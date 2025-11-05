@@ -1,0 +1,1430 @@
+[
+  {
+    "id": "discipline_basic_female",
+    "name": "Gentle Correction",
+    "description": "You speak firmly but kindly to the worker about following instructions more carefully. She listens attentively and nods in understanding.",
+    "cost_energy": 1,
+    "effect": {
+      "rebelliousness": -5,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "received_basic_discipline": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_gentle",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 5
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true,
+      "received_firm_discipline": true,
+      "received_strict_discipline": true
+    }
+  },
+  {
+    "id": "discipline_basic_male",
+    "name": "Direct Talk",
+    "description": "You have a straightforward conversation about the importance of following orders. He respects your direct approach and agrees to be more attentive.",
+    "cost_energy": 1,
+    "effect": {
+      "rebelliousness": -5,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "received_basic_discipline": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_talk",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 5
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true,
+      "received_firm_discipline": true,
+      "received_strict_discipline": true
+    }
+  },
+  {
+    "id": "discipline_firm_female",
+    "name": "Firm Training",
+    "description": "You put the worker through a structured training regimen designed to build discipline and focus. She works hard to meet your expectations, and you can see her resolve strengthening.",
+    "cost_energy": 2,
+    "effect": {
+      "rebelliousness": -15,
+      "relationship": 5,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        },
+        "received_firm_discipline": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_training",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 15,
+      "relationship": 10
+    },
+    "required_flags": {
+      "received_basic_discipline": true
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true,
+      "received_strict_discipline": true
+    }
+  },
+  {
+    "id": "discipline_firm_male",
+    "name": "Intensive Training",
+    "description": "You lead the worker through a challenging but fair training program that tests his limits while building mutual respect. He emerges stronger and more disciplined.",
+    "cost_energy": 2,
+    "effect": {
+      "rebelliousness": -15,
+      "relationship": 5,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        },
+        "received_firm_discipline": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_intensive",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 15,
+      "relationship": 10
+    },
+    "required_flags": {
+      "received_basic_discipline": true
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true,
+      "received_strict_discipline": true
+    }
+  },
+  {
+    "id": "discipline_strict_female",
+    "name": "Complete Submission",
+    "description": "Through a combination of psychological dominance and physical positioning, you establish absolute authority. She learns to obey without question, finding unexpected pleasure in complete surrender to your will.",
+    "cost_energy": 3,
+    "cost_money": 25,
+    "effect": {
+      "rebelliousness": -30,
+      "relationship": 10,
+      "romance": 15,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 15
+        },
+        "received_strict_discipline": {
+          "value": true,
+          "duration": -1
+        },
+        "strict_discipline_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_submission",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 25,
+      "relationship": 30,
+      "romance": 20
+    },
+    "required_flags": {
+      "received_firm_discipline": true
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "strict_discipline_count",
+      "max_uses": 3
+    }
+  },
+  {
+    "id": "discipline_strict_male",
+    "name": "Alpha Dominance",
+    "description": "You assert your dominance through a combination of physical presence and psychological control. He submits to your superior will, finding satisfaction in serving a true alpha leader.",
+    "cost_energy": 3,
+    "cost_money": 25,
+    "effect": {
+      "rebelliousness": -30,
+      "relationship": 10,
+      "romance": 15,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 15
+        },
+        "received_strict_discipline": {
+          "value": true,
+          "duration": -1
+        },
+        "strict_discipline_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_alpha",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 25,
+      "relationship": 30,
+      "romance": 20
+    },
+    "required_flags": {
+      "received_firm_discipline": true
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "strict_discipline_count",
+      "max_uses": 3
+    }
+  },
+  {
+    "id": "romance_flirt_female",
+    "name": "Charming Banter",
+    "description": "You engage in witty, charming conversation with subtle compliments and relaxed poise. He responds with warm confidence, and the tension between you grows.",
+    "cost_energy": 1,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "started_flirting": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 10
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "deep_romance": true,
+      "intimate_romance": true
+    }
+  },
+  {
+    "id": "romance_flirt_male",
+    "name": "Charming Banter",
+    "description": "You engage in witty, charming conversation with subtle compliments and confident body language. She responds with graceful warmth, creating an electric tension between you.",
+    "cost_energy": 1,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "started_flirting": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_banter",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 10
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "deep_romance": true,
+      "intimate_romance": true
+    }
+  },
+  {
+    "id": "romance_deep_female",
+    "name": "Intimate Evening",
+    "description": "You invite him to a private dinner where conversation flows like wine. Under candlelight, you share deeper feelings and desires, your hands touching across the table as the night grows more intimate.",
+    "cost_energy": 2,
+    "cost_money": 30,
+    "effect": {
+      "romance": 20,
+      "relationship": 10,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        },
+        "deep_romance": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 15,
+      "relationship": 20
+    },
+    "required_flags": {
+      "started_flirting": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "intimate_romance": true
+    }
+  },
+  {
+    "id": "romance_deep_male",
+    "name": "Private Connection",
+    "description": "You invite her to share drinks in your private quarters. The conversation turns personal and intense, with meaningful looks and subtle touches that build undeniable chemistry between you.",
+    "cost_energy": 2,
+    "cost_money": 30,
+    "effect": {
+      "romance": 20,
+      "relationship": 10,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        },
+        "deep_romance": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 15,
+      "relationship": 20
+    },
+    "required_flags": {
+      "started_flirting": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "intimate_romance": true
+    }
+  },
+  {
+    "id": "romance_intimate_female",
+    "name": "Passionate Night",
+    "description": "The tension that has been building finally reaches its peak. In the privacy of your chambers, you explore each other's bodies with hungry passion, his low moans filling the air as you claim him completely.",
+    "cost_energy": 3,
+    "cost_money": 50,
+    "effect": {
+      "romance": 35,
+      "relationship": 15,
+      "joy": 20,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 20
+        },
+        "intimate_romance": {
+          "value": true,
+          "duration": -1
+        },
+        "intimate_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 35,
+      "joy": 20
+    },
+    "required_flags": {
+      "deep_romance": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "intimate_count",
+      "max_uses": 5
+    }
+  },
+  {
+    "id": "romance_intimate_male",
+    "name": "Dominant Union",
+    "description": "The sexual tension explodes into raw, primal passion. You take control completely, showing her the pleasure of submission as your bodies move together in perfect, dominant harmony.",
+    "cost_energy": 3,
+    "cost_money": 50,
+    "effect": {
+      "romance": 35,
+      "relationship": 15,
+      "joy": 20,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 20
+        },
+        "intimate_romance": {
+          "value": true,
+          "duration": -1
+        },
+        "intimate_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_dominant",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 35,
+      "joy": 20
+    },
+    "required_flags": {
+      "deep_romance": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "intimate_count",
+      "max_uses": 5
+    }
+  },
+  {
+    "id": "friendship_chat_female",
+    "name": "Friendly Chat",
+    "description": "You sit down for a casual conversation about her interests, dreams, and daily life. She opens up gradually, sharing stories and laughs that bring you closer together as friends.",
+    "cost_energy": 1,
+    "effect": {
+      "relationship": 5,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        },
+        "casual_friendship": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_chat",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true,
+      "close_friendship": true,
+      "best_friendship": true
+    }
+  },
+  {
+    "id": "friendship_chat_male",
+    "name": "Friendly Chat",
+    "description": "You have a genuine heart-to-heart conversation about life, work, and shared experiences. The camaraderie builds naturally as you discover common ground and mutual respect.",
+    "cost_energy": 1,
+    "effect": {
+      "relationship": 5,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        },
+        "casual_friendship": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherly",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true,
+      "close_friendship": true,
+      "best_friendship": true
+    }
+  },
+  {
+    "id": "friendship_close_female",
+    "name": "Heart-to-Heart",
+    "description": "You create a safe space where she can share her deepest thoughts and concerns. Through empathy and understanding, you become someone she truly trusts and values as a close friend.",
+    "cost_energy": 2,
+    "cost_money": 15,
+    "effect": {
+      "relationship": 15,
+      "joy": 10,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 3
+        },
+        "close_friendship": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_heart",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 15
+    },
+    "required_flags": {
+      "casual_friendship": true
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true,
+      "best_friendship": true
+    }
+  },
+  {
+    "id": "friendship_close_male",
+    "name": "Brotherhood Bond",
+    "description": "Through shared challenges and mutual support, you forge a bond deeper than mere acquaintanceship. He comes to see you as a true brother-in-arms, someone he can count on completely.",
+    "cost_energy": 2,
+    "cost_money": 15,
+    "effect": {
+      "relationship": 15,
+      "joy": 10,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 3
+        },
+        "close_friendship": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherhood",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 15
+    },
+    "required_flags": {
+      "casual_friendship": true
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true,
+      "best_friendship": true
+    }
+  },
+  {
+    "id": "friendship_best_female",
+    "name": "Soul Sisters",
+    "description": "You share a profound emotional connection that transcends the typical master-worker relationship. She becomes your confidante, your sister-in-spirit, someone who would follow you to the ends of the earth out of pure love and loyalty.",
+    "cost_energy": 3,
+    "cost_money": 40,
+    "effect": {
+      "relationship": 30,
+      "joy": 15,
+      "romance": 10,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 12
+        },
+        "best_friendship": {
+          "value": true,
+          "duration": -1
+        },
+        "soul_bond_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_soul_sisters",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 35,
+      "joy": 25
+    },
+    "required_flags": {
+      "close_friendship": true
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "soul_bond_count",
+      "max_uses": 2
+    }
+  },
+  {
+    "id": "friendship_best_male",
+    "name": "Blood Brothers",
+    "description": "In a ceremony that bonds you as brothers, you share a connection deeper than blood. He becomes your most trusted ally, your right-hand man, someone who would die for you without question.",
+    "cost_energy": 3,
+    "cost_money": 40,
+    "effect": {
+      "relationship": 30,
+      "joy": 15,
+      "romance": 10,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 12
+        },
+        "best_friendship": {
+          "value": true,
+          "duration": -1
+        },
+        "soul_bond_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_blood_brothers",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 35,
+      "joy": 25
+    },
+    "required_flags": {
+      "close_friendship": true
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "soul_bond_count",
+      "max_uses": 2
+    }
+  },
+  {
+    "id": "joy_gift_female",
+    "name": "Thoughtful Gift",
+    "description": "You surprise her with a small but carefully chosen gift that shows you pay attention to her likes and interests. Her face lights up with genuine delight at your thoughtfulness.",
+    "cost_energy": 1,
+    "cost_money": 10,
+    "effect": {
+      "joy": 5,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "received_simple_gift": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_gift",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true,
+      "received_special_gift": true,
+      "received_dream_gift": true
+    }
+  },
+  {
+    "id": "joy_gift_male",
+    "name": "Practical Present",
+    "description": "You give him something useful that he's mentioned needing - a new tool, a quality item, or something practical. His appreciation is genuine and shows he values your attention to his needs.",
+    "cost_energy": 1,
+    "cost_money": 10,
+    "effect": {
+      "joy": 5,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "received_simple_gift": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_practical",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true,
+      "received_special_gift": true,
+      "received_dream_gift": true
+    }
+  },
+  {
+    "id": "joy_special_female",
+    "name": "Luxury Experience",
+    "description": "You treat her to a special experience - perhaps a spa day, a shopping trip to the finest boutiques, or tickets to an exclusive event. She feels pampered and truly special.",
+    "cost_energy": 2,
+    "cost_money": 35,
+    "effect": {
+      "joy": 20,
+      "relationship": 10,
+      "romance": 5,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 5
+        },
+        "received_special_gift": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_luxury",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20,
+      "joy": 15
+    },
+    "required_flags": {
+      "received_simple_gift": true
+    },
+    "excluded_flags": {
+      "joy_cooldown": true,
+      "received_dream_gift": true
+    }
+  },
+  {
+    "id": "joy_special_male",
+    "name": "Adventure Trip",
+    "description": "You organize an exciting adventure - perhaps hunting, exploring ruins, or a challenging expedition. He thrives on the excitement and adventure, feeling truly alive and appreciated.",
+    "cost_energy": 2,
+    "cost_money": 35,
+    "effect": {
+      "joy": 20,
+      "relationship": 10,
+      "romance": 5,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 5
+        },
+        "received_special_gift": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_adventure",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20,
+      "joy": 15
+    },
+    "required_flags": {
+      "received_simple_gift": true
+    },
+    "excluded_flags": {
+      "joy_cooldown": true,
+      "received_dream_gift": true
+    }
+  },
+  {
+    "id": "joy_dream_female",
+    "name": "Ultimate Fantasy",
+    "description": "You make her deepest dream come true - perhaps meeting her idol, visiting a place she's always dreamed of, or experiencing something she never thought possible. Tears of joy stream down her face as you show her that with you, anything is possible.",
+    "cost_energy": 3,
+    "cost_money": 100,
+    "effect": {
+      "joy": 40,
+      "relationship": 20,
+      "romance": 15,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 20
+        },
+        "received_dream_gift": {
+          "value": true,
+          "duration": -1
+        },
+        "dream_gift_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_dream",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 40,
+      "joy": 30,
+      "romance": 20
+    },
+    "required_flags": {
+      "received_special_gift": true
+    },
+    "excluded_flags": {
+      "joy_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "dream_gift_count",
+      "max_uses": 1
+    }
+  },
+  {
+    "id": "joy_dream_male",
+    "name": "Epic Achievement",
+    "description": "You help him accomplish something he's always dreamed of - perhaps slaying a legendary beast, mastering an impossible skill, or achieving recognition he's always craved. His gratitude and joy know no bounds as you prove that following you leads to greatness.",
+    "cost_energy": 3,
+    "cost_money": 100,
+    "effect": {
+      "joy": 40,
+      "relationship": 20,
+      "romance": 15,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 20
+        },
+        "received_dream_gift": {
+          "value": true,
+          "duration": -1
+        },
+        "dream_gift_count": {
+          "value": 1,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_epic",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 40,
+      "joy": 30,
+      "romance": 20
+    },
+    "required_flags": {
+      "received_special_gift": true
+    },
+    "excluded_flags": {
+      "joy_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "dream_gift_count",
+      "max_uses": 1
+    }
+  },
+  {
+    "id": "discipline_maintenance_female",
+    "name": "Daily Guidance",
+    "description": "You provide gentle, consistent guidance to maintain her discipline. A simple reminder of expectations and a few encouraging words keep her on the right path.",
+    "cost_energy": 1,
+    "effect": {
+      "rebelliousness": -3,
+      "flags": {
+        "discipline_maintenance": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_maintenance",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "received_strict_discipline": true
+    },
+    "excluded_flags": {
+      "discipline_maintenance": true
+    }
+  },
+  {
+    "id": "discipline_maintenance_male",
+    "name": "Routine Check-in",
+    "description": "You have a brief, respectful check-in to maintain discipline standards. A quick word about expectations and acknowledgment of his efforts keeps the structure in place.",
+    "cost_energy": 1,
+    "effect": {
+      "rebelliousness": -3,
+      "flags": {
+        "discipline_maintenance": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_check",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "received_strict_discipline": true
+    },
+    "excluded_flags": {
+      "discipline_maintenance": true
+    }
+  },
+  {
+    "id": "romance_maintenance_female",
+    "name": "Quality Time",
+    "description": "You spend quiet, intimate time together - perhaps sharing a sunset, gentle touches, or soft conversation. These moments of connection maintain the romantic bond between you.",
+    "cost_energy": 1,
+    "cost_money": 5,
+    "effect": {
+      "romance": 8,
+      "relationship": 5,
+      "flags": {
+        "romance_maintenance": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_quality_time",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "intimate_romance": true
+    },
+    "excluded_flags": {
+      "romance_maintenance": true
+    }
+  },
+  {
+    "id": "romance_maintenance_male",
+    "name": "Private Moments",
+    "description": "You share comfortable, intimate moments together - perhaps a drink in silence, a knowing look, or casual physical closeness. These connections maintain your romantic understanding.",
+    "cost_energy": 1,
+    "cost_money": 5,
+    "effect": {
+      "romance": 8,
+      "relationship": 5,
+      "flags": {
+        "romance_maintenance": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_private_moments",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "intimate_romance": true
+    },
+    "excluded_flags": {
+      "romance_maintenance": true
+    }
+  },
+  {
+    "id": "friendship_maintenance_female",
+    "name": "Casual Hangout",
+    "description": "You spend relaxed, comfortable time together doing everyday activities. These simple moments of companionship maintain your deep friendship without the intensity of deeper bonding.",
+    "cost_energy": 1,
+    "effect": {
+      "relationship": 8,
+      "joy": 5,
+      "flags": {
+        "friendship_maintenance": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_hangout",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "best_friendship": true
+    },
+    "excluded_flags": {
+      "friendship_maintenance": true
+    }
+  },
+  {
+    "id": "friendship_maintenance_male",
+    "name": "Brotherhood Time",
+    "description": "You share comfortable brotherhood time - perhaps working together, sharing a meal, or just enjoying each other's company. These moments maintain your deep bond without ceremony.",
+    "cost_energy": 1,
+    "effect": {
+      "relationship": 8,
+      "joy": 5,
+      "flags": {
+        "friendship_maintenance": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherhood_time",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "best_friendship": true
+    },
+    "excluded_flags": {
+      "friendship_maintenance": true
+    }
+  },
+  {
+    "id": "joy_maintenance_female",
+    "name": "Small Pleasures",
+    "description": "You share in life's small pleasures together - a favorite treat, a beautiful view, or a moment of simple happiness. These little joys maintain her contentment and your connection.",
+    "cost_energy": 1,
+    "cost_money": 5,
+    "effect": {
+      "joy": 8,
+      "relationship": 3,
+      "flags": {
+        "joy_maintenance": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_small_pleasures",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "received_dream_gift": true
+    },
+    "excluded_flags": {
+      "joy_maintenance": true
+    }
+  },
+  {
+    "id": "joy_maintenance_male",
+    "name": "Simple Satisfaction",
+    "description": "You find satisfaction in simple, everyday accomplishments and moments together. These small victories and shared contentment maintain his happiness and your bond.",
+    "cost_energy": 1,
+    "cost_money": 5,
+    "effect": {
+      "joy": 8,
+      "relationship": 3,
+      "flags": {
+        "joy_maintenance": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_simple_satisfaction",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "received_dream_gift": true
+    },
+    "excluded_flags": {
+      "joy_maintenance": true
+    }
+  },
+  {
+    "id": "romance_flirt_female_homo",
+    "name": "Playful Flirting",
+    "description": "You engage in light, playful banter with subtle touches and meaningful glances. She responds with knowing smiles and playful teasing that creates an intimate connection between you.",
+    "cost_energy": 1,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "intimate_romance": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 15
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "deep_romance": true,
+      "passionate_romance": true
+    }
+  },
+  {
+    "id": "romance_flirt_male_homo",
+    "name": "Brotherly Attraction",
+    "description": "You share meaningful looks and subtle touches that go beyond friendship. He responds with understanding and reciprocal interest, creating a deeper bond between you.",
+    "cost_energy": 1,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        },
+        "intimate_romance": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_banter",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 15
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "deep_romance": true,
+      "passionate_romance": true
+    }
+  },
+  {
+    "id": "romance_deep_female_homo",
+    "name": "Intimate Evening",
+    "description": "You create a private, romantic atmosphere where you can explore your mutual attraction. She opens up to you emotionally and physically, deepening your intimate bond.",
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "romance": 15,
+      "relationship": 10,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 3
+        },
+        "deep_romance": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "required_flags": {
+      "intimate_romance": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "passionate_romance": true
+    }
+  },
+  {
+    "id": "romance_deep_male_homo",
+    "name": "Private Adventure",
+    "description": "You plan a special private adventure that allows you both to explore your deeper connection. He trusts you completely, sharing intimate moments away from prying eyes.",
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "romance": 15,
+      "relationship": 10,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 3
+        },
+        "deep_romance": {
+          "value": true,
+          "duration": -1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "required_flags": {
+      "intimate_romance": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true,
+      "passionate_romance": true
+    }
+  },
+  {
+    "id": "romance_intimate_female_homo",
+    "name": "Passionate Night",
+    "description": "In the privacy of your chambers, you explore the depths of your mutual desire. She surrenders completely to the passion between you, creating memories that will bind you forever.",
+    "cost_energy": 4,
+    "cost_money": 50,
+    "effect": {
+      "romance": 40,
+      "relationship": 20,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 15
+        },
+        "passionate_romance": {
+          "value": true,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 35
+    },
+    "required_flags": {
+      "deep_romance": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "passionate_count",
+      "max_uses": 5
+    }
+  },
+  {
+    "id": "romance_intimate_male_homo",
+    "name": "Epic Adventure",
+    "description": "You embark on a passionate, private adventure that pushes the boundaries of your relationship. He follows your lead with complete trust and desire, creating an unbreakable bond.",
+    "cost_energy": 4,
+    "cost_money": 50,
+    "effect": {
+      "romance": 40,
+      "relationship": 20,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 15
+        },
+        "passionate_romance": {
+          "value": true,
+          "duration": -1,
+          "increment": true
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_dominant",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 35
+    },
+    "required_flags": {
+      "deep_romance": true
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    },
+    "usage_limit": {
+      "flag": "passionate_count",
+      "max_uses": 5
+    }
+  },
+  {
+    "id": "romance_maintenance_female_homo",
+    "name": "Quality Time",
+    "description": "You spend quiet, intimate moments together, maintaining the deep emotional connection you've built. She appreciates these gentle expressions of your ongoing affection.",
+    "cost_energy": 1,
+    "cost_money": 10,
+    "effect": {
+      "romance": 8,
+      "flags": {
+        "romance_maintenance": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_quality_time",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "intimate_romance": true
+    },
+    "excluded_flags": {
+      "romance_maintenance": true
+    }
+  },
+  {
+    "id": "romance_maintenance_male_homo",
+    "name": "Private Moments",
+    "description": "You share quiet, meaningful moments together, reinforcing the special bond you've created. He values these simple but heartfelt expressions of your continued connection.",
+    "cost_energy": 1,
+    "cost_money": 10,
+    "effect": {
+      "romance": 8,
+      "flags": {
+        "romance_maintenance": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_private_moments",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {
+      "intimate_romance": true
+    },
+    "excluded_flags": {
+      "romance_maintenance": true
+    }
+  }
+]

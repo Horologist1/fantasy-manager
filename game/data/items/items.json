@@ -1,0 +1,584 @@
+{
+  "items": [
+    {
+      "id": "binding_gem",
+      "name": "Binding Gem",
+      "display_name": "Binding Gem",
+      "type": "quest_item",
+      "effect": {
+        "custom": "break_djinn_pact"
+      },
+      "description": "A rare gem said to bind djinn and break their pacts.",
+      "price": 800,
+      "weight": 1
+    },
+    {
+      "id": "iron_sword",
+      "name": "Iron Sword",
+      "display_name": "Iron Sword",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 5
+        }
+      },
+      "description": "A sturdy sword made of iron.",
+      "durability": 100,
+      "price": 150,
+      "weight": 10
+    },
+    {
+      "id": "steel_sword",
+      "name": "Steel Sword",
+      "display_name": "Steel Sword",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 8
+        }
+      },
+      "description": "A well-forged steel sword that cuts through armor.",
+      "durability": 150,
+      "price": 300,
+      "weight": 5
+    },
+    {
+      "id": "wooden_staff",
+      "name": "Wooden Staff",
+      "display_name": "Wooden Staff",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 4
+        }
+      },
+      "description": "A simple wooden staff favored by novices.",
+      "durability": 80,
+      "price": 100,
+      "weight": 8
+    },
+    {
+      "id": "health_potion",
+      "name": "Health Potion",
+      "display_name": "Health Potion",
+      "type": "consumable",
+      "effect": {
+        "health": 20
+      },
+      "description": "Restores 20 health points when consumed.",
+      "price": 50,
+      "weight": 12
+    },
+    {
+      "id": "energy_potion",
+      "name": "Energy Potion",
+      "display_name": "Energy Potion",
+      "type": "consumable",
+      "effect": {
+        "energy": 5
+      },
+      "description": "Restores 5 energy when consumed.",
+      "price": 60,
+      "weight": 10
+    },
+    {
+      "id": "stamina_elixir",
+      "name": "Stamina Elixir",
+      "display_name": "Stamina Elixir",
+      "type": "consumable",
+      "effect": {
+        "health": 10,
+        "skill_modifiers": {
+          "Sex": 2
+        }
+      },
+      "description": "Boosts stamina and restores a little health.",
+      "price": 70,
+      "weight": 8
+    },
+    {
+      "id": "potion_vitality",
+      "name": "Potion of Vitality",
+      "display_name": "Potion of Vitality",
+      "type": "consumable",
+      "effect": {
+        "health": 15
+      },
+      "description": "A robust potion that increases vitality.",
+      "price": 65,
+      "weight": 9
+    },
+    {
+      "id": "scroll_wisdom",
+      "name": "Scroll of Wisdom",
+      "display_name": "Scroll of Wisdom",
+      "type": "consumable",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 3
+        }
+      },
+      "description": "A mystical scroll that grants temporary cleverness.",
+      "price": 120,
+      "weight": 7
+    },
+    {
+      "id": "iron_shield",
+      "name": "Iron Shield",
+      "display_name": "Iron Shield",
+      "type": "armor",
+      "effect": {
+        "health": 15
+      },
+      "description": "A sturdy shield that protects the bearer.",
+      "durability": 120,
+      "price": 200,
+      "weight": 6
+    },
+    {
+      "id": "leather_armor",
+      "name": "Leather Armor",
+      "display_name": "Leather Armor",
+      "type": "armor",
+      "effect": {
+        "health": 5
+      },
+      "description": "Light armor offering basic protection.",
+      "durability": 80,
+      "price": 100,
+      "weight": 10
+    },
+    {
+      "id": "magic_robe",
+      "name": "Magic Robe",
+      "display_name": "Magic Robe",
+      "type": "armor",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 5
+        }
+      },
+      "description": "A robe imbued with magical properties.",
+      "durability": 70,
+      "price": 250,
+      "weight": 4
+    },
+    {
+      "id": "cloak_stealth",
+      "name": "Cloak of Stealth",
+      "display_name": "Cloak of Stealth",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 3
+        }
+      },
+      "description": "A dark cloak that enhances stealth and charm.",
+      "price": 180,
+      "weight": 5
+    },
+    {
+      "id": "ring_fortitude",
+      "name": "Ring of Fortitude",
+      "display_name": "Ring of Fortitude",
+      "type": "accessory",
+      "effect": {
+        "health": 10
+      },
+      "description": "A ring that increases the wearer's resilience.",
+      "price": 150,
+      "weight": 5
+    },
+    {
+      "id": "amulet_power",
+      "name": "Amulet of Power",
+      "display_name": "Amulet of Power",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 4
+        }
+      },
+      "description": "An amulet that boosts combat prowess.",
+      "price": 200,
+      "weight": 3
+    },
+    {
+      "id": "boots_speed",
+      "name": "Boots of Speed",
+      "display_name": "Boots of Speed",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 2
+        }
+      },
+      "description": "Light boots that increase movement speed and stamina.",
+      "price": 120,
+      "weight": 7
+    },
+    {
+      "id": "gold_coin",
+      "name": "Gold Coin",
+      "display_name": "Gold Coin",
+      "type": "currency",
+      "description": "A coin made of pure gold.",
+      "price": 10,
+      "weight": 15
+    },
+    {
+      "id": "silver_coin",
+      "name": "Silver Coin",
+      "display_name": "Silver Coin",
+      "type": "currency",
+      "description": "A coin made of sterling silver.",
+      "price": 5,
+      "weight": 10
+    },
+    {
+      "id": "bronze_coin",
+      "name": "Bronze Coin",
+      "display_name": "Bronze Coin",
+      "type": "currency",
+      "description": "A coin made of bronze.",
+      "price": 2,
+      "weight": 8
+    },
+    {
+      "id": "diamond",
+      "name": "Diamond",
+      "display_name": "Diamond",
+      "type": "currency",
+      "description": "A precious gemstone with high monetary value.",
+      "price": 500,
+      "weight": 1
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby",
+      "display_name": "Ruby",
+      "type": "currency",
+      "description": "A deep red gemstone.",
+      "price": 400,
+      "weight": 1
+    },
+    {
+      "id": "emerald",
+      "name": "Emerald",
+      "display_name": "Emerald",
+      "type": "currency",
+      "description": "A bright green gemstone prized for its beauty.",
+      "price": 350,
+      "weight": 1
+    },
+    {
+      "id": "sapphire",
+      "name": "Sapphire",
+      "display_name": "Sapphire",
+      "type": "currency",
+      "description": "A blue gemstone known for its clarity.",
+      "price": 300,
+      "weight": 1
+    },
+    {
+      "id": "obsidian_blade",
+      "name": "Obsidian Blade",
+      "display_name": "Obsidian Blade",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 10
+        }
+      },
+      "description": "A razor-sharp blade crafted from volcanic glass.",
+      "durability": 90,
+      "price": 350,
+      "weight": 4
+    },
+    {
+      "id": "flame_dagger",
+      "name": "Flame Dagger",
+      "display_name": "Flame Dagger",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 6
+        }
+      },
+      "description": "A small dagger imbued with the power of fire.",
+      "durability": 70,
+      "price": 220,
+      "weight": 3
+    },
+    {
+      "id": "ice_staff",
+      "name": "Ice Staff",
+      "display_name": "Ice Staff",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 7
+        }
+      },
+      "description": "A staff that channels the chill of winter.",
+      "durability": 80,
+      "price": 280,
+      "weight": 6
+    },
+    {
+      "id": "wind_bow",
+      "name": "Wind Bow",
+      "display_name": "Wind Bow",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 6
+        }
+      },
+      "description": "A bow said to harness the speed of the wind.",
+      "durability": 85,
+      "price": 260,
+      "weight": 5
+    },
+    {
+      "id": "earth_hammer",
+      "name": "Earth Hammer",
+      "display_name": "Earth Hammer",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 9
+        }
+      },
+      "description": "A heavy hammer imbued with the power of the earth.",
+      "durability": 100,
+      "price": 320,
+      "weight": 8
+    },
+    {
+      "id": "lightning_orb",
+      "name": "Lightning Orb",
+      "display_name": "Lightning Orb",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 4
+        }
+      },
+      "description": "An orb crackling with electrical energy.",
+      "price": 240,
+      "weight": 3
+    },
+    {
+      "id": "wakeful_pill",
+      "name": "Wakeful Powder",
+      "type": "consumable",
+      "effect": {
+        "energy": 10,
+        "cap": true,
+        "add_trait": "Energetic",
+        "remove_trait": "Lazy"
+      },
+      "description": "Grants a burst of energy, making the user Energetic and removing Lazy.",
+      "price": 140,
+      "weight": 3
+    },
+    {
+      "id": "enchanted_ring",
+      "name": "Enchanted Ring",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 2
+        },
+        "add_trait": "Charming"
+      },
+      "description": "Grants an enchanted allure.",
+      "price": 140,
+      "weight": 3
+    },
+    {
+      "id": "invitation_letter",
+      "name": "Invitation Letter",
+      "display_name": "Invitation Letter",
+      "type": "consumable",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 4
+        },
+        "add_trait": "Expecting Visit"
+      },
+      "description": "A beautifully crafted invitation promising a visit from a distinguished guest.",
+      "price": 200,
+      "weight": 1
+    },
+    {
+      "id": "shadow_cloak",
+      "name": "Shadow Cloak",
+      "display_name": "Shadow Cloak",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 5
+        }
+      },
+      "description": "A cloak that shrouds the wearer in darkness.",
+      "price": 210,
+      "weight": 4
+    },
+    {
+      "id": "healing_ring",
+      "name": "Healing Ring",
+      "display_name": "Healing Ring",
+      "type": "accessory",
+      "effect": {
+        "health": 8
+      },
+      "description": "A ring that slowly regenerates the wearer's health.",
+      "price": 190,
+      "weight": 3
+    },
+    {
+      "id": "amulet_desire",
+      "name": "Amulet of Desire",
+      "display_name": "Amulet of Desire",
+      "type": "accessory",
+      "effect": {
+        "libido_max": 5,
+        "libido_regeneration": 2
+      },
+      "description": "An amulet that stirs deep passions, increasing libido capacity and recovery.",
+      "price": 260,
+      "weight": 2
+    },
+    {
+      "id": "elixir_passion",
+      "name": "Elixir of Passion",
+      "display_name": "Elixir of Passion",
+      "type": "consumable",
+      "effect": {
+        "libido": 10,
+        "libido_regeneration": 3
+      },
+      "description": "A potent elixir that boosts libido and hastens its regeneration for a time.",
+      "price": 1000,
+      "weight": 0.02
+    },
+    {
+      "id": "incriminating_documents",
+      "name": "Incriminating Documents",
+      "display_name": "Incriminating Documents",
+      "type": "quest_item",
+      "effect": {
+        "custom": "malachar_evidence"
+      },
+      "description": "Ledgers and letters proving Lord Malachar's conspiracy and dark dealings.",
+      "price": 0,
+      "weight": 2,
+      "shop_available": false
+    },
+    {
+      "id": "enchanted_blade_malachar",
+      "name": "Enchanted Blade",
+      "display_name": "Enchanted Blade",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 12
+        }
+      },
+      "description": "A blade forged with ancient magic, capable of cutting through sorcery and steel alike.",
+      "durability": 200,
+      "price": 1500,
+      "weight": 6,
+      "shop_available": false
+    },
+    {
+      "id": "siege_powder",
+      "name": "Siege Powder",
+      "display_name": "Siege Powder",
+      "type": "quest_item",
+      "effect": {
+        "custom": "breach_fortress"
+      },
+      "description": "Alchemical explosive powerful enough to breach fortress walls and shatter magical barriers.",
+      "price": 0,
+      "weight": 10,
+      "shop_available": false
+    },
+    {
+      "id": "test_skill_boost",
+      "name": "Test Skill Booster",
+      "display_name": "Test Skill Booster",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 70,
+          "Anal": 70,
+          "BDSM": 70,
+          "Hand": 70,
+          "Oral": 70,
+          "Homo": 70,
+          "Special": 70,
+          "Group": 70,
+          "Extreme": 70,
+          "Striptease": 70,
+          "Combat": 70,
+          "Clever": 70,
+          "Charm": 70,
+          "Wait": 70,
+          "Agility": 70,
+          "Magic": 70,
+          "Specialty 4": 70,
+          "Specialty 5": 70,
+          "Specialty 6": 70,
+          "Specialty 7": 70,
+          "Specialty 8": 70,
+          "Specialty 9": 70,
+          "Specialty 10": 70,
+          "Specialty 11": 70,
+          "Specialty 12": 70
+        }
+      },
+      "description": "A test item that grants +70 to all skills. For testing purposes only.",
+      "price": 50,
+      "weight": 1
+    },
+    {
+      "id": "test_unlock_shop2",
+      "name": "Test Shop 2 Unlock",
+      "display_name": "Test Shop 2 Unlock",
+      "type": "consumable",
+      "effect": {
+        "custom": "unlock_shop2"
+      },
+      "description": "Test item to unlock Shop 2 (Adventurer's Market). For testing purposes only.",
+      "price": 1,
+      "weight": 1
+    },
+    {
+      "id": "test_unlock_shop3",
+      "name": "Test Shop 3 Unlock",
+      "display_name": "Test Shop 3 Unlock",
+      "type": "consumable",
+      "effect": {
+        "custom": "unlock_shop3"
+      },
+      "description": "Test item to unlock Shop 3 (Elite Emporium). For testing purposes only.",
+      "price": 1,
+      "weight": 1
+    },
+    {
+      "id": "test_money_50k",
+      "name": "Test Money Pouch (50k)",
+      "display_name": "Test Money Pouch (50k)",
+      "type": "consumable",
+      "effect": {
+        "money": 50000
+      },
+      "description": "A test item that adds 50,000 money when used. For testing purposes only.",
+      "price": 1,
+      "weight": 1
+    }
+  ]
+}

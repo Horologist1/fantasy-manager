@@ -1,0 +1,8 @@
+Identifier	Character	Dialogue	Filename	Line Number	Ren'Py Script
+start_1cd19f3c		After much effort, you've finally managed to purchase your first building.	game/script.rpy	4398	"[what]"
+start_5849f765		As you prepare to sign the final papers, you must decide how you wish to be addressed...	game/script.rpy	4399	"[what]"
+start_15d2cb51		Very well, [player_title] [player_name]. Let's begin your journey.	game/script.rpy	4416	"[what]"
+handle_random_event_050f1654	narrator	[store.current_event_description]	game/script.rpy	4474	narrator "[what]"
+handle_random_event_376d297e	narrator	[outcome_message]	game/script.rpy	4477	narrator "[what]"
+game_over_806a8c48		You have completely run out of money.	game/script.rpy	4492	"[what]"
+game_over_1a37435e		Game Over!	game/script.rpy	4493	"[what]"

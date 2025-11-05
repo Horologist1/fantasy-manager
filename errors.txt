@@ -1,0 +1,10 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/scripts/tutorial_system.rpy", line 469: The if statement is not a valid child of the textbutton statement.
+    text_color "#d4a574" if can_assassinate else "#666666"
+                           ^
+
+Ren'Py Version: Ren'Py 8.3.7.25031702
+Wed Nov  5 16:48:32 2025

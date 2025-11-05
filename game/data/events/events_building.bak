@@ -1,0 +1,669 @@
+[
+  {
+    "id": "brothel_worker_caution",
+    "description": "Hag potions run low just as VIPs demand service; coin glitters, caution thins.",
+    "weight": 3,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_caution",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "worker_gender_requirement": "female",
+    "choices": [
+      {
+        "option": "Trust your potion supply and keep working (risk: worker pregnancy; potential: money and reputation)",
+        "condition": "building_skill",
+        "message_success": "A spare stash is found. Service continues smoothly ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "Supplies run out; some work without protection. You earn the coin but risk pregnancy and sickness ({actual_money}, a worker got Pregnant).",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 10
+          },
+          "failure": {
+            "money": 500,
+            "reputation": 0,
+            "add_trait": {
+              "name": "Pregnant",
+              "duration": 100,
+              "target": "random_worker_female"
+            }
+          }
+        }
+      },
+      {
+        "option": "Pay for extra precautions (cost: money; gain: reputation)",
+        "message": "You buy potions, avoid risk, and keep standards ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -100,
+          "reputation": 5
+        }
+      },
+      {
+        "option": "Deny service to VIP clients (loss: reputation)",
+        "message": "You deny VIP service to keep staff safe ({actual_reputation} reputation).",
+        "effect": {
+          "money": 0,
+          "reputation": -5
+        }
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "brothel_health_check",
+    "description": "A city healer arrives with ledger and stern eye to audit for illness - routine, but reputations hinge on it.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_health",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "worker_gender_requirement": "female",
+    "choices": [
+      {
+        "option": "Conduct the health check (costs and reputation may vary)",
+        "condition": "building_skill",
+        "message_success": "You pass the audit; small cost, better press ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "A worker is found ill; there's a fine and reputation drops ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": -50,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -10,
+            "add_trait": {
+              "name": "Sick",
+              "duration": 7,
+              "target": "random_worker_female"
+            }
+          }
+        }
+      },
+      {
+        "option": "Bribe the healer (cost: money)",
+        "message": "You pay to pass and stock medicine ({actual_money}).",
+        "effect": {
+          "money": -500,
+          "reputation": 0
+        }
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "restaurant_food_shortage",
+    "description": "A supplier's cart is late and the pantry thins—the menu wobbles unless you act.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "restaurant_shortage",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "choices": [
+      {
+        "option": "Resolve the shortage (potential: money and reputation; risk: losses)",
+        "condition": "building_skill",
+        "message_success": "You secure supplies; patrons stay fed ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "Tables go empty; patrons complain ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 100,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Raise prices to cope (gain: money; loss: reputation)",
+        "message": "You raise prices; costs are covered but goodwill drops ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": 100,
+          "reputation": -5
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "restaurant_noble_banquet",
+    "description": "A jeweled signet hits your desk: a noble demands a lavish banquet - timing, temper, and kitchen must align.",
+    "weight": 3,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "restaurant_banquet",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "choices": [
+      {
+        "option": "Host the banquet (potential: money and reputation; risk: losses)",
+        "condition": "building_skill",
+        "message_success": "You deliver a royal feast. Fame grows ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The banquet falters; your name suffers ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -15
+          }
+        }
+      },
+      {
+        "option": "Decline the request (loss: reputation)",
+        "message": "You decline the request ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -10
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "guild_dragon_sighting",
+    "description": "Smoke on the ridge—villagers whisper of a dragon. The guild's mettle is called.",
+    "weight": 3,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 21,
+    "worker_selection": "none",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "background_image": "guild_dragon",
+    "success_image": "guild_success",
+    "failure_image": "guild_failure",
+    "choices": [
+      {
+        "option": "Send a party to confront the dragon (potential: money and reputation; risk: worker injury)",
+        "condition": "building_skill",
+        "message_success": "You drive off the dragon and take some treasure ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The party retreats; one worker is badly burnt ({actual_reputation} reputation, a worker got Badly Burnt).",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 20
+          },
+          "failure": {
+            "reputation": -10,
+            "add_trait": {
+              "name": "Badly Burnt",
+              "duration": 7,
+              "target": "random_worker"
+            }
+          }
+        }
+      },
+      {
+        "option": "Wait and prepare to strike at a different time (loss: reputation)",
+        "message": "You wait; the dragon's shadow dims your fame ({actual_reputation} reputation).",
+        "effect": {
+          "money": 0,
+          "reputation": -5
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "guild_bandit_raid",
+    "description": "A courier bursts in—your supply caravan is hit by bandits along the low road.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "background_image": "guild_raid",
+    "success_image": "guild_success",
+    "failure_image": "guild_failure",
+    "choices": [
+      {
+        "option": "Repel the bandits (potential: reputation; risk: money and reputation)",
+        "condition": "building_skill",
+        "message_success": "Your tactics rout the bandits; supplies and respect secured ({actual_reputation} reputation).",
+        "message_failure": "The caravan is lost; your name suffers ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 0,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Pay off the bandits (cost: money)",
+        "message": "You bribe the raiders to save goods ({actual_money}).",
+        "effect": {
+          "money": -250,
+          "reputation": 0
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "tavern_brawl_outbreak",
+    "description": "A shout becomes a shove; tankards fly and a brawl surges across your floor.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "tavern_brawl",
+    "success_image": "tavern_success",
+    "failure_image": "tavern_failure",
+    "choices": [
+      {
+        "option": "Quell the brawl (potential: reputation; risk: money and reputation)",
+        "condition": "building_skill",
+        "message_success": "You quell the brawl; loyalty rises ({actual_reputation} reputation).",
+        "message_failure": "The brawl damages the tavern ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 0,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Let it burn out (cost: money and reputation)",
+        "message": "You let it fade; damage and gossip cost you ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -200,
+          "reputation": -5
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "tavern_wine_crisis",
+    "description": "Corks pop sour—an entire batch turns the room against tonight's pour.",
+    "weight": 3,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "tavern_wine",
+    "success_image": "tavern_success",
+    "failure_image": "tavern_failure",
+    "choices": [
+      {
+        "option": "Replace the wine swiftly (cost: money; potential: reputation; risk: reputation)",
+        "condition": "building_skill",
+        "message_success": "Quick replacement saves the night ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "Slow response angers drinkers ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": -200,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Serve the bad wine anyway (loss: reputation)",
+        "message": "You serve it anyway; trust drops ({actual_reputation} reputation).",
+        "effect": {
+          "money": 0,
+          "reputation": -5
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "casino_rigged_tables",
+    "description": "Low voices circle the pit—rigged tables, they say. Your integrity sits under the lamp.",
+    "weight": 3,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 21,
+    "worker_selection": "none",
+    "building_type": [
+      "casino"
+    ],
+    "background_image": "casino_rumors",
+    "success_image": "casino_success",
+    "failure_image": "casino_failure",
+    "choices": [
+      {
+        "option": "Prove the tables fair (potential: reputation; risk: reputation)",
+        "condition": "building_skill",
+        "message_success": "Transparency restores trust and draws crowds ({actual_reputation} reputation).",
+        "message_failure": "Oversights fuel distrust; customers leave ({actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 0,
+            "reputation": 15
+          },
+          "failure": {
+            "money": 0,
+            "reputation": -15
+          }
+        }
+      },
+      {
+        "option": "Silence the rumors with coin (cost: money)",
+        "message": "You offer free rounds and chips to quiet rumors ({actual_money}).",
+        "effect": {
+          "money": -400,
+          "reputation": 0
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "casino_vip_fraud",
+    "description": "A velvet-cloaked VIP palms forged bets; eyes turn to your security.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "casino"
+    ],
+    "background_image": "casino_fraud",
+    "success_image": "casino_success",
+    "failure_image": "casino_failure",
+    "choices": [
+      {
+        "option": "Expose the fraud (potential: reputation; risk: money and reputation)",
+        "condition": "building_skill",
+        "message_success": "You catch the VIP's fraud; your name rises ({actual_reputation} reputation).",
+        "message_failure": "Proof is lacking; coin and trust are lost ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 0,
+            "reputation": 20
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Ignore the fraud (cost: money and reputation)",
+        "message": "You ignore it; word spreads of weak oversight ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -200,
+          "reputation": -5
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "brothel_rainy_night_surge",
+    "description": "Rain drums the shingles; the city seeks warmth inside and your thresholds strain.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 10,
+    "worker_selection": "none",
+    "building_type": ["brothel"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Lean into the surge (potential: money; risk: reputation)",
+        "condition": "building_skill",
+        "message_success": "Your team handles the influx smoothly, turning a busy night into a profitable one ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "Overcrowding leads to complaints and slips in service ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": { "money": 300, "reputation": 5 },
+          "failure": { "money": 150, "reputation": -5 }
+        }
+      },
+      {
+        "option": "Limit entries (loss: money; gain: reputation)",
+        "message": "You cap admissions and keep standards high, earning quiet respect but less coin ({actual_money}, {actual_reputation} reputation).",
+        "effect": { "money": -50, "reputation": 5 }
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "tavern_delivery_delay",
+    "description": "The keg cart is late and the tap slows—either stretch stock or pay dear.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 12,
+    "worker_selection": "none",
+    "building_type": ["tavern"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Stretch current stock creatively (potential: reputation; risk: reputation)",
+        "condition": "building_skill",
+        "message_success": "Smart rationing and rotating specials keep patrons content ({actual_reputation} reputation).",
+        "message_failure": "Substitutes are noticed and grumbled about ({actual_reputation} reputation).",
+        "effect": {
+          "success": { "reputation": 10 },
+          "failure": { "reputation": -5 }
+        }
+      },
+      {
+        "option": "Buy emergency stock locally (cost: money)",
+        "message": "You pay over market price to avoid a dry night ({actual_money}).",
+        "effect": { "money": -150 }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "restaurant_spice_shortfall",
+    "description": "The spice chest sits near-empty; tonight's flavors need a quick hand.",
+    "weight": 3,
+    "limited": false,
+    "cooldown_days": 10,
+    "worker_selection": "none",
+    "building_type": ["restaurant"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Pivot to a seasonal menu (potential: money, reputation)",
+        "condition": "building_skill",
+        "message_success": "A clever seasonal menu delights patrons and saves costs ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The pivot feels forced and fails to impress ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": { "money": 150, "reputation": 5 },
+          "failure": { "money": -50, "reputation": -5 }
+        }
+      },
+      {
+        "option": "Import rare spices (cost: money; gain: reputation)",
+        "message": "You splurge on rare spices, earning foodie buzz ({actual_money}, {actual_reputation} reputation).",
+        "effect": { "money": -200, "reputation": 10 }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "casino_counterfeit_chips",
+    "description": "A dealer's glance hardens—counterfeit chips lurk among the stacks.",
+    "weight": 3,
+    "limited": false,
+    "cooldown_days": 16,
+    "worker_selection": "none",
+    "building_type": ["casino"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Audit the tables immediately (potential: reputation; risk: money)",
+        "condition": "building_skill",
+        "message_success": "Swift checks root out the fakes and win public trust ({actual_reputation} reputation).",
+        "message_failure": "The audit slows play and refunds pile up ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": { "reputation": 10 },
+          "failure": { "money": -200, "reputation": -5 }
+        }
+      },
+      {
+        "option": "Quietly remove suspicious stacks (neutral)",
+        "message": "You avoid a scene and tighten surveillance. The night goes on.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "guild_escort_request",
+    "description": "A merchant caravan posts for steel—escort wanted, reliability remembered.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 12,
+    "worker_selection": "none",
+    "building_type": ["adventurers_guild"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Accept the escort (potential: money, reputation; risk: injury)",
+        "condition": "building_skill",
+        "message_success": "The caravan arrives safely, and word spreads of your reliability ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "An ambush forces a retreat; a guard is hurt ({actual_reputation} reputation).",
+        "effect": {
+          "success": { "money": 250, "reputation": 10 },
+          "failure": { "reputation": -5, "add_trait": { "name": "Wounded", "duration": 5, "target": "random_worker" } }
+        }
+      },
+      {
+        "option": "Decline and recommend another guild (loss: reputation)",
+        "message": "You pass on the job; some merchants question your availability ({actual_reputation} reputation).",
+        "effect": { "reputation": -5 }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "adventurers_guild_routine_training",
+    "description": "Blades rasp against dummies and barked orders ring—the guild cycles its drills to keep edges keen.",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 10,
+    "worker_selection": "none",
+    "building_type": ["adventurers_guild"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Host extended drills (cost: money; gain: reputation)",
+        "message": "You invest in trainers and dummies; the guild looks sharper ({actual_money}, {actual_reputation} reputation).",
+        "effect": { "money": -120, "reputation": 6 }
+      },
+      {
+        "option": "Keep it light (neutral)",
+        "message": "You cycle basic forms and call it a day.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "brothel_linen_turnover",
+    "description": "Fresh linens lag a cycle and bookings bunch—logistics nudge your margin tonight.",
+    "weight": 3,
+    "limited": false,
+    "cooldown_days": 12,
+    "worker_selection": "none",
+    "building_type": ["brothel"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Outsource an extra laundry run (cost: money)",
+        "message": "You pay for express service and keep rooms rotating ({actual_money}).",
+        "effect": { "money": -80 }
+      },
+      {
+        "option": "Reshuffle bookings (risk/potential: reputation)",
+        "condition": "building_skill",
+        "message_success": "Scheduling magic keeps everyone content ({actual_reputation} reputation).",
+        "message_failure": "A misstep annoys a few clients ({actual_reputation} reputation).",
+        "effect": { "success": { "reputation": 5 }, "failure": { "reputation": -3 } }
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "restaurant_market_day",
+    "description": "Market day spills crowds into the streets—quick menus and clear signs catch the coin.",
+    "weight": 3,
+    "limited": false,
+    "cooldown_days": 9,
+    "worker_selection": "none",
+    "building_type": ["restaurant"],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Cook a street special (potential: money)",
+        "condition": "building_skill",
+        "message_success": "Your stall bites sell out before noon ({actual_money}).",
+        "message_failure": "The special fizzles and leftovers linger ({actual_money}).",
+        "effect": { "success": { "money": 180 }, "failure": { "money": -40 } }
+      },
+      {
+        "option": "Stay indoors and keep the regulars",
+        "message": "You keep the kitchen steady; takings are modest ({actual_money}).",
+        "effect": { "money": 60 }
+      }
+    ],
+    "nsfw": false
+  }
+]

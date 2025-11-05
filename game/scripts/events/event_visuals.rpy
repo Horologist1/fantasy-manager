@@ -1,0 +1,986 @@
+init python:
+    import os
+    
+    # Cache global para imágenes seleccionadas
+    image_selection_cache = {}
+
+    def clear_image_cache():
+        """
+        Limpia el caché de imágenes seleccionadas.
+        Se llama cuando se genera un nuevo Daily Report.
+        """
+        global image_selection_cache
+        image_selection_cache.clear()
+        renpy.log("Image selection cache cleared for new Daily Report")
+
+    def get_cached_choice(choices, cache_key):
+        """
+        Selecciona un elemento de la lista usando caché.
+        La primera vez selecciona aleatoriamente, luego usa el caché.
+        """
+        if not choices:
+            return None
+        
+        # Si ya está en caché, devolver el resultado guardado
+        if cache_key in image_selection_cache:
+            cached_result = image_selection_cache[cache_key]
+            # Verificar que el resultado cached aún esté en las opciones disponibles
+            if cached_result in choices:
+                return cached_result
+            else:
+                # Si el archivo cached ya no existe, limpiar caché y seleccionar nuevo
+                del image_selection_cache[cache_key]
+        
+        # Primera vez o caché inválido - seleccionar aleatoriamente y guardar
+        selected = renpy.random.choice(choices)
+        image_selection_cache[cache_key] = selected
+        return selected
+
+    def get_random_choice(choices):
+        """
+        Selecciona un elemento aleatorio de la lista SIN usar caché.
+        Para uso en el menú de habilidades donde queremos explorar contenido.
+        """
+        if not choices:
+            return None
+        return renpy.random.choice(choices)
+
+
+
+    def get_trait_prefixes(worker):
+        """
+        Get trait prefixes in priority order: Transformed > Futa > Pregnant
+        Returns a list of prefix combinations to try
+        """
+        if not worker or "traits" not in worker:
+            return []
+        
+        worker_traits = worker["traits"]
+        relevant_traits = []
+        
+        # Check for relevant traits in priority order
+        if "Transformed" in worker_traits:
+            relevant_traits.append("transformed")
+        if "Futa" in worker_traits:
+            relevant_traits.append("futa")
+        if "Pregnant" in worker_traits:
+            relevant_traits.append("pregnant")
+        
+        if not relevant_traits:
+            return []
+        
+        # Generate combinations in priority order
+        prefixes = []
+        
+        # If we have multiple traits, try combinations first
+        if len(relevant_traits) >= 2:
+            # Try all combinations starting with highest priority
+            if "transformed" in relevant_traits and "futa" in relevant_traits:
+                prefixes.append("transformed_futa")
+            if "transformed" in relevant_traits and "pregnant" in relevant_traits:
+                prefixes.append("transformed_pregnant")
+            if "futa" in relevant_traits and "pregnant" in relevant_traits:
+                prefixes.append("futa_pregnant")
+            
+            # Try three-way combination if all are present
+            if len(relevant_traits) == 3:
+                prefixes.insert(0, "transformed_futa_pregnant")  # Highest priority
+        
+        # Then try individual traits in priority order
+        prefixes.extend(relevant_traits)
+        
+        return prefixes
+
+    def get_skill_name_for_images(skill_name):
+        """
+        Convert skill_name (number or name) to the appropriate name for image searching.
+        Handles special cases like Homosexual -> les/gay and Service -> service/maid
+        """
+        # Use the global skill mapping system
+        skill_name_str = str(skill_name)
+        
+        # Use skill name directly - no conversion needed
+        skill_name = skill_name_str
+        
+        # Convert skill name to lowercase for image searching
+        skill_name_mapping = {
+            "Sex": "sex", "Anal": "anal", "BDSM": "bdsm",
+            "Hand": "hand", "Oral": "oral", "Homo": "homo",
+            "Special": "special", "Group": "group", "Extreme": "extreme",
+            "Striptease": "striptease", "Combat": "combat", "Clever": "clever",
+            "Charm": "charm", "Wait": "wait", "Agility": "agility",
+            "Magic": "magic"
+        }
+        
+        if skill_name in skill_name_mapping:
+            return skill_name_mapping[skill_name]
+        
+        # Para skills que no están mapeadas, devolver como está
+        return skill_name.lower()
+
+    def get_skill_search_patterns(skill_name):
+        """
+        Get search patterns for a skill name. Some skills search for multiple patterns.
+        """
+        special_patterns = {
+            "homo": ["les", "gay"],           # Homosexual busca "les" o "gay"
+            "wait": ["service", "maid"],      # Service busca "service" o "maid"
+            "striptease": ["strip", "striptease"]  # Striptease busca "strip" o "striptease"
+        }
+        
+        if skill_name in special_patterns:
+            return special_patterns[skill_name]
+        else:
+            return [skill_name]
+
+    def try_trait_image_search_worker_only(worker, base_folder, story_image, skill_name, outcome, trait_prefixes):
+        """
+        Try to find images with trait prefixes in worker's folder only
+        """
+        if not trait_prefixes:
+            return None
+            
+        is_success = outcome == "success" or outcome == "critical_success"
+        is_failure = outcome == "failure" or outcome == "mediocre"
+        
+        for prefix in trait_prefixes:
+            renpy.log(f"Trying trait prefix in worker folder: {prefix}")
+            
+            # 1. Event-specific with trait prefix and outcome
+            if story_image:
+                # Try failure version first if it's a failure
+                if is_failure:
+                    failure_pattern = f"{prefix}_{story_image}_failure"
+                    failure_matches = [f for f in renpy.list_files() if f.startswith(base_folder) and failure_pattern in os.path.basename(f)]
+                    if failure_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{skill_name}_{outcome}_skill_failure"
+                        selected = get_cached_choice(failure_matches, cache_key)
+                        renpy.log(f"Found trait-specific event failure image: {selected}")
+                        return selected
+                
+                # Try success version (or general version for success)
+                if is_success:
+                    success_pattern = f"{prefix}_{story_image}"
+                    success_matches = [f for f in renpy.list_files() if f.startswith(base_folder) and success_pattern in os.path.basename(f) and "failure" not in os.path.basename(f)]
+                    if success_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{skill_name}_{outcome}_skill_success"
+                        selected = get_cached_choice(success_matches, cache_key)
+                        renpy.log(f"Found trait-specific event success image: {selected}")
+                        return selected
+                
+                # Try general event image with trait prefix
+                general_pattern = f"{prefix}_{story_image}"
+                general_matches = [f for f in renpy.list_files() if f.startswith(base_folder) and general_pattern in os.path.basename(f)]
+                if general_matches:
+                    # Filter based on outcome
+                    filtered_matches = []
+                    for f in general_matches:
+                        basename = os.path.basename(f).lower()
+                        if is_failure and "failure" not in basename:
+                            continue
+                        if is_success and "failure" in basename:
+                            continue
+                        filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        selected = renpy.random.choice(filtered_matches)
+                        renpy.log(f"Found trait-specific event image: {selected}")
+                        return selected
+            
+            # 2. Skill-specific with trait prefix and outcome
+            if skill_name is not None:
+                # Convert skill_name to skill name for image searching
+                skill_name_for_search = get_skill_name_for_images(skill_name)
+                skill_patterns = get_skill_search_patterns(skill_name_for_search)
+                
+                for skill_pattern_name in skill_patterns:
+                    # Try failure version first if it's a failure
+                    if is_failure:
+                        skill_failure_pattern = f"{prefix}_{skill_pattern_name}_failure"
+                        skill_failure_matches = [f for f in renpy.list_files() if f.startswith(base_folder) and skill_failure_pattern in os.path.basename(f)]
+                        if skill_failure_matches:
+                            selected = renpy.random.choice(skill_failure_matches)
+                            renpy.log(f"Found trait-specific skill failure image: {selected}")
+                            return selected
+                    
+                    # Try success version (or general version for success)
+                    if is_success:
+                        skill_success_pattern = f"{prefix}_{skill_pattern_name}"
+                        skill_success_matches = [f for f in renpy.list_files() if f.startswith(base_folder) and skill_success_pattern in os.path.basename(f) and "failure" not in os.path.basename(f)]
+                        if skill_success_matches:
+                            selected = renpy.random.choice(skill_success_matches)
+                            renpy.log(f"Found trait-specific skill success image: {selected}")
+                            return selected
+                    
+                    # Try general skill image with trait prefix
+                    skill_pattern = f"{prefix}_{skill_pattern_name}"
+                    skill_matches = [f for f in renpy.list_files() if f.startswith(base_folder) and skill_pattern in os.path.basename(f)]
+                    if skill_matches:
+                        # First try to find outcome-specific images
+                        outcome_specific_matches = []
+                        general_matches = []
+                        
+                        for f in skill_matches:
+                            basename = os.path.basename(f).lower()
+                            if is_failure and "failure" in basename:
+                                outcome_specific_matches.append(f)
+                            elif is_success and "failure" not in basename:
+                                outcome_specific_matches.append(f)
+
+                            elif "failure" not in basename:  # General images (no failure in name)
+                                general_matches.append(f)
+                        
+                        # Prefer outcome-specific, fallback to general
+                        if outcome_specific_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{skill_name}_{outcome}_trait_specific"
+                            selected = get_cached_choice(outcome_specific_matches, cache_key)
+                            renpy.log(f"Found trait-specific outcome-specific skill image: {selected}")
+                            return selected
+                        elif general_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{skill_name}_{outcome}_trait_general"
+                            selected = get_cached_choice(general_matches, cache_key)
+                            renpy.log(f"Found trait-specific general skill image (fallback): {selected}")
+                            return selected
+        
+        return None
+
+    def try_trait_image_search(worker, base_folder, default_folder, story_image, skill_name, outcome, trait_prefixes):
+        """
+        Try to find images with trait prefixes in default folder (for fallback)
+        """
+        if not trait_prefixes:
+            return None
+            
+        is_success = outcome == "success" or outcome == "critical_success"
+        is_failure = outcome == "failure" or outcome == "mediocre"
+        
+        for prefix in trait_prefixes:
+            renpy.log(f"Trying trait prefix in default folder: {prefix}")
+            
+            # 1. Event-specific with trait prefix and outcome
+            if story_image:
+                # Try failure version first if it's a failure
+                if is_failure:
+                    failure_pattern = f"{prefix}_{story_image}_failure"
+                    failure_matches = get_pattern_matches_flexible(default_folder, failure_pattern)
+                    if failure_matches:
+                        selected = renpy.random.choice(failure_matches)
+                        renpy.log(f"Found default trait-specific event failure image: {selected}")
+                        return selected
+                
+                # Try success version (or general version for success)
+                if is_success:
+                    success_pattern = f"{prefix}_{story_image}"
+                    success_matches = get_pattern_matches_flexible(default_folder, success_pattern, exclude_failure=True)
+                    if success_matches:
+                        selected = renpy.random.choice(success_matches)
+                        renpy.log(f"Found default trait-specific event success image: {selected}")
+                        return selected
+            
+            # 2. Skill-specific with trait prefix and outcome
+            if skill_name is not None:
+                # Convert skill_name to skill name for image searching
+                skill_name_for_search = get_skill_name_for_images(skill_name)
+                skill_patterns = get_skill_search_patterns(skill_name_for_search)
+                
+                for skill_pattern_name in skill_patterns:
+                    # Try failure version first if it's a failure
+                    if is_failure:
+                        skill_failure_pattern = f"{prefix}_{skill_pattern_name}_failure"
+                        skill_failure_matches = get_pattern_matches_flexible(default_folder, skill_failure_pattern)
+                        if skill_failure_matches:
+                            selected = renpy.random.choice(skill_failure_matches)
+                            renpy.log(f"Found default trait-specific skill failure image: {selected}")
+                            return selected
+                    
+                    # Try success version (or general version for success)
+                    if is_success:
+                        skill_success_pattern = f"{prefix}_{skill_pattern_name}"
+                        skill_success_matches = get_pattern_matches_flexible(default_folder, skill_success_pattern, exclude_failure=True)
+                        if skill_success_matches:
+                            selected = renpy.random.choice(skill_success_matches)
+                            renpy.log(f"Found default trait-specific skill success image: {selected}")
+                            return selected
+        
+        return None
+
+    def get_event_image(worker, event, outcome=None, skill_name=None):
+        """
+        Get the appropriate image for an event, with proper priority order.
+        Priority: Worker folder with traits > Worker folder without traits > Default folder with traits > Default folder without traits > Profile image
+        """
+        if not worker or not event:
+            return None
+        
+        # Get worker folder
+        if hasattr(worker, 'get'):
+            worker_folder = worker.get("folder", "default")
+            renpy.log(f"Worker folder: {worker_folder}")
+        else:
+            worker_folder = "default"
+            renpy.log("Worker has no get method, using default folder")
+        
+        base_folder = f"images/workers/{worker_folder}/"
+        default_folder = "images/workers/default/"
+        
+        renpy.log(f"Worker: {worker['name']}, Outcome: {outcome}, Skill: {skill_name}, Folder: {base_folder}")
+        
+        # Get story image name from event
+        story_image = event.get("story_image")
+        success_image = event.get("success_image")
+        failure_image = event.get("failure_image")
+        renpy.log(f"Story image: {story_image}, Success image: {success_image}, Failure image: {failure_image}")
+        
+        # Debug the actual outcome value - matching outcome_key format from event_daily_exec.rpy
+        is_success = outcome in ["success", "critical_success"]
+        is_failure = outcome in ["failure", "mediocre"]  # Both "failure" and "mediocre" should look for failure images
+        is_mediocre = outcome == "mediocre"
+        renpy.log(f"Outcome analysis - Raw: '{outcome}', Is success: {is_success}, Is failure: {is_failure}")
+        
+        # Get trait prefixes for the worker
+        trait_prefixes = get_trait_prefixes(worker)
+        
+        # PRIORITY 1: Worker folder with traits (for event-specific images)
+        if trait_prefixes and story_image:
+            renpy.log(f"Worker has relevant traits, trying event-specific images with traits: {trait_prefixes}")
+            for prefix in trait_prefixes:
+                # Try failure version first if it's a failure
+                if is_failure:
+                    # Try explicit failure image with trait
+                    if failure_image:
+                        failure_pattern = f"{prefix}_{failure_image}"
+                        failure_matches = get_pattern_matches_flexible(base_folder, failure_pattern)
+                        if failure_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{failure_image}_{outcome}_event_failure"
+                            selected = get_cached_choice(failure_matches, cache_key)
+                            renpy.log(f"Found trait-specific event failure image: {selected}")
+                            return selected
+                    
+                    # Try story_image with _failure suffix and trait
+                    failure_pattern = f"{prefix}_{story_image}_failure"
+                    failure_matches = get_pattern_matches_flexible(base_folder, failure_pattern)
+                    if failure_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{story_image}_{outcome}_event_story_failure"
+                        selected = get_cached_choice(failure_matches, cache_key)
+                        renpy.log(f"Found trait-specific story failure image: {selected}")
+                        return selected
+                
+                # Try success version with trait
+                elif is_success:
+                    # Try explicit success image with trait
+                    if success_image:
+                        success_pattern = f"{prefix}_{success_image}"
+                        success_matches = get_pattern_matches_flexible(base_folder, success_pattern)
+                        if success_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{success_image}_{outcome}_event_success"
+                            selected = get_cached_choice(success_matches, cache_key)
+                            renpy.log(f"Found trait-specific event success image: {selected}")
+                            return selected
+                    
+                    # Try story_image without _failure suffix and trait
+                    success_pattern = f"{prefix}_{story_image}"
+                    success_matches = get_pattern_matches_flexible(base_folder, success_pattern, exclude_failure=True)
+                    if success_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{story_image}_{outcome}_event_story_success"
+                        selected = get_cached_choice(success_matches, cache_key)
+                        renpy.log(f"Found trait-specific story success image: {selected}")
+                        return selected
+                
+                # Try general story image with trait (flexible extension matching)
+                general_pattern = f"{prefix}_{story_image}"
+                general_matches = get_pattern_matches_flexible(base_folder, general_pattern)
+                if general_matches:
+                    # Filter based on outcome if possible
+                    filtered_matches = []
+                    for f in general_matches:
+                        basename = os.path.basename(f).lower()
+                        if is_failure and "failure" not in basename:
+                            continue
+                        if is_success and "failure" in basename:
+                            continue
+                        filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{story_image}_{outcome}_event_general_filtered"
+                        selected = get_cached_choice(filtered_matches, cache_key)
+                        renpy.log(f"Found trait-specific story image (filtered): {selected}")
+                        return selected
+                    else:
+                        # If no filtered matches, use any match as fallback
+                        cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{story_image}_{outcome}_event_general_fallback"
+                        selected = get_cached_choice(general_matches, cache_key)
+                        renpy.log(f"Found trait-specific story image (fallback): {selected}")
+                        return selected
+        
+        # PRIORITY 2: Worker folder without traits (for event-specific images)
+        if story_image:
+            renpy.log(f"Processing story image in worker folder: {story_image}")
+            
+            # For failure outcomes
+            if is_failure:
+                # Try explicit failure image first (flexible extension matching)
+                if failure_image:
+                    failure_matches = get_image_matches_flexible(base_folder, failure_image)
+                    if failure_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{failure_image}_{outcome}_event_failure"
+                        selected = get_cached_choice(failure_matches, cache_key)
+                        renpy.log(f"Found worker folder event failure image: {selected}")
+                        return selected
+                
+                # Try story_image with _failure suffix (flexible extension matching)
+                failure_pattern = f"{story_image}_failure"
+                failure_matches = get_pattern_matches_flexible(base_folder, failure_pattern)
+                if failure_matches:
+                    cache_key = f"{worker.get('name', 'unknown')}_{story_image}_{outcome}_event_story_failure"
+                    selected = get_cached_choice(failure_matches, cache_key)
+                    renpy.log(f"Found worker folder story failure image: {selected}")
+                    return selected
+            
+            # For success outcomes
+            elif is_success:
+                # Try explicit success image first (flexible extension matching)
+                if success_image:
+                    success_matches = get_image_matches_flexible(base_folder, success_image)
+                    if success_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{success_image}_{outcome}_event_success"
+                        selected = get_cached_choice(success_matches, cache_key)
+                        renpy.log(f"Found worker folder event success image: {selected}")
+                        return selected
+                
+                # Try story_image without _failure suffix (flexible extension matching)
+                success_matches = get_image_matches_flexible(base_folder, story_image, exclude_failure=True)
+                if success_matches:
+                    cache_key = f"{worker.get('name', 'unknown')}_{story_image}_{outcome}_event_story_success"
+                    selected = get_cached_choice(success_matches, cache_key)
+                    renpy.log(f"Found worker folder story success image: {selected}")
+                    return selected
+            
+            # Try general story image (flexible extension matching)
+            general_matches = get_image_matches_flexible(base_folder, story_image)
+            if general_matches:
+                # Filter based on outcome if possible
+                filtered_matches = []
+                for f in general_matches:
+                    basename = os.path.basename(f).lower()
+                    if is_failure and "failure" not in basename:
+                        continue
+                    if is_success and "failure" in basename:
+                        continue
+                    filtered_matches.append(f)
+                
+                if filtered_matches:
+                    cache_key = f"{worker.get('name', 'unknown')}_{story_image}_{outcome}_event_general_filtered"
+                    selected = get_cached_choice(filtered_matches, cache_key)
+                    renpy.log(f"Found worker folder story image (filtered): {selected}")
+                    return selected
+                else:
+                    # If no filtered matches, use any match as fallback
+                    cache_key = f"{worker.get('name', 'unknown')}_{story_image}_{outcome}_event_general_fallback"
+                    selected = get_cached_choice(general_matches, cache_key)
+                    renpy.log(f"Found worker folder story image (fallback): {selected}")
+                    return selected
+        
+        # PRIORITY 3: Worker folder with traits (for skill-based images)
+        if trait_prefixes and skill_name is not None:
+            renpy.log(f"Worker has relevant traits, trying skill-based images with traits: {trait_prefixes}")
+            skill_name_for_search = get_skill_name_for_images(skill_name)
+            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            
+            for skill_pattern_name in skill_patterns:
+                for prefix in trait_prefixes:
+                    # Try failure version first if it's a failure
+                    if is_failure:
+                        skill_failure_pattern = f"{prefix}_{skill_pattern_name}_failure"
+                        skill_failure_matches = get_pattern_matches_flexible(base_folder, skill_failure_pattern)
+                        if skill_failure_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{skill_pattern_name}_{outcome}_skill_failure"
+                            selected = get_cached_choice(skill_failure_matches, cache_key)
+                            renpy.log(f"Found trait-specific skill failure image: {selected}")
+                            return selected
+                    
+                    # Try success version
+                    elif is_success:
+                        skill_success_pattern = f"{prefix}_{skill_pattern_name}"
+                        skill_success_matches = get_pattern_matches_flexible(base_folder, skill_success_pattern, exclude_failure=True)
+                        if skill_success_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{skill_pattern_name}_{outcome}_skill_success"
+                            selected = get_cached_choice(skill_success_matches, cache_key)
+                            renpy.log(f"Found trait-specific skill success image: {selected}")
+                            return selected
+                    
+                    # Try general skill image with trait (flexible extension matching)
+                    skill_pattern = f"{prefix}_{skill_pattern_name}"
+                    skill_matches = get_pattern_matches_flexible(base_folder, skill_pattern)
+                    if skill_matches:
+                        # Filter based on outcome
+                        filtered_matches = []
+                        for f in skill_matches:
+                            basename = os.path.basename(f).lower()
+                            if is_failure and "failure" not in basename:
+                                continue
+                            if is_success and "failure" in basename:
+                                continue
+                            filtered_matches.append(f)
+                        
+                        if filtered_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{skill_pattern_name}_{outcome}_skill_general_filtered"
+                            selected = get_cached_choice(filtered_matches, cache_key)
+                            renpy.log(f"Found trait-specific skill image (filtered): {selected}")
+                            return selected
+                        else:
+                            # If no filtered matches, use any match as fallback
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{skill_pattern_name}_{outcome}_skill_general_fallback"
+                            selected = get_cached_choice(skill_matches, cache_key)
+                            renpy.log(f"Found trait-specific skill image (fallback): {selected}")
+                            return selected
+        
+        # PRIORITY 4: Worker folder without traits (for skill-based images)
+        if skill_name is not None:
+            renpy.log(f"No trait-specific images found, trying worker folder without traits for skill: {skill_name}")
+            skill_name_for_search = get_skill_name_for_images(skill_name)
+            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            trait_file_prefixes = ("pregnant_", "futa_", "transformed_")
+            
+            for skill_pattern_name in skill_patterns:
+                # Try failure version first if it's a failure
+                if is_failure:
+                    skill_failure_pattern = f"{skill_pattern_name}_failure"
+                    skill_failure_matches = get_pattern_matches_flexible(base_folder, skill_failure_pattern)
+                    # Exclude trait-prefixed files if worker has no matching trait
+                    skill_failure_matches = [f for f in skill_failure_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    if skill_failure_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_failure"
+                        selected = get_cached_choice(skill_failure_matches, cache_key)
+                        renpy.log(f"Found worker folder skill failure image: {selected}")
+                        return selected
+                
+                # Try success version
+                elif is_success:
+                    skill_success_matches = get_pattern_matches_flexible(base_folder, skill_pattern_name, exclude_failure=True)
+                    # Exclude trait-prefixed files
+                    skill_success_matches = [f for f in skill_success_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    if skill_success_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_success"
+                        selected = get_cached_choice(skill_success_matches, cache_key)
+                        renpy.log(f"Found worker folder skill success image: {selected}")
+                        return selected
+                
+                # Try general skill image (flexible extension matching)
+                skill_matches = get_pattern_matches_flexible(base_folder, skill_pattern_name)
+                # Exclude trait-prefixed files
+                skill_matches = [f for f in skill_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                if skill_matches:
+                    # Filter based on outcome
+                    filtered_matches = []
+                    for f in skill_matches:
+                        basename = os.path.basename(f).lower()
+                        if is_failure and "failure" not in basename:
+                            continue
+                        if is_success and "failure" in basename:
+                            continue
+                        filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_general_filtered"
+                        selected = get_cached_choice(filtered_matches, cache_key)
+                        renpy.log(f"Found worker folder skill image (filtered): {selected}")
+                        return selected
+                    else:
+                        # If no filtered matches, use any match as fallback
+                        cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_general_fallback"
+                        selected = get_cached_choice(skill_matches, cache_key)
+                        renpy.log(f"Found worker folder skill image (fallback): {selected}")
+                        return selected
+        
+        # PRIORITY 5: Default folder with traits (for event-specific images)
+        if trait_prefixes and story_image:
+            renpy.log(f"No worker folder images found, trying default folder with traits for event: {story_image}")
+            for prefix in trait_prefixes:
+                # Try failure version first if it's a failure
+                if is_failure:
+                    # Try explicit failure image with trait
+                    if failure_image:
+                        failure_pattern = f"{prefix}_{failure_image}"
+                        failure_matches = get_pattern_matches_flexible(default_folder, failure_pattern)
+                        if failure_matches:
+                            selected = renpy.random.choice(failure_matches)
+                            renpy.log(f"Found default trait-specific event failure image: {selected}")
+                            return selected
+                    
+                    # Try story_image with _failure suffix and trait
+                    failure_pattern = f"{prefix}_{story_image}_failure"
+                    failure_matches = get_pattern_matches_flexible(default_folder, failure_pattern)
+                    if failure_matches:
+                        selected = renpy.random.choice(failure_matches)
+                        renpy.log(f"Found default trait-specific story failure image: {selected}")
+                        return selected
+                
+                # Try success version with trait
+                elif is_success:
+                    # Try explicit success image with trait
+                    if success_image:
+                        success_pattern = f"{prefix}_{success_image}"
+                        success_matches = get_pattern_matches_flexible(default_folder, success_pattern)
+                        if success_matches:
+                            selected = renpy.random.choice(success_matches)
+                            renpy.log(f"Found default trait-specific event success image: {selected}")
+                            return selected
+                    
+                    # Try story_image without _failure suffix and trait
+                    success_pattern = f"{prefix}_{story_image}"
+                    success_matches = get_pattern_matches_flexible(default_folder, success_pattern, exclude_failure=True)
+                    if success_matches:
+                        selected = renpy.random.choice(success_matches)
+                        renpy.log(f"Found default trait-specific story success image: {selected}")
+                        return selected
+                
+                # Try general story image with trait (flexible extension matching)
+                general_pattern = f"{prefix}_{story_image}"
+                general_matches = get_pattern_matches_flexible(default_folder, general_pattern)
+                if general_matches:
+                    # Filter based on outcome if possible
+                    filtered_matches = []
+                    for f in general_matches:
+                        basename = os.path.basename(f).lower()
+                        if is_failure and "failure" not in basename:
+                            continue
+                        if is_success and "failure" in basename:
+                            continue
+                        if is_mediocre and "failure" in basename:
+                            continue  # Mediocre should not use failure images
+                        filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        selected = renpy.random.choice(filtered_matches)
+                        renpy.log(f"Found default trait-specific story image (filtered): {selected}")
+                        return selected
+                    else:
+                        # If no filtered matches, use any match as fallback
+                        selected = renpy.random.choice(general_matches)
+                        renpy.log(f"Found default trait-specific story image (fallback): {selected}")
+                        return selected
+        
+        # PRIORITY 6: Default folder without traits (for event-specific images)
+        if story_image:
+            renpy.log(f"No worker folder images found, trying default folder without traits for event: {story_image}")
+            
+            # For failure outcomes
+            if is_failure:
+                # Try explicit failure image first
+                if failure_image:
+                    failure_matches = get_image_matches_flexible(default_folder, failure_image)
+                    if failure_matches:
+                        selected = renpy.random.choice(failure_matches)
+                        renpy.log(f"Found default event failure image: {selected}")
+                        return selected
+                
+                # Try story_image with _failure suffix (flexible extension matching)
+                failure_pattern = f"{story_image}_failure"
+                failure_matches = get_pattern_matches_flexible(default_folder, failure_pattern)
+                if failure_matches:
+                    selected = renpy.random.choice(failure_matches)
+                    renpy.log(f"Found default story failure image: {selected}")
+                    return selected
+            
+            # For success outcomes
+            elif is_success:
+                # Try explicit success image first
+                if success_image:
+                    success_matches = get_image_matches_flexible(default_folder, success_image)
+                    if success_matches:
+                        selected = renpy.random.choice(success_matches)
+                        renpy.log(f"Found default event success image: {selected}")
+                        return selected
+                
+                # Try story_image without _failure suffix
+                success_matches = get_image_matches_flexible(default_folder, story_image, exclude_failure=True)
+                if success_matches:
+                    selected = renpy.random.choice(success_matches)
+                    renpy.log(f"Found default story success image: {selected}")
+                    return selected
+            
+            # Try general story image (flexible extension matching)
+            general_matches = get_image_matches_flexible(default_folder, story_image)
+            if general_matches:
+                # Filter based on outcome if possible
+                filtered_matches = []
+                for f in general_matches:
+                    basename = os.path.basename(f).lower()
+                    if is_failure and "failure" not in basename:
+                        continue
+                    if is_success and "failure" in basename:
+                        continue
+                    filtered_matches.append(f)
+                
+                if filtered_matches:
+                    selected = renpy.random.choice(filtered_matches)
+                    renpy.log(f"Found default story image (filtered): {selected}")
+                    return selected
+                else:
+                    # If no filtered matches, use any match as fallback
+                    selected = renpy.random.choice(general_matches)
+                    renpy.log(f"Found default story image (fallback): {selected}")
+                    return selected
+        
+        # PRIORITY 7: Default folder with traits (for skill-based images)
+        if trait_prefixes and skill_name is not None:
+            renpy.log(f"No worker folder images found, trying default folder with traits for skill: {skill_name}")
+            skill_name_for_search = get_skill_name_for_images(skill_name)
+            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            
+            for skill_pattern_name in skill_patterns:
+                for prefix in trait_prefixes:
+                    # Try failure version first if it's a failure
+                    if is_failure:
+                        skill_failure_pattern = f"{prefix}_{skill_pattern_name}_failure"
+                        skill_failure_matches = get_pattern_matches_flexible(default_folder, skill_failure_pattern)
+                        if skill_failure_matches:
+                            selected = renpy.random.choice(skill_failure_matches)
+                            renpy.log(f"Found default trait-specific skill failure image: {selected}")
+                            return selected
+                    
+                    # Try success version
+                    elif is_success:
+                        skill_success_pattern = f"{prefix}_{skill_pattern_name}"
+                        skill_success_matches = get_pattern_matches_flexible(default_folder, skill_success_pattern, exclude_failure=True)
+                        if skill_success_matches:
+                            selected = renpy.random.choice(skill_success_matches)
+                            renpy.log(f"Found default trait-specific skill success image: {selected}")
+                            return selected
+                    
+                    # Try general skill image with trait (flexible extension matching)
+                    skill_pattern = f"{prefix}_{skill_pattern_name}"
+                    skill_matches = get_pattern_matches_flexible(default_folder, skill_pattern)
+                    if skill_matches:
+                        # Filter based on outcome
+                        filtered_matches = []
+                        for f in skill_matches:
+                            basename = os.path.basename(f).lower()
+                            if is_failure and "failure" not in basename:
+                                continue
+                            if is_success and "failure" in basename:
+                                continue
+                            filtered_matches.append(f)
+                        
+                        if filtered_matches:
+                            selected = renpy.random.choice(filtered_matches)
+                            renpy.log(f"Found default trait-specific skill image (filtered): {selected}")
+                            return selected
+                        else:
+                            # If no filtered matches, use any match as fallback
+                            selected = renpy.random.choice(skill_matches)
+                            renpy.log(f"Found default trait-specific skill image (fallback): {selected}")
+                            return selected
+        
+        # PRIORITY 8: Default folder without traits (for skill-based images)
+        if skill_name is not None:
+            renpy.log(f"No worker folder images found, trying default folder without traits for skill: {skill_name}")
+            skill_name_for_search = get_skill_name_for_images(skill_name)
+            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            trait_file_prefixes = ("pregnant_", "futa_", "transformed_")
+            
+            for skill_pattern_name in skill_patterns:
+                # Try failure version first if it's a failure
+                if is_failure:
+                    skill_failure_pattern = f"{skill_pattern_name}_failure"
+                    skill_failure_matches = get_pattern_matches_flexible(default_folder, skill_failure_pattern)
+                    skill_failure_matches = [f for f in skill_failure_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    if skill_failure_matches:
+                        selected = renpy.random.choice(skill_failure_matches)
+                        renpy.log(f"Found default skill failure image: {selected}")
+                        return selected
+                
+                # Try success version
+                elif is_success:
+                    skill_success_matches = get_pattern_matches_flexible(default_folder, skill_pattern_name, exclude_failure=True)
+                    skill_success_matches = [f for f in skill_success_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    if skill_success_matches:
+                        selected = renpy.random.choice(skill_success_matches)
+                        renpy.log(f"Found default skill success image: {selected}")
+                        return selected
+                
+                # Try general skill image (flexible extension matching)
+                skill_matches = get_pattern_matches_flexible(default_folder, skill_pattern_name)
+                skill_matches = [f for f in skill_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                if skill_matches:
+                    # Filter based on outcome
+                    filtered_matches = []
+                    for f in skill_matches:
+                        basename = os.path.basename(f).lower()
+                        if is_failure and "failure" not in basename:
+                            continue
+                        if is_success and "failure" in basename:
+                            continue
+                        filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        selected = renpy.random.choice(filtered_matches)
+                        renpy.log(f"Found default skill image (filtered): {selected}")
+                        return selected
+                    else:
+                        # If no filtered matches, use any match as fallback
+                        selected = renpy.random.choice(skill_matches)
+                        renpy.log(f"Found default skill image (fallback): {selected}")
+                        return selected
+        
+        # FALLBACK TO PROFILE IMAGE
+        renpy.log("No specific images found, falling back to profile image")
+        
+        # Try worker's profile image (flexible extension matching)
+        profile_matches = get_pattern_matches_flexible(base_folder, "profile")
+        if profile_matches:
+            selected = renpy.random.choice(profile_matches)
+            renpy.log(f"Found worker profile image: {selected}")
+            return selected
+        
+        # Try default profile image (flexible extension matching)
+        default_profile_matches = get_pattern_matches_flexible(default_folder, "profile")
+        if default_profile_matches:
+            selected = renpy.random.choice(default_profile_matches)
+            renpy.log(f"Found default profile image: {selected}")
+            return selected
+        
+        # If no profile image exists, return a default fallback
+        renpy.log("No profile images found - using default fallback")
+        return "images/workers/default/profile.jpg"
+
+
+    def get_event_background(event, outcome=None):
+        """Get the appropriate background image path for an event based on outcome."""
+        outcome = outcome.lower() if outcome else ""
+
+        # Check for outcome-specific backgrounds first
+        if outcome == "success" or outcome == "critical_success":
+            success_bg = event.get("success_background")
+            if success_bg and renpy.loadable(success_bg):
+                renpy.log(f"Using success background: {success_bg}")
+                return success_bg
+        elif "failure" in outcome:
+            failure_bg = event.get("failure_background")
+            if failure_bg and renpy.loadable(failure_bg):
+                renpy.log(f"Using failure background: {failure_bg}")
+                return failure_bg
+        
+        # Check for a generic event background
+        generic_bg = event.get("background_image")
+        if generic_bg and renpy.loadable(generic_bg):
+            renpy.log(f"Using generic event background: {generic_bg}")
+            return generic_bg
+            
+        # Fallback to the default event background
+        renpy.log(f"Using default event background: {event_bg}")
+        return event_bg # Assumes event_bg is defined globally
+
+    def get_image_matches_flexible(base_folder, image_name, exclude_failure=False):
+        """
+        Get image/video matches for a given media name, allowing different extensions.
+        For example, searching for "Profile.jpg" will match "Profile.png", "Profile.webm", "Profile (2).png", etc.
+        
+        Supports all Ren'Py media formats: 
+        - Images: .png, .jpg, .jpeg, .webp
+        - Videos: .webm, .mp4
+        """
+        # Remove extension if present to get base name
+        image_base = os.path.splitext(image_name)[0]
+        
+        matches = []
+        all_files = renpy.list_files()
+        valid_extensions = ('.png', '.jpg', '.jpeg', '.webp', '.webm', '.mp4')
+        
+        for f in all_files:
+            if f.startswith(base_folder):
+                filename = os.path.basename(f)
+                file_base = os.path.splitext(filename)[0]
+                file_ext = os.path.splitext(filename)[1].lower()
+                
+                # Only consider files with valid media extensions
+                if file_ext not in valid_extensions:
+                    continue
+                
+                # Check if the base names match (case insensitive)
+                if file_base.lower() == image_base.lower():
+                    if exclude_failure and "failure" in filename.lower():
+                        continue
+                    matches.append(f)
+                # Also check for numbered variations like "Profile (2)"
+                elif file_base.lower().startswith(image_base.lower() + " ("):
+                    if exclude_failure and "failure" in filename.lower():
+                        continue
+                    matches.append(f)
+        
+        return matches
+
+    def get_pattern_matches_flexible(base_folder, pattern, exclude_failure=False):
+        """
+        Get image/video matches for a pattern within filename, allowing different extensions.
+        For example, searching for "human_Profile" will match any file containing that pattern.
+        
+        This is for trait-prefixed searches and skill searches.
+        """
+        matches = []
+        all_files = renpy.list_files()
+        valid_extensions = ('.png', '.jpg', '.jpeg', '.webp', '.webm', '.mp4')
+        
+        # Debug logging for troubleshooting
+        if "Android" in base_folder or pattern == "profile":
+            files_in_folder = [f for f in all_files if f.startswith(base_folder)]
+            renpy.log(f"DEBUG get_pattern_matches_flexible:")
+            renpy.log(f"  Base folder: {base_folder}")
+            renpy.log(f"  Pattern: {pattern}")
+            renpy.log(f"  Files in folder: {len(files_in_folder)}")
+            if len(files_in_folder) > 0 and len(files_in_folder) < 10:
+                renpy.log(f"  First few files: {files_in_folder[:5]}")
+        
+        for f in all_files:
+            if f.startswith(base_folder):
+                filename = os.path.basename(f)
+                file_ext = os.path.splitext(filename)[1].lower()
+                
+                # Only consider files with valid media extensions
+                if file_ext not in valid_extensions:
+                    continue
+                
+                # Check if pattern is in filename (case insensitive)
+                if pattern.lower() in filename.lower():
+                    if exclude_failure and "failure" in filename.lower():
+                        continue
+                    matches.append(f)
+        
+        return matches
+
+    def show_event_flags():
+        """Display a notification with current event flags and occurrences for debugging purposes"""
+        flag_strings = []
+
+        # Add safety checks: ensure the dictionaries exist before iterating
+        if not hasattr(store, "event_flags"):
+            store.event_flags = {}
+        if not hasattr(store, "event_occurrences"):
+            store.event_occurrences = {}
+        if not hasattr(store, "event_last_occurred"):
+            store.event_last_occurred = {}
+
+        # Add regular event flags
+        for flag, value in store.event_flags.items():
+            flag_strings.append(f"{flag}: {value}")
+
+        # Add event occurrences
+        for event_id, count in store.event_occurrences.items():
+            flag_strings.append(f"occurrence: {event_id}: {count}")
+            
+        # Add event last occurrence times
+        current_total_days = calculate_total_days()
+        for event_id, last_day in store.event_last_occurred.items():
+            days_since = current_total_days - last_day
+            flag_strings.append(f"last_occurred: {event_id}: {days_since} days ago")
+
+        if not flag_strings:
+            renpy.notify("No event flags or occurrences are set")
+            # Explicitly return None (or just use 'return')
+            return None
+
+        flags_str = "\n".join(flag_strings)
+        renpy.notify(f"Current event flags and occurrences:\n{flags_str}")
+        # Explicitly return None (or just use 'return')
+        return None
+

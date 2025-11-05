@@ -1,0 +1,187 @@
+[
+  {
+    "id": "event_recruit_simple_test",
+    "description": "A person picks the sign from the door and approaches your establishment, looking for work.",
+    "dialogue": "\"Hello! I'm [event_worker] and I'm looking for work. I'm willing to work hard for fair pay.\"",
+    "weight": 10,
+    "unlimited": true,
+    "random_worker": true,
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Hire them immediately for [COST] per day.",
+        "message": "You seal the deal at [COST] per day. [event_worker] shakes your hand with a steady smile; comfort remains as they prefer, and they start work at once.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 2
+        }
+      },
+      {
+        "option": "Negotiate a lower wage.",
+        "message": "After a measured back-and-forth, you settle at [COST] per day. [event_worker] accepts the cut with grace; they'll manage at a notch below their usual comfort ([actual_comfort]).",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You thank [event_worker] for their interest but explain you're not hiring right now. They nod understandingly and leave.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_tavern_brawler",
+    "description": "A muscular figure sits in the corner of your tavern, nursing a drink. Scars crisscross their arms, and their knuckles are split from recent fights. They notice you watching and approach with a confident swagger.",
+    "dialogue": "\"Name's [event_worker]. I heard you might be looking for someone who can handle trouble. I've been fighting in underground rings for years, but I'm looking for steadier work. What do you say?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": true,
+    "always_available": true,
+    "building_type": [],
+    "background_image": "tavern_bg",
+    "success_image": "tavern_success", 
+    "failure_image": "tavern_failure",
+    "worker_filter": {
+      "min_combat": 15,
+      "traits_required": ["Human"],
+      "traits_excluded": ["Sick", "Injured"]
+    },
+    "choices": [
+      {
+        "option": "Test their fighting skills in a friendly spar. (Requires Combat)",
+        "condition": "Combat",
+        "message_success": "You engage [event_worker] in a practice bout. Their technique is impressive, and they hold back just enough to avoid seriously hurting you. 'Not bad for a boss,' they grin, wiping sweat from their brow. 'I think we'll work well together.' They agree to work for [COST] daily.",
+        "message_failure": "The spar doesn't go as planned. [event_worker] easily overwhelms you, but their arrogance shows through. 'Maybe you need the protection more than I need the job,' they scoff before walking away. You've lost face in your own establishment.",
+        "effect": {
+          "success": { 
+            "recruit_worker": true, 
+            "reputation": 5,
+            "relationship_bonus": 10
+          },
+          "failure": { 
+            "reputation": -5,
+            "money": -50
+          }
+        }
+      },
+      {
+        "option": "Offer them a trial period with reduced pay.",
+        "message": "You outline a short trial at [COST] per day. [event_worker] nods - during the trial they'll keep to a pared-down comfort ([actual_comfort]) while proving their worth.",
+        "effect": { 
+          "recruit_worker": true,
+          "cost_modifier": 0.5,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Try to negotiate a lower wage. (Requires Charm)",
+        "condition": "Charm", 
+        "message_success": "Your persuasive words and reasonable arguments convince [event_worker] that steady work and good treatment are worth more than high pay. 'You make a good point about job security,' they admit. They agree to work for [COST] daily.",
+        "message_failure": "Your negotiation attempt comes across as cheap and insulting. [event_worker]'s expression hardens. 'I know my worth. Find someone else if you want to pay peanuts.' They storm out, and word spreads about your stinginess.",
+        "effect": {
+          "success": { 
+            "recruit_worker": true,
+            "cost_modifier": 0.75,
+            "reputation": 2
+          },
+          "failure": { 
+            "reputation": -8,
+            "money": -25
+          }
+        }
+      },
+      {
+        "option": "Politely decline their services.",
+        "message": "You thank [event_worker] for their interest but explain that you're not currently hiring. They nod respectfully. 'I understand. If you change your mind, you know where to find me.' They finish their drink and leave peacefully.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_mysterious_scholar",
+    "description": "A hooded figure approaches your establishment as evening falls. Ancient tomes peek from their travel pack, and arcane symbols are embroidered on their robes. They speak in a cultured voice that hints at noble education.",
+    "dialogue": "\"Greetings. I am [event_worker], a scholar of the mystical arts. I seek employment that would allow me to continue my research while contributing to your enterprise.\"\n\n\"My knowledge of magic and lore could prove... invaluable.\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Violet",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Ask them to demonstrate their magical abilities. (Requires Magic)",
+        "condition": "Magic",
+        "message_success": "You request a demonstration of their powers. [event_worker] nods and begins weaving intricate patterns in the air. Sparks of ethereal light dance between their fingers, and you feel a subtle enchantment settle over the room. 'Impressive,' you say. They agree to work for [COST] daily.",
+        "message_failure": "When you ask for a magical demonstration, your own attempt to sense their power backfires. A minor magical feedback leaves you dizzy and embarrassed. [event_worker] looks concerned but professional. 'Perhaps we should discuss this when you're feeling better,' they say diplomatically before departing.",
+        "effect": {
+          "success": { 
+            "recruit_worker": true,
+            "reputation": 8,
+            "add_trait": {
+              "name": "Magical Resonance",
+              "duration": 60,
+              "target": "recruited_worker"
+            }
+          },
+          "failure": { 
+            "health": -5,
+            "reputation": -3
+          }
+        }
+      },
+      {
+        "option": "Offer them access to your private library in exchange for reduced wages.",
+        "message": "You sweeten the offer with library access and settle on [COST] per day. [event_worker]'s eyes brighten; they'll work at a slightly leaner comfort ([actual_comfort]) in exchange for knowledge.",
+        "effect": { 
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "relationship_bonus": 15,
+          "add_trait": {
+            "name": "Scholar's Joy",
+            "duration": 90,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Question their true intentions. (Requires Clever)",
+        "condition": "Clever",
+        "message_success": "Your probing questions reveal that [event_worker] is researching ancient protective wards - knowledge that could benefit your establishment's security. 'Your perceptiveness is admirable,' they say with respect. 'Yes, I believe we can help each other.' They agree to work for [COST] daily.",
+        "message_failure": "Your suspicious questioning comes across as paranoid and insulting. [event_worker] draws their hood up, clearly offended. 'I see my reputation has been unfairly tarnished by rumors. Good day.' They leave, and you realize you may have misjudged them.",
+        "effect": {
+          "success": { 
+            "recruit_worker": true,
+            "reputation": 5,
+            "custom": "unlock_ward_research"
+          },
+          "failure": { 
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Respectfully decline their offer.",
+        "message": "You politely explain that your establishment doesn't currently need someone with their particular skills. [event_worker] bows gracefully. 'I understand. Should your needs change, I shall be in the area for some time.' They depart with dignity intact.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  }
+]

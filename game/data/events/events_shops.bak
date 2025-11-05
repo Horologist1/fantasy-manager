@@ -1,0 +1,288 @@
+[
+    {
+        "id": "shop_quest_ag_1",
+        "description": "At the Adventurers' Guild, Elara shows a torn map. The other half lies in the Sunken Library. Help her recover it.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "worker_selection": "choose",
+        "building_type": ["adventurers_guild"],
+        "background_image": "event_bg",
+        "conditions": { "start_when": "after_days:15", "stop_when": "has_flag:shop_quest_tier2_started" },
+        "choices": [
+            {
+                "option": "Commit a clever worker to find the library's location.",
+                "condition": "Clever",
+                "message_success": "[acting_worker] pinpoints the Sunken Library's location. The way is set. ({actual_reputation} reputation)",
+                "message_failure": "The trail runs cold.",
+                "effect": {
+                    "success": { "reputation": 5, "event_flags": { "shop_quest_path_chosen": "guild", "shop_quest_tier2_started": true } }
+                }
+            },
+            {
+                "option": "Tell Elara you need time to gather proper equipment and maps.",
+                "message": "You request time to prepare. Elara agrees. The quest will return in 10 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_ag_1_passed": true, "shop_quest_ag_1_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_br_1",
+        "description": "At the Brothel, Julian says Magistrate Valerius is being blackmailed, stalling his permit. Find the source.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "worker_selection": "choose",
+        "building_type": ["brothel"],
+        "background_image": "event_bg",
+        "conditions": { "start_when": "after_days:15", "stop_when": "has_flag:shop_quest_tier2_started" },
+        "choices": [
+            {
+                "option": "Use a charming worker to uncover the secret.",
+                "condition": "Charm",
+                "message_success": "[acting_worker] uncovers Lord Sterling's forged ledger. The trap is set. ({actual_reputation} reputation)",
+                "message_failure": "The secret holds, for now.",
+                "effect": {
+                    "success": { "reputation": 5, "event_flags": { "shop_quest_path_chosen": "brothel", "shop_quest_tier2_started": true } }
+                }
+            },
+            {
+                "option": "Request more time to investigate the magistrate's connections discreetly.",
+                "message": "You ask for time to gather intelligence. Julian agrees. The quest returns in 10 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_br_1_passed": true, "shop_quest_br_1_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_ot_1",
+        "description": "An ex-guard, Borlag, reports the Crimson Reapers are squeezing merchants. Take down their lieutenant, 'The Jaw'.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "worker_selection": "choose",
+        "building_type": ["casino", "tavern", "restaurant"],
+        "background_image": "event_bg",
+        "conditions": { "start_when": "after_days:15", "stop_when": "has_flag:shop_quest_tier2_started" },
+        "choices": [
+            {
+                "option": "Send a combat-ready worker to challenge 'The Jaw'.",
+                "condition": "Combat",
+                "message_success": "[acting_worker] drops The Jaw. The gang wavers. ({actual_reputation} reputation)",
+                "message_failure": "The Jaw proves too strong; [acting_worker] withdraws.",
+                "effect": {
+                    "success": { "reputation": 5, "event_flags": { "shop_quest_path_chosen": "other", "shop_quest_tier2_started": true } }
+                }
+            },
+            {
+                "option": "Ask Borlag to help you scout the gang's territory first.",
+                "message": "You scout first with Borlag. Return to strike in 10 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_ot_1_passed": true, "shop_quest_ot_1_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_tier2_finale",
+        "description": "A courier brings word: one final push will open the new market.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "worker_selection": "choose",
+        "building_type": ["adventurers_guild", "brothel", "casino", "tavern", "restaurant"],
+        "background_image": "event_bg",
+        "required_flags": { "shop_quest_tier2_started": true },
+        "excluded_flags": { "shop2_unlocked": true },
+        "choices": [
+            {
+                "option": "Send a warrior to brave the Sunken Library.",
+                "condition": "Combat",
+                "required_flags": { "shop_quest_path_chosen": "guild" },
+                "message_success": "[acting_worker] secures the map piece. The Adventurer's Market opens! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "The guardians hold. The way is barred for now. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 15, "money": 500, "custom": "unlock_shop2", "event_flags": { "shop2_unlocked": true, "shop2_unlock_timestamp": "[calendar.get_total_days()]", "shop_quest_tier3_started": false } },
+                    "failure": { "reputation": -10, "event_flags": { "shop_quest_tier2_failed": true } }
+                }
+            },
+            {
+                "option": "Send a clever worker to expose Lord Sterling.",
+                "condition": "Clever",
+                "required_flags": { "shop_quest_path_chosen": "brothel" },
+                "message_success": "[acting_worker] exposes the forged ledger. The permit is granted. The Adventurer's Market opens! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "Sterling anticipates the move and tightens control. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 15, "money": 500, "custom": "unlock_shop2", "event_flags": { "shop2_unlocked": true, "shop2_unlock_timestamp": "[calendar.get_total_days()]", "shop_quest_tier3_started": false } },
+                    "failure": { "reputation": -10, "event_flags": { "shop_quest_tier3_failed": true } }
+                }
+            },
+            {
+                "option": "Dispatch a champion to face The Crow's forces.",
+                "condition": "Combat",
+                "required_flags": { "shop_quest_path_chosen": "other" },
+                "message_success": "Your champion scatters The Crow's forces. The Adventurer's Market opens! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "The Reapers are too organized; the push stalls. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 15, "money": 500, "custom": "unlock_shop2", "event_flags": { "shop2_unlocked": true, "shop2_unlock_timestamp": "[calendar.get_total_days()]", "shop_quest_tier3_started": false } },
+                    "failure": { "reputation": -10, "event_flags": { "shop_quest_tier3_failed": true } }
+                }
+            },
+            {
+                "option": "Request a delay to gather more intelligence and allies.",
+                "message": "You request more time to prepare. The quest returns in 15 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_tier2_finale_passed": true, "shop_quest_tier2_finale_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_tier2_retry",
+        "description": "The last attempt failed. Try a different approach.",
+        "weight": 100,
+        "limited": false,
+        "cooldown_days": 20,
+        "worker_selection": "choose",
+        "building_type": ["adventurers_guild", "brothel", "casino", "tavern", "restaurant"],
+        "background_image": "event_bg",
+        "required_flags": { "shop_quest_tier2_failed": true },
+        "choices": [
+            {
+                "option": "Mount a new expedition to the Sunken Library. (Requires Combat)",
+                "condition": "Combat",
+                "required_flags": { "shop_quest_path_chosen": "guild" },
+                "message_success": "A new route and resolve carry the day. The Adventurer's Market opens! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "The defenses adapt. Another setback. ({actual_reputation} Reputation, -5 Health)",
+                "effect": {
+                    "success": { "reputation": 15, "money": 500, "custom": "unlock_shop2", "event_flags": { "shop2_unlocked": true, "shop2_unlock_timestamp": "[calendar.get_total_days()]", "shop_quest_tier2_failed": null } },
+                    "failure": { "reputation": -5, "health": -5 }
+                }
+            },
+            {
+                "option": "Find a new way to expose Lord Sterling. (Requires Clever)",
+                "condition": "Clever",
+                "required_flags": { "shop_quest_path_chosen": "brothel" },
+                "message_success": "[acting_worker] leads the guard to Sterling's papers. The scheme collapses. The permit is yours! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "Sterling's network holds; your move is foiled. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 15, "money": 500, "custom": "unlock_shop2", "event_flags": { "shop2_unlocked": true, "shop2_unlock_timestamp": "[calendar.get_total_days()]", "shop_quest_tier2_failed": null } },
+                    "failure": { "reputation": -5 }
+                }
+            },
+            {
+                "option": "Rally the merchants against The Crow. (Requires Charm)",
+                "condition": "Charm",
+                "required_flags": { "shop_quest_path_chosen": "other" },
+                "message_success": "[acting_worker] unites merchants in a trade stand. The Adventurer's Market opens in peace! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "Fear wins out; the speech fades. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 15, "money": 500, "custom": "unlock_shop2", "event_flags": { "shop2_unlocked": true, "shop2_unlock_timestamp": "[calendar.get_total_days()]", "shop_quest_tier2_failed": null } },
+                    "failure": { "reputation": -5 }
+                }
+            },
+            {
+                "option": "Take time to analyze what went wrong and develop a better strategy.",
+                "message": "You pause to study what went wrong. The quest returns in 25 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_tier2_retry_passed": true, "shop_quest_tier2_retry_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_tier3_start",
+        "description": "With the new market stable, a benefactor proposes a bold step: secure a Celestial Sextant from a rival collector.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "worker_selection": "choose",
+        "building_type": ["adventurers_guild", "brothel", "casino", "tavern", "restaurant"],
+        "background_image": "event_bg",
+        "required_flags": { "shop2_unlocked": true },
+        "conditions": { "start_when": "after_days_from_flag:shop2_unlock_timestamp,200", "stop_when": "has_flag:shop_quest_tier3_started" },
+        "choices": [
+            {
+                "option": "Send a clever worker to plan the heist.",
+                "condition": "Clever",
+                "message_success": "[acting_worker] drafts a solid plan to reach the vault. ({actual_reputation} Reputation)",
+                "message_failure": "The defenses are intricate; the plan falters. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 10, "event_flags": { "shop_quest_tier3_started": true, "sextant_heist_planned": true } },
+                    "failure": { "reputation": -5, "event_flags": { "shop_quest_tier3_failed": true } }
+                }
+            },
+            {
+                "option": "Decline the offer, citing the need to focus on current operations.",
+                "message": "You decline for now to focus on current ventures. The quest returns in 20 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_tier3_start_passed": true, "shop_quest_tier3_start_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_tier3_finale",
+        "description": "The plan is ready. One last move decides the Sextant.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "worker_selection": "choose",
+        "building_type": ["adventurers_guild", "brothel", "casino", "tavern", "restaurant"],
+        "background_image": "event_bg",
+        "required_flags": { "sextant_heist_planned": true },
+        "excluded_flags": { "shop3_unlocked": true },
+        "choices": [
+            {
+                "option": "Execute the heist and retrieve the Celestial Sextant.",
+                "condition": "Combat",
+                "message_success": "The heist is clean. [acting_worker] secures the Celestial Sextant. The Elite Emporium opens! ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "The heist falters; [acting_worker] barely escapes. ({actual_reputation} Reputation)",
+                "effect": {
+                    "success": { "reputation": 20, "money": 1000, "custom": "unlock_shop3", "event_flags": { "shop3_unlocked": true } },
+                    "failure": { "reputation": -15, "event_flags": { "shop_quest_tier3_failed": true } }
+                }
+            },
+            {
+                "option": "Request a postponement to strengthen the heist team.",
+                "message": "You request a postponement to strengthen the team. The quest returns in 25 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_tier3_finale_passed": true, "shop_quest_tier3_finale_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    },
+    {
+        "id": "shop_quest_tier3_retry",
+        "description": "The first heist failed. The collector is moving the Sextant. This is your final chance.",
+        "weight": 100,
+        "limited": false,
+        "cooldown_days": 30,
+        "worker_selection": "choose",
+        "building_type": ["adventurers_guild", "brothel", "casino", "tavern", "restaurant"],
+        "background_image": "event_bg",
+        "required_flags": { "shop_quest_tier3_failed": true },
+        "choices": [
+            {
+                "option": "Ambush the transport convoy. (Requires Combat)",
+                "condition": "Combat",
+                "message_success": "The ambush holds. [acting_worker] seizes the Sextant. The Elite Emporium unlocks. ({actual_money} Gold, {actual_reputation} Reputation)",
+                "message_failure": "Security is overwhelming. The Sextant is lost for now. ({actual_reputation} Reputation, -10 Health)",
+                "effect": {
+                    "success": { "reputation": 20, "money": 1000, "custom": "unlock_shop3", "event_flags": { "shop3_unlocked": true, "shop_quest_tier3_failed": null } },
+                    "failure": { "reputation": -10, "health": -10 }
+                }
+            },
+            {
+                "option": "Decline the final attempt, focusing on existing business ventures.",
+                "message": "You decline the final attempt to protect current ventures. The quest returns in 35 days.",
+                "effect": {
+                    "event_flags": { "shop_quest_tier3_retry_passed": true, "shop_quest_tier3_retry_pass_timestamp": "[calendar.get_total_days()]" }
+                }
+            }
+        ]
+    }
+]

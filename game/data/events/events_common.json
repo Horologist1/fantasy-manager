@@ -1,0 +1,775 @@
+[
+    {
+        "id": "knights_honor_duel",
+        "description": "The heavy oak doors swing wide as steel-clad boots echo across your hall's worn stones. A knight in gleaming mail stands silhouetted against the afternoon light, their hand resting on a sword hilt polished to mirror brightness. The conversations around you die to whispers as they stride forward, spurs chiming with each deliberate step.",
+        "event_music": "audio/event_dramatic.ogg",
+        "weight": 4,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "tavern",
+            "adventurers_guild"
+        ],
+        "background_image": "duel_arena",
+        "success_image": "duel_success",
+        "failure_image": "duel_failure",
+        "choices": [
+            {
+                "option": "Accept the duel. (Risk: Worker Health; Potential: Money, Reputation)",
+                "condition": "Combat",
+                "message_success": "Steel rings against steel as [acting_worker] meets each blow with practiced grace. The knight's eyes widen with respect as your champion matches their skill stroke for stroke. When the final parry lands, both warriors step back, breathing hard but grinning. The knight removes their helm and raises a toast—honor satisfied, reputation earned. A heavy purse changes hands as the crowd erupts in cheers ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "The clash of metal echoes through the hall as [acting_worker] struggles against the knight's relentless assault. Each parry comes a heartbeat too late, each riposte falls short of its mark. Blood seeps through torn fabric as your champion staggers back, pride wounded deeper than flesh. You step forward with a strained smile, covering the costs of defeat while whispers of weakness follow in your wake ({actual_money}, {actual_reputation} reputation). (-10 Health, -5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1200,
+                        "reputation": 10,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "money": -600,
+                        "reputation": -5,
+                        "health": -10,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Decline, but offer the knight free drinks.",
+                "message": "You raise your hand in a gesture of peace, your voice carrying the weight of diplomacy. 'Your challenge honors us, but tonight we offer fellowship instead of steel.' The knight's stern expression softens as you gesture toward your finest ale. Soon their entourage fills your tables, their tales of distant battles and forgotten kingdoms drawing eager listeners. Coin flows as freely as the stories, and when they finally depart, your reputation for hospitality has grown ({actual_money}, {actual_reputation} reputation).",
+                "effect": {
+                    "money": -200,
+                    "reputation": 5
+                }
+            }
+        ]
+    },
+    {
+        "id": "mystics_fortune_telling",
+        "description": "The scent of burning herbs drifts through your establishment as a figure in tattered robes unfurls a cloth marked with strange symbols. Candlelight flickers across weathered hands that move with practiced precision, arranging bone dice and crystal shards. Patrons lean forward, their conversations hushed to reverent whispers as the mystic's eyes—clouded with age or perhaps something deeper—scan the room with knowing intensity.",
+        "weight": 3,
+        "limited": true,
+        "max_occurrences": 2,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "tavern",
+            "restaurant",
+            "casino"
+        ],
+        "background_image": "mystic_tent",
+        "success_image": "mystic_success",
+        "failure_image": "mystic_failure",
+        "choices": [
+            {
+                "option": "Pay for a fortune. (Requires Magic skill)",
+                "condition": "Magic",
+                "message_success": "The mystic's gnarled fingers trace patterns in the air as [acting_worker] steps forward, coins glinting in the candlelight. Ancient words spill from cracked lips, and suddenly the crystals pulse with inner fire. A smile spreads across the mystic's face as they speak of prosperity and fortune ahead. The crowd gasps in wonder, and soon a line forms of patrons eager for their own glimpse of destiny ({actual_money}, {actual_reputation} reputation). (+10 Joy)",
+                "message_failure": "The bones clatter across the cloth like falling teeth, their pattern forming shapes that make [acting_worker] step back in alarm. The mystic's voice drops to a whisper that somehow carries to every corner of the room, speaking of shadows and misfortune. Patrons exchange nervous glances and begin to drift away, leaving behind an atmosphere thick with unease ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1000,
+                        "reputation": 5,
+                        "joy": 10
+                    },
+                    "failure": {
+                        "money": -500,
+                        "reputation": -5,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Refuse the mystic's offer.",
+                "message": "You shake your head firmly, unwilling to let superstition take root in your establishment. The mystic's clouded eyes fix on you for a long moment before they gather their implements with deliberate slowness. 'Some futures,' they murmur as they depart, 'reveal themselves whether we seek them or not.' The room returns to normal, but you can't shake the feeling that you've avoided something—though whether fortune or folly, you cannot say.",
+                "effect": {}
+            }
+        ],
+        "event_music": "audio/event_mysterious.ogg"
+    },
+    {
+        "id": "guild_rivalry_taunt",
+        "description": "The morning air carries the sound of hammering as fresh parchments appear on every post and wall. Your name stares back at you from crude illustrations, twisted into caricature and surrounded by mocking verse. The rival guild's seal gleams wet with fresh ink, their challenge written in letters bold enough to be read from across the street. Passersby pause to read and whisper, their eyes finding your establishment with new curiosity.",
+        "weight": 4,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "adventurers_guild"
+        ],
+        "background_image": "guild_rivalry",
+        "success_image": "guild_success",
+        "failure_image": "guild_failure",
+        "choices": [
+            {
+                "option": "Send a worker to publicly refute the taunts. (Risk: Reputation)",
+                "condition": "Charm",
+                "message_success": "The crowd gathers as [acting_worker] takes position beneath the largest of the offensive flyers. Their voice carries clear and strong, each word carefully chosen to slice through the rival's arguments like a blade through silk. Laughter ripples through the audience as clever retorts turn the guild's own words against them. By the time your champion finishes, the crowd is cheering your name while the rival's reputation lies in tatters ({actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "The words stumble from [acting_worker]'s lips like stones down a well, each attempt at wit falling flat before the gathered crowd. The rival guild's supporters seize upon every fumbled phrase, their laughter growing louder with each passing moment. When your champion finally retreats, the damage is done—your guild's name has become the day's entertainment, and not in the way you intended ({actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "reputation": 15,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "reputation": -10,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Ignore the taunts. (Loss: Reputation)",
+                "message": "You instruct your workers to go about their duties as if the flyers were mere decoration. The parchments flutter in the wind, their message unanswered, and some begin to whisper that perhaps the rival guild's words carry more truth than you care to admit. Silence, you learn, can speak as loudly as any proclamation ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": -5
+                }
+            }
+        ],
+        "event_music": "audio/event_dramatic.ogg"
+    },
+    {
+        "id": "patrons_lost_heirloom",
+        "description": "Panic etches deep lines across a patron's face as they search frantically through empty pockets and overturned purses. Their voice cracks with desperation as they describe a family heirloom—passed down through generations, irreplaceable beyond any measure of coin. The weight of history hangs heavy in their words, and other patrons pause their conversations to listen, some offering sympathetic murmurs while others help overturn cushions and peer beneath tables.",
+        "weight": 3,
+        "limited": true,
+        "max_occurrences": 1,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "brothel",
+            "tavern",
+            "restaurant"
+        ],
+        "background_image": "lost_heirloom",
+        "success_image": "heirloom_success",
+        "failure_image": "heirloom_failure",
+        "choices": [
+            {
+                "option": "Assign a worker to search for it. (Potential: Money, Reputation)",
+                "condition": "Clever",
+                "message_success": "With methodical precision, [acting_worker] retraces the patron's steps, their keen eyes catching what others missed. There, wedged beneath a worn bench where shadows gather thick, the glint of precious metal catches the lamplight. The heirloom emerges—a locket bearing the scratches of countless years and the warmth of countless hands. Tears of relief stream down the patron's face as they press a heavy purse into your worker's hands, their voice breaking with gratitude. Word of your establishment's integrity spreads like wildfire through the district ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "Despite [acting_worker]'s thorough search—every corner examined, every surface scrutinized—the heirloom remains lost to shadow and time. The patron's face crumbles as hope fades with the dying light. They depart in silence, their disappointment hanging in the air like incense, and you know that tonight's failure will be tomorrow's whispered warning to others ({actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1200,
+                        "reputation": 10,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "reputation": -5,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Offer condolences but do nothing.",
+                "message": "You approach with gentle words and sympathetic gestures, but your hands remain empty of action. The patron's eyes search your face for something more—some sign that you understand the weight of their loss—but find only polite distance. They gather their remaining belongings with quiet dignity, their disappointment settling over your establishment like a shroud. The other patrons watch this exchange with measuring eyes, and you sense that your reputation for compassion has dimmed ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": -3
+                }
+            }
+        ]
+    },
+    {
+        "id": "enchanted_dish_mishap",
+        "description": "The kitchen erupts in a symphony of sizzling and shouting as something goes terribly, wonderfully wrong. A volatile magical herb—mistaken for common seasoning—transforms the evening's main course into something that pulses with ethereal light. The dish hums with arcane energy, casting dancing shadows on the walls while patrons lean back in their chairs, torn between fascination and alarm. The very air seems to shimmer around the glowing plates, and whispers of wonder mix with nervous laughter.",
+        "weight": 3,
+        "limited": true,
+        "max_occurrences": 1,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "restaurant"
+        ],
+        "background_image": "kitchen_chaos",
+        "success_image": "kitchen_success",
+        "failure_image": "kitchen_failure",
+        "choices": [
+            {
+                "option": "Market it as a magical delicacy. (Risk: Reputation; Potential: Money)",
+                "condition": "Charm",
+                "message_success": "With theatrical flair, [acting_worker] emerges from the kitchen bearing the luminous dish like a sacred offering. Their voice rings with confidence as they proclaim this a rare delicacy—a fusion of culinary art and mystical craft available only to the most discerning palates. The patrons' fear transforms into excitement as they witness something truly extraordinary. Coins flow freely as word spreads of your establishment's magical cuisine, and soon you have a waiting list of curious nobles eager to experience the impossible ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "The glowing dish trembles in [acting_worker]'s hands as they attempt to present it with confidence, but their nervous energy betrays them. Patrons see not wonder but danger, their chairs scraping against stone as they retreat toward the exits. The magical light that should have enchanted instead terrifies, and soon your dining room stands empty save for the humming, abandoned plates. The night's losses cut deep, and whispers of your 'cursed kitchen' spread through the district like wildfire ({actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1000,
+                        "reputation": 10,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "reputation": -10,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Apologize and comp everyone's meals.",
+                "message": "You stride into the dining room with hands raised in apology, your voice cutting through the murmur of concern. 'Tonight,' you announce, 'we've discovered something extraordinary—but your comfort comes first.' The glowing dishes disappear back into the kitchen as you declare all meals complimentary. Your patrons appreciate the gesture, their initial alarm giving way to grateful smiles. Though your coffers feel the weight of the evening's generosity, your reputation for putting customers first grows stronger ({actual_money}, {actual_reputation} reputation).",
+                "effect": {
+                    "money": -400,
+                    "reputation": 5
+                }
+            }
+        ],
+        "event_music": "audio/event_mysterious.ogg"
+    },
+    {
+        "id": "high_stakes_gambler",
+        "description": "The dice roll like thunder across felt tables as a sharp-eyed stranger rides an impossible streak of fortune. Their fingers move with practiced precision, coins flowing toward them in an endless golden stream. Whispers coil through the smoky air like serpents—some speak of supernatural luck, others of more earthly deceptions. The other players watch with growing unease as their purses grow lighter and the stranger's smile grows wider, their eyes glittering with the cold fire of someone who knows exactly what they're doing.",
+        "weight": 4,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "casino"
+        ],
+        "background_image": "casino_table",
+        "success_image": "casino_success",
+        "failure_image": "casino_failure",
+        "choices": [
+            {
+                "option": "Have a skilled dealer take over. (Risk: Money, Reputation)",
+                "condition": "Clever",
+                "message_success": "Like a shadow given form, [acting_worker] glides to the table with a smile that promises nothing and reveals everything. Their hands move with fluid grace as they take control of the game, their eyes reading patterns that others miss. The stranger's confidence wavers as the tide of fortune shifts, their supernatural streak broken by skill that matches their own. The crowd watches in fascination as your dealer demonstrates that the house always has its own magic, and when the final hand is played, your reputation for fair but formidable gaming spreads through the district ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "Despite [acting_worker]'s best efforts, the stranger's luck holds like a curse that cannot be broken. Each attempt to regain control only feeds the growing pot, and soon the table groans under the weight of accumulated gold. The crowd watches in stunned silence as your house's fortune flows into the stranger's pockets like water through a broken dam. When they finally depart, their laughter echoes through the suddenly quiet room, and you're left to count the cost of a night when skill met something beyond mortal understanding ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1200,
+                        "reputation": 15,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "money": -600,
+                        "reputation": -10,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Let the game proceed normally.",
+                "message": "You choose to trust in the natural order of chance, watching as the stranger's impossible streak finally meets its inevitable end. The dice that once obeyed their will begin to turn cold, and fortune's wheel spins toward balance. They depart with a modest profit and a knowing smile, leaving behind the sense that you've witnessed something rare but not supernatural. Your losses are manageable, and your reputation for honest gaming remains intact ({actual_money}).",
+                "effect": {
+                    "money": -300
+                }
+            }
+        ],
+        "event_music": "audio/event_dramatic.ogg"
+    },
+    {
+        "id": "charming_patrons_request",
+        "description": "A figure draped in silk and shadow approaches your establishment as evening deepens into night. Their movements speak of wealth and discretion, each gesture calculated to draw attention while revealing nothing. They lean close to whisper their request, their voice carrying the weight of gold and the promise of secrets. Around them, the air seems to thicken with possibility and danger in equal measure.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "brothel"
+        ],
+        "background_image": "brothel_private",
+        "success_image": "brothel_success",
+        "failure_image": "brothel_failure",
+        "choices": [
+            {
+                "option": "Assign your best charmer. (Potential: Money)",
+                "condition": "Charm",
+                "message_success": "Like a dancer following music only they can hear, [acting_worker] moves with effortless grace into the client's presence. Words flow like honey between them, each gesture perfectly timed, each smile calibrated to kindle desire. The room falls silent around their performance, and when the evening reaches its crescendo, a heavy purse changes hands with whispered promises of return. Your establishment's reputation for discretion and quality spreads through the city's most exclusive circles ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "No spark. ({actual_money}) (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1000,
+                        "reputation": 5,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "money": 200,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Politely decline the request.",
+                "message": "You approach with diplomatic grace, explaining that your finest staff are currently engaged in other matters. The client's eyes narrow slightly—not with anger, but with the calculating gaze of someone accustomed to having their desires fulfilled. They nod with understanding that doesn't quite reach their eyes, and you watch them disappear into the night, knowing that their coin will find welcome elsewhere ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": -2
+                }
+            }
+        ],
+        "nsfw": true,
+        "event_music": "audio/event_romantic.ogg"
+    },
+    {
+        "id": "secret_admirers_gift",
+        "description": "Morning light reveals an unexpected treasure—a package wrapped in ribbons the color of fresh blood, bearing no seal or signature. The parchment crinkles like autumn leaves as you unfold the note within, its words written in a hand that trembles with either passion or fear. Someone watches from the shadows, their heart laid bare in ink and their identity hidden behind careful anonymity.",
+        "weight": 3,
+        "limited": true,
+        "max_occurrences": 2,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "brothel",
+            "restaurant"
+        ],
+        "background_image": "brothel_gift",
+        "success_image": "brothel_success",
+        "failure_image": "brothel_failure",
+        "choices": [
+            {
+                "option": "Have the worker investigate the sender. (Potential: Money, Reputation)",
+                "condition": "Clever",
+                "message_success": "With the patience of a hunter and the subtlety of a whisper, [acting_worker] follows the trail of clues hidden within the gift itself. A particular knot in the ribbon, the quality of the parchment, the scent that clings to the fabric—each detail tells part of a story. When the truth finally emerges, it reveals a shy noble whose admiration has grown into something deeper. Their gratitude for your worker's discretion manifests in a purse heavy with gold and a reputation for handling delicate matters with perfect grace ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "Enthusiasm outweighs subtlety as [acting_worker] pursues the mystery with all the delicacy of a charging bull. Their inquiries, though well-intentioned, scatter like startled birds through the district's gossip networks. The secret admirer retreats deeper into shadow, and soon whispers follow your establishment—not of romance, but of indiscretion and prying eyes where privacy should reign ({actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1000,
+                        "reputation": 5,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "reputation": -5,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Accept the gift and ignore the note.",
+                "message": "You choose the path of simple acceptance, allowing [acting_worker] to keep the valuable gift while leaving its sender to their cherished anonymity. Sometimes the most precious things are those left unexamined, and tonight the mystery remains intact while your coffers grow heavier. In the shadows, perhaps, someone smiles at your discretion ({actual_money}). (+5 Joy)",
+                "effect": {
+                    "money": 400,
+                    "joy": 5
+                }
+            }
+        ],
+        "nsfw": true,
+        "event_music": "audio/event_romantic.ogg"
+    },
+    {
+        "id": "veiled_dancers_allure",
+        "description": "The evening air grows thick with anticipation as a patron of obvious wealth settles into the finest chair your establishment can offer. Their eyes burn with a hunger that transcends mere physical desire—they seek art, beauty, and the kind of performance that lives in memory long after the final veil falls. Gold glints between their fingers like captured starlight, and their whispered request carries the weight of a challenge as much as a proposition.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "brothel",
+            "tavern"
+        ],
+        "background_image": "brothel_dance",
+        "success_image": "brothel_success",
+        "failure_image": "brothel_failure",
+        "choices": [
+            {
+                "option": "Assign a worker to perform. (Potential: Money; Risk: Reputation)",
+                "condition": "Striptease",
+                "message_success": "The room falls silent as [acting_worker] takes the floor, their movements flowing like water given form. Each gesture speaks a language older than words, each turn of the veil revealing and concealing in perfect harmony. The patron sits transfixed, their breathing shallow as art and desire merge into something transcendent. When the final veil falls, the applause thunders through the room, and gold flows like a river toward your coffers. Word of tonight's performance will draw connoisseurs from across the realm ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "The dance begins with promise, but [acting_worker]'s rhythm falters at the crucial moment. What should have been poetry becomes prose, what should have been fire becomes mere warmth. The patron's expression shifts from anticipation to polite disappointment, and the spell that should have bound the room instead dissipates like morning mist. They depart with courteous words, but you know that tonight's failure will echo in whispered conversations throughout the district ({actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": 1000,
+                        "reputation": 5,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "reputation": -10,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Refuse the request.",
+                "message": "You meet the patron's gaze with steady resolve, explaining that your establishment maintains certain standards that cannot be compromised for any price. Their expression hardens like cooling metal, and you watch respect war with disappointment in their eyes.\n\nThey rise with the fluid grace of someone accustomed to having doors closed in their face, and their departure carries the weight of opportunities lost ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": -3
+                }
+            }
+        ],
+        "nsfw": true,
+        "event_music": "audio/event_romantic.ogg"
+    },
+    {
+        "id": "bards_sultry_ballad",
+        "description": "The evening's entertainment takes an unexpected turn as a traveling bard strikes the opening chords of a melody that seems to bypass the ears and speak directly to the heart. Their voice weaves through the smoky air like silk through fingers, each note carefully chosen to kindle fires that polite society pretends don't exist. Patrons lean forward in their chairs, their conversations dying as the music works its ancient magic, and you sense that tonight will be remembered long after the last note fades.",
+        "weight": 3,
+        "limited": true,
+        "max_occurrences": 2,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "tavern"
+        ],
+        "background_image": "tavern_bard",
+        "success_image": "tavern_success",
+        "failure_image": "tavern_failure",
+        "choices": [
+            {
+                "option": "Encourage a worker to join in. (Potential: Reputation)",
+                "condition": "Charm",
+                "message_success": "As if drawn by invisible threads, [acting_worker] rises and adds their voice to the bard's melody. The harmony that emerges transcends mere music, becoming something that touches the soul and lifts the spirit. The room sways as one, caught in the spell of perfect collaboration, and when the final note rings out, the applause shakes the very foundations. Your establishment's name will be spoken with reverence wherever lovers of music gather ({actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "With the best of intentions, [acting_worker] attempts to join the bard's performance, but their voice clashes against the melody like discord given form. The spell breaks, the magic dissipates, and what should have been transcendent becomes merely awkward. Patrons shift uncomfortably in their seats, and you watch the evening's potential slip away like sand through fingers. The bard's reproachful glance speaks volumes about opportunities squandered ({actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "reputation": 15,
+                        "joy": 5,
+                        "money": 500
+                    },
+                    "failure": {
+                        "reputation": -10,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Ask the bard to play something less... stimulating.",
+                "message": "You approach the bard with diplomatic words, requesting a change to something more suitable for mixed company. The music shifts to safer melodies, the dangerous fire cooling to comfortable warmth. Your patrons settle back into their conversations, but you notice that their purses remain closed and their eyes have lost the spark that drives generous spending. Sometimes safety comes at the cost of passion ({actual_money}, {actual_reputation} reputation).",
+                "effect": {
+                    "money": -150,
+                    "reputation": -2
+                }
+            }
+        ],
+        "nsfw": false,
+        "event_music": "audio/event_romantic.ogg"
+    },
+    {
+        "id": "plague_rumor_panic",
+        "description": "Fear spreads faster than wildfire through your establishment as a whispered rumor takes root and grows. Someone claims to have seen the telltale signs—the pale complexion, the trembling hands, the way one of your workers moves as if carrying an invisible weight. The word 'plague' passes from lip to lip like a curse, and you watch as patrons begin to edge toward the exits, their eyes wide with the kind of terror that reason cannot touch.",
+        "weight": 2,
+        "limited": true,
+        "max_occurrences": 1,
+        "cooldown_days": 7,
+        "worker_selection": "random",
+        "building_type": [
+            "restaurant",
+            "brothel",
+            "tavern"
+        ],
+        "background_image": "restaurant_panic",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Pay a local healer to publicly examine the worker. (Cost: Money; Risk: Reputation)",
+                "condition": "none",
+                "message_success": "The healer arrives with the gravity of a judge and the precision of a scholar, their examination thorough and public. When they finally pronounce [acting_worker] free of any contagion, their words carry the weight of professional authority. The crowd's fear transforms into relief, then into admiration for your swift and responsible action. Your reputation for caring about public health spreads through the district like good news ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "Despite the healer's clean bill of health, doubt lingers in the air like smoke that refuses to clear. Some patrons nod and return to their business, but others whisper that healers can be bought, that symptoms can be hidden. The rumor may be dispelled, but its shadow remains, and you sense that tonight's crisis has left scars that time will be slow to heal ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
+                "effect": {
+                    "success": {
+                        "money": -300,
+                        "reputation": 10,
+                        "joy": 5
+                    },
+                    "failure": {
+                        "money": -300,
+                        "reputation": -5,
+                        "joy": -5
+                    }
+                }
+            },
+            {
+                "option": "Dismiss the rumor as nonsense.",
+                "message": "You stand before your patrons with the confidence of someone who knows their own house, declaring the rumor to be nothing more than idle gossip born of fear and ignorance. Some nod and settle back into their seats, trusting in your judgment, but others exchange glances that speak of doubt. The evening continues, but you notice that several tables remain empty, and whispers follow in the wake of those who choose to depart early ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": -8
+                }
+            }
+        ],
+        "event_music": "audio/event_dramatic.ogg"
+    },
+    {
+        "id": "supplier_payment_dispute",
+        "description": "The morning brings unwelcome news as your regular supplier arrives with ledgers in hand and storm clouds gathering in their expression. Their voice carries the weight of accumulated frustration as they spread parchments across your table, each line item a small battle in the ongoing war of commerce. The numbers don't lie, but their interpretation remains a matter of perspective, and you sense that today's negotiation will determine whether this partnership survives or crumbles into bitter memory.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "restaurant",
+            "tavern"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Have a worker renegotiate terms (potential: money; risk: reputation)",
+                "condition": "Charm",
+                "message_success": "With the skill of a diplomat and the patience of a saint, [acting_worker] guides the conversation away from accusation and toward understanding. They listen to the supplier's concerns, acknowledge their frustrations, and slowly build a bridge across the chasm of disagreement. When the final signatures dry on the revised contract, both parties smile with genuine satisfaction, and your establishment has gained a reputation for fair dealing that will serve you well in future negotiations ({actual_money}).",
+                "message_failure": "Despite [acting_worker]'s best intentions, the negotiation spirals into the kind of heated exchange that leaves scars on professional relationships. Words are spoken that cannot be taken back, positions harden into immovable stone, and what should have been a simple business discussion becomes a battle of wills. The supplier departs with their dignity intact but their trust shattered, and soon whispers spread through the merchant community about your establishment's aggressive tactics ({actual_reputation} reputation).",
+                "effect": {
+                    "success": {
+                        "money": 100
+                    },
+                    "failure": {
+                        "reputation": -5
+                    }
+                }
+            },
+            {
+                "option": "Pay a rush fee (cost: money)",
+                "message": "You choose the path of expedience over negotiation, producing the required coin with the weary resignation of someone who has fought this battle before. The supplier's expression softens as gold changes hands, their anger dissolving into the satisfaction of prompt payment. Sometimes the simplest solution is the wisest, even when it costs more than pride would prefer ({actual_money}).",
+                "effect": {
+                    "money": -100
+                }
+            }
+        ]
+    },
+    {
+        "id": "misdelivered_crate",
+        "description": "Fate arrives at your doorstep in the form of a wooden crate bearing someone else's name, its contents hidden behind iron bands and wax seals that gleam like promises in the morning light. The delivery boy has long since vanished into the crowd, leaving you alone with a mystery that weighs heavy in your hands. The rightful owner's address is clearly marked, but temptation whispers that sometimes the gods of commerce smile upon those bold enough to seize opportunity when it presents itself.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "none",
+        "building_type": [
+            "restaurant",
+            "tavern",
+            "casino",
+            "brothel"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Return the crate to its rightful owner (gain: reputation)",
+                "message": "Honor weighs heavier than curiosity as you dispatch [acting_worker] to deliver the crate to its intended destination. The recipient's gratitude shines brighter than gold, and their words of praise for your integrity spread through the merchant quarter like ripples on still water. Sometimes the greatest profit comes not from what you take, but from what you choose to give ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": 5
+                }
+            },
+            {
+                "option": "Check contents before deciding (risk/reward)",
+                "condition": "Clever",
+                "message_success": "With the delicate touch of a master thief and the caution of a seasoned merchant, [acting_worker] examines the crate's contents without disturbing its seals. Fortune smiles upon your discretion—the goods within are exactly what your establishment needs, and their temporary 'borrowing' will harm no one while benefiting your operation greatly. The crate finds its way to its rightful owner eventually, but not before providing unexpected profit ({actual_money}, {actual_reputation} reputation).",
+                "message_failure": "Curiosity proves stronger than caution as [acting_worker] attempts to examine the crate's contents, but their efforts are observed by eyes that should have been elsewhere. Word spreads faster than spilled wine through the district's gossip networks, and soon your establishment bears the stain of suspicion. Trust, once broken, proves harder to repair than any physical damage ({actual_money}, {actual_reputation} reputation).",
+                "effect": {
+                    "success": {
+                        "money": 150,
+                        "reputation": 2
+                    },
+                    "failure": {
+                        "money": -50,
+                        "reputation": -3
+                    }
+                }
+            },
+            {
+                "option": "Quietly absorb the supplies (gain: money; loss: reputation)",
+                "message": "Pragmatism triumphs over principle as you decide that fortune favors the bold. The crate disappears into your storage rooms, its contents becoming part of your inventory as if they had always belonged there. Profit flows into your coffers, but you notice that certain merchants now regard you with calculating eyes, and whispers follow in your wake like shadows at sunset ({actual_money}, {actual_reputation} reputation).",
+                "effect": {
+                    "money": 100,
+                    "reputation": -5
+                }
+            }
+        ]
+    },
+    {
+        "id": "djinn_bond_rumor",
+        "description": "The whisper arrives like poison on the wind, carried by voices that speak only in shadows and trust only in gold. They speak of the governor's true power—not the armies or the gold or the political connections that all can see, but something far more ancient and terrible. A djinn, they say, bound by chains of starlight and sealed with blood, grants protection that no mortal weapon can pierce. Only one thing, they claim, can break such a bond: a Binding Gem of purest crystal, rare beyond measure and precious beyond price.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "cooldown_days": 7,
+        "worker_selection": "none",
+        "building_type": [
+            "restaurant",
+            "tavern",
+            "casino",
+            "brothel",
+            "adventurers_guild"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "conditions": {
+            "start_when": "has_flag:branch_assassination OR has_flag:branch_blackmail"
+        },
+        "choices": [
+            {
+                "option": "Follow the rumor to its source.",
+                "message": "You commit the whispered words to memory, each syllable burning itself into your thoughts like brands upon flesh. The path ahead grows clearer—somewhere in the city's hidden markets, in the guild's deepest vaults, or along the whispered trails that connect shadow to shadow, a Binding Gem waits to be claimed. The governor's protection may be supernatural, but even djinn must bow to the right kind of power.",
+                "effect": {
+                    "event_flags": {
+                        "binding_gem_lead": true
+                    }
+                }
+            }
+        ],
+        "event_music": "audio/event_mysterious.ogg"
+    },
+    {
+        "id": "binding_gem_lead_2",
+        "description": "The contact emerges from shadow like a figure from a half-remembered dream, their face hidden beneath a hood that seems to drink light rather than merely block it. In their hands, something glimmers with inner fire—a crystal that pulses with the rhythm of a captured heartbeat. They speak in whispers of challenges and tests, of proving worthiness through deed rather than coin. The Binding Gem hangs between you like a star fallen to earth, waiting for the right hand to claim it.",
+        "weight": 10,
+        "limited": true,
+        "max_occurrences": 1,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "restaurant",
+            "tavern",
+            "casino",
+            "brothel",
+            "adventurers_guild"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "required_flags": {
+            "binding_gem_lead": true
+        },
+        "choices": [
+            {
+                "option": "Sway the contact. (Requires Charm)",
+                "condition": "Charm",
+                "message_success": "Words flow from [acting_worker]'s lips like honey mixed with wine, each phrase carefully crafted to kindle trust and desire in equal measure. The contact's resistance crumbles beneath the assault of perfect persuasion, their grip on the Binding Gem loosening as your champion weaves a web of promises and possibilities. When the crystal finally changes hands, it does so with the contact's blessing, their eyes bright with the conviction that they have chosen the worthier cause.",
+                "message_failure": "Despite [acting_worker]'s eloquent words and passionate appeals, the contact remains unmoved, their resolve as solid as mountain stone. The Binding Gem remains tantalizingly close yet impossibly distant, its power reserved for those who can prove their worth through other means. Perhaps another path will reveal itself in time.",
+                "effect": {
+                    "success": {
+                        "custom": "give_item",
+                        "item_id": "binding_gem"
+                    }
+                }
+            },
+            {
+                "option": "Prove your mettle. (Requires Combat)",
+                "condition": "Combat",
+                "message_success": "Steel sings its ancient song as [acting_worker] meets the contact's challenge with blade and blood. The fight is brief but fierce, each strike a test of skill and will that echoes through the shadowed alley. When the final blow lands and the contact yields with grudging respect, the Binding Gem passes to hands that have proven their strength. Victory tastes of iron and possibility.",
+                "message_failure": "The clash of weapons rings hollow in the narrow space as [acting_worker] struggles against an opponent whose skill matches their own. Defeat comes not with shame but with the bitter knowledge that strength alone was not enough. The Binding Gem remains beyond reach, its power reserved for those who can claim it through worthier means.",
+                "effect": {
+                    "success": {
+                        "custom": "give_item",
+                        "item_id": "binding_gem"
+                    }
+                }
+            }
+        ],
+        "event_music": "audio/event_mysterious.ogg"
+    },
+    {
+        "id": "apothecary_bulk_tonics",
+        "description": "The apothecary's cart creaks to a halt outside your establishment, its wooden wheels worn smooth by countless journeys through the city's winding streets. Glass vials catch the light like captured rainbows, each one filled with liquids that promise healing, energy, or temporary escape from the burdens of mortal flesh. The merchant's eyes gleam with the particular intensity of someone who has stumbled upon a windfall and seeks to share the fortune—for a price, of course.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "brothel",
+            "tavern",
+            "restaurant",
+            "adventurers_guild"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Buy the batch outright (cost: money)",
+                "message": "Gold flows from your coffers as you secure the collection of tonics and remedies. Your storage rooms grow heavy with bottles. They promise to ease the aches and ailments that plague both workers and patrons alike. The investment stings now, but you know that preparation today prevents crisis tomorrow ({actual_money}).",
+                "effect": {
+                    "money": -120,
+                    "reputation": 0
+                }
+            },
+            {
+                "option": "Negotiate a better rate (risk/potential: reputation)",
+                "condition": "Charm",
+                "message_success": "With the skill of a master merchant and the warmth of an old friend, [acting_worker] draws the apothecary into conversation about shared struggles and mutual benefit. Stories flow between them like wine at a feast, and soon the harsh edges of commerce soften into something approaching partnership. When the final price is agreed upon, both parties smile with genuine satisfaction, and your reputation for fair dealing spreads through the merchant community like good news ({actual_money}, {actual_reputation} reputation).",
+                "message_failure": "Enthusiasm outweighs wisdom as [acting_worker] pushes too hard for concessions that the apothecary cannot afford to give. What begins as friendly negotiation sours into something approaching confrontation, and nearby merchants take note of the raised voices and strained expressions. The deal concludes with mutual dissatisfaction, and whispers of your establishment's aggressive tactics follow the apothecary's cart as it rolls away ({actual_reputation} reputation).",
+                "effect": {
+                    "success": {
+                        "money": -80,
+                        "reputation": 5
+                    },
+                    "failure": {
+                        "money": -100,
+                        "reputation": -2
+                    }
+                }
+            },
+            {
+                "option": "Decline politely",
+                "message": "You offer courteous words and genuine regret as you explain that today's offer, however generous, does not align with your current needs. The apothecary nods with understanding born of countless similar encounters, their cart rolling onward to seek more receptive customers. Sometimes wisdom lies not in seizing every opportunity, but in recognizing which ones truly serve your purpose.",
+                "effect": {}
+            }
+        ]
+    },
+    {
+        "id": "bard_license_officer",
+        "description": "Authority arrives in the form of a city official whose presence seems to drain the music from the very air. Their uniform bears the weight of bureaucratic power, and their eyes scan your establishment with the methodical precision of someone trained to find fault where others see only entertainment. The parchments in their hands rustle like autumn leaves, each document a potential barrier between your business and the freedom to operate as you see fit.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "choose",
+        "building_type": [
+            "tavern",
+            "restaurant"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Have a worker demonstrate decorum and compliance (potential: reputation)",
+                "condition": "Charm",
+                "message_success": "With the grace of a courtier and the precision of a scholar, [acting_worker] guides the official through your establishment, demonstrating not just compliance but excellence in every aspect of your operation. Their words paint pictures of responsible management and community service, while their actions prove that entertainment and order can coexist in perfect harmony. When the inspection concludes, the official's stern expression has softened into something approaching approval, and your reputation for running a respectable establishment spreads through official channels ({actual_reputation} reputation).",
+                "message_failure": "Despite [acting_worker]'s earnest efforts to impress, the official's expression remains as unmoved as carved stone. Every explanation falls flat, every demonstration fails to kindle the spark of approval you desperately seek. When they finally depart, their silence speaks louder than any criticism, and you sense that your establishment has been found wanting in ways that will echo through future inspections ({actual_reputation} reputation).",
+                "effect": {
+                    "success": {
+                        "reputation": 8
+                    },
+                    "failure": {
+                        "reputation": -4
+                    }
+                }
+            },
+            {
+                "option": "Pay the routine fee (cost: money)",
+                "message": "You choose the path of expedience over persuasion, producing the required documentation and fees with the weary efficiency of someone who has navigated these waters before. The official's demeanor remains professional but distant as they complete their paperwork and depart, leaving behind the sense that you have purchased compliance rather than earned respect. Sometimes the simplest solution is the most expensive ({actual_money}).",
+                "effect": {
+                    "money": -50
+                }
+            }
+        ]
+    },
+    {
+        "id": "storm_leak_repair",
+        "description": "The storm's legacy reveals itself in the pale light of morning as a thin stream of water traces its way down your wall like a silver tear. Each drop that falls into the rushes below carries with it the promise of greater damage to come—rot in the timbers, mold in the walls, and the slow decay that turns prosperity into ruin. The leak may seem small now, but you know that the greatest disasters often begin with the smallest cracks.",
+        "weight": 3,
+        "limited": false,
+        "cooldown_days": 7,
+        "worker_selection": "none",
+        "building_type": [
+            "tavern",
+            "restaurant",
+            "brothel"
+        ],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Repair properly (cost: money; gain: reputation)",
+                "message": "You summon the finest craftsmen the city can offer, their skilled hands working to not merely patch the damage but to strengthen what was weak. The sound of hammers and the scent of fresh timber fill the air as your establishment undergoes the kind of thorough restoration that speaks of pride and permanence. When the work is complete, your building stands stronger than before, and your reputation for maintaining the highest standards spreads through the district like good news ({actual_money}, {actual_reputation} reputation).",
+                "effect": {
+                    "money": -150,
+                    "reputation": 3
+                }
+            },
+            {
+                "option": "Quick patch for now (cheap; risk: reputation)",
+                "message": "Pragmatism triumphs over perfection as you opt for a temporary solution that stops the immediate problem without addressing its deeper causes. The leak ceases, the floor dries, and business continues as if nothing had happened. Yet you notice that discerning patrons cast occasional glances at the hastily repaired section, their eyes noting the difference between craftsmanship and mere convenience ({actual_reputation} reputation).",
+                "effect": {
+                    "money": -50,
+                    "reputation": -2
+                }
+            },
+            {
+                "option": "Close a corner of the room (minor loss: reputation)",
+                "message": "You choose adaptation over expenditure, sectioning off the affected area with screens and curtains that transform damage into deliberate design. Your establishment continues to function, though with slightly less space and considerably more character. Some patrons appreciate the intimate atmosphere created by the new arrangement, while others wonder what secrets hide behind the decorative barriers ({actual_reputation} reputation).",
+                "effect": {
+                    "reputation": -1
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,417 @@
+# worker_interactions.rpy
+
+init python:
+
+    def load_interactions():
+        """
+        Load interactions from all JSON files in the interactions folder.
+        No longer treats interactions_default.json as special - loads all files equally.
+        """
+        interactions = []
+        loaded_files = False
+        
+        # Log all available files
+        all_files = renpy.list_files()
+        interaction_files = [f for f in all_files if f.startswith("data/interactions/") and f.endswith(".json")]
+        renpy.log(f"Found interaction files: {interaction_files}")
+        
+        # Load all interaction files from the interactions folder
+        for file in interaction_files:
+            try:
+                renpy.log(f"Attempting to load file: {file}")
+                with renpy.file(file) as f:
+                    file_content = f.read()
+                    renpy.log(f"File content: {file_content[:200]}...")  # Log first 200 chars
+                    file_interactions = json.load(renpy.file(file))
+                    # Filter NSFW interactions
+                    filtered_interactions = [inter for inter in file_interactions 
+                                           if persistent.nsfw_enabled or not inter.get("nsfw", False)]
+                    interactions.extend(filtered_interactions)
+                    loaded_files = True
+                    renpy.log(f"Successfully loaded {len(filtered_interactions)} interactions from {file}")
+                    # Log the names of loaded interactions
+                    for inter in filtered_interactions:
+                        renpy.log(f"Loaded interaction: {inter.get('name', 'Unknown')} for {inter.get('specific_workers', [])}")
+            except Exception as e:
+                renpy.log(f"Error loading interactions from {file}: {str(e)}")
+        
+        # If no files were successfully loaded, log an error
+        if not loaded_files:
+            renpy.log("Warning: No interaction files were successfully loaded!")
+        else:
+            renpy.log(f"Total interactions loaded: {len(interactions)}")
+            
+        # Always return whatever interactions were loaded, even if empty
+        return interactions
+
+    def filter_interactions_by_gender(interactions, gender):
+        """Filter interactions by player gender."""
+        return [interaction for interaction in interactions if interaction.get("gender_filter") is None or interaction["gender_filter"] == gender]
+
+    def filter_interactions_by_worker_gender(interactions, worker):
+        """Filter interactions by worker gender."""
+        worker_gender = worker.get("gender", None)
+        return [interaction for interaction in interactions if interaction.get("worker_gender") is None or interaction["worker_gender"] == worker_gender]
+
+    def filter_interactions_by_stats(interactions, worker):
+        """Filter interactions based on worker's stats."""
+        filtered = []
+        for interaction in interactions:
+            # Check stat requirements
+            stat_requirements = interaction.get("stat_requirements", {})
+            meets_requirements = True
+            
+            for stat, required_value in stat_requirements.items():
+                if worker.get(stat, 0) < required_value:
+                    meets_requirements = False
+                    break
+            
+            if meets_requirements:
+                filtered.append(interaction)
+        
+        return filtered
+
+    def filter_interactions_by_flags(interactions, worker):
+        """Filter interactions based on required and excluded flags."""
+        filtered = []
+        for interaction in interactions:
+            # Check required flags
+            required_flags = interaction.get("required_flags", {})
+            meets_requirements = True
+            
+            for flag_name, required_value in required_flags.items():
+                current_value = worker.get("flags", {}).get(flag_name)
+                if current_value != required_value:
+                    meets_requirements = False
+                    break
+            
+            # Check excluded flags
+            excluded_flags = interaction.get("excluded_flags", {})
+            excluded = False
+            
+            for flag_name, excluded_value in excluded_flags.items():
+                current_value = worker.get("flags", {}).get(flag_name)
+                if current_value == excluded_value:
+                    excluded = True
+                    break
+            
+            if meets_requirements and not excluded:
+                filtered.append(interaction)
+        
+        return filtered
+
+    def filter_interactions_by_items(interactions, worker):
+        """Filter interactions based on required items in manager inventory."""
+        filtered = []
+        for interaction in interactions:
+            # Check required items
+            required_items = interaction.get("required_items", [])
+            
+            # If no items are required, include the interaction
+            if not required_items:
+                filtered.append(interaction)
+                continue
+            
+            # Check if manager has all required items
+            has_required_items = True
+            for item_id in required_items:
+                item_found = False
+                for inventory_item in manager_inventory:
+                    if inventory_item[0] == item_id and inventory_item[1] > 0:
+                        item_found = True
+                        break
+                if not item_found:
+                    has_required_items = False
+                    break
+            
+            if has_required_items:
+                filtered.append(interaction)
+        
+        return filtered
+
+    def filter_interactions_by_usage_limits(interactions, worker):
+        """Filter interactions based on usage limits."""
+        filtered = []
+        for interaction in interactions:
+            # Check usage limits
+            usage_limit = interaction.get("usage_limit")
+            
+            # If no usage limit is set, include the interaction
+            if not usage_limit:
+                filtered.append(interaction)
+                continue
+            
+            # Get limit parameters
+            flag_name = usage_limit.get("flag")
+            max_uses = usage_limit.get("max_uses", 1)
+            
+            if not flag_name:
+                # If no flag specified, include the interaction
+                filtered.append(interaction)
+                continue
+            
+            # Check current usage count
+            current_uses = 0
+            flag_value = worker.get("flags", {}).get(flag_name)
+            
+            if flag_value is not None:
+                if isinstance(flag_value, dict) and "value" in flag_value:
+                    current_uses = flag_value.get("value", 0)
+                elif isinstance(flag_value, (int, float)):
+                    current_uses = flag_value
+            
+            # Include interaction if under the limit
+            if current_uses < max_uses:
+                filtered.append(interaction)
+        
+        return filtered
+        
+    def filter_interactions_by_traits(interactions, worker):
+        """Filter interactions based on worker traits."""
+        filtered = []
+        for interaction in interactions:
+            # Check required traits
+            required_traits = interaction.get("required_traits", [])
+            worker_traits = worker.get("traits", [])
+            
+            # If no traits are required, include the interaction
+            if not required_traits:
+                filtered.append(interaction)
+                continue
+                
+            # Check if worker has all required traits
+            has_required_traits = all(trait in worker_traits for trait in required_traits)
+            
+            if has_required_traits:
+                filtered.append(interaction)
+        
+        return filtered
+        
+    def filter_interactions_by_worker_name(interactions, worker):
+        """Filter interactions based on worker name."""
+        filtered = []
+        worker_name = worker.get("name", "Unknown")
+        renpy.log(f"Filtering interactions for worker: {worker_name}")
+        
+        for interaction in interactions:
+            # Check if interaction is restricted to specific workers
+            specific_workers = interaction.get("specific_workers", [])
+            
+            # Debug log for interactions with specific workers
+            if specific_workers:
+                renpy.log(f"Found interaction '{interaction.get('name')}' for specific workers: {specific_workers}")
+                
+            # If not restricted to specific workers, include it
+            if not specific_workers:
+                filtered.append(interaction)
+                continue
+            
+            # Case-insensitive name matching
+            worker_name_lower = worker_name.lower() if worker_name else ""
+            specific_workers_lower = [name.lower() for name in specific_workers]
+                
+            # Check if this worker is in the list of specific workers (case-insensitive)
+            if worker_name_lower in specific_workers_lower:
+                renpy.log(f"✓ Added specific interaction for {worker_name}: {interaction.get('name')}")
+                filtered.append(interaction)
+            else:
+                renpy.log(f"✗ Skipped specific interaction, not for {worker_name}: {interaction.get('name')} (looking for {specific_workers})")
+        
+        return filtered
+        
+    def categorize_interactions(interactions):
+        """
+        Categorize interactions into predefined and custom categories.
+        Returns a dictionary with category names as keys and lists of interactions as values.
+        """
+        categories = {
+            "Discipline": [],
+            "Romance": [],
+            "Friendship": [],
+            "Joy": [],
+            "Other": []
+        }
+        
+        for interaction in interactions:
+            # First check for explicit categories
+            explicit_categories = interaction.get("categories", [])
+            if explicit_categories:
+                # Add interaction to each of its explicit categories
+                for category in explicit_categories:
+                    if category not in categories:
+                        categories[category] = []
+                    categories[category].append(interaction)
+                continue
+            
+            # If no explicit categories, categorize based on effects
+            effects = interaction.get("effect", {})
+            categorized = False
+            
+            if "rebelliousness" in effects and effects["rebelliousness"] < 0:
+                categories["Discipline"].append(interaction)
+                categorized = True
+            if "relationship" in effects and effects["relationship"] > 0:
+                categories["Friendship"].append(interaction)
+                categorized = True
+            if "romance" in effects and effects["romance"] > 0:
+                categories["Romance"].append(interaction)
+                categorized = True
+            if "joy" in effects and effects["joy"] > 0:
+                categories["Joy"].append(interaction)
+                categorized = True
+            
+            # If not categorized by effects, put in Other
+            if not categorized:
+                categories["Other"].append(interaction)
+        
+        # Remove empty categories
+        return {k: v for k, v in categories.items() if v}
+
+    def apply_interaction_effects(worker, interaction):
+        """Apply the effects of an interaction to a worker."""
+        # Apply stat changes
+        effects = interaction.get("effect", {})
+        for stat, change in effects.items():
+            if stat != "flags":  # Handle flags separately
+                current_value = worker.get(stat, 0)
+                worker[stat] = max(0, min(100, current_value + change))
+        
+        # Apply flag changes
+        flag_effects = effects.get("flags", {})
+        if not worker.get("flags"):
+            worker["flags"] = {}
+        
+        for flag_name, flag_value in flag_effects.items():
+            if flag_value is None:
+                # Remove flag if value is None
+                if flag_name in worker["flags"]:
+                    del worker["flags"][flag_name]
+            else:
+                # Handle incremental flags (for usage counting)
+                if isinstance(flag_value, dict) and flag_value.get("increment"):
+                    current_flag = worker["flags"].get(flag_name)
+                    if current_flag is not None:
+                        if isinstance(current_flag, dict) and "value" in current_flag:
+                            # Increment existing dict flag
+                            new_value = current_flag["value"] + flag_value["value"]
+                            worker["flags"][flag_name] = {
+                                "value": new_value,
+                                "duration": flag_value.get("duration", current_flag.get("duration", -1))
+                            }
+                        elif isinstance(current_flag, (int, float)):
+                            # Convert simple number to dict and increment
+                            worker["flags"][flag_name] = {
+                                "value": current_flag + flag_value["value"],
+                                "duration": flag_value.get("duration", -1)
+                            }
+                        else:
+                            # Set new incremental flag
+                            worker["flags"][flag_name] = flag_value
+                    else:
+                        # Set new incremental flag
+                        worker["flags"][flag_name] = flag_value
+                else:
+                    # Add or update flag normally
+                    worker["flags"][flag_name] = flag_value
+        
+        # Apply costs
+        worker["energy"] = max(0, worker["energy"] - interaction.get("cost_energy", 0))
+        worker["health"] = max(0, worker["health"] - interaction.get("cost_health", 0))
+        store.money = max(0, store.money - interaction.get("cost_money", 0))
+
+        # Tutorial: friendly chat completion is now handled when closing the interaction_result screen
+
+    def get_interaction_image(worker, interaction):
+        """
+        Returns an image for the given interaction, prioritizing the worker's folder over the default folder.
+        Uses robust flexible matching for better compatibility with different file formats and naming.
+        
+        Args:
+            worker: Objeto trabajador (diccionario)
+            interaction: Interacción actual (diccionario)
+            
+        Returns:
+            Ruta a la imagen de la interacción
+        """
+        # Extraer el folder del worker exactamente como lo hace get_worker_image
+        if hasattr(worker, "get") and callable(worker.get):
+                worker_folder = worker.get("folder", "default")
+        else:
+            worker_folder = "default"
+        
+        # Registrar información para depuración
+        renpy.log(f"Worker recibido: {worker}")
+        renpy.log(f"Folder extraído: {worker_folder}")
+        
+        # Definir base folder exactamente como lo hace get_worker_image
+        base_folder = f"images/workers/{worker_folder}/"
+        default_folder = "images/workers/default/"
+        
+        # Verificar si la carpeta existe exactamente como lo hace get_worker_image
+        if not any(f.startswith(base_folder) for f in renpy.list_files()):
+            renpy.log(f"Carpeta del trabajador no existe: {base_folder}, usando default")
+            base_folder = default_folder
+        
+        # Determinar el nombre base de la imagen
+        image_base = interaction.get("image")
+        categories = interaction.get("categories", []) or []
+        worker_gender = (worker.get("gender", "").lower() if hasattr(worker, "get") else "").lower()
+        is_player_male = store.player_title.lower() == "lord"
+        player_gendered_suffix = "_male" if is_player_male else "_female"
+
+        # Preparar candidatos por prioridad
+        candidate_bases = []
+        if image_base:
+            # 1) Imagen específica del interaction (con y sin sufijo de género del jugador)
+            candidate_bases.append(f"{image_base}{player_gendered_suffix}")
+            candidate_bases.append(image_base)
+
+        # 2) Fallback por categoría (basado en género del trabajador cuando aplica)
+        if "Romance" in categories:
+            if worker_gender == "female":
+                candidate_bases.append("romance_female")
+            elif worker_gender == "male":
+                candidate_bases.append("romance_male")
+            else:
+                # Si no se conoce el género, probar ambas
+                candidate_bases.extend(["romance_female", "romance_male"])
+        elif "Friendship" in categories:
+            candidate_bases.append("friendship")
+        elif "Joy" in categories:
+            if worker_gender == "female":
+                candidate_bases.append("joy_female")
+            elif worker_gender == "male":
+                candidate_bases.append("joy_male")
+            else:
+                candidate_bases.extend(["joy_female", "joy_male"])
+        elif "Discipline" in categories:
+            candidate_bases.append("obedience")
+        
+        # Registrar información para depuración
+        renpy.log(f"Buscando imagen para interacción. Bases candidatas: {candidate_bases}")
+        renpy.log(f"Carpeta del trabajador (después de verificación): {base_folder}")
+        renpy.log(f"Género del jugador masculino? {is_player_male} | Género del trabajador: {worker_gender}")
+        
+        # Buscar por las bases candidatas en orden
+        for base in candidate_bases:
+            if not base:
+                continue
+            # Buscar en carpeta del trabajador
+            matches = get_pattern_matches_flexible(base_folder, base)
+            if matches:
+                selected_media = renpy.random.choice(matches)
+                renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta del trabajador para base '{base}': {selected_media}")
+                return selected_media
+            # Buscar en carpeta default
+            if base_folder != default_folder:
+                default_matches = get_pattern_matches_flexible(default_folder, base)
+                if default_matches:
+                    selected_media = renpy.random.choice(default_matches)
+                    renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta default para base '{base}': {selected_media}")
+                    return selected_media
+        
+        # FALLBACK: Use worker profile image or any available image
+        renpy.log("No se encontró ninguna imagen específica, usando imagen de perfil o default")
+        profile_image = get_worker_image(worker)
+        return profile_image
+

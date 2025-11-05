@@ -1,0 +1,166 @@
+{
+  "test_day_5_event": {
+    "id": "test_day_5_event",
+    "description": "A mysterious merchant arrives at your establishment on this fifth day of your venture. 'I've been watching your progress,' he says with a knowing smile. 'You show promise. Let me offer you a choice of rewards to help your business grow.'",
+    "weight": 100,
+    "limited": false,
+    "max_occurrences": 1,
+    "event_probability": 100,
+    "guaranteed": true,
+    "worker_selection": "none",
+    "building_type": [],
+    "background_image": "event_bg",
+    "conditions": {
+      "start_when": "exact_date:5,1"
+    },
+    "choices": [
+      {
+        "option": "Ask for gold to expand your business.",
+        "message": "The merchant smiles and hands you a pouch of gold coins. 'Invest wisely,' he says. 'Money well spent returns threefold.' (+300 gold)",
+        "effect": {
+          "money": 300,
+          "event_flags": {
+            "test_event_gold_chosen": true
+          }
+        }
+      },
+      {
+        "option": "Ask for reputation to attract better clients.",
+        "message": "The merchant nods approvingly. 'Word of mouth is the best advertisement,' he says, spreading good word about your establishment throughout the district. (+15 reputation)",
+        "effect": {
+          "reputation": 15,
+          "event_flags": {
+            "test_event_reputation_chosen": true
+          }
+        }
+      },
+      {
+        "option": "Ask for information about the district.",
+        "message": "The merchant leans in conspiratorially. 'Knowledge is power,' he whispers, sharing valuable secrets about local politics and business opportunities. (Moderate gold and reputation bonus)",
+        "effect": {
+          "money": 150,
+          "reputation": 8,
+          "event_flags": {
+            "test_event_information_chosen": true
+          }
+        }
+      },
+      {
+        "option": "Politely decline his offer.",
+        "message": "The merchant is impressed by your independence. 'Self-reliance is admirable,' he says. 'Here's a small token of respect.' (Small reputation bonus)",
+        "effect": {
+          "reputation": 5,
+          "event_flags": {
+            "test_event_declined": true
+          }
+        }
+      }
+    ]
+  },
+  "rich_traveler_day10": {
+    "id": "rich_traveler_day10",
+    "description": "A wealthy traveler, cloaked in fine velvet and dust from the road, takes a seat at your table. 'I reward promising establishments,' he says. 'Choose your boon, and may fortune favor your choice.'",
+    "weight": 100,
+    "limited": false,
+    "max_occurrences": 1,
+    "event_probability": 100,
+    "guaranteed": true,
+    "worker_selection": "none",
+    "building_type": [],
+    "background_image": "event_bg",
+    "conditions": {
+      "start_when": "exact_date:10,1"
+    },
+    "choices": [
+      {
+        "option": "Accept the traveler's heirloom sword (Iron Sword).",
+        "message": "You accept the heirloom blade with gratitude. Its balance is exquisite, its edge keen. (Iron Sword added to inventory)",
+        "effect": {
+          "custom": "give_item",
+          "item_id": "iron_sword",
+          "event_flags": {
+            "day10_sword": true
+          }
+        }
+      },
+      {
+        "option": "Take the sealed gift box. Whatever it holds is yours.",
+        "message": "You choose the mystery. The traveler grins, 'May luck be on your side.' (Random loot added)",
+        "effect": {
+          "custom": "grant_loot",
+          "loot_rolls": 1,
+          "event_flags": {
+            "day10_mystery": true
+          }
+        }
+      },
+      {
+        "option": "Invite Violet to join your roster (if she isn't already).",
+        "message": "You extend a formal invitation to Violet. 'I've been watching your progress,' she says. 'Very well, I'll lend you my talents.'",
+        "effect": {
+          "custom": "recruit_worker",
+          "worker_name": "Violet"
+        },
+        "conditions": {
+          "start_when": "not_has_worker:Violet"
+        }
+      },
+      {
+        "option": "Recruit a capable worker from passing caravans.",
+        "message": "You hold quick trials at dusk. A capable recruit impresses you and joins your ranks immediately.",
+        "effect": {
+          "custom": "recruit_worker",
+          "random_worker": true,
+          "event_flags": {
+            "day10_random_recruit": true
+          }
+        }
+      },
+      {
+        "option": "Decline politely. Your path is set without outside gifts.",
+        "message": "You refuse with a courteous bow. The traveler appreciates your conviction and leaves with a satisfied smile. (+5 Reputation)",
+        "effect": {
+          "reputation": 5,
+          "event_flags": {
+            "day10_declined": true
+          }
+        }
+      }
+    ]
+  },
+  "new_event_2": {
+    "id": "3magickings",
+    "description": "Three mysterious figures land in your establishment, they say they have some gifts left from their journey, and offer you a boon.",
+    "weight": 100,
+    "nsfw": false,
+    "limited": false,
+    "max_occurrences": 1,
+    "cooldown_days": 0,
+    "worker_selection": "none",
+    "worker_gender_requirement": "any",
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "",
+    "failure_image": "",
+    "start_when": "",
+    "stop_when": "",
+    "required_flags": {},
+    "choices": [
+      {
+        "option": "Ask for gold to expand your business.",
+        "condition": "",
+        "message_success": "",
+        "message_failure": "",
+        "message": "The kings offer you a bag with gold, smiling and after a bit, they leave to continue their journey.",
+        "effect": {
+          "money": 1000
+        }
+      }
+    ],
+    "event_probability": 100,
+    "guaranteed": true,
+    "conditions": {
+      "start_when": "exact_date:6,1"
+    }
+  }
+}
