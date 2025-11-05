@@ -974,7 +974,10 @@ init python:
     def load_buy_workers():
         """
         Load workers available for purchase, prioritizing workers defined in JSON files.
+        Generates procedural workers when needed, respecting the daily spawn limit.
         """
+        global daily_spawns
+        
         # Load all workers, including unique ones
         all_workers = load_workers(include_unique=True, include_encounter_only=False)
         
@@ -990,24 +993,39 @@ init python:
         json_workers = [w for w in filtered_workers if not w.get("procedural", False)]
         procedural_workers = [w for w in filtered_workers if w.get("procedural", False)]
         
+        # Check if all JSON workers are exhausted
+        all_json_exhausted = len(json_workers) == 0
+        renpy.log(f"JSON workers available: {len(json_workers)}, All JSON exhausted: {all_json_exhausted}")
+        
         # Combine JSON and procedural workers
         available_workers = json_workers + procedural_workers
         
-        # Always ensure at least 6 workers are available for purchase
-        # Generate procedural workers if needed to reach 6 total
-        while len(available_workers) < 6:
+        # Ensure MAX_DAILY_SPAWNS is defined
+        if not hasattr(store, "MAX_DAILY_SPAWNS"):
+            store.MAX_DAILY_SPAWNS = 5  # Default value if not defined
+        
+        # Always ensure at least 5 workers are available for purchase
+        # Generate procedural workers if needed, but respect the daily spawn limit
+        while len(available_workers) < 5:
+            # Respect daily spawn limit when generating procedural workers
+            if daily_spawns >= store.MAX_DAILY_SPAWNS:
+                renpy.log(f"Daily spawn limit reached ({daily_spawns}/{store.MAX_DAILY_SPAWNS}) in load_buy_workers, stopping generation")
+                break
+            
             new_worker = spawn_new_worker()
             if new_worker:
                 new_worker["market_worker"] = True  # Mark as available for purchase
+                new_worker["procedural"] = True  # Mark as procedural
                 available_workers.append(new_worker)
-                renpy.log(f"Generated new procedural worker '{new_worker['name']}' for buy workers market")
+                daily_spawns += 1  # Track daily spawns
+                renpy.log(f"Generated new procedural worker '{new_worker['name']}' for buy workers market (daily_spawns: {daily_spawns}, all_json_exhausted: {all_json_exhausted})")
         
         # Ensure defaults are applied to all workers
         for worker in available_workers:
             ensure_worker_defaults(worker)
             worker["market_worker"] = True  # Mark as available for purchase
         
-        renpy.log(f"Loaded buy workers: {[w['name'] for w in available_workers]}")
+        renpy.log(f"Loaded buy workers: {[w['name'] for w in available_workers]} (JSON exhausted: {all_json_exhausted}, daily_spawns: {daily_spawns})")
         return available_workers
 
     def load_recruit_workers():
@@ -1479,6 +1497,9 @@ init python:
                     check_tutorial_objective()
                     renpy.log("DEBUG: After calling check_tutorial_objective")
             
+            # Update displayed workers to fill the empty slot
+            update_displayed_workers()
+            
             renpy.hide_screen("worker_details")
 
     def update_displayed_workers():
@@ -1489,29 +1510,46 @@ init python:
         renpy.log(f"Hired worker names: {hired_worker_names}")
         renpy.log(f"Available workers before filtering: {[w['name'] for w in available_workers]}")
 
-        # Add existing available workers (up to 6, respecting NSFW)
+        # Check if all JSON workers are exhausted
+        # Load all JSON workers to check if any remain
+        all_json_workers = load_workers(include_unique=True, include_encounter_only=False)
+        json_worker_names = {w["name"] for w in all_json_workers if not w.get("procedural", False)}
+        available_json_workers = json_worker_names - hired_worker_names
+        all_json_exhausted = len(available_json_workers) == 0
+        
+        renpy.log(f"JSON workers available: {len(available_json_workers)}, All JSON exhausted: {all_json_exhausted}")
+
+        # Add existing available workers (up to 5, respecting NSFW)
         for worker in available_workers:
             if (worker["name"] not in hired_worker_names and 
                 (persistent.nsfw_enabled or not worker.get("nsfw", False))):
-                if len(displayed_workers) < 6:
+                if len(displayed_workers) < 5:
                     ensure_worker_defaults(worker)
                     displayed_workers.append(worker)
                     renpy.log(f"Added existing worker '{worker['name']}' to displayed_workers")
 
         # Ensure MAX_DAILY_SPAWNS is defined and allows spawning
         if not hasattr(store, "MAX_DAILY_SPAWNS"):
-            store.MAX_DAILY_SPAWNS = 6  # Default value if not defined
+            store.MAX_DAILY_SPAWNS = 5  # Default value if not defined
         renpy.log(f"MAX_DAILY_SPAWNS: {store.MAX_DAILY_SPAWNS}")
 
-        # Spawn new workers if needed (up to MAX_DAILY_SPAWNS)
-        while len(displayed_workers) < 6 and daily_spawns < store.MAX_DAILY_SPAWNS:
+        # Spawn new workers if needed (up to 5 displayed, respecting daily spawn limit)
+        # Always respect the daily spawn limit, even when JSON workers are exhausted
+        while len(displayed_workers) < 5:
+            # Check daily limit - always respect it
+            if daily_spawns >= store.MAX_DAILY_SPAWNS:
+                renpy.log(f"Daily spawn limit reached ({daily_spawns}/{store.MAX_DAILY_SPAWNS}), stopping generation")
+                break
+            
             new_worker = spawn_new_worker()
             if new_worker and (persistent.nsfw_enabled or not new_worker.get("nsfw", False)):
                 ensure_worker_defaults(new_worker)
+                new_worker["market_worker"] = True
+                new_worker["procedural"] = True
                 available_workers.append(new_worker)
                 displayed_workers.append(new_worker)
                 daily_spawns += 1
-                renpy.log(f"Spawned new worker '{new_worker['name']}' - daily_spawns: {daily_spawns}")
+                renpy.log(f"Spawned new procedural worker '{new_worker['name']}' - daily_spawns: {daily_spawns}, all_json_exhausted: {all_json_exhausted}")
 
         renpy.log(f"Final displayed_workers: {[w['name'] for w in displayed_workers]}")
         renpy.log(f"Final available_workers after update: {[w['name'] for w in available_workers]}")

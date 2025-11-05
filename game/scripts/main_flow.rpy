@@ -584,6 +584,115 @@ label show_objective_8_dialogue:
     $ renpy.log("DEBUG: show_objective_8_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
+# ===== EPIC ENDINGS =====
+label show_ending_assassination:
+    scene expression tavern_bg
+    show expression Solid("#00000080")
+    $ renpy.log("DEBUG: show_ending_assassination - STARTING EPIC ENDING")
+    
+    python:
+        # Get the workers who participated in the assassination
+        assassination_team = [w for w in store.workers if (w.get("skills", {}).get("Combat", 0) >= 65 or w.get("skills", {}).get("Magic", 0) >= 65)]
+        team_names = [w.get("name", "Unknown") for w in assassination_team[:3]]
+        building_count = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+        worker_count = len(store.workers) if hasattr(store, 'workers') else total_workers
+    
+    "The hour of reckoning hath arrived. The moon hangs low in the midnight sky, casting long shadows across the cobblestone streets of the governor's district."
+    
+    "Three of my most trusted souls stand ready at my side: [team_names[0] if len(team_names) > 0 else 'a loyal warrior'], [team_names[1] if len(team_names) > 1 else 'a skilled mage'], and [team_names[2] if len(team_names) > 2 else 'a deadly assassin']. Their eyes burn with the same fire that consumed my family's legacy."
+    
+    "From the [building_count] strongholds I have built, from the [worker_count] souls who have sworn fealty to my cause, from the [money] coins that have filled my coffers - all of it hath led to this single, decisive moment."
+    
+    "The governor's mansion looms before us, a monument to corruption and greed. But tonight, it shall become a tomb."
+    
+    "We move like shadows through the night, my team of warriors and mages executing the plan with lethal precision. The governor's guards fall silently, their throats cut or their minds shattered by arcane forces before they can raise the alarm."
+    
+    "The governor himself sits in his study, surrounded by the spoils of his tyranny - paintings seized from my family's estate, ledgers filled with debts called in under false pretenses, trophies from the lives he destroyed."
+    
+    "He looks up as we enter, his face a mask of surprise that quickly turns to terror. 'You... you cannot be here. The guards...'"
+    
+    "'The guards are dead,' I reply, my voice cold as the grave. 'And so shall you be, before this night ends.'"
+    
+    "My team moves with practiced efficiency. [team_names[0] if len(team_names) > 0 else 'The warrior']'s blade finds its mark even as [team_names[1] if len(team_names) > 1 else 'the mage']'s spells bind the governor in chains of pure force. [team_names[2] if len(team_names) > 2 else 'The assassin'] delivers the final blow - quick, clean, merciless."
+    
+    "The governor's body slumps to the floor, his blood mingling with the wine from the shattered goblet he had been holding. Justice, at long last, served not by the law he corrupted, but by the steel and sorcery of those he wronged."
+    
+    "As dawn breaks over the city, word spreads like wildfire. The governor is dead. The balance of power hath shifted irrevocably."
+    
+    "My empire stands unchallenged now. The [building_count] buildings that bear my banner, the [worker_count] souls who serve my will, the vast fortune I have amassed - all of it secured through this single act of vengeance."
+    
+    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute. I accept their offerings, but I do not forget."
+    
+    "I do not forget how they stood by while my family was destroyed. I do not forget how they profited from our ruin. But for now, I am content."
+    
+    "The governor's head adorns a spike above my main establishment. A warning to all who would cross me. A declaration that the old order is dead, and a new empire hath risen in its place."
+    
+    "My revenge is complete. But my ambition? That is only beginning."
+    
+    "The sun rises on a new day, and I am its master."
+    
+    $ renpy.log("DEBUG: show_ending_assassination - EPIC ENDING COMPLETE")
+    $ tutorial_active = False
+    return
+
+label show_ending_blackmail:
+    scene expression tavern_bg
+    show expression Solid("#00000080")
+    $ renpy.log("DEBUG: show_ending_blackmail - STARTING EPIC ENDING")
+    
+    python:
+        # Get the workers who participated in the blackmail
+        blackmail_team = []
+        charm_workers = [w for w in store.workers if w.get("skills", {}).get("Charm", 0) >= 65]
+        clever_workers = [w for w in store.workers if w.get("skills", {}).get("Clever", 0) >= 65]
+        if len(charm_workers) >= 2:
+            blackmail_team = charm_workers[:2]
+            if clever_workers:
+                blackmail_team.append(clever_workers[0])
+            elif len(charm_workers) >= 3:
+                blackmail_team.append(charm_workers[2])
+        team_names = [w.get("name", "Unknown") for w in blackmail_team[:3]]
+        building_count = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+        worker_count = len(store.workers) if hasattr(store, 'workers') else total_workers
+    
+    "The hour of reckoning hath arrived, but not through the path of the blade. The governor's downfall shall come not from steel, but from the chains of his own corruption."
+    
+    "Three of my most cunning souls stand ready: [team_names[0] if len(team_names) > 0 else 'a master of charm'], [team_names[1] if len(team_names) > 1 else 'a skilled seducer'], and [team_names[2] if len(team_names) > 2 else 'a clever strategist']. Their weapons are not swords or spells, but secrets and seduction."
+    
+    "From the [building_count] strongholds I have built, from the [worker_count] souls who have sworn fealty to my cause, from the [money] coins that have filled my coffers - all of it hath led to this single, decisive moment."
+    
+    "The governor's mansion looms before us, but we do not come to kill. We come to steal what he values most: his secrets, his reputation, his power."
+    
+    "Under cover of darkness, my team executes a plan of exquisite complexity. [team_names[0] if len(team_names) > 0 else 'The charmer'] gains entry to the governor's private study, seducing a guard with honeyed words and false promises. [team_names[1] if len(team_names) > 1 else 'The seducer'] distracts the governor himself in his chambers, while [team_names[2] if len(team_names) > 2 else 'the clever one'] cracks the safe containing documents of incalculable value."
+    
+    "Ledgers detailing embezzlement. Letters proving bribery of city officials. Contracts showing illegal dealings with criminal syndicates. Evidence that would destroy the governor's reputation and send him to the gallows."
+    
+    "We emerge from the mansion like shadows, carrying with us the governor's entire empire of lies, written in his own hand and sealed with his own seal."
+    
+    "The next morning, I send a messenger to the governor's mansion. The message is simple: 'I have in my possession documents that would see you hanged. Your choice is simple - surrender your holdings to me, publicly declare me your successor, and leave this city forever. Or face the consequences.'"
+    
+    "The governor's response comes that evening. He is a broken man, his power stripped away not by force of arms, but by the weight of his own sins brought to light."
+    
+    "He signs the documents transferring his properties to my name. He makes the public declaration, his voice trembling with fear and shame. And then he flees, a shadow of the tyrant he once was."
+    
+    "As the sun sets on his departure, word spreads throughout the city. The governor hath been brought low. The balance of power hath shifted irrevocably."
+    
+    "My empire stands unchallenged now. The [building_count] buildings that bear my banner, the [worker_count] souls who serve my will, the vast fortune I have amassed - all of it secured through cunning and blackmail, the tools of a true master of the shadows."
+    
+    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute. I accept their offerings, but I do not forget."
+    
+    "I do not forget how they stood by while my family was destroyed. I do not forget how they profited from our ruin. But for now, I am content."
+    
+    "The governor's portrait hangs in my main establishment, but with a black ribbon across it. A warning to all who would cross me. A declaration that the old order is dead, and a new empire hath risen in its place."
+    
+    "My revenge is complete. But my ambition? That is only beginning."
+    
+    "The sun rises on a new day, and I am its master."
+    
+    $ renpy.log("DEBUG: show_ending_blackmail - EPIC ENDING COMPLETE")
+    $ tutorial_active = False
+    return
+
 label tavern_screen():
     $ renpy.log("DEBUG: tavern_screen label - STARTING")
     
@@ -593,8 +702,8 @@ label tavern_screen():
     $ renpy.log(f"DEBUG: tavern_screen - current_objective={current_obj}, tutorial_active={tutorial_act}, money=${money}, obj4_dialogue_shown={obj4_shown}")
     # Removed pending_exit auto-quit; rely on standard confirmation and quit flow
     
-    # SIMPLIFIED: Show objective 4 dialogue if tutorial is active, money >= 6000, and dialogue not shown yet
-    if tutorial_act and (money >= 6000) and (not obj4_shown):
+    # SIMPLIFIED: Show objective 4 dialogue if tutorial is active, money >= 5000, and dialogue not shown yet
+    if tutorial_act and (money >= 5000) and (not obj4_shown):
         $ renpy.log("DEBUG: tavern_screen - TRIGGERING OBJECTIVE 4 DIALOGUE!")
         $ store.objective_4_complete = True
         $ store.current_objective = 5

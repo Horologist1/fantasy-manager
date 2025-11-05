@@ -4,8 +4,13 @@ init python:
         """
         Load all workers from multiple locations with optional filters.
         Loads from:
-        1. data/workers.json (if exists)
+        1. data/workers.json (legacy location, if exists)
         2. data/workers/*.json (all JSON files in workers folder)
+           - workers_sfw_unique.json: SFW unique workers (flower-themed names)
+           - workers_sfw_other.json: SFW non-unique workers (non-flower names)
+           - workers_nsfw_unique.json: NSFW unique workers (flower-themed names)
+           - workers_nsfw_other.json: NSFW non-unique workers (non-flower names)
+           Legacy files (workers_sfw.json, workers_nsfw.json) are also supported
         
         Ensures defaults are applied to every worker and avoids duplicates.
         """

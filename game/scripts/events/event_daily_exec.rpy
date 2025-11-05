@@ -456,7 +456,7 @@ init python:
 
     def process_next_day():
         # Ensure necessary variables are global (removed filtered_building)
-        global daily_report, displayed_workers, money, can_recruit_today, available_workers
+        global daily_report, displayed_workers, money, can_recruit_today, available_workers, daily_spawns
 
         # Check and update trait durations
         check_trait_durations()
@@ -468,6 +468,7 @@ init python:
 
         displayed_workers = []  # Clear displayed_workers at the start
         can_recruit_today = True  # Reset recruitment flag each day
+        daily_spawns = 0  # Reset daily spawns counter
 
         # --- ENSURE REPORT LIST IS CLEARED HERE ---
         daily_report = []
@@ -591,13 +592,8 @@ init python:
         available_workers = load_buy_workers()
         renpy.log(f"Reloaded available_workers: {[w['name'] for w in available_workers]}")
 
-        # Update displayed_workers with the latest available workers
-        hired_names = {w["name"] for w in store.workers}
-        displayed_workers = [
-            w for w in available_workers
-            if w["name"] not in hired_names
-            and (persistent.nsfw_enabled or not w.get("nsfw", False))
-        ][:6]
+        # Update displayed_workers using the proper function that handles JSON exhaustion
+        update_displayed_workers()
         renpy.log(f"Updated displayed_workers: {[w['name'] for w in displayed_workers]}")
 
         # Update money BEFORE events so events can modify the updated amount
