@@ -417,7 +417,7 @@ screen main_menu():
             text "[config.name!t]":
                 style "main_menu_title"
 
-            text "0.62":
+            text "0.7":
                 style "main_menu_version"
 
 
@@ -619,7 +619,7 @@ screen about():
             xalign 0.0
 
         ## Versión
-        text "Version 0.62":
+        text "Version 0.7":
             style "about_version"
             xalign 0.0
 
