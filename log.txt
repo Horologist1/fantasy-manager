@@ -1,11 +1,11 @@
-2025-11-06 21:39:40 UTC
+2025-11-06 21:45:23 UTC
 Windows-10-10.0.26100
 Ren'Py 8.3.7.25031702
 
-Early init took 0.10s
+Early init took 0.11s
 Loading error handling took 0.03s
-Loading script took 0.52s
-Loading save slot metadata took 0.03s
+Loading script took 0.22s
+Loading save slot metadata took 0.02s
 Loading persistent took 0.00s
 Running init code took 0.04s
 Loading analysis data took 0.02s
@@ -13,7 +13,7 @@ Analyze and compile ATL took 0.00s
 Reloading save slot metadata took 0.02s
 Index archives took 0.00s
 Backing up script files to 'C:\\Users\\Usuario\\AppData\\Roaming/RenPy/backups\\fantasy-manager':
-Dump and make backups took 0.05s
+Dump and make backups took 0.04s
 Cleaning cache took 0.00s
 Making clean stores took 0.00s
 Initial gc took 0.03s
@@ -25,13 +25,13 @@ Cleaning stores took 0.00s
 Init translation took 0.00s
 Build styles took 0.00s
 Load screen analysis took 0.00s
-Analyze screens took 0.03s
+Analyze screens took 0.02s
 Save screen analysis took 0.03s
 Prepare screens took 0.09s
 Save pyanalysis. took 0.03s
 Save bytecode. took 0.04s
 Running _start took 0.00s
-Interface start took 0.31s
+Interface start took 0.33s
 
 Initializing gl2 renderer:
 primary display bounds: (0, 0, 1920, 1080)
@@ -90,7 +90,6 @@ SAVE_STATE: snapshot stored in save JSON
 Tavern screen displayed
 Player chose: Lord
 
-SAVE_STATE: snapshot stored in save JSON
 Tavern screen displayed
 Tavern screen displayed
 Very well, Lord Manager. Let's take back our emporium.
@@ -103,126 +102,128 @@ Initial store.workers: []
 data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Jasmine
-Adding 4 traits to Jasmine (current: 1, target: 5)
-Added trait 'Cute' to Jasmine
-Added trait 'Maid' to Jasmine
-Added trait 'Quick Learner' to Jasmine
+Adding 3 traits to Jasmine (current: 1, target: 4)
 Added trait 'Flat Chest' to Jasmine
-Successfully added 4 traits to Jasmine
+Added trait 'Singer' to Jasmine
+Added trait 'Soft Ass' to Jasmine
+Successfully added 3 traits to Jasmine
 Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Orchid
-Adding 2 traits to Orchid (current: 1, target: 3)
-Added trait 'Singer' to Orchid
-Added trait 'Shy' to Orchid
-Successfully added 2 traits to Orchid
+Adding 3 traits to Orchid (current: 1, target: 4)
+Added trait 'Optimist' to Orchid
+Added trait 'Charismatic' to Orchid
+Added trait 'Exotic' to Orchid
+Successfully added 3 traits to Orchid
 Secondary attributes initialized for Orchid
 Secondary attributes initialized for Daisy
-Adding 3 traits to Daisy (current: 1, target: 4)
-Added trait 'Cute' to Daisy
-Added trait 'Magnetic' to Daisy
+Adding 4 traits to Daisy (current: 1, target: 5)
+Added trait 'Tattooed' to Daisy
+Added trait 'Slow Learner' to Daisy
 Added trait 'Determined' to Daisy
-Successfully added 3 traits to Daisy
+Added trait 'Dependant' to Daisy
+Successfully added 4 traits to Daisy
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Delilah
 Adding 2 traits to Delilah (current: 1, target: 3)
-Added trait 'Elegant Eyes' to Delilah
-Added trait 'Obedient' to Delilah
+Added trait 'Small Breasts' to Delilah
+Added trait 'Waitress' to Delilah
 Successfully added 2 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Poppy
-Adding 4 traits to Poppy (current: 1, target: 5)
-Added trait 'Delicate' to Poppy
-Added trait 'Tough' to Poppy
-Added trait 'Open Minded' to Poppy
-Added trait 'Pierced' to Poppy
-Successfully added 4 traits to Poppy
+Adding 3 traits to Poppy (current: 1, target: 4)
+Added trait 'Sensitive' to Poppy
+Added trait 'Tattooed' to Poppy
+Added trait 'Dependant' to Poppy
+Successfully added 3 traits to Poppy
 Secondary attributes initialized for Poppy
 Secondary attributes initialized for Rose
 Adding 4 traits to Rose (current: 1, target: 5)
-Added trait 'Charismatic' to Rose
-Added trait 'Obedient' to Rose
-Added trait 'Elegant Eyes' to Rose
-Added trait 'Conservative' to Rose
+Added trait 'Pessimist' to Rose
+Added trait 'Flexible' to Rose
+Added trait 'Cute' to Rose
+Added trait 'Beautiful' to Rose
 Successfully added 4 traits to Rose
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Thane
-Adding 3 traits to Thane (current: 1, target: 4)
-Added trait 'Soft Ass' to Thane
-Added trait 'Sadistic' to Thane
-Added trait 'Dependant' to Thane
-Successfully added 3 traits to Thane
+Adding 4 traits to Thane (current: 1, target: 5)
+Added trait 'Singer' to Thane
+Added trait 'Determined' to Thane
+Added trait 'Low Libido' to Thane
+Added trait 'Graceful' to Thane
+Successfully added 4 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
 Adding 4 traits to Elowen (current: 1, target: 5)
-Added trait 'Elegant Eyes' to Elowen
-Added trait 'Nice Tan' to Elowen
-Added trait 'Exotic' to Elowen
-Added trait 'Pessimist' to Elowen
+Added trait 'Cool Scars' to Elowen
+Added trait 'Stiff' to Elowen
+Added trait 'Conservative' to Elowen
+Added trait 'Maid' to Elowen
 Successfully added 4 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Zorak
-Adding 4 traits to Zorak (current: 1, target: 5)
-Added trait 'Tomboy' to Zorak
-Added trait 'Maid' to Zorak
-Added trait 'Nice Tan' to Zorak
-Added trait 'Agile' to Zorak
-Successfully added 4 traits to Zorak
+Adding 2 traits to Zorak (current: 1, target: 3)
+Added trait 'Shy' to Zorak
+Added trait 'Soft Ass' to Zorak
+Successfully added 2 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Added trait 'Delicate' to Seraphina
-Added trait 'Elegant' to Seraphina
-Added trait 'Soft Ass' to Seraphina
-Successfully added 3 traits to Seraphina
+Adding 4 traits to Seraphina (current: 1, target: 5)
+Added trait 'Confident' to Seraphina
+Added trait 'Charismatic' to Seraphina
+Added trait 'Determined' to Seraphina
+Added trait 'Quick Learner' to Seraphina
+Successfully added 4 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
-Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Tattooed' to Kael
-Added trait 'Stiff' to Kael
-Successfully added 2 traits to Kael
+Adding 4 traits to Kael (current: 1, target: 5)
+Added trait 'Strong' to Kael
+Added trait 'Exotic' to Kael
+Added trait 'Tomboy' to Kael
+Added trait 'Low Libido' to Kael
+Successfully added 4 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 4 traits to Lyria (current: 1, target: 5)
-Added trait 'Charismatic' to Lyria
-Added trait 'Flat Chest' to Lyria
-Added trait 'Agile' to Lyria
-Added trait 'Tone Deaf' to Lyria
-Successfully added 4 traits to Lyria
+Adding 3 traits to Lyria (current: 1, target: 4)
+Added trait 'Nympho' to Lyria
+Added trait 'Magnetic' to Lyria
+Added trait 'Nervous' to Lyria
+Successfully added 3 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
-Adding 4 traits to Draven (current: 1, target: 5)
-Added trait 'Rebellious' to Draven
-Added trait 'Playful' to Draven
-Added trait 'Teacher' to Draven
-Added trait 'Slow Learner' to Draven
-Successfully added 4 traits to Draven
+Adding 3 traits to Draven (current: 1, target: 4)
+Added trait 'Soft Ass' to Draven
+Added trait 'Dependant' to Draven
+Added trait 'Pessimist' to Draven
+Successfully added 3 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
 Adding 2 traits to Selene (current: 1, target: 3)
-Added trait 'Exotic' to Selene
-Added trait 'Tone Deaf' to Selene
+Added trait 'Cool Scars' to Selene
+Added trait 'Elegant' to Selene
 Successfully added 2 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
-Adding 2 traits to Ragnar (current: 1, target: 3)
-Added trait 'Satyr' to Ragnar
-Added trait 'Open Minded' to Ragnar
-Successfully added 2 traits to Ragnar
+Adding 3 traits to Ragnar (current: 1, target: 4)
+Added trait 'Cute' to Ragnar
+Added trait 'Scarred' to Ragnar
+Added trait 'Waitress' to Ragnar
+Successfully added 3 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
 Adding 4 traits to Talon (current: 1, target: 5)
-Added trait 'Firm Ass' to Talon
-Added trait 'Tomboy' to Talon
-Added trait 'Low Libido' to Talon
+Added trait 'Cute' to Talon
 Added trait 'Tight' to Talon
+Added trait 'Stiff' to Talon
+Added trait 'High Libido' to Talon
 Successfully added 4 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Elena
-Adding 3 traits to Elena (current: 1, target: 4)
-Added trait 'Radiant' to Elena
-Added trait 'Waitress' to Elena
-Added trait 'Beautiful' to Elena
-Successfully added 3 traits to Elena
+Adding 4 traits to Elena (current: 1, target: 5)
+Added trait 'Tone Deaf' to Elena
+Added trait 'Exotic' to Elena
+Added trait 'Wise' to Elena
+Added trait 'Small Breasts' to Elena
+Successfully added 4 traits to Elena
 Secondary attributes initialized for Elena
 JSON workers available: 17, All JSON exhausted: False
 Secondary attributes already initialized for Jasmine, skipping recalculation
@@ -1554,114 +1555,117 @@ data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Jasmine
 Adding 2 traits to Jasmine (current: 1, target: 3)
-Added trait 'Determined' to Jasmine
-Added trait 'Strong' to Jasmine
+Added trait 'Slow Learner' to Jasmine
+Added trait 'Brawler' to Jasmine
 Successfully added 2 traits to Jasmine
 Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Orchid
 Adding 2 traits to Orchid (current: 1, target: 3)
-Added trait 'Demanding' to Orchid
-Added trait 'Sensitive' to Orchid
+Added trait 'Singer' to Orchid
+Added trait 'Strong' to Orchid
 Successfully added 2 traits to Orchid
 Secondary attributes initialized for Orchid
 Secondary attributes initialized for Daisy
 Adding 2 traits to Daisy (current: 1, target: 3)
-Added trait 'Tough' to Daisy
-Added trait 'Shy' to Daisy
+Added trait 'Obedient' to Daisy
+Added trait 'Nympho' to Daisy
 Successfully added 2 traits to Daisy
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Delilah
-Adding 4 traits to Delilah (current: 1, target: 5)
-Added trait 'Quick Learner' to Delilah
-Added trait 'Large Breasts' to Delilah
-Added trait 'Low Libido' to Delilah
-Added trait 'Smooth Talker' to Delilah
-Successfully added 4 traits to Delilah
+Adding 2 traits to Delilah (current: 1, target: 3)
+Added trait 'Delicate' to Delilah
+Added trait 'Tomboy' to Delilah
+Successfully added 2 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Poppy
-Adding 2 traits to Poppy (current: 1, target: 3)
-Added trait 'Robust' to Poppy
-Added trait 'Tone Deaf' to Poppy
-Successfully added 2 traits to Poppy
+Adding 3 traits to Poppy (current: 1, target: 4)
+Added trait 'Adventurer' to Poppy
+Added trait 'Mystical' to Poppy
+Added trait 'Beautiful' to Poppy
+Successfully added 3 traits to Poppy
 Secondary attributes initialized for Poppy
 Secondary attributes initialized for Rose
 Adding 3 traits to Rose (current: 1, target: 4)
-Added trait 'Flexible' to Rose
-Added trait 'Determined' to Rose
-Added trait 'Tough' to Rose
+Added trait 'Open Minded' to Rose
+Added trait 'Exotic' to Rose
+Added trait 'Cute' to Rose
 Successfully added 3 traits to Rose
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Thane
-Adding 2 traits to Thane (current: 1, target: 3)
-Added trait 'Exotic' to Thane
-Added trait 'Tattooed' to Thane
-Successfully added 2 traits to Thane
+Adding 4 traits to Thane (current: 1, target: 5)
+Added trait 'Elegant Eyes' to Thane
+Added trait 'Quick Learner' to Thane
+Added trait 'Adventurer' to Thane
+Added trait 'Firm Ass' to Thane
+Successfully added 4 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
-Adding 3 traits to Elowen (current: 1, target: 4)
-Added trait 'Nympho' to Elowen
-Added trait 'Sensitive' to Elowen
-Added trait 'Clumsy' to Elowen
-Successfully added 3 traits to Elowen
+Adding 2 traits to Elowen (current: 1, target: 3)
+Added trait 'Nice Tan' to Elowen
+Added trait 'Mystical' to Elowen
+Successfully added 2 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Zorak
 Adding 2 traits to Zorak (current: 1, target: 3)
-Added trait 'Stiff' to Zorak
-Added trait 'Satyr' to Zorak
+Added trait 'Exotic' to Zorak
+Added trait 'Slow Learner' to Zorak
 Successfully added 2 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Added trait 'Adventurer' to Seraphina
-Added trait 'High Libido' to Seraphina
-Added trait 'Confident' to Seraphina
-Successfully added 3 traits to Seraphina
+Adding 2 traits to Seraphina (current: 1, target: 3)
+Added trait 'Strong' to Seraphina
+Added trait 'Teacher' to Seraphina
+Successfully added 2 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
-Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Pierced' to Kael
-Added trait 'Loose' to Kael
-Successfully added 2 traits to Kael
+Adding 4 traits to Kael (current: 1, target: 5)
+Added trait 'High Libido' to Kael
+Added trait 'Agile' to Kael
+Added trait 'Slow Learner' to Kael
+Added trait 'Cute' to Kael
+Successfully added 4 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 2 traits to Lyria (current: 1, target: 3)
-Added trait 'Elegant Eyes' to Lyria
-Added trait 'Playful' to Lyria
-Successfully added 2 traits to Lyria
+Adding 4 traits to Lyria (current: 1, target: 5)
+Added trait 'Tight' to Lyria
+Added trait 'Agile' to Lyria
+Added trait 'Stiff' to Lyria
+Added trait 'Magnetic' to Lyria
+Successfully added 4 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
-Adding 3 traits to Draven (current: 1, target: 4)
-Added trait 'Charming' to Draven
-Added trait 'Numb' to Draven
-Added trait 'Radiant' to Draven
-Successfully added 3 traits to Draven
+Adding 2 traits to Draven (current: 1, target: 3)
+Added trait 'Soft Ass' to Draven
+Added trait 'Brawler' to Draven
+Successfully added 2 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
-Adding 2 traits to Selene (current: 1, target: 3)
-Added trait 'Nervous' to Selene
-Added trait 'Determined' to Selene
-Successfully added 2 traits to Selene
+Adding 4 traits to Selene (current: 1, target: 5)
+Added trait 'Firm Ass' to Selene
+Added trait 'Delicate' to Selene
+Added trait 'Robust' to Selene
+Added trait 'Agile' to Selene
+Successfully added 4 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
 Adding 3 traits to Ragnar (current: 1, target: 4)
-Added trait 'Cool Scars' to Ragnar
-Added trait 'Mystical' to Ragnar
-Added trait 'Lazy' to Ragnar
+Added trait 'Scarred' to Ragnar
+Added trait 'Delicate' to Ragnar
+Added trait 'Tattooed' to Ragnar
 Successfully added 3 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
-Adding 3 traits to Talon (current: 1, target: 4)
-Added trait 'Shy' to Talon
-Added trait 'Cool Scars' to Talon
-Added trait 'Low Libido' to Talon
-Successfully added 3 traits to Talon
+Adding 2 traits to Talon (current: 1, target: 3)
+Added trait 'Beauty Mark' to Talon
+Added trait 'Quick Learner' to Talon
+Successfully added 2 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Elena
 Adding 4 traits to Elena (current: 1, target: 5)
+Added trait 'High Libido' to Elena
+Added trait 'Quick Learner' to Elena
+Added trait 'Clever' to Elena
 Added trait 'Confident' to Elena
-Added trait 'Stiff' to Elena
-Added trait 'Exotic' to Elena
-Added trait 'Adventurer' to Elena
 Successfully added 4 traits to Elena
 Secondary attributes initialized for Elena
 JSON workers available: 17, All JSON exhausted: False
@@ -1695,18 +1699,12 @@ Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
-Explore button clicked
-Tavern screen displayed
 Synced shop1 unlock from persistent to store: True
 Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
 False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
 Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
 DEBUG: Worker bought! workers_hired: 1, current_objective: 1
 Updating displayed_workers. Starting population...
 Hired worker names: RevertableSet({'Jasmine'})
@@ -1717,123 +1715,124 @@ data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Jasmine
 Adding 3 traits to Jasmine (current: 1, target: 4)
-Added trait 'Brawler' to Jasmine
-Added trait 'Smooth Talker' to Jasmine
-Added trait 'Agile' to Jasmine
+Added trait 'Large Breasts' to Jasmine
+Added trait 'Pessimist' to Jasmine
+Added trait 'Strong' to Jasmine
 Successfully added 3 traits to Jasmine
 Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Orchid
 Adding 3 traits to Orchid (current: 1, target: 4)
-Added trait 'Flexible' to Orchid
-Added trait 'Beautiful' to Orchid
-Added trait 'Numb' to Orchid
+Added trait 'Mystical' to Orchid
+Added trait 'Teacher' to Orchid
+Added trait 'Lazy' to Orchid
 Successfully added 3 traits to Orchid
 Secondary attributes initialized for Orchid
 Secondary attributes initialized for Daisy
-Adding 4 traits to Daisy (current: 1, target: 5)
-Added trait 'Loose' to Daisy
-Added trait 'Rebellious' to Daisy
-Added trait 'Cute' to Daisy
-Added trait 'Confident' to Daisy
-Successfully added 4 traits to Daisy
+Adding 2 traits to Daisy (current: 1, target: 3)
+Added trait 'Lazy' to Daisy
+Added trait 'Tone Deaf' to Daisy
+Successfully added 2 traits to Daisy
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Delilah
-Adding 2 traits to Delilah (current: 1, target: 3)
-Added trait 'Large Breasts' to Delilah
-Added trait 'Teacher' to Delilah
-Successfully added 2 traits to Delilah
+Adding 3 traits to Delilah (current: 1, target: 4)
+Added trait 'Adventurer' to Delilah
+Added trait 'Tattooed' to Delilah
+Added trait 'Open Minded' to Delilah
+Successfully added 3 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Poppy
-Adding 2 traits to Poppy (current: 1, target: 3)
-Added trait 'Conservative' to Poppy
-Added trait 'Agile' to Poppy
-Successfully added 2 traits to Poppy
+Adding 3 traits to Poppy (current: 1, target: 4)
+Added trait 'Strong' to Poppy
+Added trait 'Elegant Eyes' to Poppy
+Added trait 'Pierced' to Poppy
+Successfully added 3 traits to Poppy
 Secondary attributes initialized for Poppy
 Secondary attributes initialized for Rose
 Adding 4 traits to Rose (current: 1, target: 5)
-Added trait 'Tight' to Rose
-Added trait 'Graceful' to Rose
-Added trait 'Clumsy' to Rose
-Added trait 'Elegant' to Rose
+Added trait 'Tough' to Rose
+Added trait 'Nervous' to Rose
+Added trait 'High Libido' to Rose
+Added trait 'Soft Ass' to Rose
 Successfully added 4 traits to Rose
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Thane
-Adding 3 traits to Thane (current: 1, target: 4)
+Adding 4 traits to Thane (current: 1, target: 5)
+Added trait 'Robust' to Thane
+Added trait 'Magnetic' to Thane
 Added trait 'High Libido' to Thane
-Added trait 'Smooth Talker' to Thane
-Added trait 'Smoker' to Thane
-Successfully added 3 traits to Thane
+Added trait 'Exotic' to Thane
+Successfully added 4 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
-Adding 2 traits to Elowen (current: 1, target: 3)
-Added trait 'Playful' to Elowen
-Added trait 'Delicate' to Elowen
-Successfully added 2 traits to Elowen
+Adding 4 traits to Elowen (current: 1, target: 5)
+Added trait 'Pierced' to Elowen
+Added trait 'Tone Deaf' to Elowen
+Added trait 'Beauty Mark' to Elowen
+Added trait 'Scarred' to Elowen
+Successfully added 4 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Zorak
-Adding 4 traits to Zorak (current: 1, target: 5)
-Added trait 'Slow Learner' to Zorak
-Added trait 'Conservative' to Zorak
-Added trait 'Tattooed' to Zorak
-Added trait 'Cool Scars' to Zorak
-Successfully added 4 traits to Zorak
+Adding 3 traits to Zorak (current: 1, target: 4)
+Added trait 'Brawler' to Zorak
+Added trait 'Charismatic' to Zorak
+Added trait 'Smooth Talker' to Zorak
+Successfully added 3 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
 Adding 3 traits to Seraphina (current: 1, target: 4)
-Added trait 'Exotic' to Seraphina
-Added trait 'Stiff' to Seraphina
-Added trait 'Tone Deaf' to Seraphina
+Added trait 'Strong' to Seraphina
+Added trait 'Clever' to Seraphina
+Added trait 'Charismatic' to Seraphina
 Successfully added 3 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
-Adding 3 traits to Kael (current: 1, target: 4)
-Added trait 'Numb' to Kael
-Added trait 'Tattooed' to Kael
-Added trait 'Wise' to Kael
-Successfully added 3 traits to Kael
+Adding 2 traits to Kael (current: 1, target: 3)
+Added trait 'Exotic' to Kael
+Added trait 'Small Penis' to Kael
+Successfully added 2 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 4 traits to Lyria (current: 1, target: 5)
-Added trait 'Pessimist' to Lyria
-Added trait 'Nervous' to Lyria
-Added trait 'Tone Deaf' to Lyria
-Added trait 'Lazy' to Lyria
-Successfully added 4 traits to Lyria
+Adding 2 traits to Lyria (current: 1, target: 3)
+Added trait 'Sadistic' to Lyria
+Added trait 'Singer' to Lyria
+Successfully added 2 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
-Adding 2 traits to Draven (current: 1, target: 3)
-Added trait 'Shy' to Draven
-Added trait 'Agile' to Draven
-Successfully added 2 traits to Draven
+Adding 4 traits to Draven (current: 1, target: 5)
+Added trait 'Robust' to Draven
+Added trait 'Charismatic' to Draven
+Added trait 'Beauty Mark' to Draven
+Added trait 'Tight' to Draven
+Successfully added 4 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
-Adding 4 traits to Selene (current: 1, target: 5)
-Added trait 'Elegant Eyes' to Selene
-Added trait 'Low Libido' to Selene
-Added trait 'Cool Scars' to Selene
-Added trait 'Playful' to Selene
-Successfully added 4 traits to Selene
+Adding 3 traits to Selene (current: 1, target: 4)
+Added trait 'Small Breasts' to Selene
+Added trait 'High Libido' to Selene
+Added trait 'Sensitive' to Selene
+Successfully added 3 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
-Adding 3 traits to Ragnar (current: 1, target: 4)
-Added trait 'Conservative' to Ragnar
+Adding 4 traits to Ragnar (current: 1, target: 5)
+Added trait 'Singer' to Ragnar
+Added trait 'Brawler' to Ragnar
+Added trait 'Pierced' to Ragnar
 Added trait 'Firm Ass' to Ragnar
-Added trait 'Mystical' to Ragnar
-Successfully added 3 traits to Ragnar
+Successfully added 4 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
 Adding 3 traits to Talon (current: 1, target: 4)
-Added trait 'Waitress' to Talon
-Added trait 'Flexible' to Talon
-Added trait 'Clever' to Talon
+Added trait 'Smooth Talker' to Talon
+Added trait 'Exotic' to Talon
+Added trait 'Dependant' to Talon
 Successfully added 3 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Elena
 Adding 4 traits to Elena (current: 1, target: 5)
-Added trait 'Radiant' to Elena
-Added trait 'Tight' to Elena
+Added trait 'Optimist' to Elena
+Added trait 'Pierced' to Elena
+Added trait 'Nympho' to Elena
 Added trait 'Tone Deaf' to Elena
-Added trait 'Determined' to Elena
 Successfully added 4 traits to Elena
 Secondary attributes initialized for Elena
 JSON workers available: 16, All JSON exhausted: False
@@ -1854,13 +1853,7 @@ Final available_workers after update: ['Orchid', 'Daisy', 'Delilah', 'Poppy',
 'Selene', 'Ragnar', 'Talon', 'Elena']
 Final daily_spawns: 0
 Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
-Secondary attributes already initialized for Orchid, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-Secondary attributes already initialized for Delilah, skipping recalculation
 DEBUG: Worker bought! workers_hired: 2, current_objective: 1
 Updating displayed_workers. Starting population...
 Hired worker names: RevertableSet({'Jasmine', 'Orchid'})
@@ -1870,121 +1863,122 @@ Available workers before filtering: ['Daisy', 'Delilah', 'Poppy', 'Rose',
 data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Jasmine
-Adding 4 traits to Jasmine (current: 1, target: 5)
-Added trait 'Small Breasts' to Jasmine
-Added trait 'Confident' to Jasmine
-Added trait 'Soft Ass' to Jasmine
-Added trait 'Delicate' to Jasmine
-Successfully added 4 traits to Jasmine
+Adding 2 traits to Jasmine (current: 1, target: 3)
+Added trait 'Wise' to Jasmine
+Added trait 'Smooth Talker' to Jasmine
+Successfully added 2 traits to Jasmine
 Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Orchid
-Adding 3 traits to Orchid (current: 1, target: 4)
-Added trait 'Nice Tan' to Orchid
-Added trait 'Mystical' to Orchid
-Added trait 'Small Breasts' to Orchid
-Successfully added 3 traits to Orchid
+Adding 4 traits to Orchid (current: 1, target: 5)
+Added trait 'Clever' to Orchid
+Added trait 'Magnetic' to Orchid
+Added trait 'Strong' to Orchid
+Added trait 'Demanding' to Orchid
+Successfully added 4 traits to Orchid
 Secondary attributes initialized for Orchid
 Secondary attributes initialized for Daisy
 Adding 2 traits to Daisy (current: 1, target: 3)
-Added trait 'Tight' to Daisy
-Added trait 'Clever' to Daisy
+Added trait 'Magnetic' to Daisy
+Added trait 'Low Libido' to Daisy
 Successfully added 2 traits to Daisy
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Delilah
-Adding 2 traits to Delilah (current: 1, target: 3)
-Added trait 'Flexible' to Delilah
-Added trait 'Sensitive' to Delilah
-Successfully added 2 traits to Delilah
+Adding 3 traits to Delilah (current: 1, target: 4)
+Added trait 'Flat Chest' to Delilah
+Added trait 'Tight' to Delilah
+Added trait 'Beauty Mark' to Delilah
+Successfully added 3 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Poppy
-Adding 3 traits to Poppy (current: 1, target: 4)
-Added trait 'Clever' to Poppy
-Added trait 'Flat Chest' to Poppy
-Added trait 'Shy' to Poppy
-Successfully added 3 traits to Poppy
+Adding 2 traits to Poppy (current: 1, target: 3)
+Added trait 'Scarred' to Poppy
+Added trait 'Optimist' to Poppy
+Successfully added 2 traits to Poppy
 Secondary attributes initialized for Poppy
 Secondary attributes initialized for Rose
-Adding 3 traits to Rose (current: 1, target: 4)
-Added trait 'Robust' to Rose
-Added trait 'Determined' to Rose
-Added trait 'Exotic' to Rose
-Successfully added 3 traits to Rose
+Adding 2 traits to Rose (current: 1, target: 3)
+Added trait 'Radiant' to Rose
+Added trait 'High Libido' to Rose
+Successfully added 2 traits to Rose
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Thane
-Adding 2 traits to Thane (current: 1, target: 3)
-Added trait 'Numb' to Thane
-Added trait 'Optimist' to Thane
-Successfully added 2 traits to Thane
+Adding 4 traits to Thane (current: 1, target: 5)
+Added trait 'Energetic' to Thane
+Added trait 'Sadistic' to Thane
+Added trait 'Teacher' to Thane
+Added trait 'Firm Ass' to Thane
+Successfully added 4 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
 Adding 4 traits to Elowen (current: 1, target: 5)
-Added trait 'Tattooed' to Elowen
-Added trait 'Optimist' to Elowen
-Added trait 'Energetic' to Elowen
-Added trait 'Hardworking' to Elowen
+Added trait 'Pierced' to Elowen
+Added trait 'Waitress' to Elowen
+Added trait 'Tone Deaf' to Elowen
+Added trait 'Wise' to Elowen
 Successfully added 4 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Zorak
-Adding 2 traits to Zorak (current: 1, target: 3)
-Added trait 'Rebellious' to Zorak
-Added trait 'Pessimist' to Zorak
-Successfully added 2 traits to Zorak
+Adding 3 traits to Zorak (current: 1, target: 4)
+Added trait 'Demanding' to Zorak
+Added trait 'Loose' to Zorak
+Added trait 'Teacher' to Zorak
+Successfully added 3 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
-Adding 4 traits to Seraphina (current: 1, target: 5)
-Added trait 'Tomboy' to Seraphina
-Added trait 'Sensitive' to Seraphina
-Added trait 'Firm Ass' to Seraphina
-Added trait 'Pierced' to Seraphina
-Successfully added 4 traits to Seraphina
+Adding 3 traits to Seraphina (current: 1, target: 4)
+Added trait 'High Libido' to Seraphina
+Added trait 'Lazy' to Seraphina
+Added trait 'Clumsy' to Seraphina
+Successfully added 3 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
-Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Tomboy' to Kael
-Added trait 'High Libido' to Kael
-Successfully added 2 traits to Kael
+Adding 4 traits to Kael (current: 1, target: 5)
+Added trait 'Flexible' to Kael
+Added trait 'Conservative' to Kael
+Added trait 'Clever' to Kael
+Added trait 'Exotic' to Kael
+Successfully added 4 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 3 traits to Lyria (current: 1, target: 4)
-Added trait 'Cute' to Lyria
-Added trait 'Clumsy' to Lyria
-Added trait 'Flat Chest' to Lyria
-Successfully added 3 traits to Lyria
+Adding 2 traits to Lyria (current: 1, target: 3)
+Added trait 'Charming' to Lyria
+Added trait 'Wise' to Lyria
+Successfully added 2 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
-Adding 3 traits to Draven (current: 1, target: 4)
-Added trait 'Cool Scars' to Draven
-Added trait 'Clever' to Draven
-Added trait 'Loose' to Draven
-Successfully added 3 traits to Draven
+Adding 4 traits to Draven (current: 1, target: 5)
+Added trait 'Beautiful' to Draven
+Added trait 'Low Libido' to Draven
+Added trait 'Shy' to Draven
+Added trait 'Smoker' to Draven
+Successfully added 4 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
 Adding 3 traits to Selene (current: 1, target: 4)
-Added trait 'Nice Tan' to Selene
-Added trait 'Adventurer' to Selene
-Added trait 'Tough' to Selene
+Added trait 'Rebellious' to Selene
+Added trait 'Singer' to Selene
+Added trait 'Clumsy' to Selene
 Successfully added 3 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
-Adding 3 traits to Ragnar (current: 1, target: 4)
-Added trait 'Elegant' to Ragnar
-Added trait 'Adventurer' to Ragnar
-Added trait 'Optimist' to Ragnar
-Successfully added 3 traits to Ragnar
+Adding 2 traits to Ragnar (current: 1, target: 3)
+Added trait 'Loose' to Ragnar
+Added trait 'Radiant' to Ragnar
+Successfully added 2 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
-Adding 2 traits to Talon (current: 1, target: 3)
-Added trait 'Mystical' to Talon
-Added trait 'Demanding' to Talon
-Successfully added 2 traits to Talon
+Adding 3 traits to Talon (current: 1, target: 4)
+Added trait 'Charming' to Talon
+Added trait 'Numb' to Talon
+Added trait 'Clever' to Talon
+Successfully added 3 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Elena
-Adding 4 traits to Elena (current: 1, target: 5)
-Added trait 'Brawler' to Elena
-Added trait 'Quick Learner' to Elena
-Added trait 'Low Libido' to Elena
-Added trait 'Open Minded' to Elena
-Successfully added 4 traits to Elena
+Adding 3 traits to Elena (current: 1, target: 4)
+Added trait 'Clumsy' to Elena
+Added trait 'Slow Learner' to Elena
+Added trait 'Playful' to Elena
+Successfully added 3 traits to Elena
 Secondary attributes initialized for Elena
 JSON workers available: 15, All JSON exhausted: False
 Secondary attributes already initialized for Daisy, skipping recalculation
@@ -2004,13 +1998,12 @@ Final available_workers after update: ['Daisy', 'Delilah', 'Poppy', 'Rose',
 'Ragnar', 'Talon', 'Elena']
 Final daily_spawns: 0
 Tavern screen displayed
+Tavern screen displayed
 Synced shop1 unlock from persistent to store: True
 Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
 False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
 Secondary attributes already initialized for Daisy, skipping recalculation
-Secondary attributes already initialized for Delilah, skipping recalculation
-Secondary attributes already initialized for Poppy, skipping recalculation
 DEBUG: Worker bought! workers_hired: 3, current_objective: 1
 DEBUG: Reached 3 workers! Calling check_tutorial_objective...
 DEBUG: Before calling - tutorial_active: True, current_objective: 1,
@@ -2040,7 +2033,14 @@ Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
 Manage Buildings button clicked
+Tavern screen displayed
+Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
@@ -2050,7 +2050,6 @@ DEBUG: check_objective_completion called - tutorial_active: True,
 current_objective: 2
 DEBUG: Objective 2 completed!
 DEBUG: show_objective_2_dialogue - STARTING DIALOGUE
-Tavern screen displayed
 'Tis the business I shall focus upon, for the present hour...
 
 Tavern screen displayed
@@ -2066,28 +2065,6 @@ DEBUG: tavern_screen - current_objective=3, tutorial_active=True, money=$1300,
 obj4_dialogue_shown=False
 Tavern screen displayed
 Tavern screen displayed
-Explore button clicked
-Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
-Tavern screen displayed
-Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
-Tavern screen displayed
-Secondary attributes already initialized for Delilah, skipping recalculation
-Secondary attributes already initialized for Poppy, skipping recalculation
-Secondary attributes already initialized for Rose, skipping recalculation
-Secondary attributes already initialized for Thane, skipping recalculation
-Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
-Tavern screen displayed
-Tavern screen displayed
-Tavern screen displayed
 Tavern screen displayed
 DEBUG: check_objective_completion called - tutorial_active: True,
 current_objective: 3
@@ -2095,85 +2072,11 @@ Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
-Workers button clicked
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-DEBUG: check_objective_completion called - tutorial_active: True,
-current_objective: 3
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-DEBUG: check_objective_completion called - tutorial_active: True,
-current_objective: 3
-Tavern screen displayed
-Tavern screen displayed
-Tavern screen displayed
-Tavern screen displayed
-Secondary attributes already initialized for Jasmine, skipping recalculation
-Secondary attributes already initialized for Orchid, skipping recalculation
-DEBUG: check_objective_completion called - tutorial_active: True,
-current_objective: 3
-DEBUG: Objective 3 completed!
-DEBUG: show_objective_3_dialogue - STARTING DIALOGUE
-Tavern screen displayed
-Each worker doth bring their own gifts and talents to this enterprise.
-
-Tavern screen displayed
-Choose the right soul for the right profession, and we shall be well upon our
-way to prosperity.
-
-Tavern screen displayed
-Should I require more detail on how they have performed, I may open the Daily
-Report and examine the results.
-
-Tavern screen displayed
-My journal hath been inscribed with the next duty.
-
-DEBUG: show_objective_3_dialogue - FINISHED DIALOGUE
-DEBUG: tavern_screen label - STARTING
-DEBUG: tavern_screen - current_objective=4, tutorial_active=True, money=$1300,
-obj4_dialogue_shown=False
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 DEBUG: check_objective_completion called - tutorial_active: True,
-current_objective: 4
+current_objective: 8
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed

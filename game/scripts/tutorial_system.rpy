@@ -507,6 +507,97 @@ screen journal_panel():
 
                     null height 20
 
+                    # Tutorial quick access links for objectives 1-7
+                    if current_objective == 1:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Map > Buy Servants":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("map_screen")]
+                    
+                    elif current_objective == 2:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Manage Buildings > Select building > Building Type":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("Building_select_global")]
+                    
+                    elif current_objective == 3:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Workers > Worker Name > Assign Building > Select Job":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("workers")]
+                    
+                    elif current_objective == 4:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Tavern > Next Day":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("tavern")]
+                    
+                    elif current_objective == 5:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Map > Shop":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("map_screen")]
+                        textbutton "Workers > Worker Name > Details > Inventory":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("workers")]
+                    
+                    elif current_objective == 6:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Manage Buildings > Select building > Upgrade Building":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("Building_select_global")]
+                        textbutton "Manage Buildings > Select building > Skill Bonus":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("Building_select_global")]
+                        text "Tip: Each +10 supplies bonus costs $100/day." size 18 color "#6b6528"
+                    
+                    elif current_objective == 7:
+                        text "Tutorial:":
+                            size 22
+                            color "#7a4b2a"
+                        textbutton "Workers > Worker Name > Details > Interactions > Friendly Chat":
+                            xsize 520
+                            text_size 20
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("workers")]
+
                     # MARK AS COMPLETE buttons for objectives 8+
                     if current_objective == 8:
                         $ can_complete_8 = can_complete_objective_8()
