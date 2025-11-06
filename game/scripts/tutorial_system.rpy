@@ -90,7 +90,7 @@ default objective_descriptions = {
     
     3: "Each worker in my service doth possess their own gifts and talents, bestowed by fate and honed through experience. A wise lord doth employ his workers according to their greatest strengths, for 'tis through such wisdom that empires are built. I must assign three workers to their destined professions - for efficiency shall be the cornerstone upon which wealth is swiftly accumulated.",
     
-    4: "Gold is the lifeblood of power, and power is the weapon I must wield. Six thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources I shall require for the reckoning that approaches.",
+    4: "Gold is the lifeblood of power, and power is the weapon I must wield. Five thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources I shall require for the reckoning that approaches.",
     
     5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors shall I learn to tend to my workers' needs and employ items with wisdom and effectiveness.",
     
@@ -194,7 +194,7 @@ init python:
             else:
                 return f"Progress: {workers_assigned_count}/3 workers assigned to professions"
         elif current_objective == 4:
-            return f"Progress: {money}/6000 Coins"
+            return f"Progress: {money}/5000 Coins"
         elif current_objective == 5:
             if store.potion_purchased and store.potion_transferred and store.potion_used_on_worker:
                 return "Progress: Energy potion's power hath been witnessed ->"
@@ -304,6 +304,68 @@ init python:
                     return True
         return False
     
+    def can_complete_objective_8():
+        """Check if objective 8 conditions are met"""
+        # Check prerequisite: objective 7 must be complete
+        if not getattr(store, 'objective_7_complete', False):
+            return False
+        actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+        actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
+        return actual_buildings >= 2 and actual_workers >= 10 and money >= 10000
+    
+    def can_complete_objective_10():
+        """Check if objective 10 conditions are met"""
+        # Check prerequisite: objective 9 must be complete
+        if not getattr(store, 'objective_9_complete', False):
+            return False
+        return money >= 50000
+    
+    def can_complete_objective_11():
+        """Check if objective 11 conditions are met"""
+        # Check prerequisite: objective 10 must be complete
+        if not getattr(store, 'objective_10_complete', False):
+            return False
+        actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
+        return actual_workers >= 20
+    
+    def can_complete_objective_12():
+        """Check if objective 12 conditions are met"""
+        # Check prerequisite: objective 11 must be complete
+        if not getattr(store, 'objective_11_complete', False):
+            return False
+        return (has_item_anywhere("binding_gem") and 
+                has_item_anywhere("obsidian_blade") and 
+                has_item_anywhere("enchanted_ring"))
+    
+    def can_complete_objective_13():
+        """Check if objective 13 conditions are met"""
+        # Check prerequisite: objective 12 must be complete
+        if not getattr(store, 'objective_12_complete', False):
+            return False
+        actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+        return actual_buildings >= 5
+    
+    def can_complete_objective_14():
+        """Check if objective 14 conditions are met"""
+        # Check prerequisite: objective 13 must be complete
+        if not getattr(store, 'objective_13_complete', False):
+            return False
+        warriors = count_workers_with_skill("Combat", 80)
+        unique_agents = 0
+        for w in store.workers:
+            clever = _get_worker_skill_value(w, "Clever")
+            charm = _get_worker_skill_value(w, "Charm")
+            if clever >= 80 or charm >= 80:
+                unique_agents += 1
+        return warriors >= 3 and unique_agents >= 2
+    
+    def can_complete_objective_15():
+        """Check if objective 15 conditions are met"""
+        # Check prerequisite: objective 14 must be complete
+        if not getattr(store, 'objective_14_complete', False):
+            return False
+        return store.event_flags.get("daily_revenue_10k_achieved", False)
+    
     def check_objective_completion():
         global current_objective, tutorial_active
         global objective_1_complete, objective_2_complete, objective_3_complete, objective_4_complete
@@ -318,116 +380,68 @@ init python:
         if not tutorial_active:
             renpy.log("DEBUG: Tutorial not active, returning")
             return
-            
-        if current_objective == 1 and workers_hired >= 3 and not objective_1_complete:
+        
+        # Helper function to check if previous objective is complete
+        def is_previous_objective_complete(obj_num):
+            if obj_num == 1:
+                return True  # First objective has no prerequisite
+            prev_obj_complete = getattr(store, f'objective_{obj_num - 1}_complete', False)
+            return prev_obj_complete
+        
+        # Objectives 1-7: Auto-complete with prerequisite checks
+        if current_objective == 1 and is_previous_objective_complete(1) and workers_hired >= 3 and not objective_1_complete:
             renpy.log("DEBUG: Objective 1 completed!")
             objective_1_complete = True
             current_objective = 2
             renpy.call_in_new_context("show_objective_1_dialogue")
             
-        elif current_objective == 2 and building_1_type_set and not objective_2_complete:
+        elif current_objective == 2 and is_previous_objective_complete(2) and building_1_type_set and not objective_2_complete:
             renpy.log("DEBUG: Objective 2 completed!")
             objective_2_complete = True
             current_objective = 3
             renpy.call_in_new_context("show_objective_2_dialogue")
             
-        elif current_objective == 3 and workers_assigned_count >= 3 and not objective_3_complete:
+        elif current_objective == 3 and is_previous_objective_complete(3) and workers_assigned_count >= 3 and not objective_3_complete:
             renpy.log("DEBUG: Objective 3 completed!")
             objective_3_complete = True
             current_objective = 4
             renpy.call_in_new_context("show_objective_3_dialogue")
             
-        elif current_objective == 4 and money >= 6000 and not objective_4_complete:
-            renpy.log("DEBUG: Objective 4 completed!")
+        elif current_objective == 4 and is_previous_objective_complete(4) and money >= 5000 and not objective_4_complete:
+            # Double-check that objective 3 is actually complete
+            if not objective_3_complete:
+                renpy.log(f"DEBUG: Objective 4 check failed - objective 3 not complete! (objective_3_complete={objective_3_complete})")
+                return
+            # Additional safety check: verify we're actually on objective 4 and previous objectives are done
+            if current_objective != 4:
+                renpy.log(f"DEBUG: Objective 4 check failed - current_objective is {current_objective}, not 4!")
+                return
+            renpy.log(f"DEBUG: Objective 4 completed! (money={money}, objective_3_complete={objective_3_complete})")
             objective_4_complete = True
             current_objective = 5
-            store.pending_objective_4_dialogue = True
+            renpy.call_in_new_context("show_objective_4_dialogue")
             
-        elif current_objective == 5 and store.potion_purchased and store.potion_transferred and store.potion_used_on_worker and not objective_5_complete:
+        elif current_objective == 5 and is_previous_objective_complete(5) and store.potion_purchased and store.potion_transferred and store.potion_used_on_worker and not objective_5_complete:
             renpy.log("DEBUG: Objective 5 completed!")
             objective_5_complete = True
             current_objective = 6
             renpy.call_in_new_context("show_objective_5_dialogue")
             
-        elif current_objective == 6 and store.building_upgraded_tutorial and store.building_skill_bonus_increased_tutorial and not store.objective_6_complete:
+        elif current_objective == 6 and is_previous_objective_complete(6) and store.building_upgraded_tutorial and store.building_skill_bonus_increased_tutorial and not store.objective_6_complete:
             renpy.log("DEBUG: Objective 6 completed!")
             store.objective_6_complete = True
             current_objective = 7
             renpy.call_in_new_context("show_objective_6_outro")
             
-        elif current_objective == 7 and store.tutorial_friendly_chat_done and not objective_7_complete:
+        elif current_objective == 7 and is_previous_objective_complete(7) and store.tutorial_friendly_chat_done and not objective_7_complete:
             renpy.log("DEBUG: Objective 7 completed!")
             objective_7_complete = True
             current_objective = 8
             renpy.call_in_new_context("show_objective_7_dialogue")
 
-        elif current_objective == 8:
-            actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
-            actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
-            if actual_buildings >= 2 and actual_workers >= 10 and money >= 10000 and not store.objective_8_complete:
-                renpy.log("DEBUG: Objective 8 completed!")
-                store.objective_8_complete = True
-                # Set as event flag for event conditions
-                if not hasattr(store, 'event_flags') or store.event_flags is None:
-                    store.event_flags = {}
-                store.event_flags["objective_8_complete"] = True
-                store.current_objective = 9
-                renpy.call_in_new_context("show_objective_8_dialogue")
-        
-        # New objectives 10-16
-        elif current_objective == 10 and money >= 50000 and not objective_10_complete:
-            renpy.log("DEBUG: Objective 10 completed!")
-            objective_10_complete = True
-            current_objective = 11
-            renpy.call_in_new_context("show_objective_10_dialogue")
-        
-        elif current_objective == 11:
-            actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
-            if actual_workers >= 20 and not objective_11_complete:
-                renpy.log("DEBUG: Objective 11 completed!")
-                objective_11_complete = True
-                current_objective = 12
-                renpy.call_in_new_context("show_objective_11_dialogue")
-        
-        elif current_objective == 12 and not objective_12_complete:
-            has_all_artifacts = (has_item_anywhere("binding_gem") and 
-                               has_item_anywhere("obsidian_blade") and 
-                               has_item_anywhere("enchanted_ring"))
-            if has_all_artifacts:
-                renpy.log("DEBUG: Objective 12 completed!")
-                objective_12_complete = True
-                current_objective = 13
-                renpy.call_in_new_context("show_objective_12_dialogue")
-        
-        elif current_objective == 13:
-            actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
-            if actual_buildings >= 5 and not objective_13_complete:
-                renpy.log("DEBUG: Objective 13 completed!")
-                objective_13_complete = True
-                current_objective = 14
-                renpy.call_in_new_context("show_objective_13_dialogue")
-        
-        elif current_objective == 14 and not objective_14_complete:
-            warriors = count_workers_with_skill("Combat", 80)
-            # Count unique workers (a worker can't be counted twice)
-            # Use calculate_skill_with_traits to include equipment bonuses
-            unique_agents = 0
-            for w in store.workers:
-                clever = _get_worker_skill_value(w, "Clever")
-                charm = _get_worker_skill_value(w, "Charm")
-                if clever >= 80 or charm >= 80:
-                    unique_agents += 1
-            if warriors >= 3 and unique_agents >= 2:
-                renpy.log("DEBUG: Objective 14 completed!")
-                objective_14_complete = True
-                current_objective = 15
-                renpy.call_in_new_context("show_objective_14_dialogue")
-        
-        elif current_objective == 15 and store.event_flags.get("daily_revenue_10k_achieved", False) and not objective_15_complete:
-            renpy.log("DEBUG: Objective 15 completed!")
-            objective_15_complete = True
-            current_objective = 16
-            renpy.call_in_new_context("show_objective_15_dialogue")
+        # Objectives 8+: Manual completion only (no auto-completion)
+        # These objectives will only be marked complete via "MARK AS COMPLETE" button in journal
+        # We still check conditions here to enable the button, but don't auto-advance
 
 
 # ===== WRAPPER FUNCTION FOR GLOBAL ACCESS =====
@@ -493,7 +507,164 @@ screen journal_panel():
 
                     null height 20
 
-                    if current_objective == 9:
+                    # MARK AS COMPLETE buttons for objectives 8+
+                    if current_objective == 8:
+                        $ can_complete_8 = can_complete_objective_8()
+                        if can_complete_8:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_8_complete", True),
+                                    SetVariable("current_objective", 9),
+                                    Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
+                                    Function(lambda: store.event_flags.update({'objective_8_complete': True})),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_8_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 10:
+                        $ can_complete_10 = can_complete_objective_10()
+                        if can_complete_10:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_10_complete", True),
+                                    SetVariable("current_objective", 11),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_10_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 11:
+                        $ can_complete_11 = can_complete_objective_11()
+                        if can_complete_11:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_11_complete", True),
+                                    SetVariable("current_objective", 12),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_11_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 12:
+                        $ can_complete_12 = can_complete_objective_12()
+                        if can_complete_12:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_12_complete", True),
+                                    SetVariable("current_objective", 13),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_12_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 13:
+                        $ can_complete_13 = can_complete_objective_13()
+                        if can_complete_13:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_13_complete", True),
+                                    SetVariable("current_objective", 14),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_13_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 14:
+                        $ can_complete_14 = can_complete_objective_14()
+                        if can_complete_14:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_14_complete", True),
+                                    SetVariable("current_objective", 15),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_14_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 15:
+                        $ can_complete_15 = can_complete_objective_15()
+                        if can_complete_15:
+                            null height 10
+                            textbutton "MARK AS COMPLETE":
+                                xsize 520
+                                text_size 22
+                                text_color "#2a7a4b"
+                                text_hover_color "#1a5a3b"
+                                action [
+                                    SetVariable("objective_15_complete", True),
+                                    SetVariable("current_objective", 16),
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_15_dialogue")
+                                ]
+                        else:
+                            null height 10
+                            text "Complete the requirements above to mark this objective as complete.":
+                                xsize 520
+                                size 18
+                                color "#6b6528"
+                    
+                    elif current_objective == 9:
                         null height 10
                         text "Choose Your Gambit:" size 24 color "#7a4b2a" xalign 0.5
                         null height 15

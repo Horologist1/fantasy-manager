@@ -516,7 +516,7 @@ label show_objective_4_dialogue:
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_4_dialogue - STARTING DIALOGUE")
     $ store.objective_4_dialogue_shown = True
-    "Six thousand coins in my coffers. Not a fortune, but enough to start thinking about expansion."
+    "Five thousand coins in my coffers. Not a fortune, but enough to start thinking about expansion."
     $ renpy.log("DEBUG: show_objective_4_dialogue - First line shown")
     "I need to start thinking about infrastructure, improving the building to hold more workers, or the gear to be better prepared. Maybe a bit of both?"
     $ renpy.log("DEBUG: show_objective_4_dialogue - Second line shown")
@@ -702,12 +702,15 @@ label tavern_screen():
     $ renpy.log(f"DEBUG: tavern_screen - current_objective={current_obj}, tutorial_active={tutorial_act}, money=${money}, obj4_dialogue_shown={obj4_shown}")
     # Removed pending_exit auto-quit; rely on standard confirmation and quit flow
     
-    # SIMPLIFIED: Show objective 4 dialogue if tutorial is active, money >= 5000, and dialogue not shown yet
-    if tutorial_act and (money >= 5000) and (not obj4_shown):
-        $ renpy.log("DEBUG: tavern_screen - TRIGGERING OBJECTIVE 4 DIALOGUE!")
-        $ store.objective_4_complete = True
-        $ store.current_objective = 5
-        call show_objective_4_dialogue from _call_show_objective_4_dialogue
+    # NOTE: Objective 4 completion is now handled by check_objective_completion() 
+    # which respects prerequisite checks. This auto-trigger is disabled to prevent bypassing prerequisites.
+    # if tutorial_act and (money >= 5000) and (not obj4_shown):
+    #     $ obj3_complete = getattr(store, 'objective_3_complete', False)
+    #     if obj3_complete:
+    #         $ renpy.log("DEBUG: tavern_screen - TRIGGERING OBJECTIVE 4 DIALOGUE!")
+    #         $ store.objective_4_complete = True
+    #         $ store.current_objective = 5
+    #         call show_objective_4_dialogue from _call_show_objective_4_dialogue
     
     # Call the tavern screen
     call screen tavern

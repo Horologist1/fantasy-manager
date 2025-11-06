@@ -5370,19 +5370,22 @@ screen tavern():
     # $ initialize_calendar()
     
     # Auto-trigger objective 4 dialogue - SIMPLE VERSION
-    $ tutorial_act = getattr(store, 'tutorial_active', False)
-    $ obj4_shown = getattr(store, 'objective_4_dialogue_shown', False)
-    $ renpy.log(f"DEBUG: tavern screen check - tutorial_active={tutorial_act}, money=${money}, obj4_shown={obj4_shown}")
-    
-    if tutorial_act and money >= 6000 and not obj4_shown:
-        timer 0.1 action [
-            SetVariable("objective_4_complete", True),
-            SetVariable("current_objective", 5), 
-            SetVariable("objective_4_dialogue_shown", True),
-            Function(renpy.log, "DEBUG: Timer triggering objective 4 dialogue"),
-            Hide("tavern"),
-            Jump("show_objective_4_dialogue")
-        ]
+    # NOTE: This should be handled by check_objective_completion() instead
+    # Keeping this disabled to prevent bypassing prerequisite checks
+    # $ tutorial_act = getattr(store, 'tutorial_active', False)
+    # $ obj4_shown = getattr(store, 'objective_4_dialogue_shown', False)
+    # $ obj3_complete = getattr(store, 'objective_3_complete', False)
+    # $ renpy.log(f"DEBUG: tavern screen check - tutorial_active={tutorial_act}, money=${money}, obj4_shown={obj4_shown}")
+    # 
+    # if tutorial_act and money >= 5000 and not obj4_shown and obj3_complete:
+    #     timer 0.1 action [
+    #         SetVariable("objective_4_complete", True),
+    #         SetVariable("current_objective", 5), 
+    #         SetVariable("objective_4_dialogue_shown", True),
+    #         Function(renpy.log, "DEBUG: Timer triggering objective 4 dialogue"),
+    #         Hide("tavern"),
+    #         Jump("show_objective_4_dialogue")
+    #     ]
     
     zorder 1
     add tavern_bg
