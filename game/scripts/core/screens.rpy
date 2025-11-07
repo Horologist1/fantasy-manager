@@ -3821,6 +3821,8 @@ screen buy_servants_table():
     zorder 90
     modal True
     
+    on "show" action Function(_ensure_buy_workers_loaded)
+    
     add Solid("#00000099")
     frame:
         xalign 0.5

@@ -975,58 +975,84 @@ init python:
         """
         Load workers available for purchase, prioritizing workers defined in JSON files.
         Generates procedural workers when needed, respecting the daily spawn limit.
+        Refills once per day.
         """
-        global daily_spawns
+        global daily_spawns, available_workers
         
-        # Load all workers, including unique ones
+        # Check if we need to refill (is it a new day?)
+        current_date = (store.current_day, store.current_month, store.current_year)
+        last_refill = (store.last_worker_refill_day, store.last_worker_refill_month, store.last_worker_refill_year)
+        
+        is_new_day = (last_refill[0] is None or current_date != last_refill)
+        
+        renpy.log(f"WORKER REFILL CHECK - Current: {current_date}, Last: {last_refill}, New day: {is_new_day}")
+        
+        if not is_new_day:
+            # Same day - return existing workers, filter out hired ones
+            hired_names = {w["name"] for w in workers}
+            available_workers = [w for w in store.available_workers if w.get("name") not in hired_names]
+            renpy.log(f"Same day - using existing workers: {[w.get('name') for w in available_workers]}")
+            return available_workers
+        
+        # NEW DAY - Refill workers
+        renpy.log(f"NEW DAY - Refilling workers")
+        
+        # Load all workers from JSON
         all_workers = load_workers(include_unique=True, include_encounter_only=False)
+        hired_names = {w["name"] for w in workers}
         
-        # Filter out workers already hired or dead
-        hired_worker_names = {w["name"] for w in workers}
-        
-        filtered_workers = [
+        # Get available JSON workers (not hired, not dead, not recruit_only)
+        json_workers = [
             w for w in all_workers
-            if (not w.get("unique", False) or w["name"] not in hired_worker_names) and not is_worker_dead(w["name"])
+            if not w.get("procedural", False)
+            and not w.get("recruit_only", False)  # Exclude recruit_only workers
+            and w["name"] not in hired_names  # Exclude ALL hired workers
+            and not is_worker_dead(w["name"])
         ]
         
-        # Separate JSON-defined workers from procedural ones
-        json_workers = [w for w in filtered_workers if not w.get("procedural", False)]
-        procedural_workers = [w for w in filtered_workers if w.get("procedural", False)]
+        renpy.log(f"Available JSON workers: {len(json_workers)}")
         
-        # Check if all JSON workers are exhausted
-        all_json_exhausted = len(json_workers) == 0
-        renpy.log(f"JSON workers available: {len(json_workers)}, All JSON exhausted: {all_json_exhausted}")
+        # Start fresh
+        available_workers = []
         
-        # Combine JSON and procedural workers
-        available_workers = json_workers + procedural_workers
+        if len(json_workers) > 0:
+            # Use random JSON workers (up to 5) - shuffle for variety each day
+            random.shuffle(json_workers)
+            available_workers = json_workers[:5]
+            renpy.log(f"Using {len(available_workers)} JSON workers: {[w['name'] for w in available_workers]}")
+        else:
+            # JSON exhausted - generate procedural workers
+            renpy.log("JSON workers exhausted - generating procedural workers")
+            while len(available_workers) < 5 and daily_spawns < 5:
+                new_worker = spawn_new_worker()
+                if new_worker:
+                    new_worker["market_worker"] = True
+                    new_worker["procedural"] = True
+                    available_workers.append(new_worker)
+                    daily_spawns += 1
+                    renpy.log(f"Generated procedural worker: {new_worker['name']}")
         
-        # Ensure MAX_DAILY_SPAWNS is defined
-        if not hasattr(store, "MAX_DAILY_SPAWNS"):
-            store.MAX_DAILY_SPAWNS = 5  # Default value if not defined
-        
-        # Always ensure at least 5 workers are available for purchase
-        # Generate procedural workers if needed, but respect the daily spawn limit
-        while len(available_workers) < 5:
-            # Respect daily spawn limit when generating procedural workers
-            if daily_spawns >= store.MAX_DAILY_SPAWNS:
-                renpy.log(f"Daily spawn limit reached ({daily_spawns}/{store.MAX_DAILY_SPAWNS}) in load_buy_workers, stopping generation")
-                break
-            
-            new_worker = spawn_new_worker()
-            if new_worker:
-                new_worker["market_worker"] = True  # Mark as available for purchase
-                new_worker["procedural"] = True  # Mark as procedural
-                available_workers.append(new_worker)
-                daily_spawns += 1  # Track daily spawns
-                renpy.log(f"Generated new procedural worker '{new_worker['name']}' for buy workers market (daily_spawns: {daily_spawns}, all_json_exhausted: {all_json_exhausted})")
-        
-        # Ensure defaults are applied to all workers
+        # Apply defaults
         for worker in available_workers:
             ensure_worker_defaults(worker)
-            worker["market_worker"] = True  # Mark as available for purchase
+            worker["market_worker"] = True
         
-        renpy.log(f"Loaded buy workers: {[w['name'] for w in available_workers]} (JSON exhausted: {all_json_exhausted}, daily_spawns: {daily_spawns})")
+        # Update store
+        store.available_workers = available_workers
+        store.last_worker_refill_day = store.current_day
+        store.last_worker_refill_month = store.current_month
+        store.last_worker_refill_year = store.current_year
+        
+        renpy.log(f"Refilled workers: {[w['name'] for w in available_workers]}")
         return available_workers
+
+    def _ensure_buy_workers_loaded():
+        """Helper function to ensure workers are loaded when buy_servants_table screen is shown."""
+        try:
+            load_buy_workers()
+            update_displayed_workers()
+        except Exception as e:
+            renpy.log(f"Error in _ensure_buy_workers_loaded: {e}")
 
     def load_recruit_workers():
         """
@@ -1383,8 +1409,18 @@ init python:
             "procedural": True,
             "unique": False,
             "encounter_only": False,
-            # Randomize some stats while keeping folder and images
-            "skills": {skill_name: random.randint(5, 15) for skill_name in template["skills"].keys()},
+            # Randomize stats with high potential:
+            # 50% chance: decent (12-28)
+            # 30% chance: great (25-40)
+            # 20% chance: exceptional (35-50)
+            "skills": {
+                skill_name: (
+                    random.randint(12, 28) if (roll := random.random()) < 0.5
+                    else random.randint(25, 40) if roll < 0.8
+                    else random.randint(35, 50)
+                )
+                for skill_name in template["skills"].keys()
+            },
             "cost": random.randint(500, 1500),
             "rebelliousness": random.randint(20, 80),
             "joy": random.randint(20, 80),
@@ -1418,12 +1454,22 @@ init python:
         final_name = generate_unique_name(name_pool, existing_names)
         
         # Create the new worker with named skills only
+        # 50% chance: decent (12-28)
+        # 30% chance: great (25-40)
+        # 20% chance: exceptional (35-50)
         new_worker = {
             "name": final_name,
             "folder": "default",
             "gender": gender,
             "names_list": f"{name_category}_{gender}",
-            "skills": {skill_name: random.randint(5, 15) for skill_name in skill_names.keys()},
+            "skills": {
+                skill_name: (
+                    random.randint(12, 28) if (roll := random.random()) < 0.5
+                    else random.randint(25, 40) if roll < 0.8
+                    else random.randint(35, 50)
+                )
+                for skill_name in skill_names.keys()
+            },
             "traits": [],  # Will be filled by assign_random_traits
             "description": f"A {final_name} from the {name_category} region.",
             "cost": random.randint(500, 1500),
@@ -1503,7 +1549,6 @@ init python:
             renpy.hide_screen("worker_details")
 
     def update_displayed_workers():
-        global daily_spawns
         displayed_workers.clear()
         renpy.log("Updating displayed_workers. Starting population...")
         hired_worker_names = {w["name"] for w in workers}
@@ -1533,23 +1578,10 @@ init python:
             store.MAX_DAILY_SPAWNS = 5  # Default value if not defined
         renpy.log(f"MAX_DAILY_SPAWNS: {store.MAX_DAILY_SPAWNS}")
 
-        # Spawn new workers if needed (up to 5 displayed, respecting daily spawn limit)
-        # Always respect the daily spawn limit, even when JSON workers are exhausted
-        while len(displayed_workers) < 5:
-            # Check daily limit - always respect it
-            if daily_spawns >= store.MAX_DAILY_SPAWNS:
-                renpy.log(f"Daily spawn limit reached ({daily_spawns}/{store.MAX_DAILY_SPAWNS}), stopping generation")
-                break
-            
-            new_worker = spawn_new_worker()
-            if new_worker and (persistent.nsfw_enabled or not new_worker.get("nsfw", False)):
-                ensure_worker_defaults(new_worker)
-                new_worker["market_worker"] = True
-                new_worker["procedural"] = True
-                available_workers.append(new_worker)
-                displayed_workers.append(new_worker)
-                daily_spawns += 1
-                renpy.log(f"Spawned new procedural worker '{new_worker['name']}' - daily_spawns: {daily_spawns}, all_json_exhausted: {all_json_exhausted}")
+        # Don't spawn new workers in update_displayed_workers - only display what's available
+        # Worker refilling should only happen in load_buy_workers() once per day
+        # This prevents instant refills when workers are bought
+        renpy.log(f"update_displayed_workers: Not spawning new workers, only displaying available workers (available: {len(available_workers)}, displayed: {len(displayed_workers)})")
 
         renpy.log(f"Final displayed_workers: {[w['name'] for w in displayed_workers]}")
         renpy.log(f"Final available_workers after update: {[w['name'] for w in available_workers]}")
@@ -2798,6 +2830,9 @@ default current_worker_index = 0
 default current_worker = None  # Updated after workers are loaded
 default daily_spawns = 0
 define MAX_DAILY_SPAWNS = 5
+default last_worker_refill_day = None
+default last_worker_refill_month = None
+default last_worker_refill_year = None
 default custom_names = {
     "Building 1": "Building 1"
 }
