@@ -23,10 +23,17 @@ init python:
                     file_content = f.read()
                     renpy.log(f"File content: {file_content[:200]}...")  # Log first 200 chars
                     file_interactions = json.load(renpy.file(file))
-                    # Filter NSFW interactions
-                    filtered_interactions = [inter for inter in file_interactions 
-                                           if persistent.nsfw_enabled or not inter.get("nsfw", False)]
-                    interactions.extend(filtered_interactions)
+                    # Don't filter NSFW interactions - let player choose when NSFW is enabled
+                    # When NSFW is disabled, only show SFW interactions
+                    if persistent.nsfw_enabled:
+                        # NSFW enabled: show all interactions (both NSFW and SFW)
+                        filtered_interactions = file_interactions
+                        interactions.extend(file_interactions)
+                    else:
+                        # NSFW disabled: only show SFW interactions
+                        filtered_interactions = [inter for inter in file_interactions 
+                                               if not inter.get("nsfw", False)]
+                        interactions.extend(filtered_interactions)
                     loaded_files = True
                     renpy.log(f"Successfully loaded {len(filtered_interactions)} interactions from {file}")
                     # Log the names of loaded interactions
@@ -162,6 +169,60 @@ init python:
             
             # Include interaction if under the limit
             if current_uses < max_uses:
+                filtered.append(interaction)
+        
+        return filtered
+
+    def filter_interactions_by_unlock_level(interactions, worker):
+        """
+        Filter interactions based on unlock level system.
+        Each category has 4 levels:
+        - Level 1: Always available
+        - Level 2: Unlocked after 5 uses of level 1
+        - Level 3: Unlocked after 5 uses of level 2
+        - Level 4: Unlocked after 5 uses of level 3 (farmeable, optimal cost/benefit)
+        """
+        filtered = []
+        if not worker.get("flags"):
+            worker["flags"] = {}
+        
+        for interaction in interactions:
+            interaction_level = interaction.get("interaction_level", 1)
+            category = interaction.get("categories", [])
+            
+            # If no category or level specified, include it (for backwards compatibility)
+            if not category or interaction_level is None:
+                filtered.append(interaction)
+                continue
+            
+            # Get the main category (first one)
+            main_category = category[0] if category else "Other"
+            
+            # Build flag name for tracking uses in this category
+            category_flag_base = f"{main_category.lower()}_uses"
+            
+            # Level 1 is always available
+            if interaction_level == 1:
+                filtered.append(interaction)
+                continue
+            
+            # For levels 2, 3, and 4, check if previous level has been used enough
+            required_uses = 5
+            previous_level = interaction_level - 1
+            
+            # Check uses of previous level
+            previous_level_flag = f"{category_flag_base}_level_{previous_level}"
+            previous_uses = 0
+            flag_value = worker.get("flags", {}).get(previous_level_flag)
+            
+            if flag_value is not None:
+                if isinstance(flag_value, dict) and "value" in flag_value:
+                    previous_uses = flag_value.get("value", 0)
+                elif isinstance(flag_value, (int, float)):
+                    previous_uses = flag_value
+            
+            # Unlock if previous level has been used enough times
+            if previous_uses >= required_uses:
                 filtered.append(interaction)
         
         return filtered
@@ -313,6 +374,31 @@ init python:
                 else:
                     # Add or update flag normally
                     worker["flags"][flag_name] = flag_value
+        
+        # Track interaction usage for unlock system
+        interaction_level = interaction.get("interaction_level", 1)
+        category = interaction.get("categories", [])
+        
+        if category and interaction_level:
+            main_category = category[0] if category else "Other"
+            category_flag_base = f"{main_category.lower()}_uses"
+            level_flag = f"{category_flag_base}_level_{interaction_level}"
+            
+            # Increment usage count for this level
+            current_uses = 0
+            flag_value = worker["flags"].get(level_flag)
+            
+            if flag_value is not None:
+                if isinstance(flag_value, dict) and "value" in flag_value:
+                    current_uses = flag_value.get("value", 0)
+                elif isinstance(flag_value, (int, float)):
+                    current_uses = flag_value
+            
+            # Increment and store
+            worker["flags"][level_flag] = {
+                "value": current_uses + 1,
+                "duration": -1  # Permanent
+            }
         
         # Apply costs
         worker["energy"] = max(0, worker["energy"] - interaction.get("cost_energy", 0))

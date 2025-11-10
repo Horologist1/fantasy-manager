@@ -80,11 +80,22 @@ init python:
 
         worker.setdefault("success_count", 0)
 
-        if "traits" not in worker or not worker["traits"]:
-            assign_random_traits(worker)
+        # Unique workers should not get random traits - they should only have traits defined in JSON
+        if worker.get("unique", False):
+            # For unique workers, only validate existing traits, don't assign random ones
+            if "traits" in worker and worker["traits"]:
+                valid_traits = [trait for trait in worker["traits"] if trait in [t["name"] for t in traits_list]]
+                worker["traits"] = valid_traits
+            # If no traits defined, keep empty list (don't assign random)
+            elif "traits" not in worker:
+                worker["traits"] = []
         else:
-            valid_traits = [trait for trait in worker["traits"] if trait in [t["name"] for t in traits_list]]
-            worker["traits"] = valid_traits
+            # Non-unique workers can get random traits if they don't have any
+            if "traits" not in worker or not worker["traits"]:
+                assign_random_traits(worker)
+            else:
+                valid_traits = [trait for trait in worker["traits"] if trait in [t["name"] for t in traits_list]]
+                worker["traits"] = valid_traits
 
         # Preserve existing comfort_level if it exists, otherwise set to comfort_desired or default to 1
         if "comfort_level" not in worker:

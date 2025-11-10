@@ -1,0 +1,2539 @@
+[
+  {
+    "id": "discipline_level1_lord_female",
+    "name": "Gentle Correction",
+    "description": "I speak with firmness yet kindness, instructing the worker to follow my commands with greater care. She listens attentively and nods in understanding, her eyes showing respect for my authority.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -3,
+      "relationship": 1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_gentle",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level1_lord_male_platonic",
+    "name": "Direct Talk",
+    "description": "I hold a forthright discourse upon the importance of following orders. He respects my direct manner and agrees to be more attentive to my commands.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -3,
+      "relationship": 1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_talk",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level1_lady_female_platonic",
+    "name": "Kind Guidance",
+    "description": "I offer gentle yet firm guidance, aiding the worker to comprehend the importance of following my instructions. She appreciates my patient manner and shows gratitude for my wisdom.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -3,
+      "relationship": 1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_gentle",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level1_lady_male",
+    "name": "Respectful Reminder",
+    "description": "I remind the worker of his duties with grace and authority. He responds well to my clear expectations and respectful tone, showing proper deference to my station.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -3,
+      "relationship": 1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_talk",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level2_lord_female",
+    "name": "Firm Training",
+    "description": "I put the worker through a structured training regimen designed to build discipline and focus. She works hard to meet my expectations, and I can see her resolve strengthening like iron forged in flame.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "rebelliousness": -5,
+      "relationship": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_training",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level2_lord_male_platonic",
+    "name": "Intensive Training",
+    "description": "I lead the worker through a challenging yet fair training program that tests his limits whilst building mutual respect. He emerges stronger and more disciplined, his spirit tempered like steel in the forge.",
+    "interaction_level": 2,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "rebelliousness": -5,
+      "relationship": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_intensive",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level2_lady_female_platonic",
+    "name": "Structured Guidance",
+    "description": "I provide comprehensive training that combines firmness with understanding. She appreciates my methodical approach and grows more disciplined under my tutelage, her will shaped by my wisdom.",
+    "interaction_level": 2,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "rebelliousness": -5,
+      "relationship": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_training",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level2_lady_male",
+    "name": "Rigorous Instruction",
+    "description": "I guide the worker through demanding exercises that build both skill and discipline. He respects my authority and responds well to my structured approach, his loyalty deepening with each trial.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "rebelliousness": -5,
+      "relationship": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_intensive",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lord_female_nsfw",
+    "name": "Demand Complete Submission",
+    "description": "I lead her to my private chambers, where the air itself seems to bend to my will. With measured steps and commanding presence, I guide her through a ritual of submission. She kneels before me, her eyes reflecting both trepidation and desire. As I assert my dominance through carefully chosen words and commanding gestures, she finds herself surrendering completely, discovering an unexpected ecstasy in the act of yielding. Her body responds to my every command, moving in perfect harmony with my will, until she is lost in the intoxicating dance of submission and control.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "romance": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_submission",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lord_female_sfw",
+    "name": "Assert Absolute Authority",
+    "description": "I summon her to my study, where the weight of authority hangs heavy in the air. Seated in my chair, I speak with measured authority, each word carefully chosen to reinforce the hierarchy between us. She stands before me, listening intently as I outline her duties and expectations with unwavering clarity. Through this structured discourse, she comes to understand the true meaning of service and discipline. By the end of our session, her posture has straightened, her resolve has strengthened, and her devotion to my cause has become absolute.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_submission",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lord_male_romantic_nsfw",
+    "name": "Alpha Dominance",
+    "description": "I call him to the training grounds at dusk, where shadows stretch long and the air carries the weight of purpose. Standing face to face, I command his attention with unwavering presence. Through a series of physical challenges and psychological tests, I demonstrate my superior strength and will. He matches my intensity, but gradually yields to my dominance, finding a strange satisfaction in acknowledging my alpha status. As the session concludes, he kneels before me, his loyalty forged in the fires of mutual respect and tested strength.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "romance": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_alpha",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lord_male_romantic_sfw",
+    "name": "Alpha Leadership",
+    "description": "I summon him to my study, where maps and strategies cover the walls. Seated at my desk, I engage him in a discussion of tactics and leadership, my voice carrying the weight of experience and authority. Through this intellectual exchange, I demonstrate my superior understanding of command and strategy. He listens intently, recognizing the depth of my leadership. By the end of our conversation, he stands straighter, his respect for my authority solidified, his devotion to my cause unwavering.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "romance": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_alpha",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lord_male_platonic",
+    "name": "Master's Authority",
+    "description": "I lead him to the training hall, where the scent of leather and steel fills the air. Through a rigorous session of physical and mental discipline, I establish my complete authority. He follows my commands with precision, each movement executed under my watchful eye. As we progress, the boundary between master and servant becomes clear, yet he finds fulfillment in this structure. His honor becomes bound to my will, and he serves with perfect discipline, recognizing the value of true mastery.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_alpha",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lady_female_romantic_nsfw",
+    "name": "Demand Absolute Obedience",
+    "description": "I invite her to my private chambers, where soft candlelight casts dancing shadows upon the walls. With graceful authority, I guide her through a ritual of submission. She moves with elegant precision, each gesture a testament to my control. As I speak words of command and expectation, she finds herself drawn deeper into the dance of dominance and submission. Her body responds to my every directive, surrendering completely to my will. In this intimate space, she discovers fulfillment in perfect obedience, her devotion becoming absolute.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "romance": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_submission",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lady_female_romantic_sfw",
+    "name": "Demand Perfect Obedience",
+    "description": "I summon her to my private study, where the air carries the scent of old books and authority. Seated in my chair, I speak with elegant precision, each word carefully chosen to reinforce the bond between master and servant. She stands before me, listening with rapt attention as I outline the principles of perfect service. Through this structured discourse, she comes to understand the beauty of complete obedience. Her posture softens, her resolve strengthens, and her loyalty becomes unbreakable, forged in the fires of this intimate exchange.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "romance": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_submission",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lady_female_platonic",
+    "name": "Enforce Complete Discipline",
+    "description": "I lead her to the training chamber, where mirrors line the walls and the floor bears the marks of countless practice sessions. Through a structured regimen of physical discipline and mental fortitude, I establish complete control. She follows my instructions with unwavering precision, each movement executed under my watchful guidance. As the session progresses, she finds herself surrendering completely to my will, discovering fulfillment in perfect discipline and service. Her resolve becomes unshakeable, her commitment to excellence absolute.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_submission",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lady_male_nsfw",
+    "name": "Demand Total Submission",
+    "description": "I invite him to my private quarters, where the atmosphere shifts to one of absolute control. Standing before me, he feels the weight of my authority settle upon his shoulders. With precise commands and unyielding presence, I guide him through a practice of submission. He kneels, his body responding to my directives with practiced obedience. As the session progresses, he finds himself surrendering completely to my will, discovering a profound sense of purpose in serving me. His devotion becomes absolute, forged in the fires of this intimate ritual of dominance and submission.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "romance": 2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_alpha",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_lady_male_sfw",
+    "name": "Assert Complete Authority",
+    "description": "I summon him to my private quarters, where the atmosphere shifts to one of absolute command. Standing before me, he feels the weight of my refined authority settle upon him. Through a series of precise commands and structured exercises, I guide him toward complete submission. He follows my directives with disciplined precision, each action a testament to my control. As the session deepens, he finds himself yielding entirely to my will, discovering purpose in serving me with perfect discipline. His honor becomes bound to my service, his loyalty absolute.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_alpha",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_lord_female",
+    "name": "Apply Perfect Discipline",
+    "description": "Through my perfected methods, I achieve optimal results. This efficient interaction provides excellent discipline gains at a reasonable cost, making it ideal for regular use in maintaining order.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -6,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_lord_male_platonic",
+    "name": "Exercise Masterful Control",
+    "description": "My refined techniques achieve maximum efficiency. This well-balanced interaction offers great discipline benefits at an optimal cost, perfect for maintaining order within my domain.",
+    "interaction_level": 4,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -6,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_lady_female_platonic",
+    "name": "Exercise Elegant Authority",
+    "description": "My graceful command achieves perfect results. This efficient interaction provides excellent discipline gains at a reasonable cost, ideal for regular maintenance of my authority.",
+    "interaction_level": 4,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -6,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Discipline"],
+    "image": "discipline_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_lady_male",
+    "name": "Give Refined Command",
+    "description": "My sophisticated approach yields optimal efficiency. This well-balanced interaction offers great discipline benefits at an optimal cost, perfect for ongoing management of my servants.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 0,
+    "effect": {
+      "rebelliousness": -6,
+      "relationship": 3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Discipline"],
+    "image": "discipline_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lord_female_romantic",
+    "name": "Charming Banter",
+    "description": "I engage in witty, charming discourse with subtle compliments and confident bearing. She responds with graceful warmth, creating an electric tension that crackles between us like lightning in a summer storm.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "romance": 3,
+      "relationship": 1,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_banter",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lord_female_platonic",
+    "name": "Respectful Conversation",
+    "description": "I engage in warm, respectful conversation that builds mutual understanding. She appreciates my genuine interest and the professional yet friendly bond between us strengthens, creating a foundation of trust and respect.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_banter",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lord_male_romantic",
+    "name": "Charming Banter",
+    "description": "I engage in witty, charming discourse with subtle compliments and relaxed poise. He responds with warm confidence, and the romantic tension between us grows like a flame kindled in darkness.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "romance": 3,
+      "relationship": 1,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lord_male_platonic",
+    "name": "Share Friendly Time",
+    "description": "I share a genuine, friendly discourse that builds camaraderie. He appreciates my straightforward manner and the mutual respect between us strengthens like bonds forged in fire.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lady_female_romantic",
+    "name": "Playful Flirting",
+    "description": "I engage in light, playful banter with subtle touches and meaningful glances. She responds with knowing smiles and playful teasing that creates an intimate romantic connection between us, as two souls drawn together by fate's design.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "romance": 3,
+      "relationship": 1,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lady_female_platonic",
+    "name": "Share Warm Moments",
+    "description": "I share warm, friendly discourse that builds a deep bond. She appreciates my genuine interest and the friendship between us grows stronger, like roots that dig deep into fertile earth.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lady_male_romantic",
+    "name": "Elegant Flirtation",
+    "description": "I share meaningful looks and subtle touches that go beyond mere friendship. He responds with understanding and reciprocal interest, creating a deeper bond between us that transcends the bounds of simple camaraderie.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "romance": 3,
+      "relationship": 1,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_banter",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lady_male_platonic",
+    "name": "Share Respectful Moment",
+    "description": "I engage in warm, respectful conversation that builds mutual understanding. He appreciates my genuine interest and the professional yet friendly bond between us strengthens, creating a foundation of trust and respect.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_banter",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lord_female",
+    "name": "Share Private Moment",
+    "description": "I invite her to my private quarters as evening falls. The room is bathed in warm candlelight, and I pour us both fine wine. We sit close together, and the conversation flows easily at first, then turns more personal. She shares stories of her past, and I find myself drawn to her vulnerability. Our hands brush as we reach for our glasses, and the touch sends a spark through both of us. The meaningful looks we exchange build undeniable chemistry, as two souls drawn together by desire's flame.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "relationship": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 10,
+      "relationship": 15
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lord_male_romantic",
+    "name": "Intimate Evening",
+    "description": "I arrange a private dinner in my quarters, with fine food and wine laid out on a small table. The candles cast dancing shadows on the walls as evening deepens. He arrives, and we sit across from each other, the conversation flowing like wine. As the night progresses, I find myself sharing deeper romantic feelings and desires I had kept hidden. Our hands touch across the table, fingers lingering, and the intimacy between us grows. The shadows dance with the flames of passion, and we are lost in this moment of connection.",
+    "interaction_level": 2,
+    "interaction_type": "romantic",
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "relationship": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 10,
+      "relationship": 15
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lord_male_platonic",
+    "name": "Deep Conversation",
+    "description": "I invite him to my quarters for an evening of drinks and conversation. We sit together, sharing stories and laughter as the hours pass. The conversation turns to deeper topics - our dreams, our fears, our hopes for the future. He opens up in ways I had not seen before, and I find myself doing the same. The evening deepens our friendship as we discuss life, dreams, and mutual respect, building a strong bond that strengthens like steel forged in friendship's fire.",
+    "interaction_level": 2,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "relationship": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 10,
+      "relationship": 15
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lady_female_romantic",
+    "name": "Intimate Evening",
+    "description": "I arrange a private evening in my chambers, with soft music playing and candles casting warm light throughout the room. I invite her to join me, and we sit together on plush cushions. The atmosphere is intimate and romantic, perfect for exploring our mutual attraction. As the evening deepens, she opens up to me emotionally and physically, sharing secrets and desires. We move closer together, our hands finding each other, deepening our intimate romantic bond, as two hearts beat as one.",
+    "interaction_level": 2,
+    "interaction_type": "romantic",
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "relationship": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 10,
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lady_female_platonic",
+    "name": "Heart-to-Heart",
+    "description": "I invite her to my private chambers, where soft cushions and warm light create a safe, comfortable space. We sit together, and I encourage her to speak freely. Slowly, she opens up to me emotionally, sharing thoughts and feelings she has kept hidden. I listen intently, offering understanding and support. As the evening progresses, our friendship deepens into something truly special, a bond that transcends mere acquaintance.",
+    "interaction_level": 2,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "relationship": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 10,
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lady_male",
+    "name": "Private Adventure",
+    "description": "I plan a special excursion to a secluded spot I know - a hidden garden or a quiet overlook with a view of the city. We slip away together, leaving our duties behind. As we walk, we share stories and laughter, the distance between us closing with each step. In this private space, away from prying eyes, we explore our deeper connection. He trusts me completely, and we share intimate moments of understanding, as two souls united in secret.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "relationship": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 10,
+      "relationship": 15
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_female_nsfw",
+    "name": "Dominant Union",
+    "description": "The evening has been building toward this moment. In my private chambers, the candles burn low as I lead her to my bed. The tension between us finally breaks, and we come together in a storm of passion. I take control, guiding her through waves of ecstasy as our bodies move in perfect harmony. She surrenders completely, finding pleasure in submission, her moans mingling with my commands. We are lost in the dance of dominance and desire, two souls consumed by the fire of our mutual passion.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_dominant",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_female_sfw",
+    "name": "Share Passionate Moment",
+    "description": "The evening has been building toward this moment. In my private chambers, soft candlelight illuminates the room as we sit close together. The romantic tension between us finally reaches its breaking point. I lean in, and our lips meet in a tender yet passionate kiss. We share an intense, intimate moment, our hands exploring each other with gentle urgency. The connection between us deepens through mutual desire and emotional understanding, as two hearts become one in the dance of passion.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_dominant",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_male_romantic_nsfw",
+    "name": "Passionate Night",
+    "description": "The evening has been building toward this moment. In my private chambers, the fire crackles in the hearth as I lead him to my bed. The romantic tension that has been growing between us finally reaches its peak. We come together with hungry passion, exploring each other's bodies with desperate urgency. His low moans fill the air as I claim him completely, our bodies moving in perfect rhythm. We are lost in ecstasy's embrace, two souls united in the fire of our mutual desire.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_male_romantic_sfw",
+    "name": "Intimate Night",
+    "description": "The evening has been building toward this moment. In my private chambers, soft candlelight casts warm shadows as we sit together on the edge of my bed. The romantic tension that has been growing between us finally reaches its peak. I lean in, and our lips meet in a tender, passionate kiss. We share an intense, intimate moment, our hands exploring each other with gentle urgency. The connection between us deepens through mutual desire and emotional understanding, as two hearts beat in perfect harmony.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_male_platonic",
+    "name": "Forge an Alliance",
+    "description": "Through shared challenges and mutual support, I forge a bond deeper than mere acquaintanceship. He comes to see me as a true companion-in-arms, someone he can count on completely, his loyalty forged in the fires of trust and respect.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_female_romantic_nsfw",
+    "name": "Passionate Night",
+    "description": "The evening has been building toward this moment. In my private chambers, the fire crackles in the hearth as I lead her to my bed. The romantic tension that has been growing between us finally reaches its peak. We come together with hungry passion, exploring each other's bodies with desperate urgency. Her soft moans fill the air as we move together in perfect rhythm, lost in the depths of our mutual desire. She surrenders completely to the passion between us, creating memories that will bind us forever, two souls entwined in love's eternal dance.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_female_romantic_sfw",
+    "name": "Intimate Night",
+    "description": "The evening has been building toward this moment. In my private chambers, soft candlelight casts warm shadows as we sit together on the edge of my bed. The romantic tension that has been growing between us finally reaches its peak. I lean in, and our lips meet in a tender, passionate kiss. We share an intense, intimate moment, our hands exploring each other with gentle urgency. She opens up completely to me emotionally, deepening our romantic bond through mutual desire and connection, as two hearts become one.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_female_platonic",
+    "name": "Deepen Sacred Bond",
+    "description": "I share a profound emotional connection that transcends the typical master-worker relationship. She becomes my confidante, my companion-in-spirit, someone who would follow me to the ends of the earth out of pure love and loyalty, her devotion absolute.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_passionate",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_male_nsfw",
+    "name": "Epic Adventure",
+    "description": "I plan a secret excursion beyond the city walls, where we can be truly alone. Under the cover of twilight, we venture into the wilderness together. The adventure pushes the boundaries of our relationship as we navigate challenges side by side. He follows my lead with complete trust and desire, his eyes never leaving mine. As we share this intimate journey, we create an unbreakable bond that binds two souls as one, forged in the fires of shared experience and mutual passion.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_dominant",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_male_sfw",
+    "name": "Passionate Adventure",
+    "description": "I plan a secret excursion to a secluded spot I know, where we can be truly alone. Under the cover of twilight, we venture out together, leaving the city behind. The adventure deepens our relationship as we share intimate moments away from prying eyes. He follows my lead with complete trust and desire, his hand finding mine in the darkness. As we explore together, we create an unbreakable romantic bond, as two hearts beat in perfect harmony.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 3,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_dominant",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 20,
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_female",
+    "name": "Perfect Romantic Evening",
+    "description": "My refined romantic approach achieves optimal results. This efficient interaction provides excellent romance gains at a reasonable cost, making it ideal for regular use in nurturing the flames of passion.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_quality_time",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_male_romantic",
+    "name": "Masterful Romantic Night",
+    "description": "My perfected romantic techniques achieve maximum efficiency. This well-balanced interaction offers great romance benefits at an optimal cost, perfect for maintaining romantic passion within my domain.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_private_moments",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_male_platonic",
+    "name": "Spend Eternal Evening",
+    "description": "My perfected approach to friendship achieves maximum efficiency. This well-balanced interaction offers great relationship benefits at an optimal cost, perfect for maintaining our deep bond.",
+    "interaction_level": 4,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_private_moments",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_female_romantic",
+    "name": "Elegant Romantic Evening",
+    "description": "My graceful romantic approach achieves perfect results. This efficient interaction provides excellent romance gains at a reasonable cost, ideal for regular romantic maintenance of our connection.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_quality_time",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_female_platonic",
+    "name": "Spend Eternal Evening",
+    "description": "My graceful approach to friendship achieves perfect results. This efficient interaction provides excellent relationship gains at a reasonable cost, ideal for regular maintenance of our deep bond.",
+    "interaction_level": 4,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Romance"],
+    "image": "romance_quality_time",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_male",
+    "name": "Refined Romantic Evening",
+    "description": "My sophisticated romantic approach yields optimal efficiency. This well-balanced interaction offers great romance benefits at an optimal cost, perfect for ongoing connection between two hearts.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "relationship": 3,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Romance"],
+    "image": "romance_private_moments",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 30,
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level1_lord_female",
+    "name": "Friendly Chat",
+    "description": "I sit down for a casual conversation about her interests, dreams, and daily life. She opens up gradually, sharing stories and laughs that bring us closer together as friends, the bonds of camaraderie strengthening with each word.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_chat",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level1_lord_male_platonic",
+    "name": " Friendly Chat",
+    "description": "I have a genuine heart-to-heart conversation about life, work, and shared experiences. The camaraderie builds naturally as we discover common ground and mutual respect, like two kindred spirits finding their way home.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherly",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level1_lady_female_platonic",
+    "name": " Friendly Chat",
+    "description": "I sit down for a casual conversation about her interests, dreams, and daily life. She opens up gradually, sharing stories and laughs that bring us closer together as friends, the bonds of camaraderie strengthening with each word.",
+    "interaction_level": 1,
+    "interaction_type": "platonic",
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_chat",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level1_lady_male",
+    "name": "Friendly Chat",
+    "description": "I have a genuine heart-to-heart conversation about life, work, and shared experiences. The camaraderie builds naturally as we discover common ground and mutual respect, like two kindred spirits finding their way home.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 0,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherly",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level2_lord_female",
+    "name": "Heart-to-Heart",
+    "description": "I create a safe space where she may share her deepest thoughts and concerns. Through empathy and understanding, I become someone she truly trusts and values as a close friend, her confidante in times of need.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 8,
+    "effect": {
+      "relationship": 5,
+      "joy": 2,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_heart",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level2_lord_male_platonic",
+    "name": "Build Trusted Partnership",
+    "description": "Through shared challenges and mutual support, I forge a bond deeper than mere acquaintanceship. He comes to see me as a true brother-in-arms, someone he can count on completely, his loyalty forged in the fires of trust and respect.",
+    "interaction_level": 2,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 8,
+    "effect": {
+      "relationship": 5,
+      "joy": 2,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherhood",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level2_lady_female_platonic",
+    "name": "Share Deep Moment",
+    "description": "I create a safe space where she may share her deepest thoughts and concerns. Through empathy and understanding, I become someone she truly trusts and values as a close friend, her confidante in times of need.",
+    "interaction_level": 2,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 8,
+    "effect": {
+      "relationship": 5,
+      "joy": 2,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_heart",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level2_lady_male",
+    "name": "Build Companionship",
+    "description": "Through shared challenges and mutual support, I forge a bond deeper than mere acquaintanceship. He comes to see me as a true brother-in-arms, someone he can count on completely, his loyalty forged in the fires of trust and respect.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 8,
+    "effect": {
+      "relationship": 5,
+      "joy": 2,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_brotherhood",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level3_lord_female",
+    "name": "Build Sacred Trust",
+    "description": "I share a profound emotional connection that transcends the typical master-worker relationship. She becomes my confidante, my sister-in-spirit, someone who would follow me to the ends of the earth out of pure love and loyalty, her devotion absolute.",
+    "interaction_level": 3,
+    "cost_energy": 3,
+    "cost_money": 18,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_soul_sisters",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level3_lord_male_platonic",
+    "name": "Swear Blood Oath",
+    "description": "In a ceremony that bonds us as brothers, I share a connection deeper than blood. He becomes my most trusted ally, my right-hand man, someone who would die for me without question, his loyalty absolute.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 18,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_blood_brothers",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level3_lady_female_platonic",
+    "name": "Form Soul Bond",
+    "description": "I share a profound emotional connection that transcends the typical master-worker relationship. She becomes my confidante, my sister-in-spirit, someone who would follow me to the ends of the earth out of pure love and loyalty, her devotion absolute.",
+    "interaction_level": 3,
+    "interaction_type": "platonic",
+    "cost_energy": 3,
+    "cost_money": 18,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_soul_sisters",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level3_lady_male",
+    "name": "Swear Oath of Loyalty",
+    "description": "In a ceremony that bonds us as brothers, I share a connection deeper than blood. He becomes my most trusted ally, my right-hand man, someone who would die for me without question, his loyalty absolute.",
+    "interaction_level": 3,
+    "cost_energy": 3,
+    "cost_money": 18,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_blood_brothers",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level4_lord_female",
+    "name": "Perfect Friendly Evening",
+    "description": "Your perfected approach to friendship achieves maximum efficiency. This well-balanced interaction offers great relationship benefits at an optimal cost, perfect for maintaining your bond.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 6,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level4_lord_male_platonic",
+    "name": "Demonstrate Loyalty",
+    "description": "Your perfected approach to brotherhood achieves maximum efficiency. This well-balanced interaction offers great relationship benefits at an optimal cost, perfect for maintaining your bond.",
+    "interaction_level": 4,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 6,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level4_lady_female_platonic",
+    "name": "Show Devotion",
+    "description": "Your perfected approach to sisterhood achieves maximum efficiency. This well-balanced interaction offers great relationship benefits at an optimal cost, perfect for maintaining your bond.",
+    "interaction_level": 4,
+    "interaction_type": "platonic",
+    "cost_energy": 2,
+    "cost_money": 6,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Friendship"],
+    "image": "friendship_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level4_lady_male",
+    "name": "Form Eternal Partnership",
+    "description": "Your perfected approach to brotherhood achieves maximum efficiency. This well-balanced interaction offers great relationship benefits at an optimal cost, perfect for maintaining your bond.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 6,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Friendship"],
+    "image": "friendship_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level1_lord_female",
+    "name": "Give Thoughtful Gift",
+    "description": "I take time to observe her preferences and interests, then carefully select a gift that speaks to her heart. When I present it to her, her eyes widen with surprise, then her face lights up with genuine delight. She holds the gift with reverence, touched by my thoughtfulness. The moment is simple yet profound, and her gratitude shines like a beacon, warming the space between us.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 8,
+    "effect": {
+      "joy": 3,
+      "relationship": 1,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_gift",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level1_lord_male",
+    "name": "Give Thoughtful Gift",
+    "description": "I take time to observe his preferences and interests, then carefully select a gift that speaks to his heart. When I present it to him, his eyes widen with surprise, then his face lights up with genuine delight. He holds the gift with appreciation, touched by my thoughtfulness. The moment is simple yet profound, and his gratitude shines like a beacon, warming the space between us.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 8,
+    "effect": {
+      "joy": 3,
+      "relationship": 1,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_gift",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level1_lady_female",
+    "name": "Give Thoughtful Gift",
+    "description": "I take time to observe her preferences and interests, then carefully select a gift that speaks to her heart. When I present it to her, her eyes widen with surprise, then her face lights up with genuine delight. She holds the gift with reverence, touched by my thoughtfulness. The moment is simple yet profound, and her gratitude shines like a beacon, warming the space between us.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 8,
+    "effect": {
+      "joy": 3,
+      "relationship": 1,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_gift",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level1_lady_male",
+    "name": "Give Thoughtful Gift",
+    "description": "I take time to observe his preferences and interests, then carefully select a gift that speaks to his heart. When I present it to him, his eyes widen with surprise, then his face lights up with genuine delight. He holds the gift with appreciation, touched by my thoughtfulness. The moment is simple yet profound, and his gratitude shines like a beacon, warming the space between us.",
+    "interaction_level": 1,
+    "cost_energy": 1,
+    "cost_money": 8,
+    "effect": {
+      "joy": 3,
+      "relationship": 1,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_gift",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level2_lord_female",
+    "name": "Hold Special Celebration",
+    "description": "I arrange a private celebration in her honor, preparing her favorite foods and creating an atmosphere of warmth and joy. When she arrives, her eyes light up at the sight of the carefully arranged space. We share the meal together, laughing and talking, and I can see the genuine happiness in her expression. The joy and gratitude she feels creates a memorable moment that strengthens our bond, as two souls celebrate the gift of companionship in this intimate setting.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 28,
+    "effect": {
+      "joy": 5,
+      "relationship": 2,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_celebration",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level2_lord_male",
+    "name": "Hold Special Celebration",
+    "description": "I arrange a private celebration in his honor, preparing his favorite foods and creating an atmosphere of warmth and joy. When he arrives, his eyes light up at the sight of the carefully arranged space. We share the meal together, laughing and talking, and I can see the genuine happiness in his expression. The joy and gratitude he feels creates a memorable moment that strengthens our bond, as two souls celebrate the gift of companionship in this intimate setting.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 28,
+    "effect": {
+      "joy": 5,
+      "relationship": 2,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_celebration",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level2_lady_female",
+    "name": "Hold Special Celebration",
+    "description": "I arrange a private celebration in her honor, preparing her favorite foods and creating an atmosphere of warmth and joy. When she arrives, her eyes light up at the sight of the carefully arranged space. We share the meal together, laughing and talking, and I can see the genuine happiness in her expression. The joy and gratitude she feels creates a memorable moment that strengthens our bond, as two souls celebrate the gift of companionship in this intimate setting.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 28,
+    "effect": {
+      "joy": 5,
+      "relationship": 2,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_celebration",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level2_lady_male",
+    "name": "Hold Special Celebration",
+    "description": "I arrange a private celebration in his honor, preparing his favorite foods and creating an atmosphere of warmth and joy. When he arrives, his eyes light up at the sight of the carefully arranged space. We share the meal together, laughing and talking, and I can see the genuine happiness in his expression. The joy and gratitude he feels creates a memorable moment that strengthens our bond, as two souls celebrate the gift of companionship in this intimate setting.",
+    "interaction_level": 2,
+    "cost_energy": 2,
+    "cost_money": 28,
+    "effect": {
+      "joy": 5,
+      "relationship": 2,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 2
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_celebration",
+    "nsfw": false,
+    "stat_requirements": {},
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level3_lord_female",
+    "name": "Host Grand Festival",
+    "description": "I plan an extravagant private celebration for her, transforming my chambers into a space of wonder and delight. Fine decorations, exquisite food, and her favorite music fill the room. When she enters, her breath catches at the sight, and tears of joy glisten in her eyes. We spend the evening together in this magical space, sharing stories, laughter, and moments of pure happiness. The sheer joy she experiences creates an unforgettable memory that deepens our connection, as two hearts dance in the light of shared happiness.",
+    "interaction_level": 3,
+    "cost_energy": 3,
+    "cost_money": 55,
+    "effect": {
+      "joy": 7,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_festival",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level3_lord_male",
+    "name": "Host Grand Festival",
+    "description": "I plan an extravagant private celebration for him, transforming my chambers into a space of wonder and delight. Fine decorations, exquisite food, and his favorite music fill the room. When he enters, his breath catches at the sight, and a wide smile spreads across his face. We spend the evening together in this magical space, sharing stories, laughter, and moments of pure happiness. The sheer joy he experiences creates an unforgettable memory that deepens our connection, as two hearts dance in the light of shared happiness.",
+    "interaction_level": 3,
+    "cost_energy": 3,
+    "cost_money": 55,
+    "effect": {
+      "joy": 7,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_festival",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level3_lady_female",
+    "name": "Host Grand Festival",
+    "description": "I plan an extravagant private celebration for her, transforming my chambers into a space of wonder and delight. Fine decorations, exquisite food, and her favorite music fill the room. When she enters, her breath catches at the sight, and tears of joy glisten in her eyes. We spend the evening together in this magical space, sharing stories, laughter, and moments of pure happiness. The sheer joy she experiences creates an unforgettable memory that deepens our connection, as two hearts dance in the light of shared happiness.",
+    "interaction_level": 3,
+    "cost_energy": 3,
+    "cost_money": 55,
+    "effect": {
+      "joy": 7,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_festival",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level3_lady_male",
+    "name": "Host Grand Festival",
+    "description": "I plan an extravagant private celebration for him, transforming my chambers into a space of wonder and delight. Fine decorations, exquisite food, and his favorite music fill the room. When he enters, his breath catches at the sight, and a wide smile spreads across his face. We spend the evening together in this magical space, sharing stories, laughter, and moments of pure happiness. The sheer joy he experiences creates an unforgettable memory that deepens our connection, as two hearts dance in the light of shared happiness.",
+    "interaction_level": 3,
+    "cost_energy": 3,
+    "cost_money": 55,
+    "effect": {
+      "joy": 7,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 5
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_festival",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 20
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level4_lord_female",
+    "name": "Share Perfect Joy",
+    "description": "I have learned what brings her true happiness, and I create a perfect moment tailored to her desires. Whether it's a quiet afternoon together, a shared activity she loves, or simply my undivided attention, I craft an experience that fills her heart with joy. The moment is intimate and personal, yet perfectly balanced - offering great happiness at a reasonable cost, ideal for maintaining the joy in our relationship.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 18,
+    "effect": {
+      "joy": 6,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level4_lord_male",
+    "name": "Share Perfect Joy",
+    "description": "I have learned what brings him true happiness, and I create a perfect moment tailored to his desires. Whether it's a quiet afternoon together, a shared activity he loves, or simply my undivided attention, I craft an experience that fills his heart with joy. The moment is intimate and personal, yet perfectly balanced - offering great happiness at a reasonable cost, ideal for maintaining the joy in our relationship.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 18,
+    "effect": {
+      "joy": 6,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level4_lady_female",
+    "name": "Share Perfect Joy",
+    "description": "I have learned what brings her true happiness, and I create a perfect moment tailored to her desires. Whether it's a quiet afternoon together, a shared activity she loves, or simply my undivided attention, I craft an experience that fills her heart with joy. The moment is intimate and personal, yet perfectly balanced - offering great happiness at a reasonable cost, ideal for maintaining the joy in our relationship.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 18,
+    "effect": {
+      "joy": 6,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": ["Joy"],
+    "image": "joy_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  },
+  {
+    "id": "joy_level4_lady_male",
+    "name": "Share Perfect Joy",
+    "description": "I have learned what brings him true happiness, and I create a perfect moment tailored to his desires. Whether it's a quiet afternoon together, a shared activity he loves, or simply my undivided attention, I craft an experience that fills his heart with joy. The moment is intimate and personal, yet perfectly balanced - offering great happiness at a reasonable cost, ideal for maintaining the joy in our relationship.",
+    "interaction_level": 4,
+    "cost_energy": 2,
+    "cost_money": 18,
+    "effect": {
+      "joy": 6,
+      "relationship": 3,
+      "flags": {
+        "joy_cooldown": {
+          "value": true,
+          "duration": 1
+        }
+      }
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": ["Joy"],
+    "image": "joy_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_flags": {},
+    "excluded_flags": {
+      "joy_cooldown": true
+    }
+  }
+]
+

@@ -1,0 +1,1032 @@
+[
+  {
+    "id": "event_recruit_aspen",
+    "description": "A sturdy figure approaches your establishment during the evening hours. Their build suggests years of physical labor, and their calm demeanor stands out among the usual crowd. They carry themselves with quiet confidence, as if they've seen enough to know their worth.",
+    "dialogue": "\"Evening. Name's [event_worker]. I've been working various jobs around town, but I'm looking for something more stable. I'm strong, reliable, and I don't cause trouble. What do you say?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Aspen",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position immediately for [COST] per day.",
+        "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 3
+        }
+      },
+      {
+        "option": "Test their physical strength with a challenge. (70% chance of success)",
+        "message_success": "You propose a simple test of strength - moving some heavy crates. [event_worker] handles the task effortlessly, muscles working with practiced ease. 'I've done harder work,' they say with a slight grin. 'So, do I have the job?' They agree to work for [COST] daily.",
+        "message_failure": "The challenge proves more difficult than expected. [event_worker] struggles slightly, and while they complete the task, their confidence seems shaken. 'Maybe I'm not as strong as I thought,' they mutter. They still accept the job at [COST] per day, but seem less certain.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 5,
+            "relationship_bonus": 10
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 1
+          },
+          "success_chance": 0.7
+        }
+      },
+      {
+        "option": "Negotiate for a trial period at reduced pay.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.7,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
+        "effect": {}
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "event_recruit_florian",
+    "description": "A somewhat effeminate young man enters your establishment with a playful, knowing smile. He moves with a graceful, almost coquettish air, and his eyes sparkle with mischief and intelligence. There's something roguish about him - the way he carries himself suggests he's used to getting what he wants through charm and wit rather than brute force.",
+    "dialogue": "\"Well, well, well... look what we have here.\"\n\n[event_worker] leans against the doorway with a coy smile, his voice carrying a hint of playful seduction. \"I'm [event_worker], and I've heard... interesting things about your establishment. I'm quite clever, you know. Good with people. And I have a certain... flexibility that might be valuable to you.\"\n\n\"I'm looking for work, but I'm not interested in just any job. I want something that appreciates my particular talents. What do you say?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Florian",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them [COST] per day immediately.",
+        "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.'",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 4
+        }
+      },
+      {
+        "option": "Try to see through his charm and test his cleverness. (75% chance of success)",
+        "message_success": "You engage [event_worker] in a battle of wits, trying to see past his charming facade. He seems delighted by the challenge, and you quickly realize he's genuinely clever - perhaps even more so than he lets on. 'Oh, you're sharp! I like that.' He laughs, a light, musical sound. 'Most people just fall for the act. You actually see me. I respect that.' He agrees to work for [COST] daily with increased relationship.",
+        "message_failure": "You try to test his cleverness, but [event_worker] is too quick for you. He sees through your attempt immediately and gives you a knowing, almost teasing look. 'Nice try, but I've been playing this game longer than you have.' He still accepts the position at [COST] per day, but there's a hint of amusement in his eyes - as if he's already won some unspoken game.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 6,
+            "relationship_bonus": 18
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 2
+          },
+          "success_chance": 0.75
+        }
+      },
+      {
+        "option": "Try to negotiate a lower wage using his own tactics.",
+        "message": "You attempt to match his roguish charm with some clever negotiation of your own. [event_worker] seems both surprised and impressed. 'Oh, you're trying to out-rogue the rogue? I like your style!' He laughs. 'Fine, fine. [COST] per day it is. But I'll expect you to appreciate my... special talents.' He agrees to work at a slightly reduced comfort level ([actual_comfort]), but there's a playful glint in his eye that suggests he's already planning how to get what he wants anyway.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 5,
+          "relationship_bonus": 12
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
+        "effect": {}
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "event_recruit_violet",
+    "description": "As twilight settles over your establishment, a mysterious figure appears at your door. Dressed in elegant, dark clothing that seems to shimmer with subtle magic, they move with an otherworldly grace. Their presence commands attention without demanding it, and their eyes hold depths of ancient wisdom.",
+    "dialogue": "\"Good evening. I am [event_worker]. I've been... observing your establishment from a distance. You've built something interesting here.\"\n\n\"I find myself in need of employment, and I believe my particular talents could be of value to you. I'm not like other workers you might encounter. Are you interested in what I have to offer?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Violet",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 8
+        }
+      },
+      {
+        "option": "Ask about their mysterious nature. (60% chance of gaining their trust)",
+        "message_success": "You ask directly about the air of mystery surrounding them. [event_worker] seems pleased by your directness. 'Most people are too afraid to ask. I appreciate honesty.' They reveal they've studied ancient arts and have connections in many places. 'I think we'll work well together.' They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your questions come across as too probing. [event_worker]'s expression becomes guarded. 'Some things are better left unknown,' they say cryptically. They still accept the position at [COST] per day, but seem more distant.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 10,
+            "relationship_bonus": 20
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.6
+        }
+      },
+      {
+        "option": "Offer them a position with special accommodations.",
+        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your understanding.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.85,
+          "reputation": 6,
+          "add_trait": {
+            "name": "Mystical Resonance",
+            "duration": 60,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline, sensing something unusual.",
+        "message": "You explain that you're not currently hiring, though something tells you this person is more than they appear. [event_worker] smiles enigmatically. 'A wise choice, perhaps. But remember - some opportunities only come once.' They fade into the shadows, leaving you with an odd feeling.",
+        "effect": {}
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "event_recruit_lily",
+    "description": "A captivating performer enters your establishment, drawing every eye in the room. Their presence is magnetic, and they move with the confidence of someone who knows their effect on others. Dressed in dramatic, eye-catching attire, they seem to command the very air around them.",
+    "dialogue": "\"Hello there! I'm [event_worker], and I'm looking for a new stage.\"\n\n\"I've been performing in various venues, but I'm seeking something more... permanent. I have a way with people, you see. I can charm clients, entertain crowds, and make your establishment the talk of the town. Interested?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Lily",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position for [COST] per day.",
+        "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 5
+        }
+      },
+      {
+        "option": "Ask them to demonstrate their performance skills. (75% chance of success)",
+        "message_success": "You ask for a demonstration. [event_worker] doesn't hesitate - they launch into a brief but mesmerizing performance that captivates everyone in the room. When they finish, the applause is genuine. 'See? I told you I'm special.' They agree to work for [COST] daily with bonus reputation.",
+        "message_failure": "The demonstration is good, but perhaps not as spectacular as promised. [event_worker] seems slightly disappointed but recovers quickly. 'Well, I was just warming up. Still, I think you'll find me quite valuable.' They accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 8,
+            "relationship_bonus": 12
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.75
+        }
+      },
+      {
+        "option": "Negotiate for a trial period with performance-based pay.",
+        "message": "You propose a trial period at [COST] per day, with the promise of better terms if they prove their value. [event_worker] considers this. 'A challenge? I love challenges. You'll see - I'm worth every coin.' They agree to work at reduced comfort ([actual_comfort]) for the first month.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.7,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring performers. [event_worker]'s smile falters slightly but remains charming. 'That's a shame. Well, if you change your mind, you know where to find me. I'll be the one making everyone else look ordinary.' They leave with a dramatic flourish.",
+        "effect": {}
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "event_recruit_rose",
+    "description": "An elven figure approaches your establishment with ethereal grace. Their movements are fluid and precise, like a dancer's, and their eyes hold the ancient wisdom of their kind. Flowers seem to bloom in their presence, and there's an air of natural magic about them.",
+    "dialogue": "\"Greetings, mortal. I am [event_worker], of the elven folk.\"\n\n\"I seek employment that allows me to express my nature while contributing to your enterprise. My people are known for our grace, our connection to the mystical arts, and our... flexibility in many matters. Would you be interested in having an elf among your workers?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Rose",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 6
+        }
+      },
+      {
+        "option": "Ask about elven culture and magic. (70% chance of positive response)",
+        "message_success": "You express genuine interest in elven ways. [event_worker] seems pleased by your curiosity. 'Few mortals show such respect for our traditions. I appreciate that.' They share some insights about elven magic and grace. 'I believe we'll work well together.' They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your questions come across as somewhat naive. [event_worker] smiles indulgently. 'Some things take time to understand. But I appreciate the effort.' They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 8,
+            "relationship_bonus": 15
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 4
+          },
+          "success_chance": 0.7
+        }
+      },
+      {
+        "option": "Offer them a position with accommodations for their elven nature.",
+        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your consideration.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 7,
+          "add_trait": {
+            "name": "Nature's Blessing",
+            "duration": 90,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
+        "effect": {}
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "event_recruit_iris",
+    "description": "A graceful figure enters your establishment with quiet confidence. They move with purpose, and their eyes seem to take in everything with sharp intelligence. There's something magnetic about their presence - people naturally turn to look, drawn by an indefinable quality.",
+    "dialogue": "\"Hello. I'm [event_worker]. I've been looking for the right opportunity, and your establishment caught my attention.\"\n\n\"I learn quickly, adapt well, and I have a way of... drawing people in. I think I could be valuable to your operation. What do you think?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Iris",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position for [COST] per day.",
+        "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 4
+        }
+      },
+      {
+        "option": "Test their adaptability with a quick challenge. (80% chance of success)",
+        "message_success": "You give them a quick test - handling multiple tasks simultaneously. [event_worker] handles it with ease, showing impressive adaptability and quick thinking. 'See? I told you I learn fast.' They agree to work for [COST] daily with bonus reputation.",
+        "message_failure": "The challenge proves more difficult than expected. [event_worker] manages, but not as smoothly as they'd hoped. 'Well, everyone has off days,' they say with a slight shrug. They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 7,
+            "relationship_bonus": 10
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 2
+          },
+          "success_chance": 0.8
+        }
+      },
+      {
+        "option": "Offer a trial period to prove their value.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month, with the promise of better terms if they excel.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.75,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'That's fine. If you change your mind, I'll be around. I have a feeling we might work together someday.' They leave with a confident smile.",
+        "effect": {}
+      }
+    ],
+    "nsfw": true
+  },
+  {
+    "id": "event_recruit_cedar",
+    "description": "A sturdy figure approaches your establishment during the evening hours. Their build suggests years of physical labor, and their calm demeanor stands out among the usual crowd. They carry themselves with quiet confidence, as if they've seen enough to know their worth.",
+    "dialogue": "\"Evening. Name's [event_worker]. I've been working various jobs around town, but I'm looking for something more stable. I'm strong, reliable, and I don't cause trouble. What do you say?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Cedar",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position immediately for [COST] per day.",
+        "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 3
+        }
+      },
+      {
+        "option": "Test their physical strength with a challenge. (70% chance of success)",
+        "message_success": "You propose a simple test of strength - moving some heavy crates. [event_worker] handles the task effortlessly, muscles working with practiced ease. 'I've done harder work,' they say with a slight grin. 'So, do I have the job?' They agree to work for [COST] daily.",
+        "message_failure": "The challenge proves more difficult than expected. [event_worker] struggles slightly, and while they complete the task, their confidence seems shaken. 'Maybe I'm not as strong as I thought,' they mutter. They still accept the job at [COST] per day, but seem less certain.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 5,
+            "relationship_bonus": 10
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 1
+          },
+          "success_chance": 0.7
+        }
+      },
+      {
+        "option": "Negotiate for a trial period at reduced pay.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.7,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_laurel",
+    "description": "A somewhat effeminate young man enters your establishment with a playful, knowing smile. He moves with a graceful, almost coquettish air, and his eyes sparkle with mischief and intelligence. There's something roguish about him - the way he carries himself suggests he's used to getting what he wants through charm and wit rather than brute force.",
+    "dialogue": "\"Well, well, well... look what we have here.\"\n\n[event_worker] leans against the doorway with a coy smile, his voice carrying a hint of playful charm. \"I'm [event_worker], and I've heard... interesting things about your establishment. I'm quite clever, you know. Good with people. And I have a certain... adaptability that might be valuable to you.\"\n\n\"I'm looking for work, but I'm not interested in just any job. I want something that appreciates my particular talents. What do you say?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Laurel",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them [COST] per day immediately.",
+        "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.'",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 4
+        }
+      },
+      {
+        "option": "Try to see through his charm and test his cleverness. (75% chance of success)",
+        "message_success": "You engage [event_worker] in a battle of wits, trying to see past his charming facade. He seems delighted by the challenge, and you quickly realize he's genuinely clever - perhaps even more so than he lets on. 'Oh, you're sharp! I like that.' He laughs, a light, musical sound. 'Most people just fall for the act. You actually see me. I respect that.' He agrees to work for [COST] daily with increased relationship.",
+        "message_failure": "You try to test his cleverness, but [event_worker] is too quick for you. He sees through your attempt immediately and gives you a knowing, almost teasing look. 'Nice try, but I've been playing this game longer than you have.' He still accepts the position at [COST] per day, but there's a hint of amusement in his eyes - as if he's already won some unspoken game.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 6,
+            "relationship_bonus": 18
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 2
+          },
+          "success_chance": 0.75
+        }
+      },
+      {
+        "option": "Try to negotiate a lower wage using his own tactics.",
+        "message": "You attempt to match his roguish charm with some clever negotiation of your own. [event_worker] seems both surprised and impressed. 'Oh, you're trying to out-rogue the rogue? I like your style!' He laughs. 'Fine, fine. [COST] per day it is. But I'll expect you to appreciate my... special talents.' He agrees to work at a slightly reduced comfort level ([actual_comfort]), but there's a playful glint in his eye that suggests he's already planning how to get what he wants anyway.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 5,
+          "relationship_bonus": 12
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_sage",
+    "description": "As twilight settles over your establishment, a mysterious figure appears at your door. Dressed in elegant, dark clothing that seems to shimmer with subtle magic, they move with an otherworldly grace. Their presence commands attention without demanding it, and their eyes hold depths of ancient wisdom.",
+    "dialogue": "\"Good evening. I am [event_worker]. I've been... observing your establishment from a distance. You've built something interesting here.\"\n\n\"I find myself in need of employment, and I believe my particular talents could be of value to you. I'm not like other workers you might encounter. Are you interested in what I have to offer?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Sage",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 8
+        }
+      },
+      {
+        "option": "Ask about their mysterious nature. (60% chance of gaining their trust)",
+        "message_success": "You ask directly about the air of mystery surrounding them. [event_worker] seems pleased by your directness. 'Most people are too afraid to ask. I appreciate honesty.' They reveal they've studied ancient arts and have connections in many places. 'I think we'll work well together.' They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your questions come across as too probing. [event_worker]'s expression becomes guarded. 'Some things are better left unknown,' they say cryptically. They still accept the position at [COST] per day, but seem more distant.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 10,
+            "relationship_bonus": 20
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.6
+        }
+      },
+      {
+        "option": "Offer them a position with special accommodations.",
+        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your understanding.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.85,
+          "reputation": 6,
+          "add_trait": {
+            "name": "Mystical Resonance",
+            "duration": 60,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline, sensing something unusual.",
+        "message": "You explain that you're not currently hiring, though something tells you this person is more than they appear. [event_worker] smiles enigmatically. 'A wise choice, perhaps. But remember - some opportunities only come once.' They fade into the shadows, leaving you with an odd feeling.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_lotus",
+    "description": "A captivating performer enters your establishment, drawing every eye in the room. Their presence is magnetic, and they move with the confidence of someone who knows their effect on others. Dressed in dramatic, eye-catching attire, they seem to command the very air around them.",
+    "dialogue": "\"Hello there! I'm [event_worker], and I'm looking for a new stage.\"\n\n\"I've been performing in various venues, but I'm seeking something more... permanent. I have a way with people, you see. I can charm clients, entertain crowds, and make your establishment the talk of the town. Interested?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Lotus",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position for [COST] per day.",
+        "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 5
+        }
+      },
+      {
+        "option": "Ask them to demonstrate their performance skills. (75% chance of success)",
+        "message_success": "You ask for a demonstration. [event_worker] doesn't hesitate - they launch into a brief but mesmerizing performance that captivates everyone in the room. When they finish, the applause is genuine. 'See? I told you I'm special.' They agree to work for [COST] daily with bonus reputation.",
+        "message_failure": "The demonstration is good, but perhaps not as spectacular as promised. [event_worker] seems slightly disappointed but recovers quickly. 'Well, I was just warming up. Still, I think you'll find me quite valuable.' They accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 8,
+            "relationship_bonus": 12
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.75
+        }
+      },
+      {
+        "option": "Negotiate for a trial period with performance-based pay.",
+        "message": "You propose a trial period at [COST] per day, with the promise of better terms if they prove their value. [event_worker] considers this. 'A challenge? I love challenges. You'll see - I'm worth every coin.' They agree to work at reduced comfort ([actual_comfort]) for the first month.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.7,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring performers. [event_worker]'s smile falters slightly but remains charming. 'That's a shame. Well, if you change your mind, you know where to find me. I'll be the one making everyone else look ordinary.' They leave with a dramatic flourish.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_primrose",
+    "description": "An elven figure approaches your establishment with ethereal grace. Their movements are fluid and precise, like a dancer's, and their eyes hold the ancient wisdom of their kind. Flowers seem to bloom in their presence, and there's an air of natural magic about them.",
+    "dialogue": "\"Greetings, mortal. I am [event_worker], of the elven folk.\"\n\n\"I seek employment that allows me to express my nature while contributing to your enterprise. My people are known for our grace, our connection to the mystical arts, and our... flexibility in many matters. Would you be interested in having an elf among your workers?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Primrose",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 6
+        }
+      },
+      {
+        "option": "Ask about elven culture and magic. (70% chance of positive response)",
+        "message_success": "You express genuine interest in elven ways. [event_worker] seems pleased by your curiosity. 'Few mortals show such respect for our traditions. I appreciate that.' They share some insights about elven magic and grace. 'I believe we'll work well together.' They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your questions come across as somewhat naive. [event_worker] smiles indulgently. 'Some things take time to understand. But I appreciate the effort.' They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 8,
+            "relationship_bonus": 15
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 4
+          },
+          "success_chance": 0.7
+        }
+      },
+      {
+        "option": "Offer them a position with accommodations for their elven nature.",
+        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your consideration.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 7,
+          "add_trait": {
+            "name": "Nature's Blessing",
+            "duration": 90,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_jasmine",
+    "description": "A graceful figure enters your establishment with quiet confidence. They move with purpose, and their eyes seem to take in everything with sharp intelligence. There's something magnetic about their presence - people naturally turn to look, drawn by an indefinable quality.",
+    "dialogue": "\"Hello. I'm [event_worker]. I've been looking for the right opportunity, and your establishment caught my attention.\"\n\n\"I learn quickly, adapt well, and I have a way of... drawing people in. I think I could be valuable to your operation. What do you think?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Jasmine",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position for [COST] per day.",
+        "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 4
+        }
+      },
+      {
+        "option": "Test their adaptability with a quick challenge. (80% chance of success)",
+        "message_success": "You give them a quick test - handling multiple tasks simultaneously. [event_worker] handles it with ease, showing impressive adaptability and quick thinking. 'See? I told you I learn fast.' They agree to work for [COST] daily with bonus reputation.",
+        "message_failure": "The challenge proves more difficult than expected. [event_worker] manages, but not as smoothly as they'd hoped. 'Well, everyone has off days,' they say with a slight shrug. They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 7,
+            "relationship_bonus": 10
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 2
+          },
+          "success_chance": 0.8
+        }
+      },
+      {
+        "option": "Offer a trial period to prove their value.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month, with the promise of better terms if they excel.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.75,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'That's fine. If you change your mind, I'll be around. I have a feeling we might work together someday.' They leave with a confident smile.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_daisy",
+    "description": "A cheerful individual approaches your establishment with a bright, infectious smile. Their energy is palpable, and they move with the enthusiasm of someone who genuinely loves their work. They carry themselves with an optimistic air that seems to brighten the room.",
+    "dialogue": "\"Hi there! I'm [event_worker]! I've been working various service jobs, and I absolutely love helping people!\"\n\n\"I'm hardworking, always positive, and I bring good energy wherever I go. I'm looking for a place where I can really make a difference. Do you think I'd be a good fit?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Daisy",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You welcome their enthusiasm and offer [COST] per day. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 4
+        }
+      },
+      {
+        "option": "Ask them to demonstrate their service skills. (85% chance of success)",
+        "message_success": "You ask for a quick demonstration of their service abilities. [event_worker] immediately launches into action, showing impressive efficiency and a genuine desire to help. Their positive attitude is infectious. 'See? I told you I'm good at this!' They agree to work for [COST] daily with bonus reputation.",
+        "message_failure": "The demonstration is good, but perhaps a bit too enthusiastic - they're trying so hard they make a small mistake. 'Oops! Sorry about that. I get a little excited sometimes.' They still accept the position at [COST] per day with a sheepish grin.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 7,
+            "relationship_bonus": 15
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 2
+          },
+          "success_chance": 0.85
+        }
+      },
+      {
+        "option": "Offer a trial period to see how they fit in.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] nods enthusiastically. 'A trial? That's perfect! I'll show you just how hard I can work!' They agree to work at a reduced comfort level ([actual_comfort]) for the first month, their optimism undimmed.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.75,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker]'s smile falters slightly but remains bright. 'Oh, that's okay! I understand. Well, if you ever need someone cheerful and hardworking, you know where to find me!' They leave with a wave and a smile, their positive energy lingering.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_poppy",
+    "description": "An elven figure approaches your establishment with radiant grace. Their presence seems to light up the room, and they move with the effortless elegance of their kind. There's an air of charisma about them that draws people in, and their smile is both warm and captivating.",
+    "dialogue": "\"Greetings! I am [event_worker], and I'm seeking new opportunities.\"\n\n\"I've been told I have a way with people - I can charm, entertain, and make connections that benefit everyone. I'm looking for a place where I can truly shine. Would you be interested in having someone like me on your team?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Poppy",
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You welcome them warmly and offer [COST] per day. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 5
+        }
+      },
+      {
+        "option": "Ask about their elven heritage and talents. (75% chance of positive response)",
+        "message_success": "You express genuine interest in their elven background and abilities. [event_worker] seems pleased by your respect. 'It's refreshing to meet someone who appreciates our ways. I'd be honored to work with you.' They share some insights about elven grace and charm. They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your questions, while well-intentioned, come across as somewhat superficial. [event_worker] smiles politely. 'I appreciate the interest, though some things are best learned through experience.' They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 8,
+            "relationship_bonus": 18
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.75
+        }
+      },
+      {
+        "option": "Offer a position with accommodations for their elven nature.",
+        "message": "You propose [COST] per day with special accommodations - perhaps access to natural spaces or gardens. [event_worker]'s expression brightens. 'You understand our needs. That means a great deal.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your consideration.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 6,
+          "add_trait": {
+            "name": "Nature's Blessing",
+            "duration": 90,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods gracefully, their charm undiminished. 'I understand. Should your needs change, I'll be in the area. Sometimes the best opportunities come when least expected.' They depart with the same radiant grace they arrived with.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_unique_generic_1",
+    "description": "A distinctive figure approaches your establishment, clearly not your average job seeker. There's something special about them - perhaps it's their bearing, their confidence, or the way they carry themselves. They've clearly had unique experiences that set them apart.",
+    "dialogue": "\"Hello. I'm [event_worker], and I'm looking for work.\"\n\n\"I'm not like most people you'll meet. I've had experiences that have shaped me in particular ways, and I believe those experiences could be valuable to your establishment. Would you be interested in hearing more?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": true,
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position for [COST] per day.",
+        "message": "You recognize their unique qualities and offer [COST] per day. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 4
+        }
+      },
+      {
+        "option": "Ask about what makes them unique. (65% chance of positive response)",
+        "message_success": "You ask about their unique background. [event_worker] shares some of their story, and it's clear they've had remarkable experiences. 'I'm glad you're interested. Not everyone appreciates those who are different.' They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your questions come across as too curious or perhaps intrusive. [event_worker] becomes slightly guarded. 'Some things are personal,' they say. They still accept the position at [COST] per day, but seem more reserved.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 6,
+            "relationship_bonus": 12
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 2
+          },
+          "success_chance": 0.65
+        }
+      },
+      {
+        "option": "Propose a trial period to assess their fit.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial is fair. I'm confident I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.75,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'I see. Well, if you change your mind, I'll be around. Unique talents are always in demand, eventually.' They leave with quiet dignity.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_unique_generic_2",
+    "description": "An intriguing individual arrives at your establishment, their presence immediately noticeable. They carry themselves with a confidence that suggests they know their own worth, and there's an air of mystery or distinction about them that sets them apart from ordinary workers.",
+    "dialogue": "\"Good day. I am [event_worker]. I understand you might be looking for workers with... particular qualities.\"\n\n\"I have skills and experiences that aren't common. I believe I could bring something special to your establishment. Would you like to discuss the possibility?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": true,
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome them and offer [COST] per day.",
+        "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 5
+        }
+      },
+      {
+        "option": "Engage them in conversation about their background. (70% chance of success)",
+        "message_success": "You take time to learn about their background. [event_worker] opens up about their unique experiences, and it's clear they've led an interesting life. 'I appreciate someone who takes the time to understand. I think we'll work well together.' They agree to work for [COST] daily with bonus relationship.",
+        "message_failure": "The conversation doesn't flow as smoothly as hoped. [event_worker] seems slightly disappointed but remains professional. 'Well, I suppose not everyone needs to know everything.' They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 7,
+            "relationship_bonus": 14
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.7
+        }
+      },
+      {
+        "option": "Offer a position with special considerations.",
+        "message": "You propose [COST] per day with accommodations for their unique needs. [event_worker] considers this. 'You're thoughtful. I appreciate that.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your understanding of their particular requirements.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 6
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods. 'I understand. Should your situation change, I'll be available. Special talents are worth waiting for.' They leave with quiet confidence.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "event_recruit_unique_generic_3",
+    "description": "A remarkable individual enters your establishment, immediately standing out from the crowd. Whether it's their bearing, their confidence, or something indefinable, they clearly possess qualities that make them exceptional. They approach you with purpose and self-assurance.",
+    "dialogue": "\"Hello. I'm [event_worker]. I've been told I have... particular talents.\"\n\n\"I'm looking for employment that recognizes and values what makes me different. I believe I could be an asset to your establishment. Are you interested in discussing the possibility?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": true,
+    "always_available": true,
+    "building_type": [],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Offer them a position for [COST] per day.",
+        "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence.",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 5
+        }
+      },
+      {
+        "option": "Learn more about their unique qualities. (72% chance of success)",
+        "message_success": "You express interest in understanding what makes them special. [event_worker] shares insights about their unique background and abilities. 'I appreciate your curiosity. It shows you value more than just the ordinary.' They agree to work for [COST] daily with increased relationship.",
+        "message_failure": "Your approach doesn't quite connect. [event_worker] seems slightly reserved. 'Well, I suppose actions speak louder than words. You'll see my value in time.' They still accept the position at [COST] per day.",
+        "effect": {
+          "success": {
+            "recruit_worker": true,
+            "reputation": 8,
+            "relationship_bonus": 16
+          },
+          "failure": {
+            "recruit_worker": true,
+            "reputation": 3
+          },
+          "success_chance": 0.72
+        }
+      },
+      {
+        "option": "Propose a trial period to evaluate their fit.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this thoughtfully. 'A trial is reasonable. I'm confident I'll exceed your expectations.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.75,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          }
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'I see. Well, should your needs change, I'll be available. Exceptional workers are always worth considering.' They depart with quiet dignity.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  }
+]
+

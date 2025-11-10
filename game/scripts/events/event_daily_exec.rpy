@@ -376,7 +376,11 @@ init python:
                             used_skill = "N/A"
                         if selected_skill:
                             # Use skill name directly
-                            worker["skill_uses"][selected_skill] = worker["skill_uses"].get(selected_skill, 0) + 1
+                            if "skill_uses" not in worker:
+                                worker["skill_uses"] = {}
+                            old_uses = worker["skill_uses"].get(selected_skill, 0)
+                            worker["skill_uses"][selected_skill] = old_uses + 1
+                            renpy.log(f"SKILL USE: {worker.get('name', 'Unknown')} used {selected_skill} (now {worker['skill_uses'][selected_skill]} uses)")
 
                         # Update building reputation, capped at 1000
                         new_reputation = building["reputation"] + reputation_change

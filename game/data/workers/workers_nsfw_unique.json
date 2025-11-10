@@ -37,7 +37,11 @@
     },
     "names_list": "western_male",
     "traits": [
-      "Human"
+      "Human",
+      "Strong",
+      "Tough",
+      "Brawler",
+      "Robust"
     ],
     "description": "A skilled and experienced worker with a calm demeanor, perfect for general tasks.",
     "gender": "male",
@@ -81,7 +85,11 @@
     },
     "names_list": "western_male",
     "traits": [
-      "Human"
+      "Human",
+      "Wise",
+      "Teacher",
+      "Adventurer",
+      "Quick Learner"
     ],
     "description": "A skilled worker with a calm, alluring presence, suited for intimate roles.",
     "gender": "male",
@@ -98,35 +106,38 @@
     "procedural": false,
     "skills": {
       "Sex": 55,
-      "Anal": 100,
-      "BDSM": 100,
-      "Hand": 100,
-      "Oral": 100,
-      "Homo": 100,
-      "Special": 100,
-      "Group": 100,
-      "Extreme": 100,
-      "Striptease": 100,
-      "Combat": 100,
-      "Clever": 100,
-      "Charm": 100,
-      "Wait": 100,
-      "Agility": 100,
-      "Magic": 100,
-      "Specialty 4": 100,
-      "Specialty 5": 100,
-      "Specialty 6": 100,
-      "Specialty 7": 100,
-      "Specialty 8": 100,
-      "Specialty 9": 100,
-      "Specialty 10": 100,
-      "Specialty 11": 100,
-      "Specialty 12": 100
+      "Anal": 42,
+      "BDSM": 41,
+      "Hand": 40,
+      "Oral": 42,
+      "Homo": 39,
+      "Special": 38,
+      "Group": 37,
+      "Extreme": 36,
+      "Striptease": 41,
+      "Combat": 42,
+      "Clever": 43,
+      "Charm": 42,
+      "Wait": 41,
+      "Agility": 42,
+      "Magic": 40,
+      "Specialty 4": 39,
+      "Specialty 5": 38,
+      "Specialty 6": 37,
+      "Specialty 7": 41,
+      "Specialty 8": 40,
+      "Specialty 9": 39,
+      "Specialty 10": 38,
+      "Specialty 11": 37,
+      "Specialty 12": 41
     },
     "names_list": "western_female",
     "traits": [
+      "Human",
       "Beautiful",
-      "Human"
+      "Clever",
+      "Elegant",
+      "Mystical"
     ],
     "description": "A mysterious figure known for her elegance and charm, ideal for refined tasks.",
     "gender": "female",
@@ -173,7 +184,11 @@
     },
     "names_list": "fantasy_female",
     "traits": [
-      "Human"
+      "Human",
+      "Large Breasts",
+      "Charming",
+      "Charismatic",
+      "Radiant"
     ],
     "description": "An enigmatic performer whose dramatic flair excels in intimate settings.",
     "gender": "female",
@@ -217,14 +232,18 @@
     },
     "names_list": "eastern_female",
     "traits": [
-      "Elf"
+      "Elf",
+      "Mystical",
+      "Graceful",
+      "Flexible",
+      "Agile"
     ],
     "description": "A passionate performer whose fiery spirit excels in intimate encounters.",
     "gender": "female",
     "comfort_desired": 3
   },
   {
-    "name": "Jasmine",
+    "name": "Iris",
     "folder": "tangirl",
     "cost": 1200,
     "nsfw": true,
@@ -261,7 +280,11 @@
     },
     "names_list": "western_female",
     "traits": [
-      "Human"
+      "Human",
+      "Magnetic",
+      "Quick Learner",
+      "Graceful",
+      "Exotic"
     ],
     "description": "A graceful performer with excellent social skills and natural charm.",
     "gender": "female",

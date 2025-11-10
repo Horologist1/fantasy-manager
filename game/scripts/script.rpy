@@ -1269,31 +1269,58 @@ init python:
         For each worker, check each skill's uses. If skill_uses >= current skill level,
         level up that skill by 1 and reset the skill_uses counter.
         """
+        renpy.log("=== update_skill_levels() called ===")
         for worker in store.workers:
+            worker_name = worker.get("name", "Unknown")
             # Ensure skill_uses exists
             if "skill_uses" not in worker:
                 worker["skill_uses"] = {}
+                renpy.log(f"Initialized skill_uses for {worker_name}")
             
             # Get the base skills (use original_skills if available, otherwise skills)
-            base_skills = worker.get("original_skills", worker.get("skills", {}))
+            # Always read from the actual dict, not a reference, to ensure we get current values
+            if "original_skills" in worker and worker["original_skills"]:
+                base_skills = worker["original_skills"]
+            else:
+                base_skills = worker.get("skills", {})
+            
+            if not base_skills:
+                renpy.log(f"WARNING: {worker_name} has no skills!")
+                continue
+            
+            # Ensure skill_uses is initialized for all skills
+            if "skill_uses" not in worker:
+                worker["skill_uses"] = {}
             
             # Check each skill for level ups
-            for skill_name in base_skills.keys():
-                current_skill_level = base_skills.get(skill_name, 0)
-                skill_uses = worker["skill_uses"].get(skill_name, 0)
+            for skill_name in list(base_skills.keys()):  # Use list() to avoid modification during iteration
+                # Read current skill level directly from the dict
+                current_skill_level = int(base_skills.get(skill_name, 0))
+                skill_uses = int(worker["skill_uses"].get(skill_name, 0))
                 
                 # Determine uses needed for level up
                 # Skills at 0 need 1 use to reach level 1, then uses_needed = current_level
                 uses_needed = 1 if current_skill_level == 0 else current_skill_level
                 
+                # Log for debugging
+                if skill_uses > 0:
+                    renpy.log(f"{worker_name} - {skill_name}: level={current_skill_level}, uses={skill_uses}, needed={uses_needed}")
+                
                 # If uses meet or exceed threshold, level up the skill
-                if skill_uses >= uses_needed:
+                if skill_uses >= uses_needed and uses_needed > 0:
                     old_level = current_skill_level
+                    renpy.log(f"LEVEL UP: {worker_name}'s {skill_name} from {old_level} to {old_level + 1} (uses: {skill_uses} >= needed: {uses_needed})")
                     # Use modify_base_skill to increment by 1 and ensure it stays within bounds
-                    modify_base_skill(worker, skill_name, 1)
+                    new_level = modify_base_skill(worker, skill_name, 1)
                     # Reset skill_uses counter
                     worker["skill_uses"][skill_name] = 0
-                    renpy.notify(f"{worker['name']}'s {skill_name} skill leveled up from {old_level} to {old_level + 1}!")
+                    renpy.notify(f"{worker_name}'s {skill_name} skill leveled up from {old_level} to {new_level}!")
+                    # Re-read base_skills after modification to ensure we have the latest value
+                    if "original_skills" in worker and worker["original_skills"]:
+                        base_skills = worker["original_skills"]
+                    else:
+                        base_skills = worker.get("skills", {})
+        renpy.log("=== update_skill_levels() finished ===")
 
     def update_worker_levels():
         """
@@ -2783,6 +2810,31 @@ define sfw_skills = [
 ]
 
 define SKILL_MAX = 100
+
+init python:
+    def is_skill_visible(skill_name):
+        """
+        Check if a skill should be visible in the UI.
+        Hides skills that start with "Specialty" (for future extensibility).
+        Also respects NSFW/SFW mode.
+        """
+        # Hide skills that start with "Specialty"
+        if skill_name.startswith("Specialty"):
+            return False
+        
+        # Respect NSFW/SFW mode
+        if not persistent.nsfw_enabled:
+            return skill_name in sfw_skills
+        
+        return True
+    
+    def get_visible_skills(worker):
+        """
+        Get a filtered list of visible skills for a worker.
+        Returns a list of (skill_name, level) tuples.
+        """
+        base_skills = worker.get("original_skills", worker.get("skills", {}))
+        return [(sid, lvl) for sid, lvl in base_skills.items() if is_skill_visible(sid)]
 
 ################################################################################
 ### GLOBAL VARIABLES

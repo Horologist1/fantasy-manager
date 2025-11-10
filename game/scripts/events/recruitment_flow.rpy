@@ -82,14 +82,58 @@ label recruitment_event_flow(event, worker):
             choice_copy = choice.copy()
             choice_copy["option"] = choice_text
             processed_choices.append(choice_copy)
+        
+        # Split description into sentences/phrases
+        import re
+        description_sentences = []
+        if description:
+            # Split by sentence endings (periods, exclamation marks, question marks)
+            # Keep the punctuation with the sentence
+            sentences = re.split(r'(?<=[.!?])\s+', description)
+            for sentence in sentences:
+                sentence = sentence.strip()
+                # Also split by double newlines if they exist
+                if '\n\n' in sentence:
+                    parts = sentence.split('\n\n')
+                    for part in parts:
+                        part = part.strip()
+                        if part:
+                            description_sentences.append(part)
+                elif sentence:
+                    description_sentences.append(sentence)
+        
+        # Split dialogue into sentences/phrases
+        dialogue_sentences = []
+        if dialogue_text:
+            # First split by double newlines (paragraph breaks)
+            paragraphs = dialogue_text.split('\n\n')
+            for para in paragraphs:
+                para = para.strip()
+                if para:
+                    # Remove quotes if they wrap the entire paragraph
+                    if para.startswith('"') and para.endswith('"'):
+                        para = para[1:-1]
+                    # Split by sentence endings (keep punctuation)
+                    sentences = re.split(r'(?<=[.!?])\s+', para)
+                    for sentence in sentences:
+                        sentence = sentence.strip()
+                        if sentence:
+                            dialogue_sentences.append(sentence)
     
-    # Show the description using narrator (appears in dialogue box)
+    # Show the description sentences one by one
     window show
-    narrator "[description]"
+    if description_sentences:
+        python:
+            for sentence in description_sentences:
+                renpy.say(None, sentence)
     
-    # Show the worker dialogue if available (standard narrator color)
-    if dialogue_text:
-        narrator "{i}[dialogue_text]{/i}"
+    # Show the worker dialogue sentences one by one with speaker name
+    if dialogue_sentences:
+        python:
+            # Create a temporary character for the worker
+            worker_char = renpy.character.Character(worker_name, color="#ffdd88", what_italic=True)
+            for sentence in dialogue_sentences:
+                renpy.say(worker_char, sentence)
     
     # Hide window before showing choices
     window hide

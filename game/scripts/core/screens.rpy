@@ -4032,27 +4032,41 @@ screen interaction_result(worker, interaction):
         xalign 0.5
         yalign 0.5
         background Solid("#1a1a1acc")
-        padding (5, 5)
+        padding (20, 20)
         vbox:
-            spacing 15
-            # Display the media file associated with the interaction
+            spacing 20
+            xsize 1600
+            ysize 900
+            
+            # First show the description text
+            frame:
+                background Solid("#00000088")
+                padding (15, 15)
+                xsize 1560
+                text "[interaction.get('description', 'No description available.')]" size 22 color "#ffffff" xalign 0.5 text_align 0.5
+            
+            # Then show the image as a cutscene
             $ media_file = get_interaction_image(worker, interaction)
-            if media_file and media_file.lower().endswith(('.webm', '.mp4')):
-                add Movie(
-                    play=media_file,
-                    size=(1600, 900),
-                    loop=True
-                )
-            elif media_file:
-                add media_file:
-                    xalign 0.5
-                    yalign 0.5
-                    fit "contain"
-                    xysize (1600, 900)
-            else:
-                text "No media available" color "#ffffff" xalign 0.5
-
-            text "[interaction['description']]" size 24 color "#ffffff" xalign 0.5
+            frame:
+                background Solid("#000000")
+                xsize 1560
+                ysize 700
+                if media_file and media_file.lower().endswith(('.webm', '.mp4')):
+                    add Movie(
+                        play=media_file,
+                        size=(1560, 700),
+                        loop=True
+                    )
+                elif media_file:
+                    add media_file:
+                        xalign 0.5
+                        yalign 0.5
+                        fit "contain"
+                        xysize (1560, 700)
+                else:
+                    text "No image available" color "#ffffff" xalign 0.5 yalign 0.5 size 24
+            
+            # Close button
             textbutton "Close":
                 style "nav_button_text"
                 xalign 0.5
@@ -4180,6 +4194,7 @@ screen interaction_menu(worker):
             $ filtered_interactions = filter_interactions_by_traits(filtered_interactions, worker)
             $ filtered_interactions = filter_interactions_by_items(filtered_interactions, worker)
             $ filtered_interactions = filter_interactions_by_usage_limits(filtered_interactions, worker)
+            $ filtered_interactions = filter_interactions_by_unlock_level(filtered_interactions, worker)
             $ filtered_interactions = filter_interactions_by_worker_name(filtered_interactions, worker)
             
             if not filtered_interactions:
@@ -4467,7 +4482,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 vbox:
                                     spacing 5
                                     # Inside the worker_details screen
-                                    for skill_name, level in [(sid, lvl) for sid, lvl in worker.get("original_skills", worker["skills"]).items() if persistent.nsfw_enabled or sid in sfw_skills]:
+                                    for skill_name, level in get_visible_skills(worker):
                                         $ total_skill = calculate_skill_with_traits(worker, skill_name)
                                         $ skill_uses = worker["skill_uses"].get(skill_name, 0)
                                         $ uses_needed = level

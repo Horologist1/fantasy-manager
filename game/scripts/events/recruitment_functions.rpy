@@ -177,10 +177,24 @@ init python:
                     base_message = choice_data.get("message_failure", "The opportunity slips away; nothing more comes of it.")
                     applied_values = apply_recruitment_effects(effect.get("failure", {}), worker)
         else:
-            # No skill check - guaranteed outcome
-            outcome_status = "success"
-            base_message = choice_data.get("message", "Done.")
-            applied_values = apply_recruitment_effects(effect, worker)
+            # No skill check - check for success_chance probability
+            success_chance = effect.get("success_chance")
+            if success_chance is not None:
+                # Probability-based outcome
+                roll = random.random()
+                if roll <= success_chance:
+                    outcome_status = "success"
+                    base_message = choice_data.get("message_success", "The arrangement succeeds; terms are met and the day moves forward.")
+                    applied_values = apply_recruitment_effects(effect.get("success", {}), worker)
+                else:
+                    outcome_status = "failure"
+                    base_message = choice_data.get("message_failure", "The opportunity slips away; nothing more comes of it.")
+                    applied_values = apply_recruitment_effects(effect.get("failure", {}), worker)
+            else:
+                # Guaranteed outcome
+                outcome_status = "success"
+                base_message = choice_data.get("message", "Done.")
+                applied_values = apply_recruitment_effects(effect, worker)
         
         # Replace placeholders in the message
         worker_name = worker.get("name", "Unknown") if worker else "Unknown"
