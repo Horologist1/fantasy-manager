@@ -2,7 +2,8 @@
 
 # ===== INTRODUCTION SEQUENCE =====
 label tutorial_start:
-    scene expression tavern_bg
+    scene expression workers_bg
+    show expression Solid("#00000080")  # Semi-transparent black overlay
     
     "The scribe slides the final parchment across the worn wooden table. The ink glistens wet from the quill."
     

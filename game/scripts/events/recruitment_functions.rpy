@@ -59,8 +59,8 @@ init python:
             if "min_clever" in worker_filter:
                 if worker.get("skills", {}).get("Clever", 0) < worker_filter["min_clever"]:
                     continue
-            if "min_magic" in worker_filter:
-                if worker.get("skills", {}).get("Magic", 0) < worker_filter["min_magic"]:
+            if "min_craft" in worker_filter:
+                if worker.get("skills", {}).get("Craft", 0) < worker_filter["min_craft"]:
                     continue
             
             # Check required traits
@@ -222,12 +222,20 @@ init python:
         
         fallback_map = {
             "[actual_cost]": f"${final_cost}/day",
-            "[actual_comfort]": f"{final_comfort} comfort",
+            "[actual_comfort]": f"{final_comfort}",
             # Removed [actual_money] fallback since no messages use it and it might cause conflicts
             "[actual_reputation]": str(applied_values.get("actual_reputation", "0")),
         }
         for ph, val in fallback_map.items():
             outcome_message = outcome_message.replace(ph, val)
+        
+        # Handle attribute placeholders (e.g., [attr_rebelliousness])
+        for key, value in applied_values.items():
+            if key.startswith("attr_"):
+                attr_name = key.replace("attr_", "")
+                # Capitalize first letter for display
+                attr_display = attr_name.capitalize()
+                outcome_message = outcome_message.replace(f"[attr_{attr_name}]", f"{attr_display} +{value}")
 
         # Reduce redundancy and ensure currency formatting inside the message
         try:
@@ -275,26 +283,22 @@ init python:
             store.money += money_change
             applied_values["actual_money"] = money_change
         
-        # Handle reputation effects (apply to a building; no global store.reputation)
+        # Handle reputation effects (apply to Building 1 as default for recruitment events)
+        # Note: Reputation changes from recruitment are minimal since reputation should come from worker performance
         if "reputation" in effect_dict:
             rep_change = int(effect_dict["reputation"])
-            target_building = None
-            # Prefer the currently affected building, if any
-            if hasattr(store, "current_affected_building") and store.current_affected_building:
-                target_building = available_buildings.get(store.current_affected_building)
-            # Fallback: first owned building in the list
-            if target_building is None:
-                for _b in available_buildings.values():
-                    if isinstance(_b, dict) and _b.get("owned", True):
-                        target_building = _b
-                        break
+            # For recruitment events, apply to Building 1 (main building) as default
+            target_building_name = "Building 1"
+            target_building = available_buildings.get(target_building_name)
+            
             if target_building is not None:
                 new_rep = target_building.get("reputation", 0) + rep_change
                 # Cap reputation between 0 and 1000
                 target_building["reputation"] = max(0, min(new_rep, 1000))
                 applied_values["actual_reputation"] = rep_change
+                applied_values["reputation_building"] = store.custom_names.get(target_building_name, target_building_name)
             else:
-                renpy.log("Recruitment: No target building to apply reputation; skipping reputation effect.")
+                renpy.log("Recruitment: Building 1 not found; skipping reputation effect.")
         
         # Handle health effects (prefer applying to the worker)
         if "health" in effect_dict:
@@ -336,6 +340,20 @@ init python:
             worker["is_servant"] = False
             store.recruit_worker(worker)
             
+            # Apply attribute changes after recruitment (so they affect the recruited worker)
+            if "add_attribute" in effect_dict:
+                attr_info = effect_dict["add_attribute"]
+                target = attr_info.get("target", "recruited_worker")
+                
+                if target == "recruited_worker" and worker:
+                    for attr_name, attr_value in attr_info.items():
+                        if attr_name != "target" and isinstance(attr_value, (int, float)):
+                            current_value = worker.get(attr_name, 0)
+                            worker[attr_name] = max(0, min(100, current_value + int(attr_value)))
+                            # Store attribute changes for message formatting
+                            applied_values[f"attr_{attr_name}"] = int(attr_value)
+                            renpy.log(f"Applied {attr_name} change: {int(attr_value)} to {worker.get('name', 'Unknown')}")
+            
             applied_values["actual_cost"] = f"{final_cost}"
             applied_values["actual_comfort"] = negotiated_comfort
             applied_values["comfort_desired"] = int(desired_comfort)
@@ -367,18 +385,27 @@ init python:
         # Handle custom effects
         if "custom" in effect_dict:
             custom_effect = effect_dict["custom"]
-            if custom_effect == "unlock_ward_research":
-                # Custom effect example - could unlock special research options
-                store.unlocked_research = getattr(store, "unlocked_research", [])
-                if "ward_research" not in store.unlocked_research:
-                    store.unlocked_research.append("ward_research")
-                    renpy.notify("Ward Research unlocked!")
+            if custom_effect == "give_item":
+                # Add a specific item to the manager inventory
+                item_id = effect_dict.get("item_id")
+                if item_id:
+                    add_item_to_inventory(manager_inventory, item_id)
+                    # Get item name for notification
+                    try:
+                        item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
+                        item_name = item_data.get("display_name", item_id.replace("_", " ").title()) if item_data else item_id.replace("_", " ").title()
+                    except:
+                        item_name = item_id.replace("_", " ").title()
+                    renpy.notify(f"Received {item_name}!")
+                    renpy.log(f"Recruitment custom give_item: added {item_id} to inventory")
+                else:
+                    renpy.log("Recruitment custom give_item: missing item_id")
         
         return applied_values
 
     def process_advanced_recruitment_choice(choice_data, event, worker):
         """
-        Process an advanced recruitment choice and show the result.
+        Process an advanced recruitment choice and show the result using standard dialogue box.
         """
         try:
             # Process the choice
@@ -389,11 +416,8 @@ init python:
             # Hide the current screen
             renpy.hide_screen("advanced_recruitment_event_screen")
             
-            # Show result screen
-            renpy.show_screen("recruitment_result_screen", 
-                             message=outcome_message, 
-                             outcome=outcome_status, 
-                             event=event)
+            # Show result using unified screen (like interactions)
+            renpy.call_screen("recruitment_outcome", message=outcome_message, event=event, outcome=outcome_status)
             
         except Exception as e:
             renpy.log(f"Error processing advanced recruitment choice: {e}")

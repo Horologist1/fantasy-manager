@@ -6,6 +6,7 @@
       "skill_name": "Hag Potions",
       "skill_description": "Mystical concoctions and elixirs that enhance intimate experiences. Hag Potions help avoid pregnancy and skickness. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": true,
+      "allowed_map_locations": ["tavern", "redhouse"],
       "professions": [
         {
           "id": "prostitute",
@@ -1100,6 +1101,7 @@
       "skill_name": "Ingredients",
       "skill_description": "High-quality cooking components and rare spices that elevate culinary creations. Better ingredients help your chefs overcome complex recipes and impress discerning patrons with exceptional flavors. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": false,
+      "allowed_map_locations": ["tavern", "bluehouse"],
       "professions": [
         {
           "id": "service",
@@ -1370,6 +1372,7 @@
       "skill_name": "Equipment",
       "skill_description": "Masterwork tools, weapons, and armor crafted with precision and care. Superior equipment enables your smiths to tackle demanding commissions and create legendary items that exceed customer expectations. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": false,
+      "allowed_map_locations": ["greenhouse"],
       "professions": [
         {
           "id": "adventurer",
@@ -1712,6 +1715,7 @@
       "skill_name": "Accomodations",
       "skill_description": "Luxurious furnishings, comfortable beds, and welcoming atmospheres that make guests feel at home. Enhanced accommodations help your innkeepers handle difficult guests and create memorable experiences. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": false,
+      "allowed_map_locations": ["tavern", "bluehouse"],
       "professions": [
         {
           "id": "bartender",
@@ -1979,6 +1983,7 @@
       "skill_name": "Security",
       "skill_description": "Advanced defensive measures, trained guards, and protective enchantments that keep dangers at bay. Improved security helps your guardians overcome threatening situations and protect both workers and patrons. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": false,
+      "allowed_map_locations": ["greenhouse", "redhouse"],
       "professions": [
         {
           "id": "dealer",
@@ -2067,7 +2072,7 @@
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
-            "Magic"
+            "Craft"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
@@ -2081,7 +2086,7 @@
               "report": "Caught Disruptive Patron",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Magic"
+                "Craft"
               ],
               "relevant_traits": [
                 "Intimidating",
@@ -2146,7 +2151,7 @@
               "report": "Caught Cheating Gambler",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Magic"
+                "Craft"
               ],
               "relevant_traits": [
                 "Alert",

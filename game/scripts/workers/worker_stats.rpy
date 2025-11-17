@@ -35,12 +35,10 @@ init python:
         return base + bonus  # Total can exceed 100 with bonuses
 
     def calculate_max_health(worker):
-        """Return effective maximum health (base from Combat skill and level plus trait bonus)."""
+        """Return effective maximum health (base from level plus trait bonus)."""
         if "max_health" in worker:
             return worker["max_health"]
-        # Only use skill names
-        combat_skill = worker.get("skills", {}).get("Combat", 0)
-        base_health = int(combat_skill) + (worker.get("level", 1) * 5)
+        base_health = worker.get("level", 1) * 5
         bonus = 0
         for trait_name in worker.get("traits", []):
             for trait in traits_list:

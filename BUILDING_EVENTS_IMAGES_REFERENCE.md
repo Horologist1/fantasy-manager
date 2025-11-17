@@ -129,7 +129,8 @@ Los mismos prefijos de traits se aplican a las imágenes de eventos:
 - **pregnant_** - Si el worker tiene el trait "Pregnant"
 - **futa_** - Si el worker tiene el trait "Futa"
 - **transformed_** - Si el worker tiene el trait "Transformed"
-- **transformed_futa_**, **transformed_pregnant_**, **futa_pregnant_**, **transformed_futa_pregnant_** (combinaciones)
+- **magical_** - Si el worker tiene el trait "Magical"
+- **transformed_magical_**, **transformed_futa_**, **transformed_pregnant_**, **magical_futa_**, **magical_pregnant_**, **futa_pregnant_**, y todas las combinaciones de 3 y 4 traits (combinaciones)
 
 ### Sufijos de Outcome:
 - **_failure** - Para resultados de fallo

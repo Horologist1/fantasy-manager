@@ -417,7 +417,7 @@ screen main_menu():
             text "[config.name!t]":
                 style "main_menu_title"
 
-            text "0.7":
+            text "0.85":
                 style "main_menu_version"
 
 
@@ -619,7 +619,7 @@ screen about():
             xalign 0.0
 
         ## Versión
-        text "Version 0.7":
+        text "Version 0.85":
             style "about_version"
             xalign 0.0
 
@@ -1552,6 +1552,15 @@ transform delayed_blink(delay, cycle):
         pause (cycle - .4)
         repeat
 
+# Blink transform for PlazaServants button when textbutton is hovered
+transform blink_transform:
+    block:
+        alpha 1.0
+        pause 0.8
+        alpha 0.0
+        pause 0.8
+        repeat
+
 
 style skip_frame is empty
 style skip_text is gui_text
@@ -1818,6 +1827,87 @@ define bubble.expand_area = {
 }
 
 
+
+################################################################################
+## Tooltip System
+################################################################################
+
+screen tooltip(message, xpos=None, ypos=None, screen_name=None):
+    # Generic tooltip screen that displays a message.
+    # Can be positioned with xpos/ypos, or defaults to mouse position.
+    # Only shows if tooltips are enabled for the current screen
+    zorder 500
+    modal False
+    
+    python:
+        # Determine current screen name if not provided
+        if screen_name is None:
+            # Check screens in priority order using renpy.get_screen()
+            # renpy.get_screen() returns the screen object if shown, None otherwise
+            if renpy.get_screen("map_screen"):
+                screen_name = "map_screen"
+            elif renpy.get_screen("Manager"):
+                screen_name = "Manager"
+            elif renpy.get_screen("tavern"):
+                screen_name = "tavern"
+            elif renpy.get_screen("manager_inventory"):
+                screen_name = "manager_inventory"
+            elif renpy.get_screen("report_details"):
+                screen_name = "report_details"
+            else:
+                # Fallback to default
+                screen_name = "default"
+        
+        # Check if tooltips are enabled for this screen (defaults to True if not set)
+        tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+    
+    # Only show tooltip content if tooltips are enabled for this screen
+    if tooltips_enabled:
+        python:
+            # Use provided position or default to mouse position
+            if xpos is None:
+                mouse_x, mouse_y = renpy.get_mouse_pos()
+                # Tooltip max width is 250px, so we need to ensure it doesn't overflow
+                screen_width = config.screen_width
+                tooltip_max_width = 250
+                # If near right edge of screen, position tooltip to the left of mouse
+                if mouse_x > screen_width - (tooltip_max_width + 40):  # 40px margin
+                    # Position tooltip to the left of mouse, ensuring it stays on screen
+                    xpos = mouse_x - (tooltip_max_width + 30)  # Position to the left with margin
+                else:
+                    xpos = mouse_x + 20
+            if ypos is None:
+                mouse_x, mouse_y = renpy.get_mouse_pos()
+                ypos = mouse_y - 50  # Offset above mouse
+        
+        # Outer frame with beige background and dark border
+        frame:
+            xpos xpos
+            ypos ypos
+            xpadding 0
+            ypadding 0
+            background Solid("#3c1f14")  # Dark brown border
+            xsize None
+            ysize None
+            
+            # Inner frame with beige background
+            frame:
+                xsize None
+                ysize None
+                xmargin 2
+                ymargin 2
+                background Solid("#d4a574")  # Beige background
+                xpadding 6
+                ypadding 4
+                
+                # Set maximum width for tooltip to allow text wrapping
+                text message:
+                    size 20
+                    color "#3c1f14"
+                    text_align 0.0
+                    xalign 0.0
+                    yalign 0.0
+                    xmaximum 250  # Maximum width in pixels - text will wrap to multiple lines
 
 ################################################################################
 ## Mobile Variants
@@ -2508,6 +2598,7 @@ screen manager_inventory(shop_mode=None):
     default selected_worker_item = None
     default selected_description = ""
     default is_transferring = False  # Debounce flag
+    default selected_category = None  # Filter category for shop items
 
     python:
         def get_item_action_elements(item, item_info, worker):
@@ -2639,8 +2730,12 @@ screen manager_inventory(shop_mode=None):
     zorder 99
     tag manager_inventory
 
-    # Dynamic background based on shop_mode
-    add get_inventory_bg(shop_mode)
+    # Dynamic background based on shop_mode (adjusted to 1515px width to account for side panel)
+    add get_inventory_bg(shop_mode):
+        xsize 1515
+        ysize 1080
+        xalign 0.0
+        yalign 0.0
     # Decorative context background strip (same asset used in Tavern/Map)
     add context_menu_bg xalign 0.5 yalign 0.5
 
@@ -2668,7 +2763,7 @@ screen manager_inventory(shop_mode=None):
         xalign 0.0
         yalign 1.0
         xsize 1511
-        ysize 600
+        ysize 540
         background Solid("#1a1a1acc")
         padding (20, 20)
 
@@ -2677,7 +2772,7 @@ screen manager_inventory(shop_mode=None):
     frame:
         xalign 0.0
         yalign 0.9
-        yoffset 75
+        yoffset 125
         xsize 1511
         ysize 600
         background None
@@ -2922,7 +3017,15 @@ screen manager_inventory(shop_mode=None):
                                 spacing 5
                                 if shop_mode:
                                     $ price_limit = 200 if shop_mode == "shop1" else 500 if shop_mode == "shop2" else 1000
-                                    $ shop_items = [(item["id"], 1, False) for item in items_json["items"] if item.get("price", 0) <= price_limit and is_item_available_in_shop(item, shop_mode)]
+                                    # Get excluded items list from items_json (empty list if not present)
+                                    $ excluded_items = items_json.get("excluded_from_shops", [])
+                                    # Filter items by category if one is selected
+                                    $ filtered_items = items_json["items"]
+                                    if selected_category:
+                                        $ filtered_items = [item for item in filtered_items if item.get("type") == selected_category]
+                                    # Exclude items from excluded_from_shops list
+                                    $ filtered_items = [item for item in filtered_items if item.get("id") not in excluded_items]
+                                    $ shop_items = [(item["id"], 1, False) for item in filtered_items if item.get("price", 0) <= price_limit and is_item_available_in_shop(item, shop_mode)]
                                     for item in shop_items:
                                         $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
                                         $ bg_button = Solid("#777777") if shop_items.index(item) % 2 == 0 else Solid("#555555")
@@ -3066,11 +3169,90 @@ screen manager_inventory(shop_mode=None):
         yfill True
         xoffset -5
         add context_menu_bg
+        
+        # Help/Information button - positioned in top-right corner of context menu (green panel)
+        python:
+            screen_name = "manager_inventory"
+            tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+        
+        imagebutton:
+            idle Transform("gui/info_idle.png", zoom=0.315)
+            hover Transform("gui/info_hover.png", zoom=0.315)
+            selected_idle Transform("gui/info_active.png", zoom=0.315)
+            selected_hover Transform("gui/info_active.png", zoom=0.315)
+            selected tooltips_enabled
+            action Function(toggle_tooltips_for_screen, screen_name)
+            hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
+            unhovered Hide("tooltip")
+            xalign 1.0
+            xoffset -60
+            yalign 0.0
+            yoffset 55
+        
         vbox:
             xalign 0.5
             yalign 0.5
             spacing 10
-            if shop_mode is None:
+            if shop_mode:
+                # Category filter buttons
+                python:
+                    # Calculate available items first to determine which categories have items
+                    price_limit = 200 if shop_mode == "shop1" else 500 if shop_mode == "shop2" else 1000
+                    excluded_items = items_json.get("excluded_from_shops", [])
+                    # Get all items that would be available in shop (after price and exclusion filters)
+                    available_items = [item for item in items_json["items"] 
+                                     if item.get("id") not in excluded_items 
+                                     and item.get("price", 0) <= price_limit 
+                                     and is_item_available_in_shop(item, shop_mode)]
+                    
+                    # Get unique item types only from available items
+                    available_categories = set()
+                    for item in available_items:
+                        item_type = item.get("type")
+                        if item_type:
+                            available_categories.add(item_type)
+                    # Sort categories for consistent display
+                    sorted_categories = sorted(available_categories)
+                    # Category display names
+                    category_names = {
+                        "weapon": "Weapons",
+                        "armor": "Armor",
+                        "clothing": "Clothing",
+                        "accessory": "Accessories",
+                        "consumable": "Consumables",
+                        "currency": "Currency",
+                        "quest_item": "Quest Items"
+                    }
+                
+                python:
+                    all_items_color = "#3c1f14" if selected_category is None else "#6b6528"
+                    all_items_bg = Solid("#d4a574") if selected_category is None else None
+                
+                textbutton "All Items":
+                    action SetScreenVariable("selected_category", None)
+                    xsize 300
+                    ysize 50
+                    text_size 42
+                    text_color all_items_color
+                    text_hover_color "#6b6528"
+                    background all_items_bg
+                    align (0.5, 0.5)
+                
+                for category in sorted_categories:
+                    python:
+                        category_display = category_names.get(category, category.replace("_", " ").title())
+                        category_color = "#3c1f14" if selected_category == category else "#6b6528"
+                        category_bg = Solid("#d4a574") if selected_category == category else None
+                    textbutton "[category_display]":
+                        action SetScreenVariable("selected_category", category)
+                        xsize 300
+                        ysize 50
+                        text_size 42
+                        text_color category_color
+                        text_hover_color "#6b6528"
+                        background category_bg
+                        align (0.5, 0.5)
+            elif shop_mode is None:
                 if left_worker is not None and left_worker is not False:
                     textbutton "View [left_worker['name']]":
                         action Show("worker_details", worker=left_worker, in_roster=True)
@@ -3090,7 +3272,7 @@ screen manager_inventory(shop_mode=None):
                         text_hover_color "#6b6528"
                         align (0.5, 0.5)
             textbutton "Close":
-                action Hide("manager_inventory")
+                action [Hide("manager_inventory"), Show("map_screen")]
                 xsize 300
                 ysize 50
                 text_size 42
@@ -3201,7 +3383,7 @@ screen confirm_upgrade(building_name):
     python:
         building = available_buildings[building_name]
         current_level = building["base_level"]
-        upgrade_cost = 5000 * current_level
+        upgrade_cost = current_level * 1000  # Match the calculation in upgrade_building function
 
     frame:
         style "confirm_frame"
@@ -3219,7 +3401,7 @@ screen confirm_upgrade(building_name):
                 spacing 150
 
                 textbutton "Yes" action If(money >= upgrade_cost,
-                    [SetVariable("money", money - upgrade_cost), Function(upgrade_building, building_name), Function(lambda: setattr(store, 'building_upgraded_tutorial', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Hide("confirm_upgrade")],
+                    [Function(upgrade_building, building_name), Function(lambda: setattr(store, 'building_upgraded_tutorial', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Hide("confirm_upgrade")],
                     Show("error_popup", message="You do not have enough money to upgrade.")
                 )
                 textbutton "No" action Hide("confirm_upgrade")
@@ -3270,8 +3452,8 @@ screen building_type_selection(building_name):
                                 text_hover_color "#6b6528"
                                 action [
                                     SetDict(available_buildings[building_name], "type", btype["id"]),
-                                    Function(lambda: setattr(store, 'building_1_type_set', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 2 else None),
-                                    Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 2 else None),
+                                    Function(lambda: setattr(store, 'building_1_type_set', True) if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
+                                    Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
                                     Hide("building_type_selection")
                                 ]
         
@@ -3313,6 +3495,91 @@ screen confirm_change_type(building_name):
                 textbutton "No" action Hide("confirm_change_type")
 
     key "game_menu" action Hide("confirm_change_type")
+
+screen confirm_buy_worker(worker, return_screen=None):
+    modal True
+    zorder 200
+    style_prefix "confirm"
+    add "gui/overlay/confirm.png"
+
+    frame:
+        style "confirm_frame"
+        vbox:
+            xalign 0.5
+            yalign 0.5
+            spacing 45
+
+            label "Buy [worker['name']] for $[worker['cost']]?":
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 150
+
+                textbutton "Yes" action If(money >= worker["cost"],
+                    [Function(buy_worker, worker), Hide("confirm_buy_worker")],
+                    Show("error_popup", message="You do not have enough money to buy this worker.")
+                )
+                textbutton "No" action If(return_screen,
+                    [Hide("confirm_buy_worker"), Show(return_screen, worker=worker)],
+                    Hide("confirm_buy_worker")
+                )
+
+    key "game_menu" action If(return_screen,
+        [Hide("confirm_buy_worker"), Show(return_screen, worker=worker)],
+        Hide("confirm_buy_worker")
+    )
+
+screen confirm_sell_worker(worker, return_screen=None):
+    modal True
+    zorder 200
+    style_prefix "confirm"
+    add "gui/overlay/confirm.png"
+
+    python:
+        sell_text = get_sell_text(worker)
+        # Calculate daily cost savings
+        daily_cost = worker.get("daily_cost", 0)
+        if daily_cost == 0:
+            # Fallback calculation if daily_cost not set
+            comfort_level = worker.get("comfort_level", 1)
+            daily_cost = comfort_level * 10
+        
+        if worker.get("is_servant", False):
+            refund = worker.get("level", 1) * 500
+            message = f"Sell {worker['name']} for ${refund}?\nYou will save ${daily_cost} per day."
+        else:
+            message = f"Fire {worker['name']}?\nYou will save ${daily_cost} per day.\nThis action cannot be undone."
+
+    frame:
+        style "confirm_frame"
+        vbox:
+            xalign 0.5
+            yalign 0.5
+            spacing 45
+
+            label message:
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 150
+
+                textbutton "Yes" action If(return_screen == "worker_details",
+                    [Function(sell_worker, worker), Hide("confirm_sell_worker"), Hide("worker_details")],
+                    [Function(sell_worker, worker), Hide("confirm_sell_worker")]
+                )
+                textbutton "No" action If(return_screen,
+                    [Hide("confirm_sell_worker"), Show(return_screen, worker=worker)],
+                    Hide("confirm_sell_worker")
+                )
+
+    key "game_menu" action If(return_screen,
+        [Hide("confirm_sell_worker"), Show(return_screen, worker=worker)],
+        Hide("confirm_sell_worker")
+    )
 
 screen adjust_skill_bonus(building_name):
     modal True
@@ -3402,7 +3669,18 @@ screen adjust_skill_bonus(building_name):
 
 screen Manager(building_name):
     zorder 5
-    add get_building_bg(building_name)
+    # Building background adjusted to 1515px width to account for side panel
+    # Exception: default.png shows at full size (1920x1080)
+    $ bg_image = get_building_bg(building_name)
+    $ is_default = bg_image == "images/buildings/default.png"
+    if is_default:
+        add bg_image
+    else:
+        add bg_image:
+            xsize 1515
+            ysize 1080
+            xalign 0.0
+            yalign 0.0
     # Decorative context panel background centered like tavern/map
     add context_menu_bg xalign 0.5 yalign 0.5
     
@@ -3550,81 +3828,126 @@ screen Manager(building_name):
         yalign 0.5
         xsize 320
         ysize 1.0
-        background context_menu_bg
-        vbox:
-            xalign 0.5
+        background None
+        
+        # Help/Information button - positioned in top-right corner of context menu (green panel)
+        python:
+            screen_name = "Manager"
+            tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+        
+        imagebutton:
+            idle Transform("gui/info_idle.png", zoom=0.315)
+            hover Transform("gui/info_hover.png", zoom=0.315)
+            selected_idle Transform("gui/info_active.png", zoom=0.315)
+            selected_hover Transform("gui/info_active.png", zoom=0.315)
+            selected tooltips_enabled
+            action Function(toggle_tooltips_for_screen, screen_name)
+            hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
+            unhovered Hide("tooltip")
+            xalign 1.0
+            xoffset -60
+            yalign 0.0
+            yoffset 55
+        
+        frame:
+            xalign 1.0
             yalign 0.5
-            spacing 10
-            textbutton "Rename Building":
-                action Show("rename_building", building_name=building_name)
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-                ysize 50
-                align (0.5, 0.5)
-            
-            # Only show upgrade buttons if building has a type
-            $ building = available_buildings[building_name]
-            if building.get("type") is not None:
-                textbutton "Upgrade Building":
-                    action Show("confirm_upgrade", building_name=building_name)
+            xsize 320
+            ysize 1.0
+            background context_menu_bg
+            vbox:
+                xalign 0.5
+                yalign 0.5
+                spacing 10
+                textbutton "Rename Building":
+                    action Show("rename_building", building_name=building_name)
                     xsize 300
                     text_size 42
                     text_color "#3c1f14"
                     text_hover_color "#6b6528"
                     ysize 50
                     align (0.5, 0.5)
-                $ skill_name = next((bt.get('skill_name', 'Skill') for bt in building_types_json.get('building_types', []) if bt.get('id') == building.get('type')), 'Skill')
-                textbutton "[skill_name]":
-                    action Show("adjust_skill_bonus", building_name=building_name)
+                    hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Change the display name of this building", screen_name="Manager"), NullAction())
+                    unhovered Hide("tooltip")
+                
+                # Only show upgrade buttons if building has a type
+                $ building = available_buildings[building_name]
+                if building.get("type") is not None:
+                    python:
+                        upgrade_cost = building["base_level"] * 1000
+                        upgrade_tooltip = f"Increase building level by 1. Cost: ${upgrade_cost}. Higher levels increase max workers per profession and improve reputation."
+                    textbutton "Upgrade Building":
+                        action Show("confirm_upgrade", building_name=building_name)
+                        xsize 300
+                        text_size 42
+                        text_color "#3c1f14"
+                        text_hover_color "#6b6528"
+                        ysize 50
+                        align (0.5, 0.5)
+                        hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message=upgrade_tooltip, screen_name="Manager"), NullAction())
+                        unhovered Hide("tooltip")
+                    python:
+                        skill_name = next((bt.get('skill_name', 'Skill') for bt in building_types_json.get('building_types', []) if bt.get('id') == building.get('type')), 'Skill')
+                        skill_description = next((bt.get('skill_description', 'No description available') for bt in building_types_json.get('building_types', []) if bt.get('id') == building.get('type')), 'No description available')
+                    textbutton "[skill_name]":
+                        action Show("adjust_skill_bonus", building_name=building_name)
+                        xsize 300
+                        text_size 42
+                        text_color "#3c1f14"
+                        text_hover_color "#6b6528"
+                        ysize 50
+                        align (0.5, 0.5)
+                        hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message=skill_description, screen_name="Manager"), NullAction())
+                        unhovered Hide("tooltip")
+                
+                # Building type/change type button
+                if building.get("type") is None:
+                    textbutton "Building Type":
+                        action Show("building_type_selection", building_name=building_name)
+                        xsize 300
+                        text_size 42
+                        text_color "#3c1f14"
+                        text_hover_color "#6b6528"
+                        ysize 50
+                        align (0.5, 0.5)
+                        hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Select a business type for this building. Each type has unique professions and skills.", screen_name="Manager"), NullAction())
+                        unhovered Hide("tooltip")
+                else:
+                    textbutton "Change Type":
+                        action Show("confirm_change_type", building_name=building_name)
+                        xsize 300
+                        text_size 42
+                        text_color "#3c1f14"
+                        text_hover_color "#6b6528"
+                        ysize 50
+                        align (0.5, 0.5)
+                        hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Change the business type of this building. Warning: This will reset the building to level 1 and unassign all workers.", screen_name="Manager"), NullAction())
+                        unhovered Hide("tooltip")
+                
+                textbutton "Storage":
+                    action [
+                        SetVariable("left_worker", None),
+                        SetVariable("right_worker", store.workers[0] if store.workers else False),
+                        Show("manager_inventory")
+                    ]
                     xsize 300
                     text_size 42
                     text_color "#3c1f14"
                     text_hover_color "#6b6528"
                     ysize 50
                     align (0.5, 0.5)
-            
-            # Building type/change type button
-            if building.get("type") is None:
-                textbutton "Building Type":
-                    action Show("building_type_selection", building_name=building_name)
+                    hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Access the building's storage to manage items and equipment", screen_name="Manager"), NullAction())
+                    unhovered Hide("tooltip")
+                textbutton "Back":
+                    action [SetVariable("current_bg", tavern_bg), Hide("Manager"), Show("tavern")]
                     xsize 300
                     text_size 42
                     text_color "#3c1f14"
                     text_hover_color "#6b6528"
                     ysize 50
                     align (0.5, 0.5)
-            else:
-                textbutton "Change Type":
-                    action Show("confirm_change_type", building_name=building_name)
-                    xsize 300
-                    text_size 42
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
-                    ysize 50
-                    align (0.5, 0.5)
-            
-            textbutton "Storage":
-                action [
-                    SetVariable("left_worker", None),
-                    SetVariable("right_worker", store.workers[0] if store.workers else False),
-                    Show("manager_inventory")
-                ]
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-                ysize 50
-                align (0.5, 0.5)
-            textbutton "Back":
-                action [SetVariable("current_bg", tavern_bg), Hide("Manager"), Show("tavern")]
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-                ysize 50
-                align (0.5, 0.5)
+                    hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Return to the tavern", screen_name="Manager"), NullAction())
+                    unhovered Hide("tooltip")
 
             # (Context-only building options retained; tavern global options removed)
 
@@ -3815,7 +4138,147 @@ screen buy_buildings():
                             sensitive (money >= price)
                     else:
                         text "No more buildings available to purchase." size 28 xalign 0.5 color "#7a4b2a"
+
+screen recruitment_menu():
+    modal True
+    zorder 99
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        # Close button in the top-right inside the panel
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+            action Hide("recruitment_menu")
+
+        vbox:
+            spacing 15
+            null height 15
+            label "Take a walk" xalign 0.5 style "header_style"
+            null height 10
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                ysize 480
+                xsize 605
+                xoffset 25
+                yoffset -20
+                vbox:
+                    spacing 10
+                    xsize 580
+                    yoffset 25
+                    textbutton "Recruit Workers":
+                        xsize 500
+                        text_size 28
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action If(can_recruit_today,
+                            [
+                                Function(launch_recruitment_via_label),
+                                Hide("recruitment_menu")
+                            ],
+                            Show("error_popup", message="You can only recruit once per day"))
+                        sensitive can_recruit_today
             
+
+screen buy_map_building(map_button_id):
+    # Pantalla para comprar un edificio del mapa y convertirlo en un negocio.
+    # map_button_id: identificador del botón del mapa (ej: "S2Tavern", "tavern", "redhouse", etc.)
+    modal True
+    zorder 100
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        # Close button in the top-right inside the panel
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+            action Hide("buy_map_building")
+        
+        vbox:
+            spacing 15
+            null height 15
+            label "Purchase Building" xalign 0.5 style "header_style"
+            text "Would you like to purchase this building? You could convert it into one of the following businesses:" size 24 xalign 0.5 color "#7a4b2a" text_align 0.5
+            null height 10
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                ysize 480
+                xsize 605
+                xoffset 25
+                yoffset -20
+                vbox:
+                    spacing 10
+                    xsize 580
+                    yoffset 25
+                    python:
+                        available_businesses = get_available_businesses_for_map_button(map_button_id)
+                        renpy.log(f"DEBUG: map_button_id={map_button_id}, available_businesses count={len(available_businesses)}")
+                        num = len(owned_buildings)
+                        renpy.log(f"DEBUG: owned_buildings count={num}, owned_buildings={owned_buildings}")
+                        # Precios fijos según tipo de botón
+                        if "Tavern" in map_button_id:
+                            price = 15000
+                        elif "Bluehouse" in map_button_id:
+                            price = 20000
+                        elif "Redhouse" in map_button_id:
+                            price = 25000
+                        elif "Greenhouse" in map_button_id:
+                            price = 30000
+                        else:
+                            # Default para otros tipos (Shop, Servants, etc.)
+                            price = 20000
+                        renpy.log(f"DEBUG: Calculated price={price} for map_button_id={map_button_id}")
+                        building_name = f"Building {str(num + 1)}"
+                    
+                    if num < max_building:
+                        if len(available_businesses) > 0:
+                            for btype in available_businesses:
+                                textbutton "[btype['name']] - $[price]":
+                                    xsize 500
+                                    text_size 28
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action If(money >= price,
+                                        [
+                                            Function(add_new_building, building_name, price),
+                                            SetVariable("money", money - price),
+                                            Function(lambda bn=building_name, bt=btype["id"]: available_buildings[bn].update({"type": bt}) if bn in available_buildings else None),
+                                            Function(store.custom_names.__setitem__, building_name, building_name),
+                                            Function(store.owned_buildings.append, building_name),
+                                            Function(store.map_button_buildings.__setitem__, map_button_id, building_name),
+                                            SetVariable("buildings_owned", len(store.owned_buildings)),
+                                            Hide("buy_map_building"),
+                                            Hide("map_screen"),
+                                            Function(renpy.notify, f"Purchased {building_name} as {btype['name']}!"),
+                                            Show("Manager", building_name=building_name)
+                                        ])
+                                    sensitive (money >= price)
+                        else:
+                            text "No businesses available for this location." size 28 xalign 0.5 color "#7a4b2a"
+                    else:
+                        text "No more buildings available to purchase." size 28 xalign 0.5 color "#7a4b2a"
 
 screen buy_servants_table():
     zorder 90
@@ -3918,7 +4381,7 @@ screen buy_servants_table():
                             xsize 200
                             ysize 50
                             text "Buy" size 24 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
-                            action Function(buy_worker, worker)
+                            action Show("confirm_buy_worker", worker=worker)
                             sensitive (money >= worker["cost"])
 
 
@@ -4024,57 +4487,227 @@ screen more_details_screen(worker):
                 style "nav_button_text"
                 action Hide("more_details_screen")
 
-screen interaction_result(worker, interaction):
+screen interaction_result(worker, interaction, message_index=0, show_image_only=False):
     modal True
     zorder 99
+    python:
+        interaction_messages = split_text_for_dialogue(interaction.get('description', 'No description available.'))
+        current_message_index = message_index
+        total_messages = len(interaction_messages)
+        # Si show_image_only es True, significa que ya pasamos todos los mensajes
+        if show_image_only:
+            show_dialogue = False
+            close_action = [
+                Hide("interaction_result"),
+                Hide("interaction_menu"),
+                Show("worker_details", worker=worker, in_roster=True),
+                Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('id') in ("friendship_chat_female", "friendship_chat_male")) else None),
+                Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('id') in ("friendship_chat_female", "friendship_chat_male")) else None)
+            ]
+        else:
+            show_dialogue = True
+            display_message = interaction_messages[current_message_index] if current_message_index < total_messages else interaction_messages[-1] if interaction_messages else "No description available."
+            is_last_message = current_message_index >= total_messages - 1
+            # Acción al hacer click: avanzar al siguiente mensaje o mostrar solo imagen si es el último
+            if is_last_message:
+                click_action = Show("interaction_result", worker=worker, interaction=interaction, message_index=current_message_index, show_image_only=True)
+            else:
+                click_action = Show("interaction_result", worker=worker, interaction=interaction, message_index=current_message_index + 1, show_image_only=False)
+    
     add Solid("#000000dd")
-    frame:
+    
+    # Show the image as a cutscene (full screen)
+    $ media_file = get_interaction_image(worker, interaction)
+    if media_file and media_file.lower().endswith(('.webm', '.mp4')):
+        add Movie(
+            play=media_file,
+            size=(1920, 1080),
+            loop=True
+        )
+    elif media_file:
+        add media_file:
+            xalign 0.5
+            yalign 0.5
+            fit "contain"
+            xysize (1920, 1080)
+    
+    # Make the whole screen clickeable to advance dialogue (but dialogue box renders on top)
+    if show_dialogue:
+        button:
+            xfill True
+            yfill True
+            background None
+            action click_action
+            
+            # Dialogue box at the bottom (non-interactive, just display)
+            window:
+                id "window"
+                style "say_window"
+                xalign 0.5
+                xfill True
+                yalign gui.textbox_yalign
+                ysize gui.textbox_height
+                
+                text display_message:
+                    id "what"
+                    style "say_dialogue"
+                    xpos gui.dialogue_xpos
+                    xsize gui.dialogue_width
+                    ypos gui.dialogue_ypos
+    else:
+        # Image-only mode: make the whole screen clickeable to close
+        button:
+            xfill True
+            yfill True
+            background None
+            action close_action
+    
+    # Return button (top-right corner) - always available, on top of everything
+    imagebutton:
+        idle Transform("gui/button/return_idle.png", zoom=0.5)
+        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        action [
+            Hide("interaction_result"),
+            Hide("interaction_menu"),
+            Show("worker_details", worker=worker, in_roster=True),
+            Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('id') in ("friendship_chat_female", "friendship_chat_male")) else None),
+            Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('id') in ("friendship_chat_female", "friendship_chat_male")) else None)
+        ]
+        xalign 1.0
+        yalign 0.0
+        xoffset -15
+        yoffset 5
+
+screen recruitment_outcome(message, event, outcome, message_index=0, show_image_only=False):
+    modal True
+    zorder 99
+    python:
+        outcome_messages = split_text_for_dialogue(message)
+        current_message_index = message_index
+        total_messages = len(outcome_messages)
+        # Si show_image_only es True, significa que ya pasamos todos los mensajes
+        if show_image_only:
+            show_dialogue = False
+            close_action = [
+                Hide("recruitment_outcome"),
+                Return(True)
+            ]
+        else:
+            show_dialogue = True
+            display_message = outcome_messages[current_message_index] if current_message_index < total_messages else outcome_messages[-1] if outcome_messages else "No message available."
+            is_last_message = current_message_index >= total_messages - 1
+            # Acción al hacer click: avanzar al siguiente mensaje o mostrar solo imagen si es el último
+            if is_last_message:
+                click_action = Show("recruitment_outcome", message=message, event=event, outcome=outcome, message_index=current_message_index, show_image_only=True)
+            else:
+                click_action = Show("recruitment_outcome", message=message, event=event, outcome=outcome, message_index=current_message_index + 1, show_image_only=False)
+    
+    add Solid("#000000dd")
+    
+    # Get background image based on outcome with proper fallback chain
+    python:
+        # Step 1: Determine which image name to use based on outcome
+        if outcome == "success":
+            bg_name = event.get("success_image") or event.get("background_image", "event_bg")
+        elif outcome == "failure":
+            bg_name = event.get("failure_image") or event.get("background_image", "event_bg")
+        else:
+            bg_name = event.get("background_image", "event_bg")
+        
+        # Step 2: Try to resolve the image with fallback chain
+        # Priority: specific image -> generic_success/failure -> event_bg
+        bg_image = None
+        
+        # First, try the specific image name
+        if bg_name and not bg_name.startswith("images/"):
+            if hasattr(store, bg_name):
+                potential_image = getattr(store, bg_name)
+                if renpy.loadable(potential_image):
+                    bg_image = potential_image
+            else:
+                # Try events folder first, then root images folder
+                if renpy.loadable(f"images/events/{bg_name}.png"):
+                    bg_image = f"images/events/{bg_name}.png"
+                elif renpy.loadable(f"images/{bg_name}.png"):
+                    bg_image = f"images/{bg_name}.png"
+        elif bg_name:
+            if renpy.loadable(bg_name):
+                bg_image = bg_name
+        
+        # Step 3: If specific image not found, try generic fallback based on outcome
+        if not bg_image:
+            if outcome == "success":
+                generic_name = "generic_success"
+            elif outcome == "failure":
+                generic_name = "generic_failure"
+            else:
+                generic_name = None
+            
+            if generic_name:
+                if hasattr(store, generic_name) and renpy.loadable(getattr(store, generic_name)):
+                    bg_image = getattr(store, generic_name)
+                elif renpy.loadable(f"images/events/{generic_name}.png"):
+                    bg_image = f"images/events/{generic_name}.png"
+                elif renpy.loadable(f"images/{generic_name}.png"):
+                    bg_image = f"images/{generic_name}.png"
+        
+        # Step 4: Final fallback to event_bg
+        if not bg_image:
+            if hasattr(store, 'event_bg') and renpy.loadable(store.event_bg):
+                bg_image = store.event_bg
+            elif renpy.loadable("images/event_bg.png"):
+                bg_image = "images/event_bg.png"
+            else:
+                bg_image = "images/event_bg.png"  # Last resort, may show error
+                renpy.log(f"Warning: Could not load any fallback image, using {bg_image}")
+    
+    # Show the background image (full screen)
+    add bg_image:
         xalign 0.5
         yalign 0.5
-        background Solid("#1a1a1acc")
-        padding (20, 20)
-        vbox:
-            spacing 20
-            xsize 1600
-            ysize 900
+        fit "contain"
+        xysize (1920, 1080)
+    
+    # Make the whole screen clickeable to advance dialogue (but dialogue box renders on top)
+    if show_dialogue:
+        button:
+            xfill True
+            yfill True
+            background None
+            action click_action
             
-            # First show the description text
-            frame:
-                background Solid("#00000088")
-                padding (15, 15)
-                xsize 1560
-                text "[interaction.get('description', 'No description available.')]" size 22 color "#ffffff" xalign 0.5 text_align 0.5
-            
-            # Then show the image as a cutscene
-            $ media_file = get_interaction_image(worker, interaction)
-            frame:
-                background Solid("#000000")
-                xsize 1560
-                ysize 700
-                if media_file and media_file.lower().endswith(('.webm', '.mp4')):
-                    add Movie(
-                        play=media_file,
-                        size=(1560, 700),
-                        loop=True
-                    )
-                elif media_file:
-                    add media_file:
-                        xalign 0.5
-                        yalign 0.5
-                        fit "contain"
-                        xysize (1560, 700)
-                else:
-                    text "No image available" color "#ffffff" xalign 0.5 yalign 0.5 size 24
-            
-            # Close button
-            textbutton "Close":
-                style "nav_button_text"
+            # Dialogue box at the bottom (non-interactive, just display)
+            window:
+                id "window"
+                style "say_window"
                 xalign 0.5
-                action [
-                    Hide("interaction_result"),
-                    Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('id') in ("friendship_chat_female", "friendship_chat_male")) else None),
-                    Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('id') in ("friendship_chat_female", "friendship_chat_male")) else None)
-                ]
+                xfill True
+                yalign gui.textbox_yalign
+                ysize gui.textbox_height
+                
+                text display_message:
+                    id "what"
+                    style "say_dialogue"
+                    xpos gui.dialogue_xpos
+                    xsize gui.dialogue_width
+                    ypos gui.dialogue_ypos
+    else:
+        # Image-only mode: make the whole screen clickeable to close
+        button:
+            xfill True
+            yfill True
+            background None
+            action close_action
+    
+    # Return button (top-right corner) - always available, on top of everything
+    imagebutton:
+        idle Transform("gui/button/return_idle.png", zoom=0.5)
+        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        action [Hide("recruitment_outcome"), Return(True)]
+        xalign 1.0
+        yalign 0.0
+        xoffset -15
+        yoffset 5
 
 screen adjust_comfort(worker):
     modal True
@@ -4641,7 +5274,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                     xsize 250
                                     ysize 50
                                     text "[sell_text]" size 23 xalign 0.5 hover_color "#6b6528"
-                                    action [Function(sell_worker, worker), Hide("worker_details")]
+                                    action Show("confirm_sell_worker", worker=worker, return_screen="worker_details")
                         else:
                             hbox:
                                 spacing 1
@@ -4658,7 +5291,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         xsize 250
                                         ysize 50
                                         text "Buy ($[worker['cost']])" size 23 xalign 0.5
-                                        action [Function(buy_worker, worker), Hide("worker_details")]
+                                        action Show("confirm_buy_worker", worker=worker, return_screen="worker_details")
 
 
 
@@ -4862,7 +5495,7 @@ screen workers():
                                 xsize 180
                                 ysize 50
                                 text "[get_sell_text(worker)]" size 24 color "#7a4b2a" xalign 0.0 hover_color "#6b6528"  # Align text to the left
-                                action Function(sell_worker, worker)
+                                action Show("confirm_sell_worker", worker=worker)
 
             # (Removed duplicate close button)
 
@@ -4872,51 +5505,323 @@ screen map_screen():
     add map_bg
     # Draw full-width decorative PNG centered behind the menu, without clipping
     add context_menu_bg xalign 0.5 yalign 0.5
-    frame:
-        xalign 1.0
-        yalign 0.5
-        xsize 320
-        ysize 1.0
-        background None
-        vbox:
-            xalign 1.0
-            yalign 0.5
-            xoffset -5
-            spacing 10
-            textbutton "Buy Servants":
-                action Show("buy_servants_table")
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-            textbutton "Recruit Workers":
-                action If(can_recruit_today,
-                    Function(launch_recruitment_via_label),
-                    Show("error_popup", message="You can only recruit once per day"))
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-            textbutton "Buy Buildings":
-                action Show("buy_buildings")
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-            textbutton "Visit Shops":
-                action Show("shop_selection")
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-            textbutton "Back":
-                action [Hide("map_screen"), Show("tavern")]
-                xsize 300
-                text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
-
-    # Money and Date positioned over context menu area
+    
+    # Map building buttons with focus_mask
+    # Images are full map size with transparent areas, so they auto-position correctly
+    # Order matters: later buttons render on top (higher z-order)
+    
+    # Plaza buildings
+    # Plaza Shop - before Plaza Tavern so Plaza Tavern renders on top
+    imagebutton:
+        idle If(shops_text_hover,
+            At("gui/map/PlazaShopb.png", blink_transform),
+            "gui/map/PlazaShopa.png")
+        hover "gui/map/PlazaShopb.png"
+        focus_mask True
+        action [SetVariable("left_worker", None), SetVariable("right_worker", None), Show("manager_inventory", shop_mode="shop1")]
+        hovered [ShowTransient("tooltip", message="[get_shop_tooltip_text('shop1')]"), SetVariable("shops_text_hover", False)]
+        unhovered [Hide("tooltip"), SetVariable("shops_text_hover", False)]
+    
+    # Blinking animation for PlazaServants when textbutton is hovered
+    imagebutton:
+        idle If(plaza_servants_text_hover, 
+            At("gui/map/PlazaServantsb.png", blink_transform),
+            get_map_button_idle_image("PlazaServants"))
+        hover "gui/map/PlazaServantsb.png"
+        focus_mask True
+        action Show("buy_servants_table")
+        hovered [ShowTransient("tooltip", message="Buy Servants"), SetVariable("plaza_servants_text_hover", False)]
+        unhovered [Hide("tooltip"), SetVariable("plaza_servants_text_hover", False)]
+    
+    # Plaza Fountain - Recruitment menu
+    imagebutton:
+        idle If(recruit_workers_text_hover,
+            At("gui/map/PlazaFountainb.png", blink_transform),
+            "gui/map/PlazaFountaina.png")
+        hover "gui/map/PlazaFountainb.png"
+        focus_mask True
+        action Show("recruitment_menu")
+        hovered ShowTransient("tooltip", message="Take a walk")
+        unhovered Hide("tooltip")
+    
+    # S1 (South 1) buildings
+    imagebutton:
+        idle If(shops_text_hover,
+            At("gui/map/S1Shop1b.png", blink_transform),
+            get_map_button_idle_image("S1Shop1"))
+        hover "gui/map/S1Shop1b.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S1Shop1") is not None,
+            # Si el edificio está comprado, verificar si shop3 está disponible
+            If(
+                unlocked_shops.get("shop3", False),
+                [SetVariable("left_worker", None), SetVariable("right_worker", None), Show("manager_inventory", shop_mode="shop3")],
+                Show("error_popup", message="This shop will open when the owner is found and an investment has been made (an event will appear as you advance with the journal objectives).")
+            ),
+            # Si el edificio NO está comprado, mostrar mensaje en lugar de pantalla de compra
+            Show("error_popup", message="This shop will open when the owner is found and an investment has been made (an event will appear as you advance with the journal objectives).")
+        )
+        hovered [ShowTransient("tooltip", message="[get_shop_tooltip_text('shop3')]"), SetVariable("shops_text_hover", False)]
+        unhovered [Hide("tooltip"), SetVariable("shops_text_hover", False)]
+    
+    imagebutton:
+        idle If(shops_text_hover,
+            At("gui/map/S1Shop2b.png", blink_transform),
+            get_map_button_idle_image("S1Shop2"))
+        hover "gui/map/S1Shop2b.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S1Shop2") is not None,
+            # Si el edificio está comprado, verificar si shop2 está disponible
+            If(
+                unlocked_shops.get("shop2", False),
+                [SetVariable("left_worker", None), SetVariable("right_worker", None), Show("manager_inventory", shop_mode="shop2")],
+                Show("error_popup", message="This shop will open when the owner is found (an event will appear as you advance with the journal objectives).")
+            ),
+            # Si el edificio NO está comprado, mostrar mensaje en lugar de pantalla de compra
+            Show("error_popup", message="This shop will open when the owner is found (an event will appear as you advance with the journal objectives).")
+        )
+        hovered [ShowTransient("tooltip", message="[get_shop_tooltip_text('shop2')]"), SetVariable("shops_text_hover", False)]
+        unhovered [Hide("tooltip"), SetVariable("shops_text_hover", False)]
+    
+    imagebutton:
+        idle get_map_button_idle_image("S1Greenhouse")
+        hover "gui/map/S1Greenhouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S1Greenhouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S1Greenhouse"))],
+            Show("buy_map_building", map_button_id="S1Greenhouse")
+        )
+        hovered If(
+            get_map_building_name_safe("S1Greenhouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('S1Greenhouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    imagebutton:
+        idle get_map_button_idle_image("S1Redhouse")
+        hover "gui/map/S1Redhouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S1Redhouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S1Redhouse"))],
+            Show("buy_map_building", map_button_id="S1Redhouse")
+        )
+        hovered If(
+            get_map_building_name_safe("S1Redhouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('S1Redhouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # S3 (South 3) buildings - before S2 so S2 renders on top
+    imagebutton:
+        idle get_map_button_idle_image("S3Bluehouse")
+        hover "gui/map/S3Bluehouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S3Bluehouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S3Bluehouse"))],
+            Show("buy_map_building", map_button_id="S3Bluehouse")
+        )
+        hovered If(
+            get_map_building_name_safe("S3Bluehouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('S3Bluehouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # S2 (South 2) buildings - after S3 so it renders on top
+    imagebutton:
+        idle get_map_button_idle_image("S2Tavern")
+        hover "gui/map/S2Tavernb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S2Tavern") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S2Tavern"))],
+            Show("buy_map_building", map_button_id="S2Tavern")
+        )
+        hovered If(
+            get_map_building_name_safe("S2Tavern") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('S2Tavern')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # S4 (South 4) buildings
+    imagebutton:
+        idle get_map_button_idle_image("S4Redhouse")
+        hover "gui/map/S4Redhouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S4Redhouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S4Redhouse"))],
+            Show("buy_map_building", map_button_id="S4Redhouse")
+        )
+        hovered If(
+            get_map_building_name_safe("S4Redhouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('S4Redhouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    imagebutton:
+        idle get_map_button_idle_image("S4Shop")
+        hover "gui/map/S4Shopb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S4Shop") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S4Shop"))],
+            NullAction()  # No buildings available for this location
+        )
+    
+    # N1 (North 1) buildings
+    imagebutton:
+        idle get_map_button_idle_image("N1Bluehouse")
+        hover "gui/map/N1Bluehouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N1Bluehouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N1Bluehouse"))],
+            Show("buy_map_building", map_button_id="N1Bluehouse")
+        )
+        hovered If(
+            get_map_building_name_safe("N1Bluehouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('N1Bluehouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # N2 (North 2) buildings
+    imagebutton:
+        idle get_map_button_idle_image("N2Greenhouse")
+        hover "gui/map/N2Greenhouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N2Greenhouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N2Greenhouse"))],
+            Show("buy_map_building", map_button_id="N2Greenhouse")
+        )
+        hovered If(
+            get_map_building_name_safe("N2Greenhouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('N2Greenhouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # N4 (North 4) buildings - before N3 so N3 renders on top
+    imagebutton:
+        idle get_map_button_idle_image("N4Redhouse")
+        hover "gui/map/N4Redhouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N4Redhouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N4Redhouse"))],
+            Show("buy_map_building", map_button_id="N4Redhouse")
+        )
+        hovered If(
+            get_map_building_name_safe("N4Redhouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('N4Redhouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # N3 (North 3) buildings - after N4 so it renders on top
+    imagebutton:
+        idle get_map_button_idle_image("N3Bluehouse")
+        hover "gui/map/N3Bluehouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N3Bluehouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N3Bluehouse"))],
+            Show("buy_map_building", map_button_id="N3Bluehouse")
+        )
+        hovered If(
+            get_map_building_name_safe("N3Bluehouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('N3Bluehouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # N5 (North 5) buildings
+    imagebutton:
+        idle get_map_button_idle_image("N5Greenhouse")
+        hover "gui/map/N5Greenhouseb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N5Greenhouse") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N5Greenhouse"))],
+            Show("buy_map_building", map_button_id="N5Greenhouse")
+        )
+        hovered If(
+            get_map_building_name_safe("N5Greenhouse") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('N5Greenhouse')]")
+        )
+        unhovered Hide("tooltip")
+    
+    imagebutton:
+        idle get_map_button_idle_image("N5Shop")
+        hover "gui/map/N5Shopb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N5Shop") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N5Shop"))],
+            NullAction()  # No buildings available for this location
+        )
+    
+    imagebutton:
+        idle get_map_button_idle_image("N5Tavern")
+        hover "gui/map/N5Tavernb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("N5Tavern") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N5Tavern"))],
+            Show("buy_map_building", map_button_id="N5Tavern")
+        )
+        hovered If(
+            get_map_building_name_safe("N5Tavern") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('N5Tavern')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # Castle - renders on top of N5 Tavern
+    imagebutton:
+        idle "gui/map/Castlea.png"
+        hover "gui/map/Castleb.png"
+        focus_mask True
+        action NullAction()  # TODO: Define action
+    
+    # S4 Tavern - after Castle so it renders on top
+    imagebutton:
+        idle get_map_button_idle_image("S4Tavern")
+        hover "gui/map/S4Tavernb.png"
+        focus_mask True
+        action If(
+            get_map_building_name_safe("S4Tavern") is not None,
+            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S4Tavern"))],
+            Show("buy_map_building", map_button_id="S4Tavern")
+        )
+        hovered If(
+            get_map_building_name_safe("S4Tavern") is None,
+            ShowTransient("tooltip", message="Click to buy this property"),
+            ShowTransient("tooltip", message="Go to [get_map_building_display_name('S4Tavern')]")
+        )
+        unhovered Hide("tooltip")
+    
+    # Plaza Tavern - after S4 Tavern so it renders on top of everything (Plaza Shop, N4 Red house, etc.)
+    imagebutton:
+        idle "gui/map/PlazaTaverna.png"
+        hover "gui/map/PlazaTavernb.png"
+        focus_mask True
+        action [Hide("map_screen"), Show("tavern")]
+        hovered ShowTransient("tooltip", message="Go to [get_building_1_display_name()]")
+        unhovered Hide("tooltip")
+    
     vbox:
         xpos 1615
         ypos 70
@@ -4934,6 +5839,78 @@ screen map_screen():
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
+    
+    # Context menu - placed at the end to render on top of all map buttons
+    frame:
+        xalign 1.0
+        yalign 0.5
+        xsize 320
+        ysize 1.0
+        background None
+        
+        # Help/Information button - positioned in top-right corner of context menu (green panel)
+        python:
+            screen_name = "map_screen"
+            tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+        
+        imagebutton:
+            idle Transform("gui/info_idle.png", zoom=0.315)  # 10% smaller than 0.35
+            hover Transform("gui/info_hover.png", zoom=0.315)
+            selected_idle Transform("gui/info_active.png", zoom=0.315)
+            selected_hover Transform("gui/info_active.png", zoom=0.315)
+            selected tooltips_enabled
+            action Function(toggle_tooltips_for_screen, screen_name)
+            hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
+            unhovered Hide("tooltip")
+            xalign 1.0
+            xoffset -55  # More to the left
+            yalign 0.0
+            yoffset 55  # More down
+        
+        vbox:
+            xalign 1.0
+            yalign 0.5
+            xoffset -5
+            spacing 10
+            textbutton "Buy Servants":
+                action Show("buy_servants_table")
+                xsize 300
+                text_size 42
+                text_color "#3c1f14"
+                text_hover_color "#6b6528"
+                hovered SetVariable("plaza_servants_text_hover", True)
+                unhovered SetVariable("plaza_servants_text_hover", False)
+            textbutton "Recruit Workers":
+                action If(can_recruit_today,
+                    Function(launch_recruitment_via_label),
+                    Show("error_popup", message="You can only recruit once per day"))
+                xsize 300
+                text_size 42
+                text_color "#3c1f14"
+                text_hover_color "#6b6528"
+                hovered SetVariable("recruit_workers_text_hover", True)
+                unhovered SetVariable("recruit_workers_text_hover", False)
+            if not tutorial_active:
+                textbutton "Buy Buildings Abroad":
+                    action Show("buy_buildings")
+                    xsize 300
+                    text_size 42
+                    text_color "#3c1f14"
+                    text_hover_color "#6b6528"
+            textbutton "Visit Shops":
+                action Show("shop_selection")
+                xsize 300
+                text_size 42
+                text_color "#3c1f14"
+                text_hover_color "#6b6528"
+                hovered SetVariable("shops_text_hover", True)
+                unhovered SetVariable("shops_text_hover", False)
+            textbutton "Back":
+                action [Hide("map_screen"), Show("tavern")]
+                xsize 300
+                text_size 42
+                text_color "#3c1f14"
+                text_hover_color "#6b6528"
 
 # --- screen daily_report() ---
 
@@ -5296,12 +6273,36 @@ screen report_details(report):
         frame:
             xsize 320
             yfill True
-            background context_menu_bg
-            vbox:
-                spacing 20
-                xalign 0.5
-                yalign 0.5
-                xfill True
+            background None
+            
+            # Help/Information button - positioned in top-right corner of context menu (green panel)
+            python:
+                screen_name = "report_details"
+                tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+            
+            imagebutton:
+                idle Transform("gui/info_idle.png", zoom=0.315)
+                hover Transform("gui/info_hover.png", zoom=0.315)
+                selected_idle Transform("gui/info_active.png", zoom=0.315)
+                selected_hover Transform("gui/info_active.png", zoom=0.315)
+                selected tooltips_enabled
+                action Function(toggle_tooltips_for_screen, screen_name)
+                hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
+                unhovered Hide("tooltip")
+                xalign 1.0
+                xoffset -60
+                yalign 0.0
+                yoffset 55
+            
+            frame:
+                xsize 320
+                yfill True
+                background context_menu_bg
+                vbox:
+                    spacing 20
+                    xalign 0.5
+                    yalign 0.5
+                    xfill True
                 
                 # Story number and navigation info
                 text "Story [story_number] of [total_stories]" size 20 color "#ffffff" xalign 0.5 bold True
@@ -5405,7 +6406,12 @@ screen tavern():
     #     ]
     
     zorder 1
-    add tavern_bg
+    # Tavern background adjusted to 1515px width to account for side panel
+    add tavern_bg:
+        xsize 1515
+        ysize 1080
+        xalign 0.0
+        yalign 0.0
     # Draw decorative PNG centered behind the menu so it doesn't get clipped
     add context_menu_bg xalign 0.5 yalign 0.5
     frame:
@@ -5414,6 +6420,26 @@ screen tavern():
         xsize 320
         ysize 1.0
         background None
+        
+        # Help/Information button - positioned in top-right corner of context menu (green panel)
+        python:
+            screen_name = "tavern"
+            tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+        
+        imagebutton:
+            idle Transform("gui/info_idle.png", zoom=0.315)
+            hover Transform("gui/info_hover.png", zoom=0.315)
+            selected_idle Transform("gui/info_active.png", zoom=0.315)
+            selected_hover Transform("gui/info_active.png", zoom=0.315)
+            selected tooltips_enabled
+            action [Function(lambda: toggle_tooltips_for_screen("tavern"))]
+            hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
+            unhovered Hide("tooltip")
+            xalign 1.0
+            xoffset -60
+            yalign 0.0
+            yoffset 55
+        
         vbox:
             xalign 1.0
             yalign 0.5
@@ -5425,6 +6451,8 @@ screen tavern():
                 text_size 42
                 text_color "#3c1f14"
                 text_hover_color "#6b6528"
+                hovered ShowTransient("tooltip", message="View your quest objectives and track your progress", screen_name="tavern")
+                unhovered Hide("tooltip")
             textbutton "Explore":
                 action [
                     Function(renpy.log, "Explore button clicked"),
@@ -5435,6 +6463,8 @@ screen tavern():
                 text_size 42
                 text_color "#3c1f14"
                 text_hover_color "#6b6528"
+                hovered ShowTransient("tooltip", message="Explore the city map and visit different locations", screen_name="tavern")
+                unhovered Hide("tooltip")
             textbutton "Manage Buildings":
                 action [
                     Function(renpy.log, "Manage Buildings button clicked"),
@@ -5444,6 +6474,8 @@ screen tavern():
                 text_size 42
                 text_color "#3c1f14"
                 text_hover_color "#6b6528"
+                hovered ShowTransient("tooltip", message="Manage your buildings, upgrade them, and adjust settings", screen_name="tavern")
+                unhovered Hide("tooltip")
             textbutton "Workers":
                 action [
                     Function(renpy.log, "Workers button clicked"),
@@ -5454,6 +6486,8 @@ screen tavern():
                 text_size 42
                 text_color "#3c1f14"
                 text_hover_color "#6b6528"
+                hovered ShowTransient("tooltip", message="View and manage your workers roster", screen_name="tavern")
+                unhovered Hide("tooltip")
             textbutton "Next Day":
                 action [
                     Function(renpy.log, "Next Day button clicked"),
@@ -5464,6 +6498,8 @@ screen tavern():
                 text_size 42
                 text_color "#3c1f14"
                 text_hover_color "#6b6528"
+                hovered ShowTransient("tooltip", message="Advance to the next day and process daily events", screen_name="tavern")
+                unhovered Hide("tooltip")
 
 
     # Money and Date positioned over context menu area

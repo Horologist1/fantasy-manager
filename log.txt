@@ -1,19 +1,19 @@
-2025-11-10 04:11:56 UTC
+2025-11-17 18:07:10 UTC
 Windows-10-10.0.26100
 Ren'Py 8.3.7.25031702
 
-Early init took 0.11s
+Early init took 0.10s
 Loading error handling took 0.03s
-Loading script took 0.16s
+Loading script took 1.22s
 Loading save slot metadata took 0.02s
 Loading persistent took 0.00s
-Running init code took 0.04s
-Loading analysis data took 0.02s
+Running init code took 0.06s
+Loading analysis data took 0.00s
 Analyze and compile ATL took 0.00s
 Reloading save slot metadata took 0.02s
 Index archives took 0.00s
 Backing up script files to 'C:\\Users\\Usuario\\AppData\\Roaming/RenPy/backups\\fantasy-manager':
-Dump and make backups took 0.04s
+Dump and make backups took 0.05s
 Cleaning cache took 0.00s
 Making clean stores took 0.00s
 Initial gc took 0.02s
@@ -25,13 +25,13 @@ Cleaning stores took 0.00s
 Init translation took 0.00s
 Build styles took 0.00s
 Load screen analysis took 0.00s
-Analyze screens took 0.02s
+Analyze screens took 0.07s
 Save screen analysis took 0.03s
-Prepare screens took 0.08s
-Save pyanalysis. took 0.00s
+Prepare screens took 0.21s
+Save pyanalysis. took 0.03s
 Save bytecode. took 0.04s
 Running _start took 0.00s
-Interface start took 0.31s
+Interface start took 0.34s
 
 Initializing gl2 renderer:
 primary display bounds: (0, 0, 1920, 1080)
@@ -41,13 +41,37 @@ Vendor: "b'NVIDIA Corporation'"
 Renderer: b'NVIDIA GeForce RTX 4070 Ti SUPER/PCIe/SSE2'
 Version: b'4.6.0 NVIDIA 576.88'
 Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1920, 1009) drawable=(1920, 1009)
-Maximum texture size: 4096x4096
-Screen sizes: virtual=(1920, 1080) physical=(1920, 1009) drawable=(1920, 1009)
+Screen sizes: virtual=(1920, 1080) physical=(1778, 1000) drawable=(1778, 1000)
 Maximum texture size: 4096x4096
 Error loading/processing event file data/events/events_seasonal.json 'str' object has no attribute 'get'
-Error loading/processing event file data/events/events_seasonal.json 'str' object has no attribute 'get'
-eady completed, skipping
+ic_service_uniform',
+'premium_service_dress', 'basic_kitchen_knife', 'advanced_kitchen_knife',
+'elite_kitchen_knife', 'basic_cooking_utensils', 'advanced_cooking_utensils',
+'elite_cooking_utensils', 'basic_sensual_dress', 'advanced_sensual_dress',
+'elite_courtesan_dress', 'basic_lingerie', 'advanced_lingerie',
+'elite_lingerie_set', 'basic_earrings', 'advanced_earrings',
+'elite_diamond_earrings', 'basic_necklace', 'advanced_necklace',
+'elite_pearl_choker', 'basic_heels', 'advanced_heels',
+'elite_performer_heels', 'basic_bartender_apron', 'advanced_bartender_apron',
+'elite_bartender_apron', 'basic_bar_tools', 'advanced_bar_tools',
+'elite_mixology_set', 'basic_performer_outfit', 'advanced_performer_outfit',
+'elite_performer_costume', 'training_sword', 'bronze_sword', 'silver_sword',
+'mithril_sword', 'training_staff', 'oak_staff', 'enchanted_staff',
+'archmage_staff', 'leather_vest', 'chainmail_shirt', 'plate_armor',
+'dragon_scale_armor', 'simple_shield', 'steel_shield', 'tower_shield',
+'magic_shield', 'adventurer_boots', 'ranger_boots', 'master_adventurer_boots',
+'combat_gloves', 'warrior_gauntlets', 'dragon_scale_gauntlets']
+Items excluded from shops: ['binding_gem', 'debug_complete_tutorial',
+'gold_coin', 'bronze_coin', 'silver_coin']
+Setting right_worker and current_worker...
+No workers loaded, setting right_worker and current_worker to None
+--- Mon Nov 17 19:07:12 2025
+
+BGM DEBUG: Started BGM single play at 60% volume - audio/BGM.ogg
+Game started at label start
+BGM DEBUG: Started BGM single play at 60% volume - audio/BGM.ogg
+Age verification status: True
+Age verification already completed, skipping
 The scribe slides the final parchment across the worn wooden table. The ink
 glistens wet from the quill.
 
@@ -86,13 +110,12 @@ Choice: Lord
 Choice: Lady
 
 SAVE_STATE: snapshot stored in save JSON
-Tavern screen displayed
-Player chose: Lady
+Player chose: Lord
+
+SAVE_STATE: snapshot stored in save JSON
+Very well, Lord Manager. Let's take back our emporium.
 
 Tavern screen displayed
-Tavern screen displayed
-Very well, Lady Manager. Let's take back our emporium.
-
 Calendar reset for new game (forced)
 Initialized persistent.unlocked_shops: {'shop1': True, 'shop2': False,
 'shop3': False}
@@ -105,90 +128,89 @@ data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Elena
 Adding 3 traits to Elena (current: 1, target: 4)
-Added trait 'Adventurer' to Elena
-Added trait 'Nervous' to Elena
-Added trait 'Rebellious' to Elena
+Added trait 'Stiff' to Elena
+Added trait 'Small Breasts' to Elena
+Added trait 'Strong' to Elena
 Successfully added 3 traits to Elena
 Secondary attributes initialized for Elena
 Secondary attributes initialized for Delilah
-Adding 4 traits to Delilah (current: 1, target: 5)
+Adding 3 traits to Delilah (current: 1, target: 4)
+Added trait 'Rebellious' to Delilah
 Added trait 'Nervous' to Delilah
-Added trait 'Singer' to Delilah
-Added trait 'Pessimist' to Delilah
-Added trait 'Flat Chest' to Delilah
-Successfully added 4 traits to Delilah
+Added trait 'Conservative' to Delilah
+Successfully added 3 traits to Delilah
+Capped rebelliousness at 60 for Delilah due to trait restrictions
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Zorak
 Adding 3 traits to Zorak (current: 1, target: 4)
-Added trait 'Charming' to Zorak
-Added trait 'Lazy' to Zorak
-Added trait 'Tough' to Zorak
+Added trait 'Shy' to Zorak
+Added trait 'Loose' to Zorak
+Added trait 'Magnetic' to Zorak
 Successfully added 3 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Added trait 'Quick Learner' to Seraphina
-Added trait 'Tight' to Seraphina
-Added trait 'Nervous' to Seraphina
-Successfully added 3 traits to Seraphina
+Adding 2 traits to Seraphina (current: 1, target: 3)
+Added trait 'Flat Chest' to Seraphina
+Added trait 'Wise' to Seraphina
+Successfully added 2 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
 Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Lazy' to Kael
-Added trait 'Maid' to Kael
+Added trait 'Tight' to Kael
+Added trait 'Tough' to Kael
 Successfully added 2 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 4 traits to Lyria (current: 1, target: 5)
-Added trait 'Elegant' to Lyria
-Added trait 'Dependant' to Lyria
-Added trait 'Waitress' to Lyria
-Added trait 'Hardworking' to Lyria
-Successfully added 4 traits to Lyria
+Adding 2 traits to Lyria (current: 1, target: 3)
+Added trait 'Soft Ass' to Lyria
+Added trait 'Conservative' to Lyria
+Successfully added 2 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
-Adding 4 traits to Draven (current: 1, target: 5)
-Added trait 'Cool Scars' to Draven
-Added trait 'Nervous' to Draven
-Added trait 'Maid' to Draven
-Added trait 'Tone Deaf' to Draven
-Successfully added 4 traits to Draven
+Adding 3 traits to Draven (current: 1, target: 4)
+Added trait 'Flexible' to Draven
+Added trait 'Adventurer' to Draven
+Added trait 'Conservative' to Draven
+Successfully added 3 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
 Adding 3 traits to Selene (current: 1, target: 4)
-Added trait 'Tone Deaf' to Selene
-Added trait 'Tough' to Selene
-Added trait 'Magnetic' to Selene
+Added trait 'Elegant Eyes' to Selene
+Added trait 'Numb' to Selene
+Added trait 'Energetic' to Selene
 Successfully added 3 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
 Adding 3 traits to Ragnar (current: 1, target: 4)
-Added trait 'Adventurer' to Ragnar
-Added trait 'Tone Deaf' to Ragnar
-Added trait 'Hardworking' to Ragnar
+Added trait 'Small Penis' to Ragnar
+Added trait 'Demanding' to Ragnar
+Added trait 'Loose' to Ragnar
 Successfully added 3 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
-Adding 3 traits to Talon (current: 1, target: 4)
-Added trait 'Tight' to Talon
+Adding 4 traits to Talon (current: 1, target: 5)
+Added trait 'Cute' to Talon
 Added trait 'Beautiful' to Talon
-Added trait 'Large Penis' to Talon
-Successfully added 3 traits to Talon
+Added trait 'Rebellious' to Talon
+Added trait 'Tough' to Talon
+Successfully added 4 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Iris
 Secondary attributes initialized for Thane
-Adding 2 traits to Thane (current: 1, target: 3)
-Added trait 'Low Libido' to Thane
-Added trait 'Numb' to Thane
-Successfully added 2 traits to Thane
+Adding 4 traits to Thane (current: 1, target: 5)
+Added trait 'Smoker' to Thane
+Added trait 'High Libido' to Thane
+Added trait 'Cute' to Thane
+Added trait 'Brawler' to Thane
+Successfully added 4 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
 Adding 4 traits to Elowen (current: 1, target: 5)
-Added trait 'Quick Learner' to Elowen
-Added trait 'Open Minded' to Elowen
-Added trait 'Charismatic' to Elowen
-Added trait 'Soft Ass' to Elowen
+Added trait 'Small Breasts' to Elowen
+Added trait 'Singer' to Elowen
+Added trait 'Agile' to Elowen
+Added trait 'Waitress' to Elowen
 Successfully added 4 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Primrose
@@ -196,13 +218,13 @@ Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Poppy
 Available JSON workers: 18
-Using 5 JSON workers: ['Daisy', 'Seraphina', 'Elowen', 'Primrose', 'Ragnar']
-Secondary attributes already initialized for Daisy, skipping recalculation
-Secondary attributes already initialized for Seraphina, skipping recalculation
-Secondary attributes already initialized for Elowen, skipping recalculation
-Secondary attributes already initialized for Primrose, skipping recalculation
+Using 5 JSON workers: ['Iris', 'Ragnar', 'Rose', 'Zorak', 'Talon']
+Secondary attributes already initialized for Iris, skipping recalculation
 Secondary attributes already initialized for Ragnar, skipping recalculation
-Refilled workers: ['Daisy', 'Seraphina', 'Elowen', 'Primrose', 'Ragnar']
+Secondary attributes already initialized for Rose, skipping recalculation
+Secondary attributes already initialized for Zorak, skipping recalculation
+Secondary attributes already initialized for Talon, skipping recalculation
+Refilled workers: ['Iris', 'Ragnar', 'Rose', 'Zorak', 'Talon']
 Found interaction files: ['data/interactions/interactions_main.json',
 'data/interactions/interactions_special.json',
 'data/interactions/interactions_structured.json']
@@ -225,14 +247,14 @@ kindness, instructing the worker to follow my commands with greater '...
 Successfully loaded 84 interactions from
 data/interactions/interactions_structured.json
 Total interactions loaded: 86
-Secondary attributes already initialized for Daisy, skipping recalculation
-Secondary attributes already initialized for Seraphina, skipping recalculation
-Secondary attributes already initialized for Elowen, skipping recalculation
-Secondary attributes already initialized for Primrose, skipping recalculation
+Secondary attributes already initialized for Iris, skipping recalculation
 Secondary attributes already initialized for Ragnar, skipping recalculation
+Secondary attributes already initialized for Rose, skipping recalculation
+Secondary attributes already initialized for Zorak, skipping recalculation
+Secondary attributes already initialized for Talon, skipping recalculation
 After defaults - store.workers: []
-After defaults - available_workers: ['Daisy', 'Seraphina', 'Elowen',
-'Primrose', 'Ragnar']
+After defaults - available_workers: ['Iris', 'Ragnar', 'Rose', 'Zorak',
+'Talon']
   Checking event index 0 from data/events/events_building.json:
 id='brothel_worker_caution', desc_start='Fate hangs in the balance as hag
 potions run low j...'
@@ -1502,1076 +1524,296 @@ be waiting,' she says, 'when you're ready to make this dream a reality.'",
 '[calendar.get_total_days()]'}}}], 'max_occurrences': 1}
 Updating displayed_workers. Starting population...
 Hired worker names: RevertableSet()
-Available workers before filtering: ['Daisy', 'Seraphina', 'Elowen',
-'Primrose', 'Ragnar']
+Available workers before filtering: ['Iris', 'Ragnar', 'Rose', 'Zorak',
+'Talon']
 data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Elena
 Adding 3 traits to Elena (current: 1, target: 4)
-Added trait 'Optimist' to Elena
-Added trait 'Tough' to Elena
-Added trait 'Singer' to Elena
+Added trait 'Elegant Eyes' to Elena
+Added trait 'Exotic' to Elena
+Added trait 'Nympho' to Elena
 Successfully added 3 traits to Elena
 Secondary attributes initialized for Elena
 Secondary attributes initialized for Delilah
 Adding 3 traits to Delilah (current: 1, target: 4)
-Added trait 'Pessimist' to Delilah
-Added trait 'Dependant' to Delilah
-Added trait 'Elegant Eyes' to Delilah
+Added trait 'Waitress' to Delilah
+Added trait 'Rebellious' to Delilah
+Added trait 'Maid' to Delilah
 Successfully added 3 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Zorak
-Adding 4 traits to Zorak (current: 1, target: 5)
-Added trait 'Beautiful' to Zorak
-Added trait 'Wise' to Zorak
-Added trait 'Obedient' to Zorak
-Added trait 'Clever' to Zorak
-Successfully added 4 traits to Zorak
+Adding 2 traits to Zorak (current: 1, target: 3)
+Added trait 'Satyr' to Zorak
+Added trait 'Elegant' to Zorak
+Successfully added 2 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Added trait 'Nympho' to Seraphina
-Added trait 'Open Minded' to Seraphina
-Added trait 'Tone Deaf' to Seraphina
-Successfully added 3 traits to Seraphina
+Adding 4 traits to Seraphina (current: 1, target: 5)
+Added trait 'Lazy' to Seraphina
+Added trait 'Firm Ass' to Seraphina
+Added trait 'Teacher' to Seraphina
+Added trait 'Quick Learner' to Seraphina
+Successfully added 4 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
 Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Lazy' to Kael
-Added trait 'Sadistic' to Kael
+Added trait 'Robust' to Kael
+Added trait 'Pessimist' to Kael
 Successfully added 2 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
 Adding 2 traits to Lyria (current: 1, target: 3)
+Added trait 'Magical' to Lyria
 Added trait 'Dependant' to Lyria
-Added trait 'Wise' to Lyria
 Successfully added 2 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
 Adding 3 traits to Draven (current: 1, target: 4)
-Added trait 'Scarred' to Draven
-Added trait 'Hardworking' to Draven
-Added trait 'Firm Ass' to Draven
-Successfully added 3 traits to Draven
-Secondary attributes initialized for Draven
-Secondary attributes initialized for Selene
-Adding 2 traits to Selene (current: 1, target: 3)
-Added trait 'Graceful' to Selene
-Added trait 'Hardworking' to Selene
-Successfully added 2 traits to Selene
-Secondary attributes initialized for Selene
-Secondary attributes initialized for Ragnar
-Adding 2 traits to Ragnar (current: 1, target: 3)
-Added trait 'Strong' to Ragnar
-Added trait 'Magnetic' to Ragnar
-Successfully added 2 traits to Ragnar
-Secondary attributes initialized for Ragnar
-Secondary attributes initialized for Talon
-Adding 2 traits to Talon (current: 1, target: 3)
-Added trait 'Determined' to Talon
-Added trait 'Stiff' to Talon
-Successfully added 2 traits to Talon
-Secondary attributes initialized for Talon
-Secondary attributes initialized for Rose
-Secondary attributes initialized for Iris
-Secondary attributes initialized for Thane
-Adding 3 traits to Thane (current: 1, target: 4)
-Added trait 'Nervous' to Thane
-Added trait 'Firm Ass' to Thane
-Added trait 'Stiff' to Thane
-Successfully added 3 traits to Thane
-Secondary attributes initialized for Thane
-Secondary attributes initialized for Elowen
-Adding 3 traits to Elowen (current: 1, target: 4)
-Added trait 'Teacher' to Elowen
-Added trait 'Determined' to Elowen
-Added trait 'Charismatic' to Elowen
-Successfully added 3 traits to Elowen
-Secondary attributes initialized for Elowen
-Secondary attributes initialized for Primrose
-Secondary attributes initialized for Jasmine
-Secondary attributes initialized for Daisy
-Secondary attributes initialized for Poppy
-JSON workers available: 18, All JSON exhausted: False
-Secondary attributes already initialized for Daisy, skipping recalculation
-Added existing worker 'Daisy' to displayed_workers
-Secondary attributes already initialized for Seraphina, skipping recalculation
-Added existing worker 'Seraphina' to displayed_workers
-Secondary attributes already initialized for Elowen, skipping recalculation
-Added existing worker 'Elowen' to displayed_workers
-Secondary attributes already initialized for Primrose, skipping recalculation
-Added existing worker 'Primrose' to displayed_workers
-Secondary attributes already initialized for Ragnar, skipping recalculation
-Added existing worker 'Ragnar' to displayed_workers
-MAX_DAILY_SPAWNS: 5
-update_displayed_workers: Not spawning new workers, only displaying available
-workers (available: 5, displayed: 5)
-Final displayed_workers: ['Daisy', 'Seraphina', 'Elowen', 'Primrose',
-'Ragnar']
-Final available_workers after update: ['Daisy', 'Seraphina', 'Elowen',
-'Primrose', 'Ragnar']
-Final daily_spawns: 0
-After update_displayed_workers - displayed_workers: ['Daisy', 'Seraphina',
-'Elowen', 'Primrose', 'Ragnar']
-DEBUG: tavern_screen label - STARTING
-DEBUG: tavern_screen - current_objective=1, tutorial_active=True, money=$5000,
-obj4_dialogue_shown=False
-Tavern screen displayed
-Tavern screen displayed
-Explore button clicked
-Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
-Tavern screen displayed
-  Checking event index 0 from
-data/events/recruit/event_recruit_advanced_example.json:
-id='event_recruit_simple_test', desc_start='A person picks the sign from the
-door and approach...'
-  Checking event index 1 from
-data/events/recruit/event_recruit_advanced_example.json:
-id='event_recruit_tavern_brawler', desc_start='A muscular figure sits in the
-corner of your taver...'
-  Checking event index 2 from
-data/events/recruit/event_recruit_advanced_example.json:
-id='event_recruit_mysterious_scholar', desc_start='A hooded figure approaches
-your establishment as e...'
-  Checking event index 0 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_aspen', desc_start='A sturdy figure approaches your
-establishment duri...'
-  Checking event index 1 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_florian', desc_start='A somewhat effeminate young man enters
-your establ...'
-  Checking event index 2 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_violet', desc_start='As twilight settles over your
-establishment, a mys...'
-  Checking event index 3 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_lily', desc_start='A captivating performer enters your
-establishment,...'
-  Checking event index 4 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_rose', desc_start='An elven figure approaches your
-establishment with...'
-  Checking event index 5 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_iris', desc_start='A graceful figure enters your
-establishment with q...'
-  Checking event index 6 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_cedar', desc_start='A sturdy figure approaches your
-establishment duri...'
-  Checking event index 7 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_laurel', desc_start='A somewhat effeminate young man enters
-your establ...'
-  Checking event index 8 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_sage', desc_start='As twilight settles over your
-establishment, a mys...'
-  Checking event index 9 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_lotus', desc_start='A captivating performer enters your
-establishment,...'
-  Checking event index 10 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_primrose', desc_start='An elven figure approaches your
-establishment with...'
-  Checking event index 11 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_jasmine', desc_start='A graceful figure enters your
-establishment with q...'
-  Checking event index 12 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_daisy', desc_start='A cheerful individual approaches your
-establishmen...'
-  Checking event index 13 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_poppy', desc_start='An elven figure approaches your
-establishment with...'
-  Checking event index 14 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_unique_generic_1', desc_start='A distinctive figure
-approaches your establishment...'
-  Checking event index 15 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_unique_generic_2', desc_start='An intriguing individual
-arrives at your establish...'
-  Checking event index 16 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_unique_generic_3', desc_start='A remarkable individual
-enters your establishment,...'
-data/workers.json not found or error reading: Couldn't find file
-'data/workers.json'.
-Secondary attributes initialized for Android 18
-Adding 3 traits to Android 18 (current: 2, target: 5)
-Added trait 'Scarred' to Android 18
-Added trait 'Maid' to Android 18
-Added trait 'Numb' to Android 18
-Successfully added 3 traits to Android 18
-Secondary attributes initialized for Android 18
-Secondary attributes initialized for Elena
-Adding 3 traits to Elena (current: 1, target: 4)
-Added trait 'Charming' to Elena
-Added trait 'Scarred' to Elena
-Added trait 'Elegant Eyes' to Elena
-Successfully added 3 traits to Elena
-Secondary attributes initialized for Elena
-Secondary attributes initialized for Delilah
-Adding 3 traits to Delilah (current: 1, target: 4)
-Added trait 'Tattooed' to Delilah
-Added trait 'Pessimist' to Delilah
-Added trait 'Tone Deaf' to Delilah
-Successfully added 3 traits to Delilah
-Secondary attributes initialized for Delilah
-Secondary attributes initialized for Erinya
-Adding 4 traits to Erinya (current: 1, target: 5)
-Added trait 'Magnetic' to Erinya
-Added trait 'Determined' to Erinya
-Added trait 'Waitress' to Erinya
-Added trait 'Pierced' to Erinya
-Successfully added 4 traits to Erinya
-Secondary attributes initialized for Erinya
-Secondary attributes initialized for Zorak
-Adding 4 traits to Zorak (current: 1, target: 5)
-Added trait 'Strong' to Zorak
-Added trait 'Beautiful' to Zorak
-Added trait 'Maid' to Zorak
-Added trait 'Tomboy' to Zorak
-Successfully added 4 traits to Zorak
-Secondary attributes initialized for Zorak
-Secondary attributes initialized for Seraphina
-Adding 4 traits to Seraphina (current: 1, target: 5)
-Added trait 'Graceful' to Seraphina
-Added trait 'Brawler' to Seraphina
-Added trait 'Tight' to Seraphina
-Added trait 'Stiff' to Seraphina
-Successfully added 4 traits to Seraphina
-Secondary attributes initialized for Seraphina
-Secondary attributes initialized for Kael
-Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Maid' to Kael
-Added trait 'Sadistic' to Kael
-Successfully added 2 traits to Kael
-Secondary attributes initialized for Kael
-Secondary attributes initialized for Lyria
-Adding 4 traits to Lyria (current: 1, target: 5)
-Added trait 'Large Breasts' to Lyria
-Added trait 'Charming' to Lyria
-Added trait 'Agile' to Lyria
-Added trait 'Magnetic' to Lyria
-Successfully added 4 traits to Lyria
-Secondary attributes initialized for Lyria
-Secondary attributes initialized for Draven
-Adding 4 traits to Draven (current: 1, target: 5)
-Added trait 'Large Penis' to Draven
-Added trait 'Pierced' to Draven
-Added trait 'Quick Learner' to Draven
-Added trait 'Dependant' to Draven
-Successfully added 4 traits to Draven
-Secondary attributes initialized for Draven
-Secondary attributes initialized for Selene
-Adding 4 traits to Selene (current: 1, target: 5)
-Added trait 'Tomboy' to Selene
-Added trait 'Shy' to Selene
-Added trait 'Delicate' to Selene
-Added trait 'Stiff' to Selene
-Successfully added 4 traits to Selene
-Secondary attributes initialized for Selene
-Secondary attributes initialized for Ragnar
-Adding 3 traits to Ragnar (current: 1, target: 4)
-Added trait 'Robust' to Ragnar
-Added trait 'Demanding' to Ragnar
-Added trait 'Numb' to Ragnar
-Successfully added 3 traits to Ragnar
-Secondary attributes initialized for Ragnar
-Secondary attributes initialized for Ismera
-Adding 2 traits to Ismera (current: 1, target: 3)
-Added trait 'Exotic' to Ismera
-Added trait 'Determined' to Ismera
-Successfully added 2 traits to Ismera
-Secondary attributes initialized for Ismera
-Secondary attributes initialized for Talon
-Adding 4 traits to Talon (current: 1, target: 5)
-Added trait 'Numb' to Talon
-Added trait 'Elegant' to Talon
-Added trait 'Shy' to Talon
-Added trait 'Singer' to Talon
-Successfully added 4 traits to Talon
-Secondary attributes initialized for Talon
-Secondary attributes initialized for Astraea
-Adding 2 traits to Astraea (current: 1, target: 3)
-Added trait 'Clever' to Astraea
-Added trait 'Loose' to Astraea
-Successfully added 2 traits to Astraea
-Secondary attributes initialized for Astraea
-Secondary attributes initialized for Varkas
-Adding 2 traits to Varkas (current: 1, target: 3)
-Added trait 'Rebellious' to Varkas
-Added trait 'Tomboy' to Varkas
-Successfully added 2 traits to Varkas
-Secondary attributes initialized for Varkas
-Secondary attributes initialized for Lilithra
-Adding 4 traits to Lilithra (current: 1, target: 5)
-Added trait 'Flat Chest' to Lilithra
-Added trait 'Elegant' to Lilithra
-Added trait 'Teacher' to Lilithra
-Added trait 'Tomboy' to Lilithra
-Successfully added 4 traits to Lilithra
-Secondary attributes initialized for Lilithra
-Secondary attributes initialized for Aspen
-Secondary attributes initialized for Florian
-Secondary attributes initialized for Violet
-Secondary attributes initialized for Lily
-Secondary attributes initialized for Rose
-Secondary attributes initialized for Iris
-Secondary attributes initialized for Asher
-Adding 2 traits to Asher (current: 1, target: 3)
-Added trait 'Conservative' to Asher
-Added trait 'Firm Ass' to Asher
-Successfully added 2 traits to Asher
-Secondary attributes initialized for Asher
-Secondary attributes initialized for Flynn
-Adding 4 traits to Flynn (current: 1, target: 5)
-Added trait 'Optimist' to Flynn
-Added trait 'Soft Ass' to Flynn
-Added trait 'Large Penis' to Flynn
-Added trait 'Pierced' to Flynn
-Successfully added 4 traits to Flynn
-Secondary attributes initialized for Flynn
-Secondary attributes initialized for Victoria
-Adding 2 traits to Victoria (current: 1, target: 3)
-Added trait 'Conservative' to Victoria
-Added trait 'Adventurer' to Victoria
-Successfully added 2 traits to Victoria
-Secondary attributes initialized for Victoria
-Secondary attributes initialized for Amanda
-Adding 4 traits to Amanda (current: 1, target: 5)
-Added trait 'Dependant' to Amanda
-Added trait 'Sadistic' to Amanda
-Added trait 'Tomboy' to Amanda
-Added trait 'Tough' to Amanda
-Successfully added 4 traits to Amanda
-Secondary attributes initialized for Amanda
-Secondary attributes initialized for Spuk
-Adding 3 traits to Spuk (current: 1, target: 4)
-Added trait 'Firm Ass' to Spuk
-Added trait 'Lazy' to Spuk
-Added trait 'Charming' to Spuk
-Successfully added 3 traits to Spuk
-Secondary attributes initialized for Spuk
-Secondary attributes initialized for Thane
-Adding 4 traits to Thane (current: 1, target: 5)
-Added trait 'Rebellious' to Thane
-Added trait 'Sadistic' to Thane
-Added trait 'Nervous' to Thane
-Added trait 'Pessimist' to Thane
-Successfully added 4 traits to Thane
-Secondary attributes initialized for Thane
-Secondary attributes initialized for Elowen
-Adding 4 traits to Elowen (current: 1, target: 5)
-Added trait 'Energetic' to Elowen
-Added trait 'Maid' to Elowen
-Added trait 'Elegant' to Elowen
-Added trait 'Magnetic' to Elowen
-Successfully added 4 traits to Elowen
-Secondary attributes initialized for Elowen
-Secondary attributes initialized for Cedar
-Secondary attributes initialized for Laurel
-Secondary attributes initialized for Sage
-Secondary attributes initialized for Lotus
-Secondary attributes initialized for Primrose
-Secondary attributes initialized for Jasmine
-Secondary attributes initialized for Daisy
-Secondary attributes initialized for Poppy
-NSFW mode enabled: True
-Total workers before NSFW filter: 7
-Available workers for recruitment: ['Android 18', 'Aspen', 'Florian',
-'Violet', 'Lily', 'Rose', 'Iris']
-NSFW status of available workers: [('Android 18', True), ('Aspen', True),
-('Florian', True), ('Violet', True), ('Lily', True), ('Rose', True), ('Iris',
-True)]
-A graceful figure enters your establishment with quiet confidence.
-
-They move with purpose, and their eyes seem to take in everything with sharp
-intelligence.
-
-There's something magnetic about their presence - people naturally turn to
-look, drawn by an indefinable quality.
-
-Android 18
-Hello.
-
-Android 18
-I'm Android 18.
-
-Android 18
-I've been looking for the right opportunity, and your establishment caught my
-attention.
-
-Android 18
-I learn quickly, adapt well, and I have a way of...
-
-Android 18
-drawing people in.
-
-Android 18
-I think I could be valuable to your operation.
-
-Android 18
-What do you think?
-
-Secondary attributes already initialized for Android 18, skipping
-recalculation
-Secondary attributes already initialized for Android 18, skipping
-recalculation
-DEBUG: Worker hired! workers_hired: 1, current_objective: 1
-Updating displayed_workers. Starting population...
-Hired worker names: RevertableSet({'Android 18'})
-Available workers before filtering: ['Daisy', 'Seraphina', 'Elowen',
-'Primrose', 'Ragnar']
-data/workers.json not found or error reading: Couldn't find file
-'data/workers.json'.
-Secondary attributes initialized for Elena
-Adding 4 traits to Elena (current: 1, target: 5)
-Added trait 'Beauty Mark' to Elena
-Added trait 'Charismatic' to Elena
-Added trait 'Delicate' to Elena
-Added trait 'Nice Tan' to Elena
-Successfully added 4 traits to Elena
-Secondary attributes initialized for Elena
-Secondary attributes initialized for Delilah
-Adding 4 traits to Delilah (current: 1, target: 5)
-Added trait 'Wise' to Delilah
-Added trait 'Elegant Eyes' to Delilah
-Added trait 'Adventurer' to Delilah
-Added trait 'Energetic' to Delilah
-Successfully added 4 traits to Delilah
-Secondary attributes initialized for Delilah
-Secondary attributes initialized for Zorak
-Adding 3 traits to Zorak (current: 1, target: 4)
-Added trait 'Clever' to Zorak
-Added trait 'Agile' to Zorak
-Added trait 'Robust' to Zorak
-Successfully added 3 traits to Zorak
-Secondary attributes initialized for Zorak
-Secondary attributes initialized for Seraphina
-Adding 2 traits to Seraphina (current: 1, target: 3)
-Added trait 'Smooth Talker' to Seraphina
-Added trait 'Loose' to Seraphina
-Successfully added 2 traits to Seraphina
-Secondary attributes initialized for Seraphina
-Secondary attributes initialized for Kael
-Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Open Minded' to Kael
-Added trait 'Determined' to Kael
-Successfully added 2 traits to Kael
-Secondary attributes initialized for Kael
-Secondary attributes initialized for Lyria
-Adding 3 traits to Lyria (current: 1, target: 4)
-Added trait 'Numb' to Lyria
-Added trait 'Clumsy' to Lyria
-Added trait 'High Libido' to Lyria
-Successfully added 3 traits to Lyria
-Secondary attributes initialized for Lyria
-Secondary attributes initialized for Draven
-Adding 3 traits to Draven (current: 1, target: 4)
-Added trait 'Clever' to Draven
-Added trait 'Radiant' to Draven
-Added trait 'Beautiful' to Draven
+Added trait 'Clumsy' to Draven
+Added trait 'Beauty Mark' to Draven
+Added trait 'Wise' to Draven
 Successfully added 3 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
 Adding 3 traits to Selene (current: 1, target: 4)
-Added trait 'Maid' to Selene
-Added trait 'Exotic' to Selene
-Added trait 'Beauty Mark' to Selene
+Added trait 'Slow Learner' to Selene
+Added trait 'Confident' to Selene
+Added trait 'Large Breasts' to Selene
 Successfully added 3 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
-Adding 4 traits to Ragnar (current: 1, target: 5)
-Added trait 'Robust' to Ragnar
-Added trait 'Firm Ass' to Ragnar
-Added trait 'Mystical' to Ragnar
-Added trait 'Brawler' to Ragnar
-Successfully added 4 traits to Ragnar
-Secondary attributes initialized for Ragnar
-Secondary attributes initialized for Talon
-Adding 4 traits to Talon (current: 1, target: 5)
-Added trait 'Exotic' to Talon
-Added trait 'Flexible' to Talon
-Added trait 'Tight' to Talon
-Added trait 'Graceful' to Talon
-Successfully added 4 traits to Talon
-Secondary attributes initialized for Talon
-Secondary attributes initialized for Rose
-Secondary attributes initialized for Iris
-Secondary attributes initialized for Thane
-Adding 2 traits to Thane (current: 1, target: 3)
-Added trait 'Beautiful' to Thane
-Added trait 'Shy' to Thane
-Successfully added 2 traits to Thane
-Secondary attributes initialized for Thane
-Secondary attributes initialized for Elowen
-Adding 2 traits to Elowen (current: 1, target: 3)
-Added trait 'Demanding' to Elowen
-Added trait 'Low Libido' to Elowen
-Successfully added 2 traits to Elowen
-Secondary attributes initialized for Elowen
-Secondary attributes initialized for Primrose
-Secondary attributes initialized for Jasmine
-Secondary attributes initialized for Daisy
-Secondary attributes initialized for Poppy
-JSON workers available: 18, All JSON exhausted: False
-Secondary attributes already initialized for Daisy, skipping recalculation
-Added existing worker 'Daisy' to displayed_workers
-Secondary attributes already initialized for Seraphina, skipping recalculation
-Added existing worker 'Seraphina' to displayed_workers
-Secondary attributes already initialized for Elowen, skipping recalculation
-Added existing worker 'Elowen' to displayed_workers
-Secondary attributes already initialized for Primrose, skipping recalculation
-Added existing worker 'Primrose' to displayed_workers
-Secondary attributes already initialized for Ragnar, skipping recalculation
-Added existing worker 'Ragnar' to displayed_workers
-MAX_DAILY_SPAWNS: 5
-update_displayed_workers: Not spawning new workers, only displaying available
-workers (available: 5, displayed: 5)
-Final displayed_workers: ['Daisy', 'Seraphina', 'Elowen', 'Primrose',
-'Ragnar']
-Final available_workers after update: ['Daisy', 'Seraphina', 'Elowen',
-'Primrose', 'Ragnar']
-Final daily_spawns: 0
-Worker recruited: Android 18 at $100/day
-RECRUITMENT MESSAGE DEBUG: After format_dynamic_message: You give them a quick
-test - handling multiple tasks simultaneously. Android 18 handles it with
-ease, showing impressive adaptability and quick thinking. 'See? I told you I
-learn fast.' They agree to work for [COST] daily with bonus reputation.
-RECRUITMENT MESSAGE DEBUG: Final message: You give them a quick test -
-handling multiple tasks simultaneously. Android 18 handles it with ease,
-showing impressive adaptability and quick thinking. 'See? I told you I learn
-fast.' They agree to work for $100 daily with bonus reputation.
-Tavern screen displayed
-Tavern screen displayed
-DEBUG: tavern_screen label - STARTING
-DEBUG: tavern_screen - current_objective=1, tutorial_active=True, money=$5000,
-obj4_dialogue_shown=False
-Tavern screen displayed
-Tavern screen displayed
-Next Day button clicked
-DEBUG: next_day label - STARTING
-DEBUG: next_day - about to call process_next_day
-Calendar synced: Day 2, Frostveil 1
-Date advanced to: Tuelivane, 2 Frostveil 1
-BGM DEBUG: Not Monday - Day 2
-Cleared daily_report for the new day.
-Reset costs for Building 1 to 0
-Added base cost 100 + comfort 0 + upkeep 0 to Building 1, total: 100
-Libido regeneration for Android 18: +2 (now 12/20)
-process_daily_events() starting...
-ENERGY SNAPSHOT: begin daily events
-DAILY: Building Building 1 type=None assigned=[]
-DAILY: servant_jobs={}
-DAILY: Building 1 has no assigned_servants -> skipping
-process_daily_events() finished. Report entries: 0
-Calculated total income from daily_report: 0
-EARNINGS BREAKDOWN:
-Final costs for Building 1 after process_daily_events: 100
-=== update_skill_levels() called ===
-=== update_skill_levels() finished ===
-WORKER REFILL CHECK - Current: (2, 1, 1), Last: (1, 1, 1), New day: True
-NEW DAY - Refilling workers
-data/workers.json not found or error reading: Couldn't find file
-'data/workers.json'.
-Secondary attributes initialized for Elena
-Adding 2 traits to Elena (current: 1, target: 3)
-Added trait 'Obedient' to Elena
-Added trait 'Soft Ass' to Elena
-Successfully added 2 traits to Elena
-Secondary attributes initialized for Elena
-Secondary attributes initialized for Delilah
-Adding 2 traits to Delilah (current: 1, target: 3)
-Added trait 'Confident' to Delilah
-Added trait 'Clever' to Delilah
-Successfully added 2 traits to Delilah
-Secondary attributes initialized for Delilah
-Secondary attributes initialized for Zorak
-Adding 3 traits to Zorak (current: 1, target: 4)
-Added trait 'Energetic' to Zorak
-Added trait 'Delicate' to Zorak
-Added trait 'Sensitive' to Zorak
-Successfully added 3 traits to Zorak
-Secondary attributes initialized for Zorak
-Secondary attributes initialized for Seraphina
-Adding 4 traits to Seraphina (current: 1, target: 5)
-Added trait 'Elegant Eyes' to Seraphina
-Added trait 'Mystical' to Seraphina
-Added trait 'Soft Ass' to Seraphina
-Added trait 'Flexible' to Seraphina
-Successfully added 4 traits to Seraphina
-Secondary attributes initialized for Seraphina
-Secondary attributes initialized for Kael
-Adding 4 traits to Kael (current: 1, target: 5)
-Added trait 'Sadistic' to Kael
-Added trait 'Cool Scars' to Kael
-Added trait 'Radiant' to Kael
-Added trait 'Magnetic' to Kael
-Successfully added 4 traits to Kael
-Secondary attributes initialized for Kael
-Secondary attributes initialized for Lyria
-Adding 3 traits to Lyria (current: 1, target: 4)
-Added trait 'Slow Learner' to Lyria
-Added trait 'Determined' to Lyria
-Added trait 'Optimist' to Lyria
-Successfully added 3 traits to Lyria
-Secondary attributes initialized for Lyria
-Secondary attributes initialized for Draven
-Adding 4 traits to Draven (current: 1, target: 5)
-Added trait 'Scarred' to Draven
-Added trait 'Confident' to Draven
-Added trait 'Tough' to Draven
-Added trait 'Clever' to Draven
-Successfully added 4 traits to Draven
-Secondary attributes initialized for Draven
-Secondary attributes initialized for Selene
-Adding 4 traits to Selene (current: 1, target: 5)
-Added trait 'Beauty Mark' to Selene
-Added trait 'Lazy' to Selene
-Added trait 'Elegant' to Selene
-Added trait 'Wise' to Selene
-Successfully added 4 traits to Selene
-Secondary attributes initialized for Selene
-Secondary attributes initialized for Ragnar
-Adding 4 traits to Ragnar (current: 1, target: 5)
-Added trait 'Cute' to Ragnar
-Added trait 'Soft Ass' to Ragnar
-Added trait 'Flexible' to Ragnar
-Added trait 'Clever' to Ragnar
-Successfully added 4 traits to Ragnar
+Adding 3 traits to Ragnar (current: 1, target: 4)
+Added trait 'Magnetic' to Ragnar
+Added trait 'Elegant' to Ragnar
+Added trait 'Waitress' to Ragnar
+Successfully added 3 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
 Adding 3 traits to Talon (current: 1, target: 4)
-Added trait 'Elegant' to Talon
-Added trait 'Smoker' to Talon
-Added trait 'Beauty Mark' to Talon
+Added trait 'Determined' to Talon
+Added trait 'Satyr' to Talon
+Added trait 'Shy' to Talon
 Successfully added 3 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Iris
 Secondary attributes initialized for Thane
-Adding 2 traits to Thane (current: 1, target: 3)
+Adding 3 traits to Thane (current: 1, target: 4)
+Added trait 'Brawler' to Thane
+Added trait 'Lazy' to Thane
 Added trait 'Elegant' to Thane
-Added trait 'Sensitive' to Thane
-Successfully added 2 traits to Thane
+Successfully added 3 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
 Adding 3 traits to Elowen (current: 1, target: 4)
-Added trait 'Optimist' to Elowen
-Added trait 'Beautiful' to Elowen
-Added trait 'Waitress' to Elowen
+Added trait 'Tough' to Elowen
+Added trait 'Firm Ass' to Elowen
+Added trait 'Tomboy' to Elowen
 Successfully added 3 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Primrose
 Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Poppy
-Available JSON workers: 18
-Using 5 JSON workers: ['Poppy', 'Elena', 'Rose', 'Talon', 'Daisy']
-Secondary attributes already initialized for Poppy, skipping recalculation
-Secondary attributes already initialized for Elena, skipping recalculation
-Secondary attributes already initialized for Rose, skipping recalculation
-Secondary attributes already initialized for Talon, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-Refilled workers: ['Poppy', 'Elena', 'Rose', 'Talon', 'Daisy']
-Reloaded available_workers: ['Poppy', 'Elena', 'Rose', 'Talon', 'Daisy']
-Updating displayed_workers. Starting population...
-Hired worker names: RevertableSet({'Android 18'})
-Available workers before filtering: ['Poppy', 'Elena', 'Rose', 'Talon',
-'Daisy']
-data/workers.json not found or error reading: Couldn't find file
-'data/workers.json'.
-Secondary attributes initialized for Elena
-Adding 3 traits to Elena (current: 1, target: 4)
-Added trait 'Flexible' to Elena
-Added trait 'Charismatic' to Elena
-Added trait 'Obedient' to Elena
-Successfully added 3 traits to Elena
-Secondary attributes initialized for Elena
-Secondary attributes initialized for Delilah
-Adding 2 traits to Delilah (current: 1, target: 3)
-Added trait 'Smoker' to Delilah
-Added trait 'Flat Chest' to Delilah
-Successfully added 2 traits to Delilah
-Secondary attributes initialized for Delilah
-Secondary attributes initialized for Zorak
-Adding 3 traits to Zorak (current: 1, target: 4)
-Added trait 'Pessimist' to Zorak
-Added trait 'Shy' to Zorak
-Added trait 'Maid' to Zorak
-Successfully added 3 traits to Zorak
-Secondary attributes initialized for Zorak
-Secondary attributes initialized for Seraphina
-Adding 4 traits to Seraphina (current: 1, target: 5)
-Added trait 'Tattooed' to Seraphina
-Added trait 'Exotic' to Seraphina
-Added trait 'Lazy' to Seraphina
-Added trait 'Cool Scars' to Seraphina
-Successfully added 4 traits to Seraphina
-Secondary attributes initialized for Seraphina
-Secondary attributes initialized for Kael
-Adding 4 traits to Kael (current: 1, target: 5)
-Added trait 'Pierced' to Kael
-Added trait 'High Libido' to Kael
-Added trait 'Beautiful' to Kael
-Added trait 'Optimist' to Kael
-Successfully added 4 traits to Kael
-Secondary attributes initialized for Kael
-Secondary attributes initialized for Lyria
-Adding 2 traits to Lyria (current: 1, target: 3)
-Added trait 'Playful' to Lyria
-Added trait 'Demanding' to Lyria
-Successfully added 2 traits to Lyria
-Secondary attributes initialized for Lyria
-Secondary attributes initialized for Draven
-Adding 3 traits to Draven (current: 1, target: 4)
-Added trait 'Beautiful' to Draven
-Added trait 'Cute' to Draven
-Added trait 'Cool Scars' to Draven
-Successfully added 3 traits to Draven
-Secondary attributes initialized for Draven
-Secondary attributes initialized for Selene
-Adding 3 traits to Selene (current: 1, target: 4)
-Added trait 'Waitress' to Selene
-Added trait 'Open Minded' to Selene
-Added trait 'Flat Chest' to Selene
-Successfully added 3 traits to Selene
-Secondary attributes initialized for Selene
-Secondary attributes initialized for Ragnar
-Adding 3 traits to Ragnar (current: 1, target: 4)
-Added trait 'Graceful' to Ragnar
-Added trait 'Nice Tan' to Ragnar
-Added trait 'Brawler' to Ragnar
-Successfully added 3 traits to Ragnar
-Secondary attributes initialized for Ragnar
-Secondary attributes initialized for Talon
-Adding 4 traits to Talon (current: 1, target: 5)
-Added trait 'Satyr' to Talon
-Added trait 'Charming' to Talon
-Added trait 'Radiant' to Talon
-Added trait 'Smoker' to Talon
-Successfully added 4 traits to Talon
-Secondary attributes initialized for Talon
-Secondary attributes initialized for Rose
-Secondary attributes initialized for Iris
-Secondary attributes initialized for Thane
-Adding 3 traits to Thane (current: 1, target: 4)
-Added trait 'Tight' to Thane
-Added trait 'Firm Ass' to Thane
-Added trait 'Clever' to Thane
-Successfully added 3 traits to Thane
-Secondary attributes initialized for Thane
-Secondary attributes initialized for Elowen
-Adding 2 traits to Elowen (current: 1, target: 3)
-Added trait 'Agile' to Elowen
-Added trait 'Playful' to Elowen
-Successfully added 2 traits to Elowen
-Secondary attributes initialized for Elowen
-Secondary attributes initialized for Primrose
-Secondary attributes initialized for Jasmine
-Secondary attributes initialized for Daisy
-Secondary attributes initialized for Poppy
 JSON workers available: 18, All JSON exhausted: False
-Secondary attributes already initialized for Poppy, skipping recalculation
-Added existing worker 'Poppy' to displayed_workers
-Secondary attributes already initialized for Elena, skipping recalculation
-Added existing worker 'Elena' to displayed_workers
+Secondary attributes already initialized for Iris, skipping recalculation
+Added existing worker 'Iris' to displayed_workers
+Secondary attributes already initialized for Ragnar, skipping recalculation
+Added existing worker 'Ragnar' to displayed_workers
 Secondary attributes already initialized for Rose, skipping recalculation
 Added existing worker 'Rose' to displayed_workers
+Secondary attributes already initialized for Zorak, skipping recalculation
+Added existing worker 'Zorak' to displayed_workers
 Secondary attributes already initialized for Talon, skipping recalculation
 Added existing worker 'Talon' to displayed_workers
-Secondary attributes already initialized for Daisy, skipping recalculation
-Added existing worker 'Daisy' to displayed_workers
 MAX_DAILY_SPAWNS: 5
 update_displayed_workers: Not spawning new workers, only displaying available
 workers (available: 5, displayed: 5)
-Final displayed_workers: ['Poppy', 'Elena', 'Rose', 'Talon', 'Daisy']
-Final available_workers after update: ['Poppy', 'Elena', 'Rose', 'Talon',
-'Daisy']
+Final displayed_workers: ['Iris', 'Ragnar', 'Rose', 'Zorak', 'Talon']
+Final available_workers after update: ['Iris', 'Ragnar', 'Rose', 'Zorak',
+'Talon']
 Final daily_spawns: 0
-Updated displayed_workers: ['Poppy', 'Elena', 'Rose', 'Talon', 'Daisy']
-MONEY CHANGE: $5000 + $0 - $100 = $4900
-DEBUG: Checking active professions for 1 workers
-DEBUG: Worker Android 18 assigned to building: Unassigned
-DEBUG: No workers found with active professions
-  Checking event index 0 from data/events/events_building.json:
-id='brothel_worker_caution', desc_start='Fate hangs in the balance as hag
-potions run low j...'
-  Checking event index 1 from data/events/events_building.json:
-id='brothel_health_check', desc_start='The weight of decision a city healer
-emerges from ...'
-  Checking event index 2 from data/events/events_building.json:
-id='restaurant_food_shortage', desc_start='Urgency drives a supplier's cart is
-late and the p...'
-  Checking event index 3 from data/events/events_building.json:
-id='restaurant_noble_banquet', desc_start='A jeweled signet hits your desk: a
-noble speaks wi...'
-  Checking event index 4 from data/events/events_building.json:
-id='guild_dragon_sighting', desc_start='Fate hangs in the balance as smoke on
-the ridge—vi...'
-  Checking event index 5 from data/events/events_building.json:
-id='guild_bandit_raid', desc_start='The weight of decision a courier bursts
-in—your su...'
-  Checking event index 6 from data/events/events_building.json:
-id='tavern_brawl_outbreak', desc_start='Time presses heavy as a shout evolves
-into somethi...'
-  Checking event index 7 from data/events/events_building.json:
-id='tavern_wine_crisis', desc_start='Time presses heavy as corks pop sour—an
-entire bat...'
-  Checking event index 8 from data/events/events_building.json:
-id='casino_rigged_tables', desc_start='Fate hangs in the balance as low voices
-circle the...'
-  Checking event index 9 from data/events/events_building.json:
-id='casino_vip_fraud', desc_start='The weight of decision a velvet-cloaked vip
-palms ...'
-  Checking event index 10 from data/events/events_building.json:
-id='brothel_rainy_night_surge', desc_start='Time presses heavy as rain drums
-the shingles; the...'
-  Checking event index 11 from data/events/events_building.json:
-id='tavern_delivery_delay', desc_start='Urgency drives the keg cart is late
-and the tap sl...'
-  Checking event index 12 from data/events/events_building.json:
-id='restaurant_spice_shortfall', desc_start='The weight of decision the spice
-chest sits near-e...'
-  Checking event index 13 from data/events/events_building.json:
-id='casino_counterfeit_chips', desc_start='Fate hangs in the balance as a
-dealer's glance har...'
-  Checking event index 14 from data/events/events_building.json:
-id='guild_escort_request', desc_start='The weight of decision a merchant
-caravan posts fo...'
-  Checking event index 15 from data/events/events_building.json:
-id='adventurers_guild_routine_training', desc_start='Fate hangs in the balance
-as blades rasp against d...'
-  Checking event index 16 from data/events/events_building.json:
-id='brothel_linen_turnover', desc_start='The weight of decision fresh linens
-lag a cycle an...'
-  Checking event index 17 from data/events/events_building.json:
-id='restaurant_market_day', desc_start='Dawn reveals market day spills crowds
-into the str...'
-  Checking event index 0 from data/events/events_common.json:
-id='knights_honor_duel', desc_start='The heavy oak doors swing wide as steel-
-clad boots...'
-  Checking event index 1 from data/events/events_common.json:
-id='mystics_fortune_telling', desc_start='The scent of burning herbs drifts
-through your est...'
-  Checking event index 2 from data/events/events_common.json:
-id='guild_rivalry_taunt', desc_start='The morning air carries the sound of
-hammering as ...'
-  Checking event index 3 from data/events/events_common.json:
-id='patrons_lost_heirloom', desc_start='Panic etches deep lines across a
-patron's face as ...'
-  Checking event index 4 from data/events/events_common.json:
-id='enchanted_dish_mishap', desc_start='The kitchen erupts in a symphony of
-sizzling and s...'
-  Checking event index 5 from data/events/events_common.json:
-id='high_stakes_gambler', desc_start='The dice roll like thunder across felt
-tables as a...'
-  Checking event index 6 from data/events/events_common.json:
-id='charming_patrons_request', desc_start='A figure draped in silk and shadow
-approaches your...'
-  Checking event index 7 from data/events/events_common.json:
-id='secret_admirers_gift', desc_start='Morning light reveals an unexpected
-treasure—a pac...'
-  Checking event index 8 from data/events/events_common.json:
-id='veiled_dancers_allure', desc_start='The evening air grows thick with
-anticipation as a...'
-  Checking event index 9 from data/events/events_common.json:
-id='bards_sultry_ballad', desc_start='The evening's entertainment takes an
-unexpected tu...'
-  Checking event index 10 from data/events/events_common.json:
-id='plague_rumor_panic', desc_start='Fear spreads faster than wildfire through
-your est...'
-  Checking event index 11 from data/events/events_common.json:
-id='supplier_payment_dispute', desc_start='The morning brings unwelcome news
-as your regular ...'
-  Checking event index 12 from data/events/events_common.json:
-id='misdelivered_crate', desc_start='Fate arrives at your doorstep in the form
-of a woo...'
-  Checking event index 13 from data/events/events_common.json:
-id='djinn_bond_rumor', desc_start='The whisper arrives like poison on the
-wind, carri...'
-  Checking event index 14 from data/events/events_common.json:
-id='binding_gem_lead_2', desc_start='The contact emerges from shadow like a
-figure from...'
-  Checking event index 15 from data/events/events_common.json:
-id='apothecary_bulk_tonics', desc_start='The apothecary's cart creaks to a
-halt outside you...'
-  Checking event index 16 from data/events/events_common.json:
-id='bard_license_officer', desc_start='Authority arrives in the form of a city
-official w...'
-  Checking event index 17 from data/events/events_common.json:
-id='storm_leak_repair', desc_start='The storm's legacy reveals itself in the
-pale ligh...'
-Error loading or processing event file data/events/events_seasonal.json: 'str'
-object has no attribute 'get'
-  Checking event index 0 from data/events/events_shops.json:
-id='rescue_shop_owner_debt', desc_start='A commotion breaks out in the market
-square as rou...'
-  Checking event index 1 from data/events/events_shops.json:
-id='rescue_shop_owner_debt_wealthy', desc_start='A commotion breaks out in the
-market square as rou...'
-  Checking event index 2 from data/events/events_shops.json:
-id='shop_owner_expansion', desc_start='The merchant from the Adventurer's
-Market approach...'
-  Checking event index 3 from data/events/events_shops.json:
-id='shop_owner_expansion_retry', desc_start='The merchant returns, hope still
-burning in her ey...'
-Active building types for event filtering: []
-WARNING: No active building types! This will filter out all events with
-building_type requirements.
-Checking brothel_worker_caution: limited=True, occurrences=0, max=1
-Filtered out brothel_worker_caution due to building type mismatch. Event
-requires ['brothel'] but active buildings are []
-Checking brothel_health_check: limited=False, occurrences=0, max=1
-Filtered out brothel_health_check due to building type mismatch. Event
-requires ['brothel'] but active buildings are []
-Checking restaurant_food_shortage: limited=False, occurrences=0, max=1
-Filtered out restaurant_food_shortage due to building type mismatch. Event
-requires ['restaurant'] but active buildings are []
-Checking restaurant_noble_banquet: limited=True, occurrences=0, max=1
-Filtered out restaurant_noble_banquet due to building type mismatch. Event
-requires ['restaurant'] but active buildings are []
-Checking guild_dragon_sighting: limited=True, occurrences=0, max=1
-Filtered out guild_dragon_sighting due to building type mismatch. Event
-requires ['adventurers_guild'] but active buildings are []
-Checking guild_bandit_raid: limited=False, occurrences=0, max=1
-Filtered out guild_bandit_raid due to building type mismatch. Event requires
-['adventurers_guild'] but active buildings are []
-Checking tavern_brawl_outbreak: limited=False, occurrences=0, max=1
-Filtered out tavern_brawl_outbreak due to building type mismatch. Event
-requires ['tavern'] but active buildings are []
-Checking tavern_wine_crisis: limited=True, occurrences=0, max=1
-Filtered out tavern_wine_crisis due to building type mismatch. Event requires
-['tavern'] but active buildings are []
-Checking casino_rigged_tables: limited=True, occurrences=0, max=1
-Filtered out casino_rigged_tables due to building type mismatch. Event
-requires ['casino'] but active buildings are []
-Checking casino_vip_fraud: limited=False, occurrences=0, max=1
-Filtered out casino_vip_fraud due to building type mismatch. Event requires
-['casino'] but active buildings are []
-Checking brothel_rainy_night_surge: limited=False, occurrences=0, max=1
-Filtered out brothel_rainy_night_surge due to building type mismatch. Event
-requires ['brothel'] but active buildings are []
-Checking tavern_delivery_delay: limited=False, occurrences=0, max=1
-Filtered out tavern_delivery_delay due to building type mismatch. Event
-requires ['tavern'] but active buildings are []
-Checking restaurant_spice_shortfall: limited=False, occurrences=0, max=1
-Filtered out restaurant_spice_shortfall due to building type mismatch. Event
-requires ['restaurant'] but active buildings are []
-Checking casino_counterfeit_chips: limited=False, occurrences=0, max=1
-Filtered out casino_counterfeit_chips due to building type mismatch. Event
-requires ['casino'] but active buildings are []
-Checking guild_escort_request: limited=False, occurrences=0, max=1
-Filtered out guild_escort_request due to building type mismatch. Event
-requires ['adventurers_guild'] but active buildings are []
-Checking adventurers_guild_routine_training: limited=False, occurrences=0,
-max=1
-Filtered out adventurers_guild_routine_training due to building type mismatch.
-Event requires ['adventurers_guild'] but active buildings are []
-Checking brothel_linen_turnover: limited=False, occurrences=0, max=1
-Filtered out brothel_linen_turnover due to building type mismatch. Event
-requires ['brothel'] but active buildings are []
-Checking restaurant_market_day: limited=False, occurrences=0, max=1
-Filtered out restaurant_market_day due to building type mismatch. Event
-requires ['restaurant'] but active buildings are []
-Checking knights_honor_duel: limited=False, occurrences=0, max=1
-Filtered out knights_honor_duel due to building type mismatch. Event requires
-['tavern', 'adventurers_guild'] but active buildings are []
-Checking mystics_fortune_telling: limited=True, occurrences=0, max=2
-Filtered out mystics_fortune_telling due to building type mismatch. Event
-requires ['tavern', 'restaurant', 'casino'] but active buildings are []
-Checking guild_rivalry_taunt: limited=False, occurrences=0, max=1
-Filtered out guild_rivalry_taunt due to building type mismatch. Event requires
-['adventurers_guild'] but active buildings are []
-Checking patrons_lost_heirloom: limited=True, occurrences=0, max=1
-Filtered out patrons_lost_heirloom due to building type mismatch. Event
-requires ['brothel', 'tavern', 'restaurant'] but active buildings are []
-Checking enchanted_dish_mishap: limited=True, occurrences=0, max=1
-Filtered out enchanted_dish_mishap due to building type mismatch. Event
-requires ['restaurant'] but active buildings are []
-Checking high_stakes_gambler: limited=False, occurrences=0, max=1
-Filtered out high_stakes_gambler due to building type mismatch. Event requires
-['casino'] but active buildings are []
-Checking charming_patrons_request: limited=False, occurrences=0, max=1
-Filtered out charming_patrons_request due to building type mismatch. Event
-requires ['brothel'] but active buildings are []
-Checking secret_admirers_gift: limited=True, occurrences=0, max=2
-Filtered out secret_admirers_gift due to building type mismatch. Event
-requires ['brothel', 'restaurant'] but active buildings are []
-Checking veiled_dancers_allure: limited=False, occurrences=0, max=1
-Filtered out veiled_dancers_allure due to building type mismatch. Event
-requires ['brothel', 'tavern'] but active buildings are []
-Checking bards_sultry_ballad: limited=True, occurrences=0, max=2
-Filtered out bards_sultry_ballad due to building type mismatch. Event requires
-['tavern'] but active buildings are []
-Checking plague_rumor_panic: limited=True, occurrences=0, max=1
-Filtered out plague_rumor_panic due to building type mismatch. Event requires
-['restaurant', 'brothel', 'tavern'] but active buildings are []
-Checking supplier_payment_dispute: limited=False, occurrences=0, max=1
-Filtered out supplier_payment_dispute due to building type mismatch. Event
-requires ['restaurant', 'tavern'] but active buildings are []
-Checking misdelivered_crate: limited=False, occurrences=0, max=1
-Filtered out misdelivered_crate due to building type mismatch. Event requires
-['restaurant', 'tavern', 'casino', 'brothel'] but active buildings are []
-Checking djinn_bond_rumor: limited=True, occurrences=0, max=1
-Filtered out djinn_bond_rumor due to building type mismatch. Event requires
-['restaurant', 'tavern', 'casino', 'brothel', 'adventurers_guild'] but active
-buildings are []
-Checking binding_gem_lead_2: limited=True, occurrences=0, max=1
-Filtered out binding_gem_lead_2 due to building type mismatch. Event requires
-['restaurant', 'tavern', 'casino', 'brothel', 'adventurers_guild'] but active
-buildings are []
-Checking apothecary_bulk_tonics: limited=False, occurrences=0, max=1
-Filtered out apothecary_bulk_tonics due to building type mismatch. Event
-requires ['brothel', 'tavern', 'restaurant', 'adventurers_guild'] but active
-buildings are []
-Checking bard_license_officer: limited=False, occurrences=0, max=1
-Filtered out bard_license_officer due to building type mismatch. Event
-requires ['tavern', 'restaurant'] but active buildings are []
-Checking storm_leak_repair: limited=False, occurrences=0, max=1
-Filtered out storm_leak_repair due to building type mismatch. Event requires
-['tavern', 'restaurant', 'brothel'] but active buildings are []
-Checking rescue_shop_owner_debt: limited=True, occurrences=0, max=1
-Filtered out rescue_shop_owner_debt due to building type mismatch. Event
-requires ['tavern', 'brothel', 'casino', 'restaurant', 'adventurers_guild']
-but active buildings are []
-Checking rescue_shop_owner_debt_wealthy: limited=True, occurrences=0, max=1
-Filtered out rescue_shop_owner_debt_wealthy due to building type mismatch.
-Event requires ['tavern', 'brothel', 'casino', 'restaurant',
-'adventurers_guild'] but active buildings are []
-Checking shop_owner_expansion: limited=True, occurrences=0, max=1
-Filtered out shop_owner_expansion due to building type mismatch. Event
-requires ['tavern', 'brothel', 'casino', 'restaurant', 'adventurers_guild']
-but active buildings are []
-Checking shop_owner_expansion_retry: limited=False, occurrences=0, max=1
-Filtered out shop_owner_expansion_retry due to building type mismatch. Event
-requires ['tavern', 'brothel', 'casino', 'restaurant', 'adventurers_guild']
-but active buildings are []
-After filtering, 0 possible random events remain.
-Skipping random event check: No workers have active professions.
-End of Day: Income=$0, Costs=$100, Final Money=$4900
-Tavern screen displayed
+After update_displayed_workers - displayed_workers: ['Iris', 'Ragnar', 'Rose',
+'Zorak', 'Talon']
 DEBUG: tavern_screen label - STARTING
-DEBUG: tavern_screen - current_objective=1, tutorial_active=True, money=$4900,
+DEBUG: tavern_screen - current_objective=1, tutorial_active=True, money=$5000,
 obj4_dialogue_shown=False
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Explore button clicked
 Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
 Synced shop1 unlock from persistent to store: True
 Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
 False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Tavern screen displayed
 Tavern screen displayed
   Checking event index 0 from
 data/events/recruit/event_recruit_advanced_example.json:
@@ -2657,121 +1899,119 @@ data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Android 18
 Adding 2 traits to Android 18 (current: 2, target: 4)
-Added trait 'Maid' to Android 18
-Added trait 'Exotic' to Android 18
+Added trait 'Nympho' to Android 18
+Added trait 'Dwarf' to Android 18
 Successfully added 2 traits to Android 18
 Secondary attributes initialized for Android 18
 Secondary attributes initialized for Elena
 Adding 4 traits to Elena (current: 1, target: 5)
-Added trait 'Playful' to Elena
-Added trait 'Quick Learner' to Elena
-Added trait 'Tattooed' to Elena
-Added trait 'Cute' to Elena
+Added trait 'Wise' to Elena
+Added trait 'Soft Ass' to Elena
+Added trait 'Magnetic' to Elena
+Added trait 'Charming' to Elena
 Successfully added 4 traits to Elena
 Secondary attributes initialized for Elena
 Secondary attributes initialized for Delilah
-Adding 4 traits to Delilah (current: 1, target: 5)
-Added trait 'Soft Ass' to Delilah
-Added trait 'Slow Learner' to Delilah
-Added trait 'Tattooed' to Delilah
-Added trait 'Smooth Talker' to Delilah
-Successfully added 4 traits to Delilah
+Adding 2 traits to Delilah (current: 1, target: 3)
+Added trait 'Clever' to Delilah
+Added trait 'Low Libido' to Delilah
+Successfully added 2 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Erinya
-Adding 4 traits to Erinya (current: 1, target: 5)
-Added trait 'Shy' to Erinya
-Added trait 'Flat Chest' to Erinya
-Added trait 'Low Libido' to Erinya
-Added trait 'Wise' to Erinya
-Successfully added 4 traits to Erinya
+Adding 2 traits to Erinya (current: 1, target: 3)
+Added trait 'Brawler' to Erinya
+Added trait 'Beauty Mark' to Erinya
+Successfully added 2 traits to Erinya
 Secondary attributes initialized for Erinya
 Secondary attributes initialized for Zorak
-Adding 2 traits to Zorak (current: 1, target: 3)
-Added trait 'Agile' to Zorak
-Added trait 'Cute' to Zorak
-Successfully added 2 traits to Zorak
+Adding 4 traits to Zorak (current: 1, target: 5)
+Added trait 'Confident' to Zorak
+Added trait 'Loose' to Zorak
+Added trait 'Lazy' to Zorak
+Added trait 'Soft Ass' to Zorak
+Successfully added 4 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
-Adding 2 traits to Seraphina (current: 1, target: 3)
+Adding 3 traits to Seraphina (current: 1, target: 4)
 Added trait 'Brawler' to Seraphina
-Added trait 'Flexible' to Seraphina
-Successfully added 2 traits to Seraphina
+Added trait 'Adventurer' to Seraphina
+Added trait 'Confident' to Seraphina
+Successfully added 3 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
-Adding 2 traits to Kael (current: 1, target: 3)
-Added trait 'Sensitive' to Kael
-Added trait 'Smoker' to Kael
-Successfully added 2 traits to Kael
+Adding 4 traits to Kael (current: 1, target: 5)
+Added trait 'Maid' to Kael
+Added trait 'Open Minded' to Kael
+Added trait 'Charismatic' to Kael
+Added trait 'Elegant Eyes' to Kael
+Successfully added 4 traits to Kael
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 4 traits to Lyria (current: 1, target: 5)
-Added trait 'Pierced' to Lyria
-Added trait 'Adventurer' to Lyria
-Added trait 'Sadistic' to Lyria
-Added trait 'Graceful' to Lyria
-Successfully added 4 traits to Lyria
+Adding 3 traits to Lyria (current: 1, target: 4)
+Added trait 'Agile' to Lyria
+Added trait 'Exotic' to Lyria
+Added trait 'Wise' to Lyria
+Successfully added 3 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
 Adding 4 traits to Draven (current: 1, target: 5)
-Added trait 'Scarred' to Draven
-Added trait 'Magnetic' to Draven
-Added trait 'Teacher' to Draven
-Added trait 'Adventurer' to Draven
+Added trait 'Cute' to Draven
+Added trait 'Elegant Eyes' to Draven
+Added trait 'Cool Scars' to Draven
+Added trait 'Beautiful' to Draven
 Successfully added 4 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
-Adding 4 traits to Selene (current: 1, target: 5)
-Added trait 'Cool Scars' to Selene
-Added trait 'Confident' to Selene
-Added trait 'Mystical' to Selene
-Added trait 'Flexible' to Selene
-Successfully added 4 traits to Selene
+Adding 3 traits to Selene (current: 1, target: 4)
+Added trait 'Charming' to Selene
+Added trait 'Exotic' to Selene
+Added trait 'Wise' to Selene
+Successfully added 3 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
 Adding 4 traits to Ragnar (current: 1, target: 5)
-Added trait 'Tough' to Ragnar
-Added trait 'Shy' to Ragnar
+Added trait 'Tattooed' to Ragnar
 Added trait 'Tight' to Ragnar
-Added trait 'Obedient' to Ragnar
+Added trait 'Open Minded' to Ragnar
+Added trait 'Scarred' to Ragnar
 Successfully added 4 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Ismera
 Adding 4 traits to Ismera (current: 1, target: 5)
 Added trait 'Charming' to Ismera
+Added trait 'Small Breasts' to Ismera
 Added trait 'Numb' to Ismera
-Added trait 'Firm Ass' to Ismera
-Added trait 'Open Minded' to Ismera
+Added trait 'Strong' to Ismera
 Successfully added 4 traits to Ismera
 Secondary attributes initialized for Ismera
 Secondary attributes initialized for Talon
 Adding 4 traits to Talon (current: 1, target: 5)
-Added trait 'Adventurer' to Talon
-Added trait 'Clever' to Talon
-Added trait 'Magnetic' to Talon
-Added trait 'Mystical' to Talon
+Added trait 'Robust' to Talon
+Added trait 'Elegant' to Talon
+Added trait 'Large Penis' to Talon
+Added trait 'Nervous' to Talon
 Successfully added 4 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Astraea
-Adding 4 traits to Astraea (current: 1, target: 5)
-Added trait 'Sensitive' to Astraea
-Added trait 'Tomboy' to Astraea
-Added trait 'Energetic' to Astraea
-Added trait 'Tone Deaf' to Astraea
-Successfully added 4 traits to Astraea
+Adding 3 traits to Astraea (current: 1, target: 4)
+Added trait 'Beautiful' to Astraea
+Added trait 'Singer' to Astraea
+Added trait 'Obedient' to Astraea
+Successfully added 3 traits to Astraea
 Secondary attributes initialized for Astraea
 Secondary attributes initialized for Varkas
 Adding 3 traits to Varkas (current: 1, target: 4)
-Added trait 'Playful' to Varkas
-Added trait 'Tomboy' to Varkas
-Added trait 'Cute' to Varkas
+Added trait 'Exotic' to Varkas
+Added trait 'Smoker' to Varkas
+Added trait 'Elegant Eyes' to Varkas
 Successfully added 3 traits to Varkas
 Secondary attributes initialized for Varkas
 Secondary attributes initialized for Lilithra
 Adding 4 traits to Lilithra (current: 1, target: 5)
-Added trait 'Singer' to Lilithra
-Added trait 'Maid' to Lilithra
-Added trait 'Teacher' to Lilithra
-Added trait 'Elegant' to Lilithra
+Added trait 'Lazy' to Lilithra
+Added trait 'Charming' to Lilithra
+Added trait 'Sadistic' to Lilithra
+Added trait 'Cool Scars' to Lilithra
 Successfully added 4 traits to Lilithra
 Secondary attributes initialized for Lilithra
 Secondary attributes initialized for Aspen
@@ -2782,51 +2022,51 @@ Secondary attributes initialized for Rose
 Secondary attributes initialized for Iris
 Secondary attributes initialized for Asher
 Adding 3 traits to Asher (current: 1, target: 4)
-Added trait 'Nervous' to Asher
-Added trait 'Charismatic' to Asher
-Added trait 'Mystical' to Asher
+Added trait 'Teacher' to Asher
+Added trait 'Confident' to Asher
+Added trait 'Robust' to Asher
 Successfully added 3 traits to Asher
 Secondary attributes initialized for Asher
 Secondary attributes initialized for Flynn
-Adding 3 traits to Flynn (current: 1, target: 4)
-Added trait 'Tone Deaf' to Flynn
-Added trait 'Clumsy' to Flynn
-Added trait 'Quick Learner' to Flynn
-Successfully added 3 traits to Flynn
+Adding 4 traits to Flynn (current: 1, target: 5)
+Added trait 'Small Penis' to Flynn
+Added trait 'Hardworking' to Flynn
+Added trait 'Robust' to Flynn
+Added trait 'Smooth Talker' to Flynn
+Successfully added 4 traits to Flynn
 Secondary attributes initialized for Flynn
 Secondary attributes initialized for Victoria
-Adding 3 traits to Victoria (current: 1, target: 4)
-Added trait 'Slow Learner' to Victoria
-Added trait 'Firm Ass' to Victoria
-Added trait 'Wise' to Victoria
-Successfully added 3 traits to Victoria
+Adding 2 traits to Victoria (current: 1, target: 3)
+Added trait 'Graceful' to Victoria
+Added trait 'High Libido' to Victoria
+Successfully added 2 traits to Victoria
 Secondary attributes initialized for Victoria
 Secondary attributes initialized for Amanda
-Adding 4 traits to Amanda (current: 1, target: 5)
-Added trait 'Clumsy' to Amanda
-Added trait 'Lazy' to Amanda
-Added trait 'High Libido' to Amanda
-Added trait 'Brawler' to Amanda
-Successfully added 4 traits to Amanda
+Adding 3 traits to Amanda (current: 1, target: 4)
+Added trait 'Teacher' to Amanda
+Added trait 'Cute' to Amanda
+Added trait 'Shy' to Amanda
+Successfully added 3 traits to Amanda
 Secondary attributes initialized for Amanda
 Secondary attributes initialized for Spuk
-Adding 3 traits to Spuk (current: 1, target: 4)
-Added trait 'Numb' to Spuk
-Added trait 'Beauty Mark' to Spuk
-Added trait 'Elegant' to Spuk
-Successfully added 3 traits to Spuk
+Adding 2 traits to Spuk (current: 1, target: 3)
+Added trait 'Sensitive' to Spuk
+Added trait 'Flexible' to Spuk
+Successfully added 2 traits to Spuk
 Secondary attributes initialized for Spuk
 Secondary attributes initialized for Thane
-Adding 2 traits to Thane (current: 1, target: 3)
-Added trait 'Beauty Mark' to Thane
-Added trait 'Agile' to Thane
-Successfully added 2 traits to Thane
+Adding 3 traits to Thane (current: 1, target: 4)
+Added trait 'Soft Ass' to Thane
+Added trait 'Waitress' to Thane
+Added trait 'Clever' to Thane
+Successfully added 3 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
-Adding 2 traits to Elowen (current: 1, target: 3)
-Added trait 'Maid' to Elowen
-Added trait 'Beautiful' to Elowen
-Successfully added 2 traits to Elowen
+Adding 3 traits to Elowen (current: 1, target: 4)
+Added trait 'Delicate' to Elowen
+Added trait 'Mystical' to Elowen
+Added trait 'Graceful' to Elowen
+Successfully added 3 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Cedar
 Secondary attributes initialized for Laurel
@@ -2838,80 +2078,243 @@ Secondary attributes initialized for Daisy
 Secondary attributes initialized for Poppy
 NSFW mode enabled: True
 Total workers before NSFW filter: 7
-Available workers for recruitment: ['Aspen', 'Florian', 'Violet', 'Lily',
-'Rose', 'Iris']
-NSFW status of available workers: [('Aspen', True), ('Florian', True),
-('Violet', True), ('Lily', True), ('Rose', True), ('Iris', True)]
-Tavern screen displayed
-A person picks the sign from the door and approaches your establishment,
-looking for work.
+Available workers for recruitment: ['Android 18', 'Aspen', 'Florian',
+'Violet', 'Lily', 'Rose', 'Iris']
+NSFW status of available workers: [('Android 18', True), ('Aspen', True),
+('Florian', True), ('Violet', True), ('Lily', True), ('Rose', True), ('Iris',
+True)]
+A somewhat effeminate young man enters your establishment with a playful,
+knowing smile.
 
-Tavern screen displayed
-Aspen
-Hello!
+He moves with a graceful, almost coquettish air, and his eyes sparkle with
+mischief and intelligence.
 
-Tavern screen displayed
-Aspen
-I'm Aspen and I'm looking for work.
+There's something roguish about him - the way he carries himself suggests he's
+used to getting what he wants through charm and wit rather than brute force.
 
-Tavern screen displayed
-Aspen
-I'm willing to work hard for fair pay.
+Rose
+Well, well, well...
 
+Rose
+look what we have here.
+
+Rose
+Rose leans against the doorway with a coy smile, his voice carrying a hint of
+playful charm.
+
+Rose
+"I'm Rose, and I've heard...
+
+Rose
+interesting things about your establishment.
+
+Rose
+I'm quite clever, you know.
+
+Rose
+Good with people.
+
+Rose
+And I have a certain...
+
+Rose
+adaptability that might be valuable to you."
+
+Rose
+I'm looking for work, but I'm not interested in just any job.
+
+Rose
+I want something that appreciates my particular talents.
+
+Rose
+What do you say?
+
+Secondary attributes already initialized for Rose, skipping recalculation
+RECRUITMENT MESSAGE DEBUG: After format_dynamic_message: You explain that
+you're not currently hiring. Rose's smile doesn't falter, but his eyes show a
+flicker of something - disappointment, perhaps, or maybe just calculation.
+'That's a shame. I had a feeling we'd work well together.' He gives you one
+last appraising look. 'Well, if you change your mind, you know where to find
+me. I have a way of... making opportunities appear.' He leaves with the same
+graceful, almost dancing step he entered with.
+RECRUITMENT MESSAGE DEBUG: Final message: You explain that you're not
+currently hiring. Rose's smile doesn't falter, but his eyes show a flicker of
+something - disappointment, perhaps, or maybe just calculation. 'That's a
+shame. I had a feeling we'd work well together.' He gives you one last
+appraising look. 'Well, if you change your mind, you know where to find me. I
+have a way of... making opportunities appear.' He leaves with the same
+graceful, almost dancing step he entered with.
 Tavern screen displayed
-Secondary attributes already initialized for Aspen, skipping recalculation
-RECRUITMENT MESSAGE DEBUG: After format_dynamic_message: You thank Aspen for
-their interest but explain you're not hiring right now. They nod
-understandingly and leave.
-RECRUITMENT MESSAGE DEBUG: Final message: You thank Aspen for their interest
-but explain you're not hiring right now. They nod understandingly and leave.
+Tavern screen displayed
+Tavern screen displayed
 Tavern screen displayed
 DEBUG: tavern_screen label - STARTING
-DEBUG: tavern_screen - current_objective=1, tutorial_active=True, money=$4900,
+DEBUG: tavern_screen - current_objective=1, tutorial_active=True, money=$5000,
 obj4_dialogue_shown=False
-Tavern screen displayed
-Tavern screen displayed
-Tavern screen displayed
-DEBUG: check_objective_completion called - tutorial_active: True,
-current_objective: 1
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
 Explore button clicked
 Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
 Synced shop1 unlock from persistent to store: True
 Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
 False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
-WORKER REFILL CHECK - Current: (2, 1, 1), Last: (2, 1, 1), New day: False
-Same day - using existing workers: ['Poppy', 'Elena', 'Rose', 'Talon',
-'Daisy']
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+WORKER REFILL CHECK - Current: (1, 1, 1), Last: (1, 1, 1), New day: False
+Same day - using existing workers: ['Iris', 'Ragnar', 'Rose', 'Zorak',
+'Talon']
 Updating displayed_workers. Starting population...
-Hired worker names: RevertableSet({'Android 18'})
-Available workers before filtering: ['Poppy', 'Elena', 'Rose', 'Talon',
-'Daisy']
+Hired worker names: RevertableSet()
+Available workers before filtering: ['Iris', 'Ragnar', 'Rose', 'Zorak',
+'Talon']
 data/workers.json not found or error reading: Couldn't find file
 'data/workers.json'.
 Secondary attributes initialized for Elena
-Adding 3 traits to Elena (current: 1, target: 4)
-Added trait 'Tight' to Elena
+Adding 4 traits to Elena (current: 1, target: 5)
+Added trait 'Tattooed' to Elena
+Added trait 'Teacher' to Elena
 Added trait 'Soft Ass' to Elena
-Added trait 'Agile' to Elena
-Successfully added 3 traits to Elena
+Added trait 'Maid' to Elena
+Successfully added 4 traits to Elena
 Secondary attributes initialized for Elena
 Secondary attributes initialized for Delilah
 Adding 2 traits to Delilah (current: 1, target: 3)
-Added trait 'Magnetic' to Delilah
-Added trait 'Waitress' to Delilah
+Added trait 'Soft Ass' to Delilah
+Added trait 'Graceful' to Delilah
 Successfully added 2 traits to Delilah
 Secondary attributes initialized for Delilah
 Secondary attributes initialized for Zorak
-Adding 3 traits to Zorak (current: 1, target: 4)
+Adding 4 traits to Zorak (current: 1, target: 5)
+Added trait 'Elegant' to Zorak
+Added trait 'Pessimist' to Zorak
 Added trait 'Robust' to Zorak
-Added trait 'Magnetic' to Zorak
-Added trait 'Clumsy' to Zorak
-Successfully added 3 traits to Zorak
+Added trait 'Slow Learner' to Zorak
+Successfully added 4 traits to Zorak
 Secondary attributes initialized for Zorak
 Secondary attributes initialized for Seraphina
 Adding 2 traits to Seraphina (current: 1, target: 3)
@@ -2920,216 +2323,334 @@ Added trait 'Smoker' to Seraphina
 Successfully added 2 traits to Seraphina
 Secondary attributes initialized for Seraphina
 Secondary attributes initialized for Kael
-Adding 3 traits to Kael (current: 1, target: 4)
-Added trait 'Numb' to Kael
-Added trait 'Determined' to Kael
-Added trait 'Slow Learner' to Kael
-Successfully added 3 traits to Kael
+Adding 2 traits to Kael (current: 1, target: 3)
+Added trait 'Adventurer' to Kael
+Added trait 'Dependant' to Kael
+Successfully added 2 traits to Kael
+Capped rebelliousness at 30 for Kael due to trait restrictions
 Secondary attributes initialized for Kael
 Secondary attributes initialized for Lyria
-Adding 4 traits to Lyria (current: 1, target: 5)
-Added trait 'Playful' to Lyria
-Added trait 'Elegant Eyes' to Lyria
-Added trait 'Agile' to Lyria
-Added trait 'Exotic' to Lyria
-Successfully added 4 traits to Lyria
+Adding 3 traits to Lyria (current: 1, target: 4)
+Added trait 'Nice Tan' to Lyria
+Added trait 'Firm Ass' to Lyria
+Added trait 'Tomboy' to Lyria
+Successfully added 3 traits to Lyria
 Secondary attributes initialized for Lyria
 Secondary attributes initialized for Draven
 Adding 4 traits to Draven (current: 1, target: 5)
-Added trait 'Rebellious' to Draven
-Added trait 'Hardworking' to Draven
-Added trait 'Numb' to Draven
-Added trait 'Beautiful' to Draven
+Added trait 'Magical' to Draven
+Added trait 'Singer' to Draven
+Added trait 'Teacher' to Draven
+Added trait 'Tight' to Draven
 Successfully added 4 traits to Draven
 Secondary attributes initialized for Draven
 Secondary attributes initialized for Selene
-Adding 3 traits to Selene (current: 1, target: 4)
-Added trait 'Brawler' to Selene
-Added trait 'Beauty Mark' to Selene
-Added trait 'Slow Learner' to Selene
-Successfully added 3 traits to Selene
+Adding 2 traits to Selene (current: 1, target: 3)
+Added trait 'Rebellious' to Selene
+Added trait 'Tattooed' to Selene
+Successfully added 2 traits to Selene
 Secondary attributes initialized for Selene
 Secondary attributes initialized for Ragnar
-Adding 2 traits to Ragnar (current: 1, target: 3)
-Added trait 'Obedient' to Ragnar
-Added trait 'Smoker' to Ragnar
-Successfully added 2 traits to Ragnar
+Adding 4 traits to Ragnar (current: 1, target: 5)
+Added trait 'Confident' to Ragnar
+Added trait 'Delicate' to Ragnar
+Added trait 'Tight' to Ragnar
+Added trait 'Hardworking' to Ragnar
+Successfully added 4 traits to Ragnar
 Secondary attributes initialized for Ragnar
 Secondary attributes initialized for Talon
-Adding 2 traits to Talon (current: 1, target: 3)
-Added trait 'High Libido' to Talon
-Added trait 'Firm Ass' to Talon
-Successfully added 2 traits to Talon
+Adding 3 traits to Talon (current: 1, target: 4)
+Added trait 'Radiant' to Talon
+Added trait 'Playful' to Talon
+Added trait 'Soft Ass' to Talon
+Successfully added 3 traits to Talon
 Secondary attributes initialized for Talon
 Secondary attributes initialized for Rose
 Secondary attributes initialized for Iris
 Secondary attributes initialized for Thane
 Adding 2 traits to Thane (current: 1, target: 3)
-Added trait 'Rebellious' to Thane
-Added trait 'Brawler' to Thane
+Added trait 'Charismatic' to Thane
+Added trait 'Graceful' to Thane
 Successfully added 2 traits to Thane
 Secondary attributes initialized for Thane
 Secondary attributes initialized for Elowen
-Adding 3 traits to Elowen (current: 1, target: 4)
-Added trait 'Optimist' to Elowen
-Added trait 'Nice Tan' to Elowen
-Added trait 'Teacher' to Elowen
-Successfully added 3 traits to Elowen
+Adding 2 traits to Elowen (current: 1, target: 3)
+Added trait 'Maid' to Elowen
+Added trait 'Radiant' to Elowen
+Successfully added 2 traits to Elowen
 Secondary attributes initialized for Elowen
 Secondary attributes initialized for Primrose
 Secondary attributes initialized for Jasmine
 Secondary attributes initialized for Daisy
 Secondary attributes initialized for Poppy
 JSON workers available: 18, All JSON exhausted: False
-Secondary attributes already initialized for Poppy, skipping recalculation
-Added existing worker 'Poppy' to displayed_workers
-Secondary attributes already initialized for Elena, skipping recalculation
-Added existing worker 'Elena' to displayed_workers
+Secondary attributes already initialized for Iris, skipping recalculation
+Added existing worker 'Iris' to displayed_workers
+Secondary attributes already initialized for Ragnar, skipping recalculation
+Added existing worker 'Ragnar' to displayed_workers
 Secondary attributes already initialized for Rose, skipping recalculation
 Added existing worker 'Rose' to displayed_workers
+Secondary attributes already initialized for Zorak, skipping recalculation
+Added existing worker 'Zorak' to displayed_workers
 Secondary attributes already initialized for Talon, skipping recalculation
 Added existing worker 'Talon' to displayed_workers
-Secondary attributes already initialized for Daisy, skipping recalculation
-Added existing worker 'Daisy' to displayed_workers
 MAX_DAILY_SPAWNS: 5
 update_displayed_workers: Not spawning new workers, only displaying available
 workers (available: 5, displayed: 5)
-Final displayed_workers: ['Poppy', 'Elena', 'Rose', 'Talon', 'Daisy']
-Final available_workers after update: ['Poppy', 'Elena', 'Rose', 'Talon',
-'Daisy']
+Final displayed_workers: ['Iris', 'Ragnar', 'Rose', 'Zorak', 'Talon']
+Final available_workers after update: ['Iris', 'Ragnar', 'Rose', 'Zorak',
+'Talon']
 Final daily_spawns: 0
 Tavern screen displayed
-Synced shop1 unlock from persistent to store: True
-Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
-False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
-Secondary attributes already initialized for Poppy, skipping recalculation
-Secondary attributes already initialized for Elena, skipping recalculation
-Secondary attributes already initialized for Rose, skipping recalculation
-Secondary attributes already initialized for Talon, skipping recalculation
-Secondary attributes already initialized for Daisy, skipping recalculation
-DEBUG: Worker bought! workers_hired: 2, current_objective: 1
-Updating displayed_workers. Starting population...
-Hired worker names: RevertableSet({'Android 18', 'Poppy'})
-Available workers before filtering: ['Elena', 'Rose', 'Talon', 'Daisy']
-data/workers.json not found or error reading: Couldn't find file
-'data/workers.json'.
-Secondary attributes initialized for Elena
-Adding 4 traits to Elena (current: 1, target: 5)
-Added trait 'Charming' to Elena
-Added trait 'Shy' to Elena
-Added trait 'Tough' to Elena
-Added trait 'Cute' to Elena
-Successfully added 4 traits to Elena
-Secondary attributes initialized for Elena
-Secondary attributes initialized for Delilah
-Adding 4 traits to Delilah (current: 1, target: 5)
-Added trait 'Elegant' to Delilah
-Added trait 'Cute' to Delilah
-Added trait 'Smoker' to Delilah
-Added trait 'Clever' to Delilah
-Successfully added 4 traits to Delilah
-Secondary attributes initialized for Delilah
-Secondary attributes initialized for Zorak
-Adding 4 traits to Zorak (current: 1, target: 5)
-Added trait 'Tone Deaf' to Zorak
-Added trait 'Teacher' to Zorak
-Added trait 'Playful' to Zorak
-Added trait 'Adventurer' to Zorak
-Successfully added 4 traits to Zorak
-Secondary attributes initialized for Zorak
-Secondary attributes initialized for Seraphina
-Adding 2 traits to Seraphina (current: 1, target: 3)
-Added trait 'Brawler' to Seraphina
-Added trait 'Strong' to Seraphina
-Successfully added 2 traits to Seraphina
-Secondary attributes initialized for Seraphina
-Secondary attributes initialized for Kael
-Adding 4 traits to Kael (current: 1, target: 5)
-Added trait 'Waitress' to Kael
-Added trait 'Wise' to Kael
-Added trait 'Stiff' to Kael
-Added trait 'Rebellious' to Kael
-Successfully added 4 traits to Kael
-Secondary attributes initialized for Kael
-Secondary attributes initialized for Lyria
-Adding 3 traits to Lyria (current: 1, target: 4)
-Added trait 'Mystical' to Lyria
-Added trait 'Wise' to Lyria
-Added trait 'Nympho' to Lyria
-Successfully added 3 traits to Lyria
-Secondary attributes initialized for Lyria
-Secondary attributes initialized for Draven
-Adding 2 traits to Draven (current: 1, target: 3)
-Added trait 'Brawler' to Draven
-Added trait 'Mystical' to Draven
-Successfully added 2 traits to Draven
-Secondary attributes initialized for Draven
-Secondary attributes initialized for Selene
-Adding 3 traits to Selene (current: 1, target: 4)
-Added trait 'Singer' to Selene
-Added trait 'Nervous' to Selene
-Added trait 'Mystical' to Selene
-Successfully added 3 traits to Selene
-Secondary attributes initialized for Selene
-Secondary attributes initialized for Ragnar
-Adding 2 traits to Ragnar (current: 1, target: 3)
-Added trait 'Shy' to Ragnar
-Added trait 'Pessimist' to Ragnar
-Successfully added 2 traits to Ragnar
-Secondary attributes initialized for Ragnar
-Secondary attributes initialized for Talon
-Adding 4 traits to Talon (current: 1, target: 5)
-Added trait 'Smooth Talker' to Talon
-Added trait 'Strong' to Talon
-Added trait 'Elegant' to Talon
-Added trait 'Soft Ass' to Talon
-Successfully added 4 traits to Talon
-Secondary attributes initialized for Talon
-Secondary attributes initialized for Rose
-Secondary attributes initialized for Iris
-Secondary attributes initialized for Thane
-Adding 3 traits to Thane (current: 1, target: 4)
-Added trait 'Tone Deaf' to Thane
-Added trait 'Shy' to Thane
-Added trait 'Optimist' to Thane
-Successfully added 3 traits to Thane
-Secondary attributes initialized for Thane
-Secondary attributes initialized for Elowen
-Adding 4 traits to Elowen (current: 1, target: 5)
-Added trait 'Cute' to Elowen
-Added trait 'Robust' to Elowen
-Added trait 'Magnetic' to Elowen
-Added trait 'Low Libido' to Elowen
-Successfully added 4 traits to Elowen
-Secondary attributes initialized for Elowen
-Secondary attributes initialized for Primrose
-Secondary attributes initialized for Jasmine
-Secondary attributes initialized for Daisy
-Secondary attributes initialized for Poppy
-JSON workers available: 17, All JSON exhausted: False
-Secondary attributes already initialized for Elena, skipping recalculation
-Added existing worker 'Elena' to displayed_workers
-Secondary attributes already initialized for Rose, skipping recalculation
-Added existing worker 'Rose' to displayed_workers
-Secondary attributes already initialized for Talon, skipping recalculation
-Added existing worker 'Talon' to displayed_workers
-Secondary attributes already initialized for Daisy, skipping recalculation
-Added existing worker 'Daisy' to displayed_workers
-MAX_DAILY_SPAWNS: 5
-update_displayed_workers: Not spawning new workers, only displaying available
-workers (available: 4, displayed: 4)
-Final displayed_workers: ['Elena', 'Rose', 'Talon', 'Daisy']
-Final available_workers after update: ['Elena', 'Rose', 'Talon', 'Daisy']
-Final daily_spawns: 0
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
 Tavern screen displayed
 Synced shop1 unlock from persistent to store: True
 Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
 False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
-Tavern screen displayed
-Secondary attributes already initialized for Elena, skipping recalculation
+Secondary attributes already initialized for Iris, skipping recalculation
+Secondary attributes already initialized for Ragnar, skipping recalculation
 Secondary attributes already initialized for Rose, skipping recalculation
+Secondary attributes already initialized for Zorak, skipping recalculation
 Secondary attributes already initialized for Talon, skipping recalculation
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Secondary attributes already initialized for Iris, skipping recalculation
+Secondary attributes already initialized for Ragnar, skipping recalculation
+Secondary attributes already initialized for Rose, skipping recalculation
+Secondary attributes already initialized for Zorak, skipping recalculation
+Secondary attributes already initialized for Talon, skipping recalculation
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
+Tavern screen displayed
+Synced shop1 unlock from persistent to store: True
+Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
+False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
+Tavern screen displayed
+DEBUG: map_button_id=S1Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=S1Greenhouse
+DEBUG: map_button_id=S1Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S1Redhouse
+DEBUG: map_button_id=S3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=S3Bluehouse
+DEBUG: map_button_id=S2Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S2Tavern
+DEBUG: map_button_id=S4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=S4Redhouse
+DEBUG: map_button_id=N1Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N1Bluehouse
+DEBUG: map_button_id=N2Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N2Greenhouse
+DEBUG: map_button_id=N4Redhouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=25000 for map_button_id=N4Redhouse
+DEBUG: map_button_id=N3Bluehouse, available_businesses count=2
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=20000 for map_button_id=N3Bluehouse
+DEBUG: map_button_id=N5Greenhouse, available_businesses count=5
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=30000 for map_button_id=N5Greenhouse
+DEBUG: map_button_id=N5Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=N5Tavern
+DEBUG: map_button_id=S4Tavern, available_businesses count=3
+DEBUG: owned_buildings count=1, owned_buildings=['Building 1']
+DEBUG: Calculated price=15000 for map_button_id=S4Tavern
 Tavern screen displayed
 Synced shop1 unlock from persistent to store: True
 Final shop unlock state - persistent: {'shop1': True, 'shop2': False, 'shop3':
@@ -3137,40 +2658,43 @@ False}, store: {'shop1': True, 'shop2': False, 'shop3': False}
 Tavern screen displayed
 Tavern screen displayed
 Tavern screen displayed
-Workers button clicked
 Tavern screen displayed
 Tavern screen displayed
-Secondary attributes already initialized for Android 18, skipping
-recalculation
-Secondary attributes already initialized for Poppy, skipping recalculation
-Secondary attributes already initialized for Android 18, skipping
-recalculation
 Tavern screen displayed
 Tavern screen displayed
-Secondary attributes already initialized for Android 18, skipping
-recalculation
-Secondary attributes already initialized for Poppy, skipping recalculation
-Found interaction files: ['data/interactions/interactions_main.json',
-'data/interactions/interactions_special.json',
-'data/interactions/interactions_structured.json']
-Attempting to load file: data/interactions/interactions_main.json
-Error loading interactions from data/interactions/interactions_main.json:
-Refusing to open data/interactions/interactions_main.json while predicting.
-Attempting to load file: data/interactions/interactions_special.json
-Error loading interactions from data/interactions/interactions_special.json:
-Refusing to open data/interactions/interactions_special.json while predicting.
-Attempting to load file: data/interactions/interactions_structured.json
-Error loading interactions from
-data/interactions/interactions_structured.json: Refusing to open
-data/interactions/interactions_structured.json while predicting.
-Warning: No interaction files were successfully loaded!
-Filtering interactions for worker: Android 18
-Secondary attributes already initialized for Android 18, skipping
-recalculation
-Secondary attributes already initialized for Android 18, skipping
-recalculation
 Tavern screen displayed
 Tavern screen displayed
-Secondary attributes already initialized for Android 18, skipping
-recalculation
-Secondary attributes already initialized for Poppy, skipping recalculation
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed
+Tavern screen displayed

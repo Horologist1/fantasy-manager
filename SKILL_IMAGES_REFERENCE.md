@@ -20,7 +20,7 @@ El sistema busca imágenes usando estos nombres de skills (en minúsculas):
 13. **charm** - Busca directamente "charm"
 14. **wait** - Busca **"service"** O **"maid"** (múltiples patrones)
 15. **agility** - Busca directamente "agility"
-16. **magic** - Busca directamente "magic"
+16. **craft** - Busca directamente "craft"
 17. **Specialty 4-12** - Busca directamente el nombre (lowercase)
 
 ## 🏷️ Prefijos de Traits
@@ -31,14 +31,22 @@ El sistema busca imágenes con estos prefijos basados en los traits del worker:
 - **pregnant_** - Si el worker tiene el trait "Pregnant"
 - **futa_** - Si el worker tiene el trait "Futa"
 - **transformed_** - Si el worker tiene el trait "Transformed"
+- **magical_** - Si el worker tiene el trait "Magical"
 
 ### Prefijos Combinados (en orden de prioridad):
-1. **transformed_futa_pregnant_** - Si tiene los 3 traits
-2. **transformed_futa_** - Si tiene Transformed + Futa
-3. **transformed_pregnant_** - Si tiene Transformed + Pregnant
-4. **futa_pregnant_** - Si tiene Futa + Pregnant
+1. **transformed_magical_futa_pregnant_** - Si tiene los 4 traits
+2. **transformed_magical_futa_** - Si tiene Transformed + Magical + Futa
+3. **transformed_magical_pregnant_** - Si tiene Transformed + Magical + Pregnant
+4. **transformed_futa_pregnant_** - Si tiene Transformed + Futa + Pregnant
+5. **magical_futa_pregnant_** - Si tiene Magical + Futa + Pregnant
+6. **transformed_magical_** - Si tiene Transformed + Magical
+7. **transformed_futa_** - Si tiene Transformed + Futa
+8. **transformed_pregnant_** - Si tiene Transformed + Pregnant
+9. **magical_futa_** - Si tiene Magical + Futa
+10. **magical_pregnant_** - Si tiene Magical + Pregnant
+11. **futa_pregnant_** - Si tiene Futa + Pregnant
 
-**Nota:** El orden de prioridad es: Transformed > Futa > Pregnant
+**Nota:** El orden de prioridad es: Transformed > Magical > Futa > Pregnant
 
 ## 🔖 Sufijos de Outcome
 
@@ -123,7 +131,7 @@ El sistema usa búsqueda flexible que:
 
 ### Patrones Base por Skill:
 ```
-sex, anal, bdsm, hand, oral, special, group, extreme, combat, clever, charm, agility, magic
+sex, anal, bdsm, hand, oral, special, group, extreme, combat, clever, charm, agility, craft
 les, gay (para homo)
 service, maid (para wait)
 strip, striptease (para striptease)
@@ -134,10 +142,18 @@ strip, striptease (para striptease)
 pregnant_{skill}
 futa_{skill}
 transformed_{skill}
+magical_{skill}
+transformed_magical_{skill}
 transformed_futa_{skill}
 transformed_pregnant_{skill}
+magical_futa_{skill}
+magical_pregnant_{skill}
 futa_pregnant_{skill}
+transformed_magical_futa_{skill}
+transformed_magical_pregnant_{skill}
 transformed_futa_pregnant_{skill}
+magical_futa_pregnant_{skill}
+transformed_magical_futa_pregnant_{skill}
 ```
 
 ### Patrones con Sufijos:

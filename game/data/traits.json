@@ -92,7 +92,7 @@
         "removes_traits": [],
         "modifiers": {
             "skill_modifiers": {
-                "Magic": 4
+                "Craft": 4
             },
             "earnings_multiplier": 1.2
         },
@@ -438,7 +438,7 @@
         "modifiers": {
             "earnings_multiplier": 1.2,
             "skill_modifiers": {
-                "Magic": 4,
+                "Craft": 4,
                 "Agility": 2
             }
         },
@@ -497,7 +497,7 @@
             "skill_modifiers": {
                 "Extreme": 4,
                 "BDSM": 3,
-                "Magic": 2
+                "Craft": 2
             },
             "rebelliousness": 25
         },
@@ -512,7 +512,7 @@
             "earnings_multiplier": 1.25,
             "skill_modifiers": {
                 "Charm": 4,
-                "Magic": 3
+                "Craft": 3
             },
             "joy": 20,
             "rebelliousness": -20
@@ -545,7 +545,7 @@
             "skill_modifiers": {
                 "Charm": 3,
                 "Extreme": 2,
-                "Magic": 1
+                "Craft": 1
             }
         },
         "description": "Undead beings with supernatural charm and mysterious allure.",
@@ -945,7 +945,7 @@
             "skill_modifiers": {
                 "Clever": 3,
                 "Charm": 2,
-                "Magic": 1
+                "Craft": 1
             },
             "relationship": 10
         },
@@ -1244,6 +1244,19 @@
             "comfort_desired": 5
         },
         "description": "This worker has high standards and expects better accommodations. Increases desired comfort level by 5.",
+        "nsfw": false
+    },
+    {
+        "name": "Magical",
+        "conflicts": [],
+        "removes_traits": [],
+        "modifiers": {
+            "skill_modifiers": {
+                "Craft": 3
+            },
+            "earnings_multiplier": 1.15
+        },
+        "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance.",
         "nsfw": false
     }
 ]

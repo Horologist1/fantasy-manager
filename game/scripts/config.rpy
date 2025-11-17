@@ -5,13 +5,13 @@
 
 define player = Character("Manager")
 # Backgrounds
-define tavern_bg = "images/tavern.jpg"
-define tutorial_dialogue_bg = "tavern.jpg"
-define map_bg = "images/map.jpg"
-define workers_bg = "images/workers_bg.jpg"  # Background for the worker screens
+define tavern_bg = "images/tavern.png"
+define tutorial_dialogue_bg = "tavern.png"
+define map_bg = "images/map.png"
+define workers_bg = "images/workers_bg.png"  # Background for the worker screens
 # Show the full PNG; positioning is handled per-screen
 define context_menu_bg = "images/context_menu.png"
-define event_bg = "images/event_bg.jpg"
+define event_bg = "images/event_bg.png"
 
 init python:
     # Global debug flags to control noisy logging
@@ -152,6 +152,7 @@ init python:
             "interaction_result": Return(),
             "interaction_menu": Return(),
             "interaction_category": Return(),
+            "recruitment_outcome": Return(),
             "more_details_screen": Return(),
             "building_filter_menu": Return(),
             "worker_building_filter_menu": Return(),
@@ -171,6 +172,8 @@ init python:
             "error_popup": Return(),
             "confirm_upgrade": Return(),
             "confirm_change_type": Return(),
+            "confirm_buy_worker": Return(),
+            "confirm_sell_worker": Return(),
             "file_save_dialog": Hide("file_save_dialog"),
             "file_load_dialog": Hide("file_load_dialog"),
             "export_name_input": Hide("export_name_input"),
@@ -180,7 +183,7 @@ init python:
         # Check screens in priority order (confirmations first, then main screens)
         priority_order = [
             # High priority - confirmations and dialogs
-            "skip_tutorial_confirm", "error_popup", "confirm_upgrade", "confirm_change_type",
+            "skip_tutorial_confirm", "error_popup", "confirm_upgrade", "confirm_change_type", "confirm_buy_worker", "confirm_sell_worker",
             "file_save_dialog", "file_load_dialog", "export_name_input", "file_browser_simple",
             
             # Event screens (with immediate music fade-out)

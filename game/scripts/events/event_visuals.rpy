@@ -3,6 +3,8 @@ init python:
     
     # Cache global para imágenes seleccionadas
     image_selection_cache = {}
+    # También ponerlo en store para acceso desde otros módulos
+    store.image_selection_cache = image_selection_cache
 
     def clear_image_cache():
         """
@@ -47,9 +49,30 @@ init python:
 
 
 
+    def should_exclude_trait_file(filepath, trait_prefixes, current_skill_patterns):
+        """
+        Determina si un archivo debe ser excluido por tener un prefijo de trait.
+        
+        Args:
+            filepath: Ruta completa del archivo
+            trait_prefixes: Tupla de prefijos de traits a verificar
+            current_skill_patterns: Lista de patrones de skill que estamos buscando actualmente (no usado actualmente, pero mantenido para futuras extensiones)
+        
+        Returns:
+            True si el archivo debe ser excluido, False si no
+        """
+        basename = os.path.basename(filepath).lower()
+        
+        # Excluir archivos que empiezan con cualquier prefijo de trait
+        for prefix in trait_prefixes:
+            if basename.startswith(prefix):
+                return True
+        
+        return False
+
     def get_trait_prefixes(worker):
         """
-        Get trait prefixes in priority order: Transformed > Futa > Pregnant
+        Get trait prefixes in priority order: Transformed > Magical > Futa > Pregnant
         Returns a list of prefix combinations to try
         """
         if not worker or "traits" not in worker:
@@ -61,6 +84,8 @@ init python:
         # Check for relevant traits in priority order
         if "Transformed" in worker_traits:
             relevant_traits.append("transformed")
+        if "Magical" in worker_traits:
+            relevant_traits.append("magical")
         if "Futa" in worker_traits:
             relevant_traits.append("futa")
         if "Pregnant" in worker_traits:
@@ -75,16 +100,35 @@ init python:
         # If we have multiple traits, try combinations first
         if len(relevant_traits) >= 2:
             # Try all combinations starting with highest priority
+            # Transformed combinations
+            if "transformed" in relevant_traits and "magical" in relevant_traits:
+                prefixes.append("transformed_magical")
             if "transformed" in relevant_traits and "futa" in relevant_traits:
                 prefixes.append("transformed_futa")
             if "transformed" in relevant_traits and "pregnant" in relevant_traits:
                 prefixes.append("transformed_pregnant")
+            # Magical combinations
+            if "magical" in relevant_traits and "futa" in relevant_traits:
+                prefixes.append("magical_futa")
+            if "magical" in relevant_traits and "pregnant" in relevant_traits:
+                prefixes.append("magical_pregnant")
+            # Futa combinations
             if "futa" in relevant_traits and "pregnant" in relevant_traits:
                 prefixes.append("futa_pregnant")
             
-            # Try three-way combination if all are present
-            if len(relevant_traits) == 3:
-                prefixes.insert(0, "transformed_futa_pregnant")  # Highest priority
+            # Try three-way combinations if present
+            if "transformed" in relevant_traits and "magical" in relevant_traits and "futa" in relevant_traits:
+                prefixes.insert(0, "transformed_magical_futa")  # Highest priority
+            if "transformed" in relevant_traits and "magical" in relevant_traits and "pregnant" in relevant_traits:
+                prefixes.insert(0, "transformed_magical_pregnant")
+            if "transformed" in relevant_traits and "futa" in relevant_traits and "pregnant" in relevant_traits:
+                prefixes.insert(0, "transformed_futa_pregnant")
+            if "magical" in relevant_traits and "futa" in relevant_traits and "pregnant" in relevant_traits:
+                prefixes.insert(0, "magical_futa_pregnant")
+            
+            # Try four-way combination if all are present
+            if len(relevant_traits) == 4:
+                prefixes.insert(0, "transformed_magical_futa_pregnant")  # Absolute highest priority
         
         # Then try individual traits in priority order
         prefixes.extend(relevant_traits)
@@ -109,7 +153,7 @@ init python:
             "Special": "special", "Group": "group", "Extreme": "extreme",
             "Striptease": "striptease", "Combat": "combat", "Clever": "clever",
             "Charm": "charm", "Wait": "wait", "Agility": "agility",
-            "Magic": "magic"
+            "Craft": "craft"
         }
         
         if skill_name in skill_name_mapping:
@@ -539,7 +583,7 @@ init python:
             renpy.log(f"No trait-specific images found, trying worker folder without traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
             skill_patterns = get_skill_search_patterns(skill_name_for_search)
-            trait_file_prefixes = ("pregnant_", "futa_", "transformed_")
+            trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
             
             for skill_pattern_name in skill_patterns:
                 # Try failure version first if it's a failure
@@ -547,7 +591,7 @@ init python:
                     skill_failure_pattern = f"{skill_pattern_name}_failure"
                     skill_failure_matches = get_pattern_matches_flexible(base_folder, skill_failure_pattern)
                     # Exclude trait-prefixed files if worker has no matching trait
-                    skill_failure_matches = [f for f in skill_failure_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    skill_failure_matches = [f for f in skill_failure_matches if not should_exclude_trait_file(f, trait_file_prefixes, skill_patterns)]
                     if skill_failure_matches:
                         cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_failure"
                         selected = get_cached_choice(skill_failure_matches, cache_key)
@@ -558,7 +602,7 @@ init python:
                 elif is_success:
                     skill_success_matches = get_pattern_matches_flexible(base_folder, skill_pattern_name, exclude_failure=True)
                     # Exclude trait-prefixed files
-                    skill_success_matches = [f for f in skill_success_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    skill_success_matches = [f for f in skill_success_matches if not should_exclude_trait_file(f, trait_file_prefixes, skill_patterns)]
                     if skill_success_matches:
                         cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_success"
                         selected = get_cached_choice(skill_success_matches, cache_key)
@@ -568,7 +612,7 @@ init python:
                 # Try general skill image (flexible extension matching)
                 skill_matches = get_pattern_matches_flexible(base_folder, skill_pattern_name)
                 # Exclude trait-prefixed files
-                skill_matches = [f for f in skill_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                skill_matches = [f for f in skill_matches if not should_exclude_trait_file(f, trait_file_prefixes, skill_patterns)]
                 if skill_matches:
                     # Filter based on outcome
                     filtered_matches = []
@@ -777,14 +821,14 @@ init python:
             renpy.log(f"No worker folder images found, trying default folder without traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
             skill_patterns = get_skill_search_patterns(skill_name_for_search)
-            trait_file_prefixes = ("pregnant_", "futa_", "transformed_")
+            trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
             
             for skill_pattern_name in skill_patterns:
                 # Try failure version first if it's a failure
                 if is_failure:
                     skill_failure_pattern = f"{skill_pattern_name}_failure"
                     skill_failure_matches = get_pattern_matches_flexible(default_folder, skill_failure_pattern)
-                    skill_failure_matches = [f for f in skill_failure_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    skill_failure_matches = [f for f in skill_failure_matches if not should_exclude_trait_file(f, trait_file_prefixes, skill_patterns)]
                     if skill_failure_matches:
                         selected = renpy.random.choice(skill_failure_matches)
                         renpy.log(f"Found default skill failure image: {selected}")
@@ -793,7 +837,7 @@ init python:
                 # Try success version
                 elif is_success:
                     skill_success_matches = get_pattern_matches_flexible(default_folder, skill_pattern_name, exclude_failure=True)
-                    skill_success_matches = [f for f in skill_success_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                    skill_success_matches = [f for f in skill_success_matches if not should_exclude_trait_file(f, trait_file_prefixes, skill_patterns)]
                     if skill_success_matches:
                         selected = renpy.random.choice(skill_success_matches)
                         renpy.log(f"Found default skill success image: {selected}")
@@ -801,7 +845,7 @@ init python:
                 
                 # Try general skill image (flexible extension matching)
                 skill_matches = get_pattern_matches_flexible(default_folder, skill_pattern_name)
-                skill_matches = [f for f in skill_matches if not os.path.basename(f).lower().startswith(trait_file_prefixes)]
+                skill_matches = [f for f in skill_matches if not should_exclude_trait_file(f, trait_file_prefixes, skill_patterns)]
                 if skill_matches:
                     # Filter based on outcome
                     filtered_matches = []

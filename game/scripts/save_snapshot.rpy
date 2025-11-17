@@ -9,24 +9,21 @@ init python:
         # Detect current screen context
         current_screen_context = "tavern"  # default
         try:
-            # Check which screens are currently shown
-            shown_screens = renpy.get_screen_names()
-            renpy.log(f"SNAPSHOT: current screens = {shown_screens}")
-            
-            # Determine primary context based on shown screens
-            if "daily_report" in shown_screens:
+            # Check which screens are currently shown using renpy.get_screen()
+            # renpy.get_screen() returns the screen object if shown, None otherwise
+            if renpy.get_screen("daily_report"):
                 current_screen_context = "daily_report"
-            elif "tavern" in shown_screens:
+            elif renpy.get_screen("tavern"):
                 current_screen_context = "tavern"
-            elif "workers" in shown_screens:
+            elif renpy.get_screen("workers"):
                 current_screen_context = "workers"
-            elif "Building_select_global" in shown_screens:
+            elif renpy.get_screen("Building_select_global"):
                 current_screen_context = "buildings"
-            elif "map_screen" in shown_screens:
+            elif renpy.get_screen("map_screen"):
                 current_screen_context = "map"
-            elif "journal_panel" in shown_screens:
+            elif renpy.get_screen("journal_panel"):
                 current_screen_context = "journal"
-            elif "manager_inventory" in shown_screens:
+            elif renpy.get_screen("manager_inventory"):
                 current_screen_context = "inventory"
             # Add more contexts as needed
             

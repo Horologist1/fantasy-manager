@@ -22,7 +22,7 @@
           "Combat": 5
         }
       },
-      "description": "A sturdy sword made of iron.",
+      "description": "A sturdy sword made of iron. (+5 Combat)",
       "durability": 100,
       "price": 150,
       "weight": 10
@@ -37,7 +37,7 @@
           "Combat": 8
         }
       },
-      "description": "A well-forged steel sword that cuts through armor.",
+      "description": "A well-forged steel sword that cuts through armor. (+8 Combat)",
       "durability": 150,
       "price": 300,
       "weight": 5
@@ -52,7 +52,7 @@
           "Clever": 4
         }
       },
-      "description": "A simple wooden staff favored by novices.",
+      "description": "A simple wooden staff favored by novices. (+4 Clever)",
       "durability": 80,
       "price": 100,
       "weight": 8
@@ -65,7 +65,7 @@
       "effect": {
         "health": 20
       },
-      "description": "Restores 20 health points when consumed.",
+      "description": "Restores 20 health points when consumed. (+20 Health)",
       "price": 50,
       "weight": 12
     },
@@ -77,7 +77,7 @@
       "effect": {
         "energy": 5
       },
-      "description": "Restores 5 energy when consumed.",
+      "description": "Restores 5 energy when consumed. (+5 Energy)",
       "price": 60,
       "weight": 10
     },
@@ -87,12 +87,10 @@
       "display_name": "Stamina Elixir",
       "type": "consumable",
       "effect": {
-        "health": 10,
-        "skill_modifiers": {
-          "Sex": 2
-        }
+        "health": 2,
+        "energy": 5
       },
-      "description": "Boosts stamina and restores a little health.",
+      "description": "Boosts stamina and restores a little health. (+2 Health, +5 Energy)",
       "price": 70,
       "weight": 8
     },
@@ -104,7 +102,7 @@
       "effect": {
         "health": 15
       },
-      "description": "A robust potion that increases vitality.",
+      "description": "A robust potion that increases vitality. (+15 Health)",
       "price": 65,
       "weight": 9
     },
@@ -118,7 +116,7 @@
           "Clever": 3
         }
       },
-      "description": "A mystical scroll that grants temporary cleverness.",
+      "description": "A mystical scroll that grants temporary cleverness. (+3 Clever)",
       "price": 120,
       "weight": 7
     },
@@ -128,9 +126,9 @@
       "display_name": "Iron Shield",
       "type": "armor",
       "effect": {
-        "health": 15
+        "health": 10
       },
-      "description": "A sturdy shield that protects the bearer.",
+      "description": "A sturdy shield that protects the bearer. (+10 Health)",
       "durability": 120,
       "price": 200,
       "weight": 6
@@ -143,7 +141,7 @@
       "effect": {
         "health": 5
       },
-      "description": "Light armor offering basic protection.",
+      "description": "Light armor offering basic protection. (+5 Health)",
       "durability": 80,
       "price": 100,
       "weight": 10
@@ -158,7 +156,7 @@
           "Clever": 5
         }
       },
-      "description": "A robe imbued with magical properties.",
+      "description": "A robe imbued with magical properties. (+5 Clever)",
       "durability": 70,
       "price": 250,
       "weight": 4
@@ -173,7 +171,7 @@
           "Charm": 3
         }
       },
-      "description": "A dark cloak that enhances stealth and charm.",
+      "description": "A dark cloak that enhances stealth and charm. (+3 Charm)",
       "price": 180,
       "weight": 5
     },
@@ -185,7 +183,7 @@
       "effect": {
         "health": 10
       },
-      "description": "A ring that increases the wearer's resilience.",
+      "description": "A ring that increases the wearer's resilience. (+10 Health)",
       "price": 150,
       "weight": 5
     },
@@ -199,7 +197,7 @@
           "Combat": 4
         }
       },
-      "description": "An amulet that boosts combat prowess.",
+      "description": "An amulet that boosts combat prowess. (+4 Combat)",
       "price": 200,
       "weight": 3
     },
@@ -210,10 +208,10 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Sex": 2
+          "Agility": 3
         }
       },
-      "description": "Light boots that increase movement speed and stamina.",
+      "description": "Light boots that increase movement speed and agility. (+3 Agility)",
       "price": 120,
       "weight": 7
     },
@@ -290,7 +288,7 @@
           "Combat": 10
         }
       },
-      "description": "A razor-sharp blade crafted from volcanic glass.",
+      "description": "A razor-sharp blade crafted from volcanic glass. (+10 Combat)",
       "durability": 90,
       "price": 350,
       "weight": 4
@@ -305,7 +303,7 @@
           "Combat": 6
         }
       },
-      "description": "A small dagger imbued with the power of fire.",
+      "description": "A small dagger imbued with the power of fire. (+6 Combat)",
       "durability": 70,
       "price": 220,
       "weight": 3
@@ -320,7 +318,7 @@
           "Clever": 7
         }
       },
-      "description": "A staff that channels the chill of winter.",
+      "description": "A staff that channels the chill of winter. (+7 Clever)",
       "durability": 80,
       "price": 280,
       "weight": 6
@@ -332,10 +330,11 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Striptease": 6
+          "Combat": 6,
+          "Agility": 3
         }
       },
-      "description": "A bow said to harness the speed of the wind.",
+      "description": "A bow said to harness the speed of the wind. (+6 Combat, +3 Agility)",
       "durability": 85,
       "price": 260,
       "weight": 5
@@ -350,7 +349,7 @@
           "Combat": 9
         }
       },
-      "description": "A heavy hammer imbued with the power of the earth.",
+      "description": "A heavy hammer imbued with the power of the earth. (+9 Combat)",
       "durability": 100,
       "price": 320,
       "weight": 8
@@ -365,7 +364,7 @@
           "Clever": 4
         }
       },
-      "description": "An orb crackling with electrical energy.",
+      "description": "An orb crackling with electrical energy. (+4 Clever)",
       "price": 240,
       "weight": 3
     },
@@ -379,7 +378,7 @@
         "add_trait": "Energetic",
         "remove_trait": "Lazy"
       },
-      "description": "Grants a burst of energy, making the user Energetic and removing Lazy.",
+      "description": "Grants a burst of energy, making the user Energetic and removing Lazy. (+10 Energy)",
       "price": 140,
       "weight": 3
     },
@@ -393,7 +392,7 @@
         },
         "add_trait": "Charming"
       },
-      "description": "Grants an enchanted allure.",
+      "description": "Grants an enchanted allure. (+2 Striptease)",
       "price": 140,
       "weight": 3
     },
@@ -408,7 +407,7 @@
         },
         "add_trait": "Expecting Visit"
       },
-      "description": "A beautifully crafted invitation promising a visit from a distinguished guest.",
+      "description": "A beautifully crafted invitation promising a visit from a distinguished guest. (+4 Clever)",
       "price": 200,
       "weight": 1
     },
@@ -422,7 +421,7 @@
           "Charm": 5
         }
       },
-      "description": "A cloak that shrouds the wearer in darkness.",
+      "description": "A cloak that shrouds the wearer in darkness. (+5 Charm)",
       "price": 210,
       "weight": 4
     },
@@ -434,7 +433,7 @@
       "effect": {
         "health": 8
       },
-      "description": "A ring that slowly regenerates the wearer's health.",
+      "description": "A ring that slowly regenerates the wearer's health. (+8 Health)",
       "price": 190,
       "weight": 3
     },
@@ -487,7 +486,7 @@
           "Combat": 12
         }
       },
-      "description": "A blade forged with ancient magic, capable of cutting through sorcery and steel alike.",
+      "description": "A blade forged with ancient magic, capable of cutting through sorcery and steel alike. (+12 Combat)",
       "durability": 200,
       "price": 1500,
       "weight": 6,
@@ -528,7 +527,7 @@
           "Charm": 70,
           "Wait": 70,
           "Agility": 70,
-          "Magic": 70,
+          "Craft": 70,
           "Specialty 4": 70,
           "Specialty 5": 70,
           "Specialty 6": 70,
@@ -540,7 +539,7 @@
           "Specialty 12": 70
         }
       },
-      "description": "A test item that grants +70 to all skills. For testing purposes only.",
+      "description": "A test item that grants +70 to all skills. For testing purposes only. (+70 Sex, +70 Anal, +70 BDSM, +70 Hand, +70 Oral, +70 Homo, +70 Special, +70 Group, +70 Extreme, +70 Striptease, +70 Combat, +70 Clever, +70 Charm, +70 Wait, +70 Agility, +70 Craft, +70 Specialty 4, +70 Specialty 5, +70 Specialty 6, +70 Specialty 7, +70 Specialty 8, +70 Specialty 9, +70 Specialty 10, +70 Specialty 11, +70 Specialty 12)",
       "price": 50,
       "weight": 1
     },
@@ -579,6 +578,1232 @@
       "description": "A test item that adds 50,000 money when used. For testing purposes only.",
       "price": 1,
       "weight": 1
+    },
+    {
+      "id": "debug_complete_tutorial",
+      "name": "Debug: Complete Tutorial",
+      "display_name": "Debug: Complete Tutorial",
+      "type": "consumable",
+      "effect": {
+        "custom": "complete_tutorial"
+      },
+      "description": "DEBUG ITEM: Completes all tutorial objectives and enables 'Buy Buildings Abroad'. For testing purposes only.",
+      "price": 1,
+      "weight": 1
+    },
+    {
+      "id": "chef_apron",
+      "name": "Chef's Apron",
+      "display_name": "Chef's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 4
+        }
+      },
+      "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Wait)",
+      "durability": 100,
+      "price": 120,
+      "weight": 3
+    },
+    {
+      "id": "master_chef_apron",
+      "name": "Master Chef's Apron",
+      "display_name": "Master Chef's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 7
+        }
+      },
+      "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Wait)",
+      "durability": 150,
+      "price": 280,
+      "weight": 4
+    },
+    {
+      "id": "service_uniform",
+      "name": "Service Uniform",
+      "display_name": "Service Uniform",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 4
+        }
+      },
+      "description": "A clean and professional uniform that helps servers provide excellent customer service. (+4 Charm)",
+      "durability": 90,
+      "price": 110,
+      "weight": 5
+    },
+    {
+      "id": "elegant_service_dress",
+      "name": "Elegant Service Dress",
+      "display_name": "Elegant Service Dress",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 6
+        }
+      },
+      "description": "A sophisticated dress that enhances the server's charm and professionalism. (+6 Charm)",
+      "durability": 120,
+      "price": 240,
+      "weight": 4
+    },
+    {
+      "id": "kitchen_knife_set",
+      "name": "Kitchen Knife Set",
+      "display_name": "Kitchen Knife Set",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 5
+        }
+      },
+      "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Wait)",
+      "durability": 130,
+      "price": 180,
+      "weight": 6
+    },
+    {
+      "id": "master_chef_knife",
+      "name": "Master Chef's Knife",
+      "display_name": "Master Chef's Knife",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 8
+        }
+      },
+      "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Wait)",
+      "durability": 180,
+      "price": 350,
+      "weight": 5
+    },
+    {
+      "id": "cooking_utensils",
+      "name": "Professional Cooking Utensils",
+      "display_name": "Professional Cooking Utensils",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 3
+        }
+      },
+      "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Wait)",
+      "price": 90,
+      "weight": 4
+    },
+    {
+      "id": "sensual_dress",
+      "name": "Sensual Dress",
+      "display_name": "Sensual Dress",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 4,
+          "Charm": 3
+        }
+      },
+      "description": "An alluring dress designed to captivate and entice clients. (+4 Sex, +3 Charm)",
+      "durability": 80,
+      "price": 160,
+      "weight": 3
+    },
+    {
+      "id": "elegant_courtesan_dress",
+      "name": "Elegant Courtesan Dress",
+      "display_name": "Elegant Courtesan Dress",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 7,
+          "Charm": 5
+        }
+      },
+      "description": "A luxurious dress that exudes elegance and sensuality, perfect for high-end clientele. (+7 Sex, +5 Charm)",
+      "durability": 140,
+      "price": 380,
+      "weight": 4
+    },
+    {
+      "id": "seductive_lingerie",
+      "name": "Seductive Lingerie",
+      "display_name": "Seductive Lingerie",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 5,
+          "Anal": 3
+        }
+      },
+      "description": "Intimate apparel that enhances allure and confidence in intimate encounters. (+5 Sex, +3 Anal)",
+      "durability": 60,
+      "price": 140,
+      "weight": 1
+    },
+    {
+      "id": "luxury_lingerie_set",
+      "name": "Luxury Lingerie Set",
+      "display_name": "Luxury Lingerie Set",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 8,
+          "Anal": 5,
+          "Charm": 4
+        }
+      },
+      "description": "An exquisite set of fine lingerie that makes the wearer irresistible. (+8 Sex, +5 Anal, +4 Charm)",
+      "durability": 100,
+      "price": 420,
+      "weight": 2
+    },
+    {
+      "id": "charming_earrings",
+      "name": "Charming Earrings",
+      "display_name": "Charming Earrings",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 4,
+          "Sex": 2
+        }
+      },
+      "description": "Beautiful earrings that catch the light and draw attention to the wearer's face. (+4 Charm, +2 Sex)",
+      "price": 130,
+      "weight": 1
+    },
+    {
+      "id": "diamond_earrings",
+      "name": "Diamond Earrings",
+      "display_name": "Diamond Earrings",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 6,
+          "Sex": 4
+        }
+      },
+      "description": "Sparkling diamond earrings that add elegance and allure to any outfit. (+6 Charm, +4 Sex)",
+      "price": 320,
+      "weight": 1
+    },
+    {
+      "id": "sensual_necklace",
+      "name": "Sensual Necklace",
+      "display_name": "Sensual Necklace",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 3,
+          "Oral": 3
+        }
+      },
+      "description": "An elegant necklace that draws attention to the neck and enhances oral skills. (+3 Charm, +3 Oral)",
+      "price": 150,
+      "weight": 2
+    },
+    {
+      "id": "pearl_choker",
+      "name": "Pearl Choker",
+      "display_name": "Pearl Choker",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 5,
+          "Oral": 5,
+          "BDSM": 2
+        }
+      },
+      "description": "A sophisticated pearl choker that combines elegance with a hint of dominance. (+5 Charm, +5 Oral, +2 BDSM)",
+      "price": 290,
+      "weight": 2
+    },
+    {
+      "id": "stripper_heels",
+      "name": "Stripper Heels",
+      "display_name": "Stripper Heels",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 5,
+          "Sex": 2
+        }
+      },
+      "description": "High heels designed for performance, enhancing grace and stage presence. (+5 Striptease, +2 Sex)",
+      "price": 110,
+      "weight": 3
+    },
+    {
+      "id": "master_performer_heels",
+      "name": "Master Performer Heels",
+      "display_name": "Master Performer Heels",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 8,
+          "Sex": 4
+        }
+      },
+      "description": "Premium heels crafted for professional performers, maximizing stage appeal. (+8 Striptease, +4 Sex)",
+      "price": 270,
+      "weight": 3
+    },
+    {
+      "id": "bartender_apron",
+      "name": "Bartender's Apron",
+      "display_name": "Bartender's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 4
+        }
+      },
+      "description": "A practical apron that helps bartenders mix drinks with precision and flair. (+4 Clever)",
+      "durability": 95,
+      "price": 100,
+      "weight": 3
+    },
+    {
+      "id": "master_bartender_apron",
+      "name": "Master Bartender's Apron",
+      "display_name": "Master Bartender's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 7
+        }
+      },
+      "description": "An elegant apron worn by master mixologists, symbolizing expertise in the craft. (+7 Clever)",
+      "durability": 140,
+      "price": 260,
+      "weight": 4
+    },
+    {
+      "id": "bar_tools",
+      "name": "Professional Bar Tools",
+      "display_name": "Professional Bar Tools",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 3
+        }
+      },
+      "description": "Essential bar tools including shakers, strainers, and jiggers for perfect cocktails. (+3 Clever)",
+      "price": 85,
+      "weight": 4
+    },
+    {
+      "id": "master_mixology_set",
+      "name": "Master Mixology Set",
+      "display_name": "Master Mixology Set",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 6
+        }
+      },
+      "description": "A premium set of bar tools used by master mixologists to create legendary drinks. (+6 Clever)",
+      "price": 300,
+      "weight": 5
+    },
+    {
+      "id": "tavern_performer_outfit",
+      "name": "Tavern Performer Outfit",
+      "display_name": "Tavern Performer Outfit",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 4,
+          "Charm": 3
+        }
+      },
+      "description": "A vibrant outfit perfect for entertaining tavern patrons with music and dance. (+4 Striptease, +3 Charm)",
+      "durability": 85,
+      "price": 140,
+      "weight": 4
+    },
+    {
+      "id": "elite_performer_costume",
+      "name": "The Bard's Legendary Attire",
+      "display_name": "The Bard's Legendary Attire",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 7,
+          "Charm": 5
+        }
+      },
+      "description": "Worn by the greatest bard in history, this costume is said to make any performance so captivating that audiences forget the world around them. (+7 Striptease, +5 Charm)",
+      "durability": 130,
+      "price": 360,
+      "weight": 5
+    },
+    {
+      "id": "basic_chef_apron",
+      "name": "Chef's Apron",
+      "display_name": "Chef's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 2
+        }
+      },
+      "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Wait)",
+      "durability": 60,
+      "price": 50,
+      "weight": 3
+    },
+    {
+      "id": "advanced_chef_apron",
+      "name": "Master Chef's Apron",
+      "display_name": "Master Chef's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 5
+        }
+      },
+      "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Wait)",
+      "durability": 120,
+      "price": 200,
+      "weight": 3
+    },
+    {
+      "id": "elite_chef_apron",
+      "name": "The Grandmaster's Apron of Culinary Perfection",
+      "display_name": "The Grandmaster's Apron of Culinary Perfection",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 9
+        }
+      },
+      "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Wait)",
+      "durability": 200,
+      "price": 650,
+      "weight": 4
+    },
+    {
+      "id": "basic_service_uniform",
+      "name": "Service Uniform",
+      "display_name": "Service Uniform",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 2
+        }
+      },
+      "description": "A simple uniform for entry-level servers, providing basic charm enhancement. (+2 Charm)",
+      "durability": 50,
+      "price": 45,
+      "weight": 4
+    },
+    {
+      "id": "premium_service_dress",
+      "name": "Elegant Service Dress",
+      "display_name": "Elegant Service Dress",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 8
+        }
+      },
+      "description": "An exquisite dress that makes servers appear more charming and professional than ever. (+8 Charm)",
+      "durability": 150,
+      "price": 480,
+      "weight": 4
+    },
+    {
+      "id": "basic_kitchen_knife",
+      "name": "Kitchen Knife",
+      "display_name": "Kitchen Knife",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 3
+        }
+      },
+      "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Wait)",
+      "durability": 80,
+      "price": 60,
+      "weight": 4
+    },
+    {
+      "id": "advanced_kitchen_knife",
+      "name": "Chef's Knife",
+      "display_name": "Chef's Knife",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 6
+        }
+      },
+      "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Wait)",
+      "durability": 150,
+      "price": 220,
+      "weight": 5
+    },
+    {
+      "id": "elite_kitchen_knife",
+      "name": "The Eternal Edge",
+      "display_name": "The Eternal Edge",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 10
+        }
+      },
+      "description": "Legend says this blade was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Wait)",
+      "durability": 220,
+      "price": 750,
+      "weight": 5
+    },
+    {
+      "id": "basic_cooking_utensils",
+      "name": "Cooking Utensils",
+      "display_name": "Cooking Utensils",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 2
+        }
+      },
+      "description": "Essential cooking tools for everyday kitchen work. (+2 Wait)",
+      "price": 40,
+      "weight": 3
+    },
+    {
+      "id": "advanced_cooking_utensils",
+      "name": "Professional Cooking Utensils",
+      "display_name": "Professional Cooking Utensils",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 4
+        }
+      },
+      "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Wait)",
+      "price": 150,
+      "weight": 4
+    },
+    {
+      "id": "elite_cooking_utensils",
+      "name": "The Divine Culinary Instruments",
+      "display_name": "The Divine Culinary Instruments",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Wait": 6
+        }
+      },
+      "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Wait)",
+      "price": 450,
+      "weight": 5
+    },
+    {
+      "id": "basic_sensual_dress",
+      "name": "Sensual Dress",
+      "display_name": "Sensual Dress",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 2,
+          "Charm": 2
+        }
+      },
+      "description": "A simple but alluring dress that enhances basic appeal. (+2 Sex, +2 Charm)",
+      "durability": 50,
+      "price": 70,
+      "weight": 3
+    },
+    {
+      "id": "advanced_sensual_dress",
+      "name": "Courtesan Gown",
+      "display_name": "Courtesan Gown",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 5,
+          "Charm": 4
+        }
+      },
+      "description": "A well-designed dress that significantly enhances allure and charm. (+5 Sex, +4 Charm)",
+      "durability": 100,
+      "price": 190,
+      "weight": 3
+    },
+    {
+      "id": "elite_courtesan_dress",
+      "name": "The Enchantress' Embrace",
+      "display_name": "The Enchantress' Embrace",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 9,
+          "Charm": 7
+        }
+      },
+      "description": "Legendary dress once worn by the most famous courtesan in history. It is said that kings have gone to war for a single night with its wearer. (+9 Sex, +7 Charm)",
+      "durability": 180,
+      "price": 850,
+      "weight": 4
+    },
+    {
+      "id": "basic_lingerie",
+      "name": "Plain Lingerie",
+      "display_name": "Plain Lingerie",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 3,
+          "Anal": 2
+        }
+      },
+      "description": "Simple intimate apparel that provides basic enhancement. (+3 Sex, +2 Anal)",
+      "durability": 40,
+      "price": 65,
+      "weight": 1
+    },
+    {
+      "id": "advanced_lingerie",
+      "name": "Temptress' Secret",
+      "display_name": "Temptress' Secret",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 6,
+          "Anal": 4,
+          "Charm": 3
+        }
+      },
+      "description": "Well-crafted lingerie that significantly enhances appeal and confidence. (+6 Sex, +4 Anal, +3 Charm)",
+      "durability": 80,
+      "price": 210,
+      "weight": 1
+    },
+    {
+      "id": "elite_lingerie_set",
+      "name": "Empress Midnight Collection",
+      "display_name": "Empress Midnight Collection",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 10,
+          "Anal": 7,
+          "Charm": 6
+        }
+      },
+      "description": "A legendary set once owned by an empress who seduced entire kingdoms. Each piece is woven with threads of pure desire. (+10 Sex, +7 Anal, +6 Charm)",
+      "durability": 120,
+      "price": 950,
+      "weight": 2
+    },
+    {
+      "id": "basic_earrings",
+      "name": "Silver Earrings",
+      "display_name": "Silver Earrings",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 2,
+          "Sex": 1
+        }
+      },
+      "description": "Simple earrings that add a touch of charm. (+2 Charm, +1 Sex)",
+      "price": 55,
+      "weight": 1
+    },
+    {
+      "id": "advanced_earrings",
+      "name": "Gold Stars",
+      "display_name": "Gold Stars",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 5,
+          "Sex": 3
+        }
+      },
+      "description": "Beautiful earrings that significantly enhance charm and appeal. (+5 Charm, +3 Sex)",
+      "price": 180,
+      "weight": 1
+    },
+    {
+      "id": "elite_diamond_earrings",
+      "name": "The Stars' Tears",
+      "display_name": "The Stars' Tears",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 8,
+          "Sex": 6
+        }
+      },
+      "description": "Legend says these diamonds were formed from the tears of stars who wept at the beauty of the first mortal to wear them. (+8 Charm, +6 Sex)",
+      "price": 880,
+      "weight": 1
+    },
+    {
+      "id": "basic_necklace",
+      "name": "Silver Necklace",
+      "display_name": "Silver Necklace",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 2,
+          "Oral": 2
+        }
+      },
+      "description": "A simple necklace that draws attention to the neck. (+2 Charm, +2 Oral)",
+      "price": 60,
+      "weight": 2
+    },
+    {
+      "id": "advanced_necklace",
+      "name": "Pearl Necklace",
+      "display_name": "Pearl Necklace",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 4,
+          "Oral": 4
+        }
+      },
+      "description": "An elegant necklace that enhances both charm and oral skills. (+4 Charm, +4 Oral)",
+      "price": 170,
+      "weight": 2
+    },
+    {
+      "id": "elite_pearl_choker",
+      "name": "The Queen's Collar",
+      "display_name": "The Queen's Collar",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 7,
+          "Oral": 7,
+          "BDSM": 4
+        }
+      },
+      "description": "Once worn by a queen who ruled through both beauty and power, this choker symbolizes the perfect union of elegance and control. (+7 Charm, +7 Oral, +4 BDSM)",
+      "price": 720,
+      "weight": 2
+    },
+    {
+      "id": "basic_heels",
+      "name": "Performance Heels",
+      "display_name": "Performance Heels",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 3,
+          "Sex": 1
+        }
+      },
+      "description": "Simple heels for basic stage performances. (+3 Striptease, +1 Sex)",
+      "price": 50,
+      "weight": 3
+    },
+    {
+      "id": "advanced_heels",
+      "name": "Dancer's Heels",
+      "display_name": "Dancer's Heels",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 6,
+          "Sex": 3
+        }
+      },
+      "description": "Well-crafted heels that significantly enhance stage presence and appeal. (+6 Striptease, +3 Sex)",
+      "price": 160,
+      "weight": 3
+    },
+    {
+      "id": "elite_performer_heels",
+      "name": "The Siren's Stride",
+      "display_name": "The Siren's Stride",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 10,
+          "Sex": 6
+        }
+      },
+      "description": "Legendary heels said to have been worn by a performer so captivating that audiences would forget to breathe while watching her dance. (+10 Striptease, +6 Sex)",
+      "price": 920,
+      "weight": 3
+    },
+    {
+      "id": "basic_bartender_apron",
+      "name": "Bartender's Apron",
+      "display_name": "Bartender's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 2
+        }
+      },
+      "description": "A simple apron for novice bartenders. (+2 Clever)",
+      "durability": 50,
+      "price": 40,
+      "weight": 3
+    },
+    {
+      "id": "advanced_bartender_apron",
+      "name": "Master Bartender's Apron",
+      "display_name": "Master Bartender's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 5
+        }
+      },
+      "description": "A professional apron for experienced bartenders, enhancing mixology skills. (+5 Clever)",
+      "durability": 110,
+      "price": 180,
+      "weight": 3
+    },
+    {
+      "id": "elite_bartender_apron",
+      "name": "The Alchemist's Apron",
+      "display_name": "The Alchemist's Apron",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 9
+        }
+      },
+      "description": "Rumored to have been enchanted by a master alchemist, this apron is said to make any drink mixed while wearing it taste like liquid perfection. (+9 Clever)",
+      "durability": 180,
+      "price": 680,
+      "weight": 4
+    },
+    {
+      "id": "basic_bar_tools",
+      "name": "Bar Tools",
+      "display_name": "Bar Tools",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 2
+        }
+      },
+      "description": "Essential bar tools for basic drink mixing. (+2 Clever)",
+      "price": 35,
+      "weight": 3
+    },
+    {
+      "id": "advanced_bar_tools",
+      "name": "Professional Bar Tools",
+      "display_name": "Professional Bar Tools",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 4
+        }
+      },
+      "description": "High-quality tools crafted specifically for professional bartenders. Each piece is perfectly balanced and designed for precision. (+4 Clever)",
+      "price": 140,
+      "weight": 4
+    },
+    {
+      "id": "elite_mixology_set",
+      "name": "The Legendary Mixer's Tools",
+      "display_name": "The Legendary Mixer's Tools",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 8
+        }
+      },
+      "description": "These tools were once used by a legendary bartender who could mix drinks that could heal wounds, restore youth, or grant wishes. (+8 Clever)",
+      "price": 820,
+      "weight": 5
+    },
+    {
+      "id": "basic_performer_outfit",
+      "name": "Performer Outfit",
+      "display_name": "Performer Outfit",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 2,
+          "Charm": 2
+        }
+      },
+      "description": "A simple outfit for tavern performers. (+2 Striptease, +2 Charm)",
+      "durability": 50,
+      "price": 55,
+      "weight": 4
+    },
+    {
+      "id": "advanced_performer_outfit",
+      "name": "Bard's Attire",
+      "display_name": "Bard's Attire",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 5,
+          "Charm": 4
+        }
+      },
+      "description": "A well-designed outfit that significantly enhances performance appeal. (+5 Striptease, +4 Charm)",
+      "durability": 100,
+      "price": 200,
+      "weight": 4
+    },
+    {
+      "id": "elite_performer_costume",
+      "name": "Elite Performer Costume",
+      "display_name": "Elite Performer Costume",
+      "type": "clothing",
+      "effect": {
+        "skill_modifiers": {
+          "Striptease": 9,
+          "Charm": 7
+        }
+      },
+      "description": "Worn by the greatest bard in history, this costume is said to make any performance so captivating that audiences forget the world around them. (+9 Striptease, +7 Charm)",
+      "durability": 160,
+      "price": 780,
+      "weight": 5
+    },
+    {
+      "id": "training_sword",
+      "name": "Training Sword",
+      "display_name": "Training Sword",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 3
+        }
+      },
+      "description": "A basic training sword for novice adventurers. (+3 Combat)",
+      "durability": 60,
+      "price": 80,
+      "weight": 8
+    },
+    {
+      "id": "bronze_sword",
+      "name": "Bronze Sword",
+      "display_name": "Bronze Sword",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 6
+        }
+      },
+      "description": "A sturdy bronze sword, reliable for most combat situations. (+6 Combat)",
+      "durability": 100,
+      "price": 150,
+      "weight": 9
+    },
+    {
+      "id": "silver_sword",
+      "name": "Silver Sword",
+      "display_name": "Silver Sword",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 9
+        }
+      },
+      "description": "A well-forged silver sword, effective against many creatures. (+9 Combat)",
+      "durability": 140,
+      "price": 280,
+      "weight": 8
+    },
+    {
+      "id": "mithril_sword",
+      "name": "Mithril Sword",
+      "display_name": "Mithril Sword",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 12
+        }
+      },
+      "description": "A legendary sword forged from mithril, incredibly light yet devastatingly sharp. (+12 Combat)",
+      "durability": 200,
+      "price": 850,
+      "weight": 5
+    },
+    {
+      "id": "training_staff",
+      "name": "Training Staff",
+      "display_name": "Training Staff",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 3
+        }
+      },
+      "description": "A simple wooden staff for magical practice. (+3 Clever)",
+      "durability": 50,
+      "price": 70,
+      "weight": 6
+    },
+    {
+      "id": "oak_staff",
+      "name": "Oak Staff",
+      "display_name": "Oak Staff",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 6
+        }
+      },
+      "description": "A staff carved from ancient oak, enhancing magical abilities. (+6 Clever)",
+      "durability": 90,
+      "price": 160,
+      "weight": 7
+    },
+    {
+      "id": "enchanted_staff",
+      "name": "Enchanted Staff",
+      "display_name": "Enchanted Staff",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 9
+        }
+      },
+      "description": "A staff imbued with magical energy, significantly boosting spellcasting. (+9 Clever)",
+      "durability": 130,
+      "price": 320,
+      "weight": 6
+    },
+    {
+      "id": "archmage_staff",
+      "name": "Archmage Staff",
+      "display_name": "Archmage Staff",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 13
+        }
+      },
+      "description": "A legendary staff wielded by archmages, channeling immense magical power. (+13 Clever)",
+      "durability": 220,
+      "price": 980,
+      "weight": 5
+    },
+    {
+      "id": "leather_vest",
+      "name": "Leather Vest",
+      "display_name": "Leather Vest",
+      "type": "armor",
+      "effect": {
+        "health": 8,
+        "skill_modifiers": {
+          "Combat": 2
+        }
+      },
+      "description": "A basic leather vest offering minimal protection. (+8 Health, +2 Combat)",
+      "durability": 60,
+      "price": 90,
+      "weight": 6
+    },
+    {
+      "id": "chainmail_shirt",
+      "name": "Chainmail Shirt",
+      "display_name": "Chainmail Shirt",
+      "type": "armor",
+      "effect": {
+        "health": 15,
+        "skill_modifiers": {
+          "Combat": 4
+        }
+      },
+      "description": "A chainmail shirt providing solid protection in combat. (+15 Health, +4 Combat)",
+      "durability": 120,
+      "price": 190,
+      "weight": 10
+    },
+    {
+      "id": "plate_armor",
+      "name": "Plate Armor",
+      "display_name": "Plate Armor",
+      "type": "armor",
+      "effect": {
+        "health": 25,
+        "skill_modifiers": {
+          "Combat": 6
+        }
+      },
+      "description": "Heavy plate armor offering excellent protection for experienced warriors. (+25 Health, +6 Combat)",
+      "durability": 180,
+      "price": 450,
+      "weight": 15
+    },
+    {
+      "id": "dragon_scale_armor",
+      "name": "Dragon Scale Armor",
+      "display_name": "Dragon Scale Armor",
+      "type": "armor",
+      "effect": {
+        "health": 40,
+        "skill_modifiers": {
+          "Combat": 10
+        }
+      },
+      "description": "Legendary armor crafted from dragon scales, offering unparalleled protection and combat prowess. (+40 Health, +10 Combat)",
+      "durability": 300,
+      "price": 1200,
+      "weight": 12
+    },
+    {
+      "id": "simple_shield",
+      "name": "Simple Shield",
+      "display_name": "Simple Shield",
+      "type": "armor",
+      "effect": {
+        "health": 5
+      },
+      "description": "A basic wooden shield for defense. (+5 Health)",
+      "durability": 50,
+      "price": 60,
+      "weight": 5
+    },
+    {
+      "id": "steel_shield",
+      "name": "Steel Shield",
+      "display_name": "Steel Shield",
+      "type": "armor",
+      "effect": {
+        "health": 18
+      },
+      "description": "A sturdy steel shield providing reliable protection. (+18 Health)",
+      "durability": 140,
+      "price": 240,
+      "weight": 8
+    },
+    {
+      "id": "tower_shield",
+      "name": "Tower Shield",
+      "display_name": "Tower Shield",
+      "type": "armor",
+      "effect": {
+        "health": 30
+      },
+      "description": "A massive tower shield offering exceptional defensive capabilities. (+30 Health)",
+      "durability": 200,
+      "price": 520,
+      "weight": 12
+    },
+    {
+      "id": "magic_shield",
+      "name": "Magic Shield",
+      "display_name": "Magic Shield",
+      "type": "armor",
+      "effect": {
+        "health": 35,
+        "skill_modifiers": {
+          "Craft": 5
+        }
+      },
+      "description": "An enchanted shield that provides both protection and magical enhancement. (+35 Health, +5 Craft)",
+      "durability": 250,
+      "price": 880,
+      "weight": 6
+    },
+    {
+      "id": "adventurer_boots",
+      "name": "Adventurer Boots",
+      "display_name": "Adventurer Boots",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 3,
+          "Agility": 2
+        }
+      },
+      "description": "Sturdy boots designed for adventurers, enhancing both combat and mobility. (+3 Combat, +2 Agility)",
+      "price": 100,
+      "weight": 6
+    },
+    {
+      "id": "ranger_boots",
+      "name": "Ranger Boots",
+      "display_name": "Ranger Boots",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 5,
+          "Agility": 4
+        }
+      },
+      "description": "Lightweight boots favored by rangers, offering excellent mobility and combat enhancement. (+5 Combat, +4 Agility)",
+      "price": 220,
+      "weight": 5
+    },
+    {
+      "id": "master_adventurer_boots",
+      "name": "Master Adventurer Boots",
+      "display_name": "Master Adventurer Boots",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 8,
+          "Agility": 6
+        }
+      },
+      "description": "Legendary boots worn by master adventurers, combining superior protection with unmatched agility. (+8 Combat, +6 Agility)",
+      "price": 750,
+      "weight": 4
+    },
+    {
+      "id": "combat_gloves",
+      "name": "Combat Gloves",
+      "display_name": "Combat Gloves",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 2
+        }
+      },
+      "description": "Basic gloves that improve grip and combat effectiveness. (+2 Combat)",
+      "price": 55,
+      "weight": 2
+    },
+    {
+      "id": "warrior_gauntlets",
+      "name": "Warrior Gauntlets",
+      "display_name": "Warrior Gauntlets",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 5
+        }
+      },
+      "description": "Heavy gauntlets that enhance combat prowess significantly. (+5 Combat)",
+      "price": 180,
+      "weight": 4
+    },
+    {
+      "id": "dragon_scale_gauntlets",
+      "name": "Dragon Scale Gauntlets",
+      "display_name": "Dragon Scale Gauntlets",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 9
+        }
+      },
+      "description": "Legendary gauntlets crafted from dragon scales, maximizing combat effectiveness. (+9 Combat)",
+      "price": 920,
+      "weight": 3
     }
+  ],
+  "excluded_from_shops": [
+    "binding_gem",
+    "debug_complete_tutorial",
+    "gold_coin",
+    "silver_coin",
+    "bronze_coin"
   ]
 }

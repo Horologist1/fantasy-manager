@@ -378,7 +378,8 @@ label start:
         show screen esc_key_handler
         jump tavern_screen
 
-    scene expression tavern_bg
+    scene expression workers_bg
+    show expression Solid("#00000080")  # Semi-transparent black overlay
     
     # Initialize tutorial variables
     $ tutorial_active = True
@@ -392,6 +393,7 @@ label start:
     $ workers_hired = 0
     $ building_1_type_set = False
     $ workers_assigned = False
+    $ help_screen_active = True  # Tooltips enabled by default
     $ buildings_owned = 1
     $ total_workers = 0
     $ objective_dialogue_triggered = False
@@ -413,6 +415,17 @@ label start:
             player_name = "Manager"
 
     "Very well, [player_title] [player_name]. Let's take back our emporium."
+
+    # Transition to black and show initial date (like day_transition)
+    scene black with Fade(0.25, 0.0, 0.25)
+    $ day_name = day_names[(store.current_day - 1) % 7]
+    $ month_name = month_names[store.current_month]
+    $ date_text = f"{day_name}, {store.current_day} {month_name} {store.current_year}"
+    show expression Text(date_text, size=42, color="#ffffff") as daytext at truecenter
+    # Auto-advance after a short time, but still skippable by click
+    pause 1.0
+    hide daytext
+    scene black with Fade(0.25, 0.0, 0.25)
 
     # Initialize the calendar with forced reset for new game
     $ initialize_calendar(force_reset=True) if getattr(store, 'is_new_game', True) else initialize_calendar(False)
@@ -481,8 +494,7 @@ label start:
     jump tavern_screen
 
 label show_objective_1_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_1_dialogue - STARTING DIALOGUE")
     
     "Mine eyes survey the three workers who have sworn themselves to my cause. 'Tis but a modest beginning, yet from such humble seeds do mighty empires grow."
@@ -491,8 +503,7 @@ label show_objective_1_dialogue:
     jump tavern_screen
 
 label show_objective_2_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_2_dialogue - STARTING DIALOGUE")
     "'Tis the business I shall focus upon, for the present hour..."
     "The governor began with naught but ambition burning in his breast - I walk the same treacherous path he once trod."
@@ -501,8 +512,7 @@ label show_objective_2_dialogue:
     jump tavern_screen
 
 label show_objective_3_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_3_dialogue - STARTING DIALOGUE")
     "Each worker doth bring their own gifts and talents to this enterprise."
     "Choose the right soul for the right profession, and we shall be well upon our way to prosperity."
@@ -512,8 +522,7 @@ label show_objective_3_dialogue:
     jump tavern_screen
 
 label show_objective_4_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_4_dialogue - STARTING DIALOGUE")
     $ store.objective_4_dialogue_shown = True
     "Five thousand coins in my coffers. Not a fortune, but enough to start thinking about expansion."
@@ -525,8 +534,7 @@ label show_objective_4_dialogue:
     jump tavern_screen
 
 label show_objective_5_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_5_dialogue - STARTING DIALOGUE")
     "Good! Now I understand how to manage my workers' needs and use items effectively."
     "This knowledge will be crucial as my operation grows and I need to keep my workers happy and productive."
@@ -537,8 +545,7 @@ label show_objective_5_dialogue:
     jump tavern_screen
 
 label show_objective_6_intro:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_6_intro - STARTING DIALOGUE")
     "Time to strengthen my foundation."
     "I'll upgrade a building level and raise its supplies bonus. The upgrade costs 5,000 coins."
@@ -546,8 +553,7 @@ label show_objective_6_intro:
     jump tavern_screen
 
 label show_objective_6_outro:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_6_outro - STARTING DIALOGUE")
     "Excellent. The building can accommodate more souls now."
     "'Tis time to expand the scale of this entire operation."
@@ -556,8 +562,7 @@ label show_objective_6_outro:
     jump tavern_screen
 
 label show_objective_7_intro:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_7_intro - STARTING DIALOGUE")
     "Time to meet the people who make this place run."
     "I'll have a Friendly Chat with one of my workers to get a feel for their mood and motivations."
@@ -566,8 +571,7 @@ label show_objective_7_intro:
     jump tavern_screen
 
 label show_objective_7_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_7_dialogue - STARTING DIALOGUE")
     "Excellent. Taking the time to commune with my workers doth yield its rewards."
     "Now, 'tis time to establish the emporium — expand to multiple buildings and swell our coffers with gold."
@@ -575,8 +579,7 @@ label show_objective_7_dialogue:
     jump tavern_screen
 
 label show_objective_8_dialogue:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_8_dialogue - STARTING DIALOGUE")
     "I possess what I require for now, yet this is merely the dawn of my ascension. I must expand my operations, recruit more workers, erect more buildings."
     "Two buildings, ten workers, and ten thousand coins. That is the threshold where the city begins to take notice of my growing power."
@@ -586,13 +589,12 @@ label show_objective_8_dialogue:
 
 # ===== EPIC ENDINGS =====
 label show_ending_assassination:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_ending_assassination - STARTING EPIC ENDING")
     
     python:
         # Get the workers who participated in the assassination
-        assassination_team = [w for w in store.workers if (w.get("skills", {}).get("Combat", 0) >= 65 or w.get("skills", {}).get("Magic", 0) >= 65)]
+        assassination_team = [w for w in store.workers if (w.get("skills", {}).get("Combat", 0) >= 65 or w.get("skills", {}).get("Craft", 0) >= 65)]
         team_names = [w.get("name", "Unknown") for w in assassination_team[:3]]
         building_count = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
         worker_count = len(store.workers) if hasattr(store, 'workers') else total_workers
@@ -636,8 +638,7 @@ label show_ending_assassination:
     return
 
 label show_ending_blackmail:
-    scene expression tavern_bg
-    show expression Solid("#00000080")
+    scene expression workers_bg
     $ renpy.log("DEBUG: show_ending_blackmail - STARTING EPIC ENDING")
     
     python:

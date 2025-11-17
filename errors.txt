@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/tutorial_system.rpy", line 469: The if statement is not a valid child of the textbutton statement.
-    text_color "#d4a574" if can_assassinate else "#666666"
+File "game/scripts/core/screens.rpy", line 3218: The if statement is not a valid child of the textbutton statement.
+    text_color "#3c1f14" if selected_category is None else "#6b6528"
                            ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Wed Nov  5 16:48:32 2025
+Sun Nov 16 06:19:05 2025

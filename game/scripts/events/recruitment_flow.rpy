@@ -11,13 +11,38 @@ label start_recruitment_system:
                 renpy.show_screen("error_popup", message="No recruitment data found")
                 renpy.return_statement()
             
-            # Select random event based on weight
-            total_weight = sum(event.get("weight", 1) for event in recruitment_events)
+            # Filter events: only include events where the specific worker is available (if event requires specific worker)
+            available_events = []
+            for event in recruitment_events:
+                if event.get("random_worker", True):
+                    # Random worker events are always available
+                    available_events.append(event)
+                else:
+                    # Specific worker event - check if that worker is available
+                    worker_name = event.get("worker_name")
+                    if worker_name:
+                        worker_available = any(w.get("name") == worker_name for w in recruit_candidates)
+                        if worker_available:
+                            available_events.append(event)
+                            renpy.log(f"Event {event.get('id')} is available - worker {worker_name} found")
+                        else:
+                            renpy.log(f"Event {event.get('id')} filtered out - worker {worker_name} not available")
+                    else:
+                        # Event has random_worker=false but no worker_name - include it anyway
+                        available_events.append(event)
+            
+            if not available_events:
+                renpy.log("No recruitment events available (all specific workers unavailable)")
+                renpy.show_screen("error_popup", message="No recruitment events available")
+                renpy.return_statement()
+            
+            # Select random event based on weight from available events
+            total_weight = sum(event.get("weight", 1) for event in available_events)
             r = random.random() * total_weight
             current_weight = 0
-            selected_event = recruitment_events[0]  # fallback
+            selected_event = available_events[0]  # fallback
             
-            for event in recruitment_events:
+            for event in available_events:
                 current_weight += event.get("weight", 1)
                 if r <= current_weight:
                     selected_event = event
@@ -25,15 +50,25 @@ label start_recruitment_system:
             
             # Select worker based on event requirements
             if selected_event.get("random_worker", True):
-                # Random worker from available pool
+                # Random worker - filter by gender requirement if specified
+                worker_gender_requirement = selected_event.get("worker_gender_requirement", None)
+                if worker_gender_requirement:
+                    recruit_candidates = [w for w in recruit_candidates if w.get("gender", "") == worker_gender_requirement]
+                    if not recruit_candidates:
+                        renpy.log(f"No workers available matching gender requirement: {worker_gender_requirement}")
+                        renpy.show_screen("error_popup", message="No suitable workers available for this event")
+                        renpy.return_statement()
                 selected_worker = random.choice(recruit_candidates)
             else:
-                # Specific worker name
+                # Specific worker name - find the worker (we already verified it exists in the filter step)
                 worker_name = selected_event.get("worker_name")
                 selected_worker = next((w for w in recruit_candidates if w.get("name") == worker_name), None)
+                
                 if not selected_worker:
-                    # Worker not available, fallback to random
-                    selected_worker = random.choice(recruit_candidates)
+                    # This shouldn't happen if filtering worked correctly, but handle it anyway
+                    renpy.log(f"Worker {worker_name} not found in recruit candidates (this should not happen)")
+                    renpy.show_screen("error_popup", message=f"Worker {worker_name} is not available for recruitment")
+                    renpy.return_statement()
             
             # Store globally
             store.current_recruitment_event = selected_event
@@ -58,8 +93,20 @@ label start_recruitment_system:
 
 label recruitment_event_flow(event, worker):
     # Set up the scene with background
-    $ current_bg = event.get("background_image", "images/event_bg.jpg")
+    python:
+        bg_image = event.get("background_image", "images/event_bg.png")
+        # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path
+        if bg_image and not bg_image.startswith("images/"):
+            # Try to get the variable from store first (for defined backgrounds like tavern_bg)
+            if hasattr(store, bg_image):
+                current_bg = getattr(store, bg_image)
+            else:
+                # If not a variable, treat as filename and convert to full path
+                current_bg = f"images/{bg_image}.png"
+        else:
+            current_bg = bg_image
     scene expression current_bg with dissolve
+    show expression Solid("#00000080")  # Semi-transparent black overlay
     
     # Calculate cost
     python:
@@ -154,28 +201,28 @@ label recruitment_event_flow(event, worker):
         outcome_details = process_recruitment_choice(chosen_choice_data, event, worker)
         outcome_message = outcome_details.get("message", "Something happened.")
         outcome_type = outcome_details.get("outcome", "default")
-        
-        # Update background based on outcome
-        if outcome_type == "success" and "success_image" in event:
-            new_bg = event["success_image"]
-        elif outcome_type == "failure" and "failure_image" in event:
-            new_bg = event["failure_image"]
-        else:
-            new_bg = current_bg
     
-    # Change background if needed
-    if new_bg != current_bg:
-        scene expression new_bg with dissolve
-    
-    # Show the outcome in the result screen for visibility and wait for confirmation
-    call screen recruitment_result_screen(message=outcome_message, outcome=outcome_type, event=event)
+    # Show the outcome using unified screen (like interactions)
+    call screen recruitment_outcome(message=outcome_message, event=event, outcome=outcome_type)
     
     return
 
 # Simple recruitment flow for legacy events
 label recruitment_event_simple(event, worker):
-    $ current_bg = event.get("background_image", "images/event_bg.jpg")
+    python:
+        bg_image = event.get("background_image", "images/event_bg.png")
+        # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path
+        if bg_image and not bg_image.startswith("images/"):
+            # Try to get the variable from store first (for defined backgrounds like tavern_bg)
+            if hasattr(store, bg_image):
+                current_bg = getattr(store, bg_image)
+            else:
+                # If not a variable, treat as filename and convert to full path
+                current_bg = f"images/{bg_image}.png"
+        else:
+            current_bg = bg_image
     scene expression current_bg with dissolve
+    show expression Solid("#00000080")  # Semi-transparent black overlay
     
     python:
         daily_cost = worker.get("comfort_desired", 50)
@@ -205,6 +252,17 @@ label recruitment_event_simple(event, worker):
     else:
         $ outcome_msg = "You politely decline their offer."
     
-    narrator "[outcome_msg]"
+    # Show outcome using unified screen (like interactions)
+    # Use a dummy event structure for simple recruitment
+    python:
+        dummy_event = {
+            "background_image": event.get("background_image", "event_bg"),
+            "success_image": event.get("success_image", None),
+            "failure_image": event.get("failure_image", None)
+        }
+        # Determine outcome type (default to success for simple recruitment)
+        outcome_type = "success" if choice == "recruit" else "default"
+    
+    call screen recruitment_outcome(message=outcome_msg, event=dummy_event, outcome=outcome_type)
     
     return

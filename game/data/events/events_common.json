@@ -62,8 +62,7 @@
         "failure_image": "mystic_failure",
         "choices": [
             {
-                "option": "Pay for a fortune. (Requires Magic skill)",
-                "condition": "Magic",
+                "option": "Pay for a fortune.",
                 "message_success": "The mystic's gnarled fingers trace patterns in the air as [acting_worker] steps forward, coins glinting in the candlelight. Ancient words spill from cracked lips, and suddenly the crystals pulse with inner fire. A smile spreads across the mystic's face as they speak of prosperity and fortune ahead. The crowd gasps in wonder, and soon a line forms of patrons eager for their own glimpse of destiny ({actual_money}, {actual_reputation} reputation). (+10 Joy)",
                 "message_failure": "The bones clatter across the cloth like falling teeth, their pattern forming shapes that make [acting_worker] step back in alarm. The mystic's voice drops to a whisper that somehow carries to every corner of the room, speaking of shadows and misfortune. Patrons exchange nervous glances and begin to drift away, leaving behind an atmosphere thick with unease ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
                 "effect": {
@@ -76,7 +75,8 @@
                         "money": -500,
                         "reputation": -5,
                         "joy": -5
-                    }
+                    },
+                    "success_chance": 0.5
                 }
             },
             {

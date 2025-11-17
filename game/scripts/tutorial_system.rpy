@@ -282,10 +282,10 @@ init python:
             return 0
 
     def has_team_assassination():
-        # Needs 3 workers with >=70 in Combat or Magic
+        # Needs 3 workers with >=70 in Combat or Craft
         qualifying = 0
         for w in store.workers:
-            if _get_worker_skill_value(w, "Combat") >= 70 or _get_worker_skill_value(w, "Magic") >= 70:
+            if _get_worker_skill_value(w, "Combat") >= 70 or _get_worker_skill_value(w, "Craft") >= 70:
                 qualifying += 1
         return qualifying >= 3
 
@@ -394,6 +394,12 @@ init python:
             objective_1_complete = True
             current_objective = 2
             renpy.call_in_new_context("show_objective_1_dialogue")
+            # Si el tipo de edificio ya estaba establecido, completar el objetivo 2 inmediatamente
+            if building_1_type_set and not objective_2_complete:
+                renpy.log("DEBUG: Building type already set, completing objective 2 immediately")
+                objective_2_complete = True
+                current_objective = 3
+                renpy.call_in_new_context("show_objective_2_dialogue")
             
         elif current_objective == 2 and is_previous_objective_complete(2) and building_1_type_set and not objective_2_complete:
             renpy.log("DEBUG: Objective 2 completed!")
@@ -859,7 +865,8 @@ screen journal_panel():
                                 action [
                                     SetVariable("objective_16_complete", True),
                                     SetVariable("tutorial_active", False),
-                                    Hide("journal_panel")
+                                    Hide("journal_panel"),
+                                    Function(lambda: renpy.call_in_new_context("show_tutorial_completion_message"))
                                 ]
 
                     if current_objective < 8:
@@ -967,37 +974,44 @@ label check_tutorial_progress:
 
 # ===== NEW OBJECTIVE DIALOGUES =====
 label show_objective_10_dialogue:
-    scene expression tavern_bg
+    scene expression workers_bg
     show expression Solid("#00000080")
     "The coffers overflow with gold, enough to fund my campaign of vengeance. With such wealth, I can move mountains and topple tyrants."
     jump tavern_screen
 
 label show_objective_11_dialogue:
-    scene expression tavern_bg
+    scene expression workers_bg
     show expression Solid("#00000080")
     "Twenty souls now serve my cause, a network of eyes and ears that spans the city. No secret shall escape my notice, no conspiracy remain hidden."
     jump tavern_screen
 
 label show_objective_12_dialogue:
-    scene expression tavern_bg
+    scene expression workers_bg
     show expression Solid("#00000080")
     "The artifacts are mine! With these tools of power, I can face any foe, break any enchantment, and charm any ally. The arsenal of vengeance is complete."
     jump tavern_screen
 
 label show_objective_13_dialogue:
-    scene expression tavern_bg
+    scene expression workers_bg
     show expression Solid("#00000080")
     "Five strongholds now fly my banner, an empire of shadows that rivals any power in this city. From these bastions, I shall launch my final assault."
     jump tavern_screen
 
 label show_objective_14_dialogue:
-    scene expression tavern_bg
+    scene expression workers_bg
     show expression Solid("#00000080")
     "My elite guard is assembled - warriors who can fell any foe, and agents who can outwit any schemer. With such champions at my side, victory is assured."
     jump tavern_screen
 
 label show_objective_15_dialogue:
-    scene expression tavern_bg
+    scene expression workers_bg
     show expression Solid("#00000080")
     "My empire generates wealth like a mighty river - ten thousand coins in a single day! This is the power I have built, the machine of prosperity that shall fuel my vengeance."
+    jump tavern_screen
+
+label show_tutorial_completion_message:
+    scene expression tavern_bg
+    show expression Solid("#00000080")
+    "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished."
+    "With your quest complete, new opportunities arise. You can now purchase buildings in other cities through the 'Buy Buildings Abroad' option on the map."
     jump tavern_screen

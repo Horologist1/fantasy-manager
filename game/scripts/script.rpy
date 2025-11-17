@@ -180,7 +180,7 @@ init python:
                 renpy.log("Error loading " + file + ": " + str(e))
 
     # Initialize items_json with an empty list
-    items_json = {"items": []}
+    items_json = {"items": [], "excluded_from_shops": []}
 
     # Iterate over files in the "data/items/" folder
     for file in renpy.list_files():
@@ -195,11 +195,20 @@ init python:
                     renpy.log(f"Loaded {len(filtered_items)} items from {file}")
                 else:
                     renpy.log(f"File {file} does not contain an 'items' key.")
+                
+                # Merge excluded_from_shops from all JSON files (allows multiple files to contribute to exclusions)
+                if "excluded_from_shops" in data:
+                    # Combine with existing exclusions, avoiding duplicates
+                    existing_excluded = set(items_json.get("excluded_from_shops", []))
+                    new_excluded = set(data["excluded_from_shops"])
+                    items_json["excluded_from_shops"] = list(existing_excluded.union(new_excluded))
+                    renpy.log(f"Loaded {len(data['excluded_from_shops'])} excluded items from {file}")
             except Exception as e:
                 renpy.log(f"Error loading {file}: {e}")
 
     # Debug: log all loaded item IDs.
     renpy.log("Items available for loot: " + str([item["id"] for item in items_json.get("items", [])]))
+    renpy.log("Items excluded from shops: " + str(items_json.get("excluded_from_shops", [])))
 
 
 
@@ -477,6 +486,7 @@ init python:
         """
         Toggle the equipped state of an item in the given inventory.
         For equipment items (like "weapon" or "armor"), only one item of that type may be equipped.
+        Exception: "clothing" and "armor" are separate slots and can be equipped simultaneously.
         If a worker is provided, apply (or remove) the item's effects accordingly.
         Assumes inventory items are tuples: (item_id, quantity, equipped).
         """
@@ -509,13 +519,17 @@ init python:
         # If the target item is not equipped, we want to equip it.
         if not target_item[2]:
             # Unequip any other equipped item of the same type.
+            # Special case: "clothing" and "armor" are separate slots, so they don't conflict with each other.
             for j, other in enumerate(inventory):
                 if j != target_index and other[2]:
                     other_data = next((i for i in items_json["items"] if i["id"] == other[0]), None)
-                    if other_data and other_data.get("type") == item_type:
-                        renpy.log(f"Unequipping other item at index {j}: {other}")
-                        inventory[j] = (other[0], other[1], False)
-                        remove_item_effects(worker, other[0])
+                    if other_data:
+                        other_type = other_data.get("type")
+                        # Only unequip if it's the same type, EXCEPT if one is "clothing" and the other is "armor"
+                        if other_type == item_type:
+                            renpy.log(f"Unequipping other item at index {j}: {other}")
+                            inventory[j] = (other[0], other[1], False)
+                            remove_item_effects(worker, other[0])
             # Now equip the target item.
             inventory[target_index] = (target_item[0], target_item[1], True)
             if worker is not None:
@@ -1661,6 +1675,191 @@ init python:
         }
         calculate_reputation(name)  # Set initial value
 
+    def get_available_businesses_for_map_button(button_id):
+        """
+        Determina qué negocios están disponibles para un botón específico del mapa.
+        
+        button_id puede ser el nombre del botón (ej: "S2Tavern", "PlazaTavern", etc.)
+        La función detecta automáticamente el tipo basándose en el nombre:
+        - Si contiene "Tavern" -> se trata como "tavern"
+        - Si contiene "Redhouse" -> se trata como "redhouse"
+        - Si contiene "Bluehouse" -> se trata como "bluehouse"
+        - Si contiene "Greenhouse" -> se trata como "greenhouse" (comodín)
+        - Si contiene "Shop" -> se trata como "shop" (puede tener todos los tipos, como greenhouse)
+        """
+        available = []
+        
+        # Determinar el tipo de botón basándose en el nombre
+        button_type = None
+        if "Greenhouse" in button_id:
+            button_type = "greenhouse"
+        elif "Redhouse" in button_id:
+            button_type = "redhouse"
+        elif "Bluehouse" in button_id:
+            button_type = "bluehouse"
+        elif "Tavern" in button_id:
+            button_type = "tavern"
+        elif "Shop" in button_id:
+            button_type = "shop"
+        
+        # Greenhouse y Shop son comodines - pueden tener todos los tipos
+        if button_type == "greenhouse" or button_type == "shop":
+            for btype in building_types_json.get("building_types", []):
+                available.append(btype)
+            return available
+        
+        # Para otros botones, verificar allowed_map_locations
+        # También verificar si el button_id específico está en la lista (para casos especiales)
+        for btype in building_types_json.get("building_types", []):
+            allowed_locations = btype.get("allowed_map_locations", [])
+            if button_type and button_type in allowed_locations:
+                available.append(btype)
+            elif button_id in allowed_locations:
+                available.append(btype)
+        
+        return available
+
+    def get_map_building_name_safe(button_id):
+        """
+        Devuelve el nombre del edificio asociado a un botón del mapa de forma segura.
+        Retorna None si no existe.
+        """
+        if button_id in map_button_buildings:
+            building_name = map_button_buildings[button_id]
+            if building_name in owned_buildings:
+                return building_name
+        return None
+
+    def get_map_button_idle_image(button_id):
+        """
+        Devuelve la ruta de la imagen idle correcta para un botón del mapa.
+        Si el edificio está comprado, usa "c.png", si no, usa "a.png".
+        """
+        if get_map_building_name_safe(button_id) is not None:
+            # Edificio comprado, usar imagen "c.png"
+            return f"gui/map/{button_id}c.png"
+        else:
+            # Edificio no comprado, usar imagen "a.png"
+            return f"gui/map/{button_id}a.png"
+
+    def get_map_building_display_name(button_id):
+        """
+        Devuelve el nombre de visualización del edificio asociado a un botón del mapa.
+        Retorna None si el edificio no está comprado.
+        """
+        building_name = get_map_building_name_safe(button_id)
+        if building_name is None:
+            return None
+        
+        # Obtener el nombre de visualización
+        parts = building_name.split('_')
+        default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
+        display_name = store.custom_names.get(building_name, default_name)
+        return display_name
+
+    def get_building_1_display_name():
+        """
+        Devuelve el nombre de visualización de Building 1 (el edificio base).
+        """
+        building_name = "Building 1"
+        parts = building_name.split('_')
+        default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
+        display_name = store.custom_names.get(building_name, default_name)
+        return display_name
+
+    def get_shop_tooltip_text(shop_id):
+        """
+        Devuelve el texto del tooltip para una tienda.
+        shop_id puede ser "shop1", "shop2", o "shop3"
+        """
+        shop_names = {
+            "shop1": "Basic Shop",
+            "shop2": "Adventurer's Market",
+            "shop3": "Elite Emporium"
+        }
+        
+        shop_name = shop_names.get(shop_id, "Shop")
+        is_unlocked = store.unlocked_shops.get(shop_id, False)
+        
+        if is_unlocked:
+            return shop_name
+        else:
+            return f"{shop_name} (Closed)"
+
+    def split_text_for_dialogue(text, max_chars=200):
+        """
+        Divide un texto largo en múltiples mensajes que quepan en el cuadro de diálogo.
+        Intenta dividir por frases completas primero, luego por palabras.
+        max_chars: caracteres máximos por mensaje (aproximadamente 3-4 líneas)
+        """
+        if not text:
+            return [""]
+        
+        import re
+        
+        # Primero intentar dividir por frases (puntos, exclamaciones, interrogaciones)
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        
+        messages = []
+        current_message = ""
+        
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+            
+            # Si la frase sola es muy larga, dividirla por palabras
+            if len(sentence) > max_chars:
+                words = sentence.split()
+                current_sentence = ""
+                
+                for word in words:
+                    if len(current_sentence) + len(word) + 1 > max_chars:
+                        if current_sentence:
+                            if len(current_message) + len(current_sentence) + 2 <= max_chars:
+                                current_message = (current_message + " " + current_sentence).strip()
+                            else:
+                                if current_message:
+                                    messages.append(current_message)
+                                current_message = current_sentence
+                        else:
+                            # Palabra muy larga, añadirla sola
+                            if current_message:
+                                messages.append(current_message)
+                            current_message = word
+                        current_sentence = word
+                    else:
+                        if current_sentence:
+                            current_sentence += " " + word
+                        else:
+                            current_sentence = word
+                
+                # Añadir la última parte de la frase
+                if current_sentence:
+                    if len(current_message) + len(current_sentence) + 2 <= max_chars:
+                        current_message = (current_message + " " + current_sentence).strip()
+                    else:
+                        if current_message:
+                            messages.append(current_message)
+                        current_message = current_sentence
+            else:
+                # Si añadir esta frase excede el límite, guardar el mensaje actual y empezar uno nuevo
+                if len(current_message) + len(sentence) + 2 > max_chars:
+                    if current_message:
+                        messages.append(current_message)
+                    current_message = sentence
+                else:
+                    if current_message:
+                        current_message += " " + sentence
+                    else:
+                        current_message = sentence
+        
+        # Añadir el último mensaje si existe
+        if current_message:
+            messages.append(current_message)
+        
+        return messages if messages else [text]
+
     def get_building_bg(building_name):
         """Returns background image path based on building type and level, dynamically reading from building_types_json."""
         building = available_buildings.get(building_name, {})
@@ -1669,7 +1868,7 @@ init python:
         
         # Default fallback if no type is assigned or type is invalid
         if not btype_id or btype_id not in [bt["id"] for bt in building_types_json.get("building_types", [])]:
-            return "images/buildings/default.jpg"  # Fallback image
+            return "images/buildings/default.png"  # Fallback image
         
         # Use the building type ID directly as the prefix
         type_prefix = btype_id
@@ -1678,24 +1877,29 @@ init python:
         level = min(max(base_level, 1), 3)
         
         # Construct the image path using the type ID and level
-        image_path = f"images/buildings/{type_prefix}_level{level}.jpg"
+        image_path = f"images/buildings/{type_prefix}_level{level}.png"
+        
+        # Log for debugging
+        renpy.log(f"get_building_bg: Looking for image: {image_path}, building: {building_name}, type: {btype_id}, level: {level}")
         
         # Fallback to default if the specific image doesn't exist
         if not renpy.loadable(image_path):
-            return "images/buildings/default.jpg"
+            renpy.log(f"get_building_bg: Image not found: {image_path}, falling back to default.png")
+            return "images/buildings/default.png"
         
+        renpy.log(f"get_building_bg: Found image: {image_path}")
         return image_path
 
     def get_inventory_bg(shop_mode=None):
             """Returns background image path for manager_inventory screen."""
             if shop_mode == "shop1":
-                return "images/shops/shop1.jpg"
+                return "images/shops/shop1.png"
             elif shop_mode == "shop2":
-                return "images/shops/shop2.jpg"
+                return "images/shops/shop2.png"
             elif shop_mode == "shop3":
-                return "images/shops/shop3.jpg"
+                return "images/shops/shop3.png"
             else:
-                return "images/shops/storage.jpg"  # Default for non-shop mode (Storage)
+                return "images/shops/storage.png"  # Default for non-shop mode (Storage)
 
     def upgrade_building(building_name):
         building = available_buildings[building_name]
@@ -2514,6 +2718,12 @@ init python:
                     renpy.log(f"Custom grant_loot: rolled {loot_ids}")
                 except Exception as e:
                     renpy.log(f"ERROR in grant_loot: {e}")
+            elif custom_action == "complete_tutorial":
+                # Complete the tutorial and show completion message
+                store.objective_16_complete = True
+                store.tutorial_active = False
+                renpy.log("DEBUG: Tutorial completed via debug item")
+                renpy.call_in_new_context("show_tutorial_completion_message")
             elif custom_action == "recruit_worker":
                 # Prefer explicit overrides from effect_dict; fallback to current_event
                 random_from_effect = bool(effect_dict.get("random_worker", False))
@@ -2790,7 +3000,7 @@ define skill_names = {
     "Special": "Special", "Group": "Group", "Extreme": "Extreme",
     "Striptease": "Striptease", "Combat": "Combat", "Clever": "Clever",
     "Charm": "Charm", "Wait": "Service", "Agility": "Agility",
-    "Magic": "Magic", "Specialty 4": "Specialty 4", "Specialty 5": "Specialty 5",
+    "Craft": "Craft", "Specialty 4": "Specialty 4", "Specialty 5": "Specialty 5",
     "Specialty 6": "Specialty 6", "Specialty 7": "Specialty 7", "Specialty 8": "Specialty 8",
     "Specialty 9": "Specialty 9", "Specialty 10": "Specialty 10", "Specialty 11": "Specialty 11",
     "Specialty 12": "Specialty 12"
@@ -2806,7 +3016,7 @@ define sfw_skills = [
     "Charm",      # Charm
     "Wait",       # Service
     "Agility",    # Agility (era Specialty 2)
-    "Magic"       # Magic (era Specialty 3)
+    "Craft"       # Craft (era Specialty 3, antes Magic)
 ]
 
 define SKILL_MAX = 100
@@ -2850,6 +3060,7 @@ default event_occurrences = {}  # Tracks event occurrences
 default can_recruit_today = True
 default owned_buildings = ["Building 1"]
 default max_building = 50
+default map_button_buildings = {}  # Maps map button IDs to building names
 default available_buildings = {
     "Building 1": {
         "price": 10000,
@@ -2890,6 +3101,25 @@ default custom_names = {
 }
 default acting_worker = ""  # Default value for acting_worker
 default event_flags = {}  # Storage for event flags/tokens that are used for event chains and conditions
+default plaza_servants_text_hover = False  # Controls hover state of PlazaServants imagebutton when textbutton is hovered
+default shops_text_hover = False  # Controls hover state of shop imagebuttons when "Visit Shops" textbutton is hovered
+default recruit_workers_text_hover = False  # Controls hover state of PlazaFountain imagebutton when "Recruit Workers" textbutton is hovered
+default tooltips_enabled_by_screen = {}  # Dictionary to store tooltip state per screen (defaults to True if not set)
+
+init python:
+    def toggle_tooltips_for_screen(screen_name):
+        """Toggle tooltips for a specific screen. Does not return anything."""
+        # Default state: False for "tavern" and "Manager", True for all others
+        default_state = False if screen_name in ["tavern", "Manager"] else True
+        current_state = tooltips_enabled_by_screen.get(screen_name, default_state)
+        tooltips_enabled_by_screen[screen_name] = not current_state
+        # Don't return anything - Ren'Py actions should not return values
+    
+    def get_tooltips_state_for_screen(screen_name):
+        """Get tooltips state for a specific screen. Returns True if enabled (default)."""
+        # Default state: False for "tavern" and "Manager", True for all others
+        default_state = False if screen_name in ["tavern", "Manager"] else True
+        return tooltips_enabled_by_screen.get(screen_name, default_state)
 default event_worker_name = ""  # Variable to store the name of the worker being discussed in an event
 default current_affected_building = None  # Variable to store the currently affected building in an event
 default affected_building_info = ""  # Holds formatted info about the affected building

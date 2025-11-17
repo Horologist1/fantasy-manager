@@ -411,6 +411,7 @@ init python:
         """
         Returns an image for the given interaction, prioritizing the worker's folder over the default folder.
         Uses robust flexible matching for better compatibility with different file formats and naming.
+        Uses cache to maintain the same image throughout the entire interaction.
         
         Args:
             worker: Objeto trabajador (diccionario)
@@ -419,24 +420,39 @@ init python:
         Returns:
             Ruta a la imagen de la interacción
         """
+        # Crear clave de caché única basada solo en worker e interaction
+        worker_name = worker.get("name", "unknown") if hasattr(worker, "get") else "unknown"
+        interaction_id = interaction.get("id", "unknown") if hasattr(interaction, "get") else "unknown"
+        cache_key = f"{worker_name}_{interaction_id}_interaction_image"
+        
+        # PRIMERO: Verificar si ya tenemos una imagen en caché para esta interacción
+        # Usar get_cached_choice con una lista temporal para verificar el caché
+        # Si existe en caché, devolverlo directamente sin verificar opciones
+        try:
+            # Intentar obtener del caché directamente
+            # image_selection_cache está definido en event_visuals.rpy en init python
+            # En Ren'Py, está disponible en el store global
+            if hasattr(store, 'image_selection_cache') and cache_key in store.image_selection_cache:
+                cached_image = store.image_selection_cache[cache_key]
+                # Verificar que la imagen cached aún existe
+                if renpy.loadable(cached_image):
+                    renpy.log(f"Usando imagen en caché para interacción: {cached_image}")
+                    return cached_image
+                else:
+                    # Si el archivo cached ya no existe, limpiar caché
+                    del store.image_selection_cache[cache_key]
+        except (AttributeError, KeyError, NameError):
+            # Si el caché no está disponible, continuar con búsqueda normal
+            pass
+        
         # Extraer el folder del worker exactamente como lo hace get_worker_image
         if hasattr(worker, "get") and callable(worker.get):
                 worker_folder = worker.get("folder", "default")
         else:
             worker_folder = "default"
         
-        # Registrar información para depuración
-        renpy.log(f"Worker recibido: {worker}")
-        renpy.log(f"Folder extraído: {worker_folder}")
-        
-        # Definir base folder exactamente como lo hace get_worker_image
+        # Definir base folder del trabajador
         base_folder = f"images/workers/{worker_folder}/"
-        default_folder = "images/workers/default/"
-        
-        # Verificar si la carpeta existe exactamente como lo hace get_worker_image
-        if not any(f.startswith(base_folder) for f in renpy.list_files()):
-            renpy.log(f"Carpeta del trabajador no existe: {base_folder}, usando default")
-            base_folder = default_folder
         
         # Determinar el nombre base de la imagen
         image_base = interaction.get("image")
@@ -473,31 +489,36 @@ init python:
         elif "Discipline" in categories:
             candidate_bases.append("obedience")
         
-        # Registrar información para depuración
-        renpy.log(f"Buscando imagen para interacción. Bases candidatas: {candidate_bases}")
-        renpy.log(f"Carpeta del trabajador (después de verificación): {base_folder}")
-        renpy.log(f"Género del jugador masculino? {is_player_male} | Género del trabajador: {worker_gender}")
-        
-        # Buscar por las bases candidatas en orden
+        # Recopilar TODAS las posibles imágenes de todas las bases candidatas
+        all_possible_matches = []
         for base in candidate_bases:
             if not base:
                 continue
-            # Buscar en carpeta del trabajador
             matches = get_pattern_matches_flexible(base_folder, base)
             if matches:
-                selected_media = renpy.random.choice(matches)
-                renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta del trabajador para base '{base}': {selected_media}")
-                return selected_media
-            # Buscar en carpeta default
-            if base_folder != default_folder:
-                default_matches = get_pattern_matches_flexible(default_folder, base)
-                if default_matches:
-                    selected_media = renpy.random.choice(default_matches)
-                    renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta default para base '{base}': {selected_media}")
-                    return selected_media
+                all_possible_matches.extend(matches)
         
-        # FALLBACK: Use worker profile image or any available image
-        renpy.log("No se encontró ninguna imagen específica, usando imagen de perfil o default")
+        # Eliminar duplicados manteniendo el orden
+        seen = set()
+        unique_matches = []
+        for match in all_possible_matches:
+            if match not in seen:
+                seen.add(match)
+                unique_matches.append(match)
+        all_possible_matches = unique_matches
+        
+        # Si encontramos imágenes, usar get_cached_choice con TODAS las opciones
+        # Esto asegura que siempre use la misma imagen, incluso si diferentes bases tienen matches
+        if all_possible_matches:
+            renpy.log(f"DEBUG: Cache key: {cache_key}, Total matches: {len(all_possible_matches)}")
+            selected_media = get_cached_choice(all_possible_matches, cache_key)
+            renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta del trabajador: {selected_media}")
+            return selected_media
+        
+        # FALLBACK: Usar imagen de perfil del trabajador
+        renpy.log("No se encontró ninguna imagen específica, usando imagen de perfil del trabajador")
         profile_image = get_worker_image(worker)
+        # Cachear la imagen de perfil también
+        get_cached_choice([profile_image], cache_key)
         return profile_image
 
