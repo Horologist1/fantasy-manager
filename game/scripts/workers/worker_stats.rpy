@@ -38,7 +38,7 @@ init python:
         """Return effective maximum health (base from level plus trait bonus)."""
         if "max_health" in worker:
             return worker["max_health"]
-        base_health = worker.get("level", 1) * 5
+        base_health = 10 + (worker.get("level", 1) * 5)
         bonus = 0
         for trait_name in worker.get("traits", []):
             for trait in traits_list:

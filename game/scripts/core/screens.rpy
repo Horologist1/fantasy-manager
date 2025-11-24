@@ -6273,36 +6273,12 @@ screen report_details(report):
         frame:
             xsize 320
             yfill True
-            background None
-            
-            # Help/Information button - positioned in top-right corner of context menu (green panel)
-            python:
-                screen_name = "report_details"
-                tooltips_enabled = get_tooltips_state_for_screen(screen_name)
-            
-            imagebutton:
-                idle Transform("gui/info_idle.png", zoom=0.315)
-                hover Transform("gui/info_hover.png", zoom=0.315)
-                selected_idle Transform("gui/info_active.png", zoom=0.315)
-                selected_hover Transform("gui/info_active.png", zoom=0.315)
-                selected tooltips_enabled
-                action Function(toggle_tooltips_for_screen, screen_name)
-                hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
-                unhovered Hide("tooltip")
-                xalign 1.0
-                xoffset -60
-                yalign 0.0
-                yoffset 55
-            
-            frame:
-                xsize 320
-                yfill True
-                background context_menu_bg
-                vbox:
-                    spacing 20
-                    xalign 0.5
-                    yalign 0.5
-                    xfill True
+            background context_menu_bg
+            vbox:
+                spacing 20
+                xalign 0.5
+                yalign 0.5
+                xfill True
                 
                 # Story number and navigation info
                 text "Story [story_number] of [total_stories]" size 20 color "#ffffff" xalign 0.5 bold True

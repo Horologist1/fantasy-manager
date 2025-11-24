@@ -23,20 +23,12 @@
         }
       },
       {
-        "option": "Test their physical strength with a challenge. (70% chance of success)",
-        "message_success": "You propose a simple test of strength - moving some heavy crates. [event_worker] handles the task effortlessly, muscles working with practiced ease. 'I've done harder work,' they say with a slight grin. 'So, do I have the job?' They agree to work for [COST] daily.",
-        "message_failure": "The challenge proves more difficult than expected. [event_worker] struggles slightly, and while they complete the task, their confidence seems shaken. 'Maybe I'm not as strong as I thought,' they mutter. They still accept the job at [COST] per day, but seem less certain.",
+        "option": "Negotiate for a lower wage, emphasizing stability and steady work.",
+        "message": "You negotiate for a reduced wage of [COST] per day, explaining that while the pay is lower, the position offers stability and steady work. [event_worker] considers this thoughtfully. 'Steady work does have value. Alright, I accept.' They agree to work at a reduced comfort level ([actual_comfort]), appreciating the security of the position.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 5,
-            "relationship_bonus": 10
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 1
-          },
-          "success_chance": 0.7
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 4
         }
       },
       {
@@ -84,20 +76,12 @@
         }
       },
       {
-        "option": "Try to see through his charm and test his cleverness. (75% chance of success)",
-        "message_success": "You engage [event_worker] in a battle of wits, trying to see past his charming facade. He seems delighted by the challenge, and you quickly realize he's genuinely clever - perhaps even more so than he lets on. 'Oh, you're sharp! I like that.' He laughs, a light, musical sound. 'Most people just fall for the act. You actually see me. I respect that.' He agrees to work for [COST] daily with increased relationship.",
-        "message_failure": "You try to test his cleverness, but [event_worker] is too quick for you. He sees through your attempt immediately and gives you a knowing, almost teasing look. 'Nice try, but I've been playing this game longer than you have.' He still accepts the position at [COST] per day, but there's a hint of amusement in his eyes - as if he's already won some unspoken game.",
+        "option": "Offer better terms to build a strong working relationship.",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker]'s smile widens appreciatively. 'Oh, I like someone who values their workers. You're building something here, and I respect that.' He extends his hand. 'I think we'll work beautifully together.' He agrees to work with increased relationship, seeing potential in your establishment.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 6,
-            "relationship_bonus": 18
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 2
-          },
-          "success_chance": 0.75
+          "recruit_worker": true,
+          "reputation": 6,
+          "relationship_bonus": 15
         }
       },
       {
@@ -142,20 +126,12 @@
         }
       },
       {
-        "option": "Ask about their mysterious nature. (60% chance of gaining their trust)",
-        "message_success": "You ask directly about the air of mystery surrounding them. [event_worker] seems pleased by your directness. 'Most people are too afraid to ask. I appreciate honesty.' They reveal they've studied ancient arts and have connections in many places. 'I think we'll work well together.' They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your questions come across as too probing. [event_worker]'s expression becomes guarded. 'Some things are better left unknown,' they say cryptically. They still accept the position at [COST] per day, but seem more distant.",
+        "option": "Offer better terms to show you value their unique talents.",
+        "message": "You offer [COST] per day, recognizing their mysterious and valuable nature. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. They agree to work with increased relationship, appreciating your recognition of their worth.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 10,
-            "relationship_bonus": 20
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.6
+          "recruit_worker": true,
+          "reputation": 10,
+          "relationship_bonus": 18
         }
       },
       {
@@ -204,20 +180,12 @@
         }
       },
       {
-        "option": "Ask them to demonstrate their performance skills. (75% chance of success)",
-        "message_success": "You ask for a demonstration. [event_worker] doesn't hesitate - they launch into a brief but mesmerizing performance that captivates everyone in the room. When they finish, the applause is genuine. 'See? I told you I'm special.' They agree to work for [COST] daily with bonus reputation.",
-        "message_failure": "The demonstration is good, but perhaps not as spectacular as promised. [event_worker] seems slightly disappointed but recovers quickly. 'Well, I was just warming up. Still, I think you'll find me quite valuable.' They accept the position at [COST] per day.",
+        "option": "Offer better terms to recognize their talent.",
+        "message": "You offer [COST] per day, recognizing their obvious charisma and performance skills. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. They agree to work with bonus reputation and increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 8,
-            "relationship_bonus": 12
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.75
+          "recruit_worker": true,
+          "reputation": 8,
+          "relationship_bonus": 12
         }
       },
       {
@@ -265,20 +233,12 @@
         }
       },
       {
-        "option": "Ask about elven culture and magic. (70% chance of positive response)",
-        "message_success": "You express genuine interest in elven ways. [event_worker] seems pleased by your curiosity. 'Few mortals show such respect for our traditions. I appreciate that.' They share some insights about elven magic and grace. 'I believe we'll work well together.' They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your questions come across as somewhat naive. [event_worker] smiles indulgently. 'Some things take time to understand. But I appreciate the effort.' They still accept the position at [COST] per day.",
+        "option": "Offer better terms to show respect for their elven heritage.",
+        "message": "You offer [COST] per day, showing respect for their elven heritage and unique abilities. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. They agree to work with increased relationship, appreciating your recognition of their worth.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 8,
-            "relationship_bonus": 15
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 4
-          },
-          "success_chance": 0.7
+          "recruit_worker": true,
+          "reputation": 8,
+          "relationship_bonus": 15
         }
       },
       {
@@ -327,20 +287,12 @@
         }
       },
       {
-        "option": "Test their adaptability with a quick challenge. (80% chance of success)",
-        "message_success": "You give them a quick test - handling multiple tasks simultaneously. [event_worker] handles it with ease, showing impressive adaptability and quick thinking. 'See? I told you I learn fast.' They agree to work for [COST] daily with bonus reputation.",
-        "message_failure": "The challenge proves more difficult than expected. [event_worker] manages, but not as smoothly as they'd hoped. 'Well, everyone has off days,' they say with a slight shrug. They still accept the position at [COST] per day.",
+        "option": "Offer better terms to build a strong working relationship.",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker] smiles warmly. 'I appreciate that you see my potential. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. They agree to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 7,
-            "relationship_bonus": 10
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 2
-          },
-          "success_chance": 0.8
+          "recruit_worker": true,
+          "reputation": 7,
+          "relationship_bonus": 12
         }
       },
       {
@@ -388,20 +340,12 @@
         }
       },
       {
-        "option": "Test their physical strength with a challenge. (70% chance of success)",
-        "message_success": "You propose a simple test of strength - moving some heavy crates. [event_worker] handles the task effortlessly, muscles working with practiced ease. 'I've done harder work,' they say with a slight grin. 'So, do I have the job?' They agree to work for [COST] daily.",
-        "message_failure": "The challenge proves more difficult than expected. [event_worker] struggles slightly, and while they complete the task, their confidence seems shaken. 'Maybe I'm not as strong as I thought,' they mutter. They still accept the job at [COST] per day, but seem less certain.",
+        "option": "Negotiate for a lower wage, emphasizing stability and steady work.",
+        "message": "You negotiate for a reduced wage of [COST] per day, explaining that while the pay is lower, the position offers stability and steady work. [event_worker] considers this thoughtfully. 'Steady work does have value. Alright, I accept.' They agree to work at a reduced comfort level ([actual_comfort]), appreciating the security of the position.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 5,
-            "relationship_bonus": 10
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 1
-          },
-          "success_chance": 0.7
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 4
         }
       },
       {
@@ -449,20 +393,12 @@
         }
       },
       {
-        "option": "Try to see through his charm and test his cleverness. (75% chance of success)",
-        "message_success": "You engage [event_worker] in a battle of wits, trying to see past his charming facade. He seems delighted by the challenge, and you quickly realize he's genuinely clever - perhaps even more so than he lets on. 'Oh, you're sharp! I like that.' He laughs, a light, musical sound. 'Most people just fall for the act. You actually see me. I respect that.' He agrees to work for [COST] daily with increased relationship.",
-        "message_failure": "You try to test his cleverness, but [event_worker] is too quick for you. He sees through your attempt immediately and gives you a knowing, almost teasing look. 'Nice try, but I've been playing this game longer than you have.' He still accepts the position at [COST] per day, but there's a hint of amusement in his eyes - as if he's already won some unspoken game.",
+        "option": "Offer better terms to build a strong working relationship.",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker]'s smile widens appreciatively. 'Oh, I like someone who values their workers. You're building something here, and I respect that.' He extends his hand. 'I think we'll work beautifully together.' He agrees to work with increased relationship, seeing potential in your establishment.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 6,
-            "relationship_bonus": 18
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 2
-          },
-          "success_chance": 0.75
+          "recruit_worker": true,
+          "reputation": 6,
+          "relationship_bonus": 15
         }
       },
       {
@@ -507,20 +443,12 @@
         }
       },
       {
-        "option": "Ask about their mysterious nature. (60% chance of gaining their trust)",
-        "message_success": "You ask directly about the air of mystery surrounding them. [event_worker] seems pleased by your directness. 'Most people are too afraid to ask. I appreciate honesty.' They reveal they've studied ancient arts and have connections in many places. 'I think we'll work well together.' They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your questions come across as too probing. [event_worker]'s expression becomes guarded. 'Some things are better left unknown,' they say cryptically. They still accept the position at [COST] per day, but seem more distant.",
+        "option": "Offer better terms to show you value their unique talents.",
+        "message": "You offer [COST] per day, recognizing their mysterious and valuable nature. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. They agree to work with increased relationship, appreciating your recognition of their worth.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 10,
-            "relationship_bonus": 20
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.6
+          "recruit_worker": true,
+          "reputation": 10,
+          "relationship_bonus": 18
         }
       },
       {
@@ -569,20 +497,12 @@
         }
       },
       {
-        "option": "Ask them to demonstrate their performance skills. (75% chance of success)",
-        "message_success": "You ask for a demonstration. [event_worker] doesn't hesitate - they launch into a brief but mesmerizing performance that captivates everyone in the room. When they finish, the applause is genuine. 'See? I told you I'm special.' They agree to work for [COST] daily with bonus reputation.",
-        "message_failure": "The demonstration is good, but perhaps not as spectacular as promised. [event_worker] seems slightly disappointed but recovers quickly. 'Well, I was just warming up. Still, I think you'll find me quite valuable.' They accept the position at [COST] per day.",
+        "option": "Offer better terms to recognize their talent.",
+        "message": "You offer [COST] per day, recognizing their obvious charisma and performance skills. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. They agree to work with bonus reputation and increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 8,
-            "relationship_bonus": 12
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.75
+          "recruit_worker": true,
+          "reputation": 8,
+          "relationship_bonus": 12
         }
       },
       {
@@ -630,20 +550,12 @@
         }
       },
       {
-        "option": "Ask about elven culture and magic. (70% chance of positive response)",
-        "message_success": "You express genuine interest in elven ways. [event_worker] seems pleased by your curiosity. 'Few mortals show such respect for our traditions. I appreciate that.' They share some insights about elven magic and grace. 'I believe we'll work well together.' They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your questions come across as somewhat naive. [event_worker] smiles indulgently. 'Some things take time to understand. But I appreciate the effort.' They still accept the position at [COST] per day.",
+        "option": "Offer better terms to show respect for their elven heritage.",
+        "message": "You offer [COST] per day, showing respect for their elven heritage and unique abilities. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. They agree to work with increased relationship, appreciating your recognition of their worth.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 8,
-            "relationship_bonus": 15
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 4
-          },
-          "success_chance": 0.7
+          "recruit_worker": true,
+          "reputation": 8,
+          "relationship_bonus": 15
         }
       },
       {
@@ -692,20 +604,12 @@
         }
       },
       {
-        "option": "Test their adaptability with a quick challenge. (80% chance of success)",
-        "message_success": "You give them a quick test - handling multiple tasks simultaneously. [event_worker] handles it with ease, showing impressive adaptability and quick thinking. 'See? I told you I learn fast.' They agree to work for [COST] daily with bonus reputation.",
-        "message_failure": "The challenge proves more difficult than expected. [event_worker] manages, but not as smoothly as they'd hoped. 'Well, everyone has off days,' they say with a slight shrug. They still accept the position at [COST] per day.",
+        "option": "Offer better terms to build a strong working relationship.",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker] smiles warmly. 'I appreciate that you see my potential. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. They agree to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 7,
-            "relationship_bonus": 10
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 2
-          },
-          "success_chance": 0.8
+          "recruit_worker": true,
+          "reputation": 7,
+          "relationship_bonus": 12
         }
       },
       {
@@ -753,20 +657,12 @@
         }
       },
       {
-        "option": "Ask them to demonstrate their service skills. (85% chance of success)",
-        "message_success": "You ask for a quick demonstration of their service abilities. [event_worker] immediately launches into action, showing impressive efficiency and a genuine desire to help. Their positive attitude is infectious. 'See? I told you I'm good at this!' They agree to work for [COST] daily with bonus reputation.",
-        "message_failure": "The demonstration is good, but perhaps a bit too enthusiastic - they're trying so hard they make a small mistake. 'Oops! Sorry about that. I get a little excited sometimes.' They still accept the position at [COST] per day with a sheepish grin.",
+        "option": "Offer better terms to recognize their enthusiasm and service skills.",
+        "message": "You welcome their enthusiasm and offer [COST] per day, recognizing their obvious service skills and positive attitude. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy, agreeing to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 7,
-            "relationship_bonus": 15
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 2
-          },
-          "success_chance": 0.85
+          "recruit_worker": true,
+          "reputation": 7,
+          "relationship_bonus": 15
         }
       },
       {
@@ -814,20 +710,12 @@
         }
       },
       {
-        "option": "Ask about their elven heritage and talents. (75% chance of positive response)",
-        "message_success": "You express genuine interest in their elven background and abilities. [event_worker] seems pleased by your respect. 'It's refreshing to meet someone who appreciates our ways. I'd be honored to work with you.' They share some insights about elven grace and charm. They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your questions, while well-intentioned, come across as somewhat superficial. [event_worker] smiles politely. 'I appreciate the interest, though some things are best learned through experience.' They still accept the position at [COST] per day.",
+        "option": "Offer better terms to show respect for their elven heritage.",
+        "message": "You welcome them warmly and offer [COST] per day, showing respect for their elven heritage and talents. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent, and they agree to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 8,
-            "relationship_bonus": 18
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.75
+          "recruit_worker": true,
+          "reputation": 8,
+          "relationship_bonus": 18
         }
       },
       {
@@ -875,20 +763,12 @@
         }
       },
       {
-        "option": "Ask about what makes them unique. (65% chance of positive response)",
-        "message_success": "You ask about their unique background. [event_worker] shares some of their story, and it's clear they've had remarkable experiences. 'I'm glad you're interested. Not everyone appreciates those who are different.' They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your questions come across as too curious or perhaps intrusive. [event_worker] becomes slightly guarded. 'Some things are personal,' they say. They still accept the position at [COST] per day, but seem more reserved.",
+        "option": "Offer better terms to recognize their unique qualities.",
+        "message": "You recognize their unique qualities and offer [COST] per day with the promise of appreciation for what makes them special. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence, agreeing to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 6,
-            "relationship_bonus": 12
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 2
-          },
-          "success_chance": 0.65
+          "recruit_worker": true,
+          "reputation": 6,
+          "relationship_bonus": 12
         }
       },
       {
@@ -935,20 +815,12 @@
         }
       },
       {
-        "option": "Engage them in conversation about their background. (70% chance of success)",
-        "message_success": "You take time to learn about their background. [event_worker] opens up about their unique experiences, and it's clear they've led an interesting life. 'I appreciate someone who takes the time to understand. I think we'll work well together.' They agree to work for [COST] daily with bonus relationship.",
-        "message_failure": "The conversation doesn't flow as smoothly as hoped. [event_worker] seems slightly disappointed but remains professional. 'Well, I suppose not everyone needs to know everything.' They still accept the position at [COST] per day.",
+        "option": "Offer better terms to recognize their distinctive qualities.",
+        "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence, agreeing to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 7,
-            "relationship_bonus": 14
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.7
+          "recruit_worker": true,
+          "reputation": 7,
+          "relationship_bonus": 14
         }
       },
       {
@@ -991,20 +863,12 @@
         }
       },
       {
-        "option": "Learn more about their unique qualities. (72% chance of success)",
-        "message_success": "You express interest in understanding what makes them special. [event_worker] shares insights about their unique background and abilities. 'I appreciate your curiosity. It shows you value more than just the ordinary.' They agree to work for [COST] daily with increased relationship.",
-        "message_failure": "Your approach doesn't quite connect. [event_worker] seems slightly reserved. 'Well, I suppose actions speak louder than words. You'll see my value in time.' They still accept the position at [COST] per day.",
+        "option": "Offer better terms to recognize their exceptional qualities.",
+        "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence, agreeing to work with increased relationship.",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "reputation": 8,
-            "relationship_bonus": 16
-          },
-          "failure": {
-            "recruit_worker": true,
-            "reputation": 3
-          },
-          "success_chance": 0.72
+          "recruit_worker": true,
+          "reputation": 8,
+          "relationship_bonus": 16
         }
       },
       {
