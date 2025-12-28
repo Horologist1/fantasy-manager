@@ -73,7 +73,9 @@ init python:
     def get_trait_prefixes(worker):
         """
         Get trait prefixes in priority order: Transformed > Magical > Futa > Pregnant
-        Returns a list of prefix combinations to try
+        Returns a list of prefix combinations to try.
+        
+        Images should use "pregnant_" prefix (WM images are renamed during import).
         """
         if not worker or "traits" not in worker:
             return []
@@ -152,7 +154,7 @@ init python:
             "Hand": "hand", "Oral": "oral", "Homo": "homo",
             "Special": "special", "Group": "group", "Extreme": "extreme",
             "Striptease": "striptease", "Combat": "combat", "Clever": "clever",
-            "Charm": "charm", "Wait": "wait", "Agility": "agility",
+            "Charm": "charm", "Service": "service", "Agility": "agility",
             "Craft": "craft"
         }
         
@@ -168,8 +170,10 @@ init python:
         """
         special_patterns = {
             "homo": ["les", "gay"],           # Homosexual busca "les" o "gay"
-            "wait": ["service", "maid"],      # Service busca "service" o "maid"
-            "striptease": ["strip", "striptease"]  # Striptease busca "strip" o "striptease"
+            "service": ["wait", "service", "maid"],      # Service busca "wait", "service" o "maid"
+            "special": ["special", "titty"],  # Special busca "special" o "titty"
+            "striptease": ["strip", "striptease"],  # Striptease busca "strip" o "striptease"
+            "extreme": ["extreme", "beast"]  # Extreme busca "extreme" o "beast"
         }
         
         if skill_name in special_patterns:

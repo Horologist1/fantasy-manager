@@ -998,7 +998,7 @@
               "report": "Attended Clients",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Charm"
+                "Clever"
               ],
               "relevant_traits": [
                 "Hardworking",
@@ -1051,6 +1051,88 @@
                   "relationship": 0,
                   "reputation": 10,
                   "libido": 1
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "manager",
+          "name": "Manager",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Clever"
+          ],
+          "max_daily_workers": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "manager_brothel",
+              "weight": 1,
+              "report": "Managed the Brothel",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Elegant",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 100",
+              "trait_success": "The establishment benefits from {worker_name}'s {trait} management.",
+              "earnings": {
+                "success": "120 + skill * 5",
+                "critical_success": "120 + skill * 10",
+                "mediocre": "60 + skill * 2",
+                "failure": "-8"
+              },
+              "story_image": "manager_brothel",
+              "failure_image": "manager_brothel_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to manage the brothel effectively. Poor organization and lack of leadership create chaos, disappointing both workers and clients.",
+                "mediocre": "{worker_name} manages the brothel adequately but without inspiration. Basic operations run smoothly but nothing exceptional happens.",
+                "success": "{worker_name} manages the brothel with skill and professionalism. The establishment runs smoothly, workers are organized, and clients are satisfied.",
+                "critical_success": "{worker_name} excels as a manager, creating an exceptional brothel experience. Perfect organization, inspired leadership, and attention to detail make the establishment legendary."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
                 }
               },
               "loot": {
@@ -1123,7 +1205,7 @@
               "report": "Served Regulars",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Charm"
+                "Clever"
               ],
               "relevant_traits": [
                 "Hardworking",
@@ -1190,7 +1272,7 @@
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
-            "Wait"
+            "Service"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
@@ -1204,7 +1286,7 @@
               "report": "Cooked for a Table",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Wait"
+                "Service"
               ],
               "relevant_traits": [
                 "Creative",
@@ -1269,7 +1351,7 @@
               "report": "Cooked for a VIP",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Wait"
+                "Service"
               ],
               "relevant_traits": [
                 "Creative",
@@ -1321,6 +1403,88 @@
                   "romance": 0,
                   "relationship": 0,
                   "reputation": 20,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "manager",
+          "name": "Manager",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Clever"
+          ],
+          "max_daily_workers": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "manager_restaurant",
+              "weight": 1,
+              "report": "Managed the Restaurant",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Elegant",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 100",
+              "trait_success": "The restaurant benefits from {worker_name}'s {trait} management.",
+              "earnings": {
+                "success": "120 + skill * 5",
+                "critical_success": "120 + skill * 10",
+                "mediocre": "60 + skill * 2",
+                "failure": "-8"
+              },
+              "story_image": "manager_restaurant",
+              "failure_image": "manager_restaurant_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to manage the restaurant effectively. Poor coordination between kitchen and service creates chaos, disappointing both staff and diners.",
+                "mediocre": "{worker_name} manages the restaurant adequately but without inspiration. Operations run smoothly but nothing exceptional happens.",
+                "success": "{worker_name} manages the restaurant with skill and professionalism. The establishment runs smoothly, staff is organized, and diners are satisfied.",
+                "critical_success": "{worker_name} excels as a manager, creating an exceptional dining experience. Perfect coordination, inspired leadership, and attention to detail make the restaurant legendary."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
                   "libido": 0
                 }
               },
@@ -1674,6 +1838,88 @@
           ]
         },
         {
+          "id": "manager",
+          "name": "Manager",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Clever"
+          ],
+          "max_daily_workers": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "manager_adventurers_guild",
+              "weight": 1,
+              "report": "Managed the Guild",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Elegant",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 100",
+              "trait_success": "The guild benefits from {worker_name}'s {trait} management.",
+              "earnings": {
+                "success": "120 + skill * 5",
+                "critical_success": "120 + skill * 10",
+                "mediocre": "60 + skill * 2",
+                "failure": "-8"
+              },
+              "story_image": "manager_adventurers_guild",
+              "failure_image": "manager_adventurers_guild_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to manage the guild effectively. Poor organization and lack of leadership create chaos, disappointing both adventurers and clients.",
+                "mediocre": "{worker_name} manages the guild adequately but without inspiration. Basic operations run smoothly but nothing exceptional happens.",
+                "success": "{worker_name} manages the guild with skill and professionalism. The establishment runs smoothly, adventurers are organized, and contracts are fulfilled efficiently.",
+                "critical_success": "{worker_name} excels as a manager, creating an exceptional guild experience. Perfect organization, inspired leadership, and attention to detail make the guild legendary."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
           "id": "rest",
           "name": "Rest",
           "nsfw": false,
@@ -1942,6 +2188,88 @@
           ]
         },
         {
+          "id": "manager",
+          "name": "Manager",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Clever"
+          ],
+          "max_daily_workers": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "manager_tavern",
+              "weight": 1,
+              "report": "Managed the Tavern",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Elegant",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 100",
+              "trait_success": "The tavern benefits from {worker_name}'s {trait} management.",
+              "earnings": {
+                "success": "120 + skill * 5",
+                "critical_success": "120 + skill * 10",
+                "mediocre": "60 + skill * 2",
+                "failure": "-8"
+              },
+              "story_image": "manager_tavern",
+              "failure_image": "manager_tavern_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to manage the tavern effectively. Poor organization and lack of leadership create chaos, disappointing both staff and patrons.",
+                "mediocre": "{worker_name} manages the tavern adequately but without inspiration. Basic operations run smoothly but nothing exceptional happens.",
+                "success": "{worker_name} manages the tavern with skill and professionalism. The establishment runs smoothly, staff is organized, and patrons are satisfied.",
+                "critical_success": "{worker_name} excels as a manager, creating an exceptional tavern experience. Perfect organization, inspired leadership, and attention to detail make the tavern legendary."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
           "id": "rest",
           "name": "Rest",
           "nsfw": false,
@@ -1991,7 +2319,7 @@
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
-            "Wait"
+            "Service"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
@@ -2005,7 +2333,7 @@
               "report": "Worked as Croupier",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Wait"
+                "Service"
               ],
               "relevant_traits": [
                 "Charming",
@@ -2203,6 +2531,88 @@
                   "romance": 0,
                   "relationship": 0,
                   "reputation": 10,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "manager",
+          "name": "Manager",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Clever"
+          ],
+          "max_daily_workers": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "manager_casino",
+              "weight": 1,
+              "report": "Managed the Casino",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Elegant",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 100",
+              "trait_success": "The casino benefits from {worker_name}'s {trait} management.",
+              "earnings": {
+                "success": "120 + skill * 5",
+                "critical_success": "120 + skill * 10",
+                "mediocre": "60 + skill * 2",
+                "failure": "-8"
+              },
+              "story_image": "manager_casino",
+              "failure_image": "manager_casino_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to manage the casino effectively. Poor organization and lack of leadership create chaos, disappointing both staff and gamblers.",
+                "mediocre": "{worker_name} manages the casino adequately but without inspiration. Basic operations run smoothly but nothing exceptional happens.",
+                "success": "{worker_name} manages the casino with skill and professionalism. The establishment runs smoothly, dealers are organized, and gamblers are satisfied.",
+                "critical_success": "{worker_name} excels as a manager, creating an exceptional casino experience. Perfect organization, inspired leadership, and attention to detail make the casino legendary."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
                   "libido": 0
                 }
               },

@@ -94,7 +94,7 @@ default objective_descriptions = {
     
     5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors shall I learn to tend to my workers' needs and employ items with wisdom and effectiveness.",
     
-    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its supplies for the trials ahead. To elevate a building's level shall cost five thousand coins of the realm. Then, I must increase the building's supplies bonus by ten measures, be they equipment, ingredients, or mystical potions - whatever the establishment requires to weather the storms of fortune.",
+    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its supplies for the trials ahead. To elevate a building's level shall cost one thousand coins of the realm. Then, I must increase the building's supplies bonus by ten measures, be they equipment, ingredients, or mystical potions - whatever the establishment requires to weather the storms of fortune.",
     
     7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. A cordial discourse shall reveal their true nature, their motivations, and the depths of their loyalty. I should speak with any of my workers - beginning with gentle conversation to understand the souls who would follow me into darkness.",
     

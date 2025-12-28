@@ -2841,7 +2841,7 @@ screen manager_inventory(shop_mode=None):
 
                             for item in equipped_items:
                                 $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
-                                $ bg_button = Solid("#ff69b4")
+                                $ bg_button = Solid("#d4a574")
                                 button:
                                     background bg_button
                                     xsize 500
@@ -3076,7 +3076,7 @@ screen manager_inventory(shop_mode=None):
                                     for item in equipped_items:
                                         $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
                                         $ label, the_action, is_sens, btn_bg = get_item_action_elements(item, item_info, right_worker)
-                                        $ bg_button = Solid("#ff69b4")
+                                        $ bg_button = Solid("#d4a574")
                                         button:
                                             background bg_button
                                             xsize 500
@@ -5069,7 +5069,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         range calculate_max_energy(worker)
                                         xsize 190
                                         ysize 30
-                                        left_bar "#0000ff"
+                                        left_bar "#4a6fa5"  # Azul desaturado
                                         right_bar "#444444"
                                     text "Energy [worker['energy']]/[calculate_max_energy(worker)]" size 18 color "#ffffff" xalign 0.5 yalign 0.5
                             frame:
@@ -5085,7 +5085,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         range calculate_max_health(worker)
                                         xsize 190
                                         ysize 30
-                                        left_bar "#ff0000"
+                                        left_bar "#a54a4a"  # Rojo desaturado
                                         right_bar "#444444"
                                     text "Health [worker['health']]/[calculate_max_health(worker)]" size 18 color "#ffffff" xalign 0.5 yalign 0.5
                     
@@ -5358,14 +5358,14 @@ screen workers():
                 
                 # Menú desplegable para seleccionar edificio
                 frame:
-                    background "#1a1a1acc"
+                    background "#4a2a1acc"
                     padding (10, 5)
                     
                     button:
                         xsize 300
                         ysize 40
-                        background "#333333"
-                        hover_background "#555555"
+                        background "#5a3a1a"
+                        hover_background "#6b4a2a"
                         
                         text "[worker_building_filter]" size 18 color "#ffffff" xalign 0.5 yalign 0.5
                         
@@ -5503,8 +5503,6 @@ screen map_screen():
     zorder 2
     modal True
     add map_bg
-    # Draw full-width decorative PNG centered behind the menu, without clipping
-    add context_menu_bg xalign 0.5 yalign 0.5
     
     # Map building buttons with focus_mask
     # Images are full map size with transparent areas, so they auto-position correctly
@@ -5822,6 +5820,9 @@ screen map_screen():
         hovered ShowTransient("tooltip", message="Go to [get_building_1_display_name()]")
         unhovered Hide("tooltip")
     
+    # Context menu background - placed after all map buttons so it renders on top
+    add context_menu_bg xalign 0.5 yalign 0.5
+    
     vbox:
         xpos 1615
         ypos 70
@@ -5962,7 +5963,7 @@ screen daily_report():
                     xalign 0.5
                     yoffset -30  # Lowered filter 10px more
                     
-                    text "Filter by Building:" size 20 color "#ffffff" yalign 0.5
+                    text "Filter by Building:" size 20 color "#7a4b2a" yalign 0.5
                     
                     # Crear lista de edificios únicos
                     python:
@@ -5983,14 +5984,14 @@ screen daily_report():
                     
                     # Menú desplegable para seleccionar edificio
                     frame:
-                        background "#1a1a1acc"
+                        background "#4a2a1acc"
                         padding (10, 5)
                         
                         button:
                             xsize 300
                             ysize 40
-                            background "#333333"
-                            hover_background "#555555"
+                            background "#5a3a1a"
+                            hover_background "#6b4a2a"
                             
                             text "[building_filter]" size 18 color "#ffffff" xalign 0.5 yalign 0.5
                             
@@ -6178,7 +6179,7 @@ screen building_filter_menu(buildings):
     frame:
         xalign 0.5
         yalign 0.3
-        background "#1a1a1acc"
+        background "#4a2a1acc"
         padding (10, 10)
         
         vbox:
@@ -6192,8 +6193,8 @@ screen building_filter_menu(buildings):
                 textbutton "[building]":
                     xsize 300
                     ysize 30
-                    background "#333333"
-                    hover_background "#555555"
+                    background "#5a3a1a"
+                    hover_background "#6b4a2a"
                     text_size 16
                     text_color "#ffffff"
                     text_hover_color "#6b6528"
@@ -6294,7 +6295,7 @@ screen report_details(report):
                             text "[event_description]" size 18 color "#ffffff" xalign 0.0 text_align 0.0 substitute True
                             if loot_items:
                                 text ""  # Blank line for spacing
-                                text "Loot Obtained:" size 18 color "#ff69b4" bold True
+                                text "Loot Obtained:" size 18 color "#006600" bold True
                                 for item in loot_items:
                                     # If 'item' is a string (the id), look it up in items_json
                                     if isinstance(item, str):
@@ -6572,7 +6573,7 @@ screen worker_building_filter_menu(buildings):
     frame:
         xalign 0.5
         yalign 0.3
-        background "#1a1a1acc"
+        background "#4a2a1acc"
         padding (10, 10)
         
         vbox:
@@ -6586,8 +6587,8 @@ screen worker_building_filter_menu(buildings):
                 textbutton "[building]":
                     xsize 300
                     ysize 30
-                    background "#333333"
-                    hover_background "#555555"
+                    background "#5a3a1a"
+                    hover_background "#6b4a2a"
                     text_size 16
                     text_color "#ffffff"
                     text_hover_color "#6b6528"

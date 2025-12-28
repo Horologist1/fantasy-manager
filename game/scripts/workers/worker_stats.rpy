@@ -131,22 +131,56 @@ init python:
             worker["libido"] = 0
             renpy.log(f"Libido overflow for {worker.get('name', 'Unknown')}: +{overflow_amount} rebelliousness")
 
+    def get_sexual_skill_names():
+        """Return list of sexual skill names that receive Libido bonus and count for libido drain."""
+        return ["Sex", "Anal", "BDSM", "Hand", "Oral", "Homo", "Special", "Group", "Extreme", "Striptease"]
+
+    def count_sexual_work_today(worker):
+        """Count how many times this worker used sexual skills today."""
+        sexual_skills = get_sexual_skill_names()
+        skill_uses = worker.get("skill_uses", {})
+        total = 0
+        for skill_name in sexual_skills:
+            total += skill_uses.get(skill_name, 0)
+        return total
+
     def calculate_libido_regeneration(worker):
-        """Return effective libido regeneration (base 1 + level + trait + item bonuses)."""
+        """
+        Return effective libido regeneration considering work intensity.
+        
+        Base regeneration: 1 + level + trait + item bonuses
+        Penalty for sexual work: -1 per sexual skill use (minimum result: -2)
+        
+        This means:
+        - No sexual work: full regeneration
+        - Light work (1-2 uses): slight penalty
+        - Heavy work (3+ uses): may not regenerate or even decrease
+        """
         base_regen = 1 + worker.get("level", 1)
         bonus = 0
+        
         # Trait bonuses
         for trait_name in worker.get("traits", []):
             for trait in traits_list:
                 if trait["name"] == trait_name:
                     bonus += trait.get("modifiers", {}).get("libido_regeneration", 0)
+        
         # Item bonuses
         for item in worker.get("inventory", []):
             if isinstance(item, tuple) and len(item) >= 3 and item[2]:
                 item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
                 if item_data and "effect" in item_data and isinstance(item_data["effect"], dict):
                     bonus += item_data["effect"].get("libido_regeneration", 0)
-        return base_regen + bonus
+        
+        # Calculate work penalty
+        sexual_work_count = count_sexual_work_today(worker)
+        work_penalty = sexual_work_count  # -1 per sexual skill use
+        
+        # Total regeneration (can be negative, minimum -2)
+        total_regen = base_regen + bonus - work_penalty
+        
+        # Allow slight decrease if overworked, but cap at -2 to prevent rapid drain
+        return max(-2, total_regen)
 
     def get_max_libido(worker):
         """Return the maximum libido considering base, traits, items, and trait caps."""
@@ -171,17 +205,40 @@ init python:
         return max_libido
 
     def regenerate_libido(worker):
-        """Regenerate libido based on worker level + trait + item bonuses with dynamic max."""
+        """
+        Regenerate libido at end of day, considering sexual work done.
+        
+        - Regeneration can be negative if worker did lots of sexual work
+        - If libido goes below 0, overflow converts to rebelliousness
+        - Clears skill_uses counter after processing
+        """
         current_libido = worker.get("libido", 10)
         regen_amount = calculate_libido_regeneration(worker)
         max_lib = get_max_libido(worker)
-        new_libido = min(max_lib, current_libido + regen_amount)
-        worker["libido"] = new_libido
-        renpy.log(f"Libido regeneration for {worker.get('name', 'Unknown')}: +{regen_amount} (now {new_libido}/{max_lib})")
-
-    def get_sexual_skill_names():
-        """Return list of sexual skill names that receive Libido bonus."""
-        return ["Sex", "Anal", "BDSM", "Hand", "Oral", "Homo", "Special", "Group", "Extreme", "Striptease"]
+        
+        # Count work for logging
+        sexual_work = count_sexual_work_today(worker)
+        
+        # Calculate new libido
+        new_libido = current_libido + regen_amount
+        
+        # Handle overflow to rebelliousness if libido goes negative
+        if new_libido < 0:
+            overflow = abs(new_libido)
+            apply_libido_overflow(worker, -overflow)  # This sets libido to 0
+            renpy.log(f"Libido DRAIN for {worker.get('name', 'Unknown')}: {current_libido} -> 0 (overflow {overflow} to rebelliousness), sexual work: {sexual_work}")
+        else:
+            # Cap at max libido
+            new_libido = min(max_lib, new_libido)
+            worker["libido"] = new_libido
+            
+            if regen_amount >= 0:
+                renpy.log(f"Libido regen for {worker.get('name', 'Unknown')}: {current_libido} -> {new_libido} (+{regen_amount}), sexual work: {sexual_work}")
+            else:
+                renpy.log(f"Libido drain for {worker.get('name', 'Unknown')}: {current_libido} -> {new_libido} ({regen_amount}), sexual work: {sexual_work}")
+        
+        # Clear skill uses counter for next day
+        worker["skill_uses"] = {}
 
     def modify_base_skill(worker, skill_name, change):
         """Modify a base skill while ensuring it doesn't exceed SKILL_MAX (100)."""

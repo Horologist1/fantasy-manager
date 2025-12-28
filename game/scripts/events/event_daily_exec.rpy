@@ -367,7 +367,7 @@ init python:
                         full_description = base_description
                         if trait_success_messages:
                             full_description += "\n" + "\n".join(trait_success_messages)
-                        full_description += "\n\n{{color=#ff69b4}}{{size=18}}(Skill roll: {}){{/size}}{{/color}}".format(roll)
+                        full_description += "\n\n{{color=#006600}}{{size=18}}(Skill roll: {}){{/size}}{{/color}}".format(roll)
 
                         # Use skill name directly
                         if selected_skill is not None:

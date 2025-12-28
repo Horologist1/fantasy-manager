@@ -19,7 +19,7 @@ init python:
         base_skills = {
             "Sex": 5, "Anal": 5, "BDSM": 5, "Hand": 5, "Oral": 5, "Homo": 5,
             "Special": 5, "Group": 5, "Extreme": 5, "Striptease": 5, "Combat": 5, "Clever": 5,
-            "Charm": 5, "Wait": 5, "Agility": 5, "Craft": 5, "Specialty 4": 5, "Specialty 5": 5,
+            "Charm": 5, "Service": 5, "Agility": 5, "Craft": 5, "Specialty 4": 5, "Specialty 5": 5,
             "Specialty 6": 5, "Specialty 7": 5, "Specialty 8": 5, "Specialty 9": 5, "Specialty 10": 5,
             "Specialty 11": 5, "Specialty 12": 5
         }

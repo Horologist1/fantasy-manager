@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 3218: The if statement is not a valid child of the textbutton statement.
-    text_color "#3c1f14" if selected_category is None else "#6b6528"
-                           ^
+File "game/scripts/core/screens.rpy", line 5364: Line is indented, but the preceding padding statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
+    button:
+    ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Sun Nov 16 06:19:05 2025
+Sun Dec 28 01:23:48 2025

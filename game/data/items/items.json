@@ -525,7 +525,7 @@
           "Combat": 70,
           "Clever": 70,
           "Charm": 70,
-          "Wait": 70,
+          "Service": 70,
           "Agility": 70,
           "Craft": 70,
           "Specialty 4": 70,
@@ -598,7 +598,7 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Wait": 4
+          "Service": 4
         }
       },
       "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Wait)",
@@ -613,7 +613,7 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Wait": 7
+          "Service": 7
         }
       },
       "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Wait)",
@@ -658,7 +658,7 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Wait": 5
+          "Service": 5
         }
       },
       "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Wait)",
@@ -673,7 +673,7 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Wait": 8
+          "Service": 8
         }
       },
       "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Wait)",
@@ -688,7 +688,7 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Wait": 3
+          "Service": 3
         }
       },
       "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Wait)",
@@ -926,29 +926,13 @@
       "weight": 4
     },
     {
-      "id": "elite_performer_costume",
-      "name": "The Bard's Legendary Attire",
-      "display_name": "The Bard's Legendary Attire",
-      "type": "clothing",
-      "effect": {
-        "skill_modifiers": {
-          "Striptease": 7,
-          "Charm": 5
-        }
-      },
-      "description": "Worn by the greatest bard in history, this costume is said to make any performance so captivating that audiences forget the world around them. (+7 Striptease, +5 Charm)",
-      "durability": 130,
-      "price": 360,
-      "weight": 5
-    },
-    {
       "id": "basic_chef_apron",
-      "name": "Chef's Apron",
-      "display_name": "Chef's Apron",
+      "name": "Simple Chef Apron",
+      "display_name": "Simple Chef Apron",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Wait": 2
+          "Service": 2
         }
       },
       "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Wait)",
@@ -958,12 +942,12 @@
     },
     {
       "id": "advanced_chef_apron",
-      "name": "Master Chef's Apron",
-      "display_name": "Master Chef's Apron",
+      "name": "Expert Chef Apron",
+      "display_name": "Expert Chef Apron",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Wait": 5
+          "Service": 5
         }
       },
       "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Wait)",
@@ -978,7 +962,7 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Wait": 9
+          "Service": 9
         }
       },
       "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Wait)",
@@ -988,8 +972,8 @@
     },
     {
       "id": "basic_service_uniform",
-      "name": "Service Uniform",
-      "display_name": "Service Uniform",
+      "name": "Basic Service Uniform",
+      "display_name": "Basic Service Uniform",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
@@ -1003,8 +987,8 @@
     },
     {
       "id": "premium_service_dress",
-      "name": "Elegant Service Dress",
-      "display_name": "Elegant Service Dress",
+      "name": "Refined Service Dress",
+      "display_name": "Refined Service Dress",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
@@ -1023,7 +1007,7 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Wait": 3
+          "Service": 3
         }
       },
       "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Wait)",
@@ -1038,7 +1022,7 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Wait": 6
+          "Service": 6
         }
       },
       "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Wait)",
@@ -1053,7 +1037,7 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Wait": 10
+          "Service": 10
         }
       },
       "description": "Legend says this blade was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Wait)",
@@ -1063,12 +1047,12 @@
     },
     {
       "id": "basic_cooking_utensils",
-      "name": "Cooking Utensils",
-      "display_name": "Cooking Utensils",
+      "name": "Basic Cooking Set",
+      "display_name": "Basic Cooking Set",
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Wait": 2
+          "Service": 2
         }
       },
       "description": "Essential cooking tools for everyday kitchen work. (+2 Wait)",
@@ -1077,12 +1061,12 @@
     },
     {
       "id": "advanced_cooking_utensils",
-      "name": "Professional Cooking Utensils",
-      "display_name": "Professional Cooking Utensils",
+      "name": "Expert Cooking Set",
+      "display_name": "Expert Cooking Set",
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Wait": 4
+          "Service": 4
         }
       },
       "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Wait)",
@@ -1096,7 +1080,7 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Wait": 6
+          "Service": 6
         }
       },
       "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Wait)",
@@ -1105,8 +1089,8 @@
     },
     {
       "id": "basic_sensual_dress",
-      "name": "Sensual Dress",
-      "display_name": "Sensual Dress",
+      "name": "Alluring Dress",
+      "display_name": "Alluring Dress",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
@@ -1339,8 +1323,8 @@
     },
     {
       "id": "basic_bartender_apron",
-      "name": "Bartender's Apron",
-      "display_name": "Bartender's Apron",
+      "name": "Simple Bartender Apron",
+      "display_name": "Simple Bartender Apron",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
@@ -1354,8 +1338,8 @@
     },
     {
       "id": "advanced_bartender_apron",
-      "name": "Master Bartender's Apron",
-      "display_name": "Master Bartender's Apron",
+      "name": "Expert Bartender Apron",
+      "display_name": "Expert Bartender Apron",
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
@@ -1384,8 +1368,8 @@
     },
     {
       "id": "basic_bar_tools",
-      "name": "Bar Tools",
-      "display_name": "Bar Tools",
+      "name": "Basic Bar Set",
+      "display_name": "Basic Bar Set",
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
@@ -1398,8 +1382,8 @@
     },
     {
       "id": "advanced_bar_tools",
-      "name": "Professional Bar Tools",
-      "display_name": "Professional Bar Tools",
+      "name": "Expert Bar Set",
+      "display_name": "Expert Bar Set",
       "type": "accessory",
       "effect": {
         "skill_modifiers": {

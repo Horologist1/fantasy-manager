@@ -36,39 +36,54 @@ label start_recruitment_system:
                 renpy.show_screen("error_popup", message="No recruitment events available")
                 renpy.return_statement()
             
-            # Select random event based on weight from available events
-            total_weight = sum(event.get("weight", 1) for event in available_events)
-            r = random.random() * total_weight
-            current_weight = 0
-            selected_event = available_events[0]  # fallback
+            # IMPORTANT: Prioritize specific worker events over generic events
+            # First, select a random worker from candidates
+            selected_worker = random.choice(recruit_candidates)
+            worker_name = selected_worker.get("name", "")
             
+            # Check if there's a specific event for this worker
+            specific_event = None
             for event in available_events:
-                current_weight += event.get("weight", 1)
-                if r <= current_weight:
-                    selected_event = event
-                    break
+                if not event.get("random_worker", True):
+                    event_worker_name = event.get("worker_name")
+                    if event_worker_name and event_worker_name == worker_name:
+                        specific_event = event
+                        renpy.log(f"Found specific event {event.get('id')} for worker {worker_name}")
+                        break
             
-            # Select worker based on event requirements
-            if selected_event.get("random_worker", True):
-                # Random worker - filter by gender requirement if specified
+            if specific_event:
+                # Use the specific event for this worker
+                selected_event = specific_event
+            else:
+                # No specific event - use a generic random worker event
+                generic_events = [e for e in available_events if e.get("random_worker", True)]
+                if not generic_events:
+                    renpy.log("No generic recruitment events available")
+                    renpy.show_screen("error_popup", message="No recruitment events available")
+                    renpy.return_statement()
+                
+                # Select random generic event based on weight
+                total_weight = sum(event.get("weight", 1) for event in generic_events)
+                r = random.random() * total_weight
+                current_weight = 0
+                selected_event = generic_events[0]  # fallback
+                
+                for event in generic_events:
+                    current_weight += event.get("weight", 1)
+                    if r <= current_weight:
+                        selected_event = event
+                        break
+                
+                # Filter worker by gender requirement if specified
                 worker_gender_requirement = selected_event.get("worker_gender_requirement", None)
                 if worker_gender_requirement:
-                    recruit_candidates = [w for w in recruit_candidates if w.get("gender", "") == worker_gender_requirement]
-                    if not recruit_candidates:
+                    filtered_candidates = [w for w in recruit_candidates if w.get("gender", "") == worker_gender_requirement]
+                    if filtered_candidates:
+                        selected_worker = random.choice(filtered_candidates)
+                    else:
                         renpy.log(f"No workers available matching gender requirement: {worker_gender_requirement}")
                         renpy.show_screen("error_popup", message="No suitable workers available for this event")
                         renpy.return_statement()
-                selected_worker = random.choice(recruit_candidates)
-            else:
-                # Specific worker name - find the worker (we already verified it exists in the filter step)
-                worker_name = selected_event.get("worker_name")
-                selected_worker = next((w for w in recruit_candidates if w.get("name") == worker_name), None)
-                
-                if not selected_worker:
-                    # This shouldn't happen if filtering worked correctly, but handle it anyway
-                    renpy.log(f"Worker {worker_name} not found in recruit candidates (this should not happen)")
-                    renpy.show_screen("error_popup", message=f"Worker {worker_name} is not available for recruitment")
-                    renpy.return_statement()
             
             # Store globally
             store.current_recruitment_event = selected_event

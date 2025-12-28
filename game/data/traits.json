@@ -352,7 +352,7 @@
         "duration": 7,
         "modifiers": {
             "skill_modifiers": {
-                "Wait": -2
+                "Service": -2
             }
         },
         "description": "A magical curse clouds the worker's judgment, impairing their service skills.",
@@ -720,7 +720,7 @@
             "rebelliousness": -15,
             "relationship": 10,
             "skill_modifiers": {
-                "Wait": 2
+                "Service": 2
             }
         },
         "description": "They follow orders without question and aim to please.",
@@ -903,7 +903,7 @@
         "removes_traits": [],
         "modifiers": {
             "skill_modifiers": {
-                "Wait": 3,
+                "Service": 3,
                 "Charm": 1
             },
             "rebelliousness": -5
@@ -972,7 +972,7 @@
         "removes_traits": [],
         "modifiers": {
             "skill_modifiers": {
-                "Wait": 4,
+                "Service": 4,
                 "Charm": 1,
                 "Agility": 1
             }

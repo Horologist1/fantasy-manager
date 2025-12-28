@@ -246,7 +246,8 @@ init python:
         """
         special_patterns = {
             "homo": ["les", "gay"],           # Homosexual busca "les" o "gay"
-            "wait": ["service", "maid"],      # Service busca "service" o "maid"
+            "service": ["wait", "service", "maid"],      # Service busca "wait", "service" o "maid"
+            "special": ["special", "titty"],  # Special busca "special" o "titty"
             "striptease": ["strip", "striptease"]  # Striptease busca "strip" o "striptease"
         }
         
@@ -369,12 +370,48 @@ init python:
             for skill_pattern_name in skill_patterns:
                 # Try general skill image using robust matching
                 skill_matches = get_pattern_matches_flexible(base_folder, skill_pattern_name, exclude_failure=True)
+                # Exclude trait-prefixed files if worker doesn't have those traits
                 if skill_matches:
-                    # Use random selection WITHOUT cache
-                    selected = get_random_choice(skill_matches)
-                    if selected:
-                        renpy.log(f"Found skill image: {selected}")
-                        return selected
+                    worker_traits = worker.get("traits", [])
+                    trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
+                    trait_names = ("pregnant", "futa", "transformed", "magical")
+                    filtered_matches = []
+                    for f in skill_matches:
+                        basename = os.path.basename(f).lower()
+                        should_exclude = False
+                        
+                        # Check for single trait prefix
+                        for i, prefix in enumerate(trait_file_prefixes):
+                            if basename.startswith(prefix):
+                                trait_name = trait_names[i].capitalize()
+                                if trait_name not in worker_traits:
+                                    should_exclude = True
+                                break
+                        
+                        # Check for trait combinations (e.g., "transformed_pregnant_")
+                        if not should_exclude:
+                            for trait1 in trait_names:
+                                for trait2 in trait_names:
+                                    if trait1 != trait2:
+                                        combo_prefix = f"{trait1}_{trait2}_"
+                                        if basename.startswith(combo_prefix):
+                                            trait1_name = trait1.capitalize()
+                                            trait2_name = trait2.capitalize()
+                                            if trait1_name not in worker_traits or trait2_name not in worker_traits:
+                                                should_exclude = True
+                                                break
+                                if should_exclude:
+                                    break
+                        
+                        if not should_exclude:
+                            filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        # Use random selection WITHOUT cache
+                        selected = get_random_choice(filtered_matches)
+                        if selected:
+                            renpy.log(f"Found skill image: {selected}")
+                            return selected
         
         # PRIORITY 3: Default folder with traits (for skill-based images)
         if trait_prefixes and skill_name is not None:
@@ -395,12 +432,48 @@ init python:
             for skill_pattern_name in skill_patterns:
                 # Try general skill image in default folder using robust matching
                 skill_matches = get_pattern_matches_flexible(default_folder, skill_pattern_name, exclude_failure=True)
+                # Exclude trait-prefixed files if worker doesn't have those traits
                 if skill_matches:
-                    # Use random selection WITHOUT cache
-                    selected = get_random_choice(skill_matches)
-                    if selected:
-                        renpy.log(f"Found default skill image: {selected}")
-                        return selected
+                    worker_traits = worker.get("traits", [])
+                    trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
+                    trait_names = ("pregnant", "futa", "transformed", "magical")
+                    filtered_matches = []
+                    for f in skill_matches:
+                        basename = os.path.basename(f).lower()
+                        should_exclude = False
+                        
+                        # Check for single trait prefix
+                        for i, prefix in enumerate(trait_file_prefixes):
+                            if basename.startswith(prefix):
+                                trait_name = trait_names[i].capitalize()
+                                if trait_name not in worker_traits:
+                                    should_exclude = True
+                                break
+                        
+                        # Check for trait combinations (e.g., "transformed_pregnant_")
+                        if not should_exclude:
+                            for trait1 in trait_names:
+                                for trait2 in trait_names:
+                                    if trait1 != trait2:
+                                        combo_prefix = f"{trait1}_{trait2}_"
+                                        if basename.startswith(combo_prefix):
+                                            trait1_name = trait1.capitalize()
+                                            trait2_name = trait2.capitalize()
+                                            if trait1_name not in worker_traits or trait2_name not in worker_traits:
+                                                should_exclude = True
+                                                break
+                                if should_exclude:
+                                    break
+                        
+                        if not should_exclude:
+                            filtered_matches.append(f)
+                    
+                    if filtered_matches:
+                        # Use random selection WITHOUT cache
+                        selected = get_random_choice(filtered_matches)
+                        if selected:
+                            renpy.log(f"Found default skill image: {selected}")
+                            return selected
         
         # Fallback to regular worker image
         renpy.log(f"No skill images found for {skill_name}, falling back to profile")
@@ -672,6 +745,12 @@ init python:
                         store.money += money_change
                         renpy.notify(f"Money changed by ${money_change}")
                         renpy.log(f"use_item: Applied money effect: ${money_change} (used by {worker.get('name', 'worker')})")
+                        # Check objective completion after money change (for Objective 4: 5000 coins)
+                        if hasattr(store, 'tutorial_active') and store.tutorial_active:
+                            try:
+                                check_objective_completion()
+                            except Exception as e:
+                                renpy.log(f"Error checking objective completion after item money effect: {e}")
                     elif effect_type == "health":
                         worker["health"] = min(calculate_max_health(worker), worker["health"] + effect_value)
                     elif effect_type == "energy":
@@ -1015,11 +1094,15 @@ init python:
         all_workers = load_workers(include_unique=True, include_encounter_only=False)
         hired_names = {w["name"] for w in workers}
         
-        # Get available JSON workers (not hired, not dead, not recruit_only)
+        # Get available JSON workers (not hired, not dead, not recruit_only, not unique, not monsters)
+        # Unique workers should only appear in special recruitment events, not in the normal buy menu
+        # Monsters should ONLY appear in monster capture events, never in buy menu or recruitment events
         json_workers = [
             w for w in all_workers
             if not w.get("procedural", False)
             and not w.get("recruit_only", False)  # Exclude recruit_only workers
+            and not w.get("unique", False)  # Exclude unique workers (they appear in recruitment events only)
+            and not w.get("monster", False)  # Exclude monsters (they only appear in capture events)
             and w["name"] not in hired_names  # Exclude ALL hired workers
             and not is_worker_dead(w["name"])
         ]
@@ -1132,7 +1215,8 @@ init python:
             return (False, None)
         elif worker_name:
             worker = next((w for w in all_workers if w["name"] == worker_name), None)
-            if worker and worker["name"] not in recruited_names and not is_worker_dead(worker["name"]):
+            # Monsters should only be available in capture events, not in normal recruitment
+            if worker and worker["name"] not in recruited_names and not is_worker_dead(worker["name"]) and not worker.get("monster", False):
                 return (True, worker)
             return (False, None)
         return (False, None)
@@ -1903,7 +1987,7 @@ init python:
 
     def upgrade_building(building_name):
         building = available_buildings[building_name]
-        upgrade_cost = building["base_level"] * 1000
+        upgrade_cost = building["base_level"] ** 2 * 1000
         
         if store.money < upgrade_cost:
             renpy.notify("Not enough money to upgrade!")
@@ -2481,6 +2565,13 @@ init python:
                 renpy.notify(f"Money changed by ${money_change} (x{money_multiplier:.1f} building bonus)")
             else:
                 renpy.notify(f"Money changed by ${money_change}")
+            
+            # Check objective completion after money change (for Objective 4: 5000 coins)
+            if hasattr(store, 'tutorial_active') and store.tutorial_active:
+                try:
+                    check_objective_completion()
+                except Exception as e:
+                    renpy.log(f"Error checking objective completion after event money change: {e}")
 
         # Apply reputation changes with building level multiplier (FOR RANDOM EVENTS ONLY)
         if "reputation" in effect_dict:
@@ -2980,6 +3071,99 @@ init python:
         # If we got here, no worker has an active profession
         renpy.log("DEBUG: No workers found with active professions")
         return False
+    
+    # Function to count active Manager professions that reduce event probability
+    def count_active_managers():
+        """Count how many workers are assigned as Manager, which reduces event probability"""
+        manager_count = 0
+        manager_names = []
+        for worker in store.workers:
+            building_name = worker.get("assigned_building", "Unassigned")
+            if building_name == "Unassigned":
+                continue
+            
+            building = available_buildings.get(building_name, {})
+            servant_job = building.get("servant_jobs", {}).get(worker["name"], "")
+            
+            # Check if the job is "manager" (case-insensitive)
+            if servant_job and servant_job.lower() == "manager":
+                manager_count += 1
+                manager_names.append(worker["name"])
+        
+        if manager_count > 0:
+            renpy.log(f"DEBUG: Found {manager_count} active Manager(s): {', '.join(manager_names)}")
+        
+        return manager_count
+    
+    # Function to count Managers in a specific building
+    def count_managers_in_building(building_name):
+        """Count how many Managers are assigned to a specific building"""
+        building = available_buildings.get(building_name, {})
+        if not building:
+            return 0
+        
+        manager_count = 0
+        manager_names = []
+        assigned_servants = building.get("assigned_servants", [])
+        servant_jobs = building.get("servant_jobs", {})
+        
+        for worker in assigned_servants:
+            # Extract worker name safely
+            if isinstance(worker, dict):
+                worker_name = worker.get("name", "")
+            else:
+                worker_name = str(worker) if worker else ""
+            
+            # Skip if we don't have a valid worker name
+            if not worker_name or not isinstance(worker_name, str):
+                continue
+                
+            job = servant_jobs.get(worker_name, "")
+            if job and job.lower() == "manager":
+                manager_count += 1
+                manager_names.append(worker_name)
+        
+        if manager_count > 0:
+            renpy.log(f"DEBUG: Found {manager_count} Manager(s) in {building_name}: {', '.join(manager_names)}")
+        
+        return manager_count
+    
+    # Function to check if a building has workers with active professions
+    def building_has_active_professions(building_name):
+        """Check if a specific building has workers with active professions"""
+        building = available_buildings.get(building_name, {})
+        if not building:
+            return False
+        
+        assigned_servants = building.get("assigned_servants", [])
+        servant_jobs = building.get("servant_jobs", {})
+        
+        # If no assigned servants, no active professions
+        if not assigned_servants:
+            return False
+        
+        # Check each worker
+        for worker in assigned_servants:
+            # Extract worker name safely
+            if isinstance(worker, dict):
+                worker_name = worker.get("name", "")
+            else:
+                worker_name = str(worker) if worker else ""
+            
+            # Skip if we don't have a valid worker name
+            if not worker_name or not isinstance(worker_name, str):
+                continue
+                
+            # Get job from servant_jobs dict
+            job = servant_jobs.get(worker_name, "")
+            
+            # Check if job is active (not rest, unassigned, or empty)
+            if job and isinstance(job, str) and job.lower() not in ["rest", "unassigned", ""]:
+                renpy.log(f"DEBUG: building_has_active_professions found active job '{job}' for worker '{worker_name}' in building '{building_name}'")
+                return True
+        
+        renpy.log(f"DEBUG: building_has_active_professions found no active professions in building '{building_name}' (servant_jobs: {servant_jobs})")
+        return False
 
     def after_load_callback():
         for worker in store.workers:
@@ -2999,7 +3183,7 @@ define skill_names = {
     "Hand": "Handjob", "Oral": "Oral", "Homo": "Homosexual",
     "Special": "Special", "Group": "Group", "Extreme": "Extreme",
     "Striptease": "Striptease", "Combat": "Combat", "Clever": "Clever",
-    "Charm": "Charm", "Wait": "Service", "Agility": "Agility",
+    "Charm": "Charm", "Service": "Service", "Agility": "Agility",
     "Craft": "Craft", "Specialty 4": "Specialty 4", "Specialty 5": "Specialty 5",
     "Specialty 6": "Specialty 6", "Specialty 7": "Specialty 7", "Specialty 8": "Specialty 8",
     "Specialty 9": "Specialty 9", "Specialty 10": "Specialty 10", "Specialty 11": "Specialty 11",
@@ -3014,7 +3198,7 @@ define sfw_skills = [
     "Combat",     # Combat
     "Clever",     # Clever
     "Charm",      # Charm
-    "Wait",       # Service
+    "Service",    # Service
     "Agility",    # Agility (era Specialty 2)
     "Craft"       # Craft (era Specialty 3, antes Magic)
 ]
