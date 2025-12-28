@@ -619,7 +619,7 @@ screen about():
             xalign 0.0
 
         ## Versión
-        text "Version 0.85":
+        text "Version 0.89":
             style "about_version"
             xalign 0.0
 
@@ -2110,46 +2110,78 @@ screen choose_event_worker_screen(eligible_workers):
                     condition_skill = str(choice["condition"])
                     break
     
+    # Background overlay
+    add Solid("#000000dd")
+    
     # Main frame in the middle for worker selection
     frame:
-        xalign 0.5
+        xalign 0.5  # Centered for wider panel
         yalign 0.5
-        background Solid("#1a1a1acc")
-        padding (20, 20)
-        maximum (800, 490)  # Reduced height by another 10% from 540 to 490
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))  # Journal background
+        padding (40, 40)
+        xsize 800  # Wider than journal to accommodate longer text
+        ysize 720
+        
         vbox:
             spacing 15
+            null height 15  # Push title down like journal
             label (f"Choose a worker from {building_name}" if building_name else "Choose a worker for the event") xalign 0.5 style "header_style"
-            null height 10
-            if not eligible_workers:
-                text "No eligible workers found for this event." color "#ff0000" xalign 0.5 text_align 0.5
-                null height 20
-                textbutton "Continue":
-                    xalign 0.5
-                    action Return(None)
-            else:
-                viewport:
-                    scrollbars "vertical"
-                    mousewheel True
-                    vbox:
-                        spacing 10
-                        for worker in eligible_workers:
-                            hbox:
-                                spacing 10
-                                xfill True
-                                
+            null height 10  # Less space after title like journal
+            
+            vbox:
+                xsize 720  # Wider content area
+                spacing 10
+                xoffset 50  # Moved 10px to the right
+                yoffset 25
+                
+                if not eligible_workers:
+                    text "No eligible workers found for this event." color "#ff0000" xalign 0.5 text_align 0.5 size 20
+                    null height 20
+                    textbutton "Continue":
+                        xalign 0.5
+                        xsize 200
+                        text_size 20
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action Return(None)
+                else:
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        draggable True
+                        ysize 480  # Adjusted for journal layout
+                        xsize 650  # Reduced to move scrollbar left
+                        vbox:
+                            spacing 10
+                            for worker in eligible_workers:
                                 # Only display skill value if we found a condition skill
                                 if condition_skill:
                                     $ skill_value = calculate_skill_with_traits(worker, condition_skill)
                                     $ skill_name = skill_names.get(condition_skill, "Skill")
                                     textbutton "[worker['name']] - [skill_name]: [skill_value]":
-                                        xalign 0.0
+                                        xsize 640  # Wider buttons for longer text
+                                        text_size 25  # Increased by 5 points
+                                        text_color "#7a4b2a"
+                                        text_hover_color "#6b6528"
                                         action Return(worker)
                                 else:
                                     # Fallback if no condition skill found
                                     textbutton "[worker['name']]":
-                                        xalign 0.0
+                                        xsize 640  # Wider buttons for longer text
+                                        text_size 25  # Increased by 5 points
+                                        text_color "#7a4b2a"
+                                        text_hover_color "#6b6528"
                                         action Return(worker)
+        
+        # Return button (top-right)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action Return(None)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
 
 screen choose_worker_for_event(skill_name, threshold):
     python:
@@ -2190,43 +2222,62 @@ screen choose_worker_for_event(skill_name, threshold):
     
     modal True
     zorder 99
-    # Removing the darkening background effect
-    # add Solid("#000000dd")
+    
+    # Background overlay
+    add Solid("#000000dd")
     
     # Main selection frame in the middle
     frame:
-        xalign 0.5
+        xalign 0.5  # Centered for wider panel
         yalign 0.5
-        background Solid("#1a1a1acc")
-        padding (20, 20)
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))  # Journal background
+        padding (40, 40)
+        xsize 800  # Wider than journal to accommodate longer text
+        ysize 720
+        
         vbox:
             spacing 15
+            null height 15  # Push title down like journal
             label (f"Choose a Worker from {building_name}" if building_name else "Choose a Worker") xalign 0.5 style "header_style"
+            null height 10  # Less space after title like journal
             
-            # Display message if no workers are eligible
-            if not eligible_workers:
-                text "No eligible workers found. Make sure you have workers with [skill_name] assigned to the right building type." color "#ff0000" xalign 0.5 text_align 0.5
-            else:
-                # List all eligible workers
-                viewport:
-                    scrollbars "vertical"
-                    mousewheel True
-                    ysize 400
-                    xsize 500
-                    vbox:
-                        spacing 10
-                        for worker in eligible_workers:
-                            $ worker_skill = calculate_skill_with_traits(worker, skill_name)
-                            textbutton "[worker['name']] ([skill_name]: [worker_skill])":
-                                xalign 0.5
-                                xsize 400
-                                action Return(worker)
-            
-            # Close button
-            textbutton "Close":
-                xalign 0.5
-                xsize 200
-                action Return(None)
+            vbox:
+                xsize 720  # Wider content area
+                spacing 10
+                xoffset 50  # Moved 10px to the right
+                yoffset 25
+                
+                # Display message if no workers are eligible
+                if not eligible_workers:
+                    text "No eligible workers found. Make sure you have workers with [skill_name] assigned to the right building type." color "#ff0000" xalign 0.5 text_align 0.5 size 20
+                else:
+                    # List all eligible workers
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        draggable True
+                        ysize 480  # Adjusted for journal layout
+                        xsize 650  # Reduced to move scrollbar left
+                        vbox:
+                            spacing 10
+                            for worker in eligible_workers:
+                                $ worker_skill = calculate_skill_with_traits(worker, skill_name)
+                                textbutton "[worker['name']] ([skill_name]: [worker_skill])":
+                                    xsize 640  # Wider buttons for longer text
+                                    text_size 25  # Increased by 5 points
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action Return(worker)
+        
+        # Return button (top-right)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action Return(None)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
 
 screen recruitment_event_screen(event, worker):
     modal True
