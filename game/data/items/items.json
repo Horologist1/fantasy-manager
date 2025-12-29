@@ -24,7 +24,7 @@
       },
       "description": "A sturdy sword made of iron. (+5 Combat)",
       "durability": 100,
-      "price": 150,
+      "price": 450,
       "weight": 10
     },
     {
@@ -39,7 +39,7 @@
       },
       "description": "A well-forged steel sword that cuts through armor. (+8 Combat)",
       "durability": 150,
-      "price": 300,
+      "price": 1050,
       "weight": 5
     },
     {
@@ -54,7 +54,7 @@
       },
       "description": "A simple wooden staff favored by novices. (+4 Clever)",
       "durability": 80,
-      "price": 100,
+      "price": 300,
       "weight": 8
     },
     {
@@ -130,7 +130,7 @@
       },
       "description": "A sturdy shield that protects the bearer. (+10 Health)",
       "durability": 120,
-      "price": 200,
+      "price": 400,
       "weight": 6
     },
     {
@@ -143,7 +143,7 @@
       },
       "description": "Light armor offering basic protection. (+5 Health)",
       "durability": 80,
-      "price": 100,
+      "price": 200,
       "weight": 10
     },
     {
@@ -158,7 +158,7 @@
       },
       "description": "A robe imbued with magical properties. (+5 Clever)",
       "durability": 70,
-      "price": 250,
+      "price": 500,
       "weight": 4
     },
     {
@@ -172,7 +172,7 @@
         }
       },
       "description": "A dark cloak that enhances stealth and charm. (+3 Charm)",
-      "price": 180,
+      "price": 450,
       "weight": 5
     },
     {
@@ -184,7 +184,7 @@
         "health": 10
       },
       "description": "A ring that increases the wearer's resilience. (+10 Health)",
-      "price": 150,
+      "price": 270,
       "weight": 5
     },
     {
@@ -198,7 +198,7 @@
         }
       },
       "description": "An amulet that boosts combat prowess. (+4 Combat)",
-      "price": 200,
+      "price": 500,
       "weight": 3
     },
     {
@@ -212,7 +212,7 @@
         }
       },
       "description": "Light boots that increase movement speed and agility. (+3 Agility)",
-      "price": 120,
+      "price": 300,
       "weight": 7
     },
     {
@@ -290,7 +290,7 @@
       },
       "description": "A razor-sharp blade crafted from volcanic glass. (+10 Combat)",
       "durability": 90,
-      "price": 350,
+      "price": 1400,
       "weight": 4
     },
     {
@@ -305,7 +305,7 @@
       },
       "description": "A small dagger imbued with the power of fire. (+6 Combat)",
       "durability": 70,
-      "price": 220,
+      "price": 660,
       "weight": 3
     },
     {
@@ -320,7 +320,7 @@
       },
       "description": "A staff that channels the chill of winter. (+7 Clever)",
       "durability": 80,
-      "price": 280,
+      "price": 980,
       "weight": 6
     },
     {
@@ -336,7 +336,7 @@
       },
       "description": "A bow said to harness the speed of the wind. (+6 Combat, +3 Agility)",
       "durability": 85,
-      "price": 260,
+      "price": 780,
       "weight": 5
     },
     {
@@ -351,7 +351,7 @@
       },
       "description": "A heavy hammer imbued with the power of the earth. (+9 Combat)",
       "durability": 100,
-      "price": 320,
+      "price": 1120,
       "weight": 8
     },
     {
@@ -365,7 +365,7 @@
         }
       },
       "description": "An orb crackling with electrical energy. (+4 Clever)",
-      "price": 240,
+      "price": 600,
       "weight": 3
     },
     {
@@ -393,7 +393,7 @@
         "add_trait": "Charming"
       },
       "description": "Grants an enchanted allure. (+2 Striptease)",
-      "price": 140,
+      "price": 252,
       "weight": 3
     },
     {
@@ -422,7 +422,7 @@
         }
       },
       "description": "A cloak that shrouds the wearer in darkness. (+5 Charm)",
-      "price": 210,
+      "price": 630,
       "weight": 4
     },
     {
@@ -434,7 +434,7 @@
         "health": 8
       },
       "description": "A ring that slowly regenerates the wearer's health. (+8 Health)",
-      "price": 190,
+      "price": 342,
       "weight": 3
     },
     {
@@ -447,7 +447,7 @@
         "libido_regeneration": 2
       },
       "description": "An amulet that stirs deep passions, increasing libido capacity and recovery.",
-      "price": 260,
+      "price": 468,
       "weight": 2
     },
     {
@@ -488,7 +488,7 @@
       },
       "description": "A blade forged with ancient magic, capable of cutting through sorcery and steel alike. (+12 Combat)",
       "durability": 200,
-      "price": 1500,
+      "price": 6000,
       "weight": 6,
       "shop_available": false
     },
@@ -603,7 +603,7 @@
       },
       "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Wait)",
       "durability": 100,
-      "price": 120,
+      "price": 300,
       "weight": 3
     },
     {
@@ -618,7 +618,7 @@
       },
       "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Wait)",
       "durability": 150,
-      "price": 280,
+      "price": 1120,
       "weight": 4
     },
     {
@@ -633,7 +633,7 @@
       },
       "description": "A clean and professional uniform that helps servers provide excellent customer service. (+4 Charm)",
       "durability": 90,
-      "price": 110,
+      "price": 275,
       "weight": 5
     },
     {
@@ -648,7 +648,7 @@
       },
       "description": "A sophisticated dress that enhances the server's charm and professionalism. (+6 Charm)",
       "durability": 120,
-      "price": 240,
+      "price": 720,
       "weight": 4
     },
     {
@@ -663,7 +663,7 @@
       },
       "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Wait)",
       "durability": 130,
-      "price": 180,
+      "price": 540,
       "weight": 6
     },
     {
@@ -678,7 +678,7 @@
       },
       "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Wait)",
       "durability": 180,
-      "price": 350,
+      "price": 1225,
       "weight": 5
     },
     {
@@ -692,7 +692,7 @@
         }
       },
       "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Wait)",
-      "price": 90,
+      "price": 225,
       "weight": 4
     },
     {
@@ -708,7 +708,7 @@
       },
       "description": "An alluring dress designed to captivate and entice clients. (+4 Sex, +3 Charm)",
       "durability": 80,
-      "price": 160,
+      "price": 400,
       "weight": 3
     },
     {
@@ -724,7 +724,7 @@
       },
       "description": "A luxurious dress that exudes elegance and sensuality, perfect for high-end clientele. (+7 Sex, +5 Charm)",
       "durability": 140,
-      "price": 380,
+      "price": 1520,
       "weight": 4
     },
     {
@@ -740,7 +740,7 @@
       },
       "description": "Intimate apparel that enhances allure and confidence in intimate encounters. (+5 Sex, +3 Anal)",
       "durability": 60,
-      "price": 140,
+      "price": 420,
       "weight": 1
     },
     {
@@ -757,7 +757,7 @@
       },
       "description": "An exquisite set of fine lingerie that makes the wearer irresistible. (+8 Sex, +5 Anal, +4 Charm)",
       "durability": 100,
-      "price": 420,
+      "price": 1680,
       "weight": 2
     },
     {
@@ -772,7 +772,7 @@
         }
       },
       "description": "Beautiful earrings that catch the light and draw attention to the wearer's face. (+4 Charm, +2 Sex)",
-      "price": 130,
+      "price": 325,
       "weight": 1
     },
     {
@@ -787,7 +787,7 @@
         }
       },
       "description": "Sparkling diamond earrings that add elegance and allure to any outfit. (+6 Charm, +4 Sex)",
-      "price": 320,
+      "price": 960,
       "weight": 1
     },
     {
@@ -802,7 +802,7 @@
         }
       },
       "description": "An elegant necklace that draws attention to the neck and enhances oral skills. (+3 Charm, +3 Oral)",
-      "price": 150,
+      "price": 375,
       "weight": 2
     },
     {
@@ -818,7 +818,7 @@
         }
       },
       "description": "A sophisticated pearl choker that combines elegance with a hint of dominance. (+5 Charm, +5 Oral, +2 BDSM)",
-      "price": 290,
+      "price": 870,
       "weight": 2
     },
     {
@@ -833,7 +833,7 @@
         }
       },
       "description": "High heels designed for performance, enhancing grace and stage presence. (+5 Striptease, +2 Sex)",
-      "price": 110,
+      "price": 330,
       "weight": 3
     },
     {
@@ -848,7 +848,7 @@
         }
       },
       "description": "Premium heels crafted for professional performers, maximizing stage appeal. (+8 Striptease, +4 Sex)",
-      "price": 270,
+      "price": 1080,
       "weight": 3
     },
     {
@@ -863,7 +863,7 @@
       },
       "description": "A practical apron that helps bartenders mix drinks with precision and flair. (+4 Clever)",
       "durability": 95,
-      "price": 100,
+      "price": 250,
       "weight": 3
     },
     {
@@ -878,7 +878,7 @@
       },
       "description": "An elegant apron worn by master mixologists, symbolizing expertise in the craft. (+7 Clever)",
       "durability": 140,
-      "price": 260,
+      "price": 1040,
       "weight": 4
     },
     {
@@ -892,7 +892,7 @@
         }
       },
       "description": "Essential bar tools including shakers, strainers, and jiggers for perfect cocktails. (+3 Clever)",
-      "price": 85,
+      "price": 212,
       "weight": 4
     },
     {
@@ -906,7 +906,7 @@
         }
       },
       "description": "A premium set of bar tools used by master mixologists to create legendary drinks. (+6 Clever)",
-      "price": 300,
+      "price": 900,
       "weight": 5
     },
     {
@@ -922,7 +922,7 @@
       },
       "description": "A vibrant outfit perfect for entertaining tavern patrons with music and dance. (+4 Striptease, +3 Charm)",
       "durability": 85,
-      "price": 140,
+      "price": 350,
       "weight": 4
     },
     {
@@ -937,7 +937,7 @@
       },
       "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Wait)",
       "durability": 60,
-      "price": 50,
+      "price": 100,
       "weight": 3
     },
     {
@@ -952,7 +952,7 @@
       },
       "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Wait)",
       "durability": 120,
-      "price": 200,
+      "price": 600,
       "weight": 3
     },
     {
@@ -967,7 +967,7 @@
       },
       "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Wait)",
       "durability": 200,
-      "price": 650,
+      "price": 3250,
       "weight": 4
     },
     {
@@ -982,7 +982,7 @@
       },
       "description": "A simple uniform for entry-level servers, providing basic charm enhancement. (+2 Charm)",
       "durability": 50,
-      "price": 45,
+      "price": 90,
       "weight": 4
     },
     {
@@ -997,7 +997,7 @@
       },
       "description": "An exquisite dress that makes servers appear more charming and professional than ever. (+8 Charm)",
       "durability": 150,
-      "price": 480,
+      "price": 1920,
       "weight": 4
     },
     {
@@ -1012,7 +1012,7 @@
       },
       "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Wait)",
       "durability": 80,
-      "price": 60,
+      "price": 150,
       "weight": 4
     },
     {
@@ -1027,7 +1027,7 @@
       },
       "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Wait)",
       "durability": 150,
-      "price": 220,
+      "price": 660,
       "weight": 5
     },
     {
@@ -1042,7 +1042,7 @@
       },
       "description": "Legend says this blade was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Wait)",
       "durability": 220,
-      "price": 750,
+      "price": 3000,
       "weight": 5
     },
     {
@@ -1056,7 +1056,7 @@
         }
       },
       "description": "Essential cooking tools for everyday kitchen work. (+2 Wait)",
-      "price": 40,
+      "price": 80,
       "weight": 3
     },
     {
@@ -1070,7 +1070,7 @@
         }
       },
       "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Wait)",
-      "price": 150,
+      "price": 375,
       "weight": 4
     },
     {
@@ -1084,7 +1084,7 @@
         }
       },
       "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Wait)",
-      "price": 450,
+      "price": 1350,
       "weight": 5
     },
     {
@@ -1100,7 +1100,7 @@
       },
       "description": "A simple but alluring dress that enhances basic appeal. (+2 Sex, +2 Charm)",
       "durability": 50,
-      "price": 70,
+      "price": 140,
       "weight": 3
     },
     {
@@ -1116,7 +1116,7 @@
       },
       "description": "A well-designed dress that significantly enhances allure and charm. (+5 Sex, +4 Charm)",
       "durability": 100,
-      "price": 190,
+      "price": 570,
       "weight": 3
     },
     {
@@ -1132,7 +1132,7 @@
       },
       "description": "Legendary dress once worn by the most famous courtesan in history. It is said that kings have gone to war for a single night with its wearer. (+9 Sex, +7 Charm)",
       "durability": 180,
-      "price": 850,
+      "price": 4250,
       "weight": 4
     },
     {
@@ -1148,7 +1148,7 @@
       },
       "description": "Simple intimate apparel that provides basic enhancement. (+3 Sex, +2 Anal)",
       "durability": 40,
-      "price": 65,
+      "price": 162,
       "weight": 1
     },
     {
@@ -1165,7 +1165,7 @@
       },
       "description": "Well-crafted lingerie that significantly enhances appeal and confidence. (+6 Sex, +4 Anal, +3 Charm)",
       "durability": 80,
-      "price": 210,
+      "price": 630,
       "weight": 1
     },
     {
@@ -1182,7 +1182,7 @@
       },
       "description": "A legendary set once owned by an empress who seduced entire kingdoms. Each piece is woven with threads of pure desire. (+10 Sex, +7 Anal, +6 Charm)",
       "durability": 120,
-      "price": 950,
+      "price": 4750,
       "weight": 2
     },
     {
@@ -1197,7 +1197,7 @@
         }
       },
       "description": "Simple earrings that add a touch of charm. (+2 Charm, +1 Sex)",
-      "price": 55,
+      "price": 110,
       "weight": 1
     },
     {
@@ -1212,7 +1212,7 @@
         }
       },
       "description": "Beautiful earrings that significantly enhance charm and appeal. (+5 Charm, +3 Sex)",
-      "price": 180,
+      "price": 540,
       "weight": 1
     },
     {
@@ -1227,7 +1227,7 @@
         }
       },
       "description": "Legend says these diamonds were formed from the tears of stars who wept at the beauty of the first mortal to wear them. (+8 Charm, +6 Sex)",
-      "price": 880,
+      "price": 3520,
       "weight": 1
     },
     {
@@ -1242,7 +1242,7 @@
         }
       },
       "description": "A simple necklace that draws attention to the neck. (+2 Charm, +2 Oral)",
-      "price": 60,
+      "price": 120,
       "weight": 2
     },
     {
@@ -1257,7 +1257,7 @@
         }
       },
       "description": "An elegant necklace that enhances both charm and oral skills. (+4 Charm, +4 Oral)",
-      "price": 170,
+      "price": 425,
       "weight": 2
     },
     {
@@ -1273,7 +1273,7 @@
         }
       },
       "description": "Once worn by a queen who ruled through both beauty and power, this choker symbolizes the perfect union of elegance and control. (+7 Charm, +7 Oral, +4 BDSM)",
-      "price": 720,
+      "price": 2880,
       "weight": 2
     },
     {
@@ -1288,7 +1288,7 @@
         }
       },
       "description": "Simple heels for basic stage performances. (+3 Striptease, +1 Sex)",
-      "price": 50,
+      "price": 125,
       "weight": 3
     },
     {
@@ -1303,7 +1303,7 @@
         }
       },
       "description": "Well-crafted heels that significantly enhance stage presence and appeal. (+6 Striptease, +3 Sex)",
-      "price": 160,
+      "price": 480,
       "weight": 3
     },
     {
@@ -1318,7 +1318,7 @@
         }
       },
       "description": "Legendary heels said to have been worn by a performer so captivating that audiences would forget to breathe while watching her dance. (+10 Striptease, +6 Sex)",
-      "price": 920,
+      "price": 4600,
       "weight": 3
     },
     {
@@ -1333,7 +1333,7 @@
       },
       "description": "A simple apron for novice bartenders. (+2 Clever)",
       "durability": 50,
-      "price": 40,
+      "price": 80,
       "weight": 3
     },
     {
@@ -1348,7 +1348,7 @@
       },
       "description": "A professional apron for experienced bartenders, enhancing mixology skills. (+5 Clever)",
       "durability": 110,
-      "price": 180,
+      "price": 540,
       "weight": 3
     },
     {
@@ -1363,7 +1363,7 @@
       },
       "description": "Rumored to have been enchanted by a master alchemist, this apron is said to make any drink mixed while wearing it taste like liquid perfection. (+9 Clever)",
       "durability": 180,
-      "price": 680,
+      "price": 3400,
       "weight": 4
     },
     {
@@ -1377,7 +1377,7 @@
         }
       },
       "description": "Essential bar tools for basic drink mixing. (+2 Clever)",
-      "price": 35,
+      "price": 70,
       "weight": 3
     },
     {
@@ -1391,7 +1391,7 @@
         }
       },
       "description": "High-quality tools crafted specifically for professional bartenders. Each piece is perfectly balanced and designed for precision. (+4 Clever)",
-      "price": 140,
+      "price": 350,
       "weight": 4
     },
     {
@@ -1405,7 +1405,7 @@
         }
       },
       "description": "These tools were once used by a legendary bartender who could mix drinks that could heal wounds, restore youth, or grant wishes. (+8 Clever)",
-      "price": 820,
+      "price": 3280,
       "weight": 5
     },
     {
@@ -1421,7 +1421,7 @@
       },
       "description": "A simple outfit for tavern performers. (+2 Striptease, +2 Charm)",
       "durability": 50,
-      "price": 55,
+      "price": 110,
       "weight": 4
     },
     {
@@ -1437,7 +1437,7 @@
       },
       "description": "A well-designed outfit that significantly enhances performance appeal. (+5 Striptease, +4 Charm)",
       "durability": 100,
-      "price": 200,
+      "price": 600,
       "weight": 4
     },
     {
@@ -1453,7 +1453,7 @@
       },
       "description": "Worn by the greatest bard in history, this costume is said to make any performance so captivating that audiences forget the world around them. (+9 Striptease, +7 Charm)",
       "durability": 160,
-      "price": 780,
+      "price": 3900,
       "weight": 5
     },
     {
@@ -1468,7 +1468,7 @@
       },
       "description": "A basic training sword for novice adventurers. (+3 Combat)",
       "durability": 60,
-      "price": 80,
+      "price": 200,
       "weight": 8
     },
     {
@@ -1483,7 +1483,7 @@
       },
       "description": "A sturdy bronze sword, reliable for most combat situations. (+6 Combat)",
       "durability": 100,
-      "price": 150,
+      "price": 450,
       "weight": 9
     },
     {
@@ -1498,7 +1498,7 @@
       },
       "description": "A well-forged silver sword, effective against many creatures. (+9 Combat)",
       "durability": 140,
-      "price": 280,
+      "price": 980,
       "weight": 8
     },
     {
@@ -1513,7 +1513,7 @@
       },
       "description": "A legendary sword forged from mithril, incredibly light yet devastatingly sharp. (+12 Combat)",
       "durability": 200,
-      "price": 850,
+      "price": 3400,
       "weight": 5
     },
     {
@@ -1528,7 +1528,7 @@
       },
       "description": "A simple wooden staff for magical practice. (+3 Clever)",
       "durability": 50,
-      "price": 70,
+      "price": 175,
       "weight": 6
     },
     {
@@ -1543,7 +1543,7 @@
       },
       "description": "A staff carved from ancient oak, enhancing magical abilities. (+6 Clever)",
       "durability": 90,
-      "price": 160,
+      "price": 480,
       "weight": 7
     },
     {
@@ -1558,7 +1558,7 @@
       },
       "description": "A staff imbued with magical energy, significantly boosting spellcasting. (+9 Clever)",
       "durability": 130,
-      "price": 320,
+      "price": 1120,
       "weight": 6
     },
     {
@@ -1573,7 +1573,7 @@
       },
       "description": "A legendary staff wielded by archmages, channeling immense magical power. (+13 Clever)",
       "durability": 220,
-      "price": 980,
+      "price": 4900,
       "weight": 5
     },
     {
@@ -1589,7 +1589,7 @@
       },
       "description": "A basic leather vest offering minimal protection. (+8 Health, +2 Combat)",
       "durability": 60,
-      "price": 90,
+      "price": 225,
       "weight": 6
     },
     {
@@ -1605,7 +1605,7 @@
       },
       "description": "A chainmail shirt providing solid protection in combat. (+15 Health, +4 Combat)",
       "durability": 120,
-      "price": 190,
+      "price": 570,
       "weight": 10
     },
     {
@@ -1621,7 +1621,7 @@
       },
       "description": "Heavy plate armor offering excellent protection for experienced warriors. (+25 Health, +6 Combat)",
       "durability": 180,
-      "price": 450,
+      "price": 1575,
       "weight": 15
     },
     {
@@ -1637,7 +1637,7 @@
       },
       "description": "Legendary armor crafted from dragon scales, offering unparalleled protection and combat prowess. (+40 Health, +10 Combat)",
       "durability": 300,
-      "price": 1200,
+      "price": 4800,
       "weight": 12
     },
     {
@@ -1650,7 +1650,7 @@
       },
       "description": "A basic wooden shield for defense. (+5 Health)",
       "durability": 50,
-      "price": 60,
+      "price": 150,
       "weight": 5
     },
     {
@@ -1663,7 +1663,7 @@
       },
       "description": "A sturdy steel shield providing reliable protection. (+18 Health)",
       "durability": 140,
-      "price": 240,
+      "price": 720,
       "weight": 8
     },
     {
@@ -1676,7 +1676,7 @@
       },
       "description": "A massive tower shield offering exceptional defensive capabilities. (+30 Health)",
       "durability": 200,
-      "price": 520,
+      "price": 1820,
       "weight": 12
     },
     {
@@ -1692,7 +1692,7 @@
       },
       "description": "An enchanted shield that provides both protection and magical enhancement. (+35 Health, +5 Craft)",
       "durability": 250,
-      "price": 880,
+      "price": 3520,
       "weight": 6
     },
     {
@@ -1707,7 +1707,7 @@
         }
       },
       "description": "Sturdy boots designed for adventurers, enhancing both combat and mobility. (+3 Combat, +2 Agility)",
-      "price": 100,
+      "price": 250,
       "weight": 6
     },
     {
@@ -1722,7 +1722,7 @@
         }
       },
       "description": "Lightweight boots favored by rangers, offering excellent mobility and combat enhancement. (+5 Combat, +4 Agility)",
-      "price": 220,
+      "price": 660,
       "weight": 5
     },
     {
@@ -1737,7 +1737,7 @@
         }
       },
       "description": "Legendary boots worn by master adventurers, combining superior protection with unmatched agility. (+8 Combat, +6 Agility)",
-      "price": 750,
+      "price": 3000,
       "weight": 4
     },
     {
@@ -1751,7 +1751,7 @@
         }
       },
       "description": "Basic gloves that improve grip and combat effectiveness. (+2 Combat)",
-      "price": 55,
+      "price": 110,
       "weight": 2
     },
     {
@@ -1765,7 +1765,7 @@
         }
       },
       "description": "Heavy gauntlets that enhance combat prowess significantly. (+5 Combat)",
-      "price": 180,
+      "price": 540,
       "weight": 4
     },
     {
@@ -1779,7 +1779,7 @@
         }
       },
       "description": "Legendary gauntlets crafted from dragon scales, maximizing combat effectiveness. (+9 Combat)",
-      "price": 920,
+      "price": 4600,
       "weight": 3
     }
   ],

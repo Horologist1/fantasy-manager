@@ -102,7 +102,8 @@ label start_recruitment_system:
         call recruitment_event_flow(selected_event, selected_worker) from _call_recruitment_event_flow
     else:
         call recruitment_event_simple(selected_event, selected_worker) from _call_recruitment_event_simple
-    # Clear recruitment context and return to tavern
+    # Clear recruitment context, consume the day's attempt, and return to tavern
+    $ store.can_recruit_today = False
     $ store.in_recruitment = False
     jump tavern_screen
 
@@ -125,22 +126,23 @@ label recruitment_event_flow(event, worker):
     
     # Calculate cost
     python:
-        daily_cost = worker.get("comfort_desired", 50)
+        comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
+        daily_cost = comfort_level * 10  # Daily cost is comfort level * 10
         worker["daily_cost"] = daily_cost
         
         # Replace placeholders in description and dialogue
         worker_name = worker.get("name", "Unknown")
         description = event["description"].replace("[event_worker]", worker_name)
         dialogue_text = event.get("dialogue", "").replace("[event_worker]", worker_name)
-        description = description.replace("[COST]", str(daily_cost))
-        dialogue_text = dialogue_text.replace("[COST]", str(daily_cost))
+        description = description.replace("[COST]", f"${daily_cost}")
+        dialogue_text = dialogue_text.replace("[COST]", f"${daily_cost}")
         
         # Prepare choices with cost replacement
         choices = event.get("choices", [])
         processed_choices = []
         for choice in choices:
             choice_text = choice.get("option", "Choice")
-            choice_text = choice_text.replace("[COST]", str(daily_cost))
+            choice_text = choice_text.replace("[COST]", f"${daily_cost}")
             choice_copy = choice.copy()
             choice_copy["option"] = choice_text
             processed_choices.append(choice_copy)
@@ -240,12 +242,13 @@ label recruitment_event_simple(event, worker):
     show expression Solid("#00000080")  # Semi-transparent black overlay
     
     python:
-        daily_cost = worker.get("comfort_desired", 50)
+        comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
+        daily_cost = comfort_level * 10  # Daily cost is comfort level * 10
         worker["daily_cost"] = daily_cost
-        worker["comfort_level"] = worker.get("comfort_desired", 1)
+        worker["comfort_level"] = comfort_level
         worker_name = worker.get("name", "Unknown")
         description = event["description"].replace("[event_worker]", worker_name)
-        description = description.replace("[COST]", str(daily_cost))
+        description = description.replace("[COST]", f"${daily_cost}")
     
     window show
     narrator "[description]"

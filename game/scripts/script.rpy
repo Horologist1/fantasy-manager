@@ -228,11 +228,11 @@ init python:
             if worker.get('name') == "Violet":
                 folder_name = "redgirl"
             else:
-                folder_name = worker.get("folder", "default")
+                folder_name = worker.get("folder", "aspen")  # Fallback to aspen instead of default
             renpy.log(f"Worker name: {worker.get('name', 'Unknown')}, folder resolved: {folder_name}")
         else:
-            folder_name = "default"
-            renpy.log(f"Worker is not a dictionary, using default folder")
+            folder_name = "aspen"  # Fallback to aspen instead of default
+            renpy.log(f"Worker is not a dictionary, using aspen folder as fallback")
         
         full_folder = f"images/workers/{folder_name}/"
         renpy.log(f"Resolved worker folder: {full_folder}")
@@ -273,14 +273,13 @@ init python:
             
         # Get worker folder
         if hasattr(worker, 'get'):
-            worker_folder = worker.get("folder", "default")
+            worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
             worker_name = worker.get("name", "Unknown")
         else:
-            worker_folder = "default"
+            worker_folder = "aspen"  # Fallback to aspen instead of default
             worker_name = "Unknown"
         
         base_folder = f"images/workers/{worker_folder}/"
-        default_folder = "images/workers/default/"
         
         renpy.log(f"=== get_worker_image DEBUG ===")
         renpy.log(f"Worker: {worker_name}, Folder: {worker_folder}")
@@ -295,13 +294,6 @@ init python:
             renpy.log(f"Selected profile image: {selected}")
             return selected
         
-        # Try default profile image using robust flexible matching
-        default_profile_matches = get_pattern_matches_flexible(default_folder, "profile")
-        if default_profile_matches:
-            selected = renpy.random.choice(default_profile_matches)
-            renpy.log(f"Found default profile image: {selected}")
-            return selected
-        
         # Try any image in worker folder as fallback (excluding failure images)
         all_worker_images = get_pattern_matches_flexible(base_folder, "", exclude_failure=True)
         if all_worker_images:
@@ -309,15 +301,8 @@ init python:
             renpy.log(f"Found fallback worker image: {selected}")
             return selected
         
-        # Try any image in default folder as final fallback
-        all_default_images = get_pattern_matches_flexible(default_folder, "", exclude_failure=True)
-        if all_default_images:
-            selected = renpy.random.choice(all_default_images)
-            renpy.log(f"Found fallback default image: {selected}")
-            return selected
-        
         # If no images exist, return None
-        renpy.log("No images found for worker")
+        renpy.log(f"No images found for worker in folder: {worker_folder}")
         return None
 
     def get_worker_image_random(worker, skill_name=None):
@@ -331,10 +316,10 @@ init python:
         
         # Get worker folder using the same logic as get_event_image
         if hasattr(worker, 'get'):
-            worker_folder = worker.get("folder", "default")
+            worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
             worker_name = worker.get("name", "Unknown")
         else:
-            worker_folder = "default"
+            worker_folder = "aspen"  # Fallback to aspen instead of default
             worker_name = "Unknown"
         
         base_folder = f"images/workers/{worker_folder}/"
@@ -1578,13 +1563,17 @@ init python:
         
         final_name = generate_unique_name(name_pool, existing_names)
         
+        # Assign a random folder from available worker folders (not default)
+        available_folders = ["aspen", "elf", "florian", "goblingirl", "ravengirl", "redgirl", "tangirl"]
+        assigned_folder = random.choice(available_folders)
+        
         # Create the new worker with named skills only
         # 50% chance: decent (12-28)
         # 30% chance: great (25-40)
         # 20% chance: exceptional (35-50)
         new_worker = {
             "name": final_name,
-            "folder": "default",
+            "folder": assigned_folder,
             "gender": gender,
             "names_list": f"{name_category}_{gender}",
             "skills": {
@@ -1789,17 +1778,19 @@ init python:
         # Greenhouse y Shop son comodines - pueden tener todos los tipos
         if button_type == "greenhouse" or button_type == "shop":
             for btype in building_types_json.get("building_types", []):
-                available.append(btype)
+                if btype.get("id") != "governor_castle":  # Castle is only obtained through ending
+                    available.append(btype)
             return available
         
         # Para otros botones, verificar allowed_map_locations
         # También verificar si el button_id específico está en la lista (para casos especiales)
         for btype in building_types_json.get("building_types", []):
-            allowed_locations = btype.get("allowed_map_locations", [])
-            if button_type and button_type in allowed_locations:
-                available.append(btype)
-            elif button_id in allowed_locations:
-                available.append(btype)
+            if btype.get("id") != "governor_castle":  # Castle is only obtained through ending
+                allowed_locations = btype.get("allowed_map_locations", [])
+                if button_type and button_type in allowed_locations:
+                    available.append(btype)
+                elif button_id in allowed_locations:
+                    available.append(btype)
         
         return available
 
@@ -2751,35 +2742,6 @@ init python:
                         renpy.log("Custom consume_item: missing item_id")
                 except Exception as e:
                     renpy.log(f"ERROR in consume_item: {e}")
-            elif custom_action == "transfer_item_to_worker":
-                # Transfer a specific item from manager to worker inventory
-                item_id = effect_dict.get("item_id")
-                try:
-                    if item_id:
-                        # Find and remove the item from manager inventory
-                        item_found = False
-                        for i, (inv_item_id, quantity) in enumerate(manager_inventory):
-                            if inv_item_id == item_id and quantity > 0:
-                                if quantity > 1:
-                                    manager_inventory[i] = (inv_item_id, quantity - 1)
-                                else:
-                                    del manager_inventory[i]
-                                item_found = True
-                                break
-                        
-                        if item_found:
-                            # Add to worker inventory (assuming workers have inventory)
-                            if not current_worker.get("inventory"):
-                                current_worker["inventory"] = []
-                            add_item_to_inventory(current_worker["inventory"], item_id)
-                            renpy.notify(f"Gave {item_id.replace('_',' ').title()} to {current_worker.get('name', 'worker')}")
-                            renpy.log(f"Custom transfer_item_to_worker: transferred {item_id} to worker")
-                        else:
-                            renpy.log(f"Custom transfer_item_to_worker: {item_id} not found in manager inventory")
-                    else:
-                        renpy.log("Custom transfer_item_to_worker: missing item_id")
-                except Exception as e:
-                    renpy.log(f"ERROR in transfer_item_to_worker: {e}")
             elif custom_action == "grant_loot":
                 # Roll random loot and add to inventory
                 # First, consume item if specified
@@ -3280,6 +3242,8 @@ define MAX_DAILY_SPAWNS = 5
 default last_worker_refill_day = None
 default last_worker_refill_month = None
 default last_worker_refill_year = None
+default take_a_walk_in_progress = False
+default last_take_a_walk_day = None
 default custom_names = {
     "Building 1": "Building 1"
 }

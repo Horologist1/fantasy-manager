@@ -609,6 +609,13 @@ init python:
         # Log money changes for debugging
         renpy.log(f"MONEY CHANGE: ${old_money} + ${total_income} - ${total_building_costs} = ${money}")
         
+        # Check objective completion after money change (for Objective 4: 5000 coins)
+        if hasattr(store, 'tutorial_active') and store.tutorial_active:
+            try:
+                check_objective_completion()
+            except Exception as e:
+                renpy.log(f"Error checking objective completion after daily money update: {e}")
+        
         # Check for daily revenue achievement (Objective 15)
         if total_income >= 10000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
             store.event_flags["daily_revenue_10k_achieved"] = True

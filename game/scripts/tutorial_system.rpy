@@ -92,9 +92,9 @@ default objective_descriptions = {
     
     4: "Gold is the lifeblood of power, and power is the weapon I must wield. Five thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources I shall require for the reckoning that approaches.",
     
-    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors shall I learn to tend to my workers' needs and employ items with wisdom and effectiveness.",
+    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors shall I learn to tend to my workers' needs and employ items with wisdom and effectiveness. Yet I must remember: no remedy is truly necessary, for all workers regain their strength with each passing day and shall perform their duties. But with this energetic elixir, a worker may accomplish far more than a single task, turning the tide of fortune in my favor.",
     
-    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its supplies for the trials ahead. To elevate a building's level shall cost one thousand coins of the realm. Then, I must increase the building's supplies bonus by ten measures, be they equipment, ingredients, or mystical potions - whatever the establishment requires to weather the storms of fortune.",
+    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its Building skill for the trials ahead. To elevate a building's level shall cost one thousand coins of the realm. Then, I must increase the building's Building skill bonus by ten measures, be they equipment, ingredients, or Hag Potions - whatever the establishment requires to weather the storms of fortune.",
     
     7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. A cordial discourse shall reveal their true nature, their motivations, and the depths of their loyalty. I should speak with any of my workers - beginning with gentle conversation to understand the souls who would follow me into darkness.",
     
@@ -206,13 +206,13 @@ init python:
                 return "Progress: 0/3 - Buy energy potion from shop, Transfer to worker, Use on worker"
         elif current_objective == 6:
             if store.building_upgraded_tutorial and store.building_skill_bonus_increased_tutorial:
-                return "Progress: Building level enhanced ->, Supplies bonus increased ->"
+                return "Progress: Building level enhanced ->, Building skill bonus increased ->"
             elif store.building_upgraded_tutorial:
-                return "Progress: 1/2 - Building level enhanced ->, Increase supplies bonus"
+                return "Progress: 1/2 - Building level enhanced ->, Increase Building skill bonus"
             elif store.building_skill_bonus_increased_tutorial:
-                return "Progress: 1/2 - Supplies bonus increased ->, Enhance building level"
+                return "Progress: 1/2 - Building skill bonus increased ->, Enhance building level"
             else:
-                return "Progress: 0/2 - Upgrade building level, Increase supplies bonus"
+                return "Progress: 0/2 - Upgrade building level, Increase Building skill bonus"
         elif current_objective == 7:
             return "Progress: Have a Friendly Chat with any worker\nGuidance: Workers -> Details -> Interactions -> Friendly Chat"
         elif current_objective == 8:
@@ -255,12 +255,14 @@ init python:
                 charm = _get_worker_skill_value(w, "Charm")
                 if clever >= 80 or charm >= 80:
                     unique_agents += 1
-            return f"Progress:\n- Elite Warriors (Combat 80+): {warriors}/3\n- Elite Agents (Clever/Charm 80+): {unique_agents}/2"
+            warriors_ready = "✓" if warriors >= 3 else "✗"
+            agents_ready = "✓" if unique_agents >= 2 else "✗"
+            return f"Progress (Requires BOTH):\n- Elite Warriors (Combat 80+): {warriors}/3 {warriors_ready}\n- Elite Agents (Clever/Charm 80+): {unique_agents}/2 {agents_ready}"
         elif current_objective == 15:
             if store.event_flags.get("daily_revenue_10k_achieved", False):
-                return "Progress: Daily revenue goal achieved ->"
+                return "Progress: Daily revenue goal achieved (10,000 coins) ->"
             else:
-                return "Progress: Achieve 10,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase supplies"
+                return "Progress: Achieve 10,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase Building skill"
         elif current_objective == 16:
             if store.vengeance_path_chosen:
                 return f"Progress: Path chosen -> {store.vengeance_path}\nMark 'Complete' to begin the final strike"
@@ -366,6 +368,19 @@ init python:
             return False
         return store.event_flags.get("daily_revenue_10k_achieved", False)
     
+    def jump_to_ending():
+        """Jump to the appropriate ending based on chosen path"""
+        if store.event_flags.get("branch_assassination", False):
+            renpy.log("DEBUG: Jumping to assassination ending")
+            renpy.jump("show_ending_assassination")
+        elif store.event_flags.get("branch_blackmail", False):
+            renpy.log("DEBUG: Jumping to blackmail ending")
+            renpy.jump("show_ending_blackmail")
+        else:
+            # Fallback: if no branch was chosen (shouldn't happen), default to assassination
+            renpy.log("WARNING: No branch chosen, defaulting to assassination ending")
+            renpy.jump("show_ending_assassination")
+    
     def check_objective_completion():
         global current_objective, tutorial_active
         global objective_1_complete, objective_2_complete, objective_3_complete, objective_4_complete
@@ -373,13 +388,32 @@ init python:
         global objective_9_complete, objective_10_complete, objective_11_complete, objective_12_complete
         global objective_13_complete, objective_14_complete, objective_15_complete, objective_16_complete
         global workers_hired, building_1_type_set, workers_assigned, money, buildings_owned, total_workers
-        global objective_just_completed
+        global objective_just_completed, workers_assigned_count
         
         renpy.log(f"DEBUG: check_objective_completion called - tutorial_active: {tutorial_active}, current_objective: {current_objective}")
         
         if not tutorial_active:
             renpy.log("DEBUG: Tutorial not active, returning")
             return
+        
+        # Recalculate workers_assigned_count based on workers WITH PROFESSIONS assigned
+        def recalculate_workers_assigned_count():
+            count = 0
+            for building_name, building_data in available_buildings.items():
+                if building_data.get("owned", False):
+                    servant_jobs = building_data.get("servant_jobs", {})
+                    for worker_name, job_id in servant_jobs.items():
+                        job_str = str(job_id).lower() if job_id else ""
+                        if job_id and job_str != "unassigned" and job_str != "":
+                            count += 1
+            return count
+        
+        # Always update workers_assigned_count to reflect actual state when checking objectives
+        # This ensures accuracy even if workers were assigned before reaching objective 3
+        actual_count = recalculate_workers_assigned_count()
+        if actual_count != workers_assigned_count:
+            renpy.log(f"DEBUG: workers_assigned_count was {workers_assigned_count}, updating to {actual_count} based on actual assignments")
+        workers_assigned_count = actual_count
         
         # Helper function to check if previous objective is complete
         def is_previous_objective_complete(obj_num):
@@ -406,12 +440,46 @@ init python:
             objective_2_complete = True
             current_objective = 3
             renpy.call_in_new_context("show_objective_2_dialogue")
+            # Recalculate workers_assigned_count before checking objective 3
+            actual_count = recalculate_workers_assigned_count()
+            workers_assigned_count = actual_count
+            renpy.log(f"DEBUG: After objective 2, recalculated workers_assigned_count: {workers_assigned_count}")
+            # Check if objective 3 can be completed immediately after objective 2
+            if workers_assigned_count >= 3 and not objective_3_complete:
+                renpy.log(f"DEBUG: Objective 3 can be completed immediately after objective 2! (workers_assigned_count={workers_assigned_count})")
+                objective_3_complete = True
+                current_objective = 4
+                renpy.call_in_new_context("show_objective_3_dialogue")
+                # Check if objective 4 can be completed immediately after objective 3
+                if money >= 5000 and not objective_4_complete:
+                    renpy.log(f"DEBUG: Objective 4 can be completed immediately after objective 3! (money={money})")
+                    objective_4_complete = True
+                    current_objective = 5
+                    renpy.log("DEBUG: About to show objective 4 dialogue (immediate after obj 3)")
+                    # Set flag to show dialogue - will be checked in tavern_screen
+                    store.pending_objective_4_dialogue = True
+                    # Try to show immediately, but if we're in a context that doesn't allow it, 
+                    # the flag will ensure it shows when returning to tavern_screen
+                    renpy.call_in_new_context("show_objective_4_dialogue")
+                    store.pending_objective_4_dialogue = False  # Clear flag if dialogue was shown
             
         elif current_objective == 3 and is_previous_objective_complete(3) and workers_assigned_count >= 3 and not objective_3_complete:
             renpy.log("DEBUG: Objective 3 completed!")
             objective_3_complete = True
             current_objective = 4
             renpy.call_in_new_context("show_objective_3_dialogue")
+            # Check if objective 4 can be completed immediately after objective 3
+            if money >= 5000 and not objective_4_complete:
+                renpy.log(f"DEBUG: Objective 4 can be completed immediately after objective 3! (money={money})")
+                objective_4_complete = True
+                current_objective = 5
+                renpy.log("DEBUG: About to show objective 4 dialogue (immediate after obj 3)")
+                # Set flag to show dialogue - will be checked in tavern_screen
+                store.pending_objective_4_dialogue = True
+                # Try to show immediately, but if we're in a context that doesn't allow it, 
+                # the flag will ensure it shows when returning to tavern_screen
+                renpy.call_in_new_context("show_objective_4_dialogue")
+                store.pending_objective_4_dialogue = False  # Clear flag if dialogue was shown
             
         elif current_objective == 4 and is_previous_objective_complete(4) and money >= 5000 and not objective_4_complete:
             # Double-check that objective 3 is actually complete
@@ -425,7 +493,14 @@ init python:
             renpy.log(f"DEBUG: Objective 4 completed! (money={money}, objective_3_complete={objective_3_complete})")
             objective_4_complete = True
             current_objective = 5
+            # Always show the dialogue when objective 4 is completed
+            renpy.log("DEBUG: About to show objective 4 dialogue")
+            # Set flag to show dialogue - will be checked in tavern_screen
+            store.pending_objective_4_dialogue = True
+            # Try to show immediately, but if we're in a context that doesn't allow it, 
+            # the flag will ensure it shows when returning to tavern_screen
             renpy.call_in_new_context("show_objective_4_dialogue")
+            store.pending_objective_4_dialogue = False  # Clear flag if dialogue was shown
             
         elif current_objective == 5 and is_previous_objective_complete(5) and store.potion_purchased and store.potion_transferred and store.potion_used_on_worker and not objective_5_complete:
             renpy.log("DEBUG: Objective 5 completed!")
@@ -591,7 +666,7 @@ screen journal_panel():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
-                        text "Tip: Each +10 supplies bonus costs $100/day." size 18 color "#6b6528"
+                        text "Tip: Each +10 Building skill bonus costs $100/day." size 18 color "#6b6528"
                     
                     elif current_objective == 7:
                         text "Tutorial:":
@@ -822,7 +897,8 @@ screen journal_panel():
                                 action [
                                     SetVariable("objective_9_complete", True),
                                     SetVariable("current_objective", 10),
-                                    Hide("journal_panel")
+                                    Hide("journal_panel"),
+                                    Jump("show_objective_9_dialogue")
                                 ]
                     
                     elif current_objective == 16:
@@ -857,17 +933,44 @@ screen journal_panel():
                         
                         if store.vengeance_path_chosen:
                             null height 15
-                            textbutton "Mark Complete - Begin the Final Strike":
-                                xsize 520
-                                text_size 22
-                                text_color "#2a7a4b"
-                                text_hover_color "#1a5a3b"
-                                action [
-                                    SetVariable("objective_16_complete", True),
-                                    SetVariable("tutorial_active", False),
-                                    Hide("journal_panel"),
-                                    Function(lambda: renpy.call_in_new_context("show_tutorial_completion_message"))
-                                ]
+                            # Determine which ending to show based on the branch chosen in objective 9
+                            if store.event_flags.get("branch_assassination", False):
+                                textbutton "Mark Complete - Begin the Final Strike":
+                                    xsize 520
+                                    text_size 22
+                                    text_color "#2a7a4b"
+                                    text_hover_color "#1a5a3b"
+                                    action [
+                                        SetVariable("objective_16_complete", True),
+                                        SetVariable("tutorial_active", False),
+                                        Hide("journal_panel"),
+                                        Jump("show_ending_assassination")
+                                    ]
+                            elif store.event_flags.get("branch_blackmail", False):
+                                textbutton "Mark Complete - Begin the Final Strike":
+                                    xsize 520
+                                    text_size 22
+                                    text_color "#2a7a4b"
+                                    text_hover_color "#1a5a3b"
+                                    action [
+                                        SetVariable("objective_16_complete", True),
+                                        SetVariable("tutorial_active", False),
+                                        Hide("journal_panel"),
+                                        Jump("show_ending_blackmail")
+                                    ]
+                            else:
+                                # Fallback if no branch was chosen (shouldn't happen)
+                                textbutton "Mark Complete - Begin the Final Strike":
+                                    xsize 520
+                                    text_size 22
+                                    text_color "#2a7a4b"
+                                    text_hover_color "#1a5a3b"
+                                    action [
+                                        SetVariable("objective_16_complete", True),
+                                        SetVariable("tutorial_active", False),
+                                        Hide("journal_panel"),
+                                        Jump("show_ending_assassination")
+                                    ]
 
                     if current_objective < 8:
                         null height 15
@@ -976,42 +1079,158 @@ label check_tutorial_progress:
 label show_objective_10_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
-    "The coffers overflow with gold, enough to fund my campaign of vengeance. With such wealth, I can move mountains and topple tyrants."
+    $ renpy.log("DEBUG: show_objective_10_dialogue - STARTING DIALOGUE")
+    "Fifty thousand coins. The number echoes in my mind like a promise fulfilled."
+    "My coffers overflow with gold, each coin a testament to the empire I have built from nothing."
+    "This is not mere wealth—it is power made manifest, the fuel that shall drive my campaign of vengeance to its inevitable conclusion."
+    "With such resources, I can move mountains and topple tyrants."
+    "I can buy loyalty, silence enemies, and fund operations that would make lesser men tremble."
+    "The governor may have his armies and his influence, but I have something he cannot match: the patience to build, and the gold to make it real."
+    "Every coin I have earned represents a choice, a sacrifice, a moment when I chose power over comfort."
+    "Now, that power is mine to wield, and I shall use it to reshape this city in my image."
+    "The path ahead is clear. Whether through steel or secrets, the governor's reign ends here."
+    "And when the dust settles, it shall be my banner that flies over the city, my law that governs, my will that shapes the future."
+    "My journal hath been inscribed with the next duty. The final pieces of my plan are falling into place."
+    $ renpy.log("DEBUG: show_objective_10_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_11_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
-    "Twenty souls now serve my cause, a network of eyes and ears that spans the city. No secret shall escape my notice, no conspiracy remain hidden."
+    $ renpy.log("DEBUG: show_objective_11_dialogue - STARTING DIALOGUE")
+    "Twenty souls now serve my cause. Twenty pairs of eyes watching, twenty pairs of ears listening, twenty minds working toward a single purpose: my victory."
+    "This is not merely a workforce—it is a network that spans the city like a web of shadows."
+    "No secret shall escape my notice, no conspiracy remain hidden, no plot go undetected."
+    "Each worker I have recruited brings their own skills, their own connections, their own value to my cause."
+    "Warriors who can strike with deadly precision, spies who can slip through the tightest security, merchants who can move goods and information with equal ease."
+    "The governor may have his guards and his informants, but I have something far more valuable: a network built on loyalty, not fear."
+    "My workers serve me because they believe in my cause, because they have seen the future I offer, and because they know that when I triumph, they shall share in that victory."
+    "With twenty souls at my command, I can monitor every corner of the city, gather intelligence on every target, and strike when and where I choose."
+    "The governor's every move is known to me, his every weakness catalogued, his every ally marked."
+    "My journal hath been inscribed with the next duty. The web is complete, and the spider waits."
+    $ renpy.log("DEBUG: show_objective_11_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_12_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
-    "The artifacts are mine! With these tools of power, I can face any foe, break any enchantment, and charm any ally. The arsenal of vengeance is complete."
+    $ renpy.log("DEBUG: show_objective_12_dialogue - STARTING DIALOGUE")
+    "The artifacts are mine! Three relics of power, each one a key to unlocking the governor's downfall."
+    "The Binding Gem pulses with inner fire, its crystalline surface catching the light like captured starlight."
+    "With this, I can break the djinn's protection, shattering the supernatural shield that has kept the governor safe from harm."
+    "The Obsidian Blade rests in its sheath, its edge so sharp it seems to cut the very air."
+    "Forged in darkness and quenched in shadow, this weapon can pierce any defense, magical or mundane."
+    "The Enchanted Ring gleams on my finger, its power flowing through me like liquid silver."
+    "With this, I can charm any ally, break any enchantment, and command respect from those who would otherwise stand against me."
+    "These are not mere trinkets—they are tools of destiny, each one carefully chosen to serve a specific purpose in my grand design."
+    "With these artifacts, I can face any foe, overcome any obstacle, and achieve what others would call impossible."
+    "The governor may have his armies and his wealth, but I have something he cannot match: the power of legend itself, forged into instruments of vengeance."
+    "The arsenal is complete, and the time for action draws near."
+    "My journal hath been inscribed with the next duty. The final preparations begin."
+    $ renpy.log("DEBUG: show_objective_12_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_13_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
-    "Five strongholds now fly my banner, an empire of shadows that rivals any power in this city. From these bastions, I shall launch my final assault."
+    $ renpy.log("DEBUG: show_objective_13_dialogue - STARTING DIALOGUE")
+    "Five strongholds now fly my banner. Five bastions of power, each one a declaration of my growing influence."
+    "From these fortresses, I command the city."
+    "Each building serves a purpose: taverns where information flows like wine, guilds where warriors train and plan, brothels where secrets are whispered in the dark, restaurants where deals are made over fine meals."
+    "This is not merely an empire of shadows—it is a network of power that rivals any force in the city."
+    "The governor may sit in his castle, but I control the streets, the markets, the places where real power is born."
+    "From these bastions, I shall launch my final assault."
+    "Each building is a staging ground, each worker a soldier in my army, each coin a weapon in my arsenal."
+    "The governor's influence wanes with each passing day, while mine grows stronger."
+    "He may have his title and his crown, but I have something far more valuable: the loyalty of those who control the city's true power—its people, its commerce, its secrets."
+    "When the time comes, when I make my move, these five strongholds shall be the foundation upon which I build a new order."
+    "The old ways shall fall, and from their ashes, my empire shall rise."
+    "My journal hath been inscribed with the next duty. The stage is set, and the players take their positions."
+    $ renpy.log("DEBUG: show_objective_13_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_14_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
-    "My elite guard is assembled - warriors who can fell any foe, and agents who can outwit any schemer. With such champions at my side, victory is assured."
+    $ renpy.log("DEBUG: show_objective_14_dialogue - STARTING DIALOGUE")
+    "My elite guard is assembled. Warriors who can fell any foe, agents who can outwit any schemer, champions who stand ready to serve my cause."
+    "These are not mere workers—they are the finest the city has to offer, each one a master of their craft."
+    "Warriors with combat skills that would make legends tremble, agents with cleverness and charm that can turn any situation to my advantage."
+    "With such champions at my side, victory is not merely possible—it is assured."
+    "The governor may have his guards, but I have something far more dangerous: individuals who have chosen to stand with me, who believe in my cause, and who will stop at nothing to see it through."
+    "Each member of my elite guard brings their own unique talents to the table."
+    "Some excel in open combat, ready to strike with overwhelming force. Others prefer the shadows, using cunning and charm to achieve their goals without bloodshed."
+    "Together, they form a force that can adapt to any situation, overcome any obstacle, and achieve any objective."
+    "Whether the path requires steel or subtlety, I have the right tool for the job."
+    "The governor's days are numbered. With this elite guard at my command, there is nothing that can stand between me and my vengeance."
+    "The final act begins."
+    "My journal hath been inscribed with the next duty. The pieces are in place, and the endgame approaches."
+    $ renpy.log("DEBUG: show_objective_14_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_15_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
-    "My empire generates wealth like a mighty river - ten thousand coins in a single day! This is the power I have built, the machine of prosperity that shall fuel my vengeance."
+    $ renpy.log("DEBUG: show_objective_15_dialogue - STARTING DIALOGUE")
+    "Ten thousand coins in a single day. The number alone is staggering, but what it represents is far greater."
+    "My empire generates wealth like a mighty river, flowing endlessly into my coffers."
+    "This is not mere prosperity—it is the power I have built, the machine of commerce that shall fuel my vengeance and fund my rise to dominance."
+    "Each coin earned is a testament to the network I have created, the workers I have trained, the buildings I have established."
+    "This is the culmination of every choice, every sacrifice, every moment of planning that has brought me to this point."
+    "With such wealth flowing through my hands, I can fund operations that would bankrupt lesser men."
+    "I can buy loyalty, silence enemies, and create opportunities that others can only dream of."
+    "The governor may have inherited his wealth, but I have built mine from nothing."
+    "Every coin I earn is a victory, every transaction a step closer to my goal."
+    "This is the power I have forged through patience and planning."
+    "The machine of prosperity that I have built shall not only fund my vengeance, but ensure that when I take control, the city's economy flows through my hands."
+    "My journal hath been inscribed with the next duty. The final preparations are complete, and the time for action has come."
+    $ renpy.log("DEBUG: show_objective_15_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_tutorial_completion_message:
-    scene expression tavern_bg
+    scene expression event_bg
     show expression Solid("#00000080")
+    
+    # Unlock the Governor's Castle (backup in case we got here without going through endings)
+    python:
+        castle_name = "Governor's Castle"
+        renpy.log("DEBUG: show_tutorial_completion_message - Ensuring castle is unlocked")
+        
+        # Ensure castle exists in available_buildings
+        if castle_name not in available_buildings:
+            available_buildings[castle_name] = {}
+        
+        # Set all castle properties
+        available_buildings[castle_name]["price"] = 0
+        available_buildings[castle_name]["reputation"] = 0
+        available_buildings[castle_name]["base_level"] = 5
+        available_buildings[castle_name]["type"] = "governor_castle"
+        available_buildings[castle_name]["assigned_servants"] = available_buildings[castle_name].get("assigned_servants", [])
+        available_buildings[castle_name]["servant_jobs"] = available_buildings[castle_name].get("servant_jobs", {})
+        available_buildings[castle_name]["max_workers"] = 10
+        available_buildings[castle_name]["costs"] = 0
+        available_buildings[castle_name]["owned"] = True
+        available_buildings[castle_name]["skill"] = 50
+        available_buildings[castle_name]["skill_bonus"] = 0
+        
+        # Ensure it's in owned_buildings
+        if castle_name not in owned_buildings:
+            owned_buildings.append(castle_name)
+        
+        buildings_owned = len(owned_buildings)
+        map_button_buildings["Castle"] = castle_name
+        custom_names[castle_name] = castle_name
+        
+        renpy.log(f"DEBUG: Castle unlocked in completion message - in owned: {castle_name in owned_buildings}, map_button: {'Castle' in map_button_buildings}")
+    
     "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished."
+    "The governor's reign hath ended, brought low by my hand through steel or secrets, as I chose."
+    "The city now answers to a new master—one who built their power from nothing, who forged an empire of shadows through cunning and determination."
+    "The Governor's Castle is now mine, a symbol of my triumph and a testament to the empire I have built."
+    "Within its walls, I command the finest servants, the most skilled courtesans, the deadliest guards, and the wisest chamberlains."
+    "The castle serves as the crown jewel of my domain, a place where power flows like wine and where my will becomes law."
+    "From this moment forth, the castle is mine to command as I see fit—its halls echo with my authority, its chambers filled with those who serve my cause."
     "With your quest complete, new opportunities arise. You can now purchase buildings in other cities through the 'Buy Buildings Abroad' option on the map."
+    "But remember: the Governor's Castle remains the heart of your empire, a constant reminder of the vengeance you have achieved and the power you now wield."
+    "The old order hath fallen. A new empire rises, and I am its master."
     jump tavern_screen

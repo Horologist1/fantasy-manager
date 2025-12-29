@@ -548,7 +548,7 @@ label show_objective_6_intro:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_6_intro - STARTING DIALOGUE")
     "Time to strengthen my foundation."
-    "I'll upgrade a building level and raise its supplies bonus. The upgrade costs 1,000 coins."
+    "I'll upgrade a building level and raise its Building skill bonus. The upgrade costs 1,000 coins."
     $ renpy.log("DEBUG: show_objective_6_intro - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -581,15 +581,56 @@ label show_objective_7_dialogue:
 label show_objective_8_dialogue:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_8_dialogue - STARTING DIALOGUE")
-    "I possess what I require for now, yet this is merely the dawn of my ascension. I must expand my operations, recruit more workers, erect more buildings."
-    "Two buildings, ten workers, and ten thousand coins. That is the threshold where the city begins to take notice of my growing power."
-    "My journal hath been inscribed with the next duty. From this moment forth, mark 'Complete' within it to advance."
+    "I possess what I require for now, yet this is merely the dawn of my ascension."
+    "Two buildings now stand under my banner, their foundations as solid as my resolve."
+    "Ten souls serve my cause, each one chosen for their loyalty and skill."
+    "Ten thousand coins fill my coffers, a fortune that whispers of greater things to come."
+    "This is the threshold where whispers become rumors, where shadows take notice, where the city's power brokers begin to mark my name in their ledgers."
+    "The governor may still believe himself secure in his fortress, but I have built something he cannot ignore: an empire of shadows that grows stronger with each passing day."
+    "My network spreads through the city like roots through stone, finding purchase in places he never thought to guard."
+    "My workers are not mere servants—they are my eyes, my ears, my hands reaching into every corner of this accursed city."
+    "From this moment forth, the true game begins."
+    "Every choice I make, every resource I gather, every alliance I forge brings me closer to the moment when I shall stand before the governor and claim what is rightfully mine."
+    "My journal hath been inscribed with the next duty. The path ahead is clear, and I shall walk it without hesitation."
     $ renpy.log("DEBUG: show_objective_8_dialogue - FINISHED DIALOGUE")
+    jump tavern_screen
+
+label show_objective_9_dialogue:
+    scene expression workers_bg
+    $ renpy.log("DEBUG: show_objective_9_dialogue - STARTING DIALOGUE")
+    if store.event_flags.get("branch_assassination", False):
+        "The die is cast. I have chosen the path of the blade—a swift, decisive end to the governor's reign."
+        "In the quiet hours before dawn, when even the guards grow complacent, my most skilled warriors shall strike."
+        "They are not mere killers—they are instruments of justice, honed to perfection, each one a master of their craft."
+        "The governor believes himself protected by walls and guards, by wealth and influence."
+        "But steel cares not for such things. When the moment comes, when his guard is down and the shadows offer their protection, my blade shall find its mark."
+        "This path requires strength, but it is clean. One strike, and the tyrant falls."
+        "The city shall wake to find their oppressor dead, and they shall know that those who cross me do not live to regret it."
+        "There is a certain poetry to it—the man who thought himself untouchable, brought low by the very shadows he sought to control."
+        "His blood shall water the ground, and from that soil, a new order shall rise."
+        "My journal hath been inscribed with the next duty. I must gather the resources needed to see this plan through to its bloody conclusion."
+        "Gold, weapons, and the unwavering loyalty of those who shall strike the fatal blow."
+    elif store.event_flags.get("branch_blackmail", False):
+        "The die is cast. I have chosen the path of shadows—a subtle game of secrets and leverage that shall bring the governor to his knees."
+        "My cleverest agents shall infiltrate his sanctum, moving like ghosts through corridors he believes secure."
+        "They shall uncover the dark truths he hides from the world—the bribes, the betrayals, the skeletons locked away in forgotten chambers."
+        "With those secrets in hand, he shall dance to my tune."
+        "Every word he speaks, every decision he makes, shall be guided by the knowledge that I hold the keys to his destruction."
+        "This path requires cunning, but it is elegant. No blood need be spilled, yet the governor's power shall crumble all the same."
+        "He shall watch helplessly as his influence wanes, as his allies turn away, as his carefully constructed empire of lies collapses around him."
+        "There is a certain satisfaction in watching a tyrant brought low not by force, but by his own secrets."
+        "He shall learn that the most dangerous weapon is not a blade, but knowledge—and I am its master."
+        "My journal hath been inscribed with the next duty. I must gather the resources needed to see this plan through to its inevitable conclusion."
+        "Agents, information, and the patience to let the trap close slowly around my prey."
+    else:
+        "A choice has been made, though the path forward remains shrouded in uncertainty."
+        "My journal hath been inscribed with the next duty."
+    $ renpy.log("DEBUG: show_objective_9_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 # ===== EPIC ENDINGS =====
 label show_ending_assassination:
-    scene expression workers_bg
+    scene expression event_bg
     $ renpy.log("DEBUG: show_ending_assassination - STARTING EPIC ENDING")
     
     python:
@@ -635,10 +676,60 @@ label show_ending_assassination:
     
     $ renpy.log("DEBUG: show_ending_assassination - EPIC ENDING COMPLETE")
     $ tutorial_active = False
-    return
+    
+    # Unlock the Governor's Castle
+    python:
+        castle_name = "Governor's Castle"
+        renpy.log("DEBUG: ===== UNLOCKING GOVERNOR'S CASTLE =====")
+        
+        # Always ensure the castle is properly set up, even if it already exists
+        if castle_name not in available_buildings:
+            available_buildings[castle_name] = {}
+            renpy.log(f"DEBUG: Created new entry for {castle_name} in available_buildings")
+        else:
+            renpy.log(f"DEBUG: {castle_name} already exists in available_buildings, updating...")
+        
+        # Update/Set all castle properties
+        available_buildings[castle_name]["price"] = 0
+        available_buildings[castle_name]["reputation"] = 0
+        available_buildings[castle_name]["base_level"] = 3
+        available_buildings[castle_name]["type"] = "governor_castle"
+        available_buildings[castle_name]["assigned_servants"] = available_buildings[castle_name].get("assigned_servants", [])
+        available_buildings[castle_name]["servant_jobs"] = available_buildings[castle_name].get("servant_jobs", {})
+        available_buildings[castle_name]["max_workers"] = 10
+        available_buildings[castle_name]["costs"] = 0
+        available_buildings[castle_name]["owned"] = True
+        available_buildings[castle_name]["skill"] = 50
+        available_buildings[castle_name]["skill_bonus"] = 0
+        
+        # Ensure it's in owned_buildings
+        if castle_name not in owned_buildings:
+            owned_buildings.append(castle_name)
+            renpy.log(f"DEBUG: Added {castle_name} to owned_buildings")
+        else:
+            renpy.log(f"DEBUG: {castle_name} already in owned_buildings")
+        
+        buildings_owned = len(owned_buildings)
+        map_button_buildings["Castle"] = castle_name
+        custom_names[castle_name] = castle_name
+        
+        # Verify everything is set correctly
+        renpy.log(f"DEBUG: === CASTLE UNLOCK VERIFICATION ===")
+        renpy.log(f"DEBUG: Castle in available_buildings: {castle_name in available_buildings}")
+        renpy.log(f"DEBUG: Castle in owned_buildings: {castle_name in owned_buildings}")
+        renpy.log(f"DEBUG: Castle in map_button_buildings: {'Castle' in map_button_buildings}")
+        renpy.log(f"DEBUG: map_button_buildings['Castle'] = {map_button_buildings.get('Castle', 'NOT SET')}")
+        renpy.log(f"DEBUG: Castle type: {available_buildings[castle_name].get('type', 'NOT SET')}")
+        renpy.log(f"DEBUG: Castle owned: {available_buildings[castle_name].get('owned', False)}")
+        renpy.log(f"DEBUG: get_map_building_name_safe('Castle') = {get_map_building_name_safe('Castle')}")
+        renpy.log(f"DEBUG: === END VERIFICATION ===")
+    
+    "The Governor's Castle is now yours. You can access it from the map."
+    
+    jump tavern_screen
 
 label show_ending_blackmail:
-    scene expression workers_bg
+    scene expression event_bg
     $ renpy.log("DEBUG: show_ending_blackmail - STARTING EPIC ENDING")
     
     python:
@@ -692,7 +783,57 @@ label show_ending_blackmail:
     
     $ renpy.log("DEBUG: show_ending_blackmail - EPIC ENDING COMPLETE")
     $ tutorial_active = False
-    return
+    
+    # Unlock the Governor's Castle
+    python:
+        castle_name = "Governor's Castle"
+        renpy.log("DEBUG: ===== UNLOCKING GOVERNOR'S CASTLE (BLACKMAIL) =====")
+        
+        # Always ensure the castle is properly set up, even if it already exists
+        if castle_name not in available_buildings:
+            available_buildings[castle_name] = {}
+            renpy.log(f"DEBUG: Created new entry for {castle_name} in available_buildings")
+        else:
+            renpy.log(f"DEBUG: {castle_name} already exists in available_buildings, updating...")
+        
+        # Update/Set all castle properties
+        available_buildings[castle_name]["price"] = 0
+        available_buildings[castle_name]["reputation"] = 0
+        available_buildings[castle_name]["base_level"] = 3
+        available_buildings[castle_name]["type"] = "governor_castle"
+        available_buildings[castle_name]["assigned_servants"] = available_buildings[castle_name].get("assigned_servants", [])
+        available_buildings[castle_name]["servant_jobs"] = available_buildings[castle_name].get("servant_jobs", {})
+        available_buildings[castle_name]["max_workers"] = 10
+        available_buildings[castle_name]["costs"] = 0
+        available_buildings[castle_name]["owned"] = True
+        available_buildings[castle_name]["skill"] = 50
+        available_buildings[castle_name]["skill_bonus"] = 0
+        
+        # Ensure it's in owned_buildings
+        if castle_name not in owned_buildings:
+            owned_buildings.append(castle_name)
+            renpy.log(f"DEBUG: Added {castle_name} to owned_buildings")
+        else:
+            renpy.log(f"DEBUG: {castle_name} already in owned_buildings")
+        
+        buildings_owned = len(owned_buildings)
+        map_button_buildings["Castle"] = castle_name
+        custom_names[castle_name] = castle_name
+        
+        # Verify everything is set correctly
+        renpy.log(f"DEBUG: === CASTLE UNLOCK VERIFICATION (BLACKMAIL) ===")
+        renpy.log(f"DEBUG: Castle in available_buildings: {castle_name in available_buildings}")
+        renpy.log(f"DEBUG: Castle in owned_buildings: {castle_name in owned_buildings}")
+        renpy.log(f"DEBUG: Castle in map_button_buildings: {'Castle' in map_button_buildings}")
+        renpy.log(f"DEBUG: map_button_buildings['Castle'] = {map_button_buildings.get('Castle', 'NOT SET')}")
+        renpy.log(f"DEBUG: Castle type: {available_buildings[castle_name].get('type', 'NOT SET')}")
+        renpy.log(f"DEBUG: Castle owned: {available_buildings[castle_name].get('owned', False)}")
+        renpy.log(f"DEBUG: get_map_building_name_safe('Castle') = {get_map_building_name_safe('Castle')}")
+        renpy.log(f"DEBUG: === END VERIFICATION ===")
+    
+    "The Governor's Castle is now yours. You can access it from the map."
+    
+    jump tavern_screen
 
 label tavern_screen():
     $ renpy.log("DEBUG: tavern_screen label - STARTING")
@@ -701,6 +842,41 @@ label tavern_screen():
     $ tutorial_act = getattr(store, 'tutorial_active', False)
     $ obj4_shown = getattr(store, 'objective_4_dialogue_shown', False)
     $ renpy.log(f"DEBUG: tavern_screen - current_objective={current_obj}, tutorial_active={tutorial_act}, money=${money}, obj4_dialogue_shown={obj4_shown}")
+    
+    # Verify castle is properly set up if tutorial is complete
+    python:
+        if not tutorial_act:
+            castle_name = "Governor's Castle"
+            # If castle should exist but isn't properly set up, fix it
+            if castle_name in owned_buildings:
+                if castle_name not in available_buildings:
+                    renpy.log(f"WARNING: {castle_name} in owned_buildings but not in available_buildings, fixing...")
+                    available_buildings[castle_name] = {
+                        "price": 0,
+                        "reputation": 0,
+                        "base_level": 5,
+                        "type": "governor_castle",
+                        "assigned_servants": [],
+                        "servant_jobs": {},
+                        "max_workers": 10,
+                        "costs": 0,
+                        "owned": True,
+                        "skill": 50,
+                        "skill_bonus": 0
+                    }
+                if "Castle" not in map_button_buildings:
+                    renpy.log(f"WARNING: Castle not in map_button_buildings, fixing...")
+                    map_button_buildings["Castle"] = castle_name
+                if castle_name not in custom_names:
+                    custom_names[castle_name] = castle_name
+                renpy.log(f"DEBUG: Castle verification - in owned: {castle_name in owned_buildings}, in available: {castle_name in available_buildings}, map_button: {'Castle' in map_button_buildings}")
+    
+    # Check if objective 4 dialogue is pending
+    if getattr(store, 'pending_objective_4_dialogue', False) and not obj4_shown:
+        $ store.pending_objective_4_dialogue = False
+        $ renpy.log("DEBUG: Showing pending objective 4 dialogue from tavern_screen")
+        call show_objective_4_dialogue from _call_show_objective_4_dialogue
+    
     # Removed pending_exit auto-quit; rely on standard confirmation and quit flow
     
     # Call the tavern screen
@@ -709,6 +885,8 @@ label tavern_screen():
 
 label next_day:
     $ renpy.log("DEBUG: next_day label - STARTING")
+    # Reset walk flag for new day
+    $ take_a_walk_in_progress = False
     python:
         renpy.log("DEBUG: next_day - about to call process_next_day")
         result = process_next_day()
@@ -753,6 +931,8 @@ label age_verification:
     
     centered "{color=#ffffff}This game contains adult content including sexual themes and mature situations.{/color}"
     
+    centered "{color=#ffffff}All characters in this game are adults and are fictional.{/color}"
+    
     centered "{color=#ffffff}By continuing, you confirm that you are 18 years of age or older and consent to viewing such content.{/color}"
     
     menu:
@@ -781,4 +961,84 @@ label age_verification:
             centered "{color=#ffffff}This game is not suitable for minors. Please exit the game.{/color}"
             $ renpy.quit()
     
+    return
+
+################################################################################
+### TAKE A WALK SYSTEM
+################################################################################
+
+label take_a_walk:
+    # Prevent re-entry if already running
+    if take_a_walk_in_progress:
+        return
+    $ take_a_walk_in_progress = True
+    
+    # Hide map screen for the walk sequence
+    hide screen map_screen
+    
+    # Check if already used today
+    if last_take_a_walk_day == current_day:
+        $ renpy.notify("You've already taken a walk today. Come back tomorrow.")
+        show screen map_screen
+        $ take_a_walk_in_progress = False
+        return
+    
+    # Check if there are any workers available
+    if not store.workers or len(store.workers) == 0:
+        $ renpy.notify("You don't have any workers to encounter. Hire some workers first.")
+        show screen map_screen
+        $ take_a_walk_in_progress = False
+        return
+    
+    # Select a random worker
+    $ selected_worker = random.choice(store.workers)
+    $ worker_name = selected_worker.get("name", "Unknown")
+    
+    # Load and filter interactions
+    $ interactions = load_interactions()
+    $ player_gender = "male" if player_title.lower() == "lord" else "female"
+    $ filtered_interactions = filter_interactions_by_gender(interactions, player_gender)
+    $ filtered_interactions = filter_interactions_by_worker_gender(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_stats(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_flags(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_traits(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_items(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_usage_limits(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_unlock_level(filtered_interactions, selected_worker)
+    $ filtered_interactions = filter_interactions_by_worker_name(filtered_interactions, selected_worker)
+    
+    # For "take a walk", we don't filter by costs - all available interactions are valid
+    $ available_interactions = filtered_interactions
+    
+    if not available_interactions:
+        $ renpy.notify("[worker_name] doesn't have any interactions available at the moment.")
+        show screen map_screen
+        $ take_a_walk_in_progress = False
+        return
+    
+    # Select a random interaction
+    $ chosen_interaction = random.choice(available_interactions)
+    
+    # Show intro sequence
+    scene black
+    with fade
+    
+    $ interaction_name = chosen_interaction.get("name", "interaction")
+    $ interaction_name_lower = interaction_name.lower()
+    
+    "You take a walk through the city..."
+    "...and you encounter [worker_name]."
+    "You decide it's time to have a [interaction_name_lower] with [worker_name]."
+    
+    # Apply interaction effects (without costs for "take a walk")
+    $ apply_interaction_effects(selected_worker, chosen_interaction, apply_costs=False)
+    
+    # Show interaction result (with return_to_map=True to go back to map)
+    call screen interaction_result(selected_worker, chosen_interaction, return_to_map=True)
+    
+    # Mark as used today
+    $ last_take_a_walk_day = current_day
+    $ take_a_walk_in_progress = False
+    
+    # Return (map_screen is shown by interaction_result with return_to_map=True)
     return

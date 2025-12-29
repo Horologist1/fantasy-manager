@@ -328,8 +328,14 @@ init python:
         # Remove empty categories
         return {k: v for k, v in categories.items() if v}
 
-    def apply_interaction_effects(worker, interaction):
-        """Apply the effects of an interaction to a worker."""
+    def apply_interaction_effects(worker, interaction, apply_costs=True):
+        """Apply the effects of an interaction to a worker.
+        
+        Args:
+            worker: The worker to apply effects to
+            interaction: The interaction data
+            apply_costs: If True, apply energy/health/money costs. If False, skip costs.
+        """
         # Apply stat changes
         effects = interaction.get("effect", {})
         for stat, change in effects.items():
@@ -400,10 +406,11 @@ init python:
                 "duration": -1  # Permanent
             }
         
-        # Apply costs
-        worker["energy"] = max(0, worker["energy"] - interaction.get("cost_energy", 0))
-        worker["health"] = max(0, worker["health"] - interaction.get("cost_health", 0))
-        store.money = max(0, store.money - interaction.get("cost_money", 0))
+        # Apply costs only if apply_costs is True
+        if apply_costs:
+            worker["energy"] = max(0, worker["energy"] - interaction.get("cost_energy", 0))
+            worker["health"] = max(0, worker["health"] - interaction.get("cost_health", 0))
+            store.money = max(0, store.money - interaction.get("cost_money", 0))
 
         # Tutorial: friendly chat completion is now handled when closing the interaction_result screen
 
@@ -447,9 +454,9 @@ init python:
         
         # Extraer el folder del worker exactamente como lo hace get_worker_image
         if hasattr(worker, "get") and callable(worker.get):
-                worker_folder = worker.get("folder", "default")
+                worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
         else:
-            worker_folder = "default"
+            worker_folder = "aspen"  # Fallback to aspen instead of default
         
         # Definir base folder del trabajador
         base_folder = f"images/workers/{worker_folder}/"

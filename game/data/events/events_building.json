@@ -743,5 +743,179 @@
       }
     ],
     "nsfw": false
+  },
+  {
+    "id": "castle_royal_banquet",
+    "description": "Fate hangs in the balance as a jeweled invitation arrives bearing the royal seal—the crown requests your castle host a grand banquet for visiting dignitaries; honor and expectation weigh heavy. The weight of decision hangs heavy in the air, and you sense that the choices made here will echo through the days to come",
+    "weight": 3,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 21,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "castle_banquet",
+    "success_image": "castle_success",
+    "failure_image": "castle_failure",
+    "choices": [
+      {
+        "option": "Host the royal banquet (potential: reputation and money; risk: reputation and money)",
+        "condition": "building_skill",
+        "message_success": "You deliver a royal feast; fame grows ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The banquet falters; your name suffers ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 1000,
+            "reputation": 30
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -20
+          }
+        }
+      },
+      {
+        "option": "Politely decline the honor (loss: reputation)",
+        "message": "You decline the request ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -15
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "castle_assassination_attempt",
+    "description": "Fate hangs in the balance as shadows move where they should not—an assassin's blade seeks your throat in the night. Your guards detect the threat, but the danger is real. The very air seems to thicken with possibility and danger in equal measure",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 28,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "castle_assassin",
+    "success_image": "castle_success",
+    "failure_image": "castle_failure",
+    "choices": [
+      {
+        "option": "Coordinate the defense (potential: reputation; risk: worker injury and reputation)",
+        "condition": "building_skill",
+        "message_success": "You catch the assassin; your name rises ({actual_reputation} reputation).",
+        "message_failure": "The assassin escapes; a guard is wounded ({actual_reputation} reputation, a worker got Wounded).",
+        "effect": {
+          "success": {
+            "reputation": 25
+          },
+          "failure": {
+            "reputation": -15,
+            "add_trait": {
+              "name": "Wounded",
+              "duration": 7,
+              "target": "random_worker"
+            }
+          }
+        }
+      },
+      {
+        "option": "Hire additional security (cost: money; gain: reputation)",
+        "message": "Wisdom demands sacrifice as you pay for extra guards ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -800,
+          "reputation": 10
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "castle_diplomatic_crisis",
+    "description": "The weight of decision a foreign ambassador arrives unannounced, bearing news of a border dispute that threatens to escalate—your castle's diplomatic standing is tested as tensions rise between neighboring kingdoms. The weight of decision hangs heavy in the air, and you sense that the choices made here will echo through the days to come",
+    "weight": 3,
+    "limited": false,
+    "cooldown_days": 21,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "castle_diplomatic",
+    "success_image": "castle_success",
+    "failure_image": "castle_failure",
+    "choices": [
+      {
+        "option": "Mediate the dispute (potential: reputation; risk: reputation)",
+        "condition": "building_skill",
+        "message_success": "You prevent war; both kingdoms acknowledge your wisdom ({actual_reputation} reputation).",
+        "message_failure": "Your mediation fails; tensions escalate ({actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 35
+          },
+          "failure": {
+            "reputation": -20
+          }
+        }
+      },
+      {
+        "option": "Support one side with resources (cost: money; gain: reputation from one side)",
+        "message": "You provide aid to one kingdom; their favor is earned ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -600,
+          "reputation": 15
+        }
+      },
+      {
+        "option": "Remain neutral (neutral)",
+        "message": "You remain neutral; the crisis passes.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "castle_treasure_exhibition",
+    "description": "Time presses heavy as word spreads of your castle's legendary collections—nobles and collectors from across the realm request to view your treasures; hosting such an exhibition could elevate your standing or expose vulnerabilities. The very air seems to thicken with possibility and danger in equal measure",
+    "weight": 4,
+    "limited": false,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "castle_exhibition",
+    "success_image": "castle_success",
+    "failure_image": "castle_failure",
+    "choices": [
+      {
+        "option": "Host a grand exhibition (potential: reputation and money; risk: reputation)",
+        "condition": "building_skill",
+        "message_success": "The exhibition dazzles; your collection's fame spreads ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The exhibition reveals gaps; some nobles leave unimpressed ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 20
+          },
+          "failure": {
+            "money": 200,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "option": "Host a private viewing for select nobles (gain: reputation)",
+        "message": "You invite only the most influential nobles; exclusivity breeds desire ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 15
+        }
+      },
+      {
+        "option": "Keep the treasures private (neutral)",
+        "message": "You keep the treasures private.",
+        "effect": {}
+      }
+    ],
+    "nsfw": false
   }
 ]

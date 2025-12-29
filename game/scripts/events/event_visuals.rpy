@@ -362,14 +362,14 @@ init python:
         
         # Get worker folder
         if hasattr(worker, 'get'):
-            worker_folder = worker.get("folder", "default")
+            worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
             renpy.log(f"Worker folder: {worker_folder}")
         else:
-            worker_folder = "default"
-            renpy.log("Worker has no get method, using default folder")
+            worker_folder = "aspen"  # Fallback to aspen instead of default
+            renpy.log("Worker has no get method, using aspen folder as fallback")
         
         base_folder = f"images/workers/{worker_folder}/"
-        default_folder = "images/workers/default/"
+        default_folder = "images/workers/aspen/"  # Use aspen as fallback instead of default
         
         renpy.log(f"Worker: {worker['name']}, Outcome: {outcome}, Skill: {skill_name}, Folder: {base_folder}")
         
@@ -888,9 +888,9 @@ init python:
             renpy.log(f"Found default profile image: {selected}")
             return selected
         
-        # If no profile image exists, return a default fallback
-        renpy.log("No profile images found - using default fallback")
-        return "images/workers/default/profile.jpg"
+        # If no profile image exists, return None
+        renpy.log("No profile images found for worker")
+        return None
 
 
     def get_event_background(event, outcome=None):

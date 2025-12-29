@@ -11,6 +11,7 @@
         {
           "id": "prostitute",
           "name": "Prostitute",
+          "description": "Provides intimate services to clients. Generates money through various sexual services. Higher skills lead to better earnings and reputation.",
           "nsfw": true,
           "difficulty": "medium",
           "skills": [
@@ -766,6 +767,7 @@
         {
           "id": "stripper",
           "name": "Stripper",
+          "description": "Performs strip shows and lap dances for clients. Generates money through entertainment. Can attract VIP clients for higher earnings.",
           "nsfw": true,
           "difficulty": "medium",
           "skills": [
@@ -981,6 +983,7 @@
         {
           "id": "service",
           "name": "Service",
+          "description": "Attends to clients with basic services. Generates moderate income through customer service. Lower risk, steady earnings.",
           "nsfw": true,
           "difficulty": "easy",
           "skills": [
@@ -1062,6 +1065,7 @@
         {
           "id": "manager",
           "name": "Manager",
+          "description": "Helps manage the business operations. Reduces the number of daily events, making the building easier to manage. Only one manager per building.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -1144,6 +1148,7 @@
         {
           "id": "rest",
           "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
           "nsfw": false,
           "difficulty": "none",
           "skills": [],
@@ -1188,6 +1193,7 @@
         {
           "id": "service",
           "name": "Service",
+          "description": "Serves customers in the restaurant. Generates income through table service. Steady, low-risk work.",
           "nsfw": false,
           "difficulty": "easy",
           "skills": [
@@ -1269,6 +1275,7 @@
         {
           "id": "cook",
           "name": "Cook",
+          "description": "Prepares meals for restaurant customers. Generates money through food service. Can cook for VIP tables for higher earnings.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -1415,6 +1422,7 @@
         {
           "id": "manager",
           "name": "Manager",
+          "description": "Helps manage the business operations. Reduces the number of daily events, making the building easier to manage. Only one manager per building.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -1497,6 +1505,7 @@
         {
           "id": "rest",
           "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
           "nsfw": false,
           "difficulty": "none",
           "skills": [],
@@ -1541,6 +1550,7 @@
         {
           "id": "adventurer",
           "name": "Adventurer",
+          "description": "Hunts monsters and explores dungeons. High risk, high reward profession. Can find valuable loot but faces dangerous encounters.",
           "nsfw": false,
           "difficulty": "hard",
           "skills": [
@@ -1554,7 +1564,7 @@
           "daily_stories": [
             {
               "id": "adventurer_story1",
-              "weight": 1,
+              "weight": 2,
               "report": "Monster Hunting Contract",
               "difficulty_modifier": 0,
               "skill_options": [
@@ -1584,9 +1594,74 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": -15,
+                  "health": -10,
                   "joy": -1,
-                  "rebelliousness": 2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": -2,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "adventurer_story2",
+              "weight": 1,
+              "report": "Dungeon Delving",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Robust",
+                "Determined",
+                "Mystical"
+              ],
+              "trait_bonus": "level * 150",
+              "trait_success": "{worker_name}'s display of {trait} proves decisive.",
+              "earnings": {
+                "success": "200 + skill * 10",
+                "critical_success": "200 + skill * 15",
+                "mediocre": "100 + skill * 5",
+                "failure": "-10"
+              },
+              "descriptions": {
+                "failure": "{worker_name} gets lost in the dungeon's twisting passages and deadly traps. Poor navigation and combat skills lead to a dangerous retreat from the depths, returning empty-handed and badly wounded from the failed expedition.",
+                "mediocre": "{worker_name} manages to explore some of the dungeon's upper levels but struggles with the challenges. Avoids the worst traps, fights off some monsters, but only secures minor treasures before deciding to retreat safely.",
+                "success": "{worker_name} successfully delves deep into the dungeon's dangerous depths. Navigates traps skillfully, defeats guardian monsters, and emerges with valuable treasures and ancient artifacts from the expedition.",
+                "critical_success": "{worker_name} becomes a master dungeon delver with this expedition. Conquers the deepest chambers, outsmarts ancient magical defenses, and returns with legendary treasures that make them famous throughout the guild."
+              },
+              "story_image": "party_quest",
+              "failure_image": "party_quest_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": -10,
+                  "joy": -1,
+                  "rebelliousness": 1,
                   "romance": 0,
                   "relationship": 0,
                   "reputation": -5,
@@ -1618,74 +1693,9 @@
               }
             },
             {
-              "id": "adventurer_story2",
-              "weight": 2,
-              "report": "Dungeon Delving",
-              "difficulty_modifier": 0,
-              "skill_options": [
-                "Combat"
-              ],
-              "relevant_traits": [
-                "Robust",
-                "Determined",
-                "Mystical"
-              ],
-              "trait_bonus": "level * 150",
-              "trait_success": "{worker_name}'s display of {trait} proves decisive.",
-              "earnings": {
-                "success": "200 + skill * 10",
-                "critical_success": "200 + skill * 15",
-                "mediocre": "100 + skill * 5",
-                "failure": "-10"
-              },
-              "descriptions": {
-                "failure": "{worker_name} gets lost in the dungeon's twisting passages and deadly traps. Poor navigation and combat skills lead to a dangerous retreat from the depths, returning empty-handed and badly wounded from the failed expedition.",
-                "mediocre": "{worker_name} manages to explore some of the dungeon's upper levels but struggles with the challenges. Avoids the worst traps, fights off some monsters, but only secures minor treasures before deciding to retreat safely.",
-                "success": "{worker_name} successfully delves deep into the dungeon's dangerous depths. Navigates traps skillfully, defeats guardian monsters, and emerges with valuable treasures and ancient artifacts from the expedition.",
-                "critical_success": "{worker_name} becomes a master dungeon delver with this expedition. Conquers the deepest chambers, outsmarts ancient magical defenses, and returns with legendary treasures that make them famous throughout the guild."
-              },
-              "story_image": "party_quest",
-              "failure_image": "party_quest_failure",
-              "consequences": {
-                "failure": {
-                  "energy": -2,
-                  "health": -15,
-                  "joy": -1,
-                  "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
-                },
-                "success": {
-                  "energy": -1,
-                  "health": -2,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
-                },
-                "critical_success": {
-                  "energy": -1,
-                  "health": 0,
-                  "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
-                }
-              },
-              "loot": {
-                "rolls": 2
-              }
-            },
-            {
               "id": "adventurer_story3",
-              "weight": 1,
-              "report": "Mythical Beast Hunt",
+              "weight": 0.3,
+              "report": "Unexpected Dangerous Encounter",
               "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
@@ -1704,57 +1714,140 @@
                 "failure": "-20"
               },
               "descriptions": {
-                "failure": "{worker_name} faces the mythical beast but is completely outmatched. The dragon's flames, the chimera's multiple heads, or the hydra's regenerating necks prove too much, forcing a desperate escape with severe wounds and shattered pride.",
-                "mediocre": "{worker_name} engages the legendary creature in an epic battle but struggles to gain the upper hand. Manages to wound the beast and survive the encounter, but the mythical creature escapes, leaving only minor trophies as proof of the confrontation.",
-                "success": "{worker_name} achieves the impossible by slaying a mythical beast. Through skill, courage, and determination, brings down the dragon, chimera, or hydra, returning with valuable scales, horns, or other legendary materials that prove the kill.",
-                "critical_success": "{worker_name} bereaches their peak a legend by flawless, approaching the divinely executing the mythical beast hunt. The flawless strategy, with the skill of a god made flesh combat, and complete domination of the creature creates an epic tale that will be told for generations, along with beyond mortal comprehension rewards."
+                "failure": "{worker_name} stumbles upon something far beyond their capabilities - an ancient guardian, a cursed entity, or forces of nature that should not be trifled with. The encounter is brief and terrifying - a desperate flight for survival leaves them shaken and wounded, but alive. The experience serves as a harsh reminder of the true dangers that lurk in the wilds.",
+                "mediocre": "{worker_name} encounters unexpected danger of legendary proportions. Through quick thinking and a fighting retreat, manages to escape with their life and minor wounds. Whatever they faced was overwhelming, but survival itself is a victory worth celebrating.",
+                "success": "{worker_name} faces an unexpected encounter with forces far beyond normal threats. Through skill and determination, manages to overcome or escape the danger, driving it away or securing a tactical victory. Returns with proof of the encounter and valuable materials recovered from the confrontation.",
+                "critical_success": "{worker_name} survives an encounter with a legendary enemy that would have killed most adventurers. Through exceptional skill and courage, not only survives but gains the upper hand against overwhelming odds, forcing the legendary enemy to retreat. Returns with rare trophies and a tale that will be remembered for generations."
               },
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": -20,
+                  "health": -15,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
                   "relationship": 0,
-                  "reputation": -5,
-                  "libido": -2
+                  "reputation": -3,
+                  "libido": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": -5,
-                  "joy": 5,
+                  "health": -3,
+                  "joy": 3,
                   "rebelliousness": 0,
                   "romance": 0,
                   "relationship": 0,
-                  "reputation": 10,
-                  "libido": -1
+                  "reputation": 8,
+                  "libido": 0
                 },
                 "critical_success": {
                   "energy": -1,
                   "health": 0,
-                  "joy": 10,
+                  "joy": 5,
                   "rebelliousness": 0,
                   "romance": 0,
                   "relationship": 0,
-                  "reputation": 20,
+                  "reputation": 15,
                   "libido": 0
                 }
               },
               "loot": {
-                "rolls": 2
+                "rolls": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "boss_hunting",
+          "name": "Boss Hunting",
+          "description": "Hunts legendary mythical beasts. Extreme risk with the highest rewards. Can obtain rare loot and legendary materials. Very dangerous.",
+          "nsfw": false,
+          "difficulty": "extreme",
+          "skills": [
+            "Combat"
+          ],
+          "max_daily_workers": 2,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 300"
+          },
+          "daily_stories": [
+            {
+              "id": "boss_hunting_story1",
+              "weight": 1,
+              "report": "Mythical Beast Hunt",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Robust",
+                "Determined",
+                "Mystical",
+                "Fearless"
+              ],
+              "trait_bonus": "level * 200",
+              "trait_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
+              "earnings": {
+                "success": "400 + skill * 20",
+                "critical_success": "400 + skill * 30",
+                "mediocre": "200 + skill * 10",
+                "failure": "-30"
+              },
+              "descriptions": {
+                "failure": "{worker_name} tracks and confronts the mythical beast, but the legendary creature proves too powerful. The dragon's ancient wisdom, the chimera's ferocious might, or the hydra's regenerative power overwhelms even the most skilled hunter. A desperate retreat is the only option, leaving severe wounds and a humbling reminder of the true power of mythical creatures.",
+                "mediocre": "{worker_name} engages the mythical beast in an epic battle that tests every skill. The fight is brutal and exhausting - while the creature is wounded and driven off, the hunter returns with significant injuries and only minor trophies. The beast lives to fight another day, but the encounter proves the hunter's courage.",
+                "success": "{worker_name} achieves the legendary feat of slaying a mythical beast. Through masterful strategy, exceptional combat prowess, and unbreakable determination, brings down the dragon, chimera, or hydra. Returns with valuable scales, horns, claws, and other legendary materials that prove the impossible kill, becoming a legend in the guild.",
+                "critical_success": "{worker_name} transcends mortal limits by flawlessly executing the mythical beast hunt. The perfect strategy, god-like combat mastery, and complete domination of the legendary creature creates an epic tale that will be told for generations. Returns with treasures beyond mortal comprehension - dragon scales that shimmer with inner fire, chimera pelts of impossible beauty, or hydra hearts that pulse with ancient power."
+              },
+              "story_image": "solo_quest",
+              "failure_image": "solo_quest_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "health": -25,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -10,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -2,
+                  "health": -8,
+                  "joy": 8,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": -2,
+                  "joy": 15,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 25,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 4
               }
             }
           ]
         },
         {
           "id": "capture_monster_servants",
-          "name": "Capture Monster Servants",
+          "name": "Capture Monsters",
+          "description": "Captures monsters to recruit them as workers. High risk profession that can expand your workforce with unique monster servants.",
           "nsfw": true,
           "difficulty": "hard",
           "skills": [
-            "Combat",
-            "Extreme"
+            "Combat"
           ],
           "max_daily_workers": 2,
           "daily_story_count": {
@@ -1768,8 +1861,7 @@
               "report": "Monster Capture",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Combat",
-                "Extreme"
+                "Combat"
               ],
               "relevant_traits": [
                 "Determined",
@@ -1840,6 +1932,7 @@
         {
           "id": "manager",
           "name": "Manager",
+          "description": "Helps manage the business operations. Reduces the number of daily events, making the building easier to manage. Only one manager per building.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -1922,6 +2015,7 @@
         {
           "id": "rest",
           "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
           "nsfw": false,
           "difficulty": "none",
           "skills": [],
@@ -1966,6 +2060,7 @@
         {
           "id": "bartender",
           "name": "Bartender",
+          "description": "Serves drinks and tends the bar. Generates steady income through beverage service. Keeps customers happy and coming back.",
           "nsfw": false,
           "difficulty": "easy",
           "skills": [
@@ -2044,6 +2139,7 @@
         {
           "id": "performer",
           "name": "Performer",
+          "description": "Entertains tavern guests with performances. Generates money through shows. Can perform for VIP audiences for higher earnings.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -2190,6 +2286,7 @@
         {
           "id": "manager",
           "name": "Manager",
+          "description": "Helps manage the business operations. Reduces the number of daily events, making the building easier to manage. Only one manager per building.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -2272,6 +2369,7 @@
         {
           "id": "rest",
           "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
           "nsfw": false,
           "difficulty": "none",
           "skills": [],
@@ -2316,6 +2414,7 @@
         {
           "id": "dealer",
           "name": "Dealer",
+          "description": "Works as a croupier at casino tables. Generates money through gambling operations. Manages games and ensures fair play.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -2397,6 +2496,7 @@
         {
           "id": "guard",
           "name": "Guard",
+          "description": "Protects the casino from disruptive patrons and cheaters. Generates money through security services. Prevents losses from troublemakers.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -2543,6 +2643,7 @@
         {
           "id": "manager",
           "name": "Manager",
+          "description": "Helps manage the business operations. Reduces the number of daily events, making the building easier to manage. Only one manager per building.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
@@ -2625,6 +2726,7 @@
         {
           "id": "rest",
           "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
           "nsfw": false,
           "difficulty": "none",
           "skills": [],
@@ -2637,6 +2739,1136 @@
               "description": "The dealer takes a break, stepping away from the tables to recharge.",
               "report": "Taking a Break",
               "story_image": "rest_casino",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0
+              },
+              "consequences": {
+                "success": {
+                  "energy": 3,
+                  "health": 3,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "governor_castle",
+      "name": "Governor's Castle",
+      "skill_name": "Luxury",
+      "skill_description": "Exquisite furnishings, rare wines, and opulent decorations that impress the aristocracy. Enhanced luxury helps your courtiers handle demanding nobles and create unforgettable experiences. Formula: Base Level + Skill Bonus = Success chance in Events.",
+      "nsfw": true,
+      "allowed_map_locations": ["castle"],
+      "professions": [
+        {
+          "id": "ambassador",
+          "name": "Ambassador",
+          "description": "Conducts diplomatic missions and negotiates agreements. Generates reputation and money through political work. Builds alliances and resolves conflicts.",
+          "nsfw": false,
+          "difficulty": "hard",
+          "skills": [
+            "Charm",
+            "Clever"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 3,
+            "bonus_formula": "reputation / 100"
+          },
+          "daily_stories": [
+            {
+              "id": "ambassador_negotiate_trade",
+              "weight": 3,
+              "report": "Negotiated Trade Agreement",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Charm",
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Sophisticated",
+                "Smooth Talker",
+                "Clever",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 150",
+              "trait_success": "The trade delegation is impressed by {worker_name}'s {trait} during negotiations.",
+              "earnings": {
+                "success": "80 + skill * 3",
+                "critical_success": "80 + skill * 5",
+                "mediocre": "40 + skill * 1",
+                "failure": "-10"
+              },
+              "story_image": "ambassador_trade",
+              "failure_image": "ambassador_trade_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to secure favorable terms in the trade negotiations. Poor diplomatic skills and lack of understanding of economic matters result in a weak agreement that benefits the other party more than the castle.",
+                "mediocre": "{worker_name} manages to reach a basic trade agreement but fails to secure optimal terms. The deal is functional but lacks the advantages that skilled negotiation could have achieved.",
+                "success": "{worker_name} successfully negotiates a favorable trade agreement that benefits the castle significantly. Through diplomatic finesse and clever bargaining, secures advantageous terms that strengthen the castle's economic position.",
+                "critical_success": "{worker_name} achieves an exceptional trade agreement through masterful negotiation. The deal secures highly favorable terms, exclusive trade rights, and creates such valuable economic partnerships that the castle's influence and prosperity grow substantially."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -15,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 20,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 35,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "ambassador_diplomatic_alliance",
+              "weight": 3,
+              "report": "Forged Diplomatic Alliance",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Sophisticated",
+                "Elegant",
+                "Smooth Talker",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 160",
+              "trait_success": "The foreign delegation is won over by {worker_name}'s {trait} during the alliance talks.",
+              "earnings": {
+                "success": "100 + skill * 4",
+                "critical_success": "100 + skill * 6",
+                "mediocre": "50 + skill * 2",
+                "failure": "-15"
+              },
+              "story_image": "ambassador_alliance",
+              "failure_image": "ambassador_alliance_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to establish a diplomatic alliance with the foreign delegation. Poor understanding of political dynamics and awkward handling of sensitive matters create distrust and damage the castle's diplomatic standing.",
+                "mediocre": "{worker_name} makes some progress in alliance negotiations but fails to secure a formal agreement. The discussions are cordial but lack the depth needed to overcome political obstacles.",
+                "success": "{worker_name} successfully forges a diplomatic alliance with the foreign kingdom. Through careful negotiation, mutual understanding, and diplomatic skill, creates a valuable partnership that strengthens the castle's political position.",
+                "critical_success": "{worker_name} achieves a landmark diplomatic alliance that transforms the castle's political standing. The exceptional negotiation skills and strategic vision create such a strong partnership that the castle gains significant influence and protection from a powerful ally."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -20,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 25,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 40,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "ambassador_resolve_conflict",
+              "weight": 2,
+              "report": "Resolved Political Conflict",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Smooth Talker",
+                "Clever",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 170",
+              "trait_success": "The conflicting parties are persuaded by {worker_name}'s {trait} mediation.",
+              "earnings": {
+                "success": "90 + skill * 3",
+                "critical_success": "90 + skill * 5",
+                "mediocre": "45 + skill * 1",
+                "failure": "-12"
+              },
+              "story_image": "ambassador_conflict",
+              "failure_image": "ambassador_conflict_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to resolve the political conflict between feuding nobles. Poor mediation skills and inability to find common ground allow the dispute to escalate, damaging the castle's reputation as a neutral arbiter.",
+                "mediocre": "{worker_name} makes some progress in conflict resolution but fails to achieve a lasting solution. The parties agree to a temporary truce but underlying tensions remain unresolved.",
+                "success": "{worker_name} successfully mediates the political conflict, finding a solution that satisfies both parties. Through diplomatic skill and careful negotiation, prevents escalation and maintains the castle's reputation for fair arbitration.",
+                "critical_success": "{worker_name} achieves a masterful resolution of the political conflict, creating a comprehensive agreement that addresses all concerns. The exceptional mediation skills and strategic thinking not only resolve the immediate dispute but also strengthen relationships, earning widespread recognition for the castle's diplomatic excellence."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -18,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 22,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 38,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "ambassador_cultural_exchange",
+              "weight": 2,
+              "report": "Organized Cultural Exchange",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Charm"
+              ],
+              "relevant_traits": [
+                "Elegant",
+                "Sophisticated",
+                "Magnetic",
+                "Charming"
+              ],
+              "trait_bonus": "level * 140",
+              "trait_success": "The cultural delegation is inspired by {worker_name}'s {trait} during the exchange.",
+              "earnings": {
+                "success": "70 + skill * 3",
+                "critical_success": "70 + skill * 5",
+                "mediocre": "35 + skill * 1",
+                "failure": "-8"
+              },
+              "story_image": "ambassador_cultural",
+              "failure_image": "ambassador_cultural_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to organize a meaningful cultural exchange with the visiting delegation. Poor understanding of cultural differences and lack of organizational skill result in a disappointing event that fails to build bridges.",
+                "mediocre": "{worker_name} manages to organize a basic cultural exchange but lacks the depth needed to create lasting connections. The event is pleasant but fails to achieve the diplomatic goals intended.",
+                "success": "{worker_name} successfully organizes a rich cultural exchange that brings together artists, scholars, and nobles from different kingdoms. The well-planned event creates mutual understanding and strengthens cultural ties between regions.",
+                "critical_success": "{worker_name} creates an exceptional cultural exchange that becomes a landmark event. The comprehensive program of art, music, literature, and scholarly discussions creates such profound connections that the castle becomes known as a center of cultural diplomacy, earning widespread recognition."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -12,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 18,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 30,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "courtesan",
+          "name": "Courtesan",
+          "description": "Provides high-class entertainment to noble guests. Generates significant money and reputation through elite services. Requires exceptional charm and sophistication.",
+          "nsfw": true,
+          "difficulty": "hard",
+          "skills": [
+            "Charm"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 3,
+            "bonus_formula": "reputation / 100"
+          },
+          "daily_stories": [
+            {
+              "id": "courtesan_noble_entertainment",
+              "weight": 3,
+              "report": "Entertained Noble Guest",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Charm"
+              ],
+              "relevant_traits": [
+                "Elegant",
+                "Sophisticated",
+                "Charming",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 150",
+              "trait_success": "The noble is captivated by {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "300 + skill * 8",
+                "critical_success": "300 + skill * 15",
+                "mediocre": "150 + skill * 4",
+                "failure": "-20"
+              },
+              "story_image": "courtesan_noble",
+              "failure_image": "courtesan_noble_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to meet the sophisticated expectations of the noble guest. The lack of refinement and poor understanding of aristocratic etiquette disappoints the high-ranking visitor who expected elite companionship.",
+                "mediocre": "{worker_name} provides adequate entertainment for the noble but lacks the exceptional charm and sophistication expected. The interaction is pleasant but forgettable, failing to create a lasting impression.",
+                "success": "{worker_name} delivers an exquisite performance of courtly entertainment. Through elegant conversation, refined manners, and captivating presence, the noble guest is thoroughly charmed and considers making this a regular arrangement.",
+                "critical_success": "{worker_name} creates an unforgettable evening of aristocratic entertainment. The perfect blend of sophistication, wit, and magnetic charm creates such an exceptional experience that the noble becomes a devoted patron and spreads word of the castle's excellence throughout high society."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -10,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 20,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "courtesan_diplomatic_soiree",
+              "weight": 3,
+              "report": "Attended Diplomatic Soiree",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Charm"
+              ],
+              "relevant_traits": [
+                "Sophisticated",
+                "Elegant",
+                "Smooth Talker",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 140",
+              "trait_success": "The diplomatic guests are impressed by {worker_name}'s {trait} at the soiree.",
+              "earnings": {
+                "success": "350 + skill * 9",
+                "critical_success": "350 + skill * 16",
+                "mediocre": "175 + skill * 4",
+                "failure": "-25"
+              },
+              "story_image": "courtesan_soiree",
+              "failure_image": "courtesan_soiree_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to navigate the complex social dynamics of the diplomatic soiree. Poor understanding of political nuances and awkward interactions with foreign dignitaries create embarrassment and damage the castle's reputation.",
+                "mediocre": "{worker_name} manages to blend in at the diplomatic gathering but fails to make a memorable impression. The interactions are polite but lack the finesse needed to truly impress the assembled diplomats and nobles.",
+                "success": "{worker_name} excels at the diplomatic soiree, gracefully navigating conversations with foreign dignitaries and local nobles. The perfect balance of charm, wit, and political awareness creates valuable connections for the castle.",
+                "critical_success": "{worker_name} becomes the center of attention at the diplomatic soiree, effortlessly charming ambassadors and nobles from multiple kingdoms. The exceptional social skills and political acumen create such valuable alliances that the castle's influence grows significantly."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -15,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 25,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "courtesan_seduction_nsfw",
+              "weight": 2,
+              "report": "Seduced Aristocratic Patron",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Sex"
+              ],
+              "relevant_traits": [
+                "Sensual",
+                "Elegant",
+                "Passionate",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 200",
+              "trait_success": "The aristocratic patron is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
+              "earnings": {
+                "success": "500 + skill * 10",
+                "critical_success": "500 + skill * 20",
+                "mediocre": "250 + skill * 5",
+                "failure": "-30"
+              },
+              "story_image": "courtesan_seduction",
+              "failure_image": "courtesan_seduction_failure",
+              "descriptions": {
+                "failure": "{worker_name} attempts to seduce the aristocratic patron but fails to create the desired connection. The encounter feels forced and awkward, leaving the noble disappointed and unwilling to return for such services.",
+                "mediocre": "{worker_name} manages a basic seduction but lacks the finesse expected by the aristocracy. The intimate encounter is functional but fails to create the passionate connection the patron sought.",
+                "success": "{worker_name} masterfully seduces the aristocratic patron with elegant passion. The combination of refined seduction techniques and genuine desire creates an intensely satisfying encounter that leaves the noble completely captivated.",
+                "critical_success": "{worker_name} delivers an absolutely legendary seduction that exceeds all aristocratic expectations. The perfect blend of elegance, passion, and intimate mastery creates such an overwhelming experience that the patron becomes completely devoted and spreads tales of the encounter throughout noble circles."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -10,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 20,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "courtesan_vip_private_chamber",
+              "weight": 2,
+              "report": "Private Chamber with VIP",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Sex",
+                "Oral"
+              ],
+              "relevant_traits": [
+                "Sensual",
+                "Submissive",
+                "Experienced",
+                "Beautiful"
+              ],
+              "trait_bonus": "level * 180",
+              "trait_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
+              "earnings": {
+                "success": "600 + skill * 12",
+                "critical_success": "600 + skill * 22",
+                "mediocre": "300 + skill * 6",
+                "failure": "-35"
+              },
+              "story_image": "courtesan_vip_chamber",
+              "failure_image": "courtesan_vip_chamber_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to satisfy the VIP's exclusive desires in the private chamber. The lack of skill and poor understanding of elite preferences disappoints the high-ranking patron who expected an unforgettable experience.",
+                "mediocre": "{worker_name} provides basic service in the private chamber but lacks the exceptional quality expected. The encounter is adequate but fails to create the memorable experience the VIP paid premium prices for.",
+                "success": "{worker_name} delivers an exceptional private chamber experience that satisfies the VIP completely. The combination of refined techniques, sensual presence, and attentive service creates an encounter worthy of the castle's elite reputation.",
+                "critical_success": "{worker_name} provides a legendary private chamber experience that exceeds all VIP expectations. The perfect blend of elegance, passion, and intimate mastery creates such an overwhelming encounter that the VIP becomes a devoted regular and recommends the castle to other high-ranking nobles."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -15,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 25,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "servant",
+          "name": "Servant",
+          "description": "Serves aristocratic guests in the castle. Generates money through high-class service. Maintains the prestige of the establishment.",
+          "nsfw": false,
+          "difficulty": "easy",
+          "skills": [
+            "Service"
+          ],
+          "max_daily_workers": 5,
+          "daily_story_count": {
+            "base": 3,
+            "bonus_formula": "reputation / 100"
+          },
+          "daily_stories": [
+            {
+              "id": "servant_aristocratic_service",
+              "weight": 5,
+              "report": "Served Aristocratic Guests",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Service"
+              ],
+              "relevant_traits": [
+                "Hardworking",
+                "Elegant",
+                "Precise"
+              ],
+              "trait_bonus": "level * 80",
+              "trait_success": "The aristocratic guests appreciate {worker_name}'s {trait} service.",
+              "earnings": {
+                "success": "120 + skill * 5",
+                "critical_success": "120 + skill * 10",
+                "mediocre": "60 + skill * 2",
+                "failure": "-8"
+              },
+              "story_image": "servant_aristocratic",
+              "failure_image": "servant_aristocratic_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to meet the demanding standards of aristocratic service. Spills wine, serves dishes incorrectly, and the lack of proper etiquette disappoints the noble guests who expect flawless service.",
+                "mediocre": "{worker_name} provides basic service to the aristocratic guests but lacks the refinement expected. Dishes are served and drinks are poured, but the service lacks the elegance and precision that defines true aristocratic hospitality.",
+                "success": "{worker_name} delivers impeccable service to the aristocratic guests. Every dish is served with perfect timing, every glass is filled with precision, and the elegant attention to detail creates an atmosphere worthy of the castle's noble clientele.",
+                "critical_success": "{worker_name} provides service of legendary quality that exceeds all aristocratic expectations. The flawless execution, elegant presentation, and intuitive anticipation of every guest's need creates such an exceptional experience that the nobles speak of the castle's service throughout high society."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "pleasure_servant",
+          "name": "Pleasure Servant",
+          "nsfw": true,
+          "difficulty": "medium",
+          "skills": [
+            "Sex",
+            "Anal",
+            "Oral",
+            "Hand",
+            "BDSM",
+            "Special"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 3,
+            "bonus_formula": "reputation / 100"
+          },
+          "daily_stories": [
+            {
+              "id": "pleasure_servant_noble_client",
+              "weight": 4,
+              "report": "Pleasured Noble Client",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Sex",
+                "Anal",
+                "Oral",
+                "Hand"
+              ],
+              "relevant_traits": [
+                "Sensual",
+                "Submissive",
+                "Experienced",
+                "Beautiful"
+              ],
+              "trait_bonus": "level * 120",
+              "trait_success": "The noble client is enthralled by {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "200 + skill * 6",
+                "critical_success": "200 + skill * 12",
+                "mediocre": "100 + skill * 3",
+                "failure": "-15"
+              },
+              "story_image": "pleasure_servant_noble",
+              "failure_image": "pleasure_servant_noble_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to satisfy the noble client's desires. The lack of skill and poor understanding of aristocratic preferences disappoints the patron who expected exceptional service for their coin.",
+                "mediocre": "{worker_name} provides basic pleasure services but lacks the refinement and skill expected by the aristocracy. The encounter is functional but fails to create the memorable experience the noble sought.",
+                "success": "{worker_name} delivers exceptional pleasure services that satisfy the noble client completely. The combination of skilled technique, sensual presence, and attentive service creates an experience worthy of the castle's reputation.",
+                "critical_success": "{worker_name} provides pleasure services of legendary quality. The perfect blend of technique, passion, and intuitive understanding of the noble's desires creates such an overwhelming experience that the client becomes a devoted regular and spreads word of the encounter."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": 0,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "prisoner",
+          "name": "Prisoner",
+          "nsfw": false,
+          "difficulty": "none",
+          "skills": [],
+          "max_daily_workers": 99,
+          "daily_story_count": 1,
+          "daily_stories": [
+            {
+              "id": "prisoner_obedience_training",
+              "weight": 1,
+              "report": "Obedience Training",
+              "description": "The prisoner undergoes strict training to increase their obedience and submission.",
+              "difficulty_modifier": 0,
+              "story_image": "prisoner_training",
+              "failure_image": "",
+              "descriptions": {
+                "success": "{worker_name} endures the rigorous obedience training, learning to submit completely to authority. The strict discipline and structured routine gradually break down resistance, increasing their obedience and acceptance of their role."
+              },
+              "consequences": {
+                "success": {
+                  "energy": -2,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": -2,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0,
+                  "obedience": 5
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "guards",
+          "name": "Guards",
+          "nsfw": false,
+          "difficulty": "hard",
+          "skills": [
+            "Combat"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 2,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "guards_capture_intruder",
+              "weight": 3,
+              "report": "Captured Intruder",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Intimidating",
+                "Robust",
+                "Alert"
+              ],
+              "trait_bonus": "level * 150",
+              "trait_success": "{worker_name}'s {trait} proves decisive in capturing the intruder.",
+              "earnings": {
+                "success": "180 + skill * 8",
+                "critical_success": "180 + skill * 15",
+                "mediocre": "90 + skill * 4",
+                "failure": "-12"
+              },
+              "story_image": "guards_intruder",
+              "failure_image": "guards_intruder_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to catch the intruder attempting to sneak into the castle. The trespasser proves too quick or cunning, escaping through the shadows and leaving the guards embarrassed by the security breach.",
+                "mediocre": "{worker_name} spots the intruder but struggles to apprehend them. The trespasser is driven off but escapes capture, leaving the guards to reinforce security measures for the future.",
+                "success": "{worker_name} successfully captures an intruder attempting to breach the castle's defenses. The trespasser is apprehended with precision, demonstrating the guards' vigilance and protecting the castle's security.",
+                "critical_success": "{worker_name} executes a flawless capture of the intruder, catching them before they can cause any harm. The efficient operation and thorough interrogation reveal valuable intelligence about potential threats, earning recognition for the guard's expertise."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": -2,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": -1,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0,
+                "captured_worker": {
+                  "chance": 0.05,
+                  "filters": {
+                    "unique": false
+                  }
+                }
+              }
+            },
+            {
+              "id": "guards_capture_criminal",
+              "weight": 3,
+              "report": "Apprehended Criminal",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Intimidating",
+                "Determined",
+                "Robust"
+              ],
+              "trait_bonus": "level * 150",
+              "trait_success": "{worker_name}'s {trait} proves decisive in apprehending the criminal.",
+              "earnings": {
+                "success": "200 + skill * 9",
+                "critical_success": "200 + skill * 16",
+                "mediocre": "100 + skill * 4",
+                "failure": "-15"
+              },
+              "story_image": "guards_criminal",
+              "failure_image": "guards_criminal_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to apprehend the criminal attempting to infiltrate the castle. The lawbreaker proves too skilled or well-prepared, escaping the guards' pursuit and leaving the castle vulnerable.",
+                "mediocre": "{worker_name} engages the criminal but struggles to complete the capture. The lawbreaker is driven away but escapes, leaving the guards to investigate the incident and improve security protocols.",
+                "success": "{worker_name} successfully apprehends a criminal attempting to breach the castle. The lawbreaker is captured with professional efficiency, demonstrating the guards' competence and maintaining the castle's security.",
+                "critical_success": "{worker_name} executes a perfect apprehension of the criminal, catching them red-handed and preventing any potential threat. The thorough operation and successful capture earn praise from the castle's leadership and strengthen the guards' reputation."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": -1,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0,
+                "captured_worker": {
+                  "chance": 0.05,
+                  "filters": {
+                    "unique": false
+                  }
+                }
+              }
+            },
+            {
+              "id": "guards_patrol_secure",
+              "weight": 2,
+              "report": "Secured Castle Perimeter",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Alert",
+                "Robust",
+                "Determined"
+              ],
+              "trait_bonus": "level * 120",
+              "trait_success": "{worker_name}'s {trait} ensures thorough security during the patrol.",
+              "earnings": {
+                "success": "150 + skill * 7",
+                "critical_success": "150 + skill * 12",
+                "mediocre": "75 + skill * 3",
+                "failure": "-8"
+              },
+              "story_image": "guards_patrol",
+              "failure_image": "guards_patrol_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to maintain proper security during the patrol. Missed signs of potential threats and poor vigilance create security gaps that could be exploited by those seeking to breach the castle.",
+                "mediocre": "{worker_name} completes the patrol but without exceptional attention to detail. The perimeter is checked but potential security concerns might be overlooked, leaving room for improvement.",
+                "success": "{worker_name} conducts a thorough security patrol of the castle perimeter. Every potential entry point is checked, suspicious activity is noted, and the castle's defenses are reinforced through vigilant observation.",
+                "critical_success": "{worker_name} executes an exemplary security patrol that identifies and addresses multiple potential threats. The thorough inspection and proactive security measures prevent any breaches and demonstrate the guards' exceptional dedication to protecting the castle."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 3,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "chamberlain",
+          "name": "Chamberlain",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Clever"
+          ],
+          "max_daily_workers": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "chamberlain_manage_castle",
+              "weight": 1,
+              "report": "Managed the Castle",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Clever"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Elegant",
+                "Sophisticated",
+                "Magnetic"
+              ],
+              "trait_bonus": "level * 100",
+              "trait_success": "The castle benefits from {worker_name}'s {trait} management.",
+              "earnings": {
+                "success": "150 + skill * 6",
+                "critical_success": "150 + skill * 12",
+                "mediocre": "75 + skill * 3",
+                "failure": "-10"
+              },
+              "story_image": "chamberlain_castle",
+              "failure_image": "chamberlain_castle_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to manage the castle effectively. Poor coordination between different departments creates chaos, disappointing both staff and aristocratic guests.",
+                "mediocre": "{worker_name} manages the castle adequately but without inspiration. Basic operations run smoothly but nothing exceptional happens to enhance the castle's reputation.",
+                "success": "{worker_name} manages the castle with skill and professionalism. The establishment runs smoothly, staff is organized, and aristocratic guests are satisfied with the service.",
+                "critical_success": "{worker_name} excels as chamberlain, creating an exceptional castle experience. Perfect organization, inspired leadership, and attention to every detail make the castle legendary among the aristocracy."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "rest",
+          "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
+          "nsfw": false,
+          "difficulty": "none",
+          "skills": [],
+          "max_daily_workers": 99,
+          "daily_story_count": 1,
+          "daily_stories": [
+            {
+              "id": "rest_castle",
+              "weight": 1,
+              "description": "The worker takes a break in the castle's quarters, regenerating health and energy.",
+              "report": "Taking a Break",
+              "story_image": "rest_castle",
               "failure_image": "",
               "loot": {
                 "rolls": 0

@@ -25,7 +25,7 @@ define gui.show_name = True
 
 ## The version of the game.
 
-define config.version = "0.89"
+define config.version = "0.9"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -154,6 +154,16 @@ define config.save_directory = "BrothelMaster-1737665113"
 
 define config.window_icon = "gui/window_icon.png"
 
+## Build icon - used for the executable file icon in distributions
+## IMPORTANT: For Windows, you need a .ico file (not .png)
+## The icon file should be in the project root directory (not in game/)
+
+# Icono del ejecutable en las distribuciones
+# IMPORTANTE: build.icon es relativo a la RAÍZ del proyecto, no a game/
+# El archivo icon.ico debe estar en la raíz (junto a project.json)
+define build.windows_icon = "icon.ico"
+define build.icon = "icon.ico"
+
 
 ## Build configuration #########################################################
 ##
@@ -185,6 +195,17 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
+    
+    ## Exclude the docs folder completely
+    build.classify('docs/**', None)
+    
+    ## Exclude devkit files except the latest version exe
+    build.classify('devkit/legacy/**', None)
+    build.classify('devkit/*.py', None)
+    build.classify('devkit/*.bat', None)
+    build.classify('devkit/*.md', None)
+    build.classify('devkit/__pycache__/**', None)
+    build.classify('devkit/FantasyManager_Editor_v2.exe', None)
 
     ## To archive files, classify them as 'archive'.
 

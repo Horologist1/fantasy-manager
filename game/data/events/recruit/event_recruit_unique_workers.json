@@ -15,16 +15,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position immediately for [COST] per day.",
-        "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word.",
+        "option": "Offer them a position immediately for [COST] per day. (Potential: Reputation)",
+        "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word. Word of your generous treatment spreads, enhancing your reputation (+3 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 3
         }
       },
       {
-        "option": "Negotiate for a lower wage, emphasizing stability and steady work.",
-        "message": "You negotiate for a reduced wage of [COST] per day, explaining that while the pay is lower, the position offers stability and steady work. [event_worker] considers this thoughtfully. 'Steady work does have value. Alright, I accept.' They agree to work at a reduced comfort level ([actual_comfort]), appreciating the security of the position.",
+        "option": "Negotiate for a lower wage, emphasizing stability and steady work. (Potential: Discount, Reputation)",
+        "message": "You negotiate for a reduced wage of [COST] per day, explaining that while the pay is lower, the position offers stability and steady work. [event_worker] considers this thoughtfully. 'Steady work does have value. Alright, I accept.' They agree to work at a reduced daily cost ([actual_cost]), appreciating the security of the position. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation). The reduced daily cost reflects your negotiation skills (20% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -32,8 +32,8 @@
         }
       },
       {
-        "option": "Negotiate for a trial period at reduced pay.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "option": "Negotiate for a trial period at reduced pay. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost]) for the first month. The reduced daily cost reflects your negotiation skills (30% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.7,
@@ -68,16 +68,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them [COST] per day immediately.",
-        "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.'",
+        "option": "Offer them [COST] per day immediately. (Potential: Reputation)",
+        "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.' Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 4
         }
       },
       {
-        "option": "Offer better terms to build a strong working relationship.",
-        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker]'s smile widens appreciatively. 'Oh, I like someone who values their workers. You're building something here, and I respect that.' He extends his hand. 'I think we'll work beautifully together.' He agrees to work with increased relationship, seeing potential in your establishment.",
+        "option": "Offer better terms to build a strong working relationship. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker]'s smile widens appreciatively. 'Oh, I like someone who values their workers. You're building something here, and I respect that.' He extends his hand. 'I think we'll work beautifully together.' He agrees to work with increased relationship, seeing potential in your establishment. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). You sense a stronger bond forming between you and Florian (+15 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
@@ -85,8 +85,8 @@
         }
       },
       {
-        "option": "Try to negotiate a lower wage using his own tactics.",
-        "message": "You attempt to match his roguish charm with some clever negotiation of your own. [event_worker] seems both surprised and impressed. 'Oh, you're trying to out-rogue the rogue? I like your style!' He laughs. 'Fine, fine. [COST] per day it is. But I'll expect you to appreciate my... special talents.' He agrees to work at a slightly reduced comfort level ([actual_comfort]), but there's a playful glint in his eye that suggests he's already planning how to get what he wants anyway.",
+        "option": "Try to negotiate a lower wage using his own tactics. (Potential: Discount, Reputation, Relationship)",
+        "message": "You attempt to match his roguish charm with some clever negotiation of your own. [event_worker] seems both surprised and impressed. 'Oh, you're trying to out-rogue the rogue? I like your style!' He laughs. 'Fine, fine. [COST] per day it is. But I'll expect you to appreciate my... special talents.' He agrees to work at a slightly reduced daily cost ([actual_cost]), but there's a playful glint in his eye that suggests he's already planning how to get what he wants anyway. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation). You sense a stronger bond forming between you and Florian (+12 Relationship). The reduced daily cost reflects your negotiation skills (20% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -118,16 +118,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8
         }
       },
       {
-        "option": "Offer better terms to show you value their unique talents.",
-        "message": "You offer [COST] per day, recognizing their mysterious and valuable nature. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. They agree to work with increased relationship, appreciating your recognition of their worth.",
+        "option": "Offer better terms to show you value their unique talents. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day, recognizing their mysterious and valuable nature. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. They agree to work with increased relationship, appreciating your recognition of their worth. Word of your generous treatment spreads, enhancing your reputation (+10 Reputation). You sense a stronger bond forming between you and Violet (+18 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 10,
@@ -135,8 +135,8 @@
         }
       },
       {
-        "option": "Offer them a position with special accommodations.",
-        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your understanding.",
+        "option": "Offer them a position with special accommodations. (Potential: Discount, Reputation, Mystical Resonance)",
+        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your understanding. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (15% discount). They gain the 'Mystical Resonance' trait, which will last for 60 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.85,
@@ -172,16 +172,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position for [COST] per day.",
-        "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming.",
+        "option": "Offer them a position for [COST] per day. (Potential: Reputation)",
+        "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 5
         }
       },
       {
-        "option": "Offer better terms to recognize their talent.",
-        "message": "You offer [COST] per day, recognizing their obvious charisma and performance skills. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. They agree to work with bonus reputation and increased relationship.",
+        "option": "Offer better terms to recognize their talent. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day, recognizing their obvious charisma and performance skills. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. They agree to work with bonus reputation and increased relationship. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation). You sense a stronger bond forming between you and Lily (+12 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
@@ -189,8 +189,8 @@
         }
       },
       {
-        "option": "Negotiate for a trial period with performance-based pay.",
-        "message": "You propose a trial period at [COST] per day, with the promise of better terms if they prove their value. [event_worker] considers this. 'A challenge? I love challenges. You'll see - I'm worth every coin.' They agree to work at reduced comfort ([actual_comfort]) for the first month.",
+        "option": "Negotiate for a trial period with performance-based pay. (Potential: Discount, Trial Worker)",
+        "message": "You propose a trial period at [COST] per day, with the promise of better terms if they prove their value. [event_worker] considers this. 'A challenge? I love challenges. You'll see - I'm worth every coin.' They agree to work at reduced daily cost ([actual_cost]) for the first month. The reduced daily cost reflects your negotiation skills (30% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.7,
@@ -225,16 +225,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 6
         }
       },
       {
-        "option": "Offer better terms to show respect for their elven heritage.",
-        "message": "You offer [COST] per day, showing respect for their elven heritage and unique abilities. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. They agree to work with increased relationship, appreciating your recognition of their worth.",
+        "option": "Offer better terms to show respect for their elven heritage. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day, showing respect for their elven heritage and unique abilities. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. They agree to work with increased relationship, appreciating your recognition of their worth. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation). You sense a stronger bond forming between you and Rose (+15 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
@@ -242,8 +242,8 @@
         }
       },
       {
-        "option": "Offer them a position with accommodations for their elven nature.",
-        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your consideration.",
+        "option": "Offer them a position with accommodations for their elven nature. (Potential: Discount, Reputation, Nature's Blessing)",
+        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your consideration. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). The reduced daily cost reflects your negotiation skills (20% discount). They gain the 'Nature's Blessing' trait, which will last for 90 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -279,16 +279,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position for [COST] per day.",
-        "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word.",
+        "option": "Offer them a position for [COST] per day. (Potential: Reputation)",
+        "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 4
         }
       },
       {
-        "option": "Offer better terms to build a strong working relationship.",
-        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker] smiles warmly. 'I appreciate that you see my potential. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. They agree to work with increased relationship.",
+        "option": "Offer better terms to build a strong working relationship. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker] smiles warmly. 'I appreciate that you see my potential. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. They agree to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). You sense a stronger bond forming between you and Iris (+12 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
@@ -296,8 +296,8 @@
         }
       },
       {
-        "option": "Offer a trial period to prove their value.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month, with the promise of better terms if they excel.",
+        "option": "Offer a trial period to prove their value. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost]) for the first month, with the promise of better terms if they excel. The reduced daily cost reflects your negotiation skills (25% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.75,
@@ -332,16 +332,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position immediately for [COST] per day.",
-        "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word.",
+        "option": "Offer them a position immediately for [COST] per day. (Potential: Reputation)",
+        "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word. Word of your generous treatment spreads, enhancing your reputation (+3 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 3
         }
       },
       {
-        "option": "Negotiate for a lower wage, emphasizing stability and steady work.",
-        "message": "You negotiate for a reduced wage of [COST] per day, explaining that while the pay is lower, the position offers stability and steady work. [event_worker] considers this thoughtfully. 'Steady work does have value. Alright, I accept.' They agree to work at a reduced comfort level ([actual_comfort]), appreciating the security of the position.",
+        "option": "Negotiate for a lower wage, emphasizing stability and steady work. (Potential: Discount, Reputation)",
+        "message": "You negotiate for a reduced wage of [COST] per day, explaining that while the pay is lower, the position offers stability and steady work. [event_worker] considers this thoughtfully. 'Steady work does have value. Alright, I accept.' They agree to work at a reduced daily cost ([actual_cost]), appreciating the security of the position. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation). The reduced daily cost reflects your negotiation skills (20% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -349,8 +349,8 @@
         }
       },
       {
-        "option": "Negotiate for a trial period at reduced pay.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "option": "Negotiate for a trial period at reduced pay. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost]) for the first month. The reduced daily cost reflects your negotiation skills (30% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.7,
@@ -385,16 +385,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them [COST] per day immediately.",
-        "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.'",
+        "option": "Offer them [COST] per day immediately. (Potential: Reputation)",
+        "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.' Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 4
         }
       },
       {
-        "option": "Offer better terms to build a strong working relationship.",
-        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker]'s smile widens appreciatively. 'Oh, I like someone who values their workers. You're building something here, and I respect that.' He extends his hand. 'I think we'll work beautifully together.' He agrees to work with increased relationship, seeing potential in your establishment.",
+        "option": "Offer better terms to build a strong working relationship. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker]'s smile widens appreciatively. 'Oh, I like someone who values their workers. You're building something here, and I respect that.' He extends his hand. 'I think we'll work beautifully together.' He agrees to work with increased relationship, seeing potential in your establishment. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). You sense a stronger bond forming between you and Laurel (+15 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
@@ -402,8 +402,8 @@
         }
       },
       {
-        "option": "Try to negotiate a lower wage using his own tactics.",
-        "message": "You attempt to match his roguish charm with some clever negotiation of your own. [event_worker] seems both surprised and impressed. 'Oh, you're trying to out-rogue the rogue? I like your style!' He laughs. 'Fine, fine. [COST] per day it is. But I'll expect you to appreciate my... special talents.' He agrees to work at a slightly reduced comfort level ([actual_comfort]), but there's a playful glint in his eye that suggests he's already planning how to get what he wants anyway.",
+        "option": "Try to negotiate a lower wage using his own tactics. (Potential: Discount, Reputation, Relationship)",
+        "message": "You attempt to match his roguish charm with some clever negotiation of your own. [event_worker] seems both surprised and impressed. 'Oh, you're trying to out-rogue the rogue? I like your style!' He laughs. 'Fine, fine. [COST] per day it is. But I'll expect you to appreciate my... special talents.' He agrees to work at a slightly reduced daily cost ([actual_cost]), but there's a playful glint in his eye that suggests he's already planning how to get what he wants anyway. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation). You sense a stronger bond forming between you and Laurel (+12 Relationship). The reduced daily cost reflects your negotiation skills (20% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -435,16 +435,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8
         }
       },
       {
-        "option": "Offer better terms to show you value their unique talents.",
-        "message": "You offer [COST] per day, recognizing their mysterious and valuable nature. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. They agree to work with increased relationship, appreciating your recognition of their worth.",
+        "option": "Offer better terms to show you value their unique talents. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day, recognizing their mysterious and valuable nature. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. They agree to work with increased relationship, appreciating your recognition of their worth. Word of your generous treatment spreads, enhancing your reputation (+10 Reputation). You sense a stronger bond forming between you and Sage (+18 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 10,
@@ -452,8 +452,8 @@
         }
       },
       {
-        "option": "Offer them a position with special accommodations.",
-        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your understanding.",
+        "option": "Offer them a position with special accommodations. (Potential: Discount, Reputation, Mystical Resonance)",
+        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your understanding. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (15% discount). They gain the 'Mystical Resonance' trait, which will last for 60 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.85,
@@ -489,16 +489,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position for [COST] per day.",
-        "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming.",
+        "option": "Offer them a position for [COST] per day. (Potential: Reputation)",
+        "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 5
         }
       },
       {
-        "option": "Offer better terms to recognize their talent.",
-        "message": "You offer [COST] per day, recognizing their obvious charisma and performance skills. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. They agree to work with bonus reputation and increased relationship.",
+        "option": "Offer better terms to recognize their talent. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day, recognizing their obvious charisma and performance skills. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. They agree to work with bonus reputation and increased relationship. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation). You sense a stronger bond forming between you and Lotus (+12 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
@@ -506,8 +506,8 @@
         }
       },
       {
-        "option": "Negotiate for a trial period with performance-based pay.",
-        "message": "You propose a trial period at [COST] per day, with the promise of better terms if they prove their value. [event_worker] considers this. 'A challenge? I love challenges. You'll see - I'm worth every coin.' They agree to work at reduced comfort ([actual_comfort]) for the first month.",
+        "option": "Negotiate for a trial period with performance-based pay. (Potential: Discount, Trial Worker)",
+        "message": "You propose a trial period at [COST] per day, with the promise of better terms if they prove their value. [event_worker] considers this. 'A challenge? I love challenges. You'll see - I'm worth every coin.' They agree to work at reduced daily cost ([actual_cost]) for the first month. The reduced daily cost reflects your negotiation skills (30% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.7,
@@ -542,16 +542,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 6
         }
       },
       {
-        "option": "Offer better terms to show respect for their elven heritage.",
-        "message": "You offer [COST] per day, showing respect for their elven heritage and unique abilities. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. They agree to work with increased relationship, appreciating your recognition of their worth.",
+        "option": "Offer better terms to show respect for their elven heritage. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day, showing respect for their elven heritage and unique abilities. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. They agree to work with increased relationship, appreciating your recognition of their worth. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation). You sense a stronger bond forming between you and Primrose (+15 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
@@ -559,8 +559,8 @@
         }
       },
       {
-        "option": "Offer them a position with accommodations for their elven nature.",
-        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your consideration.",
+        "option": "Offer them a position with accommodations for their elven nature. (Potential: Discount, Reputation, Nature's Blessing)",
+        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your consideration. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). The reduced daily cost reflects your negotiation skills (20% discount). They gain the 'Nature's Blessing' trait, which will last for 90 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -596,16 +596,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position for [COST] per day.",
-        "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word.",
+        "option": "Offer them a position for [COST] per day. (Potential: Reputation)",
+        "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 4
         }
       },
       {
-        "option": "Offer better terms to build a strong working relationship.",
-        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker] smiles warmly. 'I appreciate that you see my potential. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. They agree to work with increased relationship.",
+        "option": "Offer better terms to build a strong working relationship. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day with the promise of better treatment and opportunities for growth. [event_worker] smiles warmly. 'I appreciate that you see my potential. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. They agree to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). You sense a stronger bond forming between you and Jasmine (+12 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
@@ -613,8 +613,8 @@
         }
       },
       {
-        "option": "Offer a trial period to prove their value.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month, with the promise of better terms if they excel.",
+        "option": "Offer a trial period to prove their value. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost]) for the first month, with the promise of better terms if they excel. The reduced daily cost reflects your negotiation skills (25% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.75,
@@ -649,16 +649,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You welcome their enthusiasm and offer [COST] per day. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You welcome their enthusiasm and offer [COST] per day. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 4
         }
       },
       {
-        "option": "Offer better terms to recognize their enthusiasm and service skills.",
-        "message": "You welcome their enthusiasm and offer [COST] per day, recognizing their obvious service skills and positive attitude. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy, agreeing to work with increased relationship.",
+        "option": "Offer better terms to recognize their enthusiasm and service skills. (Potential: Reputation, Relationship)",
+        "message": "You welcome their enthusiasm and offer [COST] per day, recognizing their obvious service skills and positive attitude. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy, agreeing to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). You sense a stronger bond forming between you and Daisy (+15 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
@@ -666,8 +666,8 @@
         }
       },
       {
-        "option": "Offer a trial period to see how they fit in.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] nods enthusiastically. 'A trial? That's perfect! I'll show you just how hard I can work!' They agree to work at a reduced comfort level ([actual_comfort]) for the first month, their optimism undimmed.",
+        "option": "Offer a trial period to see how they fit in. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] nods enthusiastically. 'A trial? That's perfect! I'll show you just how hard I can work!' They agree to work at a reduced daily cost ([actual_cost]) for the first month, their optimism undimmed. The reduced daily cost reflects your negotiation skills (25% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.75,
@@ -702,16 +702,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You welcome them warmly and offer [COST] per day. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You welcome them warmly and offer [COST] per day. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 5
         }
       },
       {
-        "option": "Offer better terms to show respect for their elven heritage.",
-        "message": "You welcome them warmly and offer [COST] per day, showing respect for their elven heritage and talents. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent, and they agree to work with increased relationship.",
+        "option": "Offer better terms to show respect for their elven heritage. (Potential: Reputation, Relationship)",
+        "message": "You welcome them warmly and offer [COST] per day, showing respect for their elven heritage and talents. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent, and they agree to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation). You sense a stronger bond forming between you and Poppy (+18 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
@@ -719,8 +719,8 @@
         }
       },
       {
-        "option": "Offer a position with accommodations for their elven nature.",
-        "message": "You propose [COST] per day with special accommodations - perhaps access to natural spaces or gardens. [event_worker]'s expression brightens. 'You understand our needs. That means a great deal.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your consideration.",
+        "option": "Offer a position with accommodations for their elven nature. (Potential: Discount, Reputation, Nature's Blessing)",
+        "message": "You propose [COST] per day with special accommodations - perhaps access to natural spaces or gardens. [event_worker]'s expression brightens. 'You understand our needs. That means a great deal.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your consideration. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (20% discount). They gain the 'Nature's Blessing' trait, which will last for 90 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -755,16 +755,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position for [COST] per day.",
-        "message": "You recognize their unique qualities and offer [COST] per day. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence.",
+        "option": "Offer them a position for [COST] per day. (Potential: Reputation)",
+        "message": "You recognize their unique qualities and offer [COST] per day. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 4
         }
       },
       {
-        "option": "Offer better terms to recognize their unique qualities.",
-        "message": "You recognize their unique qualities and offer [COST] per day with the promise of appreciation for what makes them special. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence, agreeing to work with increased relationship.",
+        "option": "Offer better terms to recognize their unique qualities. (Potential: Reputation, Relationship)",
+        "message": "You recognize their unique qualities and offer [COST] per day with the promise of appreciation for what makes them special. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence, agreeing to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). You sense a stronger bond forming between you and [event_worker] (+12 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
@@ -772,8 +772,8 @@
         }
       },
       {
-        "option": "Propose a trial period to assess their fit.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial is fair. I'm confident I'll prove my worth.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "option": "Propose a trial period to assess their fit. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial is fair. I'm confident I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost]) for the first month. The reduced daily cost reflects your negotiation skills (25% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.75,
@@ -807,16 +807,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day.",
-        "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence.",
+        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
+        "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 5
         }
       },
       {
-        "option": "Offer better terms to recognize their distinctive qualities.",
-        "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence, agreeing to work with increased relationship.",
+        "option": "Offer better terms to recognize their distinctive qualities. (Potential: Reputation, Relationship)",
+        "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence, agreeing to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). You sense a stronger bond forming between you and [event_worker] (+14 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
@@ -824,8 +824,8 @@
         }
       },
       {
-        "option": "Offer a position with special considerations.",
-        "message": "You propose [COST] per day with accommodations for their unique needs. [event_worker] considers this. 'You're thoughtful. I appreciate that.' They agree to work at a slightly reduced comfort ([actual_comfort]) in exchange for your understanding of their particular requirements.",
+        "option": "Offer a position with special considerations. (Potential: Discount, Reputation)",
+        "message": "You propose [COST] per day with accommodations for their unique needs. [event_worker] considers this. 'You're thoughtful. I appreciate that.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your understanding of their particular requirements. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (20% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -855,16 +855,16 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer them a position for [COST] per day.",
-        "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence.",
+        "option": "Offer them a position for [COST] per day. (Potential: Reputation)",
+        "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 5
         }
       },
       {
-        "option": "Offer better terms to recognize their exceptional qualities.",
-        "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence, agreeing to work with increased relationship.",
+        "option": "Offer better terms to recognize their exceptional qualities. (Potential: Reputation, Relationship)",
+        "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence, agreeing to work with increased relationship. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation). You sense a stronger bond forming between you and [event_worker] (+16 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
@@ -872,8 +872,8 @@
         }
       },
       {
-        "option": "Propose a trial period to evaluate their fit.",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this thoughtfully. 'A trial is reasonable. I'm confident I'll exceed your expectations.' They agree to work at a reduced comfort level ([actual_comfort]) for the first month.",
+        "option": "Propose a trial period to evaluate their fit. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this thoughtfully. 'A trial is reasonable. I'm confident I'll exceed your expectations.' They agree to work at a reduced daily cost ([actual_cost]) for the first month. The reduced daily cost reflects your negotiation skills (25% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.75,
@@ -893,4 +893,3 @@
     "nsfw": false
   }
 ]
-

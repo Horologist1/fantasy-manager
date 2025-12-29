@@ -18,7 +18,7 @@
             {
                 "option": "Accept the duel. (Risk: Worker Health; Potential: Money, Reputation)",
                 "condition": "Combat",
-                "message_success": "Steel rings against steel as [acting_worker] meets each blow with practiced grace. The knight's eyes widen with respect as your champion matches their skill stroke for stroke. When the final parry lands, both warriors step back, breathing hard but grinning. The knight removes their helm and raises a toast—honor satisfied, reputation earned. A heavy purse changes hands as the crowd erupts in cheers ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_success": "Steel rings against steel as [acting_worker] meets each blow with practiced grace.\n\nThe knight's eyes widen with respect as your champion matches their skill stroke for stroke.\n\nWhen the final parry lands, both warriors step back, breathing hard but grinning.\n\nThe knight removes their helm and raises a toast—honor satisfied, reputation earned.\n\nA heavy purse changes hands as the crowd erupts in cheers ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
                 "message_failure": "The clash of metal echoes through the hall as [acting_worker] struggles against the knight's relentless assault. Each parry comes a heartbeat too late, each riposte falls short of its mark. Blood seeps through torn fabric as your champion staggers back, pride wounded deeper than flesh. You step forward with a strained smile, covering the costs of defeat while whispers of weakness follow in your wake ({actual_money}, {actual_reputation} reputation). (-10 Health, -5 Joy)",
                 "effect": {
                     "success": {
