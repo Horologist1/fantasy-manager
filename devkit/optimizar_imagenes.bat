@@ -1,13 +1,15 @@
 @echo off
 chcp 65001 >nul
 echo ========================================
-echo Compresor Casi Lossless
-echo (Solo imagenes que pesan demasiado)
+echo Optimizador de Imagenes
+echo (Normaliza resoluciones y convierte PNG a JPG)
 echo ========================================
 echo.
-echo Este script comprime solo las imagenes
-echo 1920x1080 que pesan demasiado para su
-echo resolucion, usando calidad casi lossless.
+echo Este script:
+echo   - Normaliza todas las imagenes a 1920x1080
+echo   - Convierte PNG sin transparencia a JPG
+echo   - Mantiene la proporcion de aspecto
+echo   - Reduce significativamente el tamano del juego
 echo.
 
 REM Verificar si Python está instalado
@@ -35,21 +37,17 @@ if errorlevel 1 (
     echo.
 )
 
-REM Ejecutar el script de compresión
+REM Ejecutar el script de optimización
 cd /d "%~dp0"
-python compress_large_images.py
+echo Ejecutando optimizacion...
+echo.
+python normalize_resolutions.py
 
+echo.
+echo ========================================
+echo Optimizacion completada
+echo ========================================
 echo.
 echo Presiona cualquier tecla para salir...
 pause >nul
-
-
-
-
-
-
-
-
-
-
 

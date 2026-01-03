@@ -42,7 +42,7 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 ```json
 {
   "name": "Elena",
-  "folder": "tangirl",
+  "folder": "iris",
   "cost": 1400,
   "nsfw": true,
   "unique": false,

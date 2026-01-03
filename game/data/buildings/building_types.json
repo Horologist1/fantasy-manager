@@ -2137,13 +2137,13 @@
           ]
         },
         {
-          "id": "performer",
-          "name": "Performer",
-          "description": "Entertains tavern guests with performances. Generates money through shows. Can perform for VIP audiences for higher earnings.",
+          "id": "entertainer",
+          "name": "Entertainer",
+          "description": "Entertains tavern guests through conversation, dance, music, storytelling, or other talents. Generates money by captivating audiences. Can entertain VIP guests for higher earnings.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": [
-            "Striptease"
+            "Charm"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
@@ -2152,12 +2152,12 @@
           },
           "daily_stories": [
             {
-              "id": "performer_story1_tavern",
+              "id": "entertainer_story1_tavern",
               "weight": 5,
-              "report": "Performed for Regulars",
+              "report": "Entertained Regulars",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Striptease"
+                "Charm"
               ],
               "relevant_traits": [
                 "Charming",
@@ -2165,20 +2165,20 @@
                 "Playful"
               ],
               "trait_bonus": "level * 100",
-              "trait_success": "The crowd is delighted by {worker_name}'s {trait}.",
+              "trait_success": "The crowd is delighted by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
                 "success": "100 + skill * 5",
                 "critical_success": "100 + skill * 10",
                 "mediocre": "50 + skill * 2",
                 "failure": "-5"
               },
-              "story_image": "performer_story1_tavern",
-              "failure_image": "performer_story1_tavern_failure",
+              "story_image": "entertainer_story1_tavern",
+              "failure_image": "entertainer_story1_tavern_failure",
               "descriptions": {
-                "failure": "{worker_name} struggles to capture the tavern crowd's attention. The performance lacks energy and stage presence, leaving the rowdy patrons unimpressed and calling for better entertainment.",
-                "mediocre": "{worker_name} puts on a decent show for the tavern regulars but nothing that stands out. The performance gets some applause but doesn't create the electric atmosphere that makes a tavern night memorable.",
-                "success": "{worker_name} delivers an engaging performance that perfectly matches the tavern's lively atmosphere. The crowd gets into it, singing along and cheering, creating the kind of night that brings people back.",
-                "critical_success": "{worker_name} bereaches their peak the star of the tavern with an absolutely captivating performance. The entire crowd is mesmerized, creating such an beyond mortal comprehension atmosphere that the tavern bereaches their peak the talk of the town."
+                "failure": "{worker_name} struggles to capture the tavern crowd's attention. Whether through conversation, dance, or other talents, their efforts lack energy and presence, leaving the rowdy patrons unimpressed and calling for better entertainment.",
+                "mediocre": "{worker_name} provides decent entertainment for the tavern regulars but nothing that stands out. Their conversation, performance, or display of talent gets some appreciation but doesn't create the electric atmosphere that makes a tavern night memorable.",
+                "success": "{worker_name} captivates the tavern with their charm, whether through engaging conversation, graceful dance, musical talent, or other skills. The crowd gets into it, responding enthusiastically and creating the kind of night that brings people back.",
+                "critical_success": "{worker_name} becomes the star of the tavern with an absolutely captivating display of talent. Whether through mesmerizing conversation, breathtaking dance, enchanting music, or other extraordinary skills, the entire crowd is spellbound, making the tavern the talk of the town."
               },
               "consequences": {
                 "failure": {
@@ -2217,12 +2217,12 @@
               }
             },
             {
-              "id": "performer_story2_tavern",
+              "id": "entertainer_story2_tavern",
               "weight": 2,
-              "report": "Performed for VIPs",
+              "report": "Entertained VIPs",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Striptease"
+                "Charm"
               ],
               "relevant_traits": [
                 "Charming",
@@ -2230,20 +2230,20 @@
                 "Magnetic"
               ],
               "trait_bonus": "level * 100",
-              "trait_success": "The VIP guests are mesmerized by {worker_name}'s {trait}.",
+              "trait_success": "The VIP guests are mesmerized by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
                 "success": "500 + skill * 5",
                 "critical_success": "500 + skill * 10",
                 "mediocre": "250 + skill * 2",
                 "failure": "-5"
               },
-              "story_image": "performer_story2_tavern",
-              "failure_image": "performer_story2_tavern_failure",
+              "story_image": "entertainer_story2_tavern",
+              "failure_image": "entertainer_story2_tavern_failure",
               "descriptions": {
-                "failure": "{worker_name} fails to meet the sophisticated expectations of the VIP guests. The performance lacks the refinement and exclusivity that the wealthy audience expects, disappointing the high-paying patrons.",
-                "mediocre": "{worker_name} provides adequate entertainment for the VIP section but nothing that justifies the premium prices. The performance is competent but lacks the special touch that makes VIP experiences memorable for the distinguished audience.",
-                "success": "{worker_name} delivers an elegant performance perfectly suited for the tavern's VIP clientele. The sophisticated entertainment captivates the wealthy audience and creates exactly the refined experience that discerning patrons seek.",
-                "critical_success": "{worker_name} creates an absolutely stunning VIP experience that exceeds all expectations. The performance is so captivating and exclusive that the entire wealthy audience considers it the finest entertainment they've ever witnessed."
+                "failure": "{worker_name} fails to meet the sophisticated expectations of the VIP guests. Whether through conversation, dance, or other talents, their efforts lack the refinement and exclusivity that the wealthy audience expects, disappointing the high-paying patrons.",
+                "mediocre": "{worker_name} provides adequate entertainment for the VIP section but nothing that justifies the premium prices. Their conversation, performance, or display of talent is competent but lacks the special touch that makes VIP experiences memorable for the distinguished audience.",
+                "success": "{worker_name} delivers elegant entertainment perfectly suited for the tavern's VIP clientele. Through refined conversation, graceful dance, sophisticated music, or other refined talents, they captivate the wealthy audience and create exactly the refined experience that discerning patrons seek.",
+                "critical_success": "{worker_name} creates an absolutely stunning VIP experience that exceeds all expectations. Whether through mesmerizing conversation, breathtaking artistry, or extraordinary talent, the entertainment is so captivating and exclusive that the entire wealthy audience considers it the finest they've ever witnessed."
               },
               "consequences": {
                 "failure": {

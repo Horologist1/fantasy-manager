@@ -4,6 +4,7 @@ Script para normalizar resoluciones de imágenes a 1920x1080
 - Redimensiona imágenes mayores a 1920x1080
 - Redimensiona imágenes menores a 1920x1080
 - Mantiene proporción de aspecto (aspect ratio)
+- Convierte PNG sin transparencia a JPG (opcional)
 """
 
 import os
@@ -16,6 +17,10 @@ from PIL import Image, ImageOps
 TARGET_WIDTH = 1920
 TARGET_HEIGHT = 1080
 TARGET_RATIO = TARGET_WIDTH / TARGET_HEIGHT  # 16:9 = 1.777...
+
+# Configuración de conversión PNG->JPG
+JPG_QUALITY = 85  # Calidad JPG
+CONVERT_PNG_TO_JPG = True  # Convierte PNG sin transparencia a JPG
 
 # Carpetas a procesar
 IMAGE_FOLDERS = [
@@ -45,6 +50,15 @@ def should_exclude(filepath):
     for pattern in EXCLUDE_PATTERNS:
         if pattern in filepath_str:
             return True
+    return False
+
+
+def has_transparency(img):
+    """Verifica si una imagen tiene transparencia"""
+    if img.mode in ('RGBA', 'LA'):
+        return True
+    if img.mode == 'P':
+        return 'transparency' in img.info
     return False
 
 
@@ -108,67 +122,108 @@ def resize_with_aspect_ratio(img, target_width, target_height, method='fit'):
         return img.resize((target_width, target_height), Image.Resampling.LANCZOS)
 
 
-def normalize_image(image_path, output_path=None, method='fit', dry_run=False):
+def normalize_image(image_path, output_path=None, method='fit', dry_run=False, convert_png_to_jpg=True):
     """
-    Normaliza una imagen a 1920x1080
-    Retorna: (tamaño_original_mb, tamaño_nuevo_mb, resolución_original, resolución_nueva, cambió)
+    Normaliza una imagen a 1920x1080 y opcionalmente convierte PNG sin transparencia a JPG
+    Retorna: (tamaño_original_mb, tamaño_nuevo_mb, resolución_original, resolución_nueva, cambió, convertido)
     """
     if output_path is None:
         output_path = image_path
     
     original_size = get_file_size_mb(image_path)
     changed = False
+    converted = False
     
     try:
         # Abrir imagen
         img = Image.open(image_path)
         original_resolution = img.size
         original_mode = img.mode
+        original_ext = image_path.suffix.lower()
         
         width, height = original_resolution
         
         # Verificar si necesita normalización
         needs_resize = (width != TARGET_WIDTH or height != TARGET_HEIGHT)
         
-        if not needs_resize:
-            # Ya está en la resolución correcta
-            return original_size, original_size, original_resolution, original_resolution, False
+        # Verificar si es PNG sin transparencia y se puede convertir a JPG
+        should_convert_to_jpg = (convert_png_to_jpg and 
+                                 original_ext == '.png' and 
+                                 not has_transparency(img))
+        
+        if not needs_resize and not should_convert_to_jpg:
+            # Ya está en la resolución correcta y formato correcto
+            return original_size, original_size, original_resolution, original_resolution, False, False
         
         if dry_run:
             # En modo dry-run, solo estimamos
-            estimated_new_size = original_size  # Asumimos mismo tamaño
-            return original_size, estimated_new_size, original_resolution, (TARGET_WIDTH, TARGET_HEIGHT), True
+            estimated_new_size = original_size
+            if should_convert_to_jpg:
+                # JPG suele ser más pequeño
+                estimated_new_size = original_size * 0.6
+            return original_size, estimated_new_size, original_resolution, (TARGET_WIDTH, TARGET_HEIGHT), True, should_convert_to_jpg
         
-        # Redimensionar manteniendo aspect ratio
-        resized_img = resize_with_aspect_ratio(img, TARGET_WIDTH, TARGET_HEIGHT, method=method)
+        # Redimensionar manteniendo aspect ratio (si es necesario)
+        if needs_resize:
+            resized_img = resize_with_aspect_ratio(img, TARGET_WIDTH, TARGET_HEIGHT, method=method)
+        else:
+            resized_img = img
         
-        # Guardar
-        ext = image_path.suffix.lower()
-        if ext == '.png':
-            # Mantener transparencia si la tenía
-            if original_mode == 'RGBA':
-                resized_img = resized_img.convert('RGBA')
-            resized_img.save(output_path, 'PNG', optimize=True, compress_level=9)
-        elif ext in ('.jpg', '.jpeg'):
-            # Convertir a RGB si tiene transparencia
-            if resized_img.mode == 'RGBA':
-                # Crear fondo blanco para transparencia
-                background = Image.new('RGB', resized_img.size, (255, 255, 255))
-                background.paste(resized_img, mask=resized_img.split()[3])
-                resized_img = background
-            elif resized_img.mode != 'RGB':
+        # Decidir formato de salida
+        if should_convert_to_jpg:
+            # Convertir PNG sin transparencia a JPG
+            if resized_img.mode != 'RGB':
                 resized_img = resized_img.convert('RGB')
-            resized_img.save(output_path, 'JPEG', quality=85, optimize=True)
+            
+            jpg_path = image_path.with_suffix('.jpg')
+            resized_img.save(jpg_path, 'JPEG', quality=JPG_QUALITY, optimize=True)
+            
+            jpg_size = get_file_size_mb(jpg_path)
+            
+            # Solo reemplazar si el JPG es más pequeño
+            if jpg_size < original_size:
+                os.remove(image_path)
+                output_path = jpg_path
+                new_size = jpg_size
+                converted = True
+            else:
+                # Si el JPG es más grande, mantener el PNG
+                os.remove(jpg_path)
+                # Guardar como PNG normalizado
+                if needs_resize:
+                    if resized_img.mode == 'RGBA':
+                        resized_img = resized_img.convert('RGBA')
+                    resized_img.save(output_path, 'PNG', optimize=True, compress_level=9)
+                new_size = original_size
+        else:
+            # Guardar en formato original
+            ext = image_path.suffix.lower()
+            if ext == '.png':
+                # Mantener transparencia si la tenía
+                if resized_img.mode == 'RGBA':
+                    resized_img = resized_img.convert('RGBA')
+                resized_img.save(output_path, 'PNG', optimize=True, compress_level=9)
+            elif ext in ('.jpg', '.jpeg'):
+                # Convertir a RGB si tiene transparencia
+                if resized_img.mode == 'RGBA':
+                    # Crear fondo blanco para transparencia
+                    background = Image.new('RGB', resized_img.size, (255, 255, 255))
+                    background.paste(resized_img, mask=resized_img.split()[3])
+                    resized_img = background
+                elif resized_img.mode != 'RGB':
+                    resized_img = resized_img.convert('RGB')
+                resized_img.save(output_path, 'JPEG', quality=JPG_QUALITY, optimize=True)
+            
+            new_size = get_file_size_mb(output_path)
         
-        new_size = get_file_size_mb(output_path)
         new_resolution = resized_img.size
         changed = True
         
-        return original_size, new_size, original_resolution, new_resolution, True
+        return original_size, new_size, original_resolution, new_resolution, True, converted
         
     except Exception as e:
         print(f"Error procesando {image_path}: {e}")
-        return original_size, original_size, (0, 0), (0, 0), False
+        return original_size, original_size, (0, 0), (0, 0), False, False
 
 
 def find_images(base_dir):
@@ -200,9 +255,12 @@ Métodos de redimensionamiento:
   fill  - Rellena con padding manteniendo proporción
   crop  - Recorta para llenar exactamente 1920x1080
 
+El script también convierte PNG sin transparencia a JPG para reducir tamaño.
+
 Ejemplos:
-  python normalize_resolutions.py                    # Usa método 'fit' por defecto
+  python normalize_resolutions.py                    # Normaliza y convierte PNG->JPG
   python normalize_resolutions.py --method crop      # Usa método 'crop'
+  python normalize_resolutions.py --no-convert      # No convierte PNG a JPG
   python normalize_resolutions.py --dry-run          # Solo muestra estadísticas
         """
     )
@@ -210,6 +268,8 @@ Ejemplos:
                         help='Método de redimensionamiento (default: fit)')
     parser.add_argument('--dry-run', action='store_true',
                         help='Solo muestra estadísticas sin modificar archivos')
+    parser.add_argument('--no-convert', action='store_true',
+                        help='No convierte PNG sin transparencia a JPG')
     
     args = parser.parse_args()
     
@@ -223,6 +283,8 @@ Ejemplos:
     print(f"\nConfiguración:")
     print(f"  - Resolución objetivo: {TARGET_WIDTH}x{TARGET_HEIGHT}")
     print(f"  - Método: {args.method}")
+    print(f"  - Convertir PNG->JPG: {'No' if args.no_convert else 'Sí (sin transparencia)'}")
+    print(f"  - Calidad JPG: {JPG_QUALITY}")
     print(f"  - Carpetas: {', '.join(IMAGE_FOLDERS)}")
     if args.dry_run:
         print(f"  - Modo: DRY RUN (solo simulación)")
@@ -243,6 +305,7 @@ Ejemplos:
     total_new = 0
     processed = 0
     changed = 0
+    converted = 0
     errors = 0
     resolution_stats = {}
     needs_resize = []
@@ -273,23 +336,30 @@ Ejemplos:
         original_size = get_file_size_mb(img_path)
         total_original += original_size
         
-        orig, new, orig_res, new_res, changed_flag = normalize_image(
+        orig, new, orig_res, new_res, changed_flag, was_converted = normalize_image(
             img_path,
             method=args.method,
-            dry_run=args.dry_run
+            dry_run=args.dry_run,
+            convert_png_to_jpg=not args.no_convert
         )
         
         total_new += new
         processed += 1
         
+        if was_converted:
+            converted += 1
+        
         if changed_flag:
             changed += 1
             if args.dry_run:
-                print(f"  [DRY RUN] {orig_res[0]}x{orig_res[1]} -> {TARGET_WIDTH}x{TARGET_HEIGHT} | {orig:.2f} MB")
+                convert_msg = " [PNG->JPG]" if was_converted else ""
+                print(f"  [DRY RUN] {orig_res[0]}x{orig_res[1]} -> {TARGET_WIDTH}x{TARGET_HEIGHT}{convert_msg} | {orig:.2f} MB")
             else:
-                print(f"  ✓ {orig_res[0]}x{orig_res[1]} -> {new_res[0]}x{new_res[1]} | {orig:.2f} MB -> {new:.2f} MB")
+                convert_msg = " [PNG->JPG]" if was_converted else ""
+                reduction = ((orig - new) / orig * 100) if orig > 0 else 0
+                print(f"  [OK] {orig_res[0]}x{orig_res[1]} -> {new_res[0]}x{new_res[1]}{convert_msg} | {orig:.2f} MB -> {new:.2f} MB ({reduction:.1f}% reducción)")
         else:
-            print(f"  → {orig_res[0]}x{orig_res[1]} (ya normalizada) | {orig:.2f} MB")
+            print(f"  [OK] {orig_res[0]}x{orig_res[1]} (ya normalizada) | {orig:.2f} MB")
     
     # Resumen final
     print("\n" + "=" * 60)
@@ -298,6 +368,8 @@ Ejemplos:
     print(f"Imágenes procesadas: {processed}")
     print(f"Imágenes modificadas: {changed}")
     print(f"Imágenes ya normalizadas: {processed - changed}")
+    if converted > 0:
+        print(f"Imágenes convertidas PNG->JPG: {converted}")
     if errors > 0:
         print(f"Errores: {errors}")
     print(f"Tamaño original total: {total_original:.2f} MB ({total_original/1024:.2f} GB)")

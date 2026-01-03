@@ -137,7 +137,7 @@
       },
       {
         "name": "Lily",
-        "folder": "redgirl",
+        "folder": "lily",
         "cost": 1500,
         "nsfw": true,
         "unique": true,
@@ -242,7 +242,7 @@
       },
       {
         "name": "Rose",
-        "folder": "elf",
+        "folder": "rose",
         "cost": 1300,
         "nsfw": true,
         "unique": true,
@@ -734,7 +734,7 @@
       },
       {
         "name": "Violet",
-        "folder": "ravengirl",
+        "folder": "victoria",
         "cost": 1300,
         "nsfw": true,
         "unique": true,
@@ -864,7 +864,7 @@
       },
       {
         "name": "Elowen",
-        "folder": "elf",
+        "folder": "rose",
         "cost": 1250,
         "nsfw": false,
         "unique": false,
@@ -990,7 +990,7 @@
       },
       {
         "name": "Lyria",
-        "folder": "ravengirl",
+        "folder": "victoria",
         "cost": 1700,
         "nsfw": true,
         "unique": false,
@@ -1115,7 +1115,7 @@
       },
       {
         "name": "Iris",
-        "folder": "tangirl",
+        "folder": "iris",
         "cost": 1200,
         "nsfw": true,
         "unique": true,
@@ -1245,7 +1245,7 @@
       },
       {
         "name": "Brook",
-        "folder": "ravengirl",
+        "folder": "victoria",
         "cost": 1058,
         "nsfw": true,
         "unique": false,
@@ -1708,7 +1708,7 @@
       },
       {
         "name": "Elena",
-        "folder": "tangirl",
+        "folder": "iris",
         "cost": 1400,
         "nsfw": true,
         "unique": false,
@@ -1896,7 +1896,7 @@
       },
       {
         "name": "Seraphina",
-        "folder": "ravengirl",
+        "folder": "victoria",
         "cost": 1900,
         "nsfw": true,
         "unique": false,
@@ -1989,7 +1989,7 @@
       },
       {
         "name": "Delilah",
-        "folder": "redgirl",
+        "folder": "lily",
         "cost": 1300,
         "nsfw": true,
         "unique": false,
@@ -2081,7 +2081,7 @@
       },
       {
         "name": "Gaia",
-        "folder": "ravengirl",
+        "folder": "victoria",
         "cost": 643,
         "nsfw": true,
         "unique": false,
@@ -2310,7 +2310,7 @@
           },
           {
             "name": "Lily",
-            "folder": "redgirl",
+            "folder": "lily",
             "cost": 1500,
             "nsfw": true,
             "unique": true,
@@ -2415,7 +2415,7 @@
           },
           {
             "name": "Rose",
-            "folder": "elf",
+            "folder": "rose",
             "cost": 1300,
             "nsfw": true,
             "unique": true,
@@ -2936,7 +2936,7 @@
         "assigned_servants": [
           {
             "name": "Violet",
-            "folder": "ravengirl",
+            "folder": "victoria",
             "cost": 1300,
             "nsfw": true,
             "unique": true,
@@ -3066,7 +3066,7 @@
           },
           {
             "name": "Elowen",
-            "folder": "elf",
+            "folder": "rose",
             "cost": 1250,
             "nsfw": false,
             "unique": false,
@@ -3192,7 +3192,7 @@
           },
           {
             "name": "Lyria",
-            "folder": "ravengirl",
+            "folder": "victoria",
             "cost": 1700,
             "nsfw": true,
             "unique": false,
@@ -3317,7 +3317,7 @@
           },
           {
             "name": "Iris",
-            "folder": "tangirl",
+            "folder": "iris",
             "cost": 1200,
             "nsfw": true,
             "unique": true,

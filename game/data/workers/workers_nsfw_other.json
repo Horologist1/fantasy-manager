@@ -1,7 +1,7 @@
 [
   {
     "name": "Elena",
-    "folder": "tangirl",
+    "folder": "iris",
     "cost": 1400,
     "nsfw": true,
     "unique": false,
@@ -45,7 +45,7 @@
   },
   {
     "name": "Delilah",
-    "folder": "redgirl",
+    "folder": "lily",
     "cost": 1300,
     "nsfw": true,
     "unique": false,
@@ -133,7 +133,7 @@
   },
   {
     "name": "Seraphina",
-    "folder": "ravengirl",
+    "folder": "victoria",
     "cost": 1900,
     "nsfw": true,
     "unique": false,
@@ -221,7 +221,7 @@
   },
   {
     "name": "Lyria",
-    "folder": "ravengirl",
+    "folder": "victoria",
     "cost": 1700,
     "nsfw": true,
     "unique": false,
@@ -309,7 +309,7 @@
   },
   {
     "name": "Selene",
-    "folder": "ravengirl",
+    "folder": "victoria",
     "cost": 1850,
     "nsfw": true,
     "unique": false,
@@ -441,7 +441,7 @@
   },
   {
     "name": "Goblin Girl",
-    "folder": "goblingirl",
+    "folder": "amanita",
     "cost": 1200,
     "nsfw": true,
     "unique": false,

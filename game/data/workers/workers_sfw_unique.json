@@ -99,7 +99,7 @@
   },
   {
     "name": "Sage",
-    "folder": "ravengirl",
+    "folder": "victoria",
     "cost": 1300,
     "nsfw": false,
     "unique": true,
@@ -148,7 +148,7 @@
   },
   {
     "name": "Lotus",
-    "folder": "redgirl",
+    "folder": "lily",
     "cost": 1500,
     "nsfw": false,
     "unique": true,
@@ -196,7 +196,7 @@
   },
   {
     "name": "Primrose",
-    "folder": "elf",
+    "folder": "rose",
     "cost": 1300,
     "nsfw": false,
     "unique": true,
@@ -244,7 +244,7 @@
   },
   {
     "name": "Jasmine",
-    "folder": "tangirl",
+    "folder": "iris",
     "cost": 1200,
     "nsfw": false,
     "unique": true,
@@ -292,7 +292,7 @@
   },
   {
     "name": "Daisy",
-    "folder": "redgirl",
+    "folder": "lily",
     "cost": 1100,
     "nsfw": false,
     "unique": true,
@@ -340,7 +340,7 @@
   },
   {
     "name": "Poppy",
-    "folder": "elf",
+    "folder": "rose",
     "cost": 1100,
     "nsfw": false,
     "unique": true,

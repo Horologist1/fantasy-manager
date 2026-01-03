@@ -89,7 +89,7 @@
   },
   {
     "name": "Victoria",
-    "folder": "ravengirl",
+    "folder": "victoria",
     "cost": 1500,
     "nsfw": false,
     "unique": false,
@@ -134,7 +134,7 @@
   },
   {
     "name": "Amanda",
-    "folder": "redgirl",
+    "folder": "lily",
     "cost": 1300,
     "nsfw": false,
     "unique": false,
@@ -222,7 +222,7 @@
   },
   {
     "name": "Elowen",
-    "folder": "elf",
+    "folder": "rose",
     "cost": 1250,
     "nsfw": false,
     "unique": false,

@@ -112,9 +112,9 @@ Estas imágenes se usan para los trabajos diarios de workers en buildings:
 ### Tavern - Bartender:
 - **bartender_story1** / **bartender_story1_failure**
 
-### Tavern - Performer:
-- **performer_story1_tavern** / **performer_story1_tavern_failure**
-- **performer_story2_tavern** / **performer_story2_tavern_failure**
+### Tavern - Entertainer:
+- **entertainer_story1_tavern** / **entertainer_story1_tavern_failure**
+- **entertainer_story2_tavern** / **entertainer_story2_tavern_failure**
 - **Profile** (fallback, sin failure)
 
 ### Casino - Guard:
@@ -224,7 +224,7 @@ service_story1, service_story1_restaurant
 cook_story1, cook_story2
 solo_quest, party_quest, monster_capture, rest_adventurer
 bartender_story1
-performer_story1_tavern, performer_story2_tavern
+entertainer_story1_tavern, entertainer_story2_tavern
 guard_story1_casino, guard_story2_casino, rest_casino
 Profile.jpg / Profile (fallback)
 ```

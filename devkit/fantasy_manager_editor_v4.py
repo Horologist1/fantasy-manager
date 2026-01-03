@@ -86,25 +86,36 @@ def install_ffmpeg_auto() -> Tuple[bool, str]:
                               creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0)
         if result.returncode == 0:
             # Try to install with winget (without silent to see progress)
-            install_result = subprocess.run(
-                ['winget', 'install', '--id', 'Gyan.FFmpeg', '--accept-package-agreements', '--accept-source-agreements'],
-                capture_output=True, text=True, timeout=300,  # 5 minutes timeout
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
-            )
-            if install_result.returncode == 0:
-                # Wait a moment for PATH to update
-                import time
-                time.sleep(2)
-                # Check if it's now available
-                if check_ffmpeg():
-                    return True, "FFmpeg installed successfully via winget!"
+            try:
+                install_result = subprocess.run(
+                    ['winget', 'install', '--id', 'Gyan.FFmpeg', '--accept-package-agreements', '--accept-source-agreements'],
+                    capture_output=True, text=True, timeout=300,  # 5 minutes timeout
+                    creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+                )
+                if install_result.returncode == 0:
+                    # Wait a moment for PATH to update
+                    import time
+                    time.sleep(2)
+                    # Check if it's now available
+                    if check_ffmpeg():
+                        return True, "FFmpeg installed successfully via winget!"
+                    else:
+                        return False, "FFmpeg installed but not in PATH. Please restart the editor or add FFmpeg to PATH manually."
                 else:
-                    return False, "FFmpeg installed but not in PATH. Please restart the editor or add FFmpeg to PATH manually."
-            else:
-                error_msg = install_result.stderr[:300] if install_result.stderr else install_result.stdout[:300]
-                return False, f"winget install failed. Error: {error_msg}"
+                    error_msg = install_result.stderr[:300] if install_result.stderr else install_result.stdout[:300]
+                    # Check for VPN/network errors
+                    if 'vpn' in error_msg.lower() or 'network' in error_msg.lower() or 'connection' in error_msg.lower() or 'timeout' in error_msg.lower():
+                        return False, "Network connection error. Please check your internet connection or try manual installation from https://www.gyan.dev/ffmpeg/builds/"
+                    return False, f"winget install failed. Error: {error_msg}"
+            except subprocess.TimeoutExpired:
+                return False, "Installation timed out. This might be a network issue. Please try manual installation from https://www.gyan.dev/ffmpeg/builds/"
+            except Exception as e:
+                error_str = str(e).lower()
+                if 'vpn' in error_str or 'network' in error_str or 'connection' in error_str:
+                    return False, "Network connection error. Please check your internet connection or try manual installation from https://www.gyan.dev/ffmpeg/builds/"
+                return False, f"Installation error: {str(e)}. Please try manual installation."
     except subprocess.TimeoutExpired:
-        return False, "Installation timed out. Please try manual installation."
+        return False, "Connection timed out. Please try manual installation from https://www.gyan.dev/ffmpeg/builds/"
     except (subprocess.SubprocessError, FileNotFoundError) as e:
         pass
     
@@ -114,18 +125,31 @@ def install_ffmpeg_auto() -> Tuple[bool, str]:
                               capture_output=True, text=True, timeout=5,
                               creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0)
         if result.returncode == 0:
-            install_result = subprocess.run(
-                ['choco', 'install', 'ffmpeg', '-y'],
-                capture_output=True, text=True, timeout=300,
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
-            )
-            if install_result.returncode == 0:
-                import time
-                time.sleep(2)
-                if check_ffmpeg():
-                    return True, "FFmpeg installed successfully via Chocolatey!"
+            try:
+                install_result = subprocess.run(
+                    ['choco', 'install', 'ffmpeg', '-y'],
+                    capture_output=True, text=True, timeout=300,
+                    creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+                )
+                if install_result.returncode == 0:
+                    import time
+                    time.sleep(2)
+                    if check_ffmpeg():
+                        return True, "FFmpeg installed successfully via Chocolatey!"
+                    else:
+                        return False, "FFmpeg installed but not in PATH. Please restart the editor."
                 else:
-                    return False, "FFmpeg installed but not in PATH. Please restart the editor."
+                    error_msg = install_result.stderr[:300] if install_result.stderr else install_result.stdout[:300]
+                    if 'vpn' in error_msg.lower() or 'network' in error_msg.lower() or 'connection' in error_msg.lower() or 'timeout' in error_msg.lower():
+                        return False, "Network connection error. Please check your internet connection or try manual installation from https://www.gyan.dev/ffmpeg/builds/"
+                    return False, f"Chocolatey install failed. Error: {error_msg}"
+            except subprocess.TimeoutExpired:
+                return False, "Installation timed out. This might be a network issue. Please try manual installation from https://www.gyan.dev/ffmpeg/builds/"
+            except Exception as e:
+                error_str = str(e).lower()
+                if 'vpn' in error_str or 'network' in error_str or 'connection' in error_str:
+                    return False, "Network connection error. Please check your internet connection or try manual installation from https://www.gyan.dev/ffmpeg/builds/"
+                return False, f"Installation error: {str(e)}. Please try manual installation."
             else:
                 error_msg = install_result.stderr[:300] if install_result.stderr else install_result.stdout[:300]
                 return False, f"choco install failed. Error: {error_msg}"

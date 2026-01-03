@@ -414,7 +414,7 @@ screen main_menu():
         vbox:
             style "main_menu_vbox"
 
-            text "Version 0.9":
+            text "Version 9.1":
                 style "main_menu_version"
 
 
@@ -616,7 +616,7 @@ screen about():
             xalign 0.0
 
         ## Versión
-        text "Version 0.9":
+        text "Version 9.1":
             style "about_version"
             xalign 0.0
 

@@ -224,11 +224,7 @@ init python:
     def get_worker_folder(worker):
         """Resolve the worker's folder based on their data."""
         if isinstance(worker, dict):
-            # Special case for Violet
-            if worker.get('name') == "Violet":
-                folder_name = "redgirl"
-            else:
-                folder_name = worker.get("folder", "aspen")  # Fallback to aspen instead of default
+            folder_name = worker.get("folder", "aspen")  # Fallback to aspen instead of default
             renpy.log(f"Worker name: {worker.get('name', 'Unknown')}, folder resolved: {folder_name}")
         else:
             folder_name = "aspen"  # Fallback to aspen instead of default
@@ -292,8 +288,9 @@ init python:
         if len(files_in_folder) == 0:
             renpy.log(f"WARNING: Ren'Py sees NO files in {base_folder}!")
             # Check if folder exists with different case
-            similar_folders = [f for f in all_files if "ravengirl" in f.lower()]
-            renpy.log(f"Similar paths with 'ravengirl': {similar_folders[:5] if similar_folders else 'NONE'}")
+            folder_name_lower = worker_folder.lower()
+            similar_folders = [f for f in all_files if folder_name_lower in f.lower()]
+            renpy.log(f"Similar paths with '{folder_name_lower}': {similar_folders[:5] if similar_folders else 'NONE'}")
         
         # Try worker's profile image using robust flexible matching
         profile_matches = get_pattern_matches_flexible(base_folder, "profile")
@@ -1659,8 +1656,11 @@ init python:
         
         final_name = generate_unique_name(name_pool, existing_names)
         
-        # Assign a random folder from available worker folders (not default)
-        available_folders = ["aspen", "elf", "florian", "goblingirl", "ravengirl", "redgirl", "tangirl"]
+        # Assign a random folder from available worker folders (extract dynamically from loaded workers)
+        all_workers = load_workers(include_unique=True, include_encounter_only=True)
+        available_folders = list(set(w.get("folder", "aspen") for w in all_workers if w.get("folder")))
+        if not available_folders:
+            available_folders = ["aspen"]  # Fallback to default
         assigned_folder = random.choice(available_folders)
         
         # Create the new worker with named skills only
