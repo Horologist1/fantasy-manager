@@ -205,6 +205,7 @@ init python:
     build.classify('devkit/*.bat', None)
     build.classify('devkit/*.md', None)
     build.classify('devkit/__pycache__/**', None)
+    build.classify('devkit/temp_analysis/**', None)
     build.classify('devkit/FantasyManager_Editor_v2.exe', None)
 
     ## To archive files, classify them as 'archive'.

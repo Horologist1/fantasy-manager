@@ -287,5 +287,49 @@
     "description": "A graceful performer with excellent social skills and natural charm.",
     "gender": "female",
     "comfort_desired": 3
+  },
+  {
+    "name": "Erinya",
+    "folder": "succubus",
+    "cost": 2000,
+    "nsfw": true,
+    "unique": true,
+    "encounter_only": true,
+    "monster": true,
+    "procedural": false,
+    "skills": {
+      "Sex": 35,
+      "Anal": 30,
+      "BDSM": 38,
+      "Hand": 25,
+      "Oral": 25,
+      "Homo": 16,
+      "Special": 27,
+      "Group": 19,
+      "Extreme": 33,
+      "Striptease": 21,
+      "Combat": 25,
+      "Clever": 23,
+      "Charm": 35,
+      "Service": 22,
+      "Agility": 29,
+      "Craft": 38,
+      "Specialty 4": 15,
+      "Specialty 5": 14,
+      "Specialty 6": 15,
+      "Specialty 7": 32,
+      "Specialty 8": 39,
+      "Specialty 9": 39,
+      "Specialty 10": 39,
+      "Specialty 11": 17,
+      "Specialty 12": 24
+    },
+    "names_list": "fantasy_female",
+    "traits": [
+      "Demon"
+    ],
+    "description": "A seductive demoness bound to serve, excelling in alluring tasks.",
+    "gender": "female",
+    "comfort_desired": 1
   }
 ]

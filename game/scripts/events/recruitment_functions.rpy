@@ -115,7 +115,7 @@ init python:
         prepared_worker["comfort_level"] = comfort_level
         
         # Calculate daily cost based on comfort level
-        base_cost = comfort_level * 10
+        base_cost = comfort_level * 20
         prepared_worker["daily_cost"] = base_cost
         
         return prepared_worker

@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 5190: 'hovered' is not a keyword argument or valid child of the frame statement.
-    hovered ShowTransient("tooltip", message="Energy is consumed by daily activities. Workers regenerate 1 energy per day. Maximum energy and regeneration increase with level. Use energy potions to restore more.", screen_name="WorkerDetails")
-           ^
+File "game/scripts/core/screens.rpy", line 6169: Line is indented, but the preceding hover statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
+    action [Function(auto_rest_on_report_close), Hide("daily_report"), Jump("day_transition")]
+    ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Mon Dec 29 20:01:10 2025
+Tue Dec 30 01:43:38 2025

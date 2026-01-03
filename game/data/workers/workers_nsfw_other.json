@@ -309,7 +309,7 @@
   },
   {
     "name": "Selene",
-    "folder": "priestess",
+    "folder": "ravengirl",
     "cost": 1850,
     "nsfw": true,
     "unique": false,
@@ -397,7 +397,7 @@
   },
   {
     "name": "Talon",
-    "folder": "ranger",
+    "folder": "florian",
     "cost": 1700,
     "nsfw": true,
     "unique": false,

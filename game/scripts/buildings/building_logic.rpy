@@ -42,9 +42,9 @@ init python:
         # Store and clamp result
         building["reputation"] = max(0, min(total_reputation, 1000))
         return building["reputation"]
-    
+
     def get_reputation_tier(reputation):
-        """Returns the reputation tier name."""
+        """Returns the reputation tier name (matches dist build)."""
         rep = int(reputation)
         if rep < 50:
             return "Unknown"
@@ -68,17 +68,14 @@ init python:
             return "Elite"
         else:
             return "Master"
-    
+
     def get_reputation_bonus_stories(reputation, bonus_formula):
-        """Calculate bonus stories per profession per day based on reputation and formula.
-        This matches the calculation in event_daily_exec.rpy (with 50% reduction)."""
+        """Calculate bonus stories per profession per day based on reputation and formula, with 50% reduction."""
         if not bonus_formula or bonus_formula == "0":
             return 0
         try:
-            # Formula like "reputation / 100" or "reputation / 200"
             bonus = int(eval(bonus_formula, {"__builtins__": None}, {"reputation": int(reputation)}))
-            # Apply the same 50% reduction as in event_daily_exec.rpy
-            bonus = int(bonus * 0.5)
+            bonus = int(bonus * 0.5)  # Apply same 50% reduction as events
             return bonus
         except Exception:
             return 0

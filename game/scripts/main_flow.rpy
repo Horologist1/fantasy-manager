@@ -887,6 +887,8 @@ label next_day:
     $ renpy.log("DEBUG: next_day label - STARTING")
     # Reset walk flag for new day
     $ take_a_walk_in_progress = False
+    # Reset daily interaction counts for all workers
+    $ worker_interactions_today = {}
     python:
         renpy.log("DEBUG: next_day - about to call process_next_day")
         result = process_next_day()
@@ -1030,8 +1032,8 @@ label take_a_walk:
     "...and you encounter [worker_name]."
     "You decide it's time to have a [interaction_name_lower] with [worker_name]."
     
-    # Apply interaction effects (without costs for "take a walk")
-    $ apply_interaction_effects(selected_worker, chosen_interaction, apply_costs=False)
+    # Apply interaction effects (without costs for "take a walk", and skip daily limit)
+    $ apply_interaction_effects(selected_worker, chosen_interaction, apply_costs=False, skip_daily_limit=True)
     
     # Show interaction result (with return_to_map=True to go back to map)
     call screen interaction_result(selected_worker, chosen_interaction, return_to_map=True)

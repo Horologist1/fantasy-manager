@@ -328,14 +328,51 @@ init python:
         # Remove empty categories
         return {k: v for k, v in categories.items() if v}
 
-    def apply_interaction_effects(worker, interaction, apply_costs=True):
+    def get_worker_interaction_count(worker):
+        """Get the number of interactions a worker has had today."""
+        worker_name = worker.get("name", "")
+        current_day = store.current_day if hasattr(store, 'current_day') else 1
+        
+        if worker_name not in store.worker_interactions_today:
+            return 0
+        
+        day_data = store.worker_interactions_today[worker_name]
+        if current_day not in day_data:
+            return 0
+        
+        return day_data[current_day]
+    
+    def can_interact_with_worker(worker):
+        """Check if we can interact with a worker today (limit not reached)."""
+        current_count = get_worker_interaction_count(worker)
+        max_interactions = store.MAX_DAILY_INTERACTIONS if hasattr(store, 'MAX_DAILY_INTERACTIONS') else 2
+        return current_count < max_interactions
+    
+    def increment_worker_interaction_count(worker):
+        """Increment the interaction count for a worker today."""
+        worker_name = worker.get("name", "")
+        current_day = store.current_day if hasattr(store, 'current_day') else 1
+        
+        if worker_name not in store.worker_interactions_today:
+            store.worker_interactions_today[worker_name] = {}
+        
+        if current_day not in store.worker_interactions_today[worker_name]:
+            store.worker_interactions_today[worker_name][current_day] = 0
+        
+        store.worker_interactions_today[worker_name][current_day] += 1
+
+    def apply_interaction_effects(worker, interaction, apply_costs=True, skip_daily_limit=False):
         """Apply the effects of an interaction to a worker.
         
         Args:
             worker: The worker to apply effects to
             interaction: The interaction data
             apply_costs: If True, apply energy/health/money costs. If False, skip costs.
+            skip_daily_limit: If True, don't count this interaction towards daily limit (e.g., for "take a walk").
         """
+        # Increment daily interaction count (unless skipping limit)
+        if not skip_daily_limit:
+            increment_worker_interaction_count(worker)
         # Apply stat changes
         effects = interaction.get("effect", {})
         for stat, change in effects.items():

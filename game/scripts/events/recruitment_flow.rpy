@@ -127,7 +127,7 @@ label recruitment_event_flow(event, worker):
     # Calculate cost
     python:
         comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
-        daily_cost = comfort_level * 10  # Daily cost is comfort level * 10
+        daily_cost = comfort_level * 20  # Daily cost is comfort level * 20
         worker["daily_cost"] = daily_cost
         
         # Replace placeholders in description and dialogue
@@ -243,7 +243,7 @@ label recruitment_event_simple(event, worker):
     
     python:
         comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
-        daily_cost = comfort_level * 10  # Daily cost is comfort level * 10
+        daily_cost = comfort_level * 20  # Daily cost is comfort level * 20
         worker["daily_cost"] = daily_cost
         worker["comfort_level"] = comfort_level
         worker_name = worker.get("name", "Unknown")

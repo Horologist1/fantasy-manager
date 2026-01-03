@@ -2288,7 +2288,7 @@ screen recruitment_event_screen(event, worker):
     add Solid("#000000dd")
     
     $ comfort_level = worker.get("comfort_level", worker.get("comfort_desired", 1))
-    $ daily_cost = worker.get("daily_cost", comfort_level * 10)
+    $ daily_cost = worker.get("daily_cost", comfort_level * 20)
     
     $ description = event["description"].replace("[event_worker]", worker.get("name", "Unknown"))
     $ description = description.replace("[X]", "$" + str(daily_cost) + " (Comfort: " + str(comfort_level) + ")")
@@ -3615,7 +3615,7 @@ screen confirm_sell_worker(worker, return_screen=None):
         if daily_cost == 0:
             # Fallback calculation if daily_cost not set
             comfort_level = worker.get("comfort_level", 1)
-            daily_cost = comfort_level * 10
+            daily_cost = comfort_level * 20
         
         if worker.get("is_servant", False):
             refund = worker.get("level", 1) * 500
@@ -3691,7 +3691,7 @@ screen adjust_skill_bonus(building_name):
                     spacing 10
                 $ total_skill = building["skill"] + building["skill_bonus"]
                 $ fixed_cost = int(building["price"] * 0.01)
-                $ worker_costs = sum(worker["comfort_level"] * 10 for worker in building["assigned_servants"])
+                $ worker_costs = sum(worker["comfort_level"] * 20 for worker in building["assigned_servants"])
                 $ current_bonus_cost = (building["skill_bonus"] // 10) * 100
                 $ current_total_cost = fixed_cost + worker_costs + current_bonus_cost
                 $ new_bonus_cost = ((building["skill_bonus"] + 10) // 10) * 100 if building["skill_bonus"] < 50 else current_bonus_cost
@@ -3801,7 +3801,7 @@ screen Manager(building_name):
                     spacing 10
                     text "[type_name]: [display_name]" size 42 xalign 0.0 color "#7a4b2a"
                 $ fixed_cost = int(building["price"] * 0.01)
-                $ worker_costs = sum(worker["comfort_level"] * 10 for worker in building["assigned_servants"])
+                $ worker_costs = sum(worker["comfort_level"] * 20 for worker in building["assigned_servants"])
                 $ bonus_cost = (building["skill_bonus"] // 10) * 100
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
                 text "Costs: $[total_costs] {size=18}(Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size=}" size 24 color "#ffffff" xalign 0.0 yalign 0.5
@@ -4563,22 +4563,50 @@ screen more_details_screen(worker):
     modal True
     zorder 99
     add Solid("#000000dd")
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
         yalign 0.5
-        background Solid("#2d2d2dcc")
-        padding (20, 20)
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        
+        # Close button positioned like journal (top-right)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action Hide("more_details_screen")
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+        
         vbox:
             spacing 15
-            text "Description: [worker.get('description', 'No description available')]" size 18 color "#ffffff"
-            text "Folder: [worker.get('folder', 'default')]" size 16 color "#cccccc"
-            if worker.get('procedural', False):
-                text "Type: Procedural Worker" size 16 color "#ffcc66"
-            else:
-                text "Type: Predefined Character" size 16 color "#66ccff"
-            textbutton "Close":
-                style "nav_button_text"
-                action Hide("more_details_screen")
+            null height 15  # Push title down like journal
+            label "More Details" xalign 0.5 style "header_style"
+            null height 10  # Less space after title like journal
+            
+            vbox:
+                xsize 640  # Match journal content width
+                spacing 15
+                xoffset 30  # Match journal content offset
+                yoffset 25
+                
+                text "Description:" size 20 color "#7a4b2a" xalign 0.0
+                text "[worker.get('description', 'No description available')]" size 18 color "#7a4b2a" xalign 0.0 text_align 0.0
+                
+                null height 10
+                
+                text "Folder: [worker.get('folder', 'default')]" size 18 color "#7a4b2a" xalign 0.0
+                
+                null height 10
+                
+                if worker.get('procedural', False):
+                    text "Type: Procedural Worker" size 18 color "#7a4b2a" xalign 0.0
+                else:
+                    text "Type: Predefined Character" size 18 color "#7a4b2a" xalign 0.0
 
 screen interaction_result(worker, interaction, message_index=0, show_image_only=False, return_to_map=False):
     modal True
@@ -4832,7 +4860,7 @@ screen adjust_comfort(worker):
         
         $ current_comfort = worker["comfort_level"]
         $ current_comfort_desired = worker.get("comfort_desired", 1)
-        $ current_daily_cost = current_comfort * 10
+        $ current_daily_cost = current_comfort * 20
         $ current_relationship = worker.get("relationship", 10 + current_comfort)
         
         vbox:
@@ -4895,8 +4923,8 @@ screen adjust_comfort(worker):
                                 text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                                 sensitive current_comfort > 1
                     
-                    $ next_daily_cost = (current_comfort + 1) * 10 if current_comfort < 20 else current_daily_cost
-                    $ prev_daily_cost = max(1, current_comfort - 1) * 10 if current_comfort > 1 else current_daily_cost
+                    $ next_daily_cost = (current_comfort + 1) * 20 if current_comfort < 20 else current_daily_cost
+                    $ prev_daily_cost = max(1, current_comfort - 1) * 20 if current_comfort > 1 else current_daily_cost
                     
                     if current_comfort < 20:
                         text "Next Level Cost: $[next_daily_cost]/day" size 24 color "#444444" xalign 0.0
@@ -4976,8 +5004,18 @@ screen interaction_category(worker, category_name, interactions_list):
         xalign 0.5
         yalign 0.5
         vbox:
-            spacing 15
+            spacing 10
             label "[category_name] for [worker['name']]" xalign 0.0 style "header_style"
+            
+            # Show daily interaction limit info
+            $ interaction_count = get_worker_interaction_count(worker)
+            $ remaining_interactions = store.MAX_DAILY_INTERACTIONS - interaction_count
+            if remaining_interactions <= 0:
+                text "Daily interaction limit reached ([store.MAX_DAILY_INTERACTIONS]/[store.MAX_DAILY_INTERACTIONS]). Interactions disabled until next day." style "interaction_text" size 22 color "#a63c3c" xalign 0.0
+            else:
+                text "Interactions remaining today: [remaining_interactions]/[store.MAX_DAILY_INTERACTIONS]" style "interaction_text" size 22 color "#7a4b2a" xalign 0.0
+            
+            null height 5  # Small spacing between message and interactions list
             
             viewport:
                 scrollbars "vertical"
@@ -4987,6 +5025,10 @@ screen interaction_category(worker, category_name, interactions_list):
                 xsize 600
                 vbox:
                     spacing 10
+                    # Calculate interaction count once for all interactions
+                    $ interaction_count = get_worker_interaction_count(worker)
+                    $ can_interact = can_interact_with_worker(worker)
+                    $ remaining_interactions = store.MAX_DAILY_INTERACTIONS - interaction_count
                     for interaction in interactions_list:
                         vbox:
                             spacing 5
@@ -4998,7 +5040,8 @@ screen interaction_category(worker, category_name, interactions_list):
                                     Show("interaction_result", worker=worker, interaction=interaction),
                                     Hide("interaction_category")
                                 ]
-                                sensitive (worker["energy"] >= interaction.get("cost_energy", 0)
+                                sensitive (can_interact
+                                            and worker["energy"] >= interaction.get("cost_energy", 0)
                                             and 
                                             worker["health"] >= interaction.get("cost_health", 0) 
                                             and
@@ -5036,7 +5079,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
     $ worker = ensure_worker_defaults(worker)
     $ sell_text = get_sell_text(worker)
     $ comfort_level = worker.get("comfort_level", 1)
-    $ daily_cost = comfort_level * 10
+    $ daily_cost = comfort_level * 20
     default current_image = get_worker_image(worker)
     default panel_mode = current_panel_mode
 

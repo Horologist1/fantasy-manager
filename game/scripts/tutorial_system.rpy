@@ -368,6 +368,42 @@ init python:
             return False
         return store.event_flags.get("daily_revenue_10k_achieved", False)
     
+    def check_existing_building_upgrades():
+        """Check if any buildings are already upgraded when reaching objective 6"""
+        if not hasattr(store, 'tutorial_active') or not store.tutorial_active:
+            return
+        if not hasattr(store, 'current_objective') or store.current_objective != 6:
+            return
+        
+        # Check if available_buildings exists
+        if not hasattr(store, 'available_buildings'):
+            renpy.log("DEBUG: check_existing_building_upgrades - available_buildings not found")
+            return
+        
+        # Check all owned buildings for upgrades
+        owned_buildings = getattr(store, 'owned_buildings', [])
+        if not owned_buildings:
+            renpy.log("DEBUG: check_existing_building_upgrades - no owned buildings")
+            return
+        
+        for building_name in owned_buildings:
+            if building_name not in store.available_buildings:
+                continue
+            
+            building = store.available_buildings[building_name]
+            
+            # Check if building level is > 1 (upgraded)
+            if building.get("base_level", 1) > 1:
+                if not store.building_upgraded_tutorial:
+                    renpy.log(f"DEBUG: Found already upgraded building: {building_name} (level {building.get('base_level', 1)})")
+                    store.building_upgraded_tutorial = True
+            
+            # Check if building has skill bonus > 0
+            if building.get("skill_bonus", 0) > 0:
+                if not store.building_skill_bonus_increased_tutorial:
+                    renpy.log(f"DEBUG: Found already upgraded building skill: {building_name} (bonus {building.get('skill_bonus', 0)})")
+                    store.building_skill_bonus_increased_tutorial = True
+    
     def jump_to_ending():
         """Jump to the appropriate ending based on chosen path"""
         if store.event_flags.get("branch_assassination", False):
@@ -506,6 +542,7 @@ init python:
             renpy.log("DEBUG: Objective 5 completed!")
             objective_5_complete = True
             current_objective = 6
+            check_existing_building_upgrades()  # Check if buildings are already upgraded
             renpy.call_in_new_context("show_objective_5_dialogue")
             
         elif current_objective == 6 and is_previous_objective_complete(6) and store.building_upgraded_tutorial and store.building_skill_bonus_increased_tutorial and not store.objective_6_complete:
@@ -537,7 +574,7 @@ init python:
 screen journal_panel():
     modal True
     zorder 200
-    on "show" action Function(check_objective_completion)
+    on "show" action [Function(check_existing_building_upgrades), Function(check_objective_completion)]
     
     # Background overlay matching building selection
     add Solid("#000000dd")

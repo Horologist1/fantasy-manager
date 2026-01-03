@@ -21,7 +21,7 @@
       },
       {
         "option": "Negotiate a lower wage. (Potential: Discount)",
-        "message": "After a measured back-and-forth, you settle at [actual_cost]. [event_worker] accepts the cut with grace; they'll manage at a daily cost of [actual_cost]. The reduced daily cost reflects your negotiation skills (20% discount).",
+        "message": "After a measured back-and-forth, you settle at [actual_cost]. [event_worker] accepts the cut with grace; they'll manage at a daily cost of [actual_cost] (one point below their preferred level). The reduced daily cost reflects your negotiation skills (20% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8

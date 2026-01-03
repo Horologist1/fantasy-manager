@@ -285,6 +285,16 @@ init python:
         renpy.log(f"Worker: {worker_name}, Folder: {worker_folder}")
         renpy.log(f"Looking in: {base_folder}")
         
+        # Debug: list all files Ren'Py sees in this folder
+        all_files = renpy.list_files()
+        files_in_folder = [f for f in all_files if f.startswith(base_folder)]
+        renpy.log(f"Files Ren'Py sees in {base_folder}: {len(files_in_folder)}")
+        if len(files_in_folder) == 0:
+            renpy.log(f"WARNING: Ren'Py sees NO files in {base_folder}!")
+            # Check if folder exists with different case
+            similar_folders = [f for f in all_files if "ravengirl" in f.lower()]
+            renpy.log(f"Similar paths with 'ravengirl': {similar_folders[:5] if similar_folders else 'NONE'}")
+        
         # Try worker's profile image using robust flexible matching
         profile_matches = get_pattern_matches_flexible(base_folder, "profile")
         renpy.log(f"Profile matches found: {len(profile_matches) if profile_matches else 0}")
@@ -304,6 +314,92 @@ init python:
         # If no images exist, return None
         renpy.log(f"No images found for worker in folder: {worker_folder}")
         return None
+
+    def _safe_relink_worker_folder(worker_name):
+        """Safe wrapper to relink folder by worker name and update screen image"""
+        try:
+            # Find worker in store.workers first
+            worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+            if not worker:
+                renpy.notify(f"Worker {worker_name} not found")
+                return False
+            
+            # Relink the folder - this updates the worker's folder in store.workers
+            new_image = relink_worker_folder_from_json(worker)
+            
+            if new_image:
+                # Update the current_image screen variable if we're in worker_details screen
+                if renpy.get_screen("worker_details"):
+                    try:
+                        renpy.set_screen_variable("current_image", new_image)
+                        renpy.restart_interaction()
+                        renpy.log(f"Updated current_image screen variable to: {new_image}")
+                    except Exception as e:
+                        renpy.log(f"Error updating screen variable: {e}")
+                        # Fallback: try to refresh by getting the image again
+                        updated_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+                        if updated_worker:
+                            fallback_image = get_worker_image(updated_worker)
+                            if fallback_image:
+                                renpy.set_screen_variable("current_image", fallback_image)
+                                renpy.restart_interaction()
+                renpy.notify(f"Folder relinked! New image loaded.")
+                return True
+            else:
+                renpy.notify(f"Folder relinked but no image found. Check folder name in JSON.")
+                return False
+                    
+        except Exception as e:
+            import traceback
+            renpy.log(f"Error in _safe_relink_worker_folder: {e}")
+            renpy.log(traceback.format_exc())
+            renpy.notify(f"Error: {str(e)}")
+            return False
+    
+    def relink_worker_folder_from_json(worker):
+        """
+        Relink worker's folder field from JSON data.
+        Safe function that only updates the folder field, preserving all game state.
+        Updates both the worker object passed and the worker in store.workers.
+        Returns the new image path or None.
+        """
+        if not worker or not worker.get("name"):
+            renpy.notify("Invalid worker")
+            return None
+        
+        worker_name = worker.get("name")
+        try:
+            # Load workers from JSON to find this one
+            all_json_workers = load_workers(include_unique=True, include_encounter_only=True, for_events=True)
+            json_worker = next((w for w in all_json_workers if w.get("name") == worker_name), None)
+            
+            if json_worker and json_worker.get("folder"):
+                old_folder = worker.get("folder", "missing")
+                new_folder = json_worker["folder"]
+                
+                # Update the worker object passed
+                worker["folder"] = new_folder
+                
+                # Also update in store.workers if it exists there
+                store_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+                if store_worker:
+                    store_worker["folder"] = new_folder
+                    renpy.log(f"Updated folder in store.workers for {worker_name}")
+                
+                renpy.log(f"Relinked folder for {worker_name}: '{old_folder}' -> '{new_folder}'")
+                renpy.notify(f"Relinked folder for {worker_name}: {new_folder}")
+                
+                # Return new image
+                return get_worker_image(worker)
+            else:
+                renpy.notify(f"No folder found in JSON for {worker_name}")
+                return None
+        except Exception as e:
+            import traceback
+            renpy.log(f"Error relinking folder for {worker_name}: {e}")
+            renpy.log(traceback.format_exc())
+            renpy.notify(f"Error relinking folder: {str(e)}")
+            return None
 
     def get_worker_image_random(worker, skill_name=None):
         """
@@ -3127,7 +3223,92 @@ init python:
         renpy.log(f"DEBUG: building_has_active_professions found no active professions in building '{building_name}' (servant_jobs: {servant_jobs})")
         return False
 
+    # Reputation helpers for UI (aligned with dist/building_logic)
+    def get_reputation_tier(reputation):
+        """Returns the reputation tier name."""
+        rep = int(reputation)
+        if rep < 50:
+            return "Unknown"
+        elif rep < 100:
+            return "New"
+        elif rep < 200:
+            return "Recognized"
+        elif rep < 300:
+            return "Respected"
+        elif rep < 400:
+            return "Well-Known"
+        elif rep < 500:
+            return "Popular"
+        elif rep < 600:
+            return "Famous"
+        elif rep < 700:
+            return "Highly Regarded"
+        elif rep < 800:
+            return "Prestigious"
+        elif rep < 900:
+            return "Elite"
+        else:
+            return "Master"
+
+    def get_reputation_bonus_stories(reputation, bonus_formula):
+        """Calculate bonus stories per profession per day based on reputation and formula, with 50% reduction."""
+        if not bonus_formula or bonus_formula == "0":
+            return 0
+        try:
+            bonus = int(eval(bonus_formula, {"__builtins__": None}, {"reputation": int(reputation)}))
+            bonus = int(bonus * 0.5)  # Match event_daily_exec reduction
+            return bonus
+        except Exception:
+            return 0
+
+    def sync_worker_folders_from_json():
+        """
+        Sync all worker folders from JSON data.
+        This fixes workers that have incorrect folder values saved in their game state.
+        Called automatically on game load.
+        """
+        try:
+            # Load all workers from JSON
+            all_json_workers = load_workers(include_unique=True, include_encounter_only=True, for_events=True)
+            
+            # Create a lookup dict by name
+            json_folders = {w.get("name"): w.get("folder") for w in all_json_workers if w.get("name") and w.get("folder")}
+            
+            updated_count = 0
+            
+            # Update folders in store.workers
+            for worker in store.workers:
+                worker_name = worker.get("name")
+                if worker_name and worker_name in json_folders:
+                    correct_folder = json_folders[worker_name]
+                    current_folder = worker.get("folder", "")
+                    if current_folder != correct_folder:
+                        renpy.log(f"Syncing folder for {worker_name}: '{current_folder}' -> '{correct_folder}'")
+                        worker["folder"] = correct_folder
+                        updated_count += 1
+            
+            # Update folders in store.available_workers
+            for worker in store.available_workers:
+                worker_name = worker.get("name")
+                if worker_name and worker_name in json_folders:
+                    correct_folder = json_folders[worker_name]
+                    current_folder = worker.get("folder", "")
+                    if current_folder != correct_folder:
+                        renpy.log(f"Syncing folder for available worker {worker_name}: '{current_folder}' -> '{correct_folder}'")
+                        worker["folder"] = correct_folder
+                        updated_count += 1
+            
+            if updated_count > 0:
+                renpy.log(f"sync_worker_folders_from_json: Updated {updated_count} worker folders")
+        except Exception as e:
+            import traceback
+            renpy.log(f"Error in sync_worker_folders_from_json: {e}")
+            renpy.log(traceback.format_exc())
+
     def after_load_callback():
+        # Sync worker folders from JSON first (fixes Selene and any other mismatched folders)
+        sync_worker_folders_from_json()
+        # Then ensure defaults
         for worker in store.workers:
             ensure_worker_defaults(worker)
         for worker in store.available_workers:
@@ -3244,6 +3425,8 @@ default last_worker_refill_month = None
 default last_worker_refill_year = None
 default take_a_walk_in_progress = False
 default last_take_a_walk_day = None
+default worker_interactions_today = {}  # Track daily interactions per worker: {worker_name: {day: count}}
+default MAX_DAILY_INTERACTIONS = 2  # Maximum interactions per worker per day
 default custom_names = {
     "Building 1": "Building 1"
 }
