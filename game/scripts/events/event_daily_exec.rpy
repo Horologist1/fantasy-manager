@@ -176,6 +176,13 @@ init python:
                     # Check for rebelliousness
                     rebelliousness = worker.get("rebelliousness", 50)
                     if rebelliousness > 80 and random.random() < 0.2:  # 20% chance to refuse work
+                        # Apply rebelliousness decay based on comfort level
+                        comfort = worker.get("comfort_level", 1)
+                        rebelliousness_reduction = comfort * 3
+                        old_rebelliousness = worker["rebelliousness"]
+                        apply_attribute_change(worker, "rebelliousness", -rebelliousness_reduction)
+                        renpy.log(f"Rebelliousness decay: {worker['name']} refused work, rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (comfort {comfort} × 3 = -{rebelliousness_reduction})")
+                        
                         report_entry = {
                             "building": building_name,
                             "profession": profession.get("name", "Unknown Profession"),
@@ -183,7 +190,7 @@ init python:
                             "worker": worker,
                             "event_data": {"story_image": "Refuse"},
                             "report": f"Rebellious, {worker['name']} refused to work",
-                            "description": f"Rebellious, {worker['name']} refused to work and spent the day doing other activities.",
+                            "description": f"Rebellious, {worker['name']} refused to work and spent the day doing other activities. However, the comfortable conditions helped calm their rebellious spirit. (-{rebelliousness_reduction} Rebelliousness from comfort)",
                             "result": "Refused",
                             "earnings": 0,
                             "used_skill": "N/A",
@@ -367,7 +374,7 @@ init python:
                         full_description = base_description
                         if trait_success_messages:
                             full_description += "\n" + "\n".join(trait_success_messages)
-                        full_description += "\n\n{{color=#006600}}{{size=18}}(Skill roll: {}){{/size}}{{/color}}".format(roll)
+                        full_description += "\n\n{{color=#006600}}{{size=18}}(Skill roll: {} - {}){{/size}}{{/color}}".format(roll, outcome)
 
                         # Use skill name directly
                         if selected_skill is not None:
@@ -557,6 +564,13 @@ init python:
 
         # Ensure assigned_servants reference live worker objects before processing events
         _relink_assigned_servants_to_store_workers()
+        
+        # Process manager auto-rest functionality
+        try:
+            process_manager_auto_rest()
+            renpy.log("Manager auto-rest processing completed")
+        except Exception as e:
+            renpy.log(f"Error in manager auto-rest: {e}")
         # Process daily events (THIS POPULATES THE GLOBAL daily_report)
         process_daily_events_result = process_daily_events()
         # Check if process_daily_events triggered an early game over (e.g., if it were to return "game_over")

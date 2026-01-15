@@ -1,49 +1,49 @@
-# Sistema de Interacciones - Guía de Estructura
+# Interactions System - Structure Guide
 
-## Resumen del Sistema
+## System Overview
 
-El sistema de interacciones ha sido reorganizado para seguir una estructura clara y escalable:
+The interactions system has been reorganized to follow a clear and scalable structure:
 
-### Estructura Base
-- **4 Categorías**: Discipline, Romance, Friendship, Joy
-- **4 Niveles por categoría**:
-  - **Nivel 1**: Siempre disponible
-  - **Nivel 2**: Desbloqueado tras 5 usos del Nivel 1
-  - **Nivel 3**: Desbloqueado tras 5 usos del Nivel 2
-  - **Nivel 4**: Desbloqueado tras 5 usos del Nivel 3 (farmeable, coste/beneficio óptimo)
+### Base Structure
+- **4 Categories**: Discipline, Romance, Friendship, Joy
+- **4 Levels per category**:
+  - **Level 1**: Always available
+  - **Level 2**: Unlocked after 5 uses of Level 1
+  - **Level 3**: Unlocked after 5 uses of Level 2
+  - **Level 4**: Unlocked after 5 uses of Level 3 (farmable, optimal cost/benefit)
 
-### Combinaciones de Género
-Cada interacción debe tener variantes para:
-- **Jugador**: Lord (masculino) o Lady (femenino)
-- **Worker**: Male (masculino) o Female (femenino)
+### Gender Combinations
+Each interaction must have variants for:
+- **Player**: Lord (male) or Lady (female)
+- **Worker**: Male (masculine) or Female (feminine)
 
-**Total**: 4 categorías × 4 niveles × 4 combinaciones = **64 interacciones base**
+**Total**: 4 categories × 4 levels × 4 combinations = **64 base interactions**
 
-## Estructura JSON
+## JSON Structure
 
-Cada interacción debe tener los siguientes campos:
+Each interaction must have the following fields:
 
 ```json
 {
-  "id": "categoria_levelN_generoJugador_generoWorker",
-  "name": "Nombre de la Interacción",
-  "description": "Descripción narrativa de lo que ocurre",
+  "id": "category_levelN_playerGender_workerGender",
+  "name": "Interaction Name",
+  "description": "Narrative description of what happens",
   "interaction_level": 1-4,
   "cost_energy": 1-4,
   "cost_money": 0-100,
   "effect": {
-    "stat_name": valor,
+    "stat_name": value,
     "flags": {
       "cooldown_flag": {
         "value": true,
-        "duration": días
+        "duration": days
       }
     }
   },
   "gender_filter": "male" | "female" | null,
   "worker_gender": "male" | "female" | null,
   "categories": ["CategoryName"],
-  "image": "nombre_imagen",
+  "image": "image_name",
   "nsfw": true | false,
   "stat_requirements": {},
   "required_flags": {},
@@ -51,64 +51,63 @@ Cada interacción debe tener los siguientes campos:
 }
 ```
 
-## Progresión de Costes y Efectos
+## Cost and Effect Progression
 
-### Nivel 1 (Básico)
-- **Coste Energía**: 1
-- **Coste Dinero**: 0-5
-- **Efectos**: Pequeños (+2-5 en stats principales)
+### Level 1 (Basic)
+- **Energy Cost**: 1
+- **Money Cost**: 0-5
+- **Effects**: Small (+2-5 in main stats)
 
-### Nivel 2 (Intermedio)
-- **Coste Energía**: 2
-- **Coste Dinero**: 10-15
-- **Efectos**: Moderados (+5-12 en stats principales)
+### Level 2 (Intermediate)
+- **Energy Cost**: 2
+- **Money Cost**: 10-15
+- **Effects**: Moderate (+5-12 in main stats)
 
-### Nivel 3 (Avanzado)
-- **Coste Energía**: 3
-- **Coste Dinero**: 25-35
-- **Efectos**: Grandes (+15-25 en stats principales)
-- **Nota**: Puede ser NSFW
+### Level 3 (Advanced)
+- **Energy Cost**: 3
+- **Money Cost**: 25-35
+- **Effects**: Large (+15-25 in main stats)
+- **Note**: Can be NSFW
 
-### Nivel 4 (Farmeable)
-- **Coste Energía**: 2 (optimizado)
-- **Coste Dinero**: 15-20 (optimizado)
-- **Efectos**: Buenos (+15-20 en stats principales)
-- **Nota**: Diseñado para uso repetido con mejor coste/beneficio
+### Level 4 (Farmable)
+- **Energy Cost**: 2 (optimized)
+- **Money Cost**: 15-20 (optimized)
+- **Effects**: Good (+15-20 in main stats)
+- **Note**: Designed for repeated use with better cost/benefit
 
-## Sistema de Desbloqueo
+## Unlock System
 
-El sistema rastrea automáticamente los usos de cada nivel usando flags:
-- `{categoria}_uses_level_1`: Contador de usos del nivel 1
-- `{categoria}_uses_level_2`: Contador de usos del nivel 2
-- `{categoria}_uses_level_3`: Contador de usos del nivel 3
+The system automatically tracks uses of each level using flags:
+- `{category}_uses_level_1`: Counter for level 1 uses
+- `{category}_uses_level_2`: Counter for level 2 uses
+- `{category}_uses_level_3`: Counter for level 3 uses
 
-**Ejemplo**: Para desbloquear Romance Nivel 2, se necesitan 5 usos de Romance Nivel 1.
+**Example**: To unlock Romance Level 2, 5 uses of Romance Level 1 are needed.
 
-## Sistema de Visualización
+## Display System
 
-Cuando se ejecuta una interacción:
-1. Se muestra la **descripción** primero (texto narrativo)
-2. Luego se muestra la **imagen** como "cutscene"
-3. Se aplican los efectos y costes
+When an interaction is executed:
+1. The **description** is shown first (narrative text)
+2. Then the **image** is shown as a "cutscene"
+3. Effects and costs are applied
 
-## Archivos
+## Files
 
-- `interactions_structured.json`: Archivo con la nueva estructura (ejemplo completo de Discipline)
-- `interactions_main.json`: Archivo original (mantener para compatibilidad o migrar)
-- `interactions_special.json`: Interacciones especiales para workers específicos
+- `interactions_structured.json`: File with the new structure (complete example of Discipline)
+- `interactions_main.json`: Original file (keep for compatibility or migrate)
+- `interactions_special.json`: Special interactions for specific workers
 
-## Notas de Implementación
+## Implementation Notes
 
-1. El sistema de filtrado automáticamente:
-   - Filtra por género del jugador (`gender_filter`)
-   - Filtra por género del worker (`worker_gender`)
-   - Filtra por nivel de desbloqueo (`interaction_level`)
-   - Filtra por stats requeridos
-   - Filtra por flags requeridos/excluidos
+1. The filtering system automatically:
+   - Filters by player gender (`gender_filter`)
+   - Filters by worker gender (`worker_gender`)
+   - Filters by unlock level (`interaction_level`)
+   - Filters by required stats
+   - Filters by required/excluded flags
 
-2. Las imágenes deben estar en:
-   - `images/workers/{worker_folder}/` (prioridad)
+2. Images must be in:
+   - `images/workers/{worker_folder}/` (priority)
    - `images/workers/default/` (fallback)
 
-3. El sistema es retrocompatible: interacciones sin `interaction_level` se muestran siempre.
-
+3. The system is backward compatible: interactions without `interaction_level` are always shown.

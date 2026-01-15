@@ -1,5 +1,8 @@
 
 label handle_random_event:
+    # Mark start of new conversation for history navigation
+    $ start_new_conversation()
+    
     # Initial checks and setup (Ren'Py)
     if store.current_event is None:
         $ renpy.log("No event to handle, skipping to next_day")
@@ -446,7 +449,6 @@ label handle_random_event:
 
 label tavern:
     jump tavern_screen
-
 
 label tavern_after_event:
     # Ensure workers are updated and jump to tavern

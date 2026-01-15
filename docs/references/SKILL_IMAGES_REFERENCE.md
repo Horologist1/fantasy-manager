@@ -1,64 +1,64 @@
-# Referencia de Imágenes del Sistema de Skills
+# Skills System Images Reference
 
-## 📋 Skills que el Sistema Busca
+## 📋 Skills the System Searches For
 
-El sistema busca imágenes usando estos nombres de skills (en minúsculas):
+The system searches for images using these skill names (lowercase):
 
-### Skills Estándar:
-1. **sex** - Busca directamente "sex"
-2. **anal** - Busca directamente "anal"
-3. **bdsm** - Busca directamente "bdsm"
-4. **hand** - Busca directamente "hand"
-5. **oral** - Busca directamente "oral"
-6. **homo** - Busca **"les"** O **"gay"** (múltiples patrones)
-7. **special** - Busca directamente "special"
-8. **group** - Busca directamente "group"
-9. **extreme** - Busca **"extreme"** O **"beast"** (múltiples patrones)
-10. **striptease** - Busca **"strip"** O **"striptease"** (múltiples patrones)
-11. **combat** - Busca directamente "combat"
-12. **clever** - Busca directamente "clever"
-13. **charm** - Busca directamente "charm"
-14. **wait** - Busca **"service"** O **"maid"** (múltiples patrones)
-15. **agility** - Busca directamente "agility"
-16. **craft** - Busca directamente "craft"
-17. **Specialty 4-12** - Busca directamente el nombre (lowercase)
+### Standard Skills:
+1. **sex** - Searches directly for "sex"
+2. **anal** - Searches directly for "anal"
+3. **bdsm** - Searches directly for "bdsm"
+4. **hand** - Searches directly for "hand"
+5. **oral** - Searches directly for "oral"
+6. **homo** - Searches for **"les"** OR **"gay"** (multiple patterns)
+7. **special** - Searches directly for "special"
+8. **group** - Searches directly for "group"
+9. **extreme** - Searches for **"extreme"** OR **"beast"** (multiple patterns)
+10. **striptease** - Searches for **"strip"** OR **"striptease"** (multiple patterns)
+11. **combat** - Searches directly for "combat"
+12. **clever** - Searches directly for "clever"
+13. **charm** - Searches directly for "charm"
+14. **wait** - Searches for **"service"** OR **"maid"** (multiple patterns)
+15. **agility** - Searches directly for "agility"
+16. **craft** - Searches directly for "craft"
+17. **Specialty 4-12** - Searches directly for the name (lowercase)
 
-## 🏷️ Prefijos de Traits
+## 🏷️ Trait Prefixes
 
-El sistema busca imágenes con estos prefijos basados en los traits del worker:
+The system searches for images with these prefixes based on worker traits:
 
-### Prefijos Individuales:
-- **pregnant_** - Si el worker tiene el trait "Pregnant"
-- **futa_** - Si el worker tiene el trait "Futa"
-- **transformed_** - Si el worker tiene el trait "Transformed"
-- **magical_** - Si el worker tiene el trait "Magical"
+### Individual Prefixes:
+- **pregnant_** - If worker has "Pregnant" trait
+- **futa_** - If worker has "Futa" trait
+- **transformed_** - If worker has "Transformed" trait
+- **magical_** - If worker has "Magical" trait
 
-### Prefijos Combinados (en orden de prioridad):
-1. **transformed_magical_futa_pregnant_** - Si tiene los 4 traits
-2. **transformed_magical_futa_** - Si tiene Transformed + Magical + Futa
-3. **transformed_magical_pregnant_** - Si tiene Transformed + Magical + Pregnant
-4. **transformed_futa_pregnant_** - Si tiene Transformed + Futa + Pregnant
-5. **magical_futa_pregnant_** - Si tiene Magical + Futa + Pregnant
-6. **transformed_magical_** - Si tiene Transformed + Magical
-7. **transformed_futa_** - Si tiene Transformed + Futa
-8. **transformed_pregnant_** - Si tiene Transformed + Pregnant
-9. **magical_futa_** - Si tiene Magical + Futa
-10. **magical_pregnant_** - Si tiene Magical + Pregnant
-11. **futa_pregnant_** - Si tiene Futa + Pregnant
+### Combined Prefixes (in priority order):
+1. **transformed_magical_futa_pregnant_** - If has all 4 traits
+2. **transformed_magical_futa_** - If has Transformed + Magical + Futa
+3. **transformed_magical_pregnant_** - If has Transformed + Magical + Pregnant
+4. **transformed_futa_pregnant_** - If has Transformed + Futa + Pregnant
+5. **magical_futa_pregnant_** - If has Magical + Futa + Pregnant
+6. **transformed_magical_** - If has Transformed + Magical
+7. **transformed_futa_** - If has Transformed + Futa
+8. **transformed_pregnant_** - If has Transformed + Pregnant
+9. **magical_futa_** - If has Magical + Futa
+10. **magical_pregnant_** - If has Magical + Pregnant
+11. **futa_pregnant_** - If has Futa + Pregnant
 
-**Nota:** El orden de prioridad es: Transformed > Magical > Futa > Pregnant
+**Note:** Priority order is: Transformed > Magical > Futa > Pregnant
 
-## 🔖 Sufijos de Outcome
+## 🔖 Outcome Suffixes
 
-### Sufijos de Resultado:
-- **_failure** - Para resultados de fallo (outcome: "failure" o "mediocre")
-- **(sin sufijo)** - Para resultados de éxito (outcome: "success" o "critical_success")
+### Result Suffixes:
+- **_failure** - For failure results (outcome: "failure" or "mediocre")
+- **(no suffix)** - For success results (outcome: "success" or "critical_success")
 
-## 📁 Estructura de Búsqueda de Imágenes
+## 📁 Image Search Structure
 
-El sistema busca imágenes en este orden de prioridad:
+The system searches for images in this priority order:
 
-### Para Skills:
+### For Skills:
 1. `{worker_folder}/{prefix}_{skill}_{suffix}`
 2. `{worker_folder}/{prefix}_{skill}`
 3. `{worker_folder}/{skill}_{suffix}`
@@ -68,7 +68,7 @@ El sistema busca imágenes en este orden de prioridad:
 7. `images/workers/default/{skill}_{suffix}`
 8. `images/workers/default/{skill}`
 
-### Para Eventos (story_image):
+### For Events (story_image):
 1. `{worker_folder}/{prefix}_{story_image}_{suffix}`
 2. `{worker_folder}/{prefix}_{story_image}`
 3. `{worker_folder}/{story_image}_{suffix}`
@@ -78,29 +78,29 @@ El sistema busca imágenes en este orden de prioridad:
 7. `images/workers/default/{story_image}_{suffix}`
 8. `images/workers/default/{story_image}`
 
-## 📝 Ejemplos de Nombres de Archivo
+## 📝 Filename Examples
 
-### Ejemplos con Skills:
-- `sex.png` - Imagen general de sex
-- `sex_failure.png` - Imagen de fallo para sex
-- `pregnant_sex.png` - Imagen de sex para workers pregnant
-- `pregnant_sex_failure.png` - Imagen de fallo de sex para workers pregnant
-- `futa_anal.png` - Imagen de anal para workers futa
-- `transformed_futa_oral.png` - Imagen de oral para workers transformed + futa
-- `les.png` o `gay.png` - Imágenes para skill "homo"
-- `service.png` o `maid.png` - Imágenes para skill "wait"
-- `strip.png` o `striptease.png` - Imágenes para skill "striptease"
-- `extreme.png` o `beast.png` - Imágenes para skill "extreme"
+### Examples with Skills:
+- `sex.png` - General sex image
+- `sex_failure.png` - Failure image for sex
+- `pregnant_sex.png` - Sex image for pregnant workers
+- `pregnant_sex_failure.png` - Failure sex image for pregnant workers
+- `futa_anal.png` - Anal image for futa workers
+- `transformed_futa_oral.png` - Oral image for transformed + futa workers
+- `les.png` or `gay.png` - Images for "homo" skill
+- `service.png` or `maid.png` - Images for "wait" skill
+- `strip.png` or `striptease.png` - Images for "striptease" skill
+- `extreme.png` or `beast.png` - Images for "extreme" skill
 
-### Ejemplos con Eventos:
-- `brothel_success.png` - Imagen de éxito para evento brothel
-- `brothel_failure.png` - Imagen de fallo para evento brothel
-- `pregnant_brothel.png` - Imagen de brothel para workers pregnant
-- `pregnant_brothel_failure.png` - Imagen de fallo de brothel para workers pregnant
+### Examples with Events:
+- `brothel_success.png` - Success image for brothel event
+- `brothel_failure.png` - Failure image for brothel event
+- `pregnant_brothel.png` - Brothel image for pregnant workers
+- `pregnant_brothel_failure.png` - Failure brothel image for pregnant workers
 
-## 🎯 Formato de Archivos Soportados
+## 🎯 Supported File Formats
 
-El sistema soporta estos formatos de imagen/video:
+The system supports these image/video formats:
 - `.png`
 - `.jpg`
 - `.jpeg`
@@ -108,39 +108,39 @@ El sistema soporta estos formatos de imagen/video:
 - `.webm` (video)
 - `.mp4` (video)
 
-## 🔍 Búsqueda Flexible
+## 🔍 Flexible Search
 
-El sistema usa búsqueda flexible que:
-- Es **case-insensitive** (no distingue mayúsculas/minúsculas)
-- Busca el patrón **dentro del nombre del archivo** (no requiere coincidencia exacta)
-- Soporta variaciones numeradas como `sex (2).png`, `sex (3).png`, etc.
+The system uses flexible search that:
+- Is **case-insensitive** (doesn't distinguish uppercase/lowercase)
+- Searches for pattern **within filename** (doesn't require exact match)
+- Supports numbered variations like `sex (2).png`, `sex (3).png`, etc.
 
-## 📌 Notas Importantes
+## 📌 Important Notes
 
-1. **Exclusión de prefijos:** Si un worker NO tiene un trait, el sistema excluye automáticamente archivos que empiecen con ese prefijo (ej: si no es pregnant, no busca `pregnant_*.png`)
+1. **Prefix exclusion:** If a worker does NOT have a trait, the system automatically excludes files starting with that prefix (e.g., if not pregnant, doesn't search for `pregnant_*.png`)
 
-2. **Profile images:** El sistema también busca imágenes de perfil con el patrón `profile.*` como fallback
+2. **Profile images:** The system also searches for profile images with pattern `profile.*` as fallback
 
-3. **Caché:** El sistema usa caché para mantener consistencia visual durante el mismo Daily Report
+3. **Cache:** The system uses cache to maintain visual consistency during the same Daily Report
 
-4. **Skills especiales:** Algunos skills buscan múltiples patrones:
-   - `homo` → busca "les" Y "gay"
-   - `wait` → busca "service" Y "maid"
-   - `striptease` → busca "strip" Y "striptease"
-   - `extreme` → busca "extreme" Y "beast"
+4. **Special skills:** Some skills search for multiple patterns:
+   - `homo` → searches for "les" AND "gay"
+   - `wait` → searches for "service" AND "maid"
+   - `striptease` → searches for "strip" AND "striptease"
+   - `extreme` → searches for "extreme" AND "beast"
 
-## 📊 Resumen de Patrones de Búsqueda
+## 📊 Search Pattern Summary
 
-### Patrones Base por Skill:
+### Base Patterns by Skill:
 ```
 sex, anal, bdsm, hand, oral, special, group, extreme, combat, clever, charm, agility, craft
-les, gay (para homo)
-service, maid (para wait)
-strip, striptease (para striptease)
-extreme, beast (para extreme)
+les, gay (for homo)
+service, maid (for wait)
+strip, striptease (for striptease)
+extreme, beast (for extreme)
 ```
 
-### Patrones con Prefijos:
+### Patterns with Prefixes:
 ```
 pregnant_{skill}
 futa_{skill}
@@ -159,19 +159,16 @@ magical_futa_pregnant_{skill}
 transformed_magical_futa_pregnant_{skill}
 ```
 
-### Patrones con Sufijos:
+### Patterns with Suffixes:
 ```
 {skill}_failure
 {prefix}_{skill}_failure
 ```
 
-### Patrones Completos:
+### Complete Patterns:
 ```
 {prefix}_{skill}
 {prefix}_{skill}_failure
 {skill}
 {skill}_failure
 ```
-
-
-

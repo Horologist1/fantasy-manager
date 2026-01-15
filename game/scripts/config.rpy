@@ -23,6 +23,15 @@ init python:
     if not hasattr(store, "debug_event_loading_logging"):
         store.debug_event_loading_logging = False
 
+    # Initialize dialogue history navigation offset
+    if not hasattr(store, "dialogue_history_offset"):
+        store.dialogue_history_offset = 0
+    
+    # Initialize dialogue history start index (marks start of current conversation)
+    # This is the index in _history_list where the current conversation started
+    if not hasattr(store, "dialogue_history_start_index"):
+        store.dialogue_history_start_index = 0
+
     # Keep a reference to the original logger
     if not hasattr(store, "_original_renpy_log"):
         store._original_renpy_log = renpy.log
@@ -253,6 +262,34 @@ init python:
     
     # We'll use a screen-based approach instead of modifying keymap directly
     
+    # Reset dialogue navigation offset when new dialogue appears
+    def reset_dialogue_history_offset(event, interact=True, **kwargs):
+        """Reset history navigation when advancing to a new dialogue line."""
+        if event == "begin" and interact:
+            # Simply reset offset to 0 when new dialogue appears
+            store.dialogue_history_offset = 0
+            # Ensure offset is valid (in case history changed)
+            if hasattr(renpy.store, 'clamp_history_offset'):
+                clamp_history_offset()
+    
+    # Register the callback to reset on new dialogue
+    config.say_menu_text_filter = None  # Ensure we don't conflict
+    config.all_character_callbacks.append(reset_dialogue_history_offset)
+    
+    # Function to mark start of new conversation (can be called from labels)
+    def start_new_conversation():
+        """Mark the current point as the start of a new conversation."""
+        # Simply save the current history size - all messages from this point forward
+        # will be part of this conversation
+        old_start = store.dialogue_history_start_index
+        store.dialogue_history_start_index = len(_history_list)
+        store.dialogue_history_offset = 0
+        renpy.log(f"==========================================")
+        renpy.log(f"NEW CONVERSATION STARTED")
+        renpy.log(f"Start index: {old_start} -> {store.dialogue_history_start_index}")
+        renpy.log(f"Current history size: {len(_history_list)}")
+        renpy.log(f"==========================================")
+    
     # Money formatting utility to prevent double $ symbols
     def format_money(amount):
         """
@@ -282,3 +319,8 @@ screen esc_key_handler():
     key "K_ESCAPE" action Function(custom_escape_action)
     # Emergency music stop with Ctrl+M
     key "K_m" action Function(emergency_stop_all_music)
+    # Dialogue history navigation with safe functions
+    key "K_h" action ShowMenu("history")  # Full history screen
+    key "K_LEFT" action Function(safe_increment_history_offset)  # Previous message
+    key "K_RIGHT" action Function(safe_decrement_history_offset)  # Next message
+    key "K_DOWN" action SetVariable("dialogue_history_offset", 0)  # Return to current message

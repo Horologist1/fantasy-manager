@@ -62,19 +62,19 @@
         "failure_image": "mystic_failure",
         "choices": [
             {
-                "option": "Pay for a fortune.",
-                "message_success": "The mystic's gnarled fingers trace patterns in the air as [acting_worker] steps forward, coins glinting in the candlelight. Ancient words spill from cracked lips, and suddenly the crystals pulse with inner fire. A smile spreads across the mystic's face as they speak of prosperity and fortune ahead. The crowd gasps in wonder, and soon a line forms of patrons eager for their own glimpse of destiny ({actual_money}, {actual_reputation} reputation). (+10 Joy)",
-                "message_failure": "The bones clatter across the cloth like falling teeth, their pattern forming shapes that make [acting_worker] step back in alarm. The mystic's voice drops to a whisper that somehow carries to every corner of the room, speaking of shadows and misfortune. Patrons exchange nervous glances and begin to drift away, leaving behind an atmosphere thick with unease ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
+                "option": "Pay 500 gold to the mystic for a fortune reading.",
+                "message_success": "You hand over 500 gold coins as [acting_worker] steps forward into the candlelight. The mystic's gnarled fingers trace patterns in the air, and ancient words spill from cracked lips. Suddenly the crystals pulse with inner fire! A knowing smile spreads across the mystic's weathered face. 'Fortune smiles upon you,' they intone, and patrons begin pressing forward with coin pouches in hand, eager for their own readings. The evening proves remarkably profitable ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
+                "message_failure": "You count out 500 gold coins as [acting_worker] steps into the mystic's space. The bones clatter across the cloth, their pattern forming ambiguous shapes. The mystic studies them for a long moment before shaking their head. 'The spirits are silent tonight,' they murmur, gathering their implements. A few curious patrons drift closer, but most return to their drinks, unmoved by the lackluster display ({actual_money}). (No change in Joy)",
                 "effect": {
                     "success": {
-                        "money": 1000,
-                        "reputation": 5,
-                        "joy": 10
+                        "money": 500,
+                        "reputation": 3,
+                        "joy": 5
                     },
                     "failure": {
                         "money": -500,
-                        "reputation": -5,
-                        "joy": -5
+                        "reputation": 0,
+                        "joy": 0
                     },
                     "success_chance": 0.5
                 }

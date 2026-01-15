@@ -20,6 +20,7 @@ init python:
             rpy.quit()
         except Exception:
             pass
+    
     config.log = "log.txt"  # Force log file
     config.developer = True  # restore original dev setting
     
@@ -1491,6 +1492,14 @@ init python:
                     # Reset skill_uses counter
                     worker["skill_uses"][skill_name] = 0
                     renpy.notify(f"{worker_name}'s {skill_name} skill leveled up from {old_level} to {new_level}!")
+                    
+                    # Reduce rebelliousness when leveling up a skill (worker feels satisfied with progress)
+                    comfort = worker.get("comfort_level", 1)
+                    current_rebelliousness = worker.get("rebelliousness", 50)
+                    new_rebelliousness = max(0, current_rebelliousness - comfort)
+                    set_attribute_with_caps(worker, "rebelliousness", new_rebelliousness)
+                    renpy.log(f"Skill level up reduces {worker_name}'s rebelliousness: {current_rebelliousness} -> {new_rebelliousness} (-{comfort} from comfort)")
+                    
                     # Re-read base_skills after modification to ensure we have the latest value
                     if "original_skills" in worker and worker["original_skills"]:
                         base_skills = worker["original_skills"]
@@ -1510,6 +1519,13 @@ init python:
                 worker["level"] += 1
                 worker["success_count"] = 0
                 renpy.notify(f"{worker['name']} leveled up from {old_level} to {worker['level']}!")
+                
+                # Reduce rebelliousness when leveling up (worker feels satisfied with progress)
+                comfort = worker.get("comfort_level", 1)
+                current_rebelliousness = worker.get("rebelliousness", 50)
+                new_rebelliousness = max(0, current_rebelliousness - comfort)
+                set_attribute_with_caps(worker, "rebelliousness", new_rebelliousness)
+                renpy.log(f"Level up reduces {worker['name']}'s rebelliousness: {current_rebelliousness} -> {new_rebelliousness} (-{comfort} from comfort)")
 
 
     def recruit_worker(worker):
@@ -2072,6 +2088,24 @@ init python:
             else:
                 return "images/shops/storage.png"  # Default for non-shop mode (Storage)
 
+    def get_max_daily_workers(building, profession):
+        """
+        Calculate max_daily_workers dynamically based on building level.
+        This ensures the value is always correct regardless of save/load state.
+        
+        Args:
+            building: Building dict with base_level
+            profession: Profession dict from building_types_json
+            
+        Returns:
+            int: Maximum daily workers for this profession at this building level
+        """
+        # Get the original base value (stored when building_types_json was first loaded)
+        original_max = profession.get("original_max_daily_workers", profession.get("max_daily_workers", 1))
+        # Calculate based on current building level
+        base_level = building.get("base_level", 1)
+        return original_max + (base_level - 1)
+
     def upgrade_building(building_name):
         building = available_buildings[building_name]
         upgrade_cost = building["base_level"] ** 2 * 1000
@@ -2083,14 +2117,8 @@ init python:
         building["base_level"] += 1
         store.money -= upgrade_cost
 
-        # Only update if building has a type
-        if building["type"]:
-            btype = next((bt for bt in building_types_json["building_types"] if bt["id"] == building["type"]), None)
-            if btype:
-                # Calculate fresh from base level
-                for profession in btype.get("professions", []):
-                    base_max = profession.get("max_daily_workers", 1)
-                    profession["max_daily_workers"] = base_max + (building["base_level"] - 1)
+        # No need to update max_daily_workers here - it's now calculated dynamically
+        # The get_max_daily_workers() function will always return the correct value
 
         calculate_reputation(building_name)
         renpy.notify(f"Upgraded {custom_names[building_name]} to level {building['base_level']}!")
@@ -2460,8 +2488,33 @@ init python:
                 return {"message": outcome_message, "outcome": outcome_status}
         else:
             # Handle choices without conditions (no worker skill check)
-            applied_values = apply_effects(effect)
-            message = choice.get("message", "The event concludes.")
+            
+            # Check if this choice uses success_chance for probability-based outcomes
+            success_chance = effect.get("success_chance")
+            if success_chance is not None:
+                # Probability-based outcome (like fortune telling)
+                roll = random.random()
+                if roll <= success_chance:
+                    outcome_status = "success"
+                    message = choice.get("message_success", "Fortune smiles upon you.")
+                    applied_values = apply_effects(effect.get("success", {}))
+                else:
+                    outcome_status = "failure"
+                    message = choice.get("message_failure", "Fortune turns her back.")
+                    applied_values = apply_effects(effect.get("failure", {}))
+                
+                # Replace worker name if present
+                if acting_worker and hasattr(acting_worker, 'get'):
+                    worker_name = acting_worker.get("name", "Unknown")
+                    message = message.replace("[acting_worker]", worker_name)
+                
+                renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} = {outcome_status}")
+            else:
+                # Simple choice without probability
+                applied_values = apply_effects(effect)
+                message = choice.get("message", "The event concludes.")
+                outcome_status = "success"
+            
             message = message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
             
             # Apply dynamic message formatting
@@ -2471,10 +2524,10 @@ init python:
             event_id = event.get("id")
             if event_id:
                 store.event_occurrences[event_id] = store.event_occurrences.get(event_id, 0) + 1
-                store.event_last_occurred[event_id] = calculate_total_days() # <<<--- ADDED THIS LINE
+                store.event_last_occurred[event_id] = calculate_total_days()
             
-            # Return dictionary (assume success for simple choices)
-            return {"message": message, "outcome": "success"}
+            # Return dictionary
+            return {"message": message, "outcome": outcome_status}
 
     def select_weighted_event(events):
         """Select an event from the list based on their weights."""
@@ -3435,6 +3488,8 @@ default event_flags = {}  # Storage for event flags/tokens that are used for eve
 default plaza_servants_text_hover = False  # Controls hover state of PlazaServants imagebutton when textbutton is hovered
 default shops_text_hover = False  # Controls hover state of shop imagebuttons when "Visit Shops" textbutton is hovered
 default recruit_workers_text_hover = False  # Controls hover state of PlazaFountain imagebutton when "Recruit Workers" textbutton is hovered
+default take_a_walk_text_hover = False  # Controls hover state of PlazaFountain imagebutton when "Take a Walk" textbutton is hovered
+default buy_buildings_text_hover = False  # Controls hover state of buyable buildings when "Buy Buildings" textbutton is hovered
 default tooltips_enabled_by_screen = {}  # Dictionary to store tooltip state per screen (defaults to True if not set)
 
 init python:

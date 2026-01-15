@@ -1,116 +1,116 @@
-# Lista de Imágenes Mínimas para un Worker
+# Minimum Image List for a Worker
 
-## 🎯 Imagen Mínima Absoluta (REQUERIDA)
+## 🎯 Absolute Minimum Image (REQUIRED)
 
-Para que un worker funcione correctamente en el juego, necesita **al menos una imagen de perfil**:
+For a worker to function correctly in the game, they need **at least one profile image**:
 
-### 1. Imagen de Perfil (Profile)
-- **Nombre del archivo:** `Profile.png`, `Profile.jpg`, `Profile.jpeg`, `Profile.webp` (o variaciones con números como `Profile (1).jpg`)
-- **Ubicación:** `game/images/workers/{folder_del_worker}/`
-- **Descripción:** Esta es la imagen que se muestra en la pantalla de detalles del worker, en la lista de workers, y como fallback cuando no hay otras imágenes disponibles.
-- **Formato:** Cualquier formato soportado (png, jpg, jpeg, webp, webm, mp4)
-- **Requisito:** ✅ **OBLIGATORIA**
-
----
-
-## 📸 Imágenes Opcionales (Recomendadas)
-
-Aunque no son estrictamente necesarias, estas imágenes mejoran la experiencia del juego:
-
-### 2. Imágenes de Habilidades (Skills)
-
-El sistema busca imágenes basadas en las habilidades del worker. Si un worker tiene una habilidad alta, es recomendable tener imágenes para ella:
-
-#### Skills Estándar:
-- `sex.png` / `sex.jpg` - Para la habilidad "Sex"
-- `anal.png` / `anal.jpg` - Para la habilidad "Anal"
-- `bdsm.png` / `bdsm.jpg` - Para la habilidad "BDSM"
-- `hand.png` / `hand.jpg` - Para la habilidad "Hand"
-- `oral.png` / `oral.jpg` - Para la habilidad "Oral"
-- `les.png` o `gay.png` - Para la habilidad "Homo"
-- `special.png` / `special.jpg` - Para la habilidad "Special"
-- `group.png` / `group.jpg` - Para la habilidad "Group"
-- `extreme.png` o `beast.png` - Para la habilidad "Extreme"
-- `strip.png` o `striptease.png` - Para la habilidad "Striptease"
-- `combat.png` / `combat.jpg` - Para la habilidad "Combat"
-- `clever.png` / `clever.jpg` - Para la habilidad "Clever"
-- `charm.png` / `charm.jpg` - Para la habilidad "Charm"
-- `service.png` o `maid.png` - Para la habilidad "Service"
-- `agility.png` / `agility.jpg` - Para la habilidad "Agility"
-- `craft.png` / `craft.jpg` - Para la habilidad "Craft"
-
-#### Variantes de Resultado:
-- `{skill}_failure.png` - Imagen cuando la habilidad falla (ej: `sex_failure.png`)
-- `{skill}.png` (sin sufijo) - Imagen cuando la habilidad tiene éxito
-
-**Nota:** Puedes tener múltiples variantes numeradas: `sex (1).png`, `sex (2).png`, `sex (3).png`, etc.
-
-### 3. Imágenes de Interacciones (Opcional)
-
-Si el worker participa en interacciones, estas imágenes pueden ser útiles:
-
-- `romance_female.png` - Para interacciones románticas (workers femeninos)
-- `romance_male.png` - Para interacciones románticas (workers masculinos)
-- `friendship.png` - Para interacciones de amistad
-- `joy_female.png` / `joy_male.png` - Para interacciones de alegría
-- `obedience.png` - Para interacciones de disciplina
-
-### 4. Imágenes de Eventos (Opcional)
-
-Si el worker participa en eventos específicos, puedes crear imágenes para ellos:
-
-- `{event_name}.png` - Imagen del evento (ej: `cook_story1_restaurant.png`)
-- `{event_name}_failure.png` - Imagen de fallo del evento
-
-### 5. Imágenes con Prefijos de Traits (Opcional)
-
-Si el worker tiene traits especiales, puedes crear imágenes específicas:
-
-#### Traits Individuales:
-- `pregnant_{skill}.png` - Si el worker tiene el trait "Pregnant"
-- `futa_{skill}.png` - Si el worker tiene el trait "Futa"
-- `transformed_{skill}.png` - Si el worker tiene el trait "Transformed"
-- `magical_{skill}.png` - Si el worker tiene el trait "Magical"
-
-#### Traits Combinados:
-- `transformed_magical_futa_pregnant_{skill}.png` - Si tiene los 4 traits
-- `transformed_magical_futa_{skill}.png` - Si tiene Transformed + Magical + Futa
-- `transformed_magical_pregnant_{skill}.png` - Si tiene Transformed + Magical + Pregnant
-- `transformed_futa_pregnant_{skill}.png` - Si tiene Transformed + Futa + Pregnant
-- `magical_futa_pregnant_{skill}.png` - Si tiene Magical + Futa + Pregnant
-- `transformed_magical_{skill}.png` - Si tiene Transformed + Magical
-- `transformed_futa_{skill}.png` - Si tiene Transformed + Futa
-- `transformed_pregnant_{skill}.png` - Si tiene Transformed + Pregnant
-- `magical_futa_{skill}.png` - Si tiene Magical + Futa
-- `magical_pregnant_{skill}.png` - Si tiene Magical + Pregnant
-- `futa_pregnant_{skill}.png` - Si tiene Futa + Pregnant
+### 1. Profile Image
+- **Filename:** `Profile.png`, `Profile.jpg`, `Profile.jpeg`, `Profile.webp` (or numbered variations like `Profile (1).jpg`)
+- **Location:** `game/images/workers/{worker_folder}/`
+- **Description:** This is the image shown in the worker details screen, in the worker list, and as fallback when no other images are available.
+- **Format:** Any supported format (png, jpg, jpeg, webp, webm, mp4)
+- **Requirement:** ✅ **MANDATORY**
 
 ---
 
-## 📋 Resumen Mínimo
+## 📸 Optional Images (Recommended)
 
-### Estructura de Carpeta Mínima:
+Although not strictly necessary, these images improve the game experience:
+
+### 2. Skill Images
+
+The system searches for images based on worker skills. If a worker has a high skill, it's recommended to have images for it:
+
+#### Standard Skills:
+- `sex.png` / `sex.jpg` - For "Sex" skill
+- `anal.png` / `anal.jpg` - For "Anal" skill
+- `bdsm.png` / `bdsm.jpg` - For "BDSM" skill
+- `hand.png` / `hand.jpg` - For "Hand" skill
+- `oral.png` / `oral.jpg` - For "Oral" skill
+- `les.png` or `gay.png` - For "Homo" skill
+- `special.png` / `special.jpg` - For "Special" skill
+- `group.png` / `group.jpg` - For "Group" skill
+- `extreme.png` or `beast.png` - For "Extreme" skill
+- `strip.png` or `striptease.png` - For "Striptease" skill
+- `combat.png` / `combat.jpg` - For "Combat" skill
+- `clever.png` / `clever.jpg` - For "Clever" skill
+- `charm.png` / `charm.jpg` - For "Charm" skill
+- `service.png` or `maid.png` - For "Service" skill
+- `agility.png` / `agility.jpg` - For "Agility" skill
+- `craft.png` / `craft.jpg` - For "Craft" skill
+
+#### Result Variants:
+- `{skill}_failure.png` - Image when skill fails (e.g., `sex_failure.png`)
+- `{skill}.png` (no suffix) - Image when skill succeeds
+
+**Note:** You can have multiple numbered variants: `sex (1).png`, `sex (2).png`, `sex (3).png`, etc.
+
+### 3. Interaction Images (Optional)
+
+If the worker participates in interactions, these images can be useful:
+
+- `romance_female.png` - For romantic interactions (female workers)
+- `romance_male.png` - For romantic interactions (male workers)
+- `friendship.png` - For friendship interactions
+- `joy_female.png` / `joy_male.png` - For joy interactions
+- `obedience.png` - For discipline interactions
+
+### 4. Event Images (Optional)
+
+If the worker participates in specific events, you can create images for them:
+
+- `{event_name}.png` - Event image (e.g., `cook_story1_restaurant.png`)
+- `{event_name}_failure.png` - Event failure image
+
+### 5. Images with Trait Prefixes (Optional)
+
+If the worker has special traits, you can create specific images:
+
+#### Individual Traits:
+- `pregnant_{skill}.png` - If worker has "Pregnant" trait
+- `futa_{skill}.png` - If worker has "Futa" trait
+- `transformed_{skill}.png` - If worker has "Transformed" trait
+- `magical_{skill}.png` - If worker has "Magical" trait
+
+#### Combined Traits:
+- `transformed_magical_futa_pregnant_{skill}.png` - If has all 4 traits
+- `transformed_magical_futa_{skill}.png` - If has Transformed + Magical + Futa
+- `transformed_magical_pregnant_{skill}.png` - If has Transformed + Magical + Pregnant
+- `transformed_futa_pregnant_{skill}.png` - If has Transformed + Futa + Pregnant
+- `magical_futa_pregnant_{skill}.png` - If has Magical + Futa + Pregnant
+- `transformed_magical_{skill}.png` - If has Transformed + Magical
+- `transformed_futa_{skill}.png` - If has Transformed + Futa
+- `transformed_pregnant_{skill}.png` - If has Transformed + Pregnant
+- `magical_futa_{skill}.png` - If has Magical + Futa
+- `magical_pregnant_{skill}.png` - If has Magical + Pregnant
+- `futa_pregnant_{skill}.png` - If has Futa + Pregnant
+
+---
+
+## 📋 Minimum Summary
+
+### Minimum Folder Structure:
 ```
-game/images/workers/{folder_del_worker}/
-├── Profile.png (o Profile.jpg)  ← REQUERIDA
+game/images/workers/{worker_folder}/
+├── Profile.png (or Profile.jpg)  ← REQUIRED
 ```
 
-### Estructura de Carpeta Recomendada:
+### Recommended Folder Structure:
 ```
-game/images/workers/{folder_del_worker}/
-├── Profile.png (o Profile.jpg)  ← REQUERIDA
-├── sex.png                      ← Opcional (si tiene habilidad Sex)
-├── sex_failure.png              ← Opcional (variante de fallo)
-├── anal.png                     ← Opcional (si tiene habilidad Anal)
-├── oral.png                     ← Opcional (si tiene habilidad Oral)
-└── ... (más imágenes según habilidades)
+game/images/workers/{worker_folder}/
+├── Profile.png (or Profile.jpg)  ← REQUIRED
+├── sex.png                      ← Optional (if has Sex skill)
+├── sex_failure.png              ← Optional (failure variant)
+├── anal.png                     ← Optional (if has Anal skill)
+├── oral.png                     ← Optional (if has Oral skill)
+└── ... (more images according to skills)
 ```
 
 ---
 
-## 🎨 Formatos Soportados
+## 🎨 Supported Formats
 
-El sistema soporta estos formatos de imagen/video:
+The system supports these image/video formats:
 - `.png` ✅
 - `.jpg` ✅
 - `.jpeg` ✅
@@ -120,31 +120,28 @@ El sistema soporta estos formatos de imagen/video:
 
 ---
 
-## 📝 Notas Importantes
+## 📝 Important Notes
 
-1. **Búsqueda Flexible:** El sistema busca imágenes de forma flexible:
-   - No distingue mayúsculas/minúsculas
-   - Busca el patrón dentro del nombre del archivo
-   - Soporta variaciones numeradas: `sex (1).png`, `sex (2).png`, etc.
+1. **Flexible Search:** The system searches for images flexibly:
+   - Case-insensitive
+   - Searches pattern within filename
+   - Supports numbered variations: `sex (1).png`, `sex (2).png`, etc.
 
-2. **Fallback:** Si no se encuentra una imagen específica, el sistema usa la imagen de perfil como fallback.
+2. **Fallback:** If a specific image is not found, the system uses the profile image as fallback.
 
-3. **Caché:** El sistema usa caché para mantener consistencia visual durante el mismo Daily Report.
+3. **Cache:** The system uses cache to maintain visual consistency during the same Daily Report.
 
-4. **Prioridad de Búsqueda:**
-   - Primero busca en la carpeta del worker
-   - Luego busca en la carpeta default (`images/workers/aspen/`)
-   - Finalmente usa la imagen de perfil
+4. **Search Priority:**
+   - First searches in worker folder
+   - Then searches in default folder (`images/workers/aspen/`)
+   - Finally uses profile image
 
 ---
 
-## ✅ Checklist Mínimo para un Worker
+## ✅ Minimum Checklist for a Worker
 
-- [ ] **Imagen de perfil** (`Profile.png` o `Profile.jpg`) en `game/images/workers/{folder}/`
-- [ ] El campo `"folder"` en el JSON del worker coincide con el nombre de la carpeta
-- [ ] La imagen está en un formato soportado (png, jpg, jpeg, webp)
+- [ ] **Profile image** (`Profile.png` or `Profile.jpg`) in `game/images/workers/{folder}/`
+- [ ] The `"folder"` field in the worker JSON matches the folder name
+- [ ] The image is in a supported format (png, jpg, jpeg, webp)
 
-**Con solo estos 3 requisitos, el worker funcionará correctamente en el juego.**
-
-
-
+**With just these 3 requirements, the worker will function correctly in the game.**

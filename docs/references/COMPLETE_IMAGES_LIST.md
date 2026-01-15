@@ -1,183 +1,183 @@
-# Lista Completa de Imágenes para Workers
+# Complete Image List for Workers
 
-Este documento contiene la lista completa de todas las imágenes que puede necesitar un worker.
+This document contains the complete list of all images a worker may need.
 
 ---
 
-## 📸 1. IMAGEN DE PERFIL (Profile) - REQUERIDA
+## 📸 1. PROFILE IMAGE - REQUIRED
 
-### Imagen Base
+### Base Image
 - `Profile.png` / `Profile.jpg` / `Profile.jpeg` / `Profile.webp`
-- **Variantes numeradas:** `Profile (1).png`, `Profile (2).png`, etc.
-- **Variante de failure:** ❌ No tiene (es solo una imagen de perfil)
+- **Numbered variants:** `Profile (1).png`, `Profile (2).png`, etc.
+- **Failure variant:** ❌ None (it's just a profile image)
 
-**Descripción:** Imagen principal del worker que se muestra en la pantalla de detalles, lista de workers, y como fallback cuando no hay otras imágenes disponibles.
+**Description:** Main worker image shown in the details screen, worker list, and as fallback when no other images are available.
 
 ---
 
-## 🎯 2. IMÁGENES DE HABILIDADES (Skills)
+## 🎯 2. SKILL IMAGES
 
-Cada skill tiene dos variantes: **normal** y **failure**. También puedes tener múltiples variantes numeradas.
+Each skill has two variants: **normal** and **failure**. You can also have multiple numbered variants.
 
-### Skills Estándar
+### Standard Skills
 
 #### Sex
 - `sex.png` / `sex.jpg` / `sex.jpeg` / `sex.webp`
 - `sex_failure.png` / `sex_failure.jpg` / `sex_failure.jpeg` / `sex_failure.webp`
-- **Variantes numeradas:** `sex (1).png`, `sex (2).png`, `sex (3).png`, etc.
+- **Numbered variants:** `sex (1).png`, `sex (2).png`, `sex (3).png`, etc.
 
 #### Anal
 - `anal.png` / `anal.jpg` / `anal.jpeg` / `anal.webp`
 - `anal_failure.png` / `anal_failure.jpg` / `anal_failure.jpeg` / `anal_failure.webp`
-- **Variantes numeradas:** `anal (1).png`, `anal (2).png`, `anal (3).png`, etc.
+- **Numbered variants:** `anal (1).png`, `anal (2).png`, `anal (3).png`, etc.
 
 #### BDSM
 - `bdsm.png` / `bdsm.jpg` / `bdsm.jpeg` / `bdsm.webp`
 - `bdsm_failure.png` / `bdsm_failure.jpg` / `bdsm_failure.jpeg` / `bdsm_failure.webp`
-- **Variantes numeradas:** `bdsm (1).png`, `bdsm (2).png`, `bdsm (3).png`, etc.
+- **Numbered variants:** `bdsm (1).png`, `bdsm (2).png`, `bdsm (3).png`, etc.
 
 #### Hand
 - `hand.png` / `hand.jpg` / `hand.jpeg` / `hand.webp`
 - `hand_failure.png` / `hand_failure.jpg` / `hand_failure.jpeg` / `hand_failure.webp`
-- **Variantes numeradas:** `hand (1).png`, `hand (2).png`, `hand (3).png`, etc.
+- **Numbered variants:** `hand (1).png`, `hand (2).png`, `hand (3).png`, etc.
 
 #### Oral
 - `oral.png` / `oral.jpg` / `oral.jpeg` / `oral.webp`
 - `oral_failure.png` / `oral_failure.jpg` / `oral_failure.jpeg` / `oral_failure.webp`
-- **Variantes numeradas:** `oral (1).png`, `oral (2).png`, `oral (3).png`, etc.
+- **Numbered variants:** `oral (1).png`, `oral (2).png`, `oral (3).png`, etc.
 
-#### Homo (busca "les" o "gay")
+#### Homo (searches for "les" or "gay")
 - `les.png` / `les.jpg` / `les.jpeg` / `les.webp`
 - `gay.png` / `gay.jpg` / `gay.jpeg` / `gay.webp`
 - `les_failure.png` / `les_failure.jpg` / `les_failure.jpeg` / `les_failure.webp`
 - `gay_failure.png` / `gay_failure.jpg` / `gay_failure.jpeg` / `gay_failure.webp`
-- **Variantes numeradas:** `les (1).png`, `gay (1).png`, `les (2).png`, `gay (2).png`, etc.
+- **Numbered variants:** `les (1).png`, `gay (1).png`, `les (2).png`, `gay (2).png`, etc.
 
 #### Special
 - `special.png` / `special.jpg` / `special.jpeg` / `special.webp`
 - `special_failure.png` / `special_failure.jpg` / `special_failure.jpeg` / `special_failure.webp`
-- **Variantes numeradas:** `special (1).png`, `special (2).png`, `special (3).png`, etc.
+- **Numbered variants:** `special (1).png`, `special (2).png`, `special (3).png`, etc.
 
 #### Group
 - `group.png` / `group.jpg` / `group.jpeg` / `group.webp`
 - `group_failure.png` / `group_failure.jpg` / `group_failure.jpeg` / `group_failure.webp`
-- **Variantes numeradas:** `group (1).png`, `group (2).png`, `group (3).png`, etc.
+- **Numbered variants:** `group (1).png`, `group (2).png`, `group (3).png`, etc.
 
-#### Extreme (busca "extreme" o "beast")
+#### Extreme (searches for "extreme" or "beast")
 - `extreme.png` / `extreme.jpg` / `extreme.jpeg` / `extreme.webp`
 - `beast.png` / `beast.jpg` / `beast.jpeg` / `beast.webp`
 - `extreme_failure.png` / `extreme_failure.jpg` / `extreme_failure.jpeg` / `extreme_failure.webp`
 - `beast_failure.png` / `beast_failure.jpg` / `beast_failure.jpeg` / `beast_failure.webp`
-- **Variantes numeradas:** `extreme (1).png`, `beast (1).png`, `extreme (2).png`, `beast (2).png`, etc.
+- **Numbered variants:** `extreme (1).png`, `beast (1).png`, `extreme (2).png`, `beast (2).png`, etc.
 
-#### Striptease (busca "strip" o "striptease")
+#### Striptease (searches for "strip" or "striptease")
 - `strip.png` / `strip.jpg` / `strip.jpeg` / `strip.webp`
 - `striptease.png` / `striptease.jpg` / `striptease.jpeg` / `striptease.webp`
 - `strip_failure.png` / `strip_failure.jpg` / `strip_failure.jpeg` / `strip_failure.webp`
 - `striptease_failure.png` / `striptease_failure.jpg` / `striptease_failure.jpeg` / `striptease_failure.webp`
-- **Variantes numeradas:** `strip (1).png`, `striptease (1).png`, `strip (2).png`, `striptease (2).png`, etc.
+- **Numbered variants:** `strip (1).png`, `striptease (1).png`, `strip (2).png`, `striptease (2).png`, etc.
 
 #### Combat
 - `combat.png` / `combat.jpg` / `combat.jpeg` / `combat.webp`
 - `combat_failure.png` / `combat_failure.jpg` / `combat_failure.jpeg` / `combat_failure.webp`
-- **Variantes numeradas:** `combat (1).png`, `combat (2).png`, `combat (3).png`, etc.
+- **Numbered variants:** `combat (1).png`, `combat (2).png`, `combat (3).png`, etc.
 
 #### Clever
 - `clever.png` / `clever.jpg` / `clever.jpeg` / `clever.webp`
 - `clever_failure.png` / `clever_failure.jpg` / `clever_failure.jpeg` / `clever_failure.webp`
-- **Variantes numeradas:** `clever (1).png`, `clever (2).png`, `clever (3).png`, etc.
+- **Numbered variants:** `clever (1).png`, `clever (2).png`, `clever (3).png`, etc.
 
 #### Charm
 - `charm.png` / `charm.jpg` / `charm.jpeg` / `charm.webp`
 - `charm_failure.png` / `charm_failure.jpg` / `charm_failure.jpeg` / `charm_failure.webp`
-- **Variantes numeradas:** `charm (1).png`, `charm (2).png`, `charm (3).png`, etc.
+- **Numbered variants:** `charm (1).png`, `charm (2).png`, `charm (3).png`, etc.
 
-#### Service (busca "wait", "service" o "maid")
+#### Service (searches for "wait", "service" or "maid")
 - `wait.png` / `wait.jpg` / `wait.jpeg` / `wait.webp`
 - `service.png` / `service.jpg` / `service.jpeg` / `service.webp`
 - `maid.png` / `maid.jpg` / `maid.jpeg` / `maid.webp`
 - `wait_failure.png` / `wait_failure.jpg` / `wait_failure.jpeg` / `wait_failure.webp`
 - `service_failure.png` / `service_failure.jpg` / `service_failure.jpeg` / `service_failure.webp`
 - `maid_failure.png` / `maid_failure.jpg` / `maid_failure.jpeg` / `maid_failure.webp`
-- **Variantes numeradas:** `wait (1).png`, `service (1).png`, `maid (1).png`, `wait (2).png`, `service (2).png`, `maid (2).png`, etc.
+- **Numbered variants:** `wait (1).png`, `service (1).png`, `maid (1).png`, `wait (2).png`, `service (2).png`, `maid (2).png`, etc.
 
 #### Agility
 - `agility.png` / `agility.jpg` / `agility.jpeg` / `agility.webp`
 - `agility_failure.png` / `agility_failure.jpg` / `agility_failure.jpeg` / `agility_failure.webp`
-- **Variantes numeradas:** `agility (1).png`, `agility (2).png`, `agility (3).png`, etc.
+- **Numbered variants:** `agility (1).png`, `agility (2).png`, `agility (3).png`, etc.
 
 #### Craft
 - `craft.png` / `craft.jpg` / `craft.jpeg` / `craft.webp`
 - `craft_failure.png` / `craft_failure.jpg` / `craft_failure.jpeg` / `craft_failure.webp`
-- **Variantes numeradas:** `craft (1).png`, `craft (2).png`, `craft (3).png`, etc.
+- **Numbered variants:** `craft (1).png`, `craft (2).png`, `craft (3).png`, etc.
 
 ---
 
-## 💕 3. IMÁGENES DE INTERACCIONES
+## 💕 3. INTERACTION IMAGES
 
-**Nota:** Las interacciones NO tienen variante de failure.
+**Note:** Interactions do NOT have a failure variant.
 
 ### Romance
 
-#### Romance Female (para workers femeninos)
+#### Romance Female (for female workers)
 - `romance_female.png` / `romance_female.jpg` / `romance_female.jpeg` / `romance_female.webp`
-- **Variantes numeradas:** `romance_female (1).png`, `romance_female (2).png`, etc.
+- **Numbered variants:** `romance_female (1).png`, `romance_female (2).png`, etc.
 
-#### Romance Male (para workers masculinos)
+#### Romance Male (for male workers)
 - `romance_male.png` / `romance_male.jpg` / `romance_male.jpeg` / `romance_male.webp`
-- **Variantes numeradas:** `romance_male (1).png`, `romance_male (2).png`, etc.
+- **Numbered variants:** `romance_male (1).png`, `romance_male (2).png`, etc.
 
-**Nota:** El sistema también busca imágenes con sufijos de género del jugador:
-- `romance_female_male.png` (si el jugador es Lord/masculino)
-- `romance_female_female.png` (si el jugador es Lady/femenino)
-- `romance_male_male.png` (si el jugador es Lord/masculino)
-- `romance_male_female.png` (si el jugador es Lady/femenino)
+**Note:** The system also searches for images with player gender suffixes:
+- `romance_female_male.png` (if player is Lord/male)
+- `romance_female_female.png` (if player is Lady/female)
+- `romance_male_male.png` (if player is Lord/male)
+- `romance_male_female.png` (if player is Lady/female)
 
 ### Friendship
 
-#### Friendship (sin distinción de género)
+#### Friendship (no gender distinction)
 - `friendship.png` / `friendship.jpg` / `friendship.jpeg` / `friendship.webp`
-- **Variantes numeradas:** `friendship (1).png`, `friendship (2).png`, etc.
+- **Numbered variants:** `friendship (1).png`, `friendship (2).png`, etc.
 
 ### Joy
 
-#### Joy Female (para workers femeninos)
+#### Joy Female (for female workers)
 - `joy_female.png` / `joy_female.jpg` / `joy_female.jpeg` / `joy_female.webp`
-- **Variantes numeradas:** `joy_female (1).png`, `joy_female (2).png`, etc.
+- **Numbered variants:** `joy_female (1).png`, `joy_female (2).png`, etc.
 
-#### Joy Male (para workers masculinos)
+#### Joy Male (for male workers)
 - `joy_male.png` / `joy_male.jpg` / `joy_male.jpeg` / `joy_male.webp`
-- **Variantes numeradas:** `joy_male (1).png`, `joy_male (2).png`, etc.
+- **Numbered variants:** `joy_male (1).png`, `joy_male (2).png`, etc.
 
 ### Discipline (Obedience)
 
-#### Obedience (para todas las interacciones de disciplina)
+#### Obedience (for all discipline interactions)
 - `obedience.png` / `obedience.jpg` / `obedience.jpeg` / `obedience.webp`
-- **Variantes numeradas:** `obedience (1).png`, `obedience (2).png`, etc.
+- **Numbered variants:** `obedience (1).png`, `obedience (2).png`, etc.
 
 ---
 
-## 📋 RESUMEN
+## 📋 SUMMARY
 
-### Imágenes Mínimas (Requeridas)
-- ✅ **Profile** - 1 imagen
+### Minimum Images (Required)
+- ✅ **Profile** - 1 image
 
-### Imágenes de Habilidades (Opcionales)
-- **17 skills estándar** × 2 (normal + failure) = **34 imágenes base**
-- Puedes tener múltiples variantes numeradas para cada una
+### Skill Images (Optional)
+- **17 standard skills** × 2 (normal + failure) = **34 base images**
+- You can have multiple numbered variants for each
 
-### Imágenes de Interacciones (Opcionales)
-- **Romance:** 2 variantes (female/male) = **2 imágenes base**
-- **Friendship:** 1 variante = **1 imagen base**
-- **Joy:** 2 variantes (female/male) = **2 imágenes base**
-- **Obedience:** 1 variante = **1 imagen base**
-- **Total:** **6 imágenes base** (sin variantes de failure)
+### Interaction Images (Optional)
+- **Romance:** 2 variants (female/male) = **2 base images**
+- **Friendship:** 1 variant = **1 base image**
+- **Joy:** 2 variants (female/male) = **2 base images**
+- **Obedience:** 1 variant = **1 base image**
+- **Total:** **6 base images** (no failure variants)
 
 ---
 
-## 🎨 FORMATOS SOPORTADOS
+## 🎨 SUPPORTED FORMATS
 
-Todas las imágenes pueden usar estos formatos:
+All images can use these formats:
 - `.png` ✅
 - `.jpg` ✅
 - `.jpeg` ✅
@@ -187,40 +187,40 @@ Todas las imágenes pueden usar estos formatos:
 
 ---
 
-## 📝 NOTAS IMPORTANTES
+## 📝 IMPORTANT NOTES
 
-1. **Búsqueda Flexible:** El sistema busca imágenes de forma flexible:
-   - No distingue mayúsculas/minúsculas
-   - Busca el patrón dentro del nombre del archivo
-   - Soporta variaciones numeradas: `sex (1).png`, `sex (2).png`, etc.
+1. **Flexible Search:** The system searches for images flexibly:
+   - Case-insensitive
+   - Searches pattern within filename
+   - Supports numbered variations: `sex (1).png`, `sex (2).png`, etc.
 
-2. **Prioridad de Búsqueda:**
-   - Primero busca en la carpeta del worker
-   - Si no encuentra, busca en la carpeta default (`images/workers/aspen/`)
-   - Finalmente usa la imagen de perfil como fallback
+2. **Search Priority:**
+   - First searches in worker folder
+   - If not found, searches in default folder (`images/workers/aspen/`)
+   - Finally uses profile image as fallback
 
-3. **Variantes de Failure (solo para Skills):**
-   - Se usan cuando el resultado es "failure" o "mediocre"
-   - Si no existe, se usa la imagen normal
-   - El sufijo `_failure` debe estar antes de la extensión: `sex_failure.png`
+3. **Failure Variants (only for Skills):**
+   - Used when result is "failure" or "mediocre"
+   - If it doesn't exist, uses normal image
+   - The `_failure` suffix must be before the extension: `sex_failure.png`
 
-4. **Variantes Numeradas:**
-   - Puedes tener múltiples imágenes: `sex (1).png`, `sex (2).png`, `sex (3).png`
-   - El sistema selecciona una aleatoriamente (con caché para mantener consistencia)
+4. **Numbered Variants:**
+   - You can have multiple images: `sex (1).png`, `sex (2).png`, `sex (3).png`
+   - System selects one randomly (with cache to maintain consistency)
 
-5. **Skills con Múltiples Patrones:**
-   - **Homo:** busca `les` O `gay`
-   - **Service:** busca `wait` O `service` O `maid`
-   - **Striptease:** busca `strip` O `striptease`
-   - **Extreme:** busca `extreme` O `beast`
+5. **Skills with Multiple Patterns:**
+   - **Homo:** searches for `les` OR `gay`
+   - **Service:** searches for `wait` OR `service` OR `maid`
+   - **Striptease:** searches for `strip` OR `striptease`
+   - **Extreme:** searches for `extreme` OR `beast`
 
 ---
 
-## ✅ CHECKLIST MÍNIMO
+## ✅ MINIMUM CHECKLIST
 
-Para que un worker funcione correctamente:
-- [ ] **Imagen de perfil** (`Profile.png` o `Profile.jpg`) en `game/images/workers/{folder}/`
-- [ ] El campo `"folder"` en el JSON del worker coincide con el nombre de la carpeta
-- [ ] La imagen está en un formato soportado (png, jpg, jpeg, webp)
+For a worker to function correctly:
+- [ ] **Profile image** (`Profile.png` or `Profile.jpg`) in `game/images/workers/{folder}/`
+- [ ] The `"folder"` field in the worker JSON matches the folder name
+- [ ] The image is in a supported format (png, jpg, jpeg, webp)
 
-**Con solo estos 3 requisitos, el worker funcionará correctamente en el juego.**
+**With just these 3 requirements, the worker will function correctly in the game.**

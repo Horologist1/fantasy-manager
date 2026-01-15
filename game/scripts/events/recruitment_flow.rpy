@@ -108,6 +108,9 @@ label start_recruitment_system:
     jump tavern_screen
 
 label recruitment_event_flow(event, worker):
+    # Mark start of new conversation for history navigation
+    $ start_new_conversation()
+    
     # Set up the scene with background
     python:
         bg_image = event.get("background_image", "images/event_bg.png")
@@ -226,6 +229,9 @@ label recruitment_event_flow(event, worker):
 
 # Simple recruitment flow for legacy events
 label recruitment_event_simple(event, worker):
+    # Mark start of new conversation for history navigation
+    $ start_new_conversation()
+    
     python:
         bg_image = event.get("background_image", "images/event_bg.png")
         # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path

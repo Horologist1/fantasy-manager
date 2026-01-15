@@ -1,78 +1,28 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/scripts/main_flow.rpy", line 885, in script
-    call screen tavern
-  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
-    store._return = renpy.call_screen(name, *args, **kwargs)
-  File "game/scripts/core/screens.rpy", line 3741, in execute
-    screen Manager(building_name):
-  File "game/scripts/core/screens.rpy", line 3741, in execute
-    screen Manager(building_name):
-  File "game/scripts/core/screens.rpy", line 3776, in execute
-    frame:
-  File "game/scripts/core/screens.rpy", line 3783, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 3786, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 3797, in execute
-    $ rep_tier = get_reputation_tier(capped_reputation)
-  File "game/scripts/core/screens.rpy", line 3797, in <module>
-    $ rep_tier = get_reputation_tier(capped_reputation)
-NameError: name 'get_reputation_tier' is not defined
+  File "game/scripts/main_flow.rpy", line 404, in script
+    menu:
+Exception: The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/main_flow.rpy", line 885, in script
-    call screen tavern
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
-    self.call("execute")
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1966, in call
-    return renpy.statements.call(method, parsed, *args, **kwargs)
-  File "D:\renpy-8.3.4-sdk\renpy\statements.py", line 374, in call
-    return method(parsed, *args, **kwargs)
-  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
-    store._return = renpy.call_screen(name, *args, **kwargs)
-  File "D:\renpy-8.3.4-sdk\renpy\exports\statementexports.py", line 345, in call_screen
-    rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
-  File "D:\renpy-8.3.4-sdk\renpy\ui.py", line 301, in interact
-    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
-  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2218, in interact
-    repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
-  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2748, in interact_core
-    root_widget.visit_all(lambda d : d.per_interact())
-  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
-    d.visit_all(callback, seen)
-  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
-    d.visit_all(callback, seen)
-  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
-    d.visit_all(callback, seen)
-  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 480, in visit_all
-    callback(self)
-  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2748, in <lambda>
-    root_widget.visit_all(lambda d : d.per_interact())
-  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 491, in per_interact
-    self.update()
-  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 700, in update
-    self.screen.function(**self.scope)
-  File "game/scripts/core/screens.rpy", line 3741, in execute
-    screen Manager(building_name):
-  File "game/scripts/core/screens.rpy", line 3741, in execute
-    screen Manager(building_name):
-  File "game/scripts/core/screens.rpy", line 3776, in execute
-    frame:
-  File "game/scripts/core/screens.rpy", line 3783, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 3786, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 3797, in execute
-    $ rep_tier = get_reputation_tier(capped_reputation)
-  File "game/scripts/core/screens.rpy", line 3797, in <module>
-    $ rep_tier = get_reputation_tier(capped_reputation)
-NameError: name 'get_reputation_tier' is not defined
+  File "game/scripts/main_flow.rpy", line 404, in script
+    menu:
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1628, in execute
+    renpy.exports.say(None, "\n".join(narration), interact=False)
+  File "D:\renpy-8.3.4-sdk\renpy\exports\sayexports.py", line 132, in say
+    who(what, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\character.py", line 1471, in __call__
+    self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
+  File "D:\renpy-8.3.4-sdk\renpy\character.py", line 1117, in do_display
+    display_say(who,
+  File "D:\renpy-8.3.4-sdk\renpy\character.py", line 799, in display_say
+    raise Exception("The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.")
+Exception: The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
-Fantasy Manager 0.9
-Tue Dec 30 01:18:34 2025
+Fantasy Manager 9.1.1
+Tue Jan  6 23:28:27 2026

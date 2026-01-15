@@ -38,23 +38,24 @@
 
 ### Worker Stats
 - **Level**: Affects health, energy, and various bonuses (starts at 1)
-- **Health**: Combat skill + (level × 5) + trait bonuses
-- **Energy**: Level × 5 + trait bonuses (regenerates level + 1 per day)
+- **Health**: 10 + (level × 5) + trait bonuses
+- **Energy**: Level × 5 + trait bonuses (regenerates level per day)
 - **Skills**: 0-100 base, can exceed with bonuses from traits/equipment/libido
 
 ### Secondary Attributes
 - **Joy** (0-100): Worker happiness, affects performance
 - **Rebelliousness** (0-100): Resistance to work, >80 = 20% chance to refuse
 - **Romance** (0-100): Romantic attraction to player
-- **Relationship** (0-100): General trust and friendship
-- **Comfort Level** (1-10): Current accommodation quality
-- **Comfort Desired** (1-10): Preferred accommodation level
+- **Relationship** (0-100): General trust and friendship (minimum: 10 + comfort_level)
+- **Comfort Level** (1-5): Current accommodation quality
+- **Comfort Desired** (1-5): Preferred accommodation level
 - **Libido** (0-dynamic max): Sexual energy, affects sexual skills
 
 ### Libido System (NSFW Mode)
 - **Base Maximum**: 20
 - **Dynamic Maximum**: Base + trait bonuses + item bonuses
-- **Regeneration**: 1 + level + trait/item bonuses per day
+- **Regeneration**: 1 + level + trait/item bonuses - sexual_work_count per day
+  - Minimum regeneration: -2 (can decrease if overworked)
 - **Skill Bonus**: Sexual skills gain floor(libido/2) bonus
 - **Overflow**: Negative libido converts to rebelliousness
 
@@ -136,8 +137,8 @@ adjusted_skill = effective_skill + difficulty_modifier
 
 ### Story Volume
 - **Base Stories**: Defined per profession (reduced by 1 if originally ≥2)
-- **Reputation Bonus**: floor(reputation/200) additional stories
-- **Per Worker**: Each assigned worker gets full story allocation
+- **Reputation Bonus**: Formula-based (e.g., "reputation / 100"), then reduced to 50% of calculated value
+- **Per Worker**: Each assigned worker gets full story allocation (base_events + bonus_events)
 
 ---
 

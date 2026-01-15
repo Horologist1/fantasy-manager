@@ -95,3 +95,69 @@ init python:
         # Update stored reputation
         building["reputation"] = max(0, building["reputation"] + reputation_change)
         renpy.log(f"Updated {building_name} reputation to {building['reputation']} after {event_result}")
+
+    def process_manager_auto_rest():
+        """
+        Automatic rest management when a Manager is assigned to a building.
+        
+        If a building has a worker with profession 'manager', the manager will:
+        - Automatically assign workers with energy < 2 to 'rest'
+        - Save their previous profession for restoration
+        - Restore workers to their previous profession when energy recovers
+        """
+        for building_name in store.owned_buildings:
+            building = available_buildings.get(building_name)
+            if not building or not building.get("assigned_servants"):
+                continue
+            
+            servant_jobs = building.get("servant_jobs", {})
+            
+            # Check if there's a manager in this building
+            has_manager = False
+            for worker in building["assigned_servants"]:
+                worker_name = worker.get("name")
+                if servant_jobs.get(worker_name, "") == "manager":
+                    has_manager = True
+                    renpy.log(f"Manager detected in {building_name}: {worker_name}")
+                    break
+            
+            if not has_manager:
+                continue
+            
+            # Manager found - process all other workers in the building
+            for worker in building["assigned_servants"]:
+                worker_name = worker.get("name")
+                current_job = servant_jobs.get(worker_name, "")
+                
+                # Skip the manager themselves
+                if current_job == "manager":
+                    continue
+                
+                worker_energy = worker.get("energy", 0)
+                max_energy = calculate_max_energy(worker)
+                
+                # Calculate percentage-based thresholds that scale with level
+                rest_threshold = max_energy * 0.35  # Put to rest when below 35% energy
+                restore_threshold = max_energy * 0.95  # Restore to work when at 95% energy (almost full recovery)
+                
+                # Initialize previous_profession field if it doesn't exist
+                if "previous_profession" not in worker:
+                    worker["previous_profession"] = None
+                
+                # Case 1: Worker has low energy and is not resting - put them to rest
+                if worker_energy < rest_threshold and current_job not in ["rest", "unassigned"]:
+                    # Save current profession
+                    worker["previous_profession"] = current_job
+                    # Change to rest
+                    servant_jobs[worker_name] = "rest"
+                    renpy.log(f"Manager auto-rest: {worker_name} moved to rest (energy: {worker_energy}/{max_energy} < {rest_threshold:.1f}, saved profession: {current_job})")
+                
+                # Case 2: Worker is resting (managed by manager) and has recovered - restore profession
+                elif current_job == "rest" and worker["previous_profession"] is not None:
+                    # Check if worker has recovered (energy at reasonable level)
+                    if worker_energy >= restore_threshold:
+                        # Restore previous profession
+                        restored_profession = worker["previous_profession"]
+                        servant_jobs[worker_name] = restored_profession
+                        worker["previous_profession"] = None
+                        renpy.log(f"Manager auto-restore: {worker_name} returned to {restored_profession} (energy: {worker_energy}/{max_energy} >= {restore_threshold:.1f})")

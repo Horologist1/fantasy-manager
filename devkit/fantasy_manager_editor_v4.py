@@ -43,6 +43,8 @@ WM_SKILL_MAPPING = {
     "Strip": "Striptease", "Magic": "Craft", "Medicine": "Clever",
     "Performance": "Charm", "Crafting": "Craft", "Farming": "Service",
     "Cooking": "Service", "Herbalism": "Craft", "Brewing": "Clever", "AnimalHandling": "Craft",
+    # Skills que ya existen en FM pero faltaban en el mapeo
+    "Anal": "Anal", "BDSM": "BDSM", "Group": "Group", "Service": "Service", "Combat": "Combat",
 }
 
 WM_TRAIT_MAPPING = {
@@ -58,6 +60,19 @@ WM_TRAIT_MAPPING = {
     "Maid": "Maid", "Singer": "Singer", "Teacher": "Teacher", "Waitress": "Waitress",
     "Elf": "Elf", "Dwarf": "Dwarf", "Demon": "Demon", "Angel": "Angel",
     "Vampire": "Vampire", "Orc": "Orc", "Goblin": "Goblin",
+    # Traits que existen en FM pero faltaban en el mapeo
+    "Quick Learner": "Quick Learner", "Dependant": "Dependant", "Optimist": "Optimist",
+    "Open Minded": "Open Minded", "Cool Scars": "Cool Scars", "Nervous": "Nervous",
+    "Sadistic": "Sadistic", "Exotic": "Exotic", "Flexible": "Flexible", "Brawler": "Brawler",
+    "Tomboy": "Tomboy", "Tattooed": "Tattooed", "Pessimist": "Pessimist",
+    # Traits que se mapean a otros existentes
+    "Cool Person": "Charming",
+    "Small Scars": "Cool Scars",
+    "Heavily Tattooed": "Tattooed",
+    "Horrific Scars": "Scarred",
+    # Traits que se mapean a nuevos traits (a crear en FM)
+    "Retarded": "Dumb",
+    "Mind Fucked": "Crazy",
 }
 
 # =============================================================================
@@ -300,6 +315,27 @@ WM_IMAGE_RENAME_PATTERNS = [
     
     # Shop -> service
     (r'^Shop\b', 'service'),
+    
+    # Death -> combat_failure
+    (r'^Death\b', 'combat_failure'),
+    
+    # Cook -> service
+    (r'^Cook\b', 'service'),
+    
+    # Imágenes específicas adicionales
+    (r'^Blacksmith\b', 'craft'),
+    (r'^Card\b', 'charm'),
+    (r'^Dance\b', 'charm'),  # O podría ser 'striptease', según preferencia
+    (r'^Doctor\b', 'service'),  # O 'clever' para medicina
+    (r'^Farm\b', 'service'),
+    (r'^Eatout\b', 'oral'),
+    (r'^Deepthroat\b', 'oral'),
+    (r'^Futa\b', 'futa_sex'),  # En la mayoría de casos es futa_sex
+    (r'^Sub\b', 'bdsm'),
+    (r'^Study\b', 'clever'),
+    (r'^Work1\b', 'service'),
+    (r'^Maid3\b', 'service'),
+    (r'^Matron3\b', 'service'),
 ]
 
 def rename_wm_images_in_folder(folder: Path) -> int:
@@ -382,6 +418,13 @@ def parse_wm_girl_xml(xml_path: Path) -> Optional[Dict]:
                         'Beauty', 'Confidence', 'Obedience', 'Spirit', 'Libido', 'Mana']:
                 val = girl.get(attr)
                 if val: data['stats'][attr] = int(val)
+            # Leer AskPrice para mapearlo a comfort_desired
+            ask_price = girl.get('AskPrice')
+            if ask_price:
+                try:
+                    data['ask_price'] = int(ask_price)
+                except (ValueError, TypeError):
+                    pass
             for attr in ['NormalSex', 'Anal', 'BDSM', 'OralSex', 'Group', 'Lesbian', 
                         'Combat', 'Magic', 'Service', 'Strip']:
                 val = girl.get(attr)
@@ -401,6 +444,27 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
     - .rgirlsx = random templates → unique: false, encounter_only: false, procedural: true
     """
     is_random = wm_data.get('is_random', False)
+    
+    # Mapear AskPrice a comfort_desired
+    # AskPrice en WM es el precio de compra, que se relaciona con el nivel de comodidad demandado
+    # Normalizar AskPrice (0-1000+) a comfort_desired (1-5)
+    ask_price = wm_data.get('ask_price', 0)
+    if ask_price > 0:
+        # Convertir AskPrice a comfort_desired (escala 1-5)
+        # Asumimos que AskPrice 0-200 = comfort 1, 201-400 = 2, 401-600 = 3, 601-800 = 4, 801+ = 5
+        if ask_price <= 200:
+            comfort_desired = 1
+        elif ask_price <= 400:
+            comfort_desired = 2
+        elif ask_price <= 600:
+            comfort_desired = 3
+        elif ask_price <= 800:
+            comfort_desired = 4
+        else:
+            comfort_desired = 5
+    else:
+        comfort_desired = 3  # Default
+    
     fm_worker = {
         "name": wm_data.get('name', 'Unknown'), "folder": folder_name, "cost": 1000,
         "nsfw": True, 
@@ -409,7 +473,8 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
         "monster": False,
         "procedural": is_random,           # .rgirlsx = procedural generation
         "skills": {}, "traits": ["Human"],
-        "description": wm_data.get('description', ''), "gender": "female", "comfort_desired": 3
+        "description": wm_data.get('description', ''), "gender": "female", 
+        "comfort_desired": comfort_desired
     }
     
     for skill_name in all_skills:
@@ -423,11 +488,25 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
             else:
                 fm_worker["skills"][fm_skill] = min(100, value)
     
+    # Traits que requieren otros traits automáticamente
+    TRAIT_REQUIREMENTS = {
+        "Strong Magic": "Magical",
+        "Powerful Magic": "Magical",
+        "Psychic": "Magical",
+    }
+    
     fm_traits = ["Human"]
     for trait in wm_data.get('traits', []):
         trait_name = trait.get('name', '') if isinstance(trait, dict) else trait
         fm_trait = WM_TRAIT_MAPPING.get(trait_name)
         if fm_trait and fm_trait not in fm_traits:
+            # Si el trait requiere otro trait, añadirlo automáticamente
+            if fm_trait in TRAIT_REQUIREMENTS:
+                required_trait = TRAIT_REQUIREMENTS[fm_trait]
+                if required_trait not in fm_traits:
+                    fm_traits.append(required_trait)
+            
+            # Remover "Human" si se añade una raza no humana
             if fm_trait in ["Elf", "Dwarf", "Demon", "Angel", "Vampire", "Orc", "Goblin", "Transformed"]:
                 fm_traits = [t for t in fm_traits if t != "Human"]
             fm_traits.append(fm_trait)

@@ -185,6 +185,9 @@ init python:
                     renpy.log("SNAPSHOT: building restore error: " + str(e))
         except Exception as e:
             renpy.log("SNAPSHOT: relink error: " + str(e))
+        
+        # Note: No need to recalculate max_daily_workers here anymore
+        # The get_max_daily_workers() function calculates it dynamically based on base_level
 
         # Restore event/journal state
         try:

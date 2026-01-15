@@ -1,253 +1,252 @@
-# Lista de Interacciones Disponibles
+# Available Interactions List
 
-Este documento lista todas las interacciones del sistema organizadas por categoría, nivel y combinaciones de género.
-
----
-
-## 📋 Estructura General
-
-Cada categoría tiene **4 niveles**:
-- **Nivel 1**: Siempre disponible
-- **Nivel 2**: Desbloqueado tras 5 usos del Nivel 1
-- **Nivel 3**: Desbloqueado tras 5 usos del Nivel 2
-- **Nivel 4**: Desbloqueado tras 5 usos del Nivel 3 (farmeable, coste/beneficio óptimo)
-
-Cada nivel tiene variantes para **4 combinaciones de género**:
-- Lord (masculino) + Worker Femenino
-- Lord (masculino) + Worker Masculino
-- Lady (femenino) + Worker Femenino
-- Lady (femenino) + Worker Masculino
+This document lists all interactions in the system organized by category, level, and gender combinations.
 
 ---
 
-## ⚔️ DISCIPLINE (Disciplina)
+## 📋 General Structure
 
-### Nivel 1 - Básico
-**Coste:** 1 Energía | 0 Dinero
+Each category has **4 levels**:
+- **Level 1**: Always available
+- **Level 2**: Unlocked after 5 uses of Level 1
+- **Level 3**: Unlocked after 5 uses of Level 2
+- **Level 4**: Unlocked after 5 uses of Level 3 (farmable, optimal cost/benefit)
 
-| ID | Nombre | Jugador | Worker | Efectos |
+Each level has variants for **4 gender combinations**:
+- Lord (male) + Female Worker
+- Lord (male) + Male Worker
+- Lady (female) + Female Worker
+- Lady (female) + Male Worker
+
+---
+
+## ⚔️ DISCIPLINE
+
+### Level 1 - Basic
+**Cost:** 1 Energy | 0 Money
+
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `discipline_level1_lord_female` | Gentle Correction | Lord | Female | -3 rebelliousness, +1 relationship |
 | `discipline_level1_lord_male` | Direct Talk | Lord | Male | -3 rebelliousness, +1 relationship |
 | `discipline_level1_lady_female` | Kind Guidance | Lady | Female | -3 rebelliousness, +1 relationship |
 | `discipline_level1_lady_male` | Respectful Reminder | Lady | Male | -3 rebelliousness, +1 relationship |
 
-### Nivel 2 - Intermedio
-**Coste:** 2 Energía | 10 Dinero
+### Level 2 - Intermediate
+**Cost:** 2 Energy | 10 Money
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `discipline_level2_lord_female` | Firm Training | Lord | Female | -5 rebelliousness, +2 relationship |
 | `discipline_level2_lord_male` | Intensive Training | Lord | Male | -5 rebelliousness, +2 relationship |
 | `discipline_level2_lady_female` | Structured Guidance | Lady | Female | -5 rebelliousness, +2 relationship |
 | `discipline_level2_lady_male` | Rigorous Instruction | Lady | Male | -5 rebelliousness, +2 relationship |
 
-### Nivel 3 - Avanzado
-**Coste:** 3 Energía | 0 Dinero | ⚠️ NSFW
+### Level 3 - Advanced
+**Cost:** 3 Energy | 0 Money | ⚠️ NSFW
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `discipline_level3_lord_female` | Complete Submission | Lord | Female | -7 rebelliousness, +3 relationship, +2 romance |
 | `discipline_level3_lord_male` | Alpha Dominance | Lord | Male | -7 rebelliousness, +3 relationship, +2 romance |
 | `discipline_level3_lady_female` | Absolute Obedience | Lady | Female | -7 rebelliousness, +3 relationship, +2 romance |
 | `discipline_level3_lady_male` | Total Submission | Lady | Male | -7 rebelliousness, +3 relationship, +2 romance |
 
-**Requisitos:** relationship ≥ 20
+**Requirements:** relationship ≥ 20
 
-### Nivel 4 - Farmeable
-**Coste:** 2 Energía | 0 Dinero
+### Level 4 - Farmable
+**Cost:** 2 Energy | 0 Money
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `discipline_level4_lord_female` | Perfect Discipline | Lord | Female | -6 rebelliousness, +3 relationship |
 | `discipline_level4_lord_male` | Masterful Control | Lord | Male | -6 rebelliousness, +3 relationship |
 | `discipline_level4_lady_female` | Elegant Authority | Lady | Female | -6 rebelliousness, +3 relationship |
 | `discipline_level4_lady_male` | Refined Command | Lady | Male | -6 rebelliousness, +3 relationship |
 
-**Requisitos:** relationship ≥ 30
+**Requirements:** relationship ≥ 30
 
 ---
 
-## 💕 ROMANCE (Romance)
+## 💕 ROMANCE
 
-### Nivel 1 - Básico
-**Coste:** 1 Energía | 0 Dinero
+### Level 1 - Basic
+**Cost:** 1 Energy | 0 Money
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `romance_level1_lord_female` | Charming Banter | Lord | Female | +3 romance, +1 relationship |
 | `romance_level1_lord_male` | Charming Banter | Lord | Male | +3 romance, +1 relationship |
 | `romance_level1_lady_female` | Playful Flirting | Lady | Female | +3 romance, +1 relationship |
 | `romance_level1_lady_male` | Elegant Flirtation | Lady | Male | +3 romance, +1 relationship |
 
-**Requisitos:** relationship ≥ 10 (Lord+Male/Female), relationship ≥ 15 (Lady+Female)
+**Requirements:** relationship ≥ 10 (Lord+Male/Female), relationship ≥ 15 (Lady+Female)
 
-### Nivel 2 - Intermedio
-**Coste:** 2 Energía | 20 Dinero
+### Level 2 - Intermediate
+**Cost:** 2 Energy | 20 Money
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `romance_level2_lord_female` | Private Connection | Lord | Female | +5 romance, +2 relationship |
 | `romance_level2_lord_male` | Intimate Evening | Lord | Male | +5 romance, +2 relationship |
 | `romance_level2_lady_female` | Intimate Evening | Lady | Female | +5 romance, +2 relationship |
 | `romance_level2_lady_male` | Private Adventure | Lady | Male | +5 romance, +2 relationship |
 
-**Requisitos:** romance ≥ 10, relationship ≥ 15 (Lord), relationship ≥ 20 (Lady+Female)
+**Requirements:** romance ≥ 10, relationship ≥ 15 (Lord), relationship ≥ 20 (Lady+Female)
 
-### Nivel 3 - Avanzado
-**Coste:** 3 Energía | 12 Dinero | ⚠️ NSFW
+### Level 3 - Advanced
+**Cost:** 3 Energy | 12 Money | ⚠️ NSFW
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `romance_level3_lord_female` | Dominant Union | Lord | Female | +7 romance, +3 relationship, +2 joy |
 | `romance_level3_lord_male` | Passionate Night | Lord | Male | +7 romance, +3 relationship, +2 joy |
 | `romance_level3_lady_female` | Passionate Night | Lady | Female | +7 romance, +3 relationship, +2 joy |
 | `romance_level3_lady_male` | Epic Adventure | Lady | Male | +7 romance, +3 relationship, +2 joy |
 
-**Requisitos:** romance ≥ 20, relationship ≥ 25 (Lord), relationship ≥ 30 (Lady+Female)
+**Requirements:** romance ≥ 20, relationship ≥ 25 (Lord), relationship ≥ 30 (Lady+Female)
 
-### Nivel 4 - Farmeable
-**Coste:** 2 Energía | 10 Dinero
+### Level 4 - Farmable
+**Cost:** 2 Energy | 10 Money
 
-| ID | Nombre | Jugador | Worker | Efectos |
+| ID | Name | Player | Worker | Effects |
 |---|---|---|---|---|
 | `romance_level4_lord_female` | Perfect Romance | Lord | Female | +6 romance, +3 relationship, +2 joy |
 | `romance_level4_lord_male` | Masterful Romance | Lord | Male | +6 romance, +3 relationship, +2 joy |
 | `romance_level4_lady_female` | Elegant Romance | Lady | Female | +6 romance, +3 relationship, +2 joy |
 | `romance_level4_lady_male` | Refined Romance | Lady | Male | +6 romance, +3 relationship, +2 joy |
 
-**Requisitos:** romance ≥ 30, relationship ≥ 30
+**Requirements:** romance ≥ 30, relationship ≥ 30
 
 ---
 
-## 🤝 FRIENDSHIP (Amistad)
+## 🤝 FRIENDSHIP
 
-*Nota: Las interacciones de Friendship aún no están implementadas en `interactions_structured.json`. Se pueden agregar siguiendo el mismo patrón.*
+*Note: Friendship interactions are not yet implemented in `interactions_structured.json`. They can be added following the same pattern.*
 
-### Estructura Propuesta:
+### Proposed Structure:
 
-**Nivel 1:** Friendly Chat / Casual Conversation
-- Coste: 1 Energía | 0 Dinero
-- Efectos: +3 relationship
+**Level 1:** Friendly Chat / Casual Conversation
+- Cost: 1 Energy | 0 Money
+- Effects: +3 relationship
 
-**Nivel 2:** Heart-to-Heart / Brotherhood Bond
-- Coste: 2 Energía | 5-8 Dinero
-- Efectos: +5 relationship, +2 joy
+**Level 2:** Heart-to-Heart / Brotherhood Bond
+- Cost: 2 Energy | 5-8 Money
+- Effects: +5 relationship, +2 joy
 
-**Nivel 3:** Soul Sisters / Blood Brothers
-- Coste: 3 Energía | 15-20 Dinero
-- Efectos: +7 relationship, +3 joy, +2 romance
+**Level 3:** Soul Sisters / Blood Brothers
+- Cost: 3 Energy | 15-20 Money
+- Effects: +7 relationship, +3 joy, +2 romance
 
-**Nivel 4:** Perfect Friendship (Farmeable)
-- Coste: 2 Energía | 5-8 Dinero
-- Efectos: +6 relationship, +3 joy
-
----
-
-## 🎉 JOY (Alegría)
-
-*Nota: Las interacciones de Joy aún no están implementadas en `interactions_structured.json`. Se pueden agregar siguiendo el mismo patrón.*
-
-### Estructura Propuesta:
-
-**Nivel 1:** Thoughtful Gift / Practical Present
-- Coste: 1 Energía | 8-10 Dinero
-- Efectos: +3 joy, +1 relationship
-
-**Nivel 2:** Luxury Experience / Adventure Trip
-- Coste: 2 Energía | 25-30 Dinero
-- Efectos: +5 joy, +2 relationship, +1 romance
-
-**Nivel 3:** Ultimate Fantasy / Epic Achievement
-- Coste: 3 Energía | 50-60 Dinero
-- Efectos: +7 joy, +3 relationship, +2 romance
-
-**Nivel 4:** Perfect Joy (Farmeable)
-- Coste: 2 Energía | 15-20 Dinero
-- Efectos: +6 joy, +3 relationship, +2 romance
+**Level 4:** Perfect Friendship (Farmable)
+- Cost: 2 Energy | 5-8 Money
+- Effects: +6 relationship, +3 joy
 
 ---
 
-## 🎭 INTERACCIONES ESPECÍFICAS
+## 🎉 JOY
 
-Estas interacciones están diseñadas para trabajadores específicos o con traits especiales.
+*Note: Joy interactions are not yet implemented in `interactions_structured.json`. They can be added following the same pattern.*
+
+### Proposed Structure:
+
+**Level 1:** Thoughtful Gift / Practical Present
+- Cost: 1 Energy | 8-10 Money
+- Effects: +3 joy, +1 relationship
+
+**Level 2:** Luxury Experience / Adventure Trip
+- Cost: 2 Energy | 25-30 Money
+- Effects: +5 joy, +2 relationship, +1 romance
+
+**Level 3:** Ultimate Fantasy / Epic Achievement
+- Cost: 3 Energy | 50-60 Money
+- Effects: +7 joy, +3 relationship, +2 romance
+
+**Level 4:** Perfect Joy (Farmable)
+- Cost: 2 Energy | 15-20 Money
+- Effects: +6 joy, +3 relationship, +2 romance
+
+---
+
+## 🎭 SPECIFIC INTERACTIONS
+
+These interactions are designed for specific workers or with special traits.
 
 ### Violet's Special Performance
 - **ID:** `violet_special`
-- **Categoría:** Romance
-- **Worker Específico:** Violet
-- **Coste:** 3 Energía | 0 Dinero
-- **Efectos:** +30 romance, +15 relationship, +20 joy
-- **Requisitos:** romance ≥ 0
-- **Cooldown:** 5 días
+- **Category:** Romance
+- **Specific Worker:** Violet
+- **Cost:** 3 Energy | 0 Money
+- **Effects:** +30 romance, +15 relationship, +20 joy
+- **Requirements:** romance ≥ 0
+- **Cooldown:** 5 days
 
 ### Enchanting Presence
 - **ID:** `charming_beauty`
-- **Categoría:** Romance
-- **Traits Requeridos:** Beautiful, Charming
-- **Coste:** 3 Energía | 0 Dinero
-- **Efectos:** +35 romance, +20 joy, +15 relationship
-- **Requisitos:** romance ≥ 15
-- **Cooldown:** 4 días
+- **Category:** Romance
+- **Required Traits:** Beautiful, Charming
+- **Cost:** 3 Energy | 0 Money
+- **Effects:** +35 romance, +20 joy, +15 relationship
+- **Requirements:** romance ≥ 15
+- **Cooldown:** 4 days
 
 ---
 
-## 📊 Resumen de Costes por Categoría
+## 📊 Cost Summary by Category
 
 ### Discipline
-| Nivel | Energía | Dinero | Tipo |
+| Level | Energy | Money | Type |
 |-------|---------|--------|------|
-| 1 | 1 | 0 | Básico |
-| 2 | 2 | 10 | Intermedio |
-| 3 | 3 | 0 | Avanzado (NSFW) |
-| 4 | 2 | 0 | Farmeable |
+| 1 | 1 | 0 | Basic |
+| 2 | 2 | 10 | Intermediate |
+| 3 | 3 | 0 | Advanced (NSFW) |
+| 4 | 2 | 0 | Farmable |
 
 ### Romance
-| Nivel | Energía | Dinero | Tipo |
+| Level | Energy | Money | Type |
 |-------|---------|--------|------|
-| 1 | 1 | 0 | Básico |
-| 2 | 2 | 20 | Intermedio |
-| 3 | 3 | 12 | Avanzado (NSFW) |
-| 4 | 2 | 10 | Farmeable |
+| 1 | 1 | 0 | Basic |
+| 2 | 2 | 20 | Intermediate |
+| 3 | 3 | 12 | Advanced (NSFW) |
+| 4 | 2 | 10 | Farmable |
 
-### Friendship (Propuesto)
-| Nivel | Energía | Dinero | Tipo |
+### Friendship (Proposed)
+| Level | Energy | Money | Type |
 |-------|---------|--------|------|
-| 1 | 1 | 0 | Básico |
-| 2 | 2 | 5-8 | Intermedio |
-| 3 | 3 | 15-20 | Avanzado |
-| 4 | 2 | 5-8 | Farmeable |
+| 1 | 1 | 0 | Basic |
+| 2 | 2 | 5-8 | Intermediate |
+| 3 | 3 | 15-20 | Advanced |
+| 4 | 2 | 5-8 | Farmable |
 
-### Joy (Propuesto)
-| Nivel | Energía | Dinero | Tipo |
+### Joy (Proposed)
+| Level | Energy | Money | Type |
 |-------|---------|--------|------|
-| 1 | 1 | 8-10 | Básico |
-| 2 | 2 | 25-30 | Intermedio |
-| 3 | 3 | 50-60 | Avanzado |
-| 4 | 2 | 15-20 | Farmeable |
+| 1 | 1 | 8-10 | Basic |
+| 2 | 2 | 25-30 | Intermediate |
+| 3 | 3 | 50-60 | Advanced |
+| 4 | 2 | 15-20 | Farmable |
 
 ---
 
-## 🔓 Sistema de Desbloqueo
+## 🔓 Unlock System
 
-El sistema rastrea automáticamente los usos de cada nivel usando flags:
-- `{categoria}_uses_level_1`: Contador de usos del nivel 1
-- `{categoria}_uses_level_2`: Contador de usos del nivel 2
-- `{categoria}_uses_level_3`: Contador de usos del nivel 3
+The system automatically tracks uses of each level using flags:
+- `{category}_uses_level_1`: Counter for level 1 uses
+- `{category}_uses_level_2`: Counter for level 2 uses
+- `{category}_uses_level_3`: Counter for level 3 uses
 
-**Ejemplo:** Para desbloquear Romance Nivel 2, se necesitan 5 usos de Romance Nivel 1.
-
----
-
-## 📝 Notas
-
-- Todas las interacciones tienen cooldowns para evitar spam
-- Las interacciones NSFW requieren que `persistent.nsfw_enabled` esté activado
-- Las interacciones específicas aparecen solo para los trabajadores indicados
-- Las interacciones con traits aparecen solo para trabajadores con esos traits
-- El sistema es retrocompatible: interacciones sin `interaction_level` se muestran siempre
+**Example:** To unlock Romance Level 2, 5 uses of Romance Level 1 are needed.
 
 ---
 
-*Última actualización: Sistema de interacciones reorganizado con estructura de 4 niveles por categoría*
+## 📝 Notes
 
+- All interactions have cooldowns to prevent spam
+- NSFW interactions require `persistent.nsfw_enabled` to be active
+- Specific interactions appear only for the indicated workers
+- Trait interactions appear only for workers with those traits
+- The system is backward compatible: interactions without `interaction_level` are always shown
+
+---
+
+*Last update: Interactions system reorganized with 4-level structure per category*

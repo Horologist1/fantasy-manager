@@ -1,6 +1,6 @@
-# Prompts para Imágenes Nuevas (Building Levels, Map, Shops)
+# Prompts for New Images (Building Levels, Map, Shops)
 
-Este documento contiene prompts sencillos para generar las imágenes que fueron agregadas al resumen: Building Level Images, Map & General Backgrounds, y Shop Images.
+This document contains simple prompts for generating the images that were added to the summary: Building Level Images, Map & General Backgrounds, and Shop Images.
 
 ---
 
@@ -55,12 +55,10 @@ Este documento contiene prompts sencillos para generar las imágenes que fueron 
 
 ---
 
-## 📝 Notas para Generación
+## 📝 Generation Notes
 
-- Todas las imágenes deben tener un estilo consistente de fantasía medieval
-- Las imágenes de edificios deben mostrar progresión visual clara entre niveles (simple → mejorado → máximo)
-- Las imágenes deben ser adecuadas para usar como fondos en un juego visual novel
-- Considerar la iluminación y el ambiente apropiado para cada tipo de establecimiento
-- Las imágenes de tiendas deben reflejar el tipo de mercancía que venden (básica, de aventureros, de élite)
-
-
+- All images must have a consistent fantasy medieval style
+- Building images should show clear visual progression between levels (simple → improved → maximum)
+- Images should be suitable for use as backgrounds in a visual novel game
+- Consider appropriate lighting and atmosphere for each establishment type
+- Shop images should reflect the type of merchandise they sell (basic, adventurer, elite)

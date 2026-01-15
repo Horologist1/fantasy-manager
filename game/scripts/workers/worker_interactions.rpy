@@ -565,4 +565,79 @@ init python:
         # Cachear la imagen de perfil también
         get_cached_choice([profile_image], cache_key)
         return profile_image
+    
+    def start_take_a_walk():
+        """
+        Function to handle Take a Walk feature without nested contexts.
+        Returns True if walk was started, False if it couldn't be started.
+        """
+        # Prevent re-entry if already running
+        if store.take_a_walk_in_progress:
+            renpy.log("Take a walk already in progress, aborting")
+            return False
+        
+        store.take_a_walk_in_progress = True
+        
+        # Check if already used today
+        if store.last_take_a_walk_day == store.current_day:
+            renpy.notify("You've already taken a walk today. Come back tomorrow.")
+            store.take_a_walk_in_progress = False
+            return False
+        
+        # Check if there are any workers available
+        if not store.workers or len(store.workers) == 0:
+            renpy.notify("You don't have any workers to encounter. Hire some workers first.")
+            store.take_a_walk_in_progress = False
+            return False
+        
+        # Select a random worker
+        import random
+        selected_worker = random.choice(store.workers)
+        worker_name = selected_worker.get("name", "Unknown")
+        
+        # Load and filter interactions
+        interactions = load_interactions()
+        player_gender = "male" if store.player_title.lower() == "lord" else "female"
+        filtered_interactions = filter_interactions_by_gender(interactions, player_gender)
+        filtered_interactions = filter_interactions_by_worker_gender(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_stats(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_flags(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_traits(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_items(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_usage_limits(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_unlock_level(filtered_interactions, selected_worker)
+        filtered_interactions = filter_interactions_by_worker_name(filtered_interactions, selected_worker)
+        
+        # For "take a walk", we don't filter by costs - all available interactions are valid
+        available_interactions = filtered_interactions
+        
+        if not available_interactions:
+            renpy.notify(f"{worker_name} doesn't have any interactions available at the moment.")
+            store.take_a_walk_in_progress = False
+            return False
+        
+        # Select a random interaction
+        chosen_interaction = random.choice(available_interactions)
+        
+        interaction_name = chosen_interaction.get("name", "interaction")
+        interaction_name_lower = interaction_name.lower()
+        
+        # Apply interaction effects (without costs for "take a walk", and skip daily limit)
+        apply_interaction_effects(selected_worker, chosen_interaction, apply_costs=False, skip_daily_limit=True)
+        
+        # Mark as used today
+        store.last_take_a_walk_day = store.current_day
+        
+        # Store the interaction data for the screen to display
+        store.walk_worker = selected_worker
+        store.walk_interaction = chosen_interaction
+        store.walk_intro_text_1 = "You take a walk through the city..."
+        store.walk_intro_text_2 = f"...and you encounter {worker_name}."
+        store.walk_intro_text_3 = f"You decide it's time to have a {interaction_name_lower} with {worker_name}."
+        
+        # Reset the flag
+        store.take_a_walk_in_progress = False
+        
+        renpy.log(f"Take a walk prepared with {worker_name} and {interaction_name}")
+        return True
 

@@ -970,77 +970,33 @@ label age_verification:
 ################################################################################
 
 label take_a_walk:
-    # Prevent re-entry if already running
-    if take_a_walk_in_progress:
-        return
-    $ take_a_walk_in_progress = True
-    
-    # Hide map screen for the walk sequence
+    # Handle Take a Walk feature without nested contexts
     hide screen map_screen
     
-    # Check if already used today
-    if last_take_a_walk_day == current_day:
-        $ renpy.notify("You've already taken a walk today. Come back tomorrow.")
+    # Call the function to set up the walk
+    $ success = start_take_a_walk()
+    
+    # If not successful, return to map immediately
+    if not success:
         show screen map_screen
-        $ take_a_walk_in_progress = False
         return
     
-    # Check if there are any workers available
-    if not store.workers or len(store.workers) == 0:
-        $ renpy.notify("You don't have any workers to encounter. Hire some workers first.")
-        show screen map_screen
-        $ take_a_walk_in_progress = False
-        return
+    # Loop through stages until done
+    $ current_stage = 0
+    $ walk_continue = True
     
-    # Select a random worker
-    $ selected_worker = random.choice(store.workers)
-    $ worker_name = selected_worker.get("name", "Unknown")
+    while walk_continue:
+        # Show the current stage and wait for user response
+        call screen take_a_walk_result(stage=current_stage)
+        
+        # Check the result
+        if _return == "next":
+            # User clicked to continue, advance to next stage
+            $ current_stage += 1
+        else:
+            # User clicked to finish or pressed return button
+            $ walk_continue = False
     
-    # Load and filter interactions
-    $ interactions = load_interactions()
-    $ player_gender = "male" if player_title.lower() == "lord" else "female"
-    $ filtered_interactions = filter_interactions_by_gender(interactions, player_gender)
-    $ filtered_interactions = filter_interactions_by_worker_gender(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_stats(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_flags(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_traits(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_items(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_usage_limits(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_unlock_level(filtered_interactions, selected_worker)
-    $ filtered_interactions = filter_interactions_by_worker_name(filtered_interactions, selected_worker)
-    
-    # For "take a walk", we don't filter by costs - all available interactions are valid
-    $ available_interactions = filtered_interactions
-    
-    if not available_interactions:
-        $ renpy.notify("[worker_name] doesn't have any interactions available at the moment.")
-        show screen map_screen
-        $ take_a_walk_in_progress = False
-        return
-    
-    # Select a random interaction
-    $ chosen_interaction = random.choice(available_interactions)
-    
-    # Show intro sequence
-    scene black
-    with fade
-    
-    $ interaction_name = chosen_interaction.get("name", "interaction")
-    $ interaction_name_lower = interaction_name.lower()
-    
-    "You take a walk through the city..."
-    "...and you encounter [worker_name]."
-    "You decide it's time to have a [interaction_name_lower] with [worker_name]."
-    
-    # Apply interaction effects (without costs for "take a walk", and skip daily limit)
-    $ apply_interaction_effects(selected_worker, chosen_interaction, apply_costs=False, skip_daily_limit=True)
-    
-    # Show interaction result (with return_to_map=True to go back to map)
-    call screen interaction_result(selected_worker, chosen_interaction, return_to_map=True)
-    
-    # Mark as used today
-    $ last_take_a_walk_day = current_day
-    $ take_a_walk_in_progress = False
-    
-    # Return (map_screen is shown by interaction_result with return_to_map=True)
+    # Return to map after walk is complete
+    show screen map_screen
     return

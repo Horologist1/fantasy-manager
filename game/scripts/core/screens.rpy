@@ -178,11 +178,159 @@ screen say(who, what):
     ## phone variant - there's no room.
     if not renpy.variant("small"):
         add SideImage() xalign 0.0 yalign 1.0
+    
+    ## Overlay for historical message when navigating back
+    if dialogue_history_offset > 0:
+        $ clamp_history_offset()
+        $ history_entry = get_history_message(dialogue_history_offset)
+        if history_entry:
+            # Full overlay that covers the dialogue box
+            window:
+                id "history_overlay"
+                style_prefix "say"
+                xalign 0.5
+                yalign gui.textbox_yalign
+                xfill True
+                ysize gui.textbox_height
+                background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+                
+                # Historical character name
+                if history_entry.who:
+                    window:
+                        style "namebox"
+                        text history_entry.who
+                
+                # Historical dialogue text
+                $ history_what = renpy.filter_text_tags(history_entry.what, allow=gui.history_allow_tags)
+                text history_what:
+                    style "say_dialogue"
+            
+    ## History navigation buttons - navigate through previous messages without undoing actions
+    use dialogue_history_nav
 
 
 ## Make the namebox available for styling through the Character object.
 init python:
     config.character_id_prefixes.append('namebox')
+
+## Dialogue History Navigation Screen ###########################################
+##
+## This screen provides navigation buttons to view previous dialogue messages
+## without undoing any game actions. It's a read-only navigation system.
+##
+init python:
+    # Variable to track history navigation offset (0 = current message, 1 = previous, etc.)
+    dialogue_history_offset = 0
+    
+    def get_history_message(offset):
+        """Get a message from history at the given offset (0 = current, 1 = previous, etc.)."""
+        if not _history_list:
+            return None
+        
+        history_size = len(_history_list)
+        
+        # Clamp offset to valid range
+        safe_offset = max(0, min(offset, history_size - 1))
+        
+        # Calculate the actual index in _history_list
+        # _history_list is ordered newest first: [newest, ..., oldest]
+        # So index = size - 1 - offset
+        history_index = history_size - 1 - safe_offset
+        
+        if history_index < 0 or history_index >= history_size:
+            return None
+        
+        try:
+            return _history_list[history_index]
+        except (IndexError, TypeError):
+            return None
+    
+    def can_go_back_in_history():
+        """Check if we can go back further in history."""
+        if not _history_list or len(_history_list) <= 1:
+            return False
+        
+        # Simple check: can go back if offset is less than history size - 1
+        # This allows navigating through recent messages
+        history_size = len(_history_list)
+        max_offset = history_size - 1
+        
+        return dialogue_history_offset < max_offset
+    
+    def can_go_forward_in_history():
+        """Check if we can go forward (toward current message)."""
+        return dialogue_history_offset > 0
+    
+    def mark_dialogue_start():
+        """Mark the current position as the start of a new conversation."""
+        store.dialogue_history_start_index = len(_history_list)
+        store.dialogue_history_offset = 0
+        renpy.log(f"Dialogue start index set to {store.dialogue_history_start_index}")
+    
+    def clamp_history_offset():
+        """Clamp history offset to valid range. Called after ANY modification."""
+        if not _history_list:
+            store.dialogue_history_offset = 0
+            return
+        
+        history_size = len(_history_list)
+        max_offset = max(0, history_size - 1)
+        store.dialogue_history_offset = max(0, min(store.dialogue_history_offset, max_offset))
+    
+    def safe_increment_history_offset():
+        """Safely increment history offset with bounds checking."""
+        if can_go_back_in_history():
+            store.dialogue_history_offset += 1
+            clamp_history_offset()
+    
+    def safe_decrement_history_offset():
+        """Safely decrement history offset with bounds checking."""
+        if store.dialogue_history_offset > 0:
+            store.dialogue_history_offset -= 1
+            clamp_history_offset()
+
+screen dialogue_history_nav():
+    ## Only show if we're viewing dialogue and there's history
+    if len(_history_list) > 0:
+        # Ensure offset is always valid when drawing buttons
+        $ clamp_history_offset()
+        $ can_go_back = can_go_back_in_history()
+        $ can_go_forward = can_go_forward_in_history()
+        
+        # Previous message button - moved 345px from left, 140px up from bottom
+        imagebutton:
+            xpos 345
+            yalign 0.95
+            yoffset -140
+            idle "gui/arrowpreviousidle.png"
+            hover "gui/arrowprevioushover.png"
+            action If(can_go_back, Function(safe_increment_history_offset), NullAction())
+            tooltip "Previous message (←)"
+            at transform:
+                zoom 0.0625
+        
+        # Next message button - right side, same height as previous, 345px from right edge
+        imagebutton:
+            xalign 1.0
+            xoffset -345
+            yalign 0.95
+            yoffset -140
+            idle "gui/arrownextidle.png"
+            hover "gui/arrownexthover.png"
+            action If(can_go_forward, Function(safe_decrement_history_offset), NullAction())
+            tooltip "Next message (→)"
+            at transform:
+                zoom 0.0625
+        
+        # Small indicator below Previous button
+        if dialogue_history_offset > 0:
+            text "[dialogue_history_offset]":
+                xpos 350
+                yalign 0.95
+                yoffset -120
+                size 14
+                color "#D2691E"
+                xanchor 0.5
 
 style window is default
 style say_label is default
@@ -371,7 +519,9 @@ screen navigation():
 
             ## The quit button is banned on iOS and unnecessary on Android and
             ## Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
+            ## DISABLED: Quit button causes issues, use Main Menu or window close instead
+            # textbutton _("Quit") action Quit(confirm=not main_menu)
+            pass
 
 
 style navigation_button is gui_button
@@ -414,7 +564,7 @@ screen main_menu():
         vbox:
             style "main_menu_vbox"
 
-            text "Version 9.1":
+            text "Version 0.9.2.2":
                 style "main_menu_version"
 
 
@@ -616,7 +766,7 @@ screen about():
             xalign 0.0
 
         ## Versión
-        text "Version 9.1":
+        text "Version 0.9.2.2":
             style "about_version"
             xalign 0.0
 
@@ -782,7 +932,8 @@ screen save():
         hotspot (75, 483, 257, 91) action ShowMenu('load')
         hotspot (82, 366, 265, 90) action ShowMenu('save')
         hotspot (1584, 537, 254, 91) action MainMenu()
-        hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
+        # Quit button disabled - close window instead
+        # hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
 
         hotspot (1448, 183, 64, 65) action Return()
 
@@ -850,7 +1001,8 @@ screen load():
         hotspot (75, 483, 257, 91) action ShowMenu('load')
         hotspot (82, 366, 265, 90) action ShowMenu('save')
         hotspot (1584, 537, 254, 91) action MainMenu()
-        hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
+        # Quit button disabled - close window instead
+        # hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
 
         hotspot (1448, 183, 64, 65) action Return()
 
@@ -1016,7 +1168,8 @@ screen preferences():
         hotspot (75, 483, 257, 91) action ShowMenu('load')
         hotspot (82, 366, 265, 90) action ShowMenu('save')
         hotspot (1584, 537, 254, 91) action MainMenu()
-        hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
+        # Quit button disabled - close window instead
+        # hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
 
         hotspot (1448, 183, 64, 65) action Return()
 
@@ -1134,7 +1287,8 @@ screen history():
         hotspot (75, 483, 257, 91) action ShowMenu('load')
         hotspot (82, 366, 265, 90) action ShowMenu('save')
         hotspot (1584, 537, 254, 91) action MainMenu()
-        hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
+        # Quit button disabled - close window instead
+        # hotspot (1601, 698, 229, 96) action [SetVariable("pending_exit", True), Quit()]
 
         hotspot (1448, 183, 64, 65) action Return()
         
@@ -2598,7 +2752,7 @@ screen job_selection(worker):
                                 else:
                                     $ avg_skill = 0
                                 $ current_count = len([w for w in building["assigned_servants"] if building["servant_jobs"].get(w["name"], "") == profession["id"]])
-                                $ max_limit = profession.get("max_daily_workers", 99)
+                                $ max_limit = get_max_daily_workers(building, profession)
                                 vbox:  # Wrap each profession entry in a vbox
                                     spacing 2  # Tight spacing between lines
                                     if current_count < max_limit:
@@ -3825,7 +3979,7 @@ screen Manager(building_name):
                         if building_type_entry is not None:
                             for profession in building_type_entry.get("professions", []):
                                 $ current_count = len([s for s in building["assigned_servants"] if building["servant_jobs"].get(s["name"], "") == profession["id"]])
-                                $ max_limit = profession.get("max_daily_workers", 99)
+                                $ max_limit = get_max_daily_workers(building, profession)
                                 text "[profession['name']] ([current_count]/[max_limit])" size 26 xalign 0.0 color "#7a4b2a"
                                 frame:
                                     background Solid("#1a1a1a99")
@@ -4035,8 +4189,8 @@ screen Manager(building_name):
                     action [SetVariable("current_bg", tavern_bg), Hide("Manager"), Show("tavern")]
                     xsize 300
                     text_size 42
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
+                    text_color "#6b6528"
+                    text_hover_color "#ffffff"
                     ysize 50
                     align (0.5, 0.5)
                     hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Return to the tavern", screen_name="Manager"), NullAction())
@@ -4120,57 +4274,64 @@ screen rename_building(building_name):
     zorder 99
     default new_name = custom_names[building_name]
     add Solid("#000000dd")
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
         yalign 0.5
-        xsize 600
-        ysize 500
-        background Solid("#1a1a1acc")
-        padding (20, 20)
-        # Title outside the vbox, centered
-        frame:
-            xalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        
+        # Close button positioned like journal (top-right)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action Hide("rename_building")
+            xalign 1.0
             yalign 0.0
-            background None
-            label "Rename [custom_names[building_name]]:" style "header_style"
-        # Main content vbox
+            xoffset -15
+            yoffset 5
+        
         vbox:
-            xalign 0.1
-            yalign 0.1  # Adjusted offset to give more space below the title
-            spacing 25
-            null height 40  # Match adjust_skill_bonus spacing
+            spacing 15
+            null height 15  # Push title down like journal
+            label "Rename [custom_names[building_name]]" xalign 0.5 style "header_style"
+            null height 10  # Less space after title like journal
+            
             vbox:
-                spacing 10
-                # Input field centered
+                xsize 640  # Match journal content width
+                spacing 15
+                xoffset 30  # Match journal content offset
+                yoffset 25
+                
+                # Input field
+                text "New Name:" size 20 color "#7a4b2a" xalign 0.0
+                null height 10
                 input:
                     id "new_name"
                     value ScreenVariableInputValue("new_name")
                     length 20
-                    color "#ffffff"
-                null height 15
-        # Bottom action buttons: Confirm (left) and Close (right)
-        textbutton "Confirm":
-            xalign 0.0
-            yalign 1.0
-            xoffset 20
-            text_size 24
-            text_color "#ffffff"
-            action If(
-                new_name.strip() != "",
-                [
-                    Function(custom_names.update, {building_name: new_name}),
-                    Hide("rename_building"),
-                    Show("Manager", building_name=building_name)
-                ],
-                Show("error_popup", message="Name cannot be empty")
-            )
-        textbutton "Close":
-            xalign 1.0
-            yalign 1.0
-            xoffset -20
-            text_size 24
-            text_color "#ffffff"
-            action Hide("rename_building")
+                    color "#7a4b2a"
+                null height 60
+                
+                # Confirm button centered
+                textbutton "Confirm":
+                    xalign 0.5
+                    xsize 200
+                    text_size 34
+                    yoffset 10
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action If(
+                        new_name.strip() != "",
+                        [
+                            Function(custom_names.update, {building_name: new_name}),
+                            Hide("rename_building"),
+                            Show("Manager", building_name=building_name)
+                        ],
+                        Show("error_popup", message="Name cannot be empty")
+                    )
 
 screen buy_buildings():
     modal True
@@ -4456,7 +4617,7 @@ screen buy_servants_table():
                             background "tablebutton1b.png"
                             xsize 200
                             ysize 50
-                            text "[worker['name']]" size 24 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
+                            text "[worker['name']] [('(M)' if worker.get('gender', '') == 'male' else '(F)' if worker.get('gender', '') == 'female' else '(?)')]" size 24 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
                             action Show("worker_details", worker=worker, in_roster=False, from_buy_workers=True)
                         button:
                             background "tablebutton1b.png"
@@ -4709,6 +4870,119 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                 Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
             ]
         )
+        xalign 1.0
+        yalign 0.0
+        xoffset -15
+        yoffset 5
+
+screen take_a_walk_result(stage=0):
+    # Screen to handle Take a Walk feature without nested call screen.
+    # Stage 0: Show intro text 1
+    # Stage 1: Show intro text 2
+    # Stage 2: Show intro text 3
+    # Stage 3+: Show interaction result with message navigation
+    modal True
+    zorder 99
+    
+    python:
+        worker = store.walk_worker
+        interaction = store.walk_interaction
+        
+        if stage == 0:
+            # Stage 0: First intro text
+            show_dialogue = True
+            display_message = store.walk_intro_text_1
+            next_action = Return("next")
+            bg_image = None
+        elif stage == 1:
+            # Stage 1: Second intro text
+            show_dialogue = True
+            display_message = store.walk_intro_text_2
+            next_action = Return("next")
+            bg_image = None
+        elif stage == 2:
+            # Stage 2: Third intro text
+            show_dialogue = True
+            display_message = store.walk_intro_text_3
+            next_action = Return("next")
+            bg_image = None
+        else:
+            # Stage 3+: Show interaction result messages
+            interaction_messages = split_text_for_dialogue(interaction.get('description', 'No description available.'))
+            message_index = stage - 3
+            total_messages = len(interaction_messages)
+            
+            if message_index >= total_messages:
+                # All messages shown, display image only
+                show_dialogue = False
+                display_message = ""
+                next_action = Return("done")
+                bg_image = get_interaction_image(worker, interaction)
+            else:
+                # Show current message
+                show_dialogue = True
+                display_message = interaction_messages[message_index]
+                next_action = Return("next")
+                bg_image = get_interaction_image(worker, interaction)
+    
+    # Background
+    if stage < 3:
+        # Black background for intro text
+        add Solid("#000000")
+    else:
+        # Dark overlay for interaction
+        add Solid("#000000dd")
+        
+        # Show interaction image/video
+        if bg_image and bg_image.lower().endswith(('.webm', '.mp4')):
+            add Movie(
+                play=bg_image,
+                size=(1920, 1080),
+                loop=True
+            )
+        elif bg_image:
+            add bg_image:
+                xalign 0.5
+                yalign 0.5
+                fit "contain"
+                xysize (1920, 1080)
+    
+    # Make the whole screen clickable to advance
+    if show_dialogue:
+        button:
+            xfill True
+            yfill True
+            background None
+            action next_action
+            
+            # Dialogue box at the bottom
+            window:
+                id "window"
+                style "say_window"
+                xalign 0.5
+                xfill True
+                yalign gui.textbox_yalign
+                ysize gui.textbox_height
+                
+                text display_message:
+                    id "what"
+                    style "say_dialogue"
+                    xpos gui.dialogue_xpos
+                    xsize gui.dialogue_width
+                    ypos gui.dialogue_ypos
+    else:
+        # Image-only mode: click to close
+        button:
+            xfill True
+            yfill True
+            background None
+            action next_action
+    
+    # Return button (top-right corner) - always available
+    imagebutton:
+        idle Transform("gui/button/return_idle.png", zoom=0.5)
+        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        action Return("done")
         xalign 1.0
         yalign 0.0
         xoffset -15
@@ -5786,9 +6060,9 @@ screen map_screen():
         hovered [ShowTransient("tooltip", message="Buy Servants"), SetVariable("plaza_servants_text_hover", False)]
         unhovered [Hide("tooltip"), SetVariable("plaza_servants_text_hover", False)]
     
-    # Plaza Fountain - Recruitment menu
+    # Plaza Fountain - Take a Walk
     imagebutton:
-        idle If(recruit_workers_text_hover,
+        idle If(take_a_walk_text_hover,
             At("gui/map/PlazaFountainb.png", blink_transform),
             "gui/map/PlazaFountaina.png")
         hover "gui/map/PlazaFountainb.png"
@@ -5843,7 +6117,9 @@ screen map_screen():
         unhovered [Hide("tooltip"), SetVariable("shops_text_hover", False)]
     
     imagebutton:
-        idle get_map_button_idle_image("S1Greenhouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("S1Greenhouse") is None,
+            At("gui/map/S1Greenhouseb.png", blink_transform),
+            get_map_button_idle_image("S1Greenhouse"))
         hover "gui/map/S1Greenhouseb.png"
         focus_mask True
         action If(
@@ -5859,7 +6135,9 @@ screen map_screen():
         unhovered Hide("tooltip")
     
     imagebutton:
-        idle get_map_button_idle_image("S1Redhouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("S1Redhouse") is None,
+            At("gui/map/S1Redhouseb.png", blink_transform),
+            get_map_button_idle_image("S1Redhouse"))
         hover "gui/map/S1Redhouseb.png"
         focus_mask True
         action If(
@@ -5876,7 +6154,9 @@ screen map_screen():
     
     # S3 (South 3) buildings - before S2 so S2 renders on top
     imagebutton:
-        idle get_map_button_idle_image("S3Bluehouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("S3Bluehouse") is None,
+            At("gui/map/S3Bluehouseb.png", blink_transform),
+            get_map_button_idle_image("S3Bluehouse"))
         hover "gui/map/S3Bluehouseb.png"
         focus_mask True
         action If(
@@ -5893,7 +6173,9 @@ screen map_screen():
     
     # S2 (South 2) buildings - after S3 so it renders on top
     imagebutton:
-        idle get_map_button_idle_image("S2Tavern")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("S2Tavern") is None,
+            At("gui/map/S2Tavernb.png", blink_transform),
+            get_map_button_idle_image("S2Tavern"))
         hover "gui/map/S2Tavernb.png"
         focus_mask True
         action If(
@@ -5910,7 +6192,9 @@ screen map_screen():
     
     # S4 (South 4) buildings
     imagebutton:
-        idle get_map_button_idle_image("S4Redhouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("S4Redhouse") is None,
+            At("gui/map/S4Redhouseb.png", blink_transform),
+            get_map_button_idle_image("S4Redhouse"))
         hover "gui/map/S4Redhouseb.png"
         focus_mask True
         action If(
@@ -5925,19 +6209,19 @@ screen map_screen():
         )
         unhovered Hide("tooltip")
     
+    # S4Shop - Desactivado (sin funcionalidad)
     imagebutton:
         idle get_map_button_idle_image("S4Shop")
-        hover "gui/map/S4Shopb.png"
+        hover get_map_button_idle_image("S4Shop")  # Mismo que idle para no mostrar hover
         focus_mask True
-        action If(
-            get_map_building_name_safe("S4Shop") is not None,
-            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("S4Shop"))],
-            NullAction()  # No buildings available for this location
-        )
+        action NullAction()  # No buildings available for this location
+        sensitive False  # Desactivar interactividad
     
     # N1 (North 1) buildings
     imagebutton:
-        idle get_map_button_idle_image("N1Bluehouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("N1Bluehouse") is None,
+            At("gui/map/N1Bluehouseb.png", blink_transform),
+            get_map_button_idle_image("N1Bluehouse"))
         hover "gui/map/N1Bluehouseb.png"
         focus_mask True
         action If(
@@ -5954,7 +6238,9 @@ screen map_screen():
     
     # N2 (North 2) buildings
     imagebutton:
-        idle get_map_button_idle_image("N2Greenhouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("N2Greenhouse") is None,
+            At("gui/map/N2Greenhouseb.png", blink_transform),
+            get_map_button_idle_image("N2Greenhouse"))
         hover "gui/map/N2Greenhouseb.png"
         focus_mask True
         action If(
@@ -5971,7 +6257,9 @@ screen map_screen():
     
     # N4 (North 4) buildings - before N3 so N3 renders on top
     imagebutton:
-        idle get_map_button_idle_image("N4Redhouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("N4Redhouse") is None,
+            At("gui/map/N4Redhouseb.png", blink_transform),
+            get_map_button_idle_image("N4Redhouse"))
         hover "gui/map/N4Redhouseb.png"
         focus_mask True
         action If(
@@ -5988,7 +6276,9 @@ screen map_screen():
     
     # N3 (North 3) buildings - after N4 so it renders on top
     imagebutton:
-        idle get_map_button_idle_image("N3Bluehouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("N3Bluehouse") is None,
+            At("gui/map/N3Bluehouseb.png", blink_transform),
+            get_map_button_idle_image("N3Bluehouse"))
         hover "gui/map/N3Bluehouseb.png"
         focus_mask True
         action If(
@@ -6005,7 +6295,9 @@ screen map_screen():
     
     # N5 (North 5) buildings
     imagebutton:
-        idle get_map_button_idle_image("N5Greenhouse")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("N5Greenhouse") is None,
+            At("gui/map/N5Greenhouseb.png", blink_transform),
+            get_map_button_idle_image("N5Greenhouse"))
         hover "gui/map/N5Greenhouseb.png"
         focus_mask True
         action If(
@@ -6020,18 +6312,18 @@ screen map_screen():
         )
         unhovered Hide("tooltip")
     
+    # N5Shop - Desactivado (sin funcionalidad)
     imagebutton:
         idle get_map_button_idle_image("N5Shop")
-        hover "gui/map/N5Shopb.png"
+        hover get_map_button_idle_image("N5Shop")  # Mismo que idle para no mostrar hover
         focus_mask True
-        action If(
-            get_map_building_name_safe("N5Shop") is not None,
-            [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("N5Shop"))],
-            NullAction()  # No buildings available for this location
-        )
+        action NullAction()  # No buildings available for this location
+        sensitive False  # Desactivar interactividad
     
     imagebutton:
-        idle get_map_button_idle_image("N5Tavern")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("N5Tavern") is None,
+            At("gui/map/N5Tavernb.png", blink_transform),
+            get_map_button_idle_image("N5Tavern"))
         hover "gui/map/N5Tavernb.png"
         focus_mask True
         action If(
@@ -6066,7 +6358,9 @@ screen map_screen():
     
     # S4 Tavern - after Castle so it renders on top
     imagebutton:
-        idle get_map_button_idle_image("S4Tavern")
+        idle If(buy_buildings_text_hover and get_map_building_name_safe("S4Tavern") is None,
+            At("gui/map/S4Tavernb.png", blink_transform),
+            get_map_button_idle_image("S4Tavern"))
         hover "gui/map/S4Tavernb.png"
         focus_mask True
         action If(
@@ -6143,6 +6437,14 @@ screen map_screen():
             yalign 0.5
             xoffset -5
             spacing 10
+            textbutton "Buy Buildings":
+                action Show("error_popup", message="Select a building on the map to view purchase options.")
+                xsize 300
+                text_size 42
+                text_color "#3c1f14"
+                text_hover_color "#6b6528"
+                hovered SetVariable("buy_buildings_text_hover", True)
+                unhovered SetVariable("buy_buildings_text_hover", False)
             textbutton "Buy Servants":
                 action Show("buy_servants_table")
                 xsize 300
@@ -6159,8 +6461,18 @@ screen map_screen():
                 text_size 42
                 text_color "#3c1f14"
                 text_hover_color "#6b6528"
-                hovered SetVariable("recruit_workers_text_hover", True)
-                unhovered SetVariable("recruit_workers_text_hover", False)
+            textbutton "Take a Walk":
+                action If(
+                    last_take_a_walk_day == current_day or take_a_walk_in_progress,
+                    Show("error_popup", message="You've already taken a walk today. Come back tomorrow."),
+                    Function(renpy.call_in_new_context, "take_a_walk")
+                )
+                xsize 300
+                text_size 42
+                text_color "#3c1f14"
+                text_hover_color "#6b6528"
+                hovered SetVariable("take_a_walk_text_hover", True)
+                unhovered SetVariable("take_a_walk_text_hover", False)
             if not tutorial_active:
                 textbutton "Buy Buildings Abroad":
                     action Show("buy_buildings")
@@ -6180,8 +6492,8 @@ screen map_screen():
                 action [Hide("map_screen"), Show("tavern")]
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color "#6b6528"
+                text_hover_color "#ffffff"
 
 # --- screen daily_report() ---
 
@@ -6713,7 +7025,7 @@ screen tavern():
                 text_hover_color "#6b6528"
                 hovered ShowTransient("tooltip", message="Explore the city map and visit different locations", screen_name="tavern")
                 unhovered Hide("tooltip")
-            textbutton "Manage Buildings":
+            textbutton "Buildings":
                 action [
                     Function(renpy.log, "Manage Buildings button clicked"),
                     Show("Building_select_global")
@@ -6744,8 +7056,8 @@ screen tavern():
                 ]
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color "#6b6528"
+                text_hover_color "#ffffff"
                 hovered ShowTransient("tooltip", message="Advance to the next day and process daily events", screen_name="tavern")
                 unhovered Hide("tooltip")
 

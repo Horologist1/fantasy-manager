@@ -6,63 +6,51 @@ echo    FANTASY MANAGER EDITOR v4.0 - BUILD EXE
 echo ============================================================
 echo.
 
-REM Verificar si PyInstaller está instalado
+REM Check if PyInstaller is installed
 python -c "import PyInstaller" 2>nul
 if errorlevel 1 (
-    echo PyInstaller no está instalado. Instalando...
+    echo PyInstaller is not installed. Installing...
     pip install pyinstaller
     if errorlevel 1 (
         echo.
-        echo [ERROR] No se pudo instalar PyInstaller
-        echo Intenta manualmente: pip install pyinstaller
+        echo [ERROR] Could not install PyInstaller
+        echo Try manually: pip install pyinstaller
         pause
         exit /b 1
     )
 )
 
 echo.
-echo Compilando Fantasy Manager Editor v4.0...
-echo Esto puede tardar unos minutos...
+echo Building Fantasy Manager Editor v4.0...
+echo This may take a few minutes...
 echo.
 
-REM Compilar con PyInstaller
+REM Build with PyInstaller
 pyinstaller --onefile --windowed --name "FantasyManager_Editor_v4" --icon=NUL fantasy_manager_editor_v4.py
 
 if errorlevel 1 (
     echo.
-    echo [ERROR] La compilación falló
+    echo [ERROR] Build failed
     pause
     exit /b 1
 )
 
 echo.
 echo ============================================================
-echo    COMPILACIÓN COMPLETADA
+echo    BUILD COMPLETED
 echo ============================================================
 echo.
-echo El ejecutable se encuentra en:
+echo The executable is located at:
 echo   dist\FantasyManager_Editor_v4.exe
 echo.
-echo Puedes mover el .exe a la carpeta que prefieras.
+echo You can move the .exe to any folder you prefer.
 echo.
 
-REM Mover a la carpeta actual
+REM Copy to current directory
 if exist "dist\FantasyManager_Editor_v4.exe" (
     copy "dist\FantasyManager_Editor_v4.exe" "FantasyManager_Editor_v4.exe" >nul
-    echo También se ha copiado a: devkit\FantasyManager_Editor_v4.exe
+    echo Also copied to: devkit\FantasyManager_Editor_v4.exe
 )
 
 echo.
 pause
-
-
-
-
-
-
-
-
-
-
-
-

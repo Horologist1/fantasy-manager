@@ -1,26 +1,26 @@
-# Guía de Compatibilidad: Whoremaster → Fantasy Manager
+# Compatibility Guide: Whoremaster → Fantasy Manager
 
-## Resumen Ejecutivo
+## Executive Summary
 
-Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy Manager**, proporcionando un mapeo completo de estructuras de datos y recomendaciones para la conversión.
+This document analyzes the compatibility between **Whoremaster 7.2.2** and **Fantasy Manager**, providing a complete mapping of data structures and conversion recommendations.
 
 ---
 
-## 📊 Comparación de Arquitecturas
+## 📊 Architecture Comparison
 
-### Formatos de Datos
+### Data Formats
 
-| Aspecto | Whoremaster | Fantasy Manager |
-|---------|-------------|-----------------|
-| **Formato Personajes** | XML (.girlsx, .rgirlsx) | JSON |
-| **Formato Items** | XML (.itemsx) | JSON |
-| **Formato Traits** | XML (.traitsx) | JSON |
-| **Formato Jobs** | XML | Ren'Py Scripts |
-| **Imágenes** | Carpeta por personaje | Carpeta por personaje |
+| Aspect | Whoremaster | Fantasy Manager |
+|--------|-------------|-----------------|
+| **Character Format** | XML (.girlsx, .rgirlsx) | JSON |
+| **Item Format** | XML (.itemsx) | JSON |
+| **Trait Format** | XML (.traitsx) | JSON |
+| **Job Format** | XML | Ren'Py Scripts |
+| **Images** | Folder per character | Folder per character |
 
-### Estructura de Personajes
+### Character Structure
 
-#### Whoremaster (`.girlsx` - Único)
+#### Whoremaster (`.girlsx` - Unique)
 ```xml
 <Girl Name="Aeris Gainsborough" 
       Charisma="70" Intelligence="60" Agility="30" ...>
@@ -58,46 +58,46 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 
 ---
 
-## 🎯 Mapeo de Skills
+## 🎯 Skill Mapping
 
-### Skills Directos
+### Direct Skills
 
-| Whoremaster | Fantasy Manager | Notas |
+| Whoremaster | Fantasy Manager | Notes |
 |-------------|-----------------|-------|
-| Combat | Combat | ✅ Directo |
-| Service | Service | ✅ Directo |
-| Anal | Anal | ✅ Directo |
-| BDSM | BDSM | ✅ Directo |
-| Group | Group | ✅ Directo |
-| Strip | Striptease | ✅ Renombrado |
+| Combat | Combat | ✅ Direct |
+| Service | Service | ✅ Direct |
+| Anal | Anal | ✅ Direct |
+| BDSM | BDSM | ✅ Direct |
+| Group | Group | ✅ Direct |
+| Strip | Striptease | ✅ Renamed |
 
-### Skills Sexuales
+### Sexual Skills
 
-| Whoremaster | Fantasy Manager | Notas |
+| Whoremaster | Fantasy Manager | Notes |
 |-------------|-----------------|-------|
-| NormalSex | Sex | ✅ Principal skill sexual |
-| OralSex | Oral | ✅ Directo |
+| NormalSex | Sex | ✅ Main sexual skill |
+| OralSex | Oral | ✅ Direct |
 | Lesbian | Homo | ✅ Homosexual activities |
-| Handjob | Hand | ✅ Directo |
-| TittySex | Special | Combinado en Special |
-| Footjob | Special | Combinado en Special |
-| Beastiality | Extreme | Mapeado a Extreme |
+| Handjob | Hand | ✅ Direct |
+| TittySex | Special | Combined into Special |
+| Footjob | Special | Combined into Special |
+| Beastiality | Extreme | Mapped to Extreme |
 
-### Skills No-Sexuales
+### Non-Sexual Skills
 
-| Whoremaster | Fantasy Manager | Notas |
+| Whoremaster | Fantasy Manager | Notes |
 |-------------|-----------------|-------|
-| Magic | Craft | Habilidades mágicas → crafting |
-| Medicine | Clever | Conocimiento médico → inteligencia |
-| Performance | Charm | Actuación → carisma |
-| Crafting | Craft | ✅ Directo |
-| Farming | Service | Trabajo agrícola → servicio |
-| Cooking | Service | Cocina → servicio |
-| Herbalism | Craft | Herbalismo → crafting |
-| Brewing | Clever | Destilación → inteligencia |
-| AnimalHandling | Craft | Animales → crafting |
+| Magic | Craft | Magical abilities → crafting |
+| Medicine | Clever | Medical knowledge → intelligence |
+| Performance | Charm | Acting → charisma |
+| Crafting | Craft | ✅ Direct |
+| Farming | Service | Agricultural work → service |
+| Cooking | Service | Cooking → service |
+| Herbalism | Craft | Herbalism → crafting |
+| Brewing | Clever | Distillation → intelligence |
+| AnimalHandling | Craft | Animals → crafting |
 
-### Stats → Skills (Contribución)
+### Stats → Skills (Contribution)
 
 | WM Stat | FM Skill | Factor |
 |---------|----------|--------|
@@ -112,9 +112,9 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 
 ---
 
-## 🏷️ Mapeo de Traits
+## 🏷️ Trait Mapping
 
-### Traits de Personalidad
+### Personality Traits
 
 | Whoremaster | Fantasy Manager |
 |-------------|-----------------|
@@ -137,7 +137,7 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 | Broken Will | Obedient |
 | Dependant | Dependant |
 
-### Traits de Apariencia
+### Appearance Traits
 
 | Whoremaster | Fantasy Manager |
 |-------------|-----------------|
@@ -153,7 +153,7 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 | Great Arse / Deluxe Derriere | Firm Ass |
 | Plump Tush / Wide Bottom | Soft Ass |
 
-### Traits de Especie/Raza
+### Species/Race Traits
 
 | Whoremaster | Fantasy Manager |
 |-------------|-----------------|
@@ -168,7 +168,7 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 | Vampire | Vampire |
 | Dryad | Elf |
 
-### Traits Profesionales
+### Professional Traits
 
 | Whoremaster | Fantasy Manager |
 |-------------|-----------------|
@@ -181,18 +181,18 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 | Doctor | Teacher |
 | Hunter | Adventurer |
 
-### Traits Sexuales y de Libido
+### Sexual and Libido Traits
 
-| Whoremaster | Fantasy Manager | Notas |
+| Whoremaster | Fantasy Manager | Notes |
 |-------------|-----------------|-------|
-| Nymphomaniac | Nymph-Touched | Femenino, libido alto, +Sex +Oral |
-| (masculino hipersexual) | Beast Within | Masculino, libido alto, +Sex +Group |
-| High Sex Drive | Burning Desire | Regeneración libido +4/día |
+| Nymphomaniac | Nymph-Touched | Female, high libido, +Sex +Oral |
+| (masculine hypersexual) | Beast Within | Male, high libido, +Sex +Group |
+| High Sex Drive | Burning Desire | Libido regeneration +4/day |
 | Insatiable | Insatiable | +6 regen, +15 max, +Sex +Group |
-| Chaste | Frigid Soul | Cap libido a 5, trabajo frío |
-| (resistente) | Stamina of the Bull | +3 regen, +5 max, +5 health |
-| (frágil) | Easily Spent | -3 regen, -5 max |
-| (paciente) | Slow Burn | -2 regen, +BDSM +Special |
+| Chaste | Frigid Soul | Cap libido to 5, cold work |
+| (resistant) | Stamina of the Bull | +3 regen, +5 max, +5 health |
+| (fragile) | Easily Spent | -3 regen, -5 max |
+| (patient) | Slow Burn | -2 regen, +BDSM +Special |
 | Fast Orgasms | Sensitive | +Sex +Oral +BDSM |
 | Slow Orgasms | Numb | +BDSM +Extreme |
 | Deep Throat | Pierced | +Oral +Sex |
@@ -202,9 +202,9 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 
 ---
 
-## 📦 Mapeo de Items
+## 📦 Item Mapping
 
-### Tipos de Item
+### Item Types
 
 | WM Type | FM Type |
 |---------|---------|
@@ -215,7 +215,7 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 | Consumable, Food, Drug, Medicine, Makeup | consumable |
 | Misc | accessory |
 
-### Efectos de Item
+### Item Effects
 
 | WM Effect | FM Effect |
 |-----------|-----------|
@@ -223,189 +223,189 @@ Este documento analiza la compatibilidad entre **Whoremaster 7.2.2** y **Fantasy
 | Stat: Charisma | skill_modifiers.Charm |
 | Stat: Intelligence | skill_modifiers.Clever |
 | Stat: Constitution | health |
-| Stat: Tiredness | energy (invertido) |
+| Stat: Tiredness | energy (inverted) |
 | Stat: Libido | libido |
-| Stat: Happiness | (no directo) |
+| Stat: Happiness | (no direct) |
 
 ---
 
-## 📁 Estructura de Carpetas de Imágenes
+## 📁 Image Folder Structure
 
-### ✅ Buena Noticia: Alta Compatibilidad
+### ✅ Good News: High Compatibility
 
-**Fantasy Manager ya entiende la mayoría de nombres de imágenes de Whoremaster.**
+**Fantasy Manager already understands most Whoremaster image names.**
 
-El sistema de búsqueda de imágenes de FM es:
-- **Case-insensitive** (no importan mayúsculas/minúsculas)
-- **Busca múltiples patrones** para cada skill
+FM's image search system is:
+- **Case-insensitive** (case doesn't matter)
+- **Searches multiple patterns** for each skill
 
-### Nombres que FM Ya Entiende (sin renombrar):
+### Names FM Already Understands (no renaming needed):
 
-| WM Name | FM Skill | Notas |
+| WM Name | FM Skill | Notes |
 |---------|----------|-------|
-| `les`, `lesbian` | Homo | FM busca "les" o "gay" |
-| `gay` | Homo | ✅ Directo |
-| `beast` | Extreme | FM busca "beast" o "extreme" |
-| `strip` | Striptease | FM busca "strip" o "striptease" |
-| `titty`, `tittysex` | Special | FM busca "titty" o "special" |
-| `wait`, `maid` | Service | FM busca "wait", "service", "maid" |
-| `sex`, `oral`, `anal`, `bdsm`, `group` | Directo | ✅ Nombres iguales |
-| `combat`, `hand`, `charm` | Directo | ✅ Nombres iguales |
+| `les`, `lesbian` | Homo | FM searches for "les" or "gay" |
+| `gay` | Homo | ✅ Direct |
+| `beast` | Extreme | FM searches for "beast" or "extreme" |
+| `strip` | Striptease | FM searches for "strip" or "striptease" |
+| `titty`, `tittysex` | Special | FM searches for "titty" or "special" |
+| `wait`, `maid` | Service | FM searches for "wait", "service", "maid" |
+| `sex`, `oral`, `anal`, `bdsm`, `group` | Direct | ✅ Same names |
+| `combat`, `hand`, `charm` | Direct | ✅ Same names |
 
-### Nombres que SÍ Necesitan Renombrar:
+### Names that DO Need Renaming:
 
-| WM Name | FM Name | Motivo |
+| WM Name | FM Name | Reason |
 |---------|---------|--------|
-| `Portrait` | `Profile` | FM busca "profile", no "portrait" |
-| `Foot`, `Footjob` | `hand` | FM no busca "foot" |
-| `Dildo`, `Mast` | `special` | No están en patrones FM |
-| `Escort`, `Formal` | `charm` | No están en patrones FM |
-| `Swim`, `Bath` | `rest` | Para imágenes de descanso |
-| `Nurse`, `Shop` | `service` | Servicio genérico |
-| `Magic`, `Fight` | `craft`, `combat` | Renombre simple |
-| `Herd` | `extreme` | "beast" funciona, "herd" no |
+| `Portrait` | `Profile` | FM searches for "profile", not "portrait" |
+| `Foot`, `Footjob` | `hand` | FM doesn't search for "foot" |
+| `Dildo`, `Mast` | `special` | Not in FM patterns |
+| `Escort`, `Formal` | `charm` | Not in FM patterns |
+| `Swim`, `Bath` | `rest` | For rest images |
+| `Nurse`, `Shop` | `service` | Generic service |
+| `Magic`, `Fight` | `craft`, `combat` | Simple rename |
+| `Herd` | `extreme` | "beast" works, "herd" doesn't |
 
-### Estructura de Carpetas
+### Folder Structure
 
 ```
 Whoremaster:                          Fantasy Manager:
 Resources/Characters/                 game/images/workers/
 ├── Aeris Gainsborough/              └── aeris_gainsborough/
-│   ├── Portrait.jpg    ───→            ├── Profile.jpg (renombrar)
-│   ├── Sex.jpg         ───→            ├── Sex.jpg (funciona directo)
-│   ├── Les.jpg         ───→            ├── Les.jpg (funciona directo!)
-│   ├── Strip.jpg       ───→            ├── Strip.jpg (funciona directo!)
-│   ├── Beast.gif       ───→            ├── Beast.webm (convertir GIF)
+│   ├── Portrait.jpg    ───→            ├── Profile.jpg (rename)
+│   ├── Sex.jpg         ───→            ├── Sex.jpg (works directly)
+│   ├── Les.jpg         ───→            ├── Les.jpg (works directly!)
+│   ├── Strip.jpg       ───→            ├── Strip.jpg (works directly!)
+│   ├── Beast.gif       ───→            ├── Beast.webm (convert GIF)
 │   └── ...                             └── ...
-└── Aeris Gainsborough.girlsx        workers_wm.json (convertido)
+└── Aeris Gainsborough.girlsx        workers_wm.json (converted)
 ```
 
-### Videos en lugar de GIFs
+### Videos instead of GIFs
 
-**Importante**: Ren'Py no puede reproducir GIFs animados. Use el conversor para transformar GIFs a WebM:
+**Important**: Ren'Py cannot play animated GIFs. Use the converter to transform GIFs to WebM:
 
 ```bash
-python rename_wm_images.py "carpeta_personaje" --convert-gifs
+python rename_wm_images.py "character_folder" --convert-gifs
 ```
 
-FM soporta estos formatos de video: `.webm`, `.mp4`, `.ogv`
+FM supports these video formats: `.webm`, `.mp4`, `.ogv`
 
 ---
 
-## 🔧 Uso de los Conversores
+## 🔧 Converter Usage
 
-### Scripts Disponibles
+### Available Scripts
 
-| Script | Descripción |
+| Script | Description |
 |--------|-------------|
-| `wm_to_fm_converter.py` | Convierte datos XML de personajes/items a JSON |
-| `rename_wm_images.py` | Renombra imágenes y convierte GIFs a WebM |
+| `wm_to_fm_converter.py` | Converts XML character/item data to JSON |
+| `rename_wm_images.py` | Renames images and converts GIFs to WebM |
 
-### 1. Conversor de Datos (XML → JSON)
+### 1. Data Converter (XML → JSON)
 
 ```bash
-# Convertir personajes
+# Convert characters
 python wm_to_fm_converter.py \
     --characters "C:/path/to/WM/Resources/Characters" \
     --output "workers_wm.json"
 
-# Convertir con copia de imágenes
+# Convert with image copy
 python wm_to_fm_converter.py \
     --characters "C:/path/to/WM/Resources/Characters" \
     --output "workers_wm.json" \
     --copy-images \
     --image-dest "C:/path/to/FM/game/images/workers"
 
-# Convertir items
+# Convert items
 python wm_to_fm_converter.py \
     --items "C:/path/to/WM/Resources/Items" \
     --output "items_wm.json"
 ```
 
-### 2. Conversor de Imágenes
+### 2. Image Converter
 
-La mayoría de imágenes de WM funcionan directamente en FM. Este script solo:
-- Renombra imágenes que FM no reconoce (Portrait→Profile, etc.)
-- Convierte GIFs animados a WebM (Ren'Py no soporta GIF)
+Most WM images work directly in FM. This script only:
+- Renames images FM doesn't recognize (Portrait→Profile, etc.)
+- Converts animated GIFs to WebM (Ren'Py doesn't support GIF)
 
 ```bash
-# Ver qué se haría (sin cambiar nada)
+# Preview what would be done (without changing anything)
 python rename_wm_images.py "../game/images/workers/aeris" --dry-run
 
-# Renombrar solo
+# Rename only
 python rename_wm_images.py "../game/images/workers/aeris"
 
-# Renombrar + Convertir GIFs a WebM (requiere ffmpeg)
+# Rename + Convert GIFs to WebM (requires ffmpeg)
 python rename_wm_images.py "../game/images/workers/aeris" --convert-gifs
 
-# Procesar TODAS las carpetas de workers
+# Process ALL worker folders
 python rename_wm_images.py "../game/images/workers" --all --convert-gifs
 ```
 
-**Nota**: Para conversión de GIFs, necesitas [ffmpeg](https://ffmpeg.org/) instalado y en PATH.
+**Note**: For GIF conversion, you need [ffmpeg](https://ffmpeg.org/) installed and in PATH.
 
-### Ejemplo Práctico Completo
+### Complete Practical Example
 
 ```bash
 cd "C:\Users\Usuario\Desktop\SNS\FantasyManager\fantasy-manager\devkit"
 
-# 1. Convertir datos de personajes
+# 1. Convert character data
 python wm_to_fm_converter.py ^
     --characters "..\..\WM-7.2.2-win64 - copia\Resources\Characters" ^
     --output "..\game\data\workers\workers_wm.json" ^
     --copy-images ^
     --image-dest "..\game\images\workers"
 
-# 2. Procesar imágenes (renombrar + GIF→WebM)
+# 2. Process images (rename + GIF→WebM)
 python rename_wm_images.py "..\game\images\workers" --all --convert-gifs
 ```
 
 ---
 
-## 💡 Propuestas de Mejoras para Fantasy Manager
+## 💡 Improvement Proposals for Fantasy Manager
 
-### 1. Sistema de Libido Expandido
+### 1. Expanded Libido System
 
-**Estado Actual**: FM tiene `libido` como un entero simple (0-20) que afecta principalmente el éxito en trabajos sexuales.
+**Current State**: FM has `libido` as a simple integer (0-20) that mainly affects success in sexual work.
 
-**Propuesta Mejorada**: Expandir libido para crear más dinamismo en el gameplay:
+**Improved Proposal**: Expand libido to create more gameplay dynamism:
 
 ```python
-# En worker_defaults.rpy
+# In worker_defaults.rpy
 worker.setdefault("libido", {
-    "base": 10,          # Nivel base del personaje (permanente)
-    "current": 10,       # Nivel actual (fluctúa)
-    "max": 20,           # Máximo posible
-    "regen_rate": 2,     # Regeneración por día sin trabajo sexual
-    "decay_rate": 3,     # Reducción por trabajo sexual intenso
+    "base": 10,          # Character base level (permanent)
+    "current": 10,       # Current level (fluctuates)
+    "max": 20,           # Maximum possible
+    "regen_rate": 2,     # Regeneration per day without sexual work
+    "decay_rate": 3,     # Reduction from intense sexual work
 })
 ```
 
-**Mecánicas sugeridas**:
-- **Trabajos NSFW reducen libido**: Cada trabajo sexual reduce `current` según intensidad
-  - Sex, Oral: -1 a -2
-  - Group, Extreme: -3 a -4
-  - BDSM, Anal: -2 a -3
-- **Libido bajo = Menor rendimiento**: Si `current < base * 0.5`, penalización en skills sexuales
-- **Libido alto = Bonus**: Si `current > base * 1.5`, bonus a earnings y satisfacción
-- **Regeneración**: +`regen_rate` por día de descanso o trabajo no-sexual
-- **Traits afectan libido** (ya implementados):
+**Suggested mechanics**:
+- **NSFW work reduces libido**: Each sexual job reduces `current` based on intensity
+  - Sex, Oral: -1 to -2
+  - Group, Extreme: -3 to -4
+  - BDSM, Anal: -2 to -3
+- **Low libido = Lower performance**: If `current < base * 0.5`, penalty to sexual skills
+- **High libido = Bonus**: If `current > base * 1.5`, bonus to earnings and satisfaction
+- **Regeneration**: +`regen_rate` per day of rest or non-sexual work
+- **Traits affect libido** (already implemented):
   - "Burning Desire": +4 regen, +8 max
   - "Nymph-Touched" / "Beast Within": +5 regen, +12 max, min 10
   - "Insatiable": +6 regen, +15 max, min 8
-  - "Frigid Soul": cap a 5
+  - "Frigid Soul": cap to 5
   - "Stamina of the Bull": +3 regen, +5 max
   - "Easily Spent": -3 regen, -5 max
-  - "Slow Burn": -2 regen (pero +BDSM)
-- **Items**: Pociones de libido (afrodisíacos) podrían aumentar temporalmente
+  - "Slow Burn": -2 regen (but +BDSM)
+- **Items**: Libido potions (aphrodisiacs) could temporarily increase
 
-**Implementación simplificada (alternativa)**:
+**Simplified implementation (alternative)**:
 ```python
-# Si no quieres complejidad, simplemente:
-worker.setdefault("libido_base", 10)  # Permanente
-worker.setdefault("libido_current", 10)  # Fluctúa con el trabajo
+# If you don't want complexity, simply:
+worker.setdefault("libido_base", 10)  # Permanent
+worker.setdefault("libido_current", 10)  # Fluctuates with work
 
-# Regeneración en end_day
+# Regeneration in end_day
 if worker["libido_current"] < worker["libido_base"]:
     worker["libido_current"] = min(
         worker["libido_base"], 
@@ -413,9 +413,9 @@ if worker["libido_current"] < worker["libido_base"]:
     )
 ```
 
-### 2. Sistema de Crafting de Items
+### 2. Item Crafting System
 
-WM tiene sistema de crafting. FM podría añadir:
+WM has a crafting system. FM could add:
 
 ```python
 item = {
@@ -424,79 +424,78 @@ item = {
         "required_skill": "Craft",
         "required_level": 20,
         "materials": ["silver_ore", "mana_crystal"],
-        "craft_time": 2  # días
+        "craft_time": 2  # days
     }
 }
 ```
 
-### 3. Conversión GIF → WebM (Video)
+### 3. GIF → WebM Conversion (Video)
 
-Ren'Py **no puede reproducir GIFs animados**, pero **sí soporta videos** (WebM, MP4).
-El conversor incluye funcionalidad para convertir GIFs a WebM automáticamente:
+Ren'Py **cannot play animated GIFs**, but **does support videos** (WebM, MP4).
+The converter includes functionality to automatically convert GIFs to WebM:
 
 ```bash
-# Convertir carpeta de imágenes con GIFs
+# Convert image folder with GIFs
 python rename_wm_images.py "../game/images/workers/aeris" --convert-gifs
 ```
 
-Requiere **ffmpeg** instalado y en PATH.
+Requires **ffmpeg** installed and in PATH.
 
-### 4. Sistema de Embarazo/Fertilidad (Futuro)
+### 4. Pregnancy/Fertility System (Future)
 
-WM tiene sistema completo de fertilidad/embarazo que podría añadirse a FM en futuras versiones.
-
----
-
-## ⚠️ Limitaciones de la Conversión
-
-1. **Traits sin equivalente directo**: Algunos traits de WM no tienen equivalente en FM y se pierden o mapean a alternativas.
-
-2. **Sistema de Embarazo**: WM tiene sistema de fertilidad/embarazo que FM no implementa aún.
-
-3. **Sistema de Enfermedades**: WM tiene STDs (AIDS, Herpes, etc.) que FM no tiene.
-
-4. **GIFs Animados**: Ren'Py no soporta GIFs. Usar conversor para transformar a WebM.
-
-5. **Jobs vs Buildings**: WM usa sistema de Jobs, FM usa sistema de Buildings con diferentes mecánicas.
-
-6. **Stats WM vs Traits FM**: 
-   - WM tiene stats separados (Constitution, Beauty, Intelligence)
-   - FM usa traits para representar estos conceptos (Strong, Beautiful, Clever)
-   - La conversión no crea nuevos stats, sino que asigna traits equivalentes
+WM has a complete fertility/pregnancy system that could be added to FM in future versions.
 
 ---
 
-## 📋 Checklist de Conversión
+## ⚠️ Conversion Limitations
 
-### Paso 1: Convertir Datos
-- [ ] Ejecutar `wm_to_fm_converter.py` con `--copy-images`
-- [ ] Verificar JSON generado (workers_wm.json)
-- [ ] Verificar que las carpetas de imágenes se copiaron
+1. **Traits without direct equivalent**: Some WM traits don't have an equivalent in FM and are lost or mapped to alternatives.
 
-### Paso 2: Procesar Imágenes
-- [ ] Ejecutar `rename_wm_images.py --dry-run` para previsualizar
-- [ ] Ejecutar `rename_wm_images.py --convert-gifs` para aplicar
-- [ ] Verificar que GIFs se convirtieron a WebM
+2. **Pregnancy System**: WM has a fertility/pregnancy system that FM doesn't implement yet.
 
-### Paso 3: Verificación
-- [ ] Verificar que cada personaje tiene imagen Profile
-- [ ] Verificar que traits se mapearon correctamente
-- [ ] Ajustar skills manualmente si necesario
-- [ ] Probar personajes en el juego
+3. **Disease System**: WM has STDs (AIDS, Herpes, etc.) that FM doesn't have.
 
-### Paso 4: Items (Opcional)
-- [ ] Ejecutar conversor en Items
-- [ ] Merge items convertidos con items.json existente
+4. **Animated GIFs**: Ren'Py doesn't support GIFs. Use converter to transform to WebM.
+
+5. **Jobs vs Buildings**: WM uses a Jobs system, FM uses a Buildings system with different mechanics.
+
+6. **WM Stats vs FM Traits**: 
+   - WM has separate stats (Constitution, Beauty, Intelligence)
+   - FM uses traits to represent these concepts (Strong, Beautiful, Clever)
+   - Conversion doesn't create new stats, but assigns equivalent traits
 
 ---
 
-## 🔄 Actualizaciones Futuras
+## 📋 Conversion Checklist
 
-Este documento se actualizará conforme:
-- Se añadan nuevos traits a Fantasy Manager
-- Se implementen nuevos sistemas (embarazo, enfermedades, etc.)
-- Se mejore el conversor con más opciones
+### Step 1: Convert Data
+- [ ] Run `wm_to_fm_converter.py` with `--copy-images`
+- [ ] Verify generated JSON (workers_wm.json)
+- [ ] Verify that image folders were copied
 
-**Última actualización**: Diciembre 2024
-**Versión del Conversor**: 1.0
+### Step 2: Process Images
+- [ ] Run `rename_wm_images.py --dry-run` to preview
+- [ ] Run `rename_wm_images.py --convert-gifs` to apply
+- [ ] Verify that GIFs were converted to WebM
 
+### Step 3: Verification
+- [ ] Verify that each character has a Profile image
+- [ ] Verify that traits were mapped correctly
+- [ ] Manually adjust skills if necessary
+- [ ] Test characters in the game
+
+### Step 4: Items (Optional)
+- [ ] Run converter on Items
+- [ ] Merge converted items with existing items.json
+
+---
+
+## 🔄 Future Updates
+
+This document will be updated as:
+- New traits are added to Fantasy Manager
+- New systems are implemented (pregnancy, diseases, etc.)
+- The converter is improved with more options
+
+**Last update**: December 2024
+**Converter Version**: 1.0
