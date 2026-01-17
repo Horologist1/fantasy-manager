@@ -31,6 +31,15 @@ init python:
     import json
 
     #############################
+    # Event Success Configuration
+    #############################
+    # Base success bonus added to all skill-based event checks
+    # This increases the baseline success chance for all events
+    EVENT_SUCCESS_BASE_BONUS_WORKER = 30  # Percentage points added to worker skill level for success checks
+    EVENT_SUCCESS_BASE_BONUS_BUILDING = 50  # Percentage points added to building skill for success checks
+    EVENT_SUCCESS_MIN_CHANCE = 0.6  # Minimum success chance (60%) for events with defined success_chance
+
+    #############################
     # Helper Functions & Loading
     #############################
 
@@ -1813,14 +1822,60 @@ init python:
         renpy.log(f"Final available_workers after update: {[w['name'] for w in available_workers]}")
         renpy.log(f"Final daily_spawns: {daily_spawns}")
 
+    def _remove_worker_from_building_by_name(building, worker_name):
+        """Remove all instances of a worker by name from a building assignment list."""
+        if not building:
+            return
+        assigned = building.get("assigned_servants", []) or []
+        if not assigned:
+            return
+        building["assigned_servants"] = [w for w in assigned if w.get("name") != worker_name]
+
+    def add_worker_to_building(worker, building_name):
+        """Assign worker to a building, ensuring no duplicates by name."""
+        if not building_name or building_name not in available_buildings:
+            return
+        building = available_buildings[building_name]
+        if "assigned_servants" not in building or not isinstance(building["assigned_servants"], list):
+            building["assigned_servants"] = []
+        worker_name = worker.get("name")
+        # Remove any stale duplicates by name before adding
+        _remove_worker_from_building_by_name(building, worker_name)
+        building["assigned_servants"].append(worker)
+        if "servant_jobs" not in building or not isinstance(building["servant_jobs"], dict):
+            building["servant_jobs"] = {}
+
+    def normalize_building_assignments():
+        """Deduplicate assigned_servants per building by worker name."""
+        try:
+            name_to_worker = {w.get("name"): w for w in store.workers}
+            for bname in store.owned_buildings:
+                building = available_buildings.get(bname)
+                if not isinstance(building, dict):
+                    continue
+                assigned = building.get("assigned_servants", []) or []
+                if not assigned:
+                    continue
+                deduped = []
+                seen_names = set()
+                for w in assigned:
+                    wname = w.get("name")
+                    if wname in seen_names:
+                        continue
+                    deduped.append(name_to_worker.get(wname, w))
+                    if wname:
+                        seen_names.add(wname)
+                building["assigned_servants"] = deduped
+        except Exception as e:
+            renpy.log("normalize_building_assignments error: " + str(e))
+
     def unassign_worker(worker):
         """Fully remove worker from their building assignment."""
         remove_worker_from_building(worker)
         building_name = worker.get("assigned_building")
         if building_name and building_name in available_buildings:
             building = available_buildings[building_name]
-            if worker in building["assigned_servants"]:
-                building["assigned_servants"].remove(worker)
+            _remove_worker_from_building_by_name(building, worker.get("name"))
             if worker["name"] in building["servant_jobs"]:
                 del building["servant_jobs"][worker["name"]]
         worker["assigned_building"] = "Unassigned"
@@ -1828,8 +1883,7 @@ init python:
     def remove_worker_from_building(worker):
         if worker.get("assigned_building", "Unassigned") != "Unassigned" and worker["assigned_building"] in available_buildings:
             building = available_buildings[worker["assigned_building"]]
-            if worker in building["assigned_servants"]:
-                building["assigned_servants"].remove(worker)
+            _remove_worker_from_building_by_name(building, worker.get("name"))
 
     def check_worker_health():
         global workers
@@ -2175,7 +2229,9 @@ init python:
                 # Log which building we're using
                 renpy.log(f"Event using building: {selected_building_name}")
                 
-                total_skill = selected_building["skill"] + selected_building["skill_bonus"]
+                base_total_skill = selected_building["skill"] + selected_building["skill_bonus"]
+                # Apply base success bonus to increase baseline success chance
+                total_skill = min(100, base_total_skill + EVENT_SUCCESS_BASE_BONUS_BUILDING)
 
                 roll = random.randint(1, 100)
                 
@@ -2184,7 +2240,8 @@ init python:
                 renpy.log(f"Building: {selected_building_name}")
                 renpy.log(f"Base Skill: {selected_building['skill']}")
                 renpy.log(f"Skill Bonus: {selected_building['skill_bonus']}")
-                renpy.log(f"Total Skill: {total_skill}")
+                renpy.log(f"Base Total Skill: {base_total_skill}")
+                renpy.log(f"With +{EVENT_SUCCESS_BASE_BONUS_BUILDING}% bonus: {total_skill}")
                 renpy.log(f"Roll (1-100): {roll}")
                 renpy.log(f"Result: {'Success' if roll <= total_skill else 'Failure'}")
                 renpy.log(f"--------------------------")
@@ -2196,10 +2253,11 @@ init python:
                 # Check for assigned servants, limit to this specific building only
                 assigned_servants = selected_building.get("assigned_servants", [])
                 if not assigned_servants:
-                    # Fallback: Find workers assigned to this specific building from store.workers
+                    # Fallback: Rebuild assigned_servants from store.workers (dedupe by name)
                     for worker in store.workers:
                         if worker.get("assigned_building") == selected_building_name:
-                            assigned_servants.append(worker)
+                            add_worker_to_building(worker, selected_building_name)
+                    assigned_servants = selected_building.get("assigned_servants", [])
 
                 # Get text first
                 description = store.current_event_description
@@ -2444,9 +2502,11 @@ init python:
                             outcome_status = "success"
                         else:
                             # If worker meets threshold, use a minimum success chance of 90%
+                            # Also apply base success bonus
                             min_success_chance = 90
-                            effective_success_chance = max(skill_level, min_success_chance)
-                            renpy.log(f"Worker {selected_worker['name']} skill {skill_level} meets threshold {threshold} - using {effective_success_chance}% success chance")
+                            skill_with_bonus = min(100, skill_level + EVENT_SUCCESS_BASE_BONUS_WORKER)
+                            effective_success_chance = max(skill_with_bonus, min_success_chance)
+                            renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{EVENT_SUCCESS_BASE_BONUS_WORKER} bonus = {skill_with_bonus}) meets threshold {threshold} - using {effective_success_chance}% success chance")
                             roll = random.randint(1, 100)
                             if roll <= effective_success_chance:
                                 base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
@@ -2458,8 +2518,11 @@ init python:
                                 outcome_status = "failure"
                     else:
                         # No threshold or doesn't meet it - use normal skill-based roll
+                        # Apply base success bonus to increase baseline success chance
+                        effective_skill = min(100, skill_level + EVENT_SUCCESS_BASE_BONUS_WORKER)
                         roll = random.randint(1, 100)
-                        if roll <= skill_level:
+                        renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{EVENT_SUCCESS_BASE_BONUS_WORKER}% bonus = {effective_skill}) - roll {roll} vs {effective_skill}%")
+                        if roll <= effective_skill:
                             base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
                             applied_values = apply_effects(effect.get("success", {}), worker=selected_worker)
                             outcome_status = "success"
@@ -2493,8 +2556,10 @@ init python:
             success_chance = effect.get("success_chance")
             if success_chance is not None:
                 # Probability-based outcome (like fortune telling)
+                # Ensure minimum success chance of 60%
+                effective_success_chance = max(EVENT_SUCCESS_MIN_CHANCE, success_chance)
                 roll = random.random()
-                if roll <= success_chance:
+                if roll <= effective_success_chance:
                     outcome_status = "success"
                     message = choice.get("message_success", "Fortune smiles upon you.")
                     applied_values = apply_effects(effect.get("success", {}))
@@ -2508,7 +2573,10 @@ init python:
                     worker_name = acting_worker.get("name", "Unknown")
                     message = message.replace("[acting_worker]", worker_name)
                 
-                renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} = {outcome_status}")
+                if effective_success_chance > success_chance:
+                    renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} (boosted to minimum {EVENT_SUCCESS_MIN_CHANCE*100}% = {effective_success_chance:.2f}) = {outcome_status}")
+                else:
+                    renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} = {outcome_status}")
             else:
                 # Simple choice without probability
                 applied_values = apply_effects(effect)

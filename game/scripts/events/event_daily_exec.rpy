@@ -70,76 +70,95 @@ init python:
             building["costs"] = building.get("costs", 0) + bonus_cost
             renpy.log(f"Building {building_name} new costs after skill bonus: {building['costs']}")
 
+            # Process "rest" workers ONCE per building, before processing other professions
+            # Find the rest profession definition (should only be one, but we'll take the first)
+            rest_profession = None
+            for prof in btype.get("professions", []):
+                if prof.get("id") == "rest":
+                    rest_profession = prof
+                    break
+            
+            if rest_profession:
+                # Get all workers in rest for this building, ensuring no duplicates
+                workers_in_rest = []
+                seen_worker_names = set()
+                for w in building["assigned_servants"]:
+                    worker_name = w.get("name", "")
+                    job = building["servant_jobs"].get(worker_name, "").lower()
+                    if job == "rest" and worker_name not in seen_worker_names:
+                        workers_in_rest.append(w)
+                        seen_worker_names.add(worker_name)
+                        renpy.log(f"DAILY: Found worker in rest: {worker_name} in {building_name}")
+                
+                # Process each worker in rest exactly once
+                for worker in workers_in_rest:
+                    stories = rest_profession.get("daily_stories", [])
+                    if not stories:
+                        renpy.log(f"DAILY: No daily_stories for rest profession, skipping")
+                        continue
+                    chosen_story = random.choice(stories)
+                    full_description = chosen_story.get("description", "")
+                    outcome = "Rest"
+
+                    if "consequences" in chosen_story:
+                        cons = chosen_story["consequences"].get("success", {})
+                        if cons:
+                            # Apply energy and health changes
+                            if "energy" in cons:
+                                old_energy = worker["energy"]
+                                worker["energy"] = min(calculate_max_energy(worker), max(0, worker["energy"] + cons["energy"]))
+                                renpy.log(f"Event: {worker['name']} energy {old_energy} -> {worker['energy']} (change: {cons['energy']}), Worker ID: {id(worker)}")
+                            if "health" in cons:
+                                old_health = worker["health"]
+                                worker["health"] = min(calculate_max_health(worker), max(0, worker["health"] + cons["health"]))
+                                renpy.log(f"Event: {worker['name']} health {old_health} -> {worker['health']} (change: {cons['health']}), Worker ID: {id(worker)}")
+
+                            # Apply joy changes
+                            if "joy" in cons:
+                                old_joy = worker["joy"]
+                                apply_attribute_change(worker, "joy", cons["joy"])
+                                renpy.log(f"Event: {worker['name']} joy {old_joy} -> {worker['joy']} (change: {cons['joy']}), Worker ID: {id(worker)}")
+
+                            # Apply rebelliousness changes
+                            if "rebelliousness" in cons:
+                                old_rebelliousness = worker["rebelliousness"]
+                                apply_attribute_change(worker, "rebelliousness", cons["rebelliousness"])
+                                renpy.log(f"Event: {worker['name']} rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (change: {cons['rebelliousness']}), Worker ID: {id(worker)}")
+
+                            # Apply romance changes
+                            if "romance" in cons:
+                                old_romance = worker["romance"]
+                                apply_attribute_change(worker, "romance", cons["romance"])
+                                renpy.log(f"Event: {worker['name']} romance {old_romance} -> {worker['romance']} (change: {cons['romance']}), Worker ID: {id(worker)}")
+
+                            # Apply relationship changes
+                            if "relationship" in cons:
+                                old_relationship = worker["relationship"]
+                                apply_attribute_change(worker, "relationship", cons["relationship"])
+                                renpy.log(f"Event: {worker['name']} relationship {old_relationship} -> {worker['relationship']} (change: {cons['relationship']}), Worker ID: {id(worker)}")
+                    report_entry = {
+                        "building": building_name,
+                        "profession": rest_profession.get("name", "Rest"),
+                        "worker_name": worker.get("name", "Unknown"),
+                        "worker": worker,
+                        "event_data": chosen_story,
+                        "report": chosen_story.get("report", "Resting"),
+                        "description": full_description,
+                        "result": outcome,
+                        "earnings": 0,
+                        "used_skill": "N/A",
+                        "roll": "N/A",
+                        "trait_roll": None,
+                        "trait_success_messages": [],
+                        "group_event": False,
+                        "loot": [],
+                        "story_image": get_event_image(worker, chosen_story, outcome="success")
+                    }
+                    daily_report.append(report_entry)
+
             for profession in btype.get("professions", []):
+                # Skip rest profession as it's already processed above
                 if profession["id"] == "rest":
-                    assigned_workers = [w for w in building["assigned_servants"]
-                                        if building["servant_jobs"].get(w["name"], "").lower() in ["rest", "unassigned"]]
-                    for worker in assigned_workers:
-                        stories = profession.get("daily_stories", [])
-                        if not stories:
-                            continue
-                        chosen_story = random.choice(stories)
-                        full_description = chosen_story.get("description", "")
-                        outcome = "Rest"
-                        # outcome_key = outcome.lower().replace(" ", "_") # No longer needed for rest
-
-                        if "consequences" in chosen_story:
-                            # --- MODIFIED LINE ---
-                            cons = chosen_story["consequences"].get("success", {}) # Use "success" key directly
-                            # --- END MODIFIED LINE ---
-                            if cons:
-                                # Apply energy and health changes
-                                if "energy" in cons:
-                                    old_energy = worker["energy"]
-                                    worker["energy"] = min(calculate_max_energy(worker), max(0, worker["energy"] + cons["energy"]))
-                                    renpy.log(f"Event: {worker['name']} energy {old_energy} -> {worker['energy']} (change: {cons['energy']}), Worker ID: {id(worker)}")
-                                if "health" in cons:
-                                    old_health = worker["health"]
-                                    worker["health"] = min(calculate_max_health(worker), max(0, worker["health"] + cons["health"]))
-                                    renpy.log(f"Event: {worker['name']} health {old_health} -> {worker['health']} (change: {cons['health']}), Worker ID: {id(worker)}")
-
-                                # Apply joy changes
-                                if "joy" in cons:
-                                    old_joy = worker["joy"]
-                                    apply_attribute_change(worker, "joy", cons["joy"])
-                                    renpy.log(f"Event: {worker['name']} joy {old_joy} -> {worker['joy']} (change: {cons['joy']}), Worker ID: {id(worker)}")
-
-                                # Apply rebelliousness changes
-                                if "rebelliousness" in cons:
-                                    old_rebelliousness = worker["rebelliousness"]
-                                    apply_attribute_change(worker, "rebelliousness", cons["rebelliousness"])
-                                    renpy.log(f"Event: {worker['name']} rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (change: {cons['rebelliousness']}), Worker ID: {id(worker)}")
-
-                                # Apply romance changes
-                                if "romance" in cons:
-                                    old_romance = worker["romance"]
-                                    apply_attribute_change(worker, "romance", cons["romance"])
-                                    renpy.log(f"Event: {worker['name']} romance {old_romance} -> {worker['romance']} (change: {cons['romance']}), Worker ID: {id(worker)}")
-
-                                # Apply relationship changes
-                                if "relationship" in cons:
-                                    old_relationship = worker["relationship"]
-                                    apply_attribute_change(worker, "relationship", cons["relationship"])
-                                    renpy.log(f"Event: {worker['name']} relationship {old_relationship} -> {worker['relationship']} (change: {cons['relationship']}), Worker ID: {id(worker)}")
-                        report_entry = {
-                            "building": building_name,
-                            "profession": profession.get("name", "Rest"),
-                            "worker_name": worker.get("name", "Unknown"),
-                            "worker": worker,
-                            "event_data": chosen_story,
-                            "report": chosen_story.get("report", "Resting"),
-                            "description": full_description,
-                            "result": outcome,
-                            "earnings": 0,
-                            "used_skill": "N/A",
-                            "roll": "N/A",
-                            "trait_roll": None,
-                            "trait_success_messages": [],
-                            "group_event": False,
-                            "loot": [],
-                            "story_image": get_event_image(worker, chosen_story, outcome="success")
-                        }
-                        daily_report.append(report_entry)
                     continue
 
                 assigned_workers = [
@@ -147,8 +166,17 @@ init python:
                     for w in building["assigned_servants"]
                     if (building.get("servant_jobs") or {}).get(w.get("name"), "") == profession["id"]
                 ]
-                # Keep building list referencing canonical store objects to avoid drift
-                building["assigned_servants"] = [name_to_store.get(w.get("name"), w) for w in building.get("assigned_servants", [])]
+                # Keep building list referencing canonical store objects to avoid drift (dedupe by name)
+                _deduped_assigned = []
+                _seen_names = set()
+                for _w in building.get("assigned_servants", []) or []:
+                    _wname = _w.get("name")
+                    if _wname in _seen_names:
+                        continue
+                    _deduped_assigned.append(name_to_store.get(_wname, _w))
+                    if _wname:
+                        _seen_names.add(_wname)
+                building["assigned_servants"] = _deduped_assigned
                 renpy.log(f"DAILY: Profession {profession['id']} -> assigned_workers={ [w.get('name') for w in assigned_workers] }")
                 eligible_workers = [w for w in assigned_workers]  # No energy filter
                 if not eligible_workers:
@@ -458,9 +486,15 @@ init python:
                     continue
                 assigned = b.get("assigned_servants", []) or []
                 relinked = []
+                seen_names = set()
                 for sw in assigned:
                     wname = sw.get("name") if isinstance(sw, dict) else None
+                    if wname in seen_names:
+                        renpy.log(f"RELINK: duplicate assigned_servant '{wname}' in {bname}, skipping")
+                        continue
                     relinked.append(name_to_worker.get(wname, sw))
+                    if wname:
+                        seen_names.add(wname)
                 b["assigned_servants"] = relinked
         except Exception as e:
             renpy.log("RELINK: error while relinking assigned_servants: " + str(e))
@@ -692,22 +726,28 @@ init python:
             return "handle_random_event"
 
         # Check for guaranteed events (100% probability or date-specific)
-        guaranteed_events = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 50) >= 100]
+        guaranteed_events = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 30) >= 100]
         
         if guaranteed_events:
             renpy.log(f"Found {len(guaranteed_events)} guaranteed events, skipping probability check")
             should_trigger_event = True
             possible_events = guaranteed_events  # Only consider guaranteed events
         elif has_active_professions:
-            # Use default 50% chance or check for events with custom probabilities
-            base_probability = 50
-            max_event_probability = max([e.get("event_probability", base_probability) for e in possible_events]) if possible_events else base_probability
+            # Use default 30% chance (reduced from 50%)
+            base_probability = 30
+            
+            # Each manager reduces event probability by 10%
+            manager_count = count_active_managers()
+            manager_reduction = manager_count * 10
+            effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
+            
+            max_event_probability = max([e.get("event_probability", effective_probability) for e in possible_events]) if possible_events else effective_probability
             
             random_roll = renpy.random.randint(1, 100)
-            renpy.log(f"DEBUG: Event chance roll: {random_roll}/100 (base: ≤{base_probability}, max event probability: {max_event_probability})")
+            renpy.log(f"DEBUG: Event chance roll: {random_roll}/100 (base: {base_probability}%, managers: {manager_count} (-{manager_reduction}%), effective: {effective_probability}%, max event probability: {max_event_probability}%)")
             
             # Trigger if base chance succeeds OR if any event has higher probability that succeeds
-            should_trigger_event = random_roll <= max(base_probability, max_event_probability)
+            should_trigger_event = random_roll <= max(effective_probability, max_event_probability)
         else:
             should_trigger_event = False
         
@@ -775,8 +815,24 @@ init python:
                 if valid_events:
                     # Filter events by their individual probability
                     probability_filtered_events = []
+                    # Calculate effective base probability with manager reduction (already calculated above)
+                    # Use the same effective_probability calculated earlier, or recalculate if needed
+                    manager_count = count_active_managers()
+                    manager_reduction = manager_count * 10
+                    base_event_prob = max(1, 30 - manager_reduction)  # Minimum 1%
+                    
                     for event, worker in valid_events:
-                        event_probability = event.get("event_probability", 50)
+                        # If event has custom probability (fixed chance), use it as-is (NOT affected by managers)
+                        # If not, use the effective base probability (reduced by managers)
+                        event_probability = event.get("event_probability")
+                        if event_probability is None:
+                            # No custom probability, use effective base (reduced by managers)
+                            event_probability = base_event_prob
+                        else:
+                            # Has custom probability (fixed chance) - use it exactly as defined, NOT affected by managers
+                            # Only ensure it's not below 1% for safety
+                            event_probability = max(1, event_probability)
+                        
                         if event.get("guaranteed", False) or event_probability >= 100:
                             # Guaranteed events always pass
                             probability_filtered_events.append((event, worker))
@@ -786,9 +842,9 @@ init python:
                             individual_roll = renpy.random.randint(1, 100)
                             if individual_roll <= event_probability:
                                 probability_filtered_events.append((event, worker))
-                                renpy.log(f"Event {event.get('id')} passed individual probability check ({individual_roll} <= {event_probability})")
+                                renpy.log(f"Event {event.get('id')} passed individual probability check ({individual_roll} <= {event_probability}%)")
                             else:
-                                renpy.log(f"Event {event.get('id')} failed individual probability check ({individual_roll} > {event_probability})")
+                                renpy.log(f"Event {event.get('id')} failed individual probability check ({individual_roll} > {event_probability}%)")
                     
                     if probability_filtered_events:
                         # Use weight-based selection among events that passed probability check

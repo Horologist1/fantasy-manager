@@ -842,5 +842,3 @@ unique, procedural, encounter_only, monster
 equipment, consumable, ingredient
 
 ---
-
-This document serves as a complete reference for understanding all mechanics, calculations, and systems in Fantasy Manager.

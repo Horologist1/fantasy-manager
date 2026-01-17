@@ -564,7 +564,7 @@ screen main_menu():
         vbox:
             style "main_menu_vbox"
 
-            text "Version 0.9.2.2":
+            text "Version 0.9.2.3":
                 style "main_menu_version"
 
 
@@ -766,7 +766,7 @@ screen about():
             xalign 0.0
 
         ## Versión
-        text "Version 0.9.2.2":
+        text "Version 0.9.2.3":
             style "about_version"
             xalign 0.0
 
@@ -2663,8 +2663,8 @@ screen Building_select(worker):
                         action [
                             # Remove the worker from any current building.
                             Function(remove_worker_from_building, worker),
-                            # Add the worker to this building's assigned workers list.
-                            Function(available_buildings[building_name]["assigned_servants"].append, worker),
+                            # Add the worker to this building's assigned workers list (dedup by name).
+                            Function(add_worker_to_building, worker, building_name),
                             # Set the worker's assigned_building field.
                             SetDict(worker, "assigned_building", building_name),
                             Hide("Building_select"),
@@ -2763,7 +2763,7 @@ screen job_selection(worker):
                                             text_hover_color "#6b6528"
                                             sensitive True
                                             action [
-                                                Function(lambda w, b: b["assigned_servants"].append(w) if w not in b["assigned_servants"] else None, worker, building),
+                                                Function(add_worker_to_building, worker, building_name),
                                                 SetDict(building["servant_jobs"], worker["name"], profession["id"]),
                                                 # Always recalculate and check objectives when assigning workers during tutorial
                                                 Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
@@ -4246,7 +4246,7 @@ screen building_selection(worker):
                                 text_hover_color "#6b6528"
                                 action [
                                     Function(remove_worker_from_building, worker),
-                                    Function(lambda w, b: available_buildings[b]["assigned_servants"].append(w) if w not in available_buildings[b]["assigned_servants"] else None, worker, building_name),
+                                    Function(add_worker_to_building, worker, building_name),
                                     SetDict(worker, "assigned_building", building_name),
                                     Hide("building_selection"),
                                     Show("workers")
@@ -5831,6 +5831,9 @@ screen workers():
     modal True
     add workers_bg
     add Solid("#00000099")
+    # Ensure no duplicate workers appear in assigned lists
+    python:
+        normalize_building_assignments()
     frame:
         xalign 0.5  # Center the frame horizontally
         yalign 0.5  # Center the frame vertically

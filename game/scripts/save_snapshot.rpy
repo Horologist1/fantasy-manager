@@ -98,6 +98,21 @@ init python:
         store.money = int(s.get("money", 5000))
         # Restore workers first
         store.workers = _cp.deepcopy(s.get("workers", []))
+        # Deduplicate workers by name to avoid save-induced duplicates
+        try:
+            seen_names = set()
+            deduped_workers = []
+            for w in store.workers:
+                wname = w.get("name")
+                if wname in seen_names:
+                    renpy.log(f"SNAPSHOT: duplicate worker '{wname}' in workers list, skipping")
+                    continue
+                deduped_workers.append(w)
+                if wname:
+                    seen_names.add(wname)
+            store.workers = deduped_workers
+        except Exception as e:
+            renpy.log("SNAPSHOT: error deduping workers list: " + str(e))
         # Restore buildings next
         store.available_buildings = _cp.deepcopy(s.get("available_buildings", {}))
         store.manager_inventory = _cp.deepcopy(s.get("manager_inventory", []))
@@ -163,9 +178,15 @@ init python:
                     continue
                 assigned = b.get("assigned_servants", []) or []
                 relinked = []
+                seen_names = set()
                 for sw in assigned:
                     wname = sw.get("name") if isinstance(sw, dict) else None
+                    if wname in seen_names:
+                        renpy.log(f"SNAPSHOT: duplicate assigned_servant '{wname}' in {bname}, skipping")
+                        continue
                     relinked.append(name_to_worker.get(wname, sw))
+                    if wname:
+                        seen_names.add(wname)
                 b["assigned_servants"] = relinked
                 # Ensure servant_jobs exists
                 if "servant_jobs" not in b or not isinstance(b["servant_jobs"], dict):
@@ -278,49 +299,66 @@ init python:
                 screen_context = snap["screen_context"]
             
             renpy.log(f"SNAPSHOT: restoring screen context = {screen_context}")
+
+            # Clear existing UI/state before showing the restored screen to avoid stale overlays
+            try:
+                for _screen in [
+                    "daily_report",
+                    "workers",
+                    "Building_select_global",
+                    "map_screen",
+                    "journal_panel",
+                    "manager_inventory",
+                    "tavern",
+                    "Building_select",
+                    "job_selection",
+                    "building_selection",
+                    "worker_details",
+                    "more_details_screen",
+                    "report_details",
+                ]:
+                    if renpy.get_screen(_screen):
+                        renpy.hide_screen(_screen)
+                renpy.scene()
+            except Exception as e_reset:
+                renpy.log("SNAPSHOT: UI reset error: " + str(e_reset))
             
             try:
-                if screen_context == "daily_report":
-                    renpy.show_screen("daily_report")
-                    renpy.log("SNAPSHOT: daily_report screen shown successfully")
-                elif screen_context == "workers":
-                    renpy.show_screen("workers")
-                    renpy.log("SNAPSHOT: workers screen shown successfully")
-                elif screen_context == "buildings":
-                    renpy.show_screen("Building_select_global")
-                    renpy.log("SNAPSHOT: buildings screen shown successfully")
-                elif screen_context == "map":
-                    renpy.show_screen("map_screen")
-                    renpy.log("SNAPSHOT: map screen shown successfully")
-                elif screen_context == "journal":
-                    renpy.show_screen("journal_panel")
-                    renpy.log("SNAPSHOT: journal screen shown successfully")
-                elif screen_context == "inventory":
-                    renpy.show_screen("manager_inventory")
-                    renpy.log("SNAPSHOT: inventory screen shown successfully")
-                else:
-                    # Default to tavern
-                    renpy.show_screen("tavern")
-                    renpy.log("SNAPSHOT: tavern screen shown successfully (default)")
-                
-                # Clear persistent flags after successful screen restoration
+                # Clear persistent flags before transferring control to a screen/label
                 persistent._slot_to_apply = None
                 persistent.loaded_via_save = False
                 persistent._context_restored = True
                 renpy.save_persistent()
-                renpy.log("SNAPSHOT: persistent flags cleared after successful screen restore")
+                renpy.log("SNAPSHOT: persistent flags cleared before screen restoration")
+
+                if screen_context == "daily_report":
+                    renpy.call_screen("daily_report")
+                    renpy.log("SNAPSHOT: daily_report screen called successfully")
+                elif screen_context == "workers":
+                    renpy.call_screen("workers")
+                    renpy.log("SNAPSHOT: workers screen called successfully")
+                elif screen_context == "buildings":
+                    renpy.call_screen("Building_select_global")
+                    renpy.log("SNAPSHOT: buildings screen called successfully")
+                elif screen_context == "map":
+                    renpy.call_screen("map_screen")
+                    renpy.log("SNAPSHOT: map screen called successfully")
+                elif screen_context == "journal":
+                    renpy.call_screen("journal_panel")
+                    renpy.log("SNAPSHOT: journal screen called successfully")
+                elif screen_context == "inventory":
+                    renpy.call_screen("manager_inventory")
+                    renpy.log("SNAPSHOT: inventory screen called successfully")
+                else:
+                    # Default to tavern flow label (handles setup and calls screen)
+                    renpy.jump("tavern_screen")
             except Exception as e_show:
                 renpy.log(f"SNAPSHOT: show_screen error for {screen_context}: " + str(e_show))
                 try:
-                    # Fallback to tavern if specific screen fails
-                    renpy.show_screen("tavern")
-                    renpy.log("SNAPSHOT: fallback to tavern screen successful")
+                    # Fallback to tavern flow if specific screen fails
+                    renpy.jump("tavern_screen")
                 except Exception as e_fallback:
                     renpy.log("SNAPSHOT: fallback tavern error: " + str(e_fallback))
-                    try:
-                        renpy.restart_interaction()
-                    except Exception as e_restart:
-                        renpy.log("SNAPSHOT: restart_interaction error: " + str(e_restart))
         except Exception as e:
             renpy.log("SNAPSHOT: post-load apply error: " + str(e))
 

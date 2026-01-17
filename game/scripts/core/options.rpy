@@ -25,7 +25,7 @@ define gui.show_name = True
 
 ## The version of the game.
 
-define config.version = "0.9.2.2"
+define config.version = "0.9.2.3"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -199,35 +199,10 @@ init python:
     ## Exclude the docs folder completely
     build.classify('docs/**', None)
     
-    ## Exclude ALL devkit files and folders EXCEPT FantasyManager_Editor_v4.exe
-    ## This ensures only the editor .exe is included in builds, all other devkit files are excluded
-    
-    # Exclude entire subdirectories (all files and subfolders)
-    build.classify('devkit/linux/**', None)
-    build.classify('devkit/legacy/**', None)
-    build.classify('devkit/__pycache__/**', None)
-    build.classify('devkit/temp_analysis/**', None)
-    
-    # Exclude all script files by extension
-    build.classify('devkit/*.py', None)
-    build.classify('devkit/*.bat', None)
-    build.classify('devkit/*.sh', None)
-    build.classify('devkit/*.ps1', None)
-    
-    # Exclude all documentation files
-    build.classify('devkit/*.md', None)
-    build.classify('devkit/**/*.md', None)
-    
-    # Exclude specific old .exe versions (v4 will be included by default since it's not classified)
-    build.classify('devkit/FantasyManager_Editor_v2.exe', None)
-    build.classify('devkit/FantasyManager_Editor_v3.exe', None)
-    
-    # Exclude any other common file types that might be added
-    # Note: FantasyManager_Editor_v4.exe is NOT classified here, so it will be included
-    build.classify('devkit/*.txt', None)
-    build.classify('devkit/*.json', None)
-    build.classify('devkit/*.xml', None)
-    build.classify('devkit/*.ico', None)
+    ## Exclude ALL devkit files and folders completely (including all .exe files and the folder itself)
+    ## This ensures the entire devkit folder is excluded from builds
+    build.classify('devkit/**', None)
+    build.classify('devkit/', None)
 
     ## To archive files, classify them as 'archive'.
 

@@ -1,8 +1,11 @@
 @echo off
 cd /d "%~dp0"
-echo Fantasy Manager Editor v4.0 - Complete Edition
+echo Fantasy Manager Editor v5.1 - Complete Edition
 echo.
 echo Features:
+echo  - Only Assigned field for traits
+echo  - Manual worker file loading
+echo  - Save only current worker
 echo  - Whoremaster Import
 echo  - GIF to WebM conversion
 echo  - Workers, Traits, Events, Items editors

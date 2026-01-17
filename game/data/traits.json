@@ -1,1810 +1,2043 @@
 [
-    {
-        "name": "Beautiful",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2
-        },
-        "description": "Clients love beauty. Increases earnings when clients are seeking attractive servants.",
-        "nsfw": false
+  {
+    "name": "Beautiful",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2
     },
-    {
-        "name": "Charming",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 2
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "Charm enhances performance and attracts high-paying clients.",
-        "nsfw": false
+    "description": "Clients love beauty. Increases earnings when clients are seeking attractive servants.",
+    "nsfw": false
+  },
+  {
+    "name": "Charming",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2
+      },
+      "earnings_multiplier": 1.15
     },
-    {
-        "name": "Nice Tan",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1
-        },
-        "description": "A nice tan makes a servant more appealing, increasing client tips.",
-        "nsfw": false
+    "description": "Charm enhances performance and attracts high-paying clients.",
+    "nsfw": false
+  },
+  {
+    "name": "Nice Tan",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1
     },
-    {
-        "name": "Hardworking",
-        "conflicts": ["Lazy"],
-        "removes_traits": ["Lazy"],
-        "modifiers": {
-            "skill_modifiers": {
-                "Sex": 1,
-                "Anal": 1,
-                "BDSM": 1
-            },
-            "health_regeneration": 1
-        },
-        "description": "A hardworking servant increases overall efficiency and regenerates health faster.",
-        "nsfw": false
+    "description": "A nice tan makes a servant more appealing, increasing client tips.",
+    "nsfw": false
+  },
+  {
+    "name": "Hardworking",
+    "conflicts": [
+      "Lazy"
+    ],
+    "removes_traits": [
+      "Lazy"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Sex": 1,
+        "Anal": 1,
+        "BDSM": 1
+      },
+      "health_regeneration": 1
     },
-    {
-        "name": "Lazy",
-        "conflicts": ["Hardworking", "Energetic"],
-        "removes_traits": ["Hardworking", "Energetic"],
-        "modifiers": {
-            "energy": -1,
-            "skill_modifiers": {
-                "Special": -1
-            }
-        },
-        "description": "A lazy servant loses energy faster and underperforms in client services.",
-        "nsfw": false
+    "description": "A hardworking servant increases overall efficiency and regenerates health faster.",
+    "nsfw": false
+  },
+  {
+    "name": "Lazy",
+    "conflicts": [
+      "Hardworking",
+      "Energetic"
+    ],
+    "removes_traits": [
+      "Hardworking",
+      "Energetic"
+    ],
+    "modifiers": {
+      "energy": -1,
+      "skill_modifiers": {
+        "Special": -1
+      }
     },
-    {
-        "name": "Clever",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 3
-            },
-            "earnings_multiplier": 1.05
-        },
-        "description": "A clever servant can make smart decisions, slightly boosting earnings.",
-        "nsfw": false
+    "description": "A lazy servant loses energy faster and underperforms in client services.",
+    "nsfw": false
+  },
+  {
+    "name": "Clever",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 3
+      },
+      "earnings_multiplier": 1.05
     },
-    {
-        "name": "Agile",
-        "conflicts": ["Clumsy"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Agility": 1,
-                "Striptease": 1
-            }
-        },
-        "description": "Agility improves performance in physical tasks and dance routines.",
-        "nsfw": false
+    "description": "A clever servant can make smart decisions, slightly boosting earnings.",
+    "nsfw": false
+  },
+  {
+    "name": "Agile",
+    "conflicts": [
+      "Clumsy"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 1,
+        "Striptease": 1
+      }
     },
-    {
-        "name": "Mystical",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Craft": 4
-            },
-            "earnings_multiplier": 1.2
-        },
-        "description": "A mystical servant possesses an otherworldly allure that clients find irresistible.",
-        "nsfw": false
+    "description": "Agility improves performance in physical tasks and dance routines.",
+    "nsfw": false
+  },
+  {
+    "name": "Mystical",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 4
+      },
+      "earnings_multiplier": 1.2
     },
-    {
-        "name": "Wise",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 2
-            },
-            "health_regeneration": 2
-        },
-        "description": "Wisdom increases decision-making skills and helps recover health quickly.",
-        "nsfw": false
+    "description": "A mystical servant possesses an otherworldly allure that clients find irresistible.",
+    "nsfw": false
+  },
+  {
+    "name": "Wise",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 2
+      },
+      "health_regeneration": 2
     },
-    {
-        "name": "Graceful",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 2,
-                "Clever": 1
-            },
-            "earnings_multiplier": 1.1
-        },
-        "description": "Gracefulness enhances performance on stage and attracts premium clients.",
-        "nsfw": false
+    "description": "Wisdom increases decision-making skills and helps recover health quickly.",
+    "nsfw": false
+  },
+  {
+    "name": "Graceful",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2,
+        "Clever": 1
+      },
+      "earnings_multiplier": 1.1
     },
-    {
-        "name": "Determined",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "health_regeneration": 3,
-            "skill_modifiers": {
-                "Sex": 1
-            }
-        },
-        "description": "Determination helps servants push through tough tasks, slightly boosting stamina.",
-        "nsfw": false
+    "description": "Gracefulness enhances performance on stage and attracts premium clients.",
+    "nsfw": false
+  },
+  {
+    "name": "Determined",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "health_regeneration": 3,
+      "skill_modifiers": {
+        "Sex": 1
+      }
     },
-    {
-        "name": "Charismatic",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 2
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "Charisma attracts clients and increases tips during high-demand events.",
-        "nsfw": false
+    "description": "Determination helps servants push through tough tasks, slightly boosting stamina.",
+    "nsfw": false
+  },
+  {
+    "name": "Charismatic",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2
+      },
+      "earnings_multiplier": 1.15
     },
-    {
-        "name": "Radiant",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "health_regeneration": 1,
-            "joy": 10
-        },
-        "description": "A radiant appearance not only boosts client satisfaction but also improves health regeneration.",
-        "nsfw": false
+    "description": "Charisma attracts clients and increases tips during high-demand events.",
+    "nsfw": false
+  },
+  {
+    "name": "Radiant",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "health_regeneration": 1,
+      "joy": 10
     },
-    {
-        "name": "Smooth Talker",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 3
-            },
-            "earnings_multiplier": 1.25
-        },
-        "description": "Being a smooth talker means better negotiation with clients and increased earnings.",
-        "nsfw": false
+    "description": "A radiant appearance not only boosts client satisfaction but also improves health regeneration.",
+    "nsfw": false
+  },
+  {
+    "name": "Smooth Talker",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 3
+      },
+      "earnings_multiplier": 1.25
     },
-    {
-        "name": "Elegant",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15,
-            "skill_modifiers": {
-                "Striptease": 1,
-                "Charm": 1
-            }
-        },
-        "description": "Elegance not only enhances the servant's presence but also entices premium clientele.",
-        "nsfw": false
+    "description": "Being a smooth talker means better negotiation with clients and increased earnings.",
+    "nsfw": false
+  },
+  {
+    "name": "Elegant",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Striptease": 1,
+        "Charm": 1
+      }
     },
-    {
-        "name": "Robust",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "health": 10,
-            "health_regeneration": 2
-        },
-        "description": "A robust servant has extra health and recovers more quickly from injuries.",
-        "nsfw": false
+    "description": "Elegance not only enhances the servant's presence but also entices premium clientele.",
+    "nsfw": false
+  },
+  {
+    "name": "Robust",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "health": 10,
+      "health_regeneration": 2
     },
-    {
-        "name": "Energetic",
-        "conflicts": ["Lazy"],
-        "removes_traits": ["Lazy"],
-        "modifiers": {
-            "energy": 10,
-            "joy": 10
-        },
-        "description": "An energetic servant has an extra boost in energy, allowing for more client engagements per day.",
-        "nsfw": false
+    "description": "A robust servant has extra health and recovers more quickly from injuries.",
+    "nsfw": false
+  },
+  {
+    "name": "Energetic",
+    "conflicts": [
+      "Lazy"
+    ],
+    "removes_traits": [
+      "Lazy"
+    ],
+    "modifiers": {
+      "energy": 10,
+      "joy": 10
     },
-    {
-        "name": "Magnetic",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "romance": 10
-        },
-        "description": "Magnetic traits draw clients in and substantially increase the earnings per client.",
-        "nsfw": false
+    "description": "An energetic servant has an extra boost in energy, allowing for more client engagements per day.",
+    "nsfw": false
+  },
+  {
+    "name": "Magnetic",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "romance": 10
     },
-    {
-        "name": "Playful",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Special": 1
-            }
-        },
-        "description": "A playful servant often lifts the mood, attracting clients who value light-hearted service.",
-        "nsfw": false
+    "description": "Magnetic traits draw clients in and substantially increase the earnings per client.",
+    "nsfw": false
+  },
+  {
+    "name": "Playful",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Special": 1
+      }
     },
-    {
-        "name": "Elegant Eyes",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1
-        },
-        "description": "Unique traits like elegant eyes are highly sought after by discerning clients.",
-        "nsfw": false
+    "description": "A playful servant often lifts the mood, attracting clients who value light-hearted service.",
+    "nsfw": false
+  },
+  {
+    "name": "Elegant Eyes",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1
     },
-    {
-        "name": "Badly Burnt",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 7,
-        "on_expire": {
-            "add_trait": {
-                "name": "Scarred",
-                "duration": 0
-            }
-        },
-        "description": "Severe burns requiring recovery time. Reduces charm and max energy.",
-        "nsfw": false,
-        "only_assigned": true
-    },
-    {
+    "description": "Unique traits like elegant eyes are highly sought after by discerning clients.",
+    "nsfw": false
+  },
+  {
+    "name": "Badly Burnt",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 7,
+    "on_expire": {
+      "add_trait": {
         "name": "Scarred",
-        "conflicts": ["Cool Scars"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Striptease": -2
-            }
-        },
-        "description": "Permanent scarring that slightly reduces charm effectiveness.",
-        "nsfw": false
+        "duration": 0
+      }
     },
-    {
-        "name": "Expecting Visit2",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 14,
-        "on_expire": {
-            "add_worker": {
-                "worker_name": "Lady Isabella",
-                "conditions": {
-                    "skills": {"Striptease": 18},
-                    "traits": ["Noble"]
-                }
-            }
-        },
-        "description": "Expecting a visit from Lady Isabella, a noble worker with high charm skills.",
-        "nsfw": false,
-        "only_assigned": true
+    "description": "Severe burns requiring recovery time. Reduces charm and max energy.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Scarred",
+    "conflicts": [
+      "Cool Scars"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Striptease": -2
+      }
     },
-    {
-        "name": "Expecting Visit",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 14,
-        "on_expire": {
-            "add_worker": {
-                "random": true
-            }
-        },
-        "description": "Expecting a visit from a high-profile client, boosting skills and earnings.",
-        "nsfw": false,
-        "only_assigned": true
-    },
-    {
-        "name": "Soul Wearied",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 7,
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": -2
-            }
-        },
-        "description": "The worker's spirit is drained after a haunting encounter, reducing their charm.",
-        "nsfw": false,
-        "only_assigned": true
-    },
-    {
-        "name": "Cursed Vitality",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 7,
-        "modifiers": {
-            "health": -5
-        },
-        "description": "A wraith's curse saps the worker's strength, leaving them frail.",
-        "nsfw": false,
-        "only_assigned": true
-    },
-    {
-        "name": "Blade's Whisper",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 7,
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": -2
-            }
-        },
-        "description": "A cursed blade's call lingers, distracting the worker from combat tasks.",
-        "nsfw": false,
-        "only_assigned": true
-    },
-    {
-        "name": "Curse of Greed",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 7,
-        "modifiers": {
-            "skill_modifiers": {
-                "Service": -2
-            }
-        },
-        "description": "A magical curse clouds the worker's judgment, impairing their service skills.",
-        "nsfw": false,
-        "only_assigned": true
-    },
-    {
-        "name": "Pregnant",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 100,
-        "modifiers": {
-            "energy": -5,
-            "skill_modifiers": {
-                "Sex": -2
-            }
-        },
-        "description": "The worker is pregnant, reducing energy and physical performance for an extended period.",
-        "nsfw": true,
-        "only_assigned": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Sick",
-        "conflicts": [],
-        "removes_traits": [],
-        "duration": 7,
-        "modifiers": {
-            "health": -5,
-            "skill_modifiers": {
-                "Charm": -2
-            }
-        },
-        "description": "The worker suffers from illness, weakening health and charm.",
-        "nsfw": true,
-        "only_assigned": true
-    },
-    {
-        "name": "Futa",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "skill_modifiers": {
-                "Special": 2
-            }
-        },
-        "description": "They possess unique anatomy that attracts specialized clientele and commands premium rates.",
-        "nsfw": true,
-        "only_assigned": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Transformed",
-        "conflicts": ["Human", "Elf", "Dwarf", "Orc", "Ogre", "Demon", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.4,
-            "skill_modifiers": {
-                "Extreme": 3,
-                "Charm": 2
-            }
-        },
-        "description": "They have undergone magical transformation, granting otherworldly appeal and enhanced abilities.",
-        "nsfw": false
-    },
-    {
-        "name": "Human",
-        "conflicts": ["Elf", "Dwarf", "Orc", "Ogre", "Demon", "Angel", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 1
-            }
-        },
-        "description": "The most common race, adaptable and versatile in all situations.",
-        "nsfw": false
-    },
-    {
-        "name": "Elf",
-        "conflicts": ["Human", "Dwarf", "Orc", "Ogre", "Demon", "Angel", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Craft": 4,
-                "Agility": 2
-            }
-        },
-        "description": "Graceful and magical beings with natural affinity for mystical arts and agility.",
-        "nsfw": false
-    },
-    {
-        "name": "Dwarf",
-        "conflicts": ["Human", "Elf", "Orc", "Ogre", "Demon", "Angel", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "health": 10,
-            "skill_modifiers": {
-                "Combat": 3,
-                "Clever": 2
-            }
-        },
-        "description": "Sturdy and resilient folk known for their combat prowess and practical wisdom.",
-        "nsfw": false
-    },
-    {
-        "name": "Orc",
-        "conflicts": ["Human", "Elf", "Dwarf", "Ogre", "Demon", "Angel", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 4,
-                "BDSM": 2
-            },
-            "rebelliousness": 20
-        },
-        "description": "Fierce warriors with natural combat instincts and dominant personalities.",
-        "nsfw": false
-    },
-    {
-        "name": "Ogre",
-        "conflicts": ["Human", "Elf", "Dwarf", "Orc", "Demon", "Angel", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "health": 15,
-            "skill_modifiers": {
-                "Combat": 3,
-                "Sex": 2
-            },
-            "rebelliousness": 15
-        },
-        "description": "Large and powerful beings with impressive physical capabilities.",
-        "nsfw": false
-    },
-    {
-        "name": "Demon",
-        "conflicts": ["Human", "Elf", "Dwarf", "Orc", "Ogre", "Angel", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "skill_modifiers": {
-                "Extreme": 4,
-                "BDSM": 3,
-                "Craft": 2
-            },
-            "rebelliousness": 25
-        },
-        "description": "Infernal beings with dark charisma and expertise in forbidden pleasures.",
-        "nsfw": true
-    },
-    {
-        "name": "Angel",
-        "conflicts": ["Human", "Elf", "Dwarf", "Orc", "Ogre", "Demon", "Vampire", "Goblin"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.25,
-            "skill_modifiers": {
-                "Charm": 4,
-                "Craft": 3
-            },
-            "joy": 20,
-            "rebelliousness": -20
-        },
-        "description": "Divine beings radiating purity and grace, naturally obedient and joyful.",
-        "nsfw": false
-    },
-    {
-        "name": "Goblin",
-        "conflicts": ["Human", "Elf", "Dwarf", "Orc", "Ogre", "Demon", "Angel"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Agility": 4,
-                "Clever": 3,
-                "Extreme": 2
-            },
-            "rebelliousness": 10,
-            "joy": 15
-        },
-        "description": "Small, mischievous creatures with quick reflexes and cunning minds, perfect for agile tasks.",
-        "nsfw": false
-    },
-    {
-        "name": "Vampire",
-        "conflicts": ["Angel"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Charm": 3,
-                "Extreme": 2,
-                "Craft": 1
-            }
-        },
-        "description": "Undead beings with supernatural charm and mysterious allure.",
-        "nsfw": true,
-        "only_assigned": true
-    },
-    {
-        "name": "Open Minded",
-        "conflicts": ["Shy", "Conservative"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Extreme": 2,
-                "Group": 2,
-                "BDSM": 1
-            }
-        },
-        "description": "They embrace new experiences and unconventional requests with enthusiasm.",
-        "nsfw": true
-    },
-    {
-        "name": "Shy",
-        "conflicts": ["Open Minded", "Charismatic"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": -2,
-                "Group": -2
-            }
-        },
-        "description": "They struggle with social situations and group activities.",
-        "nsfw": false
-    },
-    {
-        "name": "Conservative",
-        "conflicts": ["Open Minded"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Extreme": -2,
-                "BDSM": -1
-            },
-            "rebelliousness": -10
-        },
-        "description": "They prefer traditional approaches and avoid extreme activities.",
-        "nsfw": false,
-        "attribute_caps": {
-            "rebelliousness": 60
+    "description": "Permanent scarring that slightly reduces charm effectiveness.",
+    "nsfw": false
+  },
+  {
+    "name": "Expecting Visit2",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 14,
+    "on_expire": {
+      "add_worker": {
+        "worker_name": "Lady Isabella",
+        "conditions": {
+          "skills": {
+            "Striptease": 18
+          },
+          "traits": [
+            "Noble"
+          ]
         }
-    },
-    {
-        "name": "Nervous",
-        "conflicts": ["Confident"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": -1,
-                "Combat": -1
-            }
-        },
-        "description": "They are easily startled and perform poorly under pressure.",
-        "nsfw": false
-    },
-    {
-        "name": "Confident",
-        "conflicts": ["Nervous", "Shy"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 2,
-                "Striptease": 1
-            }
-        },
-        "description": "They exude self-assurance and perform excellently in social situations.",
-        "nsfw": false
-    },
-    {
-        "name": "Optimist",
-        "conflicts": ["Pessimist"],
-        "removes_traits": [],
-        "modifiers": {
-            "joy": 20,
-            "skill_modifiers": {
-                "Charm": 1
-            }
-        },
-        "description": "They maintain a positive outlook that brightens everyone's day.",
-        "nsfw": false
-    },
-    {
-        "name": "Pessimist",
-        "conflicts": ["Optimist"],
-        "removes_traits": [],
-        "modifiers": {
-            "joy": -20,
-            "skill_modifiers": {
-                "Charm": -1
-            }
-        },
-        "description": "They expect the worst and their negativity affects their performance.",
-        "nsfw": false
-    },
-    {
-        "name": "Quick Learner",
-        "conflicts": ["Slow Learner"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 2
-            }
-        },
-        "description": "They pick up new skills and techniques faster than others.",
-        "nsfw": false
-    },
-    {
-        "name": "Slow Learner",
-        "conflicts": ["Quick Learner"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": -2
-            }
-        },
-        "description": "They need more time to master new skills and concepts.",
-        "nsfw": false
-    },
-    {
-        "name": "Sadistic",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "BDSM": 4,
-                "Extreme": 2
-            }
-        },
-        "description": "They derive pleasure from dominance and control over others.",
-        "nsfw": true
-    },
-    {
-        "name": "Rebellious",
-        "conflicts": ["Dependant", "Obedient"],
-        "removes_traits": [],
-        "modifiers": {
-            "rebelliousness": 30,
-            "skill_modifiers": {
-                "Combat": 1
-            }
-        },
-        "description": "They resist authority and prefer to do things their own way.",
-        "nsfw": false
-    },
-    {
-        "name": "Dependant",
-        "conflicts": ["Rebellious"],
-        "removes_traits": [],
-        "modifiers": {
-            "rebelliousness": -20,
-            "relationship": 15
-        },
-        "description": "They rely heavily on others and form strong emotional bonds.",
-        "nsfw": false,
-        "attribute_caps": {
-            "rebelliousness": 30
-        }
-    },
-    {
-        "name": "Obedient",
-        "conflicts": ["Rebellious"],
-        "removes_traits": [],
-        "modifiers": {
-            "rebelliousness": -15,
-            "relationship": 10,
-            "skill_modifiers": {
-                "Service": 2
-            }
-        },
-        "description": "They follow orders without question and aim to please.",
-        "nsfw": false,
-        "attribute_caps": {
-            "rebelliousness": 40
-        }
-    },
-    {
-        "name": "Tomboy",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 2,
-                "Agility": 1
-            }
-        },
-        "description": "They prefer physical activities and have a tough, independent attitude.",
-        "nsfw": false
-    },
-    {
-        "name": "Strong",
-        "conflicts": ["Delicate"],
-        "removes_traits": [],
-        "modifiers": {
-            "health": 5,
-            "skill_modifiers": {
-                "Combat": 3
-            }
-        },
-        "description": "They possess exceptional physical strength and endurance.",
-        "nsfw": false
-    },
-    {
-        "name": "Delicate",
-        "conflicts": ["Strong"],
-        "removes_traits": [],
-        "modifiers": {
-            "health": -10,
-            "skill_modifiers": {
-                "Charm": 2,
-                "Striptease": 1
-            }
-        },
-        "description": "They have a fragile constitution but refined grace.",
-        "nsfw": false
-    },
-    {
-        "name": "Tough",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "health": 8,
-            "skill_modifiers": {
-                "Combat": 1
-            }
-        },
-        "description": "They can endure hardship and recover from injuries quickly.",
-        "nsfw": false
-    },
-    {
-        "name": "Clumsy",
-        "conflicts": ["Agile"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Agility": -2,
-                "Striptease": -1
-            }
-        },
-        "description": "They are prone to accidents and lack coordination.",
-        "nsfw": false
-    },
-    {
-        "name": "Exotic",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.25
-        },
-        "description": "They have an unusual and captivating appearance that draws attention.",
-        "nsfw": false
-    },
-    {
-        "name": "Pierced",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15,
-            "skill_modifiers": {
-                "Oral": 1,
-                "Sex": 1
-            }
-        },
-        "description": "They have strategic piercings that enhance certain activities.",
-        "nsfw": true
-    },
-    {
-        "name": "Tattooed",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1,
-            "skill_modifiers": {
-                "BDSM": 1,
-                "Extreme": 1
-            }
-        },
-        "description": "They have artistic tattoos that add to their rebellious appeal.",
-        "nsfw": false
-    },
-    {
-        "name": "Cool Scars",
-        "conflicts": ["Scarred"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.05,
-            "skill_modifiers": {
-                "Combat": 1
-            }
-        },
-        "description": "They have attractive battle scars that tell stories of adventure.",
-        "nsfw": false
-    },
-    {
-        "name": "Beauty Mark",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1,
-            "skill_modifiers": {
-                "Charm": 1
-            }
-        },
-        "description": "They have a distinctive mark that enhances their natural beauty.",
-        "nsfw": false
-    },
-    {
-        "name": "Cute",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15,
-            "skill_modifiers": {
-                "Charm": 2
-            }
-        },
-        "description": "They have an adorable appearance that melts hearts.",
-        "nsfw": false
-    },
-    {
-        "name": "Smoker",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "health": -5,
-            "skill_modifiers": {
-                "Charm": 1
-            }
-        },
-        "description": "They smoke regularly, which affects their health but adds to their mystique.",
-        "nsfw": false
-    },
-    {
-        "name": "Brawler",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 4
-            }
-        },
-        "description": "They are experienced street fighters with excellent combat skills.",
-        "nsfw": false
-    },
-    {
-        "name": "Maid",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Service": 3,
-                "Charm": 1
-            },
-            "rebelliousness": -5
-        },
-        "description": "They are trained in domestic service and hospitality.",
-        "nsfw": false
-    },
-    {
-        "name": "Singer",
-        "conflicts": ["Tone Deaf"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 4,
-                "Striptease": 2
-            }
-        },
-        "description": "They have a beautiful voice that captivates audiences.",
-        "nsfw": false
-    },
-    {
-        "name": "Tone Deaf",
-        "conflicts": ["Singer"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": -2,
-                "Striptease": -1
-            }
-        },
-        "description": "They cannot carry a tune and struggle with musical performances.",
-        "nsfw": false
-    },
-    {
-        "name": "Teacher",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 3,
-                "Charm": 2,
-                "Craft": 1
-            },
-            "relationship": 10
-        },
-        "description": "They are skilled educators who build strong relationships through knowledge.",
-        "nsfw": false
-    },
-    {
-        "name": "Adventurer",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 2,
-                "Agility": 2
-            },
-            "rebelliousness": 10
-        },
-        "description": "They have explored dangerous places and gained valuable experience.",
-        "nsfw": false
-    },
-    {
-        "name": "Waitress",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Service": 4,
-                "Charm": 1,
-                "Agility": 1
-            }
-        },
-        "description": "They are experienced in customer service and hospitality work.",
-        "nsfw": false
-    },
-    {
-        "name": "Large Breasts",
-        "conflicts": ["Small Breasts", "Flat Chest"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Sex": 2,
-                "Striptease": 2,
-                "Charm": 1
-            }
-        },
-        "description": "They have an impressive bust that attracts significant attention.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Small Breasts",
-        "conflicts": ["Large Breasts", "Flat Chest"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.05,
-            "skill_modifiers": {
-                "Agility": 1,
-                "Charm": 1
-            }
-        },
-        "description": "They have a petite bust that some clients find particularly appealing.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Flat Chest",
-        "conflicts": ["Large Breasts", "Small Breasts"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 0.95,
-            "skill_modifiers": {
-                "Agility": 2,
-                "Combat": 1
-            }
-        },
-        "description": "They have a flat chest that appeals to clients with specific preferences.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Firm Ass",
-        "conflicts": ["Soft Ass"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15,
-            "skill_modifiers": {
-                "Anal": 2,
-                "Striptease": 1,
-                "Agility": 1
-            }
-        },
-        "description": "They have a well-toned posterior that enhances their physical appeal.",
-        "nsfw": true
-    },
-    {
-        "name": "Soft Ass",
-        "conflicts": ["Firm Ass"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1,
-            "skill_modifiers": {
-                "Anal": 1,
-                "Charm": 1
-            }
-        },
-        "description": "They have a soft, inviting posterior that clients love to touch.",
-        "nsfw": true
-    },
-    {
-        "name": "Large Penis",
-        "conflicts": ["Small Penis"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "skill_modifiers": {
-                "Sex": 3,
-                "Anal": 2,
-                "Homo": 2
-            }
-        },
-        "description": "They are exceptionally well-endowed, commanding premium rates.",
-        "nsfw": true,
-        "gender_restriction": "male"
-    },
-    {
-        "name": "Small Penis",
-        "conflicts": ["Large Penis"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 0.9,
-            "skill_modifiers": {
-                "Oral": 1,
-                "Charm": 1
-            }
-        },
-        "description": "They compensate for their modest size with skill and charm.",
-        "nsfw": true,
-        "gender_restriction": "male"
-    },
-    {
-        "name": "Tight",
-        "conflicts": ["Loose"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Sex": 2,
-                "Anal": 2
-            }
-        },
-        "description": "They have exceptional muscle control that clients find irresistible.",
-        "nsfw": true
-    },
-    {
-        "name": "Loose",
-        "conflicts": ["Tight"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1,
-            "skill_modifiers": {
-                "Group": 2,
-                "Extreme": 1
-            }
-        },
-        "description": "They can accommodate larger groups and extreme activities with ease.",
-        "nsfw": true
-    },
-    {
-        "name": "Sensitive",
-        "conflicts": ["Numb"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.1,
-            "skill_modifiers": {
-                "Sex": 1,
-                "Oral": 1,
-                "BDSM": 1
-            }
-        },
-        "description": "They are highly responsive to touch, enhancing the experience for clients.",
-        "nsfw": true
-    },
-    {
-        "name": "Numb",
-        "conflicts": ["Sensitive"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.05,
-            "skill_modifiers": {
-                "BDSM": 2,
-                "Extreme": 1
-            }
-        },
-        "description": "They have reduced sensitivity, allowing them to endure more intense activities.",
-        "nsfw": true
-    },
-    {
-        "name": "Flexible",
-        "conflicts": ["Stiff"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15,
-            "skill_modifiers": {
-                "Agility": 2,
-                "Striptease": 2,
-                "Sex": 1
-            }
-        },
-        "description": "They have exceptional flexibility that opens up new possibilities.",
-        "nsfw": false
-    },
-    {
-        "name": "Stiff",
-        "conflicts": ["Flexible"],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 0.95,
-            "skill_modifiers": {
-                "Agility": -2,
-                "Striptease": -1,
-                "Combat": 1
-            }
-        },
-        "description": "They lack flexibility but make up for it with other strengths.",
-        "nsfw": false
-    },
-    {
-        "name": "High Libido",
-        "conflicts": ["Low Libido"],
-        "removes_traits": ["Low Libido"],
-        "modifiers": {
-            "libido_regeneration": 5,
-            "libido": 5,
-            "libido_max": 5
-        },
-        "description": "An unusually high sex drive leads to faster libido regeneration (+5 per day) and higher starting libido.",
-        "nsfw": true
-    },
-    {
-        "name": "Low Libido",
-        "conflicts": ["High Libido", "Nympho", "Satyr"],
-        "removes_traits": ["High Libido", "Nympho", "Satyr"],
-        "modifiers": {
-            "libido": -5
-        },
-        "attribute_caps": {
-            "libido": 5
-        },
-        "description": "A naturally low sex drive caps libido at 5 and reduces starting libido. Incompatible with high-libido traits.",
-        "nsfw": true
-    },
-    {
-        "name": "Nympho",
-        "conflicts": ["Low Libido", "Satyr"],
-        "removes_traits": ["Low Libido"],
-        "gender_restriction": "female",
-        "modifiers": {
-            "libido": 10,
-            "libido_max": 10,
-            "skill_modifiers": {
-                "Sex": 3,
-                "Oral": 2
-            }
-        },
-        "attribute_minimums": {
-            "libido": 10
-        },
-        "description": "Insatiable female sexuality keeps libido at minimum 10 and provides bonuses to sexual skills.",
-        "nsfw": true
-    },
-    {
-        "name": "Satyr",
-        "conflicts": ["Low Libido", "Nympho"],
-        "removes_traits": ["Low Libido"],
-        "gender_restriction": "male",
-        "modifiers": {
-            "libido": 10,
-            "libido_max": 10,
-            "skill_modifiers": {
-                "Sex": 3,
-                "Group": 2
-            }
-        },
-        "attribute_minimums": {
-            "libido": 10
-        },
-        "description": "Primal male sexuality keeps libido at minimum 10 and provides bonuses to sexual skills.",
-        "nsfw": true
-    },
-    {
-        "name": "Demanding",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "comfort_desired": 5
-        },
-        "description": "This worker has high standards and expects better accommodations. Increases desired comfort level by 5.",
-        "nsfw": false
-    },
-    {
-        "name": "Magical",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Craft": 3
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance.",
-        "nsfw": false
-    },
-    {
-        "name": "Great Figure",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Charm": 2,
-                "Striptease": 1
-            }
-        },
-        "description": "They have an exceptional figure that captivates clients and enhances their appeal.",
-        "nsfw": false
-    },
-    {
-        "name": "Long Legs",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Agility": 2,
-                "Striptease": 2
-            },
-            "earnings_multiplier": 1.1
-        },
-        "description": "Long legs enhance their grace and agility, making them excellent performers.",
-        "nsfw": false
-    },
-    {
-        "name": "Large Hips",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Sex": 2
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "They have wide hips that enhance their appeal and performance.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Deluxe Derriere",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Anal": 3,
-                "Striptease": 1
-            }
-        },
-        "description": "They have an exceptional posterior that commands premium rates.",
-        "nsfw": true
-    },
-    {
-        "name": "Perky Nipples",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 1,
-                "Striptease": 2
-            },
-            "earnings_multiplier": 1.1
-        },
-        "description": "Their perky nipples enhance their appeal and striptease performances.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Mature Body",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.25,
-            "skill_modifiers": {
-                "Charm": 2
-            }
-        },
-        "description": "A mature body exudes confidence and experience, attracting discerning clients.",
-        "nsfw": false
-    },
-    {
-        "name": "Tall",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 1,
-                "Combat": 2
-            },
-            "earnings_multiplier": 1.1
-        },
-        "description": "Their height gives them a commanding presence and combat advantage.",
-        "nsfw": false
-    },
-    {
-        "name": "Fleet of Foot",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Agility": 3
-            }
-        },
-        "description": "They are exceptionally quick and agile on their feet.",
-        "nsfw": false
-    },
-    {
-        "name": "Good Kisser",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Oral": 2,
-                "Charm": 1
-            },
-            "earnings_multiplier": 1.1
-        },
-        "description": "They are skilled at kissing, enhancing their oral and charm abilities.",
-        "nsfw": true
-    },
-    {
-        "name": "Sexy Air",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Charm": 2
-            }
-        },
-        "description": "They exude a sexy aura that captivates clients and increases earnings.",
-        "nsfw": true
-    },
-    {
-        "name": "Meek",
-        "conflicts": ["Rebellious", "Aggressive"],
-        "removes_traits": [],
-        "modifiers": {
-            "rebelliousness": -15,
-            "skill_modifiers": {
-                "Service": 1
-            }
-        },
-        "description": "They are submissive and obedient, reducing rebelliousness and improving service.",
-        "nsfw": false,
-        "attribute_caps": {
-            "rebelliousness": 40
-        }
-    },
-    {
-        "name": "Nerd",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 3,
-                "Charm": -1
-            }
-        },
-        "description": "They are highly intelligent but struggle with social interactions.",
-        "nsfw": false
-    },
-    {
-        "name": "Idol",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.4,
-            "skill_modifiers": {
-                "Charm": 4,
-                "Striptease": 3
-            }
-        },
-        "description": "They are a pop idol with exceptional charm and performance skills.",
-        "nsfw": false
-    },
-    {
-        "name": "Princess",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "skill_modifiers": {
-                "Charm": 3
-            },
-            "comfort_desired": 2
-        },
-        "description": "They have a regal attitude that attracts premium clients but demands better accommodations.",
-        "nsfw": false,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Tsundere",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.25,
-            "skill_modifiers": {
-                "Charm": 2
-            },
-            "rebelliousness": 10
-        },
-        "description": "They act cold but are actually warm inside, creating an appealing contrast.",
-        "nsfw": false,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Yandere",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "skill_modifiers": {
-                "Charm": 2,
-                "BDSM": 3
-            },
-            "relationship": -10
-        },
-        "description": "They are obsessively in love, which can be both appealing and dangerous.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Aggressive",
-        "conflicts": ["Meek", "Obedient"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 3,
-                "BDSM": 2
-            },
-            "rebelliousness": 15
-        },
-        "description": "They are aggressive and dominant, excelling in combat and BDSM activities.",
-        "nsfw": false
-    },
-    {
-        "name": "Audacity",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Charm": 2
-            }
-        },
-        "description": "They have bold confidence that attracts clients and increases earnings.",
-        "nsfw": false
-    },
-    {
-        "name": "Manly",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 3,
-                "Charm": -2
-            }
-        },
-        "description": "They have a masculine appearance that enhances combat but reduces charm.",
-        "nsfw": false
-    },
-    {
-        "name": "Social Drinker",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": 1
-            },
-            "health": -3
-        },
-        "description": "They enjoy social drinking, which enhances charm but slightly affects health.",
-        "nsfw": false
-    },
-    {
-        "name": "Strong Magic",
-        "conflicts": [],
-        "removes_traits": [],
-        "requires_traits": ["Magical"],
-        "modifiers": {
-            "skill_modifiers": {
-                "Craft": 5,
-                "Combat": 3
-            },
-            "earnings_multiplier": 1.2
-        },
-        "description": "They possess strong magical abilities, significantly enhancing craft and combat skills.",
-        "nsfw": false
-    },
-    {
-        "name": "Powerful Magic",
-        "conflicts": ["Strong Magic"],
-        "removes_traits": [],
-        "requires_traits": ["Magical"],
-        "modifiers": {
-            "skill_modifiers": {
-                "Craft": 6,
-                "Combat": 4
-            },
-            "earnings_multiplier": 1.3
-        },
-        "description": "They wield powerful magic, making them exceptional in craft and combat.",
-        "nsfw": false
-    },
-    {
-        "name": "Psychic",
-        "conflicts": [],
-        "removes_traits": [],
-        "requires_traits": ["Magical"],
-        "modifiers": {
-            "skill_modifiers": {
-                "Craft": 4,
-                "Clever": 3,
-                "Combat": 2
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "They have psychic abilities that enhance their magical, mental, and combat capabilities.",
-        "nsfw": false
-    },
-    {
-        "name": "Construct",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "health_multiplier": 3.0,
-            "libido": -10
-        },
-        "description": "They are an artificial construct with triple the health but reduced libido.",
-        "nsfw": false
-    },
-    {
-        "name": "Half-Breed",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3
-        },
-        "description": "They are of mixed heritage, making them exotic and highly sought after.",
-        "nsfw": false
-    },
-    {
-        "name": "Sharp-Eyed",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": 2,
-                "Combat": 2
-            }
-        },
-        "description": "They have keen eyesight that enhances their cleverness and combat accuracy.",
-        "nsfw": false
-    },
-    {
-        "name": "Masochist",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "BDSM": 5,
-                "Extreme": 3
-            },
-            "earnings_multiplier": 1.2
-        },
-        "description": "They derive pleasure from pain, excelling in BDSM and extreme activities.",
-        "nsfw": true
-    },
-    {
-        "name": "Pierced Nipples",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15,
-            "skill_modifiers": {
-                "Charm": 1
-            }
-        },
-        "description": "They have pierced nipples that enhance their appeal and earnings.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Pierced Clit",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.2,
-            "skill_modifiers": {
-                "Sex": 2
-            }
-        },
-        "description": "They have a pierced clitoris that enhances sexual performance and earnings.",
-        "nsfw": true,
-        "gender_restriction": "female"
-    },
-    {
-        "name": "Pierced Tongue",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Oral": 4
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "They have a pierced tongue that significantly enhances oral skills.",
-        "nsfw": true
-    },
-    {
-        "name": "No Gag Reflex",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Oral": 5
-            },
-            "earnings_multiplier": 1.2
-        },
-        "description": "They lack a gag reflex, allowing them to excel in deep oral activities.",
-        "nsfw": true
-    },
-    {
-        "name": "Fertile",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.15
-        },
-        "description": "They are highly fertile, attracting clients seeking pregnancy.",
-        "nsfw": true
-    },
-    {
-        "name": "Exhibitionist",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Striptease": 3,
-                "Charm": 2
-            },
-            "earnings_multiplier": 1.15
-        },
-        "description": "They enjoy being watched, excelling in striptease and charm activities.",
-        "nsfw": true
-    },
-    {
-        "name": "Cum Addict",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Oral": 3
-            },
-            "libido_regeneration": 3
-        },
-        "description": "They are addicted to semen, enhancing oral skills and libido regeneration.",
-        "nsfw": true
-    },
-    {
-        "name": "Actress",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.3,
-            "skill_modifiers": {
-                "Charm": 4,
-                "Striptease": 3
-            }
-        },
-        "description": "They are a skilled actress with exceptional charm and performance abilities.",
-        "nsfw": false
-    },
-    {
-        "name": "Porn Star",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "earnings_multiplier": 1.4,
-            "skill_modifiers": {
-                "Sex": 4,
-                "Anal": 3,
-                "Oral": 3,
-                "Group": 3
-            }
-        },
-        "description": "They are a professional porn star with exceptional sexual skills across all activities.",
-        "nsfw": true
-    },
-    {
-        "name": "Assassin",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 5,
-                "Agility": 4
-            },
-            "rebelliousness": 20
-        },
-        "description": "They are a trained assassin with exceptional combat and agility skills.",
-        "nsfw": false
-    },
-    {
-        "name": "Merciless",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Combat": 3,
-                "BDSM": 3
-            }
-        },
-        "description": "They show no mercy, excelling in combat and BDSM activities.",
-        "nsfw": false
-    },
-    {
-        "name": "Dumb",
-        "conflicts": ["Clever", "Quick Learner", "Wise"],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Clever": -3
-            }
-        },
-        "description": "They struggle with intellectual tasks and learning new skills.",
-        "nsfw": false
-    },
-    {
-        "name": "Crazy",
-        "conflicts": [],
-        "removes_traits": [],
-        "modifiers": {
-            "skill_modifiers": {
-                "Charm": -1,
-                "Service": -1
-            },
-            "rebelliousness": 15
-        },
-        "description": "They have unstable mental health, affecting their performance and behavior.",
-        "nsfw": false
+      }
+    },
+    "description": "Expecting a visit from Lady Isabella, a noble worker with high charm skills.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Expecting Visit",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 14,
+    "on_expire": {
+      "add_worker": {
+        "random": true
+      }
+    },
+    "description": "Expecting a visit from a high-profile client, boosting skills and earnings.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Soul Wearied",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 7,
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -2
+      }
+    },
+    "description": "The worker's spirit is drained after a haunting encounter, reducing their charm.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Cursed Vitality",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 7,
+    "modifiers": {
+      "health": -5
+    },
+    "description": "A wraith's curse saps the worker's strength, leaving them frail.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Blade's Whisper",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 7,
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": -2
+      }
+    },
+    "description": "A cursed blade's call lingers, distracting the worker from combat tasks.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Curse of Greed",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 7,
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": -2
+      }
+    },
+    "description": "A magical curse clouds the worker's judgment, impairing their service skills.",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Pregnant",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 100,
+    "modifiers": {
+      "energy": -5,
+      "skill_modifiers": {
+        "Sex": -2
+      }
+    },
+    "description": "The worker is pregnant, reducing energy and physical performance for an extended period.",
+    "nsfw": true,
+    "only_assigned": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Sick",
+    "conflicts": [],
+    "removes_traits": [],
+    "duration": 7,
+    "modifiers": {
+      "health": -5,
+      "skill_modifiers": {
+        "Charm": -2
+      }
+    },
+    "description": "The worker suffers from illness, weakening health and charm.",
+    "nsfw": true,
+    "only_assigned": true
+  },
+  {
+    "name": "Futa",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Special": 2
+      }
+    },
+    "description": "They possess unique anatomy that attracts specialized clientele and commands premium rates.",
+    "nsfw": true,
+    "only_assigned": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Transformed",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.4,
+      "skill_modifiers": {
+        "Extreme": 3,
+        "Charm": 2
+      }
+    },
+    "description": "They have undergone magical transformation, granting otherworldly appeal and enhanced abilities.",
+    "nsfw": false
+  },
+  {
+    "name": "Human",
+    "conflicts": [
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.0,
+      "skill_modifiers": {
+        "Clever": 1,
+        "Service": 2,
+        "Charm": 2
+      }
+    },
+    "description": "The most common race, adaptable and versatile in all situations.",
+    "nsfw": false
+  },
+  {
+    "name": "Elf",
+    "conflicts": [
+      "Human",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Craft": 4,
+        "Agility": 2
+      }
+    },
+    "description": "Graceful and magical beings with natural affinity for mystical arts and agility.",
+    "nsfw": false
+  },
+  {
+    "name": "Dwarf",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "health": 10,
+      "skill_modifiers": {
+        "Combat": 3,
+        "Clever": 2
+      }
+    },
+    "description": "Sturdy and resilient folk known for their combat prowess and practical wisdom.",
+    "nsfw": false
+  },
+  {
+    "name": "Orc",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 4,
+        "BDSM": 2
+      },
+      "rebelliousness": 20
+    },
+    "description": "Fierce warriors with natural combat instincts and dominant personalities.",
+    "nsfw": false
+  },
+  {
+    "name": "Ogre",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Demon",
+      "Angel",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "health": 15,
+      "skill_modifiers": {
+        "Combat": 3,
+        "Sex": 2
+      },
+      "rebelliousness": 15
+    },
+    "description": "Large and powerful beings with impressive physical capabilities.",
+    "nsfw": false
+  },
+  {
+    "name": "Demon",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Angel",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Extreme": 4,
+        "BDSM": 3,
+        "Craft": 2
+      },
+      "rebelliousness": 25
+    },
+    "description": "Infernal beings with dark charisma and expertise in forbidden pleasures.",
+    "nsfw": true
+  },
+  {
+    "name": "Angel",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Vampire",
+      "Goblin"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.25,
+      "skill_modifiers": {
+        "Charm": 4,
+        "Craft": 3
+      },
+      "joy": 20,
+      "rebelliousness": -20
+    },
+    "description": "Divine beings radiating purity and grace, naturally obedient and joyful.",
+    "nsfw": false
+  },
+  {
+    "name": "Goblin",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 4,
+        "Clever": 3,
+        "Extreme": 2
+      },
+      "rebelliousness": 10,
+      "joy": 15
+    },
+    "description": "Small, mischievous creatures with quick reflexes and cunning minds, perfect for agile tasks.",
+    "nsfw": false
+  },
+  {
+    "name": "Vampire",
+    "conflicts": [
+      "Angel"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Charm": 3,
+        "Extreme": 2,
+        "Craft": 1
+      }
+    },
+    "description": "Undead beings with supernatural charm and mysterious allure.",
+    "nsfw": true,
+    "only_assigned": true
+  },
+  {
+    "name": "Open Minded",
+    "conflicts": [
+      "Shy",
+      "Conservative"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Extreme": 2,
+        "Group": 2,
+        "BDSM": 1
+      }
+    },
+    "description": "They embrace new experiences and unconventional requests with enthusiasm.",
+    "nsfw": true
+  },
+  {
+    "name": "Shy",
+    "conflicts": [
+      "Open Minded",
+      "Charismatic"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -2,
+        "Group": -2
+      }
+    },
+    "description": "They struggle with social situations and group activities.",
+    "nsfw": false
+  },
+  {
+    "name": "Conservative",
+    "conflicts": [
+      "Open Minded"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Extreme": -2,
+        "BDSM": -1
+      },
+      "rebelliousness": -10
+    },
+    "description": "They prefer traditional approaches and avoid extreme activities.",
+    "nsfw": false,
+    "attribute_caps": {
+      "rebelliousness": 60
     }
+  },
+  {
+    "name": "Nervous",
+    "conflicts": [
+      "Confident"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -1,
+        "Combat": -1
+      }
+    },
+    "description": "They are easily startled and perform poorly under pressure.",
+    "nsfw": false
+  },
+  {
+    "name": "Confident",
+    "conflicts": [
+      "Nervous",
+      "Shy"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2,
+        "Striptease": 1
+      }
+    },
+    "description": "They exude self-assurance and perform excellently in social situations.",
+    "nsfw": false
+  },
+  {
+    "name": "Optimist",
+    "conflicts": [
+      "Pessimist"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "joy": 20,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They maintain a positive outlook that brightens everyone's day.",
+    "nsfw": false
+  },
+  {
+    "name": "Pessimist",
+    "conflicts": [
+      "Optimist"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "joy": -20,
+      "skill_modifiers": {
+        "Charm": -1
+      }
+    },
+    "description": "They expect the worst and their negativity affects their performance.",
+    "nsfw": false
+  },
+  {
+    "name": "Quick Learner",
+    "conflicts": [
+      "Slow Learner"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 2
+      }
+    },
+    "description": "They pick up new skills and techniques faster than others.",
+    "nsfw": false
+  },
+  {
+    "name": "Slow Learner",
+    "conflicts": [
+      "Quick Learner"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": -2
+      }
+    },
+    "description": "They need more time to master new skills and concepts.",
+    "nsfw": false
+  },
+  {
+    "name": "Sadistic",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "BDSM": 4,
+        "Extreme": 2
+      }
+    },
+    "description": "They derive pleasure from dominance and control over others.",
+    "nsfw": true
+  },
+  {
+    "name": "Rebellious",
+    "conflicts": [
+      "Dependant",
+      "Obedient"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "rebelliousness": 30,
+      "skill_modifiers": {
+        "Combat": 1
+      }
+    },
+    "description": "They resist authority and prefer to do things their own way.",
+    "nsfw": false
+  },
+  {
+    "name": "Dependant",
+    "conflicts": [
+      "Rebellious"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "rebelliousness": -20,
+      "relationship": 15
+    },
+    "description": "They rely heavily on others and form strong emotional bonds.",
+    "nsfw": false,
+    "attribute_caps": {
+      "rebelliousness": 30
+    }
+  },
+  {
+    "name": "Obedient",
+    "conflicts": [
+      "Rebellious"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "rebelliousness": -15,
+      "relationship": 10,
+      "skill_modifiers": {
+        "Service": 2
+      }
+    },
+    "description": "They follow orders without question and aim to please.",
+    "nsfw": false,
+    "attribute_caps": {
+      "rebelliousness": 40
+    }
+  },
+  {
+    "name": "Tomboy",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 2,
+        "Agility": 1
+      }
+    },
+    "description": "They prefer physical activities and have a tough, independent attitude.",
+    "nsfw": false
+  },
+  {
+    "name": "Strong",
+    "conflicts": [
+      "Delicate"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "health": 5,
+      "skill_modifiers": {
+        "Combat": 3
+      }
+    },
+    "description": "They possess exceptional physical strength and endurance.",
+    "nsfw": false
+  },
+  {
+    "name": "Delicate",
+    "conflicts": [
+      "Strong"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "health": -10,
+      "skill_modifiers": {
+        "Charm": 2,
+        "Striptease": 1
+      }
+    },
+    "description": "They have a fragile constitution but refined grace.",
+    "nsfw": false
+  },
+  {
+    "name": "Tough",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "health": 8,
+      "skill_modifiers": {
+        "Combat": 1
+      }
+    },
+    "description": "They can endure hardship and recover from injuries quickly.",
+    "nsfw": false
+  },
+  {
+    "name": "Clumsy",
+    "conflicts": [
+      "Agile"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": -2,
+        "Striptease": -1
+      }
+    },
+    "description": "They are prone to accidents and lack coordination.",
+    "nsfw": false
+  },
+  {
+    "name": "Exotic",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.25
+    },
+    "description": "They have an unusual and captivating appearance that draws attention.",
+    "nsfw": false
+  },
+  {
+    "name": "Pierced",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Oral": 1,
+        "Sex": 1
+      }
+    },
+    "description": "They have strategic piercings that enhance certain activities.",
+    "nsfw": true
+  },
+  {
+    "name": "Tattooed",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "BDSM": 1,
+        "Extreme": 1
+      }
+    },
+    "description": "They have artistic tattoos that add to their rebellious appeal.",
+    "nsfw": false
+  },
+  {
+    "name": "Cool Scars",
+    "conflicts": [
+      "Scarred"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.05,
+      "skill_modifiers": {
+        "Combat": 1
+      }
+    },
+    "description": "They have attractive battle scars that tell stories of adventure.",
+    "nsfw": false
+  },
+  {
+    "name": "Beauty Mark",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They have a distinctive mark that enhances their natural beauty.",
+    "nsfw": false
+  },
+  {
+    "name": "Cute",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "They have an adorable appearance that melts hearts.",
+    "nsfw": false
+  },
+  {
+    "name": "Smoker",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "health": -5,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They smoke regularly, which affects their health but adds to their mystique.",
+    "nsfw": false
+  },
+  {
+    "name": "Brawler",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 4
+      }
+    },
+    "description": "They are experienced street fighters with excellent combat skills.",
+    "nsfw": false
+  },
+  {
+    "name": "Maid",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": 3,
+        "Charm": 1
+      },
+      "rebelliousness": -5
+    },
+    "description": "They are trained in domestic service and hospitality.",
+    "nsfw": false
+  },
+  {
+    "name": "Singer",
+    "conflicts": [
+      "Tone Deaf"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 4,
+        "Striptease": 2
+      }
+    },
+    "description": "They have a beautiful voice that captivates audiences.",
+    "nsfw": false
+  },
+  {
+    "name": "Tone Deaf",
+    "conflicts": [
+      "Singer"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -2,
+        "Striptease": -1
+      }
+    },
+    "description": "They cannot carry a tune and struggle with musical performances.",
+    "nsfw": false
+  },
+  {
+    "name": "Teacher",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 3,
+        "Charm": 2,
+        "Craft": 1
+      },
+      "relationship": 10
+    },
+    "description": "They are skilled educators who build strong relationships through knowledge.",
+    "nsfw": false
+  },
+  {
+    "name": "Adventurer",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 2,
+        "Agility": 2
+      },
+      "rebelliousness": 10
+    },
+    "description": "They have explored dangerous places and gained valuable experience.",
+    "nsfw": false
+  },
+  {
+    "name": "Waitress",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": 4,
+        "Charm": 1,
+        "Agility": 1
+      }
+    },
+    "description": "They are experienced in customer service and hospitality work.",
+    "nsfw": false
+  },
+  {
+    "name": "Large Breasts",
+    "conflicts": [
+      "Small Breasts",
+      "Flat Chest"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Sex": 2,
+        "Striptease": 2,
+        "Charm": 1
+      }
+    },
+    "description": "They have an impressive bust that attracts significant attention.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Small Breasts",
+    "conflicts": [
+      "Large Breasts",
+      "Flat Chest"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.05,
+      "skill_modifiers": {
+        "Agility": 1,
+        "Charm": 1
+      }
+    },
+    "description": "They have a petite bust that some clients find particularly appealing.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Flat Chest",
+    "conflicts": [
+      "Large Breasts",
+      "Small Breasts"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 0.95,
+      "skill_modifiers": {
+        "Agility": 2,
+        "Combat": 1
+      }
+    },
+    "description": "They have a flat chest that appeals to clients with specific preferences.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Firm Ass",
+    "conflicts": [
+      "Soft Ass"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Anal": 2,
+        "Striptease": 1,
+        "Agility": 1
+      }
+    },
+    "description": "They have a well-toned posterior that enhances their physical appeal.",
+    "nsfw": true
+  },
+  {
+    "name": "Soft Ass",
+    "conflicts": [
+      "Firm Ass"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "Anal": 1,
+        "Charm": 1
+      }
+    },
+    "description": "They have a soft, inviting posterior that clients love to touch.",
+    "nsfw": true
+  },
+  {
+    "name": "Large Penis",
+    "conflicts": [
+      "Small Penis"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Sex": 3,
+        "Anal": 2,
+        "Homo": 2
+      }
+    },
+    "description": "They are exceptionally well-endowed, commanding premium rates.",
+    "nsfw": true,
+    "gender_restriction": "male"
+  },
+  {
+    "name": "Small Penis",
+    "conflicts": [
+      "Large Penis"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 0.9,
+      "skill_modifiers": {
+        "Oral": 1,
+        "Charm": 1
+      }
+    },
+    "description": "They compensate for their modest size with skill and charm.",
+    "nsfw": true,
+    "gender_restriction": "male"
+  },
+  {
+    "name": "Tight",
+    "conflicts": [
+      "Loose"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Sex": 2,
+        "Anal": 2
+      }
+    },
+    "description": "They have exceptional muscle control that clients find irresistible.",
+    "nsfw": true
+  },
+  {
+    "name": "Loose",
+    "conflicts": [
+      "Tight"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "Group": 2,
+        "Extreme": 1
+      }
+    },
+    "description": "They can accommodate larger groups and extreme activities with ease.",
+    "nsfw": true
+  },
+  {
+    "name": "Sensitive",
+    "conflicts": [
+      "Numb"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "Sex": 1,
+        "Oral": 1,
+        "BDSM": 1
+      }
+    },
+    "description": "They are highly responsive to touch, enhancing the experience for clients.",
+    "nsfw": true
+  },
+  {
+    "name": "Numb",
+    "conflicts": [
+      "Sensitive"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.05,
+      "skill_modifiers": {
+        "BDSM": 2,
+        "Extreme": 1
+      }
+    },
+    "description": "They have reduced sensitivity, allowing them to endure more intense activities.",
+    "nsfw": true
+  },
+  {
+    "name": "Flexible",
+    "conflicts": [
+      "Stiff"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Agility": 2,
+        "Striptease": 2,
+        "Sex": 1
+      }
+    },
+    "description": "They have exceptional flexibility that opens up new possibilities.",
+    "nsfw": false
+  },
+  {
+    "name": "Stiff",
+    "conflicts": [
+      "Flexible"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 0.95,
+      "skill_modifiers": {
+        "Agility": -2,
+        "Striptease": -1,
+        "Combat": 1
+      }
+    },
+    "description": "They lack flexibility but make up for it with other strengths.",
+    "nsfw": false
+  },
+  {
+    "name": "High Libido",
+    "conflicts": [
+      "Low Libido"
+    ],
+    "removes_traits": [
+      "Low Libido"
+    ],
+    "modifiers": {
+      "libido_regeneration": 5,
+      "libido": 5,
+      "libido_max": 5
+    },
+    "description": "An unusually high sex drive leads to faster libido regeneration (+5 per day) and higher starting libido.",
+    "nsfw": true
+  },
+  {
+    "name": "Low Libido",
+    "conflicts": [
+      "High Libido",
+      "Nympho",
+      "Satyr"
+    ],
+    "removes_traits": [
+      "High Libido",
+      "Nympho",
+      "Satyr"
+    ],
+    "modifiers": {
+      "libido": -5
+    },
+    "attribute_caps": {
+      "libido": 5
+    },
+    "description": "A naturally low sex drive caps libido at 5 and reduces starting libido. Incompatible with high-libido traits.",
+    "nsfw": true
+  },
+  {
+    "name": "Nympho",
+    "conflicts": [
+      "Low Libido",
+      "Satyr"
+    ],
+    "removes_traits": [
+      "Low Libido"
+    ],
+    "gender_restriction": "female",
+    "modifiers": {
+      "libido": 10,
+      "libido_max": 10,
+      "skill_modifiers": {
+        "Sex": 3,
+        "Oral": 2
+      }
+    },
+    "attribute_minimums": {
+      "libido": 10
+    },
+    "description": "Insatiable female sexuality keeps libido at minimum 10 and provides bonuses to sexual skills.",
+    "nsfw": true
+  },
+  {
+    "name": "Satyr",
+    "conflicts": [
+      "Low Libido",
+      "Nympho"
+    ],
+    "removes_traits": [
+      "Low Libido"
+    ],
+    "gender_restriction": "male",
+    "modifiers": {
+      "libido": 10,
+      "libido_max": 10,
+      "skill_modifiers": {
+        "Sex": 3,
+        "Group": 2
+      }
+    },
+    "attribute_minimums": {
+      "libido": 10
+    },
+    "description": "Primal male sexuality keeps libido at minimum 10 and provides bonuses to sexual skills.",
+    "nsfw": true
+  },
+  {
+    "name": "Demanding",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "comfort_desired": 5
+    },
+    "description": "This worker has high standards and expects better accommodations. Increases desired comfort level by 5.",
+    "nsfw": false
+  },
+  {
+    "name": "Magical",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 3
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance.",
+    "nsfw": false
+  },
+  {
+    "name": "Great Figure",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Charm": 2,
+        "Striptease": 1
+      }
+    },
+    "description": "They have an exceptional figure that captivates clients and enhances their appeal.",
+    "nsfw": false
+  },
+  {
+    "name": "Long Legs",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 2,
+        "Striptease": 2
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "Long legs enhance their grace and agility, making them excellent performers.",
+    "nsfw": false
+  },
+  {
+    "name": "Large Hips",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Sex": 2
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "They have wide hips that enhance their appeal and performance.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Deluxe Derriere",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Anal": 3,
+        "Striptease": 1
+      }
+    },
+    "description": "They have an exceptional posterior that commands premium rates.",
+    "nsfw": true
+  },
+  {
+    "name": "Perky Nipples",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 1,
+        "Striptease": 2
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "Their perky nipples enhance their appeal and striptease performances.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Mature Body",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.25,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "A mature body exudes confidence and experience, attracting discerning clients.",
+    "nsfw": false
+  },
+  {
+    "name": "Tall",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 1,
+        "Combat": 2
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "Their height gives them a commanding presence and combat advantage.",
+    "nsfw": false
+  },
+  {
+    "name": "Fleet of Foot",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 3
+      }
+    },
+    "description": "They are exceptionally quick and agile on their feet.",
+    "nsfw": false
+  },
+  {
+    "name": "Good Kisser",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Oral": 2,
+        "Charm": 1
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "They are skilled at kissing, enhancing their oral and charm abilities.",
+    "nsfw": true
+  },
+  {
+    "name": "Sexy Air",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "They exude a sexy aura that captivates clients and increases earnings.",
+    "nsfw": true
+  },
+  {
+    "name": "Meek",
+    "conflicts": [
+      "Rebellious",
+      "Aggressive"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "rebelliousness": -15,
+      "skill_modifiers": {
+        "Service": 1
+      }
+    },
+    "description": "They are submissive and obedient, reducing rebelliousness and improving service.",
+    "nsfw": false,
+    "attribute_caps": {
+      "rebelliousness": 40
+    }
+  },
+  {
+    "name": "Nerd",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 3,
+        "Charm": -1
+      }
+    },
+    "description": "They are highly intelligent but struggle with social interactions.",
+    "nsfw": false
+  },
+  {
+    "name": "Idol",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.4,
+      "skill_modifiers": {
+        "Charm": 4,
+        "Striptease": 3
+      }
+    },
+    "description": "They are a pop idol with exceptional charm and performance skills.",
+    "nsfw": false
+  },
+  {
+    "name": "Princess",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Charm": 3
+      },
+      "comfort_desired": 2
+    },
+    "description": "They have a regal attitude that attracts premium clients but demands better accommodations.",
+    "nsfw": false,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Tsundere",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.25,
+      "skill_modifiers": {
+        "Charm": 2
+      },
+      "rebelliousness": 10
+    },
+    "description": "They act cold but are actually warm inside, creating an appealing contrast.",
+    "nsfw": false,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Yandere",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Charm": 2,
+        "BDSM": 3
+      },
+      "relationship": -10
+    },
+    "description": "They are obsessively in love, which can be both appealing and dangerous.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Aggressive",
+    "conflicts": [
+      "Meek",
+      "Obedient"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 3,
+        "BDSM": 2
+      },
+      "rebelliousness": 15
+    },
+    "description": "They are aggressive and dominant, excelling in combat and BDSM activities.",
+    "nsfw": false
+  },
+  {
+    "name": "Audacity",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "They have bold confidence that attracts clients and increases earnings.",
+    "nsfw": false
+  },
+  {
+    "name": "Manly",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 3,
+        "Charm": -2
+      }
+    },
+    "description": "They have a masculine appearance that enhances combat but reduces charm.",
+    "nsfw": false
+  },
+  {
+    "name": "Social Drinker",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 1
+      },
+      "health": -3
+    },
+    "description": "They enjoy social drinking, which enhances charm but slightly affects health.",
+    "nsfw": false
+  },
+  {
+    "name": "Strong Magic",
+    "conflicts": [],
+    "removes_traits": [],
+    "requires_traits": [
+      "Magical"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 5,
+        "Combat": 3
+      },
+      "earnings_multiplier": 1.2
+    },
+    "description": "They possess strong magical abilities, significantly enhancing craft and combat skills.",
+    "nsfw": false
+  },
+  {
+    "name": "Powerful Magic",
+    "conflicts": [
+      "Strong Magic"
+    ],
+    "removes_traits": [],
+    "requires_traits": [
+      "Magical"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 6,
+        "Combat": 4
+      },
+      "earnings_multiplier": 1.3
+    },
+    "description": "They wield powerful magic, making them exceptional in craft and combat.",
+    "nsfw": false
+  },
+  {
+    "name": "Psychic",
+    "conflicts": [],
+    "removes_traits": [],
+    "requires_traits": [
+      "Magical"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 4,
+        "Clever": 3,
+        "Combat": 2
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "They have psychic abilities that enhance their magical, mental, and combat capabilities.",
+    "nsfw": false
+  },
+  {
+    "name": "Construct",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "health_multiplier": 3.0,
+      "libido": -10
+    },
+    "description": "They are an artificial construct with triple the health but reduced libido.",
+    "nsfw": false
+  },
+  {
+    "name": "Half-Breed",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3
+    },
+    "description": "They are of mixed heritage, making them exotic and highly sought after.",
+    "nsfw": false
+  },
+  {
+    "name": "Sharp-Eyed",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 2,
+        "Combat": 2
+      }
+    },
+    "description": "They have keen eyesight that enhances their cleverness and combat accuracy.",
+    "nsfw": false
+  },
+  {
+    "name": "Masochist",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "BDSM": 5,
+        "Extreme": 3
+      },
+      "earnings_multiplier": 1.2
+    },
+    "description": "They derive pleasure from pain, excelling in BDSM and extreme activities.",
+    "nsfw": true
+  },
+  {
+    "name": "Pierced Nipples",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They have pierced nipples that enhance their appeal and earnings.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Pierced Clit",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Sex": 2
+      }
+    },
+    "description": "They have a pierced clitoris that enhances sexual performance and earnings.",
+    "nsfw": true,
+    "gender_restriction": "female"
+  },
+  {
+    "name": "Pierced Tongue",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Oral": 4
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "They have a pierced tongue that significantly enhances oral skills.",
+    "nsfw": true
+  },
+  {
+    "name": "No Gag Reflex",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Oral": 5
+      },
+      "earnings_multiplier": 1.2
+    },
+    "description": "They lack a gag reflex, allowing them to excel in deep oral activities.",
+    "nsfw": true
+  },
+  {
+    "name": "Fertile",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.15
+    },
+    "description": "They are highly fertile, attracting clients seeking pregnancy.",
+    "nsfw": true
+  },
+  {
+    "name": "Exhibitionist",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Striptease": 3,
+        "Charm": 2
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "They enjoy being watched, excelling in striptease and charm activities.",
+    "nsfw": true
+  },
+  {
+    "name": "Cum Addict",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Oral": 3
+      },
+      "libido_regeneration": 3
+    },
+    "description": "They are addicted to semen, enhancing oral skills and libido regeneration.",
+    "nsfw": true
+  },
+  {
+    "name": "Actress",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Charm": 4,
+        "Striptease": 3
+      }
+    },
+    "description": "They are a skilled actress with exceptional charm and performance abilities.",
+    "nsfw": false
+  },
+  {
+    "name": "Porn Star",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.4,
+      "skill_modifiers": {
+        "Sex": 4,
+        "Anal": 3,
+        "Oral": 3,
+        "Group": 3
+      }
+    },
+    "description": "They are a professional porn star with exceptional sexual skills across all activities.",
+    "nsfw": true
+  },
+  {
+    "name": "Assassin",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 5,
+        "Agility": 4
+      },
+      "rebelliousness": 20
+    },
+    "description": "They are a trained assassin with exceptional combat and agility skills.",
+    "nsfw": false
+  },
+  {
+    "name": "Merciless",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 3,
+        "BDSM": 3
+      }
+    },
+    "description": "They show no mercy, excelling in combat and BDSM activities.",
+    "nsfw": false
+  },
+  {
+    "name": "Dumb",
+    "conflicts": [
+      "Clever",
+      "Quick Learner",
+      "Wise"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": -3
+      }
+    },
+    "description": "They struggle with intellectual tasks and learning new skills.",
+    "nsfw": false
+  },
+  {
+    "name": "Crazy",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -1,
+        "Service": -1
+      },
+      "rebelliousness": 15
+    },
+    "description": "They have unstable mental health, affecting their performance and behavior.",
+    "nsfw": false
+  },
+  {
+    "name": "Furry",
+    "description": "Their appearance blends human and animal features, with some soft fur, pointed ears, and sometimes an expressive tail. Their exotic nature attracts clients with particular tastes, who value their feline agility and wild charm.",
+    "nsfw": true,
+    "only_assigned": true,
+    "conflicts": [
+      "Human",
+      "Demon",
+      "Orc",
+      "Goblin",
+      "Elf",
+      "Dwarf",
+      "Ogre",
+      "Angel",
+      "Vampire"
+    ],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.0,
+      "skill_modifiers": {
+        "Agility": 2,
+        "Charm": 2
+      }
+    }
+  }
 ]
-

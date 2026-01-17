@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fantasy Manager Editor v4.0 - Complete Edition with WM Import
+Fantasy Manager Editor v5.1 - Complete Edition with WM Import
 =============================================================
-Based on v3, enhanced with:
+Based on v5, enhanced with:
+- Added "only_assigned" field support for traits in editor
+- Manual worker file loading (no auto-load on game folder set)
+- Save only current worker (instead of all workers)
+- Improved worker file management
 - Whoremaster Import functionality (characters & items)
 - Image conversion (GIF → WebM)
 - Image preview in all editors
@@ -23,7 +27,7 @@ import sys
 import xml.etree.ElementTree as ET
 from typing import Dict, List, Optional, Tuple, Any
 
-VERSION = "4.0"
+VERSION = "5.1"
 
 # Intentar importar PIL para previsualización de imágenes (opcional)
 try:
@@ -941,8 +945,9 @@ class FantasyManagerEditorV4:
             # Show success message immediately (don't use after for critical messages)
             messagebox.showinfo("Success", result_msg)
             
-            # Reload workers data in background (non-blocking)
-            self.root.after(100, lambda: self._reload_workers_background())
+            # NO recargar automáticamente - el usuario puede recargar manualmente si lo necesita
+            # para evitar sobreescribir workers que están siendo editados
+            # self.root.after(100, lambda: self._reload_workers_background())
         else:
             self.import_status.config(text=f"Error: {error_message or 'Unknown error'}")
             messagebox.showerror("Error", error_message or "Failed to save JSON file")
@@ -1167,8 +1172,8 @@ Requirements:
         
         data_path = Path(self.game_directory) / "game" / "data"
         
-        # Cargar workers
-        self.load_workers_files(data_path)
+        # NO cargar workers automáticamente - el usuario debe cargar manualmente
+        # self.load_workers_files(data_path)
         
         # Cargar traits
         self.load_traits_file(data_path)
@@ -1185,9 +1190,18 @@ Requirements:
         # Cargar items
         self.load_items_file(data_path)
         
-        # Actualizar interfaces
-        self.refresh_all_lists()
-        self.status_bar.config(text="All data loaded")
+        # Actualizar interfaces (excepto workers, que no se cargaron)
+        if hasattr(self, 'traits_listbox'):
+            self.refresh_traits_list()
+        if hasattr(self, 'buildings_listbox'):
+            self.refresh_buildings_list()
+        if hasattr(self, 'events_listbox'):
+            self.refresh_events_list()
+        if hasattr(self, 'interactions_listbox'):
+            self.refresh_interactions_list()
+        if hasattr(self, 'items_listbox'):
+            self.refresh_items_list()
+        self.status_bar.config(text="Data loaded (workers not loaded - use 'Load Workers File' to load manually)")
     
     def load_workers_files(self, data_path):
         """Cargar archivos de workers"""
@@ -2194,6 +2208,8 @@ Requirements:
                         cleaned_data.append(cleaned_worker)
                     
                     self.workers_data = cleaned_data
+                    # Guardar la ruta del archivo cargado para poder guardar después
+                    self.current_workers_file = file_path
                     self.refresh_workers_list()
                     messagebox.showinfo("Success", f"Loaded {len(data)} workers from {Path(file_path).name}")
                 else:
@@ -2237,93 +2253,109 @@ Requirements:
                 messagebox.showerror("Error", f"Error saving file:\n{str(e)}")
     
     def save_workers(self):
-        """Guardar workers en archivos (con confirmación)"""
+        """Guardar solo el worker actual en el archivo correcto"""
         if not self.game_directory:
             messagebox.showwarning("Warning", "Please select game directory first")
             return
         
-        if not self.workers_data:
-            messagebox.showwarning("Warning", "No workers to save")
+        if not self.current_worker:
+            messagebox.showwarning("Warning", "No worker selected to save")
             return
         
-        # Guardar datos actuales
-        if self.current_worker:
-            self.save_current_worker_data()
+        # Guardar datos actuales del formulario
+        self.save_current_worker_data()
         
-        # Confirmar guardado
-        response = messagebox.askyesnocancel(
-            "Save Workers",
-            "This will save workers to their default files:\n\n"
-            "- workers_sfw_unique.json\n"
-            "- workers_sfw_other.json\n"
-            "- workers_nsfw_unique.json\n"
-            "- workers_nsfw_other.json\n\n"
-            "Existing files will be overwritten.\n\n"
-            "Continue?"
-        )
+        # Determinar el archivo de destino
+        target_file = None
         
-        if not response:  # Cancel o No
-            return
-        
-        # Determinar en qué archivo guardar cada worker
-        data_path = Path(self.game_directory) / "game" / "data" / "workers"
-        
-        workers_sfw_unique = []
-        workers_sfw_other = []
-        workers_nsfw_unique = []
-        workers_nsfw_other = []
-        
-        for worker in self.workers_data:
-            is_nsfw = worker.get('nsfw', False)
-            is_unique = worker.get('unique', False)
+        # Si hay un archivo cargado, usar ese
+        if self.current_workers_file and Path(self.current_workers_file).exists():
+            target_file = Path(self.current_workers_file)
+        else:
+            # Si no, determinar el archivo correcto basándose en las propiedades del worker
+            data_path = Path(self.game_directory) / "game" / "data" / "workers"
+            is_nsfw = self.current_worker.get('nsfw', False)
+            is_unique = self.current_worker.get('unique', False)
             
             if is_nsfw and is_unique:
-                workers_nsfw_unique.append(worker)
+                target_file = data_path / "workers_nsfw_unique.json"
             elif is_nsfw:
-                workers_nsfw_other.append(worker)
+                target_file = data_path / "workers_nsfw_other.json"
             elif is_unique:
-                workers_sfw_unique.append(worker)
+                target_file = data_path / "workers_sfw_unique.json"
             else:
-                workers_sfw_other.append(worker)
+                target_file = data_path / "workers_sfw_other.json"
         
-        # Guardar archivos
-        files_to_save = [
-            (data_path / "workers_sfw_unique.json", workers_sfw_unique),
-            (data_path / "workers_sfw_other.json", workers_sfw_other),
-            (data_path / "workers_nsfw_unique.json", workers_nsfw_unique),
-            (data_path / "workers_nsfw_other.json", workers_nsfw_other)
-        ]
+        # Confirmar guardado
+        response = messagebox.askyesno(
+            "Save Worker",
+            f"This will save the current worker '{self.current_worker.get('name', 'Unknown')}' to:\n\n"
+            f"{target_file.name}\n\n"
+            f"If the file exists, the worker will be updated or added.\n\n"
+            f"Continue?"
+        )
         
-        saved_count = 0
-        errors = []
-        for file_path, workers_list in files_to_save:
+        if not response:
+            return
+        
+        # Cargar el contenido actual del archivo (si existe)
+        existing_workers = []
+        if target_file.exists():
             try:
-                # Limpiar campos vacíos de images_folder/image_folder antes de guardar
-                cleaned_workers = []
-                for worker in workers_list:
-                    cleaned_worker = worker.copy()
-                    # Eliminar images_folder/image_folder si están vacíos
-                    if cleaned_worker.get('images_folder') == '' or cleaned_worker.get('images_folder') is None:
-                        cleaned_worker.pop('images_folder', None)
-                    if cleaned_worker.get('image_folder') == '' or cleaned_worker.get('image_folder') is None:
-                        cleaned_worker.pop('image_folder', None)
-                    cleaned_workers.append(cleaned_worker)
-                
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    json.dump(cleaned_workers, f, indent=2, ensure_ascii=False)
-                saved_count += 1
+                with open(target_file, 'r', encoding='utf-8') as f:
+                    existing_data = json.load(f)
+                    if isinstance(existing_data, list):
+                        existing_workers = existing_data
             except Exception as e:
-                errors.append(f"{file_path.name}: {str(e)}")
+                messagebox.showerror("Error", f"Error reading existing file:\n{str(e)}")
+                return
         
-        if saved_count > 0:
-            msg = f"Saved {saved_count} worker file(s)"
-            if errors:
-                msg += f"\n\nErrors:\n" + "\n".join(errors)
-            messagebox.showinfo("Success", msg)
+        # Buscar si el worker ya existe en el archivo (por nombre)
+        worker_name = self.current_worker.get('name', '')
+        worker_updated = False
+        for i, worker in enumerate(existing_workers):
+            if worker.get('name') == worker_name:
+                # Actualizar el worker existente
+                existing_workers[i] = self.current_worker.copy()
+                worker_updated = True
+                break
+        
+        # Si no existe, agregarlo
+        if not worker_updated:
+            existing_workers.append(self.current_worker.copy())
+        
+        # Limpiar campos vacíos de images_folder/image_folder antes de guardar
+        cleaned_workers = []
+        for worker in existing_workers:
+            cleaned_worker = worker.copy()
+            # Eliminar images_folder/image_folder si están vacíos
+            if cleaned_worker.get('images_folder') == '' or cleaned_worker.get('images_folder') is None:
+                cleaned_worker.pop('images_folder', None)
+            if cleaned_worker.get('image_folder') == '' or cleaned_worker.get('image_folder') is None:
+                cleaned_worker.pop('image_folder', None)
+            cleaned_workers.append(cleaned_worker)
+        
+        # Guardar el archivo
+        try:
+            # Asegurar que el directorio existe
+            target_file.parent.mkdir(parents=True, exist_ok=True)
+            
+            with open(target_file, 'w', encoding='utf-8') as f:
+                json.dump(cleaned_workers, f, indent=2, ensure_ascii=False)
+            
+            action = "updated" if worker_updated else "added"
+            messagebox.showinfo("Success", 
+                f"Worker '{worker_name}' {action} in {target_file.name}\n\n"
+                f"Total workers in file: {len(cleaned_workers)}")
+            
+            # Actualizar current_workers_file si no estaba establecido
+            if not self.current_workers_file:
+                self.current_workers_file = str(target_file)
+            
             self.has_unsaved_changes = False
             self.update_title()
-        elif errors:
-            messagebox.showerror("Error", "Failed to save files:\n" + "\n".join(errors))
+        except Exception as e:
+            messagebox.showerror("Error", f"Error saving file:\n{str(e)}")
     
     def show_worker_help(self):
         """Mostrar ayuda para workers"""
@@ -2452,6 +2484,11 @@ Images Tab:
         ttk.Checkbutton(parent, text="NSFW", variable=self.trait_nsfw_var).grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
         
+        # Only Assigned
+        self.trait_only_assigned_var = tk.BooleanVar()
+        ttk.Checkbutton(parent, text="Only Assigned (not randomly assigned)", variable=self.trait_only_assigned_var).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        row += 1
+        
         # Conflicts
         ttk.Label(parent, text="Conflicts:", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(20, 5))
         row += 1
@@ -2517,6 +2554,7 @@ Images Tab:
         self.trait_description_text.delete(1.0, tk.END)
         self.trait_description_text.insert(1.0, self.current_trait.get('description', ''))
         self.trait_nsfw_var.set(self.current_trait.get('nsfw', False))
+        self.trait_only_assigned_var.set(self.current_trait.get('only_assigned', False))
         
         # Cargar conflicts
         self.trait_conflicts_listbox.delete(0, tk.END)
@@ -2539,6 +2577,7 @@ Images Tab:
             'name': 'NewTrait',
             'description': 'A new trait',
             'nsfw': False,
+            'only_assigned': False,
             'conflicts': [],
             'removes_traits': [],
             'modifiers': {}
@@ -2633,6 +2672,11 @@ Images Tab:
         self.current_trait['name'] = self.trait_name_var.get()
         self.current_trait['description'] = self.trait_description_text.get(1.0, tk.END).strip()
         self.current_trait['nsfw'] = self.trait_nsfw_var.get()
+        only_assigned = self.trait_only_assigned_var.get()
+        if only_assigned:
+            self.current_trait['only_assigned'] = True
+        else:
+            self.current_trait.pop('only_assigned', None)  # Remove if False
         
         # Guardar conflicts
         conflicts = []
