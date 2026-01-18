@@ -76,7 +76,7 @@ init python:
             export_data = {
                 "metadata": {
                     "export_date": datetime.datetime.now().isoformat(),
-                    "game_version": "Fantasy Manager v0.9.2.3",
+                    "game_version": "Fantasy Manager v0.9.3",
                     "save_type": "external_file"
                 },
                 "game_state": snapshot
@@ -199,9 +199,9 @@ screen file_save_dialog():
             xalign 0.5
             yalign 0.5
             
-            text "Export Game to File" style "file_dialog_text" size 32 xalign 0.5
+            text "Export Game to File" style "file_dialog_text" size font_size(32) xalign 0.5
             
-            text "Choose export option:" style "file_dialog_text" size 22 xalign 0.5
+            text "Choose export option:" style "file_dialog_text" size font_size(22) xalign 0.5
             
             vbox:
                 spacing 15
@@ -211,7 +211,7 @@ screen file_save_dialog():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 400
-                    text_size 22
+                    text_size font_size(22)
                     action [
                         Function(export_save_to_file),
                         Hide("file_save_dialog")
@@ -221,7 +221,7 @@ screen file_save_dialog():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 400
-                    text_size 22
+                    text_size font_size(22)
                     action [
                         Hide("file_save_dialog"),
                         Show("export_name_input")
@@ -231,7 +231,7 @@ screen file_save_dialog():
                 style "file_button"
                 text_style "file_button_text"
                 xsize 200
-                text_size 20
+                text_size font_size(20)
                 action [
                     Hide("file_save_dialog"),
                     Return()
@@ -256,9 +256,9 @@ screen file_load_dialog():
             xalign 0.5
             yalign 0.5
             
-            text "Import Game from File" style "file_dialog_text" size 32 xalign 0.5
+            text "Import Game from File" style "file_dialog_text" size font_size(32) xalign 0.5
             
-            text "Select a file to import:" style "file_dialog_text" size 22 xalign 0.5
+            text "Select a file to import:" style "file_dialog_text" size font_size(22) xalign 0.5
             
             vbox:
                 spacing 15
@@ -268,19 +268,19 @@ screen file_load_dialog():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 400
-                    text_size 22
+                    text_size font_size(22)
                     action [
                         Hide("file_load_dialog"),
                         Show("file_browser_simple")
                     ]
                 
-                text "Save files location: /game/saves/" style "file_dialog_text" size 18 xalign 0.5
+                text "Save files location: /game/saves/" style "file_dialog_text" size font_size(18) xalign 0.5
             
             textbutton "Cancel":
                 style "file_button"
                 text_style "file_button_text"
                 xsize 200
-                text_size 20
+                text_size font_size(20)
                 action [
                     Hide("file_load_dialog"),
                     Return()
@@ -306,9 +306,9 @@ screen export_name_input():
             xalign 0.5
             yalign 0.5
             
-            text "Export Filename" style "file_dialog_text" size 28 xalign 0.5
+            text "Export Filename" style "file_dialog_text" size font_size(28) xalign 0.5
             
-            text "Enter filename (without .json extension):" style "file_dialog_text" size 22 xalign 0.5
+            text "Enter filename (without .json extension):" style "file_dialog_text" size font_size(22) xalign 0.5
             
             python:
                 if not hasattr(store, 'export_filename'):
@@ -327,7 +327,7 @@ screen export_name_input():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 150
-                    text_size 20
+                    text_size font_size(20)
                     action [
                         Function(export_save_to_file, export_filename),
                         Hide("export_name_input")
@@ -337,7 +337,7 @@ screen export_name_input():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 150
-                    text_size 20
+                    text_size font_size(20)
                     action Hide("export_name_input")
 
 # Simplified file browser for load screen
@@ -362,18 +362,18 @@ screen file_browser_simple():
             xfill True
             yfill True
             
-            text "Select File to Import" style "file_dialog_text" size 28 xalign 0.5
+            text "Select File to Import" style "file_dialog_text" size font_size(28) xalign 0.5
             
             if selected_file:
-                text "Selected: [selected_file]" style "file_dialog_text" size 20 color "#314311" xalign 0.5
+                text "Selected: [selected_file]" style "file_dialog_text" size font_size(20) color "#314311" xalign 0.5
             else:
-                text "Click on a file to select it" style "file_dialog_text" size 20 xalign 0.5
+                text "Click on a file to select it" style "file_dialog_text" size font_size(20) xalign 0.5
             
             python:
                 save_files = list_save_files()
             
             if not save_files:
-                text "No save files found." style "file_dialog_text" size 22 xalign 0.5
+                text "No save files found." style "file_dialog_text" size font_size(22) xalign 0.5
             else:
                 viewport:
                     scrollbars "vertical"
@@ -415,7 +415,7 @@ screen file_browser_simple():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 150
-                    text_size 20
+                    text_size font_size(20)
                     action [
                         Hide("file_browser_simple"),
                         Show("file_load_dialog")
@@ -425,7 +425,7 @@ screen file_browser_simple():
                     style "file_button"
                     text_style "file_button_text"
                     xsize 150
-                    text_size 20
+                    text_size font_size(20)
                     action [
                         Function(import_save_from_file, selected_file),
                         Hide("file_browser_simple"),

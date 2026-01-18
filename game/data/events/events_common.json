@@ -567,6 +567,7 @@
         "description": "The whisper arrives like poison on the wind, carried by voices that speak only in shadows and trust only in gold. They speak of the governor's true power—not the armies or the gold or the political connections that all can see, but something far more ancient and terrible. A djinn, they say, bound by chains of starlight and sealed with blood, grants protection that no mortal weapon can pierce. Only one thing, they claim, can break such a bond: a Binding Gem of purest crystal, rare beyond measure and precious beyond price.",
         "weight": 10,
         "limited": true,
+        "event_probability": 80,
         "max_occurrences": 1,
         "cooldown_days": 7,
         "worker_selection": "none",
@@ -589,7 +590,8 @@
                 "message": "You commit the whispered words to memory, each syllable burning itself into your thoughts like brands upon flesh. The path ahead grows clearer—somewhere in the city's hidden markets, in the guild's deepest vaults, or along the whispered trails that connect shadow to shadow, a Binding Gem waits to be claimed. The governor's protection may be supernatural, but even djinn must bow to the right kind of power.",
                 "effect": {
                     "event_flags": {
-                        "binding_gem_lead": true
+                        "binding_gem_lead": true,
+                        "binding_gem_lead_timestamp": "[calculate_total_days()]"
                     }
                 }
             }
@@ -601,6 +603,7 @@
         "description": "The contact emerges from shadow like a figure from a half-remembered dream, their face hidden beneath a hood that seems to drink light rather than merely block it. In their hands, something glimmers with inner fire—a crystal that pulses with the rhythm of a captured heartbeat. They speak in whispers of challenges and tests, of proving worthiness through deed rather than coin. The Binding Gem hangs between you like a star fallen to earth, waiting for the right hand to claim it.",
         "weight": 10,
         "limited": true,
+        "event_probability": 50,
         "max_occurrences": 1,
         "cooldown_days": 7,
         "worker_selection": "choose",
@@ -616,6 +619,9 @@
         "failure_image": "generic_failure",
         "required_flags": {
             "binding_gem_lead": true
+        },
+        "conditions": {
+            "start_when": "after_days_from_flag:binding_gem_lead_timestamp,20"
         },
         "choices": [
             {

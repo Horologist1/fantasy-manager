@@ -132,42 +132,56 @@ init python:
         if not hasattr(store, 'manager_inventory') or store.manager_inventory is None:
             store.manager_inventory = []
         
+        # Check manager inventory
         for entry in store.manager_inventory:
+            found = False
             if isinstance(entry, tuple):
                 if len(entry) > 0 and entry[0] == item_id:
-                    return True
+                    found = True
             elif isinstance(entry, list):
                 # Handle list format: [item_id] or [item_id, quantity] or [item_id, quantity, equipped]
                 if len(entry) > 0 and entry[0] == item_id:
-                    return True
+                    found = True
             elif isinstance(entry, dict):
                 # Handle old dict format for backwards compatibility
                 if entry.get("item_id") == item_id:
-                    return True
+                    found = True
             elif isinstance(entry, str):
                 # Handle old string format for backwards compatibility
                 if entry == item_id:
-                    return True
+                    found = True
+            
+            if found:
+                renpy.log(f"DEBUG has_item_anywhere: Found {item_id} in manager_inventory as {type(entry).__name__}: {entry}")
+                return True
         
         # Check worker inventories (also can be tuples, lists, dicts, or strings)
         for worker in store.workers:
             worker_inventory = worker.get("inventory", [])
+            worker_name = worker.get("name", "Unknown")
             for entry in worker_inventory:
+                found = False
                 if isinstance(entry, tuple):
                     if len(entry) > 0 and entry[0] == item_id:
-                        return True
+                        found = True
                 elif isinstance(entry, list):
                     # Handle list format
                     if len(entry) > 0 and entry[0] == item_id:
-                        return True
+                        found = True
                 elif isinstance(entry, dict):
                     # Handle old dict format
                     if entry.get("item_id") == item_id:
-                        return True
+                        found = True
                 elif isinstance(entry, str):
                     # Handle old string format
                     if entry == item_id:
-                        return True
+                        found = True
+                
+                if found:
+                    renpy.log(f"DEBUG has_item_anywhere: Found {item_id} in {worker_name}'s inventory as {type(entry).__name__}: {entry}")
+                    return True
+        
+        renpy.log(f"DEBUG has_item_anywhere: {item_id} NOT FOUND in any inventory")
         return False
     
     def count_workers_with_skill(skill_name, threshold):
@@ -271,7 +285,7 @@ init python:
                 clever_count = count_workers_with_skill("Clever", 70)
                 blade_ready = "[Ready]" if combat_count >= 5 else "[Not Ready]"
                 shadow_ready = "[Ready]" if clever_count >= 5 else "[Not Ready]"
-                return f"Progress: Choose your path of vengeance\n- Path of the Blade (Combat 70+): {combat_count}/5 {blade_ready}\n- Path of the Shadow (Clever 70+): {clever_count}/5 {shadow_ready}"
+                return f"Progress: Choose your path of vengeance\n- Path of the Blade (Combat 70+): {combat_count}/5 {blade_ready}\n- Path of the Shadow (Clever 70+): {clever_count}/5 {shadow_ready}\nTip: Check out shops for items to boost skills!"
         else:
             return "Progress: The path remains shrouded in mystery"
 
@@ -333,11 +347,22 @@ init python:
     def can_complete_objective_12():
         """Check if objective 12 conditions are met"""
         # Check prerequisite: objective 11 must be complete
-        if not getattr(store, 'objective_11_complete', False):
+        objective_11_complete = getattr(store, 'objective_11_complete', False)
+        if not objective_11_complete:
+            renpy.log(f"DEBUG Objective 12: Objective 11 not complete (objective_11_complete={objective_11_complete})")
             return False
-        return (has_item_anywhere("binding_gem") and 
-                has_item_anywhere("obsidian_blade") and 
-                has_item_anywhere("enchanted_ring"))
+        
+        has_binding_gem = has_item_anywhere("binding_gem")
+        has_obsidian_blade = has_item_anywhere("obsidian_blade")
+        has_enchanted_ring = has_item_anywhere("enchanted_ring")
+        
+        renpy.log(f"DEBUG Objective 12: binding_gem={has_binding_gem}, obsidian_blade={has_obsidian_blade}, enchanted_ring={has_enchanted_ring}")
+        renpy.log(f"DEBUG Objective 12: manager_inventory length={len(getattr(store, 'manager_inventory', []))}")
+        renpy.log(f"DEBUG Objective 12: manager_inventory sample={str(getattr(store, 'manager_inventory', [])[:5])}")
+        
+        result = (has_binding_gem and has_obsidian_blade and has_enchanted_ring)
+        renpy.log(f"DEBUG Objective 12: can_complete={result}")
+        return result
     
     def can_complete_objective_13():
         """Check if objective 13 conditions are met"""
@@ -607,12 +632,12 @@ screen journal_panel():
                 if tutorial_active:
                     text "[get_current_objective_title()]":
                         xsize 520
-                        size 30
+                        size font_size(32)
                         color "#7a4b2a"
 
                     text "[get_current_objective_description()]":
                         xsize 520
-                        size 22
+                        size font_size(24)
                         color "#7a4b2a"
                         text_align 0.0
 
@@ -620,7 +645,7 @@ screen journal_panel():
 
                     text "[get_current_objective_progress()]":
                         xsize 520
-                        size 20
+                        size font_size(22)
                         color "#6b6528"
 
                     null height 20
@@ -628,90 +653,90 @@ screen journal_panel():
                     # Tutorial quick access links for objectives 1-7
                     if current_objective == 1:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Map > Buy Servants":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("map_screen")]
                     
                     elif current_objective == 2:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Manage Buildings > Select building > Building Type":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
                     
                     elif current_objective == 3:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Workers > Worker Name > Assign Building > Select Job":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
                     
                     elif current_objective == 4:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Tavern > Next Day":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("tavern")]
                     
                     elif current_objective == 5:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Map > Shop":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("map_screen")]
                         textbutton "Workers > Worker Name > Details > Inventory":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
                     
                     elif current_objective == 6:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Manage Buildings > Select building > Upgrade Building":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
                         textbutton "Manage Buildings > Select building > Skill Bonus":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
-                        text "Tip: Each +10 Building skill bonus costs $100/day." size 18 color "#6b6528"
+                        text "Tip: Each +10 Building skill bonus costs $100/day." size font_size(20) color "#6b6528"
                     
                     elif current_objective == 7:
                         text "Tutorial:":
-                            size 22
+                            size font_size(24)
                             color "#7a4b2a"
                         textbutton "Workers > Worker Name > Details > Interactions > Friendly Chat":
                             xsize 520
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
@@ -723,7 +748,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -738,7 +763,7 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 10:
@@ -747,7 +772,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -760,7 +785,7 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 11:
@@ -769,7 +794,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -782,7 +807,7 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 12:
@@ -791,7 +816,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -804,7 +829,7 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 13:
@@ -813,7 +838,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -826,7 +851,7 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 14:
@@ -835,7 +860,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -848,7 +873,7 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 15:
@@ -857,7 +882,7 @@ screen journal_panel():
                             null height 10
                             textbutton "MARK AS COMPLETE":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -870,12 +895,12 @@ screen journal_panel():
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
-                                size 18
+                                size font_size(20)
                                 color "#6b6528"
                     
                     elif current_objective == 9:
                         null height 10
-                        text "Choose Your Gambit:" size 24 color "#7a4b2a" xalign 0.5
+                        text "Choose Your Gambit:" size font_size(24) color "#7a4b2a" xalign 0.5
                         null height 15
                         
                         # Calculate requirements dynamically
@@ -890,7 +915,7 @@ screen journal_panel():
                             margin (5, 5)
                             textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Magic)":
                                 xsize 530
-                                text_size 24
+                                text_size font_size(24)
                                 text_color "#ffffff"
                                 text_hover_color "#f4c594"
                                 action [
@@ -912,7 +937,7 @@ screen journal_panel():
                             margin (5, 5)
                             textbutton "Heist and Blackmail\n(requires 1 with 70+ Clever/Charm and 2 with 70+ Charm)":
                                 xsize 530
-                                text_size 24
+                                text_size font_size(24)
                                 text_color "#ffffff"
                                 text_hover_color "#f4c594"
                                 action [
@@ -924,11 +949,14 @@ screen journal_panel():
                                 ]
                                 sensitive can_blackmail
                         
+                        null height 10
+                        text "Tip: Check out shops for items to boost skills!" size font_size(18) color "#6b6528" italic True
+                        
                         if store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False):
                             null height 15
                             textbutton "Mark Complete":
                                 xsize 520
-                                text_size 22
+                                text_size font_size(24)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -939,14 +967,14 @@ screen journal_panel():
                                 ]
                     
                     elif current_objective == 16:
-                        text "Choose Your Path of Vengeance:" size 22 color "#7a4b2a"
+                        text "Choose Your Path of Vengeance:" size font_size(24) color "#7a4b2a"
                         
                         $ combat_count = count_workers_with_skill("Combat", 70)
                         $ clever_count = count_workers_with_skill("Clever", 70)
                         
                         textbutton "Path of the Blade - Strike with overwhelming force (requires 5 with Combat 70+)":
                             xsize 520
-                            text_size 22
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [
@@ -958,7 +986,7 @@ screen journal_panel():
                         
                         textbutton "Path of the Shadow - Strike with cunning subterfuge (requires 5 with Clever 70+)":
                             xsize 520
-                            text_size 22
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [
@@ -974,7 +1002,7 @@ screen journal_panel():
                             if store.event_flags.get("branch_assassination", False):
                                 textbutton "Mark Complete - Begin the Final Strike":
                                     xsize 520
-                                    text_size 22
+                                    text_size font_size(24)
                                     text_color "#2a7a4b"
                                     text_hover_color "#1a5a3b"
                                     action [
@@ -986,7 +1014,7 @@ screen journal_panel():
                             elif store.event_flags.get("branch_blackmail", False):
                                 textbutton "Mark Complete - Begin the Final Strike":
                                     xsize 520
-                                    text_size 22
+                                    text_size font_size(24)
                                     text_color "#2a7a4b"
                                     text_hover_color "#1a5a3b"
                                     action [
@@ -999,7 +1027,7 @@ screen journal_panel():
                                 # Fallback if no branch was chosen (shouldn't happen)
                                 textbutton "Mark Complete - Begin the Final Strike":
                                     xsize 520
-                                    text_size 22
+                                    text_size font_size(24)
                                     text_color "#2a7a4b"
                                     text_hover_color "#1a5a3b"
                                     action [
@@ -1014,14 +1042,14 @@ screen journal_panel():
                         textbutton "Skip Tutorial":
                             xalign 0.0
                             xsize 200
-                            text_size 20
+                            text_size font_size(22)
                             text_color "#444444"
                             text_hover_color "#777777"
                             action Show("skip_tutorial_confirm")
                 else:
                     text "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished.":
                         xsize 580
-                        size 28
+                        size font_size(28)
                         color "#7a4b2a"
                         text_align 0.5
         

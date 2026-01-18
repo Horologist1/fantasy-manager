@@ -1,28 +1,94 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/scripts/main_flow.rpy", line 404, in script
-    menu:
-Exception: The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.
+  File "game/scripts/main_flow.rpy", line 921, in script
+    call screen tavern
+  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "renpy/common/00action_other.rpy", line 619, in __call__
+    rv = self.callable(*self.args, **self.kwargs)
+  File "game/scripts/core/screens.rpy", line 3540, in <lambda>
+    Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
+  File "game/scripts/tutorial_system.rpy", line 478, in check_objective_completion
+    renpy.call_in_new_context("show_objective_2_dialogue")
+  File "game/scripts/main_flow.rpy", line 955, in script
+    python:
+ScriptError: could not find label 'day_transition'.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/main_flow.rpy", line 404, in script
-    menu:
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1628, in execute
-    renpy.exports.say(None, "\n".join(narration), interact=False)
-  File "D:\renpy-8.3.4-sdk\renpy\exports\sayexports.py", line 132, in say
-    who(what, *args, **kwargs)
-  File "D:\renpy-8.3.4-sdk\renpy\character.py", line 1471, in __call__
-    self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
-  File "D:\renpy-8.3.4-sdk\renpy\character.py", line 1117, in do_display
-    display_say(who,
-  File "D:\renpy-8.3.4-sdk\renpy\character.py", line 799, in display_say
-    raise Exception("The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.")
-Exception: The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.
+  File "game/scripts/main_flow.rpy", line 921, in script
+    call screen tavern
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
+    self.call("execute")
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1966, in call
+    return renpy.statements.call(method, parsed, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\statements.py", line 374, in call
+    return method(parsed, *args, **kwargs)
+  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\exports\statementexports.py", line 345, in call_screen
+    rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
+  File "D:\renpy-8.3.4-sdk\renpy\ui.py", line 301, in interact
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2218, in interact
+    repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
+  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 3289, in interact_core
+    rv = root_widget.event(ev, x, y, 0)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 794, in event
+    rv = self.child.event(ev, x, y, st)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1526, in event
+    rv = super(Window, self).event(ev, x, y, st)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 285, in event
+    rv = d.event(ev, x - xo, y - yo, st)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 285, in event
+    rv = d.event(ev, x - xo, y - yo, st)
+  File "D:\renpy-8.3.4-sdk\renpy\display\viewport.py", line 589, in event
+    rv = super(Viewport, self).event(ev, x, y, st)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 285, in event
+    rv = d.event(ev, x - xo, y - yo, st)
+  File "D:\renpy-8.3.4-sdk\renpy\display\layout.py", line 1297, in event
+    rv = i.event(ev, x - xo, y - yo, cst)
+  File "D:\renpy-8.3.4-sdk\renpy\display\behavior.py", line 1182, in event
+    return handle_click(self.clicked)
+  File "D:\renpy-8.3.4-sdk\renpy\display\behavior.py", line 1103, in handle_click
+    rv = run(action)
+  File "D:\renpy-8.3.4-sdk\renpy\display\behavior.py", line 394, in run
+    new_rv = run(i, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\display\behavior.py", line 401, in run
+    return action(*args, **kwargs)
+  File "renpy/common/00action_other.rpy", line 619, in __call__
+    rv = self.callable(*self.args, **self.kwargs)
+  File "game/scripts/core/screens.rpy", line 3540, in <lambda>
+    Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
+  File "game/scripts/tutorial_system.rpy", line 478, in check_objective_completion
+    renpy.call_in_new_context("show_objective_2_dialogue")
+  File "D:\renpy-8.3.4-sdk\renpy\game.py", line 377, in call_in_new_context
+    return renpy.execution.run_context(False)
+  File "D:\renpy-8.3.4-sdk\renpy\execution.py", line 958, in run_context
+    context.run()
+  File "game/scripts/main_flow.rpy", line 955, in script
+    python:
+  File "D:\renpy-8.3.4-sdk\renpy\script.py", line 1103, in lookup
+    raise ScriptError("could not find label '%s'." % str(original))
+ScriptError: could not find label 'day_transition'.
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
-Fantasy Manager 9.1.1
-Tue Jan  6 23:28:27 2026
+Fantasy Manager 0.9.2.3
+Sun Jan 18 04:27:11 2026

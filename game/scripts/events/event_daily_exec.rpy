@@ -396,13 +396,20 @@ init python:
                         if selected_skill:
                             # Use skill name directly
                             skill_for_desc = selected_skill
+                            # Calculate the actual skill value for display
+                            skill_value = calculate_skill_with_traits(worker, selected_skill)
                         else:
                             skill_for_desc = "No Skill"
+                            skill_value = 0
                         base_description = chosen_story.get("descriptions", {}).get(outcome_key, "No description available").format(worker_name=worker["name"], skill=skill_for_desc)
                         full_description = base_description
                         if trait_success_messages:
                             full_description += "\n" + "\n".join(trait_success_messages)
-                        full_description += "\n\n{{color=#006600}}{{size=18}}(Skill roll: {} - {}){{/size}}{{/color}}".format(roll, outcome)
+                        # Show skill name and value before skill roll
+                        if selected_skill and skill_value > 0:
+                            full_description += "\n\n{{color=#006600}}{{size=18}}({}: {} - Skill roll: {} - {}){{/size}}{{/color}}".format(selected_skill, skill_value, roll, outcome)
+                        else:
+                            full_description += "\n\n{{color=#006600}}{{size=18}}(Skill roll: {} - {}){{/size}}{{/color}}".format(roll, outcome)
 
                         # Use skill name directly
                         if selected_skill is not None:
@@ -450,6 +457,20 @@ init python:
                                     report_entry["loot"] = loot
                                     for item_id in loot:
                                         add_item_to_inventory(manager_inventory, item_id)
+                                
+                                # Bonus items handling - specific items with chance
+                                bonus_items = loot_data.get("bonus_items", [])
+                                for bonus in bonus_items:
+                                    item_id = bonus.get("item_id")
+                                    chance = bonus.get("chance", 1.0)
+                                    # Only on critical success if specified
+                                    if bonus.get("critical_only", False) and outcome != "Critical Success":
+                                        continue
+                                    if item_id and random.random() <= chance:
+                                        add_item_to_inventory(manager_inventory, item_id)
+                                        if item_id not in report_entry["loot"]:
+                                            report_entry["loot"].append(item_id)
+                                        renpy.log(f"Bonus loot: {item_id} (chance: {chance})")
                                 
                                 # Monster worker loot handling
                                 if "monster_worker" in loot_data:
@@ -728,26 +749,57 @@ init python:
         # Check for guaranteed events (100% probability or date-specific)
         guaranteed_events = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 30) >= 100]
         
+        # Check for priority events (NOT affected by managers):
+        # - Events with custom probability (event_probability defined)
+        # - Limited events (limited: true) - these are quest/story events
+        # These are quest events, story events, etc. that should not be blocked by managers
+        priority_events = [e for e in possible_events 
+                         if (e.get("event_probability") is not None or e.get("limited", False))
+                         and not e.get("guaranteed", False) 
+                         and e.get("event_probability", 30) < 100]
+        
+        # Events without custom probability and not limited (affected by managers)
+        normal_events = [e for e in possible_events if e.get("event_probability") is None and not e.get("limited", False)]
+        
         if guaranteed_events:
             renpy.log(f"Found {len(guaranteed_events)} guaranteed events, skipping probability check")
             should_trigger_event = True
             possible_events = guaranteed_events  # Only consider guaranteed events
-        elif has_active_professions:
-            # Use default 30% chance (reduced from 50%)
-            base_probability = 30
+        elif priority_events or (normal_events and has_active_professions):
+            # Two separate checks:
+            # 1. Priority events (custom probability OR limited) - NOT affected by managers
+            # 2. Normal events - affected by managers
             
-            # Each manager reduces event probability by 10%
-            manager_count = count_active_managers()
-            manager_reduction = manager_count * 10
-            effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
+            should_trigger_event = False
+            events_to_consider = []
             
-            max_event_probability = max([e.get("event_probability", effective_probability) for e in possible_events]) if possible_events else effective_probability
+            # Check priority events (NOT affected by managers)
+            # Priority events include: events with custom probability OR limited events (quest/story)
+            if priority_events:
+                # Use event_probability if defined, otherwise use 50% for limited events
+                max_priority_prob = max([e.get("event_probability", 50) for e in priority_events])
+                priority_roll = renpy.random.randint(1, 100)
+                renpy.log(f"DEBUG: Priority events roll: {priority_roll}/100 (max prob: {max_priority_prob}%, NOT affected by managers, {len(priority_events)} events)")
+                if priority_roll <= max_priority_prob:
+                    should_trigger_event = True
+                    events_to_consider.extend(priority_events)
             
-            random_roll = renpy.random.randint(1, 100)
-            renpy.log(f"DEBUG: Event chance roll: {random_roll}/100 (base: {base_probability}%, managers: {manager_count} (-{manager_reduction}%), effective: {effective_probability}%, max event probability: {max_event_probability}%)")
+            # Check normal events (affected by managers)
+            if normal_events and has_active_professions:
+                base_probability = 30
+                manager_count = count_active_managers()
+                manager_reduction = manager_count * 10
+                effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
+                
+                normal_roll = renpy.random.randint(1, 100)
+                renpy.log(f"DEBUG: Normal events roll: {normal_roll}/100 (base: {base_probability}%, managers: {manager_count} (-{manager_reduction}%), effective: {effective_probability}%)")
+                if normal_roll <= effective_probability:
+                    should_trigger_event = True
+                    events_to_consider.extend(normal_events)
             
-            # Trigger if base chance succeeds OR if any event has higher probability that succeeds
-            should_trigger_event = random_roll <= max(effective_probability, max_event_probability)
+            # If any check passed, consider those events
+            if events_to_consider:
+                possible_events = events_to_consider
         else:
             should_trigger_event = False
         

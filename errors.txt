@@ -2,15 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 4725: expected a keyword argument or child statement.
-    """
-    ^
-        Screen to handle Take a Walk feature without nested call screen.
-        Stage 0: Show intro text 1
-        Stage 1: Show intro text 2
-        Stage 2: Show intro text 3
-        Stage 3+: Show interaction result with message navigation
-        """
+File "game/scripts/core/screens.rpy", line 5948: a non-constant keyword argument like 'action Show("worker_details", worker=worker, in_roster=True)' is not allowed after a python block.
+    action Show("worker_details", worker=worker, in_roster=True)
+                                                                ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Sun Jan  4 23:25:29 2026
+Sun Jan 18 04:42:50 2026

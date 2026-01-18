@@ -231,6 +231,29 @@ init python:
 
 
 
+    def font_size(base_size):
+        """
+        Calculate font size based on user preference.
+        Large mode adds 40% increase for better readability.
+        Excludes the workers and buy_servants_table screens from font size increase.
+        """
+        if persistent.large_font_mode:
+            # Check if we're in excluded screens and exclude them from font increase
+            workers_screen = renpy.get_screen("workers")
+            buy_servants_screen = renpy.get_screen("buy_servants_table")
+            if workers_screen is None and buy_servants_screen is None:
+                return int(base_size * 1.4)
+        return base_size
+
+    def col_size(base_size):
+        """
+        Calculate column width based on user preference.
+        Large mode increases column width by 25% to accommodate larger text.
+        """
+        if persistent.large_font_mode:
+            return int(base_size * 1.25)
+        return base_size
+
     def get_worker_folder(worker):
         """Resolve the worker's folder based on their data."""
         if isinstance(worker, dict):
@@ -1485,8 +1508,16 @@ init python:
                 skill_uses = int(worker["skill_uses"].get(skill_name, 0))
                 
                 # Determine uses needed for level up
-                # Skills at 0 need 1 use to reach level 1, then uses_needed = current_level
-                uses_needed = 1 if current_skill_level == 0 else current_skill_level
+                # Tiered system: fast early, slows down after 75, very hard after 85
+                if current_skill_level <= 0:
+                    uses_needed = 1  # Level 0 needs 1 use
+                elif current_skill_level <= 75:
+                    # Fast progression: 1-6 uses based on tier
+                    uses_needed = max(1, current_skill_level // 15 + 1)
+                else:
+                    # Exponential slowdown after 75
+                    excess = current_skill_level - 75
+                    uses_needed = 6 + int(excess ** 1.8 / 5)
                 
                 # Log for debugging
                 if skill_uses > 0:
@@ -3499,7 +3530,7 @@ init python:
 ################################################################################
 default player_title = ""
 default player_name = ""
-default money = 5000
+default money = 8000
 default current_bg = tavern_bg
 default manager_inventory = []
 default is_new_game = True
@@ -3527,6 +3558,9 @@ default available_buildings = {
 
 default workers = []
 default unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
+
+# Font size preferences - persistent across sessions
+default persistent.large_font_mode = False
 default available_workers = []
 default displayed_workers = []
 default roster_current_page = 0
@@ -3536,6 +3570,8 @@ default right_worker = None  # Will be set in init python
 default daily_report = []
 default building_filter = "All Buildings"
 default worker_building_filter = "All Workers"
+default worker_job_filter = "All Jobs"
+default daily_report_job_filter = "All Jobs"
 define roster_page_size = 50
 default current_worker_index = 0
 default current_worker = None  # Updated after workers are loaded

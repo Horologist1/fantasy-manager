@@ -136,7 +136,7 @@ init python:
             "Building_select_global": [Hide("Building_select_global"), Show("tavern")],
             
             # Daily report with transition
-            "daily_report": [Hide("daily_report"), Jump("day_transition")],
+            "daily_report": Jump("day_transition"),
             
             # Shop and building screens
             "shop_selection": Hide("shop_selection"),
@@ -165,6 +165,8 @@ init python:
             "more_details_screen": Return(),
             "building_filter_menu": Return(),
             "worker_building_filter_menu": Return(),
+            "worker_job_filter_menu": Return(),
+            "daily_report_job_filter_menu": Return(),
             "report_details": Return(),
             "manager_inventory": Hide("manager_inventory"),
             
@@ -203,7 +205,7 @@ init python:
             "journal_panel", "worker_selection_popup", "building_type_selection", "adjust_skill_bonus",
             "adjust_comfort", "rename_building", "interaction_result", "interaction_menu",
             "interaction_category", "more_details_screen", "building_filter_menu",
-            "worker_building_filter_menu", "report_details", "manager_inventory", "worker_details",
+            "worker_building_filter_menu", "worker_job_filter_menu", "daily_report_job_filter_menu", "report_details", "manager_inventory", "worker_details",
             
             # Shop and building screens (HIGH PRIORITY - user wants these to close easily)
             "shop_selection", "buy_buildings", "buy_servants_table",

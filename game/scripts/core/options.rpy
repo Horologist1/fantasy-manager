@@ -25,7 +25,7 @@ define gui.show_name = True
 
 ## The version of the game.
 
-define config.version = "0.9.2.3"
+define config.version = "0.9.3"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -116,13 +116,18 @@ define config.window = "auto"
 define config.window_show_transition = Dissolve(.2)
 define config.window_hide_transition = Dissolve(.2)
 
-
 ## Preference defaults #########################################################
 
 ## Controls the default text speed. The default, 0, is infinite, while any other
 ## number is the number of characters per second to type out.
 
 default preferences.text_cps = 0
+
+## Default save/load page starts at 1
+init -1 python:
+    if getattr(persistent, '_file_page_reset_v2', None) is None:
+        persistent._file_page = 1
+        persistent._file_page_reset_v2 = True
 
 
 ## The default auto-forward delay. Larger numbers lead to longer waits, with 0

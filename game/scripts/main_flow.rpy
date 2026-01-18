@@ -3,6 +3,7 @@
 ################################################################################
 
 init python:
+    import copy as _copy
     # Inicializar variables del sistema de música por capas
     if not hasattr(store, 'bgm_volume'):
         store.bgm_volume = 0.6  # Volumen normal de BGM (60%)
@@ -291,19 +292,18 @@ init python:
             month_name = month_names_local[renpy.store.current_month]
             date_text = f"{day_name}, {renpy.store.current_day} {month_name} {renpy.store.current_year}"
 
-            # Fade to black
+            # Dissolve to black
             renpy.scene()
-            renpy.with_statement(Fade(0.75, 0.0, 0.75))
+            renpy.show("expression Solid('#000000')", tag="black_bg")
+            renpy.with_statement(dissolve)
 
-            # Show black screen and centered date text
-            renpy.scene()
-            renpy.show("expression Solid('#000000FF')")
-            renpy.show("expression Text(date_text, size=42, color='#ffffff')", at_list=[Position(xalign=0.5, yalign=0.5)])
-            renpy.pause(2.0)
+            # Show date text
+            renpy.show("expression Text('" + date_text + "', size=42, color='#ffffff')", tag="daytext", at_list=[Position(xalign=0.5, yalign=0.5)])
+            renpy.pause(1.5)
 
-            # Fade out text and return to tavern
+            # Dissolve out and return to tavern
             renpy.scene()
-            renpy.with_statement(Fade(0.75, 0.0, 0.75))
+            renpy.with_statement(dissolve)
             renpy.call_in_new_context("_return_to_tavern")
         except Exception as e:
             renpy.log("DAY TRANSITION ERROR: " + str(e))
@@ -313,15 +313,19 @@ label _return_to_tavern:
     jump tavern_screen
 
 label day_transition:
-    scene black with Fade(0.25, 0.0, 0.25)
+    # Show black IMMEDIATELY (no transition yet) to cover daily_report
+    scene expression Solid('#000000')
+    # NOW hide daily_report (it's covered by black, so no transparency)
+    $ renpy.hide_screen("daily_report")
+    # Show date text with fade in
     $ day_name = day_names[(store.current_day - 1) % 7]
     $ month_name = month_names[store.current_month]
     $ date_text = f"{day_name}, {store.current_day} {month_name} {store.current_year}"
-    show expression Text(date_text, size=42, color="#ffffff") as daytext at truecenter
+    show expression Text(date_text, size=42, color="#ffffff") as daytext at truecenter with dissolve
     # Auto-advance after a short time, but still skippable by click
     pause 1.0
-    hide daytext
-    scene black with Fade(0.25, 0.0, 0.25)
+    hide daytext with dissolve
+    # Fade to tavern
     jump tavern_screen
 
 ################################################################################
@@ -417,7 +421,7 @@ label start:
     "Very well, [player_title] [player_name]. Let's take back our emporium."
 
     # Transition to black and show initial date (like day_transition)
-    scene black with Fade(0.25, 0.0, 0.25)
+    scene expression Solid('#000000') with dissolve
     $ day_name = day_names[(store.current_day - 1) % 7]
     $ month_name = month_names[store.current_month]
     $ date_text = f"{day_name}, {store.current_day} {month_name} {store.current_year}"
@@ -425,16 +429,30 @@ label start:
     # Auto-advance after a short time, but still skippable by click
     pause 1.0
     hide daytext
-    scene black with Fade(0.25, 0.0, 0.25)
+    scene expression Solid('#000000') with dissolve
 
     # Initialize the calendar with forced reset for new game
     $ initialize_calendar(force_reset=True) if getattr(store, 'is_new_game', True) else initialize_calendar(False)
 
-    # Reset persistent.unlocked_shops for a new game and link to store
-    $ persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
-    $ store.unlocked_shops = persistent.unlocked_shops
-    $ renpy.log("Initialized persistent.unlocked_shops: " + str(persistent.unlocked_shops))
-    $ renpy.log("Linked store.unlocked_shops: " + str(store.unlocked_shops))
+    # Only reset persistent.unlocked_shops for a NEW GAME, not when loading
+    if getattr(store, 'is_new_game', True):
+        $ persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
+        $ store.unlocked_shops = persistent.unlocked_shops
+        $ renpy.log("Initialized persistent.unlocked_shops for NEW GAME: " + str(persistent.unlocked_shops))
+    else:
+        # When loading, sync persistent with store (store was restored from save)
+        if hasattr(store, 'unlocked_shops') and store.unlocked_shops:
+            $ persistent.unlocked_shops = _copy.deepcopy(store.unlocked_shops)
+            $ renpy.log("Synced persistent.unlocked_shops from loaded save: " + str(persistent.unlocked_shops))
+        elif hasattr(persistent, 'unlocked_shops') and persistent.unlocked_shops:
+            # Fallback: if store doesn't have it but persistent does, sync the other way
+            $ store.unlocked_shops = _copy.deepcopy(persistent.unlocked_shops)
+            $ renpy.log("Synced store.unlocked_shops from persistent: " + str(store.unlocked_shops))
+        else:
+            # Last resort: initialize both
+            $ persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
+            $ store.unlocked_shops = persistent.unlocked_shops
+            $ renpy.log("Initialized unlocked_shops as fallback: " + str(persistent.unlocked_shops))
 
     # FIXED: Do NOT reinitialize workers - they're already defined with 'default workers = []'
     # The line below was causing workers to reset on load:
@@ -648,23 +666,35 @@ label show_ending_assassination:
     
     "The governor's mansion looms before us, a monument to corruption and greed. But tonight, it shall become a tomb."
     
-    "We move like shadows through the night, my team of warriors and mages executing the plan with lethal precision. The governor's guards fall silently, their throats cut or their minds shattered by arcane forces before they can raise the alarm."
+    "We move like shadows through the night, my team of warriors and mages executing the plan with lethal precision."
     
-    "The governor himself sits in his study, surrounded by the spoils of his tyranny - paintings seized from my family's estate, ledgers filled with debts called in under false pretenses, trophies from the lives he destroyed."
+    "The governor's guards fall silently, their throats cut or their minds shattered by arcane forces before they can raise the alarm."
+    
+    "The governor himself sits in his study, surrounded by the spoils of his tyranny - paintings seized from my family's estate, ledgers filled with debts called in under false pretenses."
+    
+    "Trophies from the lives he destroyed line the walls, each one a testament to his corruption."
     
     "He looks up as we enter, his face a mask of surprise that quickly turns to terror. 'You... you cannot be here. The guards...'"
     
     "'The guards are dead,' I reply, my voice cold as the grave. 'And so shall you be, before this night ends.'"
     
-    "My team moves with practiced efficiency. [team_names[0] if len(team_names) > 0 else 'The warrior']'s blade finds its mark even as [team_names[1] if len(team_names) > 1 else 'the mage']'s spells bind the governor in chains of pure force. [team_names[2] if len(team_names) > 2 else 'The assassin'] delivers the final blow - quick, clean, merciless."
+    "My team moves with practiced efficiency. [team_names[0] if len(team_names) > 0 else 'The warrior']'s blade finds its mark even as [team_names[1] if len(team_names) > 1 else 'the mage']'s spells bind the governor in chains of pure force."
     
-    "The governor's body slumps to the floor, his blood mingling with the wine from the shattered goblet he had been holding. Justice, at long last, served not by the law he corrupted, but by the steel and sorcery of those he wronged."
+    "[team_names[2] if len(team_names) > 2 else 'The assassin'] delivers the final blow - quick, clean, merciless."
+    
+    "The governor's body slumps to the floor, his blood mingling with the wine from the shattered goblet he had been holding."
+    
+    "Justice, at long last, served not by the law he corrupted, but by the steel and sorcery of those he wronged."
     
     "As dawn breaks over the city, word spreads like wildfire. The governor is dead. The balance of power hath shifted irrevocably."
     
-    "My empire stands unchallenged now. The [building_count] buildings that bear my banner, the [worker_count] souls who serve my will, the vast fortune I have amassed - all of it secured through this single act of vengeance."
+    "My empire stands unchallenged now. The [building_count] buildings that bear my banner, the [worker_count] souls who serve my will, the vast fortune I have amassed."
     
-    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute. I accept their offerings, but I do not forget."
+    "All of it secured through this single act of vengeance."
+    
+    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute."
+    
+    "I accept their offerings, but I do not forget."
     
     "I do not forget how they stood by while my family was destroyed. I do not forget how they profited from our ruin. But for now, I am content."
     
@@ -749,29 +779,47 @@ label show_ending_blackmail:
     
     "The hour of reckoning hath arrived, but not through the path of the blade. The governor's downfall shall come not from steel, but from the chains of his own corruption."
     
-    "Three of my most cunning souls stand ready: [team_names[0] if len(team_names) > 0 else 'a master of charm'], [team_names[1] if len(team_names) > 1 else 'a skilled seducer'], and [team_names[2] if len(team_names) > 2 else 'a clever strategist']. Their weapons are not swords or spells, but secrets and seduction."
+    "Three of my most cunning souls stand ready: [team_names[0] if len(team_names) > 0 else 'a master of charm'], [team_names[1] if len(team_names) > 1 else 'a skilled seducer'], and [team_names[2] if len(team_names) > 2 else 'a clever strategist']."
     
-    "From the [building_count] strongholds I have built, from the [worker_count] souls who have sworn fealty to my cause, from the [money] coins that have filled my coffers - all of it hath led to this single, decisive moment."
+    "Their weapons are not swords or spells, but secrets and seduction."
+    
+    "From the [building_count] strongholds I have built, from the [worker_count] souls who have sworn fealty to my cause, from the [money] coins that have filled my coffers."
+    
+    "All of it hath led to this single, decisive moment."
     
     "The governor's mansion looms before us, but we do not come to kill. We come to steal what he values most: his secrets, his reputation, his power."
     
-    "Under cover of darkness, my team executes a plan of exquisite complexity. [team_names[0] if len(team_names) > 0 else 'The charmer'] gains entry to the governor's private study, seducing a guard with honeyed words and false promises. [team_names[1] if len(team_names) > 1 else 'The seducer'] distracts the governor himself in his chambers, while [team_names[2] if len(team_names) > 2 else 'the clever one'] cracks the safe containing documents of incalculable value."
+    "Under cover of darkness, my team executes a plan of exquisite complexity."
     
-    "Ledgers detailing embezzlement. Letters proving bribery of city officials. Contracts showing illegal dealings with criminal syndicates. Evidence that would destroy the governor's reputation and send him to the gallows."
+    "[team_names[0] if len(team_names) > 0 else 'The charmer'] gains entry to the governor's private study, seducing a guard with honeyed words and false promises."
+    
+    "[team_names[1] if len(team_names) > 1 else 'The seducer'] distracts the governor himself in his chambers, while [team_names[2] if len(team_names) > 2 else 'the clever one'] cracks the safe containing documents of incalculable value."
+    
+    "Ledgers detailing embezzlement. Letters proving bribery of city officials. Contracts showing illegal dealings with criminal syndicates."
+    
+    "Evidence that would destroy the governor's reputation and send him to the gallows."
     
     "We emerge from the mansion like shadows, carrying with us the governor's entire empire of lies, written in his own hand and sealed with his own seal."
     
-    "The next morning, I send a messenger to the governor's mansion. The message is simple: 'I have in my possession documents that would see you hanged. Your choice is simple - surrender your holdings to me, publicly declare me your successor, and leave this city forever. Or face the consequences.'"
+    "The next morning, I send a messenger to the governor's mansion."
+    
+    "The message is simple: 'I have in my possession documents that would see you hanged. Your choice is simple - surrender your holdings to me, publicly declare me your successor, and leave this city forever. Or face the consequences.'"
     
     "The governor's response comes that evening. He is a broken man, his power stripped away not by force of arms, but by the weight of his own sins brought to light."
     
-    "He signs the documents transferring his properties to my name. He makes the public declaration, his voice trembling with fear and shame. And then he flees, a shadow of the tyrant he once was."
+    "He signs the documents transferring his properties to my name. He makes the public declaration, his voice trembling with fear and shame."
+    
+    "And then he flees, a shadow of the tyrant he once was."
     
     "As the sun sets on his departure, word spreads throughout the city. The governor hath been brought low. The balance of power hath shifted irrevocably."
     
-    "My empire stands unchallenged now. The [building_count] buildings that bear my banner, the [worker_count] souls who serve my will, the vast fortune I have amassed - all of it secured through cunning and blackmail, the tools of a true master of the shadows."
+    "My empire stands unchallenged now. The [building_count] buildings that bear my banner, the [worker_count] souls who serve my will, the vast fortune I have amassed."
     
-    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute. I accept their offerings, but I do not forget."
+    "All of it secured through cunning and blackmail, the tools of a true master of the shadows."
+    
+    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute."
+    
+    "I accept their offerings, but I do not forget."
     
     "I do not forget how they stood by while my family was destroyed. I do not forget how they profited from our ruin. But for now, I am content."
     
@@ -906,6 +954,9 @@ label next_day:
 
 label handle_event_then_daily_report:
     $ renpy.log("DEBUG: handle_event_then_daily_report - STARTING")
+    
+    # Show black overlay first to prevent transparency during transition
+    scene expression Solid('#000000')
     
     # Process the event with full visual presentation (exactly as before)
     call handle_random_event from _call_handle_random_event

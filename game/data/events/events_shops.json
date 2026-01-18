@@ -4,6 +4,7 @@
     "description": "A commotion breaks out in the market square as rough men in worn leather surround a merchant, their voices rising in threat. The shop owner, a middle-aged woman with worry etched into her face, pleads for more time as they demand immediate payment. Her goods—fine fabrics and rare trinkets—lie scattered, and you can see the desperation in her eyes. This could be your chance to gain favor with a merchant who might open new trade opportunities.",
     "weight": 10,
     "limited": true,
+    "event_probability": 80,
     "max_occurrences": 1,
     "worker_selection": "choose",
     "building_type": [
@@ -39,7 +40,7 @@
             "custom": "unlock_shop2",
             "event_flags": {
               "shop2_unlocked": true,
-              "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
             }
           },
           "failure": {
@@ -59,7 +60,7 @@
             "custom": "unlock_shop2",
             "event_flags": {
               "shop2_unlocked": true,
-              "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
             }
           },
           "failure": {
@@ -79,7 +80,7 @@
             "custom": "unlock_shop2",
             "event_flags": {
               "shop2_unlocked": true,
-              "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
             }
           },
           "failure": {
@@ -96,7 +97,7 @@
           "custom": "unlock_shop2",
           "event_flags": {
             "shop2_unlocked": true,
-            "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+            "shop2_unlock_timestamp": "[calculate_total_days()]"
           }
         }
       },
@@ -112,6 +113,7 @@
     "description": "A commotion breaks out in the market square as rough men in worn leather surround a merchant, their voices rising in threat. The shop owner, a middle-aged woman with worry etched into her face, pleads for more time as they demand immediate payment. Her goods—fine fabrics and rare trinkets—lie scattered, and you can see the desperation in her eyes. This could be your chance to gain favor with a merchant who might open new trade opportunities.",
     "weight": 50,
     "limited": true,
+    "event_probability": 80,
     "max_occurrences": 1,
     "worker_selection": "choose",
     "building_type": [
@@ -144,7 +146,7 @@
             "custom": "unlock_shop2",
             "event_flags": {
               "shop2_unlocked": true,
-              "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
             }
           },
           "failure": {
@@ -164,7 +166,7 @@
             "custom": "unlock_shop2",
             "event_flags": {
               "shop2_unlocked": true,
-              "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
             }
           },
           "failure": {
@@ -184,7 +186,7 @@
             "custom": "unlock_shop2",
             "event_flags": {
               "shop2_unlocked": true,
-              "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
             }
           },
           "failure": {
@@ -201,7 +203,7 @@
           "custom": "unlock_shop2",
           "event_flags": {
             "shop2_unlocked": true,
-            "shop2_unlock_timestamp": "[calendar.get_total_days()]"
+            "shop2_unlock_timestamp": "[calculate_total_days()]"
           }
         }
       },
@@ -217,6 +219,7 @@
     "description": "The merchant from the Adventurer's Market approaches you with a gleam in her eye. 'Your patronage has been a blessing,' she says, 'but I have grander visions. With an investment, I could expand my emporium into something truly magnificent—a place where only the finest goods are sold. Ten thousand coins would secure the location, permits, and the initial inventory. In return, you'll have exclusive access to the Elite Emporium, where treasures beyond the ordinary await.'",
     "weight": 10,
     "limited": true,
+    "event_probability": 50,
     "max_occurrences": 1,
     "worker_selection": "none",
     "building_type": [
@@ -236,7 +239,7 @@
       "shop3_unlocked": true
     },
     "conditions": {
-      "start_when": "after_days:5",
+      "start_when": "after_days_from_flag:shop2_unlock_timestamp,20",
       "stop_when": "has_flag:shop3_unlocked"
     },
     "choices": [
@@ -258,7 +261,7 @@
         "effect": {
           "event_flags": {
             "shop_expansion_declined": true,
-            "shop_expansion_decline_timestamp": "[calendar.get_total_days()]"
+            "shop_expansion_decline_timestamp": "[calculate_total_days()]"
           }
         }
       }
@@ -269,6 +272,7 @@
     "description": "The merchant returns, hope still burning in her eyes. 'I haven't given up on the Elite Emporium,' she says. 'The opportunity remains—ten thousand coins to open the most exclusive market in the city. Will you reconsider your investment?'",
     "weight": 10,
     "limited": false,
+    "event_probability": 80,
     "cooldown_days": 10,
     "worker_selection": "none",
     "building_type": [
@@ -310,7 +314,7 @@
         "message": "You explain that you still need more time to gather the funds. The merchant accepts this with a nod, though her shoulders slump slightly. 'I'll be waiting,' she says, 'when you're ready to make this dream a reality.'",
         "effect": {
           "event_flags": {
-            "shop_expansion_decline_timestamp": "[calendar.get_total_days()]"
+            "shop_expansion_decline_timestamp": "[calculate_total_days()]"
           }
         }
       }

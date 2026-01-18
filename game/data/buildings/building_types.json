@@ -22,7 +22,8 @@
             "Oral",
             "Homo",
             "Special",
-            "Group"
+            "Group",
+            "Extreme"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
@@ -756,6 +757,73 @@
                   "relationship": 0,
                   "reputation": 20,
                   "libido": -1
+                }
+              },
+              "loot": {
+                "rolls": 0
+              }
+            },
+            {
+              "id": "prostitute_extreme_client",
+              "weight": 1,
+              "report": "Client paid for Extreme Fantasy",
+              "difficulty_modifier": -10,
+              "skill_options": [
+                "Extreme"
+              ],
+              "relevant_traits": [
+                "Fearless",
+                "Open-minded",
+                "Tough",
+                "Adventurous",
+                "Wild"
+              ],
+              "trait_bonus": "level * 200",
+              "trait_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
+              "earnings": {
+                "success": "500 + skill * 15",
+                "critical_success": "500 + skill * 25",
+                "mediocre": "250 + skill * 8",
+                "failure": "-50"
+              },
+              "story_image": "prostitute_extreme",
+              "failure_image": "prostitute_extreme_failure",
+              "descriptions": {
+                "failure": "{worker_name} cannot handle the client's extreme request. A masked noble pays extra to watch {worker_name} be taken by a summoned tentacled creature - but {worker_name} panics at the sight of the writhing beast and flees the room screaming, ruining the expensive ritual and leaving the client furious.",
+                "mediocre": "{worker_name} nervously agrees to the wealthy merchant's fantasy - being mounted by an illusory minotaur while the client watches. The magical beast takes {worker_name} but the worker's discomfort shows, making the performance unconvincing. The client pays but leaves disappointed by the lack of genuine submission.",
+                "success": "{worker_name} fulfills a noble's dark fantasy flawlessly. Bound and presented as an offering, {worker_name} is claimed by a summoned wolf-creature while the client watches in rapture. The worker's genuine moans and complete surrender to the beast create exactly the depraved spectacle the noble craved, earning a generous tip.",
+                "critical_success": "{worker_name} handles the archmage's forbidden 'Ritual of the Beast' flawlessly. Magical tentacles probe and fill every opening as {worker_name} surrenders completely, crying out in genuine ecstasy. The archmage becomes a devoted patron, and word spreads among elite circles."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "health": -2,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -10,
+                  "libido": -5
+                },
+                "success": {
+                  "energy": -2,
+                  "health": -1,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 25,
+                  "libido": 0
                 }
               },
               "loot": {
@@ -1835,19 +1903,26 @@
                 }
               },
               "loot": {
-                "rolls": 4
+                "rolls": 4,
+                "bonus_items": [
+                  {
+                    "item_id": "obsidian_blade",
+                    "chance": 0.15
+                  }
+                ]
               }
             }
           ]
         },
         {
-          "id": "capture_monster_servants",
-          "name": "Capture Monsters",
-          "description": "Captures monsters to recruit them as workers. High risk profession that can expand your workforce with unique monster servants.",
+          "id": "monster_taming",
+          "name": "Monster Taming",
+          "description": "Captures and tames wild monsters to recruit them as workers. Can use combat prowess to subdue creatures through force, or seductive charm to lure them through primal attraction. High risk profession that expands your workforce with unique monster servants.",
           "nsfw": true,
           "difficulty": "hard",
           "skills": [
-            "Combat"
+            "Combat",
+            "Extreme"
           ],
           "max_daily_workers": 2,
           "daily_story_count": {
@@ -1856,7 +1931,7 @@
           },
           "daily_stories": [
             {
-              "id": "capture_monster_story1",
+              "id": "monster_taming_combat",
               "weight": 1,
               "report": "Monster Capture",
               "difficulty_modifier": 0,
@@ -1866,7 +1941,8 @@
               "relevant_traits": [
                 "Determined",
                 "Fearless",
-                "Sadistic"
+                "Sadistic",
+                "Robust"
               ],
               "trait_bonus": "level * 200",
               "trait_success": "{worker_name}'s {trait} makes the capture particularly effective.",
@@ -1882,8 +1958,8 @@
                 "success": "{worker_name} advances the guild's monster servant program significantly. Either captures a new creature or makes extraordinary progress in taming and training existing monsters, bringing the guild closer to its goals.",
                 "critical_success": "{worker_name} achieves a breakthrough in monster capture operations. Successfully brings back a powerful new servant creature or completes the training of multiple monsters, dramatically expanding the guild's supernatural workforce."
               },
-              "story_image": "monster_capture",
-              "failure_image": "monster_capture_failure",
+              "story_image": "monster_combat",
+              "failure_image": "monster_combat_failure",
               "consequences": {
                 "failure": {
                   "energy": -2,
@@ -1920,6 +1996,80 @@
                 "rolls": 0,
                 "monster_worker": {
                   "chance": 0.1,
+                  "filters": {
+                    "monster": true,
+                    "encounter_only": true
+                  }
+                }
+              }
+            },
+            {
+              "id": "monster_taming_seduction",
+              "weight": 1,
+              "report": "Monster Seduction Attempt",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Extreme"
+              ],
+              "relevant_traits": [
+                "Fearless",
+                "Seductive",
+                "Wild",
+                "Charming",
+                "Beautiful"
+              ],
+              "trait_bonus": "level * 250",
+              "trait_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
+              "earnings": {
+                "success": "300 + skill * 20",
+                "critical_success": "300 + skill * 30",
+                "mediocre": "150 + skill * 8",
+                "failure": "-30"
+              },
+              "descriptions": {
+                "failure": "{worker_name} ventures into the wilderness to lure a wild creature with seductive displays. But the seduction works too well - instead of becoming docile, the beast's lust turns aggressive. {worker_name} loses control as the creature mounts them roughly, taking what it wants before disappearing into the forest. No servant gained, only bruises and shame.",
+                "mediocre": "{worker_name} finds a suitable monster and begins an enticing display - slow movements, exposed skin, alluring scents. The creature approaches, sniffing curiously, clearly attracted but ultimately too wild to be tamed. It circles {worker_name} with obvious desire before wandering off, leaving the seduction incomplete.",
+                "success": "{worker_name} locates a territorial werewolf and begins an irresistible seduction dance. The beast's rage transforms into fascination as {worker_name} moves sensually, teasing with glimpses of bare flesh. The creature becomes entranced, following every movement with hungry eyes. By maintaining the tension of unfulfilled desire, {worker_name} leads the captivated beast back - a new devoted servant, forever chasing the promise of pleasure.",
+                "critical_success": "{worker_name} achieves legendary status among monster tamers. A fearsome dragon-kin discovers {worker_name} performing an ancient fertility dance in its lair. The creature is utterly mesmerized, its predatory instincts overwritten by overwhelming attraction. {worker_name} teases the beast to the edge of madness with promises of intimacy, binding it through desperate unfulfilled desire. The creature now follows with obsessive devotion, forever addicted to {worker_name}'s presence."
+              },
+              "story_image": "monster_capture",
+              "failure_image": "monster_capture_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "health": -5,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 1
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 20,
+                  "libido": 2
+                }
+              },
+              "loot": {
+                "rolls": 1,
+                "monster_worker": {
+                  "chance": 0.15,
                   "filters": {
                     "monster": true,
                     "encounter_only": true
@@ -2066,7 +2216,7 @@
           "skills": [
             "Clever"
           ],
-          "max_daily_workers": 99,
+          "max_daily_workers": 4,
           "daily_story_count": 1,
           "daily_stories": [
             {
@@ -2762,7 +2912,7 @@
     },
     {
       "id": "governor_castle",
-      "name": "Governor's Castle",
+      "name": "Castle",
       "skill_name": "Luxury",
       "skill_description": "Exquisite furnishings, rare wines, and opulent decorations that impress the aristocracy. Enhanced luxury helps your courtiers handle demanding nobles and create unforgettable experiences. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": true,
@@ -3515,7 +3665,7 @@
           "nsfw": false,
           "difficulty": "none",
           "skills": [],
-          "max_daily_workers": 99,
+          "max_daily_workers": 9,
           "daily_story_count": 1,
           "daily_stories": [
             {

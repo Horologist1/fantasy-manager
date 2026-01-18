@@ -502,7 +502,7 @@ init python:
         image_base = interaction.get("image")
         categories = interaction.get("categories", []) or []
         worker_gender = (worker.get("gender", "").lower() if hasattr(worker, "get") else "").lower()
-        is_player_male = store.player_title.lower() == "lord"
+        is_player_male = store.player_title and store.player_title.lower().strip() == "lord"
         player_gendered_suffix = "_male" if is_player_male else "_female"
 
         # Preparar candidatos por prioridad
@@ -597,7 +597,7 @@ init python:
         
         # Load and filter interactions
         interactions = load_interactions()
-        player_gender = "male" if store.player_title.lower() == "lord" else "female"
+        player_gender = "male" if store.player_title and store.player_title.lower().strip() == "lord" else "female"
         filtered_interactions = filter_interactions_by_gender(interactions, player_gender)
         filtered_interactions = filter_interactions_by_worker_gender(filtered_interactions, selected_worker)
         filtered_interactions = filter_interactions_by_stats(filtered_interactions, selected_worker)

@@ -88,6 +88,16 @@ init python:
                 "objective_4_complete": getattr(store, "objective_4_complete", False),
                 "objective_5_complete": getattr(store, "objective_5_complete", False),
                 "objective_6_complete": getattr(store, "objective_6_complete", False),
+                "objective_7_complete": getattr(store, "objective_7_complete", False),
+                "objective_8_complete": getattr(store, "objective_8_complete", False),
+                "objective_9_complete": getattr(store, "objective_9_complete", False),
+                "objective_10_complete": getattr(store, "objective_10_complete", False),
+                "objective_11_complete": getattr(store, "objective_11_complete", False),
+                "objective_12_complete": getattr(store, "objective_12_complete", False),
+                "objective_13_complete": getattr(store, "objective_13_complete", False),
+                "objective_14_complete": getattr(store, "objective_14_complete", False),
+                "objective_15_complete": getattr(store, "objective_15_complete", False),
+                "objective_16_complete": getattr(store, "objective_16_complete", False),
                 "objective_4_dialogue_shown": getattr(store, "objective_4_dialogue_shown", False)
             },
         }
@@ -119,6 +129,10 @@ init python:
         store.owned_buildings = _cp.deepcopy(s.get("owned_buildings", []))
         store.custom_names = _cp.deepcopy(s.get("custom_names", {}))
         store.unlocked_shops = _cp.deepcopy(s.get("unlocked_shops", {}))
+        # Sync persistent.unlocked_shops with restored store.unlocked_shops
+        if store.unlocked_shops:
+            persistent.unlocked_shops = _cp.deepcopy(store.unlocked_shops)
+            renpy.log(f"SNAPSHOT: Synced persistent.unlocked_shops from snapshot: {persistent.unlocked_shops}")
         store.player_name = s.get("player_name", "")
         store.player_title = s.get("player_title", "")
         store.current_day = s.get("current_day", 1)
@@ -221,6 +235,13 @@ init python:
         except Exception as e:
             renpy.log("SNAPSHOT: journal/flags restore error: " + str(e))
 
+        # Final normalization pass to ensure no duplicates
+        try:
+            normalize_building_assignments()
+            renpy.log("SNAPSHOT: normalize_building_assignments completed")
+        except Exception as e:
+            renpy.log("SNAPSHOT: normalize error: " + str(e))
+
     def snapshot_pre_save(slot_number: int):
         try:
             # Build snapshot safely without generators and with only JSON-serializable structures
@@ -265,30 +286,139 @@ init python:
         except Exception as e:
             renpy.log("SNAPSHOT: error mark_load_name: " + str(e))
 
+    # Helper functions that capture current page at click time
+    def snapshot_pre_save_slot(slot_num):
+        """Save snapshot with page-aware slot name, evaluated at click time."""
+        page = getattr(persistent, "_file_page", 1)
+        # Handle special page values
+        if page in ["auto", "quick"]:
+            slot_name = f"{page}-{slot_num}"
+        else:
+            try:
+                page = int(page)
+            except (ValueError, TypeError):
+                page = 1
+            slot_name = f"{page}-{slot_num}"
+        renpy.log(f"SNAPSHOT: pre_save_slot called with slot_num={slot_num}, page={page}, slot_name='{slot_name}'")
+        snapshot_pre_save_name(slot_name)
+
+    def snapshot_mark_load_slot(slot_num):
+        """Mark load with page-aware slot name, evaluated at click time."""
+        page = getattr(persistent, "_file_page", 1)
+        # Handle special page values
+        if page in ["auto", "quick"]:
+            slot_name = f"{page}-{slot_num}"
+        else:
+            try:
+                page = int(page)
+            except (ValueError, TypeError):
+                page = 1
+            slot_name = f"{page}-{slot_num}"
+        renpy.log(f"SNAPSHOT: mark_load_slot called with slot_num={slot_num}, page={page}, slot_name='{slot_name}'")
+        snapshot_mark_load_name(slot_name)
+
+    # Custom action class for page-aware FileAction
+    class PageAwareFileAction(renpy.store.Action):
+        """Action that handles both save and load with page-aware snapshots."""
+        def __init__(self, slot_num):
+            self.slot_num = slot_num
+        
+        def __call__(self):
+            try:
+                # Check if slot has a save file by trying to get its time
+                # FileTime returns "empty slot" if there's no save
+                from renpy.store import FileTime
+                slot_time = FileTime(self.slot_num, empty="empty slot")
+                slot_has_data = (slot_time != "empty slot")
+                
+                if slot_has_data:
+                    # Slot has data - this will likely LOAD (unless user overwrites)
+                    # Mark for load - if user overwrites, the save will create new snapshot anyway
+                    renpy.log(f"SNAPSHOT: PageAwareFileAction detected slot {self.slot_num} has data - preparing for LOAD")
+                    snapshot_mark_load_slot(self.slot_num)
+                    # Also prepare save snapshot in case user overwrites (confirms overwrite dialog)
+                    snapshot_pre_save_slot(self.slot_num)
+                else:
+                    # Slot is empty - this will SAVE
+                    renpy.log(f"SNAPSHOT: PageAwareFileAction detected slot {self.slot_num} is empty - preparing for SAVE")
+                    snapshot_pre_save_slot(self.slot_num)
+                
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: PageAwareFileAction error: {str(e)}, defaulting to save")
+                # On error, default to save (safer)
+                snapshot_pre_save_slot(self.slot_num)
+            
+            # Then execute the native FileAction (which will save or load accordingly)
+            return renpy.store.FileAction(self.slot_num)()
+        
+        def get_sensitive(self):
+            return renpy.store.FileAction(self.slot_num).get_sensitive()
+
     def _apply_pending_snapshot_and_show_tavern():
         try:
             slot = getattr(persistent, "_slot_to_apply", None)
             renpy.log(f"SNAPSHOT: _apply_pending start, slot={slot}, keys={list((getattr(persistent, '_slot_snapshots', {}) or {}).keys())}")
             snap = None
             d = getattr(persistent, "_slot_snapshots", {}) or {}
+            
+            # Only look for snapshot with exact slot key - don't fallback to _last_snapshot
+            # Ren'Py already restored the variables, only apply snapshot if we find exact match
             if slot is not None:
                 key_try = slot
                 if key_try in d:
                     snap = d.get(key_try)
+                    renpy.log(f"SNAPSHOT: found exact match for slot '{key_try}'")
                 elif isinstance(slot, int) and str(slot) in d:
                     snap = d.get(str(slot))
+                    renpy.log(f"SNAPSHOT: found match for slot '{slot}' as string")
                 elif isinstance(slot, str) and slot.isdigit() and int(slot) in d:
                     snap = d.get(int(slot))
-            if snap is None:
-                snap = getattr(persistent, "_last_snapshot", None)
-                if snap is None:
-                    renpy.log("SNAPSHOT: no snapshot found; proceeding to tavern without apply")
+                    renpy.log(f"SNAPSHOT: found match for slot '{slot}' as int")
+                else:
+                    renpy.log(f"SNAPSHOT: no snapshot found for slot '{slot}', Ren'Py data preserved")
+            
+            # Check if Ren'Py/save_state already restored valid data
+            # If workers list is populated, data was already restored - don't overwrite
+            current_workers = getattr(store, "workers", None)
+            has_valid_data = current_workers and len(current_workers) > 0
+            
+            if has_valid_data:
+                renpy.log(f"SNAPSHOT: Ren'Py already restored {len(current_workers)} workers, skipping snapshot apply")
+            elif snap is not None:
+                # Only apply snapshot if Ren'Py didn't restore data
+                snap_player = snap.get("player_name", "")
+                current_player = getattr(store, "player_name", "")
+                if snap_player == current_player or not current_player:
+                    try:
+                        _apply_snapshot(snap)
+                        renpy.log("SNAPSHOT: applied as fallback (Ren'Py data was empty)")
+                    except Exception as e_apply:
+                        renpy.log("SNAPSHOT: error during _apply_snapshot: " + str(e_apply))
+                else:
+                    renpy.log(f"SNAPSHOT: player mismatch (snap='{snap_player}', store='{current_player}'), skipping apply")
             else:
-                try:
-                    _apply_snapshot(snap)
-                    renpy.log("SNAPSHOT: applied via post-load timer")
-                except Exception as e_apply:
-                    renpy.log("SNAPSHOT: error during _apply_snapshot: " + str(e_apply))
+                renpy.log("SNAPSHOT: no snapshot available and Ren'Py data empty - this may indicate a problem")
+            
+            # Auto-fix objective 11 if player has 20+ workers but objective not marked
+            try:
+                workers_count = len(getattr(store, "workers", []))
+                objective_11_complete = getattr(store, "objective_11_complete", False)
+                if workers_count >= 20 and not objective_11_complete:
+                    store.objective_11_complete = True
+                    renpy.log(f"AUTO-FIX: Marked objective_11_complete=True (has {workers_count} workers)")
+                    # Also update the snapshot for this slot if it exists
+                    if slot is not None and snap is not None:
+                        journal_state = snap.get("_journal_state", {})
+                        if isinstance(journal_state, dict):
+                            journal_state["objective_11_complete"] = True
+                            snap["_journal_state"] = journal_state
+                            # Update the snapshot in persistent
+                            if slot in d:
+                                persistent._slot_snapshots[slot] = snap
+                                renpy.save_persistent()
+                                renpy.log(f"AUTO-FIX: Updated snapshot '{slot}' with objective_11_complete=True")
+            except Exception as e_fix:
+                renpy.log(f"AUTO-FIX: Error auto-fixing objective 11: {str(e_fix)}")
             # Ensure we don't re-run init path in this session
             store.is_new_game = False
             # NOTE: Do NOT clear persistent flags here; clear them once screen is shown
@@ -376,6 +506,54 @@ init python:
         config.after_load_callbacks.append(_after_load_callback)
     except Exception as e:
         renpy.log("Register after_load callback error: " + str(e))
+    
+    def fix_objective_11_in_all_snapshots():
+        """Fix objective_11_complete in all saved snapshots - call this once to update existing saves"""
+        try:
+            if not isinstance(getattr(persistent, "_slot_snapshots", None), dict):
+                return
+            
+            updated_count = 0
+            for slot_key, snap in persistent._slot_snapshots.items():
+                if not isinstance(snap, dict):
+                    continue
+                journal_state = snap.get("_journal_state", {})
+                if isinstance(journal_state, dict):
+                    # Check if objective 11 can be completed (has 20 workers)
+                    workers_count = len(getattr(store, "workers", []))
+                    if workers_count >= 20 and not journal_state.get("objective_11_complete", False):
+                        journal_state["objective_11_complete"] = True
+                        snap["_journal_state"] = journal_state
+                        updated_count += 1
+                        renpy.log(f"FIXED: Marked objective_11_complete=True in snapshot '{slot_key}' (has {workers_count} workers)")
+            
+            if updated_count > 0:
+                renpy.save_persistent()
+                renpy.log(f"FIXED: Updated {updated_count} snapshot(s) with objective_11_complete=True")
+            else:
+                renpy.log("FIXED: No snapshots needed updating")
+        except Exception as e:
+            renpy.log(f"FIXED: Error fixing objective 11 in snapshots: {str(e)}")
+    
+    def fix_objective_11_current():
+        """Fix objective_11_complete in current game state and update all snapshots"""
+        try:
+            # Check if objective 11 can be completed
+            workers_count = len(getattr(store, "workers", []))
+            if workers_count >= 20:
+                store.objective_11_complete = True
+                renpy.log(f"FIXED: Marked objective_11_complete=True in current game (has {workers_count} workers)")
+                
+                # Also update all snapshots
+                fix_objective_11_in_all_snapshots()
+                
+                return True
+            else:
+                renpy.log(f"FIXED: Cannot mark objective 11 - only have {workers_count} workers (need 20)")
+                return False
+        except Exception as e:
+            renpy.log(f"FIXED: Error fixing objective 11: {str(e)}")
+            return False
 
 label after_load:
     python:
