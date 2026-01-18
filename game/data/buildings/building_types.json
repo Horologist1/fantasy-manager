@@ -4,7 +4,7 @@
       "id": "brothel",
       "name": "Brothel",
       "skill_name": "Hag Potions",
-      "skill_description": "Mystical concoctions and elixirs that enhance intimate experiences. Hag Potions help avoid pregnancy and skickness. Formula: Base Level + Skill Bonus = Success chance in Events.",
+      "skill_description": "Mystical concoctions and elixirs that enhance intimate experiences. Hag Potions help avoid pregnancy and sickness. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": true,
       "allowed_map_locations": ["tavern", "redhouse"],
       "professions": [
@@ -1240,7 +1240,7 @@
                   "libido": 0
                 }
               },
-              "story_image": "Profile.jpg",
+              "story_image": "rest_brothel",
               "failure_image": "",
               "loot": {
                 "rolls": 0
@@ -1581,11 +1581,11 @@
           "daily_story_count": 1,
           "daily_stories": [
             {
-              "id": "rest_story1_restaurant",
+              "id": "rest_restaurant",
               "weight": 1,
               "description": "The worker takes a break in the restaurant, regenerating health and energy without a roll.",
               "report": "Taking a Break",
-              "story_image": "Profile.jpg",
+              "story_image": "rest_restaurant",
               "failure_image": "",
               "loot": {
                 "rolls": 0
@@ -2531,7 +2531,7 @@
               "weight": 1,
               "description": "The worker relaxes behind the bar, regaining energy and composure.",
               "report": "Taking a Break",
-              "story_image": "Profile",
+              "story_image": "rest_tavern",
               "failure_image": "",
               "loot": {
                 "rolls": 0

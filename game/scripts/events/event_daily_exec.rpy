@@ -184,7 +184,11 @@ init python:
                     continue
 
                 daily_story_count = profession.get("daily_story_count", 0)
-                if hasattr(daily_story_count, "get"):
+                # Check if building has event_limit set (0 = unlimited, 1 = limit to 1, 2 = limit to 2, 3 = limit to 3)
+                event_limit = building.get("event_limit", 0)
+                if event_limit > 0:
+                    events_per_worker = event_limit
+                elif hasattr(daily_story_count, "get"):
                     base_events = int(daily_story_count.get("base", 0))
                     bonus_formula = daily_story_count.get("bonus_formula", "0")
                     try:

@@ -496,7 +496,13 @@ init python:
                         return selected
                 
                 # Try story_image without _failure suffix (flexible extension matching)
-                success_matches = get_image_matches_flexible(base_folder, story_image, exclude_failure=True)
+                # For rest images, use pattern matching
+                if story_image and story_image.startswith("rest_"):
+                    success_matches = get_pattern_matches_flexible(base_folder, story_image)
+                    # Filter out failure images manually
+                    success_matches = [f for f in success_matches if "failure" not in os.path.basename(f).lower()]
+                else:
+                    success_matches = get_image_matches_flexible(base_folder, story_image, exclude_failure=True)
                 if success_matches:
                     cache_key = f"{worker.get('name', 'unknown')}_{story_image}_{outcome}_event_story_success"
                     selected = get_cached_choice(success_matches, cache_key)
@@ -504,7 +510,16 @@ init python:
                     return selected
             
             # Try general story image (flexible extension matching)
-            general_matches = get_image_matches_flexible(base_folder, story_image)
+            # For rest images, first try the specific name, then fallback to generic "rest"
+            if story_image and story_image.startswith("rest_"):
+                # First try the specific rest image name (e.g., "rest_brothel")
+                general_matches = get_pattern_matches_flexible(base_folder, story_image)
+                if not general_matches:
+                    # If not found, try generic "rest" pattern
+                    renpy.log(f"Specific rest image '{story_image}' not found, trying generic 'rest' pattern")
+                    general_matches = get_pattern_matches_flexible(base_folder, "rest")
+            else:
+                general_matches = get_image_matches_flexible(base_folder, story_image)
             if general_matches:
                 # Filter based on outcome if possible
                 filtered_matches = []
@@ -741,14 +756,29 @@ init python:
                         return selected
                 
                 # Try story_image without _failure suffix
-                success_matches = get_image_matches_flexible(default_folder, story_image, exclude_failure=True)
+                # For rest images, use pattern matching
+                if story_image and story_image.startswith("rest_"):
+                    success_matches = get_pattern_matches_flexible(default_folder, story_image)
+                    # Filter out failure images manually
+                    success_matches = [f for f in success_matches if "failure" not in os.path.basename(f).lower()]
+                else:
+                    success_matches = get_image_matches_flexible(default_folder, story_image, exclude_failure=True)
                 if success_matches:
                     selected = renpy.random.choice(success_matches)
                     renpy.log(f"Found default story success image: {selected}")
                     return selected
             
             # Try general story image (flexible extension matching)
-            general_matches = get_image_matches_flexible(default_folder, story_image)
+            # For rest images, first try the specific name, then fallback to generic "rest"
+            if story_image and story_image.startswith("rest_"):
+                # First try the specific rest image name (e.g., "rest_brothel")
+                general_matches = get_pattern_matches_flexible(default_folder, story_image)
+                if not general_matches:
+                    # If not found, try generic "rest" pattern
+                    renpy.log(f"Specific rest image '{story_image}' not found in default folder, trying generic 'rest' pattern")
+                    general_matches = get_pattern_matches_flexible(default_folder, "rest")
+            else:
+                general_matches = get_image_matches_flexible(default_folder, story_image)
             if general_matches:
                 # Filter based on outcome if possible
                 filtered_matches = []
@@ -870,6 +900,24 @@ init python:
                         selected = renpy.random.choice(skill_matches)
                         renpy.log(f"Found default skill image (fallback): {selected}")
                         return selected
+        
+        # FALLBACK FOR REST IMAGES: Try "rest" pattern before profile
+        if story_image and story_image.startswith("rest_"):
+            renpy.log("No specific rest images found, trying generic 'rest' pattern")
+            
+            # Try worker's rest images (flexible extension matching)
+            rest_matches = get_pattern_matches_flexible(base_folder, "rest")
+            if rest_matches:
+                selected = renpy.random.choice(rest_matches)
+                renpy.log(f"Found worker rest image: {selected}")
+                return selected
+            
+            # Try default rest images (flexible extension matching)
+            default_rest_matches = get_pattern_matches_flexible(default_folder, "rest")
+            if default_rest_matches:
+                selected = renpy.random.choice(default_rest_matches)
+                renpy.log(f"Found default rest image: {selected}")
+                return selected
         
         # FALLBACK TO PROFILE IMAGE
         renpy.log("No specific images found, falling back to profile image")

@@ -1738,7 +1738,7 @@ style confirm_button:
 
 style confirm_button_text:
     properties gui.text_properties("confirm_button")
-    size 42  # Aumentado 50% desde 28
+    size 38  # Ajustado para coincidir con el texto del mensaje
     color "#3c1f14"  # Marrón oscuro como los menús laterales
     hover_color "#ffffff"  # Blanco en hover
 
@@ -2829,7 +2829,7 @@ screen job_selection(worker):
                                 else:
                                     $ avg_skill = 0
                                 $ current_count = len([w for w in building["assigned_servants"] if building["servant_jobs"].get(w["name"], "") == profession["id"]])
-                                $ max_limit = profession.get("max_daily_workers", 99)
+                                $ max_limit = get_max_daily_workers(building, profession)
                                 vbox:  # Wrap each profession entry in a vbox
                                     spacing 2  # Tight spacing between lines
                                     if current_count < max_limit:
@@ -3093,7 +3093,12 @@ screen manager_inventory(shop_mode=None):
                         background "tablebutton.png"
                         xsize 500
                         ysize 50
-                        text "{size=32}{b}[left_worker['name'] if left_worker and left_worker is not False else ('Storage' if left_worker is None else 'None')]{/b}{/size}" xalign 0.5 yalign 0.5 color "#ffffff"
+                        hbox:
+                            xalign 0.5
+                            yalign 0.5
+                            spacing 10
+                            text "{size=32}{b}[left_worker['name'] if left_worker and left_worker is not False else ('Storage' if left_worker is None else 'None')]{/b}{/size}" color "#ffffff" yalign 0.5
+                            text "{size=18}(Click to change){/size}" color "#ffffff" yalign 0.5
                         action If(not shop_mode, 
                             Show("worker_selection_popup", panel="left", current_left=left_worker, current_right=right_worker, shop_mode=shop_mode),
                             None
@@ -3266,7 +3271,13 @@ screen manager_inventory(shop_mode=None):
                         background "tablebutton.png"
                         xsize 500
                         ysize 50
-                        text "{size=32}{b}[shop_name]{/b}{/size}" xalign 0.5 yalign 0.5 color "#ffffff"
+                        hbox:
+                            xalign 0.5
+                            yalign 0.5
+                            spacing 10
+                            text "{size=32}{b}[shop_name]{/b}{/size}" color "#ffffff" yalign 0.5
+                            if not shop_mode:
+                                text "{size=18}(Click to change){/size}" color "#ffffff" yalign 0.5
                         action If(not shop_mode, 
                             Show("worker_selection_popup", panel="right", current_left=left_worker, current_right=right_worker, shop_mode=shop_mode),
                             None
@@ -3815,6 +3826,57 @@ screen confirm_change_type(building_name):
 
     key "game_menu" action Hide("confirm_change_type")
 
+screen confirm_buy_potion(worker, potion_id):
+    modal True
+    zorder 200
+    style_prefix "confirm"
+    add "gui/overlay/confirm.png"
+
+    python:
+        potion_item = next((i for i in items_json["items"] if i["id"] == potion_id), None)
+        if potion_item:
+            potion_name = potion_item.get("name", "Potion")
+            potion_price = potion_item.get("price", 0)
+        else:
+            potion_name = "Potion"
+            potion_price = 0
+
+    frame:
+        style "confirm_frame"
+        vbox:
+            xalign 0.5
+            yalign 0.5
+            spacing 45
+
+            text "You have no [potion_name]s, do you want to buy one for $[potion_price]? {size=34}(You have $[money]){/size}":
+                style "confirm_prompt"
+                xalign 0.5
+                yalign 0.5
+                size 38
+                color "#3c1f14"
+                text_align 0.5
+                xsize 600
+
+            hbox:
+                xalign 0.5
+                spacing 150
+
+                textbutton "Yes" action If(money >= potion_price,
+                    [
+                        Function(lambda p=potion_price: setattr(store, 'money', store.money - p)),
+                        Function(lambda pid=potion_id: add_item_to_inventory(manager_inventory, pid)),
+                        Function(use_potion_from_inventory, worker, potion_id),
+                        Hide("confirm_buy_potion")
+                    ],
+                    [
+                        Hide("confirm_buy_potion"),
+                        Show("error_popup", message="You do not have enough money to buy this potion.")
+                    ]
+                )
+                textbutton "No" action Hide("confirm_buy_potion")
+
+    key "game_menu" action Hide("confirm_buy_potion")
+
 screen confirm_buy_worker(worker, return_screen=None):
     modal True
     zorder 200
@@ -4056,9 +4118,30 @@ screen Manager(building_name):
                 text "Costs: $[total_costs] {size=18}(Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size=}" size font_size(24) color "#ffffff" xalign 0.0 yalign 0.5
                 text "Level: [building['base_level']]" size font_size(24) color "#ffffff" xalign 0.0
                 text "Reputation: [capped_reputation] - {b}[rep_tier]{/b}" size font_size(24) color "#ffffff" xalign 0.0
+                $ event_limit = building.get("event_limit", 0)
                 if typical_bonus_stories > 0:
-                    text "  → +[typical_bonus_stories] stories per profession per day" size font_size(20) color "#d4a574" xalign 0.0
+                    if event_limit == 0:
+                        text "  → +[typical_bonus_stories] stories per profession per day" size font_size(20) color "#d4a574" xalign 0.0
+                    elif event_limit == 1:
+                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 1)" size font_size(20) color "#d4a574" xalign 0.0
+                    elif event_limit == 2:
+                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 2)" size font_size(20) color "#d4a574" xalign 0.0
+                    elif event_limit == 3:
+                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 3)" size font_size(20) color "#d4a574" xalign 0.0
+                elif event_limit > 0:
+                    text "  → Limited to [event_limit] event[event_limit != 1 and 's' or ''] per worker per day" size font_size(20) color "#d4a574" xalign 0.0
                 text "[skill_name]: [total_skill] {size=18}(Base: [building['skill']], Bonus: [building['skill_bonus']]){/size=}" size font_size(24) color "#ffffff" xalign 0.0
+                hbox:
+                    spacing 10
+                    text "Daily Stories Limit:" size font_size(22) color "#ffffff" yalign 0.5
+                    $ event_limit = building.get("event_limit", 0)
+                    $ limit_texts = ["Unlimited (with reputation bonus)", "Limited to 1 per worker", "Limited to 2 per worker", "Limited to 3 per worker"]
+                    $ current_text = limit_texts[event_limit] if event_limit < len(limit_texts) else limit_texts[0]
+                    textbutton "[current_text]":
+                        text_size font_size(20)
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action SetDict(building, "event_limit", (event_limit + 1) % 4)
             viewport:
                 scrollbars "vertical"
                 mousewheel True
@@ -4074,7 +4157,7 @@ screen Manager(building_name):
                         if building_type_entry is not None:
                             for profession in building_type_entry.get("professions", []):
                                 $ current_count = len([s for s in building["assigned_servants"] if building["servant_jobs"].get(s["name"], "") == profession["id"]])
-                                $ max_limit = profession.get("max_daily_workers", 99)
+                                $ max_limit = get_max_daily_workers(building, profession)
                                 text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color "#7a4b2a"
                                 frame:
                                     background Solid("#1a1a1a99")
@@ -4151,11 +4234,21 @@ screen Manager(building_name):
                                                         text_size font_size(21)
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
-                                                    textbutton "E: [worker['energy']]/[calculate_max_energy(worker)] - H: [worker['health']]/[calculate_max_health(worker)]":
+                                                    hbox:
+                                                        spacing 2
                                                         xsize 275
-                                                        text_size font_size(21)
-                                                        text_color "#ffffff"
-                                                        text_hover_color "#6b6528"
+                                                        textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
+                                                            xsize 136
+                                                            text_size font_size(20)
+                                                            text_color "#ffffff"
+                                                            text_hover_color "#2c4aa6"
+                                                            action use_or_buy_potion_action(worker, "energy_potion")
+                                                        textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
+                                                            xsize 137
+                                                            text_size font_size(20)
+                                                            text_color "#ffffff"
+                                                            text_hover_color "#a63c3c"
+                                                            action use_or_buy_potion_action(worker, "health_potion")
                                                     textbutton "Change / View skills":
                                                         xsize 275
                                                         text_size font_size(21)
@@ -6224,12 +6317,27 @@ screen workers():
                                     ysize 50
                                     text "Unassigned" size font_size(24) color "#7a4b2a" hover_color "#6b6528"
                                     action Show("job_selection", worker=worker)
-                            # Energy - Health column
-                            button:
-                                background "tablebutton1b.png"
+                            # Energy - Health column (split into two buttons)
+                            hbox:
+                                spacing 2
                                 xsize 180
                                 ysize 50
-                                text "E: [worker['energy']]/[calculate_max_energy(worker)] - H: [worker['health']]/[calculate_max_health(worker)]" size font_size(24) color "#7a4b2a"
+                                textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
+                                    background "tablebutton1b.png"
+                                    xsize 89
+                                    ysize 50
+                                    text_size font_size(22)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#2c4aa6"
+                                    action use_or_buy_potion_action(worker, "energy_potion")
+                                textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
+                                    background "tablebutton1b.png"
+                                    xsize 89
+                                    ysize 50
+                                    text_size font_size(22)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#a63c3c"
+                                    action use_or_buy_potion_action(worker, "health_potion")
                             # Type / Action column (fused)
                             frame:
                                 background "tablebutton1b.png"
@@ -6762,7 +6870,80 @@ screen daily_report():
             # Updated title with date
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month]
-            label "Daily Report: [day_name], [store.current_day] [month_name] [store.current_year]" xalign 0.5 style "header_style" text_size font_size(28)
+            
+            # Calculate totals with filters applied
+            python:
+                # Initialize totals
+                daily_total_earnings = 0
+                daily_total_costs = 0
+                daily_net_profit = 0
+                
+                if daily_report:
+                    # Ensure filters are set
+                    if not hasattr(store, 'building_filter') or store.building_filter is None:
+                        store.building_filter = "All Buildings"
+                    if not hasattr(store, 'daily_report_job_filter') or store.daily_report_job_filter is None:
+                        store.daily_report_job_filter = "All Jobs"
+                    
+                    # Filter reports
+                    filtered_for_total = []
+                    for report in daily_report:
+                        # Building filter
+                        building_match = True
+                        if building_filter != "All Buildings":
+                            building_name = report.get('building', 'Unknown Building')
+                            building = available_buildings.get(building_name, {})
+                            btype_id = building.get("type")
+                            type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
+                            parts = building_name.split('_')
+                            default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
+                            building_display_name = store.custom_names.get(building_name, default_name)
+                            full_display_name = f"{type_name}: {building_display_name}"
+                            if full_display_name != building_filter:
+                                building_match = False
+                        
+                        # Job filter
+                        job_match = True
+                        if daily_report_job_filter != "All Jobs":
+                            job_name = report.get('profession', 'N/A')
+                            if job_name != daily_report_job_filter:
+                                job_match = False
+                        
+                        if building_match and job_match:
+                            filtered_for_total.append(report)
+                    
+                    # Calculate earnings from filtered reports
+                    daily_total_earnings = sum(int(report.get("earnings", 0)) for report in filtered_for_total)
+                    
+                    # Calculate costs for filtered buildings
+                    for building_name, building in available_buildings.items():
+                        if not building.get("owned", False):
+                            continue
+                        
+                        # Apply building filter
+                        if building_filter != "All Buildings":
+                            btype_id = building.get("type")
+                            type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
+                            parts = building_name.split('_')
+                            default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
+                            building_display_name = store.custom_names.get(building_name, default_name)
+                            full_display_name = f"{type_name}: {building_display_name}"
+                            if full_display_name != building_filter:
+                                continue
+                        
+                        fixed_cost = int(building.get("price", 0) * 0.01)
+                        worker_costs = sum(worker.get("comfort_level", 1) * 20 for worker in building.get("assigned_servants", []))
+                        bonus_cost = (building.get("skill_bonus", 0) // 10) * 100
+                        daily_total_costs += fixed_cost + worker_costs + bonus_cost
+                    
+                    daily_net_profit = daily_total_earnings - daily_total_costs
+            
+            # Title with total on same line - centered
+            $ profit_color = "#4a8a4a" if daily_net_profit >= 0 else "#8a4a4a"
+            $ profit_sign = "+" if daily_net_profit >= 0 else ""
+            label "Daily Report: [day_name], [store.current_day] [month_name] [store.current_year]    Total: {color=[profit_color]}[profit_sign]$[daily_net_profit]{/color}" xalign 0.5 style "header_style" text_size font_size(28)
+            
+            
             if not daily_report:
                 text "No significant events occurred today." size font_size(24) xalign 0.5 color "#ffffff"
             else:
@@ -6874,6 +7055,9 @@ screen daily_report():
                         # Aplicar ambos filtros (AND lógico)
                         if building_match and job_match:
                             filtered_reports.append(report)
+                    
+                    # Total is already calculated at the top with filters applied
+                    pass
 
                 if not filtered_reports:
                     text "No events found for the selected building." size font_size(20) xalign 0.5 color "#ffffff"

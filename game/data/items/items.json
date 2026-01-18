@@ -539,7 +539,7 @@
           "Specialty 12": 70
         }
       },
-      "description": "A test item that grants +70 to all skills. For testing purposes only. (+70 Sex, +70 Anal, +70 BDSM, +70 Hand, +70 Oral, +70 Homo, +70 Special, +70 Group, +70 Extreme, +70 Striptease, +70 Combat, +70 Clever, +70 Charm, +70 Wait, +70 Agility, +70 Craft, +70 Specialty 4, +70 Specialty 5, +70 Specialty 6, +70 Specialty 7, +70 Specialty 8, +70 Specialty 9, +70 Specialty 10, +70 Specialty 11, +70 Specialty 12)",
+      "description": "A test item that grants +70 to all skills. For testing purposes only. (+70 Sex, +70 Anal, +70 BDSM, +70 Hand, +70 Oral, +70 Homo, +70 Special, +70 Group, +70 Extreme, +70 Striptease, +70 Combat, +70 Clever, +70 Charm, +70 Service, +70 Agility, +70 Craft, +70 Specialty 4, +70 Specialty 5, +70 Specialty 6, +70 Specialty 7, +70 Specialty 8, +70 Specialty 9, +70 Specialty 10, +70 Specialty 11, +70 Specialty 12)",
       "price": 50,
       "weight": 1
     },
@@ -601,7 +601,7 @@
           "Service": 4
         }
       },
-      "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Wait)",
+      "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Service)",
       "durability": 100,
       "price": 300,
       "weight": 3
@@ -616,7 +616,7 @@
           "Service": 7
         }
       },
-      "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Wait)",
+      "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Service)",
       "durability": 150,
       "price": 1120,
       "weight": 4
@@ -661,7 +661,7 @@
           "Service": 5
         }
       },
-      "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Wait)",
+      "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Service)",
       "durability": 130,
       "price": 540,
       "weight": 6
@@ -676,7 +676,7 @@
           "Service": 8
         }
       },
-      "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Wait)",
+      "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Service)",
       "durability": 180,
       "price": 1225,
       "weight": 5
@@ -691,7 +691,7 @@
           "Service": 3
         }
       },
-      "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Wait)",
+      "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Service)",
       "price": 225,
       "weight": 4
     },
@@ -935,7 +935,7 @@
           "Service": 2
         }
       },
-      "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Wait)",
+      "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Service)",
       "durability": 60,
       "price": 100,
       "weight": 3
@@ -950,7 +950,7 @@
           "Service": 5
         }
       },
-      "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Wait)",
+      "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Service)",
       "durability": 120,
       "price": 600,
       "weight": 3
@@ -965,7 +965,7 @@
           "Service": 9
         }
       },
-      "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Wait)",
+      "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Service)",
       "durability": 200,
       "price": 3250,
       "weight": 4
@@ -1010,7 +1010,7 @@
           "Service": 3
         }
       },
-      "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Wait)",
+      "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Service)",
       "durability": 80,
       "price": 150,
       "weight": 4
@@ -1025,7 +1025,7 @@
           "Service": 6
         }
       },
-      "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Wait)",
+      "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Service)",
       "durability": 150,
       "price": 660,
       "weight": 5
@@ -1040,7 +1040,7 @@
           "Service": 10
         }
       },
-      "description": "Legend says this blade was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Wait)",
+      "description": "Legend says this blade was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Service)",
       "durability": 220,
       "price": 3000,
       "weight": 5
@@ -1055,7 +1055,7 @@
           "Service": 2
         }
       },
-      "description": "Essential cooking tools for everyday kitchen work. (+2 Wait)",
+      "description": "Essential cooking tools for everyday kitchen work. (+2 Service)",
       "price": 80,
       "weight": 3
     },
@@ -1069,7 +1069,7 @@
           "Service": 4
         }
       },
-      "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Wait)",
+      "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Service)",
       "price": 375,
       "weight": 4
     },
@@ -1083,7 +1083,7 @@
           "Service": 6
         }
       },
-      "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Wait)",
+      "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Service)",
       "price": 1350,
       "weight": 5
     },

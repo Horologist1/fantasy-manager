@@ -512,15 +512,13 @@ init python:
             candidate_bases.append(f"{image_base}{player_gendered_suffix}")
             candidate_bases.append(image_base)
 
-        # 2) Fallback por categoría (basado en género del trabajador cuando aplica)
+        # 2) Fallback por categoría (basado en género del jugador para Romance, género del trabajador para otros)
         if "Romance" in categories:
-            if worker_gender == "female":
-                candidate_bases.append("romance_female")
-            elif worker_gender == "male":
+            # Romance images should show the player, so use player gender
+            if is_player_male:
                 candidate_bases.append("romance_male")
             else:
-                # Si no se conoce el género, probar ambas
-                candidate_bases.extend(["romance_female", "romance_male"])
+                candidate_bases.append("romance_female")
         elif "Friendship" in categories:
             candidate_bases.append("friendship")
         elif "Joy" in categories:

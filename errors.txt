@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 5948: a non-constant keyword argument like 'action Show("worker_details", worker=worker, in_roster=True)' is not allowed after a python block.
-    action Show("worker_details", worker=worker, in_roster=True)
-                                                                ^
+File "game/scripts/core/screens.rpy", line 7050: 'else' is not a keyword argument or valid child of the vbox statement.
+    else:
+        ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Sun Jan 18 04:42:50 2026
+Sun Jan 18 17:12:37 2026

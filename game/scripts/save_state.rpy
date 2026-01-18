@@ -79,11 +79,16 @@ init -1 python:
             if "available_buildings" in state:
                 store.available_buildings = _copy.deepcopy(state["available_buildings"]) or {}
                 # Deduplicate assigned_servants in each building and relink to store.workers
+                # Also ensure base_level is present and valid
                 try:
                     name_to_worker = {w.get("name"): w for w in store.workers}
                     for bname, building in store.available_buildings.items():
                         if not isinstance(building, dict):
                             continue
+                        # Ensure base_level exists and is valid (persist building levels)
+                        if "base_level" not in building or not isinstance(building.get("base_level"), int) or building["base_level"] < 1:
+                            building["base_level"] = building.get("base_level", 1)
+                            renpy.log(f"SAVE_STATE: initialized/restored base_level for {bname} to {building['base_level']}")
                         assigned = building.get("assigned_servants", []) or []
                         if not assigned:
                             continue
@@ -171,6 +176,16 @@ init -1 python:
             if "current_year" in state:
                 store.current_year = state["current_year"]
                 persistent.current_year = state["current_year"]
+
+            # SYNC OBJECTIVES FOR OLD SAVES: If current_objective > N, all objectives 1 to N-1 must be complete
+            # This fixes old saves where objective completion states weren't saved
+            current_obj = getattr(store, "current_objective", 1)
+            if current_obj > 1:
+                for i in range(1, current_obj):
+                    obj_var = f"objective_{i}_complete"
+                    if not getattr(store, obj_var, False):
+                        setattr(store, obj_var, True)
+                        renpy.log(f"SAVE_STATE: Synced {obj_var} to True (current_objective={current_obj})")
 
             # Optional: flags if present (future-proof)
             if "event_flags" in state:

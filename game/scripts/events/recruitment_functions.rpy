@@ -371,12 +371,12 @@ init python:
                 duration = trait_info.get("duration", -1)  # -1 for permanent
                 
                 if trait_name:
-                    if "traits" not in worker:
-                        worker["traits"] = []
-                    if trait_name not in worker["traits"]:
-                        worker["traits"].append(trait_name)
+                    # Use add_trait_with_duration to ensure no duplicates and proper conflict handling
+                    # Convert -1 (permanent) to 0 (no duration) for the function
+                    trait_duration = 0 if duration == -1 else duration
+                    add_trait_with_duration(worker, trait_name, trait_duration)
                     
-                    # Handle temporary traits with duration
+                    # Handle temporary traits with duration (for tracking purposes)
                     if duration > 0:
                         if "temporary_traits" not in worker:
                             worker["temporary_traits"] = {}

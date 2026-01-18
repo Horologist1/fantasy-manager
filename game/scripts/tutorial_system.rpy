@@ -711,6 +711,7 @@ screen journal_panel():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
+                        text "Tip: For this tutorial, purchase the potion from the shop and transfer it manually. In the future, you can use potions directly from Manage Workers or Manage Buildings." size font_size(20) color "#6b6528"
                     
                     elif current_objective == 6:
                         text "Tutorial:":
@@ -954,7 +955,7 @@ screen journal_panel():
                         
                         if store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False):
                             null height 15
-                            textbutton "Mark Complete":
+                            textbutton "MARK COMPLETE":
                                 xsize 520
                                 text_size font_size(24)
                                 text_color "#2a7a4b"
@@ -1000,7 +1001,7 @@ screen journal_panel():
                             null height 15
                             # Determine which ending to show based on the branch chosen in objective 9
                             if store.event_flags.get("branch_assassination", False):
-                                textbutton "Mark Complete - Begin the Final Strike":
+                                textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
                                     xsize 520
                                     text_size font_size(24)
                                     text_color "#2a7a4b"
@@ -1012,7 +1013,7 @@ screen journal_panel():
                                         Jump("show_ending_assassination")
                                     ]
                             elif store.event_flags.get("branch_blackmail", False):
-                                textbutton "Mark Complete - Begin the Final Strike":
+                                textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
                                     xsize 520
                                     text_size font_size(24)
                                     text_color "#2a7a4b"
@@ -1025,7 +1026,7 @@ screen journal_panel():
                                     ]
                             else:
                                 # Fallback if no branch was chosen (shouldn't happen)
-                                textbutton "Mark Complete - Begin the Final Strike":
+                                textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
                                     xsize 520
                                     text_size font_size(24)
                                     text_color "#2a7a4b"

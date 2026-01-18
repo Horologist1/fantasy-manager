@@ -816,6 +816,69 @@ init python:
                     inventory[i] = (entry[0], new_quantity, entry[2])
                 return
 
+    def use_potion_from_inventory(worker, potion_id):
+        """
+        Use a potion on a worker from manager_inventory.
+        Assumes the potion exists in manager_inventory.
+        
+        Args:
+            worker: Worker dict to use the potion on
+            potion_id: Item ID of the potion ("energy_potion" or "health_potion")
+        """
+        potion_item = next((i for i in items_json["items"] if i["id"] == potion_id), None)
+        if not potion_item:
+            renpy.notify(f"Potion {potion_id} not found!")
+            return
+        
+        # Apply effects
+        renpy.notify("Used " + potion_item.get("name", "Unknown"))
+        if "effect" in potion_item and worker:
+            for effect_type, effect_value in potion_item["effect"].items():
+                if effect_type == "health":
+                    worker["health"] = min(calculate_max_health(worker), worker["health"] + effect_value)
+                elif effect_type == "energy":
+                    worker["energy"] = min(calculate_max_energy(worker), worker["energy"] + effect_value)
+        
+        # Remove from manager_inventory
+        remove_item_from_inventory(manager_inventory, potion_id)
+        
+        # Track tutorial objective 5 - potion usage
+        if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and potion_item.get("name", "").lower().find("energy") != -1:
+            store.potion_used_on_worker = True
+            renpy.log("DEBUG: Tutorial - Energy potion used on worker")
+            check_objective_completion()
+
+    def use_or_buy_potion_action(worker, potion_id):
+        """
+        Returns an action to use a potion or show buy confirmation.
+        Use this in button actions instead of calling use_or_buy_potion directly.
+        
+        Args:
+            worker: Worker dict to use the potion on
+            potion_id: Item ID of the potion ("energy_potion" or "health_potion")
+        """
+        # Check if potion exists in items_json
+        potion_item = next((i for i in items_json["items"] if i["id"] == potion_id), None)
+        if not potion_item:
+            return Function(lambda: renpy.notify(f"Potion {potion_id} not found!"))
+        
+        # Check if we have the potion in manager_inventory
+        has_potion = False
+        potion_quantity = 0
+        for item_entry in manager_inventory:
+            if isinstance(item_entry, tuple) and len(item_entry) >= 2:
+                if item_entry[0] == potion_id:
+                    has_potion = True
+                    potion_quantity = item_entry[1]
+                    break
+        
+        if has_potion and potion_quantity > 0:
+            # We have the potion, use it directly
+            return Function(use_potion_from_inventory, worker, potion_id)
+        else:
+            # We don't have the potion, show confirmation dialog
+            return Show("confirm_buy_potion", worker=worker, potion_id=potion_id)
+
     def use_item(item_id, worker=None):
         """
         Uses a consumable item.
@@ -1875,6 +1938,8 @@ init python:
         building["assigned_servants"].append(worker)
         if "servant_jobs" not in building or not isinstance(building["servant_jobs"], dict):
             building["servant_jobs"] = {}
+        if "event_limit" not in building:
+            building["event_limit"] = 0
 
     def normalize_building_assignments():
         """Deduplicate assigned_servants per building by worker name."""
@@ -1941,7 +2006,8 @@ init python:
             "costs": 0,
             "owned": True,
             "skill": 10,  # Initialize to base_level * 10
-            "skill_bonus": 0  # Initialize bonus to 0
+            "skill_bonus": 0,  # Initialize bonus to 0
+            "event_limit": 0  # Event limit: 0 = unlimited (with reputation bonus), 1 = limit to 1, 2 = limit to 2
         }
         calculate_reputation(name)  # Set initial value
 
@@ -3182,9 +3248,20 @@ init python:
             renpy.log("roll_loot: No items found in items_json. Please check your items JSON file.")
             return []
         
-        # Build a list of weights from the items.
-        weights = []
+        # Filter out test items (items with "test" in their id)
+        filtered_items = []
         for item in items_list:
+            item_id = item.get("id", "").lower()
+            if "test" not in item_id:
+                filtered_items.append(item)
+        
+        if not filtered_items:
+            renpy.log("roll_loot: No valid items after filtering test items.")
+            return []
+        
+        # Build a list of weights from the filtered items.
+        weights = []
+        for item in filtered_items:
             try:
                 weight = float(item.get("weight", 1))
             except Exception:
@@ -3197,7 +3274,7 @@ init python:
             return []
         
         # Use random.choices to select items based on their weights.
-        chosen_items = random.choices(items_list, weights=weights, k=num_rolls)
+        chosen_items = random.choices(filtered_items, weights=weights, k=num_rolls)
         loot_ids = [item["id"] for item in chosen_items]
         
         renpy.log(f"roll_loot: Loot rolled using random.choices: {loot_ids} (weights: {weights})")
@@ -3530,7 +3607,7 @@ init python:
 ################################################################################
 default player_title = ""
 default player_name = ""
-default money = 8000
+default money = 6000
 default current_bg = tavern_bg
 default manager_inventory = []
 default is_new_game = True

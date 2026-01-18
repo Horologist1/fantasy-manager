@@ -57,10 +57,14 @@ init python:
                     conflicts = True
                     break
 
-            if not conflicts:
+            if not conflicts and trait_name not in selected_traits:
                 selected_traits.append(trait_name)
 
-        worker["traits"].extend(selected_traits)
+        # Only add traits that aren't already in worker["traits"]
+        for trait_name in selected_traits:
+            if trait_name not in worker["traits"]:
+                worker["traits"].append(trait_name)
+        
         return worker["traits"]
 
     def get_trait_desc(trait_name):
@@ -289,6 +293,28 @@ init python:
         current_value = worker.get(attribute, 0)
         new_value = current_value + change
         set_attribute_with_caps(worker, attribute, new_value)
+
+    def deduplicate_traits(worker):
+        """
+        Remove duplicate traits from a worker's traits list.
+        Preserves the order of first occurrence.
+        """
+        if "traits" not in worker or not worker["traits"]:
+            return
+        
+        seen = set()
+        deduplicated = []
+        for trait_name in worker["traits"]:
+            if trait_name not in seen:
+                seen.add(trait_name)
+                deduplicated.append(trait_name)
+        
+        if len(deduplicated) != len(worker["traits"]):
+            removed_count = len(worker["traits"]) - len(deduplicated)
+            renpy.log(f"Removed {removed_count} duplicate trait(s) from {worker.get('name', 'Unknown')}")
+            worker["traits"] = deduplicated
+            # Recalculate modifiers after deduplication
+            recalculate_trait_modifiers(worker)
 
     def ensure_minimum_traits(worker, min_traits=3, max_traits=5):
         """Ensure worker has minimum number of traits, adding random ones if needed."""

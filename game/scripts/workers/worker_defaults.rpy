@@ -118,6 +118,9 @@ init python:
 
         # Ensure minimum traits for workers that might have too few
         ensure_minimum_traits(worker)
+        
+        # Deduplicate traits to prevent duplicates
+        deduplicate_traits(worker)
 
         return worker
 

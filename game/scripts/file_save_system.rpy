@@ -76,7 +76,7 @@ init python:
             export_data = {
                 "metadata": {
                     "export_date": datetime.datetime.now().isoformat(),
-                    "game_version": "Fantasy Manager v0.9.3",
+                    "game_version": "Fantasy Manager v0.9.3.1",
                     "save_type": "external_file"
                 },
                 "game_state": snapshot

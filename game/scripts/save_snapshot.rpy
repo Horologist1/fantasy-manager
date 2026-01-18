@@ -216,6 +216,10 @@ init python:
                     base_map = s.get("_building_base_levels", {}) or {}
                     if bname in base_map:
                         b["base_level"] = base_map[bname]
+                    # Ensure base_level exists and is valid (persist building levels)
+                    if "base_level" not in b or not isinstance(b.get("base_level"), int) or b["base_level"] < 1:
+                        b["base_level"] = b.get("base_level", 1)
+                        renpy.log(f"SNAPSHOT: initialized/restored base_level for {bname} to {b['base_level']}")
                 except Exception as e:
                     renpy.log("SNAPSHOT: building restore error: " + str(e))
         except Exception as e:
@@ -399,26 +403,9 @@ init python:
             else:
                 renpy.log("SNAPSHOT: no snapshot available and Ren'Py data empty - this may indicate a problem")
             
-            # Auto-fix objective 11 if player has 20+ workers but objective not marked
-            try:
-                workers_count = len(getattr(store, "workers", []))
-                objective_11_complete = getattr(store, "objective_11_complete", False)
-                if workers_count >= 20 and not objective_11_complete:
-                    store.objective_11_complete = True
-                    renpy.log(f"AUTO-FIX: Marked objective_11_complete=True (has {workers_count} workers)")
-                    # Also update the snapshot for this slot if it exists
-                    if slot is not None and snap is not None:
-                        journal_state = snap.get("_journal_state", {})
-                        if isinstance(journal_state, dict):
-                            journal_state["objective_11_complete"] = True
-                            snap["_journal_state"] = journal_state
-                            # Update the snapshot in persistent
-                            if slot in d:
-                                persistent._slot_snapshots[slot] = snap
-                                renpy.save_persistent()
-                                renpy.log(f"AUTO-FIX: Updated snapshot '{slot}' with objective_11_complete=True")
-            except Exception as e_fix:
-                renpy.log(f"AUTO-FIX: Error auto-fixing objective 11: {str(e_fix)}")
+            # NOTE: Objective sync for old saves is now handled generically in save_state.rpy
+            # (syncs ALL previous objectives based on current_objective)
+            
             # Ensure we don't re-run init path in this session
             store.is_new_game = False
             # NOTE: Do NOT clear persistent flags here; clear them once screen is shown
@@ -507,53 +494,8 @@ init python:
     except Exception as e:
         renpy.log("Register after_load callback error: " + str(e))
     
-    def fix_objective_11_in_all_snapshots():
-        """Fix objective_11_complete in all saved snapshots - call this once to update existing saves"""
-        try:
-            if not isinstance(getattr(persistent, "_slot_snapshots", None), dict):
-                return
-            
-            updated_count = 0
-            for slot_key, snap in persistent._slot_snapshots.items():
-                if not isinstance(snap, dict):
-                    continue
-                journal_state = snap.get("_journal_state", {})
-                if isinstance(journal_state, dict):
-                    # Check if objective 11 can be completed (has 20 workers)
-                    workers_count = len(getattr(store, "workers", []))
-                    if workers_count >= 20 and not journal_state.get("objective_11_complete", False):
-                        journal_state["objective_11_complete"] = True
-                        snap["_journal_state"] = journal_state
-                        updated_count += 1
-                        renpy.log(f"FIXED: Marked objective_11_complete=True in snapshot '{slot_key}' (has {workers_count} workers)")
-            
-            if updated_count > 0:
-                renpy.save_persistent()
-                renpy.log(f"FIXED: Updated {updated_count} snapshot(s) with objective_11_complete=True")
-            else:
-                renpy.log("FIXED: No snapshots needed updating")
-        except Exception as e:
-            renpy.log(f"FIXED: Error fixing objective 11 in snapshots: {str(e)}")
-    
-    def fix_objective_11_current():
-        """Fix objective_11_complete in current game state and update all snapshots"""
-        try:
-            # Check if objective 11 can be completed
-            workers_count = len(getattr(store, "workers", []))
-            if workers_count >= 20:
-                store.objective_11_complete = True
-                renpy.log(f"FIXED: Marked objective_11_complete=True in current game (has {workers_count} workers)")
-                
-                # Also update all snapshots
-                fix_objective_11_in_all_snapshots()
-                
-                return True
-            else:
-                renpy.log(f"FIXED: Cannot mark objective 11 - only have {workers_count} workers (need 20)")
-                return False
-        except Exception as e:
-            renpy.log(f"FIXED: Error fixing objective 11: {str(e)}")
-            return False
+    # NOTE: fix_objective_11_* functions removed - objective sync is now handled
+    # generically in save_state.rpy for ALL objectives based on current_objective
 
 label after_load:
     python:
