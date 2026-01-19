@@ -63,6 +63,11 @@ default show_objective_dialogue = False
 default vengeance_path_chosen = False
 default vengeance_path = ""  # "Blade" or "Shadow"
 
+# Governor's Tension System
+default governor_attention = 0  # 0-100, increases as player progresses
+default governor_retaliation_done = False  # Has the retaliation event occurred?
+default governor_tension_active = False  # Is the tension system active?
+
 # Objective content
 default objective_titles = {
     1: "The First Gathering - Assembling Loyal Souls",
@@ -428,6 +433,167 @@ init python:
                 if not store.building_skill_bonus_increased_tutorial:
                     renpy.log(f"DEBUG: Found already upgraded building skill: {building_name} (bonus {building.get('skill_bonus', 0)})")
                     store.building_skill_bonus_increased_tutorial = True
+    
+    # ===== GOVERNOR'S TENSION SYSTEM =====
+    
+    def update_governor_attention():
+        """Update governor's attention based on current objective progress"""
+        current_obj = getattr(store, 'current_objective', 1)
+        
+        # Calculate attention based on objective
+        if current_obj < 8:
+            store.governor_attention = 0
+            store.governor_tension_active = False
+        elif current_obj == 8:
+            store.governor_attention = 10
+            store.governor_tension_active = False
+        elif current_obj == 9:
+            store.governor_attention = 30
+            store.governor_tension_active = True
+        elif current_obj == 10:
+            store.governor_attention = 50
+        elif current_obj == 11:
+            store.governor_attention = 60
+        elif current_obj == 12:
+            store.governor_attention = 70
+        elif current_obj == 13:
+            store.governor_attention = 80
+        elif current_obj == 14:
+            store.governor_attention = 90
+        elif current_obj == 15:
+            store.governor_attention = 95
+        elif current_obj >= 16:
+            store.governor_attention = 100
+        
+        renpy.log(f"TENSION: Governor attention updated to {store.governor_attention} (objective {current_obj})")
+    
+    def check_governor_retaliation():
+        """Check and trigger the governor's retaliation event when reaching objective 9"""
+        if store.governor_retaliation_done:
+            return False
+        
+        # Only trigger when player has chosen a path (assassination or blackmail)
+        if store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False):
+            store.governor_retaliation_done = True
+            store.governor_tension_active = True
+            return True
+        return False
+    
+    def process_governor_tension_event():
+        """Process a random tension event from the governor (called during daily events)"""
+        import random
+        
+        # Only active from objective 10 onwards
+        if not store.governor_tension_active or store.current_objective < 10:
+            return None
+        
+        # Quest completed - no more tension events
+        if store.current_objective > 16 or store.event_flags.get("quest_complete", False):
+            store.governor_tension_active = False
+            return None
+    
+    def resolve_governor_tension():
+        """Called when the governor storyline ends - removes fear traits from workers"""
+        store.governor_tension_active = False
+        store.event_flags["quest_complete"] = True
+        
+        # Remove "Shaken by the Governor" from all workers (Poisoned expires naturally or via antidote)
+        traits_to_remove = ["Shaken by the Governor"]
+        workers_healed = []
+        
+        for worker in store.workers:
+            worker_traits = worker.get("traits", [])
+            for trait_name in traits_to_remove:
+                if trait_name in worker_traits:
+                    remove_trait(worker, trait_name)
+                    if worker["name"] not in workers_healed:
+                        workers_healed.append(worker["name"])
+        
+        renpy.log(f"TENSION: Governor storyline resolved. Healed workers: {workers_healed}")
+        return workers_healed
+        
+        # Calculate probability based on attention (max 15% chance at 100 attention)
+        probability = store.governor_attention / 100.0 * 0.15
+        
+        if random.random() > probability:
+            return None  # No event today
+        
+        # Choose event type
+        event_types = ["poison", "sabotage", "spy"]
+        event_type = random.choice(event_types)
+        
+        renpy.log(f"TENSION: Governor tension event triggered: {event_type}")
+        return event_type
+    
+    def apply_governor_poison_event():
+        """Apply poison effect to a random worker"""
+        import random
+        
+        if not store.workers or len(store.workers) == 0:
+            return None
+        
+        # Choose a random worker who isn't already poisoned
+        available_workers = [w for w in store.workers if "Poisoned" not in w.get("traits", [])]
+        if not available_workers:
+            return None
+        
+        victim = random.choice(available_workers)
+        
+        # Apply Poisoned and Shaken traits
+        add_trait_with_duration(victim, "Poisoned", 7)
+        add_trait_with_duration(victim, "Shaken by the Governor", 0)  # Permanent until quest ends
+        
+        # Also deal some immediate health damage
+        victim["health"] = max(1, victim["health"] - 10)
+        
+        renpy.log(f"TENSION: {victim['name']} has been poisoned!")
+        return victim["name"]
+    
+    def apply_governor_sabotage_event():
+        """Apply sabotage effect to a random building"""
+        import random
+        
+        if not store.owned_buildings or len(store.owned_buildings) == 0:
+            return None
+        
+        # Choose a random building
+        building_name = random.choice(list(store.owned_buildings))
+        building = store.available_buildings.get(building_name)
+        
+        if not building:
+            return None
+        
+        # Reduce building skill bonus temporarily (stored in event_flags)
+        sabotage_key = f"sabotage_{building_name}"
+        store.event_flags[sabotage_key] = store.current_day
+        
+        # Reduce skill bonus (will be restored after 3 days)
+        old_bonus = building.get("skill_bonus", 0)
+        building["skill_bonus"] = max(0, old_bonus - 10)
+        
+        renpy.log(f"TENSION: {building_name} has been sabotaged! Skill bonus reduced.")
+        return building_name
+    
+    def apply_governor_spy_event():
+        """Apply spy effect - steal some money"""
+        import random
+        
+        # Steal 5-15% of current money
+        steal_percent = random.uniform(0.05, 0.15)
+        stolen = int(store.money * steal_percent)
+        stolen = min(stolen, 2000)  # Cap at 2000
+        stolen = max(stolen, 100)   # Minimum 100 if player has money
+        
+        if store.money < stolen:
+            stolen = store.money // 2
+        
+        if stolen <= 0:
+            return None
+        
+        store.money -= stolen
+        
+        renpy.log(f"TENSION: Governor's spy stole ${stolen}!")
+        return stolen
     
     def jump_to_ending():
         """Jump to the appropriate ending based on chosen path"""

@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fantasy Manager Editor v5.1 - Complete Edition with WM Import
-=============================================================
-Based on v5, enhanced with:
-- Added "only_assigned" field support for traits in editor
-- Manual worker file loading (no auto-load on game folder set)
-- Save only current worker (instead of all workers)
-- Improved worker file management
-- Whoremaster Import functionality (characters & items)
-- Image conversion (GIF → WebM)
-- Image preview in all editors
-- Visual add_trait editor
-- Worker creation from image folders
+Fantasy Manager Editor v5.3 - Complete Edition with Full Daily Stories & Events
+================================================================================
+Based on v5.2, enhanced with:
+- Event Probability field (1-100%) - absolute probability, not affected by managers
+- Updated Limited field logic (limited: false = NOT affected by managers)
+- COMPLETE Daily Stories Editor with:
+  * Basic fields (ID, Report, Weight, Difficulty, Images)
+  * Traits section (relevant_traits, trait_bonus, trait_success)
+  * Earnings formulas
+  * Descriptions for all outcomes (failure, mediocre, success, critical_success)
+  * Consequences per outcome (energy, health, joy, rebelliousness, etc.)
+  * Loot system (rolls + bonus_items with chance, NSFW, critical_only flags)
+- COMPLETE Event Choice Editor with:
+  * Skill check condition
+  * Threshold (minimum skill level requirement)
+  * Required trait (worker must have this trait)
+  * Add trait on success effect
+  * servant_health, servant_energy, servant_joy, rebelliousness effects
+- All previous v5.1 features
 """
 
 import tkinter as tk
@@ -27,7 +34,7 @@ import sys
 import xml.etree.ElementTree as ET
 from typing import Dict, List, Optional, Tuple, Any
 
-VERSION = "5.1"
+VERSION = "5.3"
 
 # Intentar importar PIL para previsualización de imágenes (opcional)
 try:
@@ -520,7 +527,7 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
 class FantasyManagerEditorV4:
     def __init__(self, root):
         self.root = root
-        self.root.title(f"Fantasy Manager Editor v{VERSION} - Complete Edition")
+        self.root.title(f"Fantasy Manager Editor v{VERSION} - Complete Edition with Event Probability")
         self.root.geometry("1600x1000")
         
         # Variables de datos
@@ -3209,13 +3216,15 @@ Modifiers:
         for i in range(self.item_add_traits_listbox.size()):
             add_traits.append(self.item_add_traits_listbox.get(i))
         if add_traits:
-            effect['add_trait'] = add_traits if len(add_traits) > 1 else add_traits[0]
+            # Always save as array for consistency (game code now supports both)
+            effect['add_trait'] = add_traits
         
         remove_traits = []
         for i in range(self.item_remove_traits_listbox.size()):
             remove_traits.append(self.item_remove_traits_listbox.get(i))
         if remove_traits:
-            effect['remove_trait'] = remove_traits if len(remove_traits) > 1 else remove_traits[0]
+            # Always save as array for consistency (game code now supports both)
+            effect['remove_trait'] = remove_traits
         
         # Custom action
         custom = self.item_effect_custom_var.get().strip()
@@ -3795,9 +3804,32 @@ Effects:
             'difficulty_modifier': 0,
             'skill_options': [],
             'relevant_traits': [],
-            'earnings': {'success': '100', 'failure': '-10'},
-            'descriptions': {},
-            'consequences': {}
+            'trait_bonus': 'level * 100',
+            'trait_success': '{worker_name}\'s {trait} proves valuable.',
+            'earnings': {
+                'success': '100 + skill * 5',
+                'failure': '-10',
+                'critical_success': '150 + skill * 8',
+                'mediocre': '50 + skill * 2'
+            },
+            'descriptions': {
+                'failure': '{worker_name} fails at the task.',
+                'mediocre': '{worker_name} achieves mediocre results.',
+                'success': '{worker_name} succeeds at the task.',
+                'critical_success': '{worker_name} achieves exceptional results!'
+            },
+            'consequences': {
+                'failure': {'energy': -2, 'health': 0, 'joy': -1, 'rebelliousness': 1, 'reputation': -3},
+                'mediocre': {'energy': -1, 'health': 0, 'joy': 0, 'rebelliousness': 0, 'reputation': 0},
+                'success': {'energy': -1, 'health': 0, 'joy': 1, 'rebelliousness': 0, 'reputation': 3},
+                'critical_success': {'energy': -1, 'health': 0, 'joy': 3, 'rebelliousness': 0, 'reputation': 8}
+            },
+            'story_image': 'generic',
+            'failure_image': 'generic_failure',
+            'loot': {
+                'rolls': 0,
+                'bonus_items': []
+            }
         }
         
         if 'daily_stories' not in self.current_profession:
@@ -3832,45 +3864,65 @@ Effects:
                     self.update_title()
     
     def open_daily_story_editor(self, story, index):
-        """Abrir editor de daily story"""
+        """Abrir editor de daily story - Version completa con todas las pestañas"""
         editor_window = tk.Toplevel(self.root)
         editor_window.title(f"Edit Daily Story: {story.get('id', 'Unknown')}")
-        editor_window.geometry("900x700")
+        editor_window.geometry("1000x800")
         
         # Notebook para organizar
         story_notebook = ttk.Notebook(editor_window)
         story_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Pestaña básica
+        # ========== PESTAÑA 1: BASIC ==========
         basic_story_frame = ttk.Frame(story_notebook)
         story_notebook.add(basic_story_frame, text="Basic")
         
+        basic_canvas = tk.Canvas(basic_story_frame)
+        basic_scrollbar = ttk.Scrollbar(basic_story_frame, orient="vertical", command=basic_canvas.yview)
+        basic_scrollable = ttk.Frame(basic_canvas)
+        basic_scrollable.bind("<Configure>", lambda e: basic_canvas.configure(scrollregion=basic_canvas.bbox("all")))
+        basic_canvas.create_window((0, 0), window=basic_scrollable, anchor="nw")
+        basic_canvas.configure(yscrollcommand=basic_scrollbar.set)
+        basic_canvas.pack(side="left", fill="both", expand=True)
+        basic_scrollbar.pack(side="right", fill="y")
+        
         row = 0
-        ttk.Label(basic_story_frame, text="ID:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="ID:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         story_id_var = tk.StringVar(value=story.get('id', ''))
-        ttk.Entry(basic_story_frame, textvariable=story_id_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        ttk.Entry(basic_scrollable, textvariable=story_id_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_story_frame, text="Report:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="Report:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         story_report_var = tk.StringVar(value=story.get('report', ''))
-        ttk.Entry(basic_story_frame, textvariable=story_report_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        ttk.Entry(basic_scrollable, textvariable=story_report_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_story_frame, text="Weight:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
-        story_weight_var = tk.IntVar(value=story.get('weight', 1))
-        ttk.Spinbox(basic_story_frame, from_=1, to=10, textvariable=story_weight_var, width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="Weight (frequency):").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        story_weight_var = tk.DoubleVar(value=story.get('weight', 1))
+        ttk.Spinbox(basic_scrollable, from_=0.1, to=10, increment=0.1, textvariable=story_weight_var, width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_story_frame, text="Difficulty Modifier:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="Difficulty Modifier:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         story_diff_mod_var = tk.IntVar(value=story.get('difficulty_modifier', 0))
-        ttk.Spinbox(basic_story_frame, from_=-20, to=20, textvariable=story_diff_mod_var, width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Spinbox(basic_scrollable, from_=-20, to=20, textvariable=story_diff_mod_var, width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        row += 1
+        
+        # Images
+        ttk.Label(basic_scrollable, text="Story Image:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        story_image_var = tk.StringVar(value=story.get('story_image', ''))
+        ttk.Entry(basic_scrollable, textvariable=story_image_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        row += 1
+        
+        ttk.Label(basic_scrollable, text="Failure Image:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        failure_image_var = tk.StringVar(value=story.get('failure_image', ''))
+        ttk.Entry(basic_scrollable, textvariable=failure_image_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
         # Skill Options
-        ttk.Label(basic_story_frame, text="Skill Options:", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(20, 5))
+        ttk.Label(basic_scrollable, text="Skill Options:", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(20, 5))
         row += 1
         
-        skill_options_frame = ttk.Frame(basic_story_frame)
+        skill_options_frame = ttk.Frame(basic_scrollable)
         skill_options_frame.grid(row=row, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         story_skill_options_listbox = tk.Listbox(skill_options_frame, height=4)
         story_skill_options_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
@@ -3883,47 +3935,259 @@ Effects:
         ttk.Button(skill_options_buttons, text="Remove", command=lambda: story_skill_options_listbox.delete(tk.ANCHOR)).pack(pady=2)
         row += 1
         
-        # Earnings
-        ttk.Label(basic_story_frame, text="Earnings", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(20, 5))
+        basic_scrollable.columnconfigure(1, weight=1)
+        
+        # ========== PESTAÑA 2: TRAITS ==========
+        traits_story_frame = ttk.Frame(story_notebook)
+        story_notebook.add(traits_story_frame, text="Traits")
+        
+        row = 0
+        ttk.Label(traits_story_frame, text="Relevant Traits:", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=5)
         row += 1
         
+        traits_list_frame = ttk.Frame(traits_story_frame)
+        traits_list_frame.grid(row=row, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        story_traits_listbox = tk.Listbox(traits_list_frame, height=6)
+        story_traits_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        for trait in story.get('relevant_traits', []):
+            story_traits_listbox.insert(tk.END, trait)
+        
+        traits_buttons = ttk.Frame(traits_list_frame)
+        traits_buttons.pack(side=tk.LEFT, fill=tk.Y)
+        ttk.Button(traits_buttons, text="Add", command=lambda: self.add_trait_to_listbox(story_traits_listbox)).pack(pady=2)
+        ttk.Button(traits_buttons, text="Remove", command=lambda: story_traits_listbox.delete(tk.ANCHOR)).pack(pady=2)
+        row += 1
+        
+        ttk.Label(traits_story_frame, text="Trait Bonus Formula:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        trait_bonus_var = tk.StringVar(value=story.get('trait_bonus', 'level * 100'))
+        ttk.Entry(traits_story_frame, textvariable=trait_bonus_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        ttk.Label(traits_story_frame, text="Variables: level, skill").grid(row=row, column=2, sticky="w", padx=5)
+        row += 1
+        
+        ttk.Label(traits_story_frame, text="Trait Success Message:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        trait_success_var = tk.StringVar(value=story.get('trait_success', '{worker_name}\'s {trait} proves valuable.'))
+        ttk.Entry(traits_story_frame, textvariable=trait_success_var, width=50).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        ttk.Label(traits_story_frame, text="Use: {worker_name}, {trait}").grid(row=row, column=2, sticky="w", padx=5)
+        row += 1
+        
+        traits_story_frame.columnconfigure(1, weight=1)
+        
+        # ========== PESTAÑA 3: EARNINGS ==========
+        earnings_story_frame = ttk.Frame(story_notebook)
+        story_notebook.add(earnings_story_frame, text="Earnings")
+        
         earnings = story.get('earnings', {})
-        earnings_frame = ttk.Frame(basic_story_frame)
-        earnings_frame.grid(row=row, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        row = 0
         
-        ttk.Label(earnings_frame, text="Success:").grid(row=0, column=0, sticky="w", padx=5, pady=2)
-        story_earnings_success_var = tk.StringVar(value=earnings.get('success', '100'))
-        ttk.Entry(earnings_frame, textvariable=story_earnings_success_var, width=20).grid(row=0, column=1, sticky="w", padx=5, pady=2)
+        ttk.Label(earnings_story_frame, text="Earnings Formulas", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        ttk.Label(earnings_story_frame, text="Variables: skill, level").grid(row=row, column=3, sticky="w", padx=5)
+        row += 1
         
-        ttk.Label(earnings_frame, text="Failure:").grid(row=0, column=2, sticky="w", padx=5, pady=2)
+        ttk.Label(earnings_story_frame, text="Success:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        story_earnings_success_var = tk.StringVar(value=earnings.get('success', '100 + skill * 5'))
+        ttk.Entry(earnings_story_frame, textvariable=story_earnings_success_var, width=40).grid(row=row, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
+        row += 1
+        
+        ttk.Label(earnings_story_frame, text="Failure:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         story_earnings_failure_var = tk.StringVar(value=earnings.get('failure', '-10'))
-        ttk.Entry(earnings_frame, textvariable=story_earnings_failure_var, width=20).grid(row=0, column=3, sticky="w", padx=5, pady=2)
+        ttk.Entry(earnings_story_frame, textvariable=story_earnings_failure_var, width=40).grid(row=row, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
+        row += 1
         
-        ttk.Label(earnings_frame, text="Critical Success:").grid(row=1, column=0, sticky="w", padx=5, pady=2)
-        story_earnings_critical_var = tk.StringVar(value=earnings.get('critical_success', '200'))
-        ttk.Entry(earnings_frame, textvariable=story_earnings_critical_var, width=20).grid(row=1, column=1, sticky="w", padx=5, pady=2)
+        ttk.Label(earnings_story_frame, text="Critical Success:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        story_earnings_critical_var = tk.StringVar(value=earnings.get('critical_success', '150 + skill * 8'))
+        ttk.Entry(earnings_story_frame, textvariable=story_earnings_critical_var, width=40).grid(row=row, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
+        row += 1
         
-        ttk.Label(earnings_frame, text="Mediocre:").grid(row=1, column=2, sticky="w", padx=5, pady=2)
-        story_earnings_mediocre_var = tk.StringVar(value=earnings.get('mediocre', '50'))
-        ttk.Entry(earnings_frame, textvariable=story_earnings_mediocre_var, width=20).grid(row=1, column=3, sticky="w", padx=5, pady=2)
+        ttk.Label(earnings_story_frame, text="Mediocre:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        story_earnings_mediocre_var = tk.StringVar(value=earnings.get('mediocre', '50 + skill * 2'))
+        ttk.Entry(earnings_story_frame, textvariable=story_earnings_mediocre_var, width=40).grid(row=row, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
+        row += 1
         
-        basic_story_frame.columnconfigure(1, weight=1)
+        earnings_story_frame.columnconfigure(1, weight=1)
         
-        # Botones
+        # ========== PESTAÑA 4: DESCRIPTIONS ==========
+        desc_story_frame = ttk.Frame(story_notebook)
+        story_notebook.add(desc_story_frame, text="Descriptions")
+        
+        descriptions = story.get('descriptions', {})
+        
+        ttk.Label(desc_story_frame, text="Descriptions for each outcome", font=("Arial", 10, "bold")).pack(anchor="w", padx=5, pady=5)
+        ttk.Label(desc_story_frame, text="Use: {worker_name}, {skill}").pack(anchor="w", padx=5)
+        
+        ttk.Label(desc_story_frame, text="Failure:").pack(anchor="w", padx=5, pady=(10, 2))
+        desc_failure_text = scrolledtext.ScrolledText(desc_story_frame, width=80, height=4)
+        desc_failure_text.pack(fill=tk.X, padx=5, pady=2)
+        desc_failure_text.insert(tk.END, descriptions.get('failure', ''))
+        
+        ttk.Label(desc_story_frame, text="Mediocre:").pack(anchor="w", padx=5, pady=(10, 2))
+        desc_mediocre_text = scrolledtext.ScrolledText(desc_story_frame, width=80, height=4)
+        desc_mediocre_text.pack(fill=tk.X, padx=5, pady=2)
+        desc_mediocre_text.insert(tk.END, descriptions.get('mediocre', ''))
+        
+        ttk.Label(desc_story_frame, text="Success:").pack(anchor="w", padx=5, pady=(10, 2))
+        desc_success_text = scrolledtext.ScrolledText(desc_story_frame, width=80, height=4)
+        desc_success_text.pack(fill=tk.X, padx=5, pady=2)
+        desc_success_text.insert(tk.END, descriptions.get('success', ''))
+        
+        ttk.Label(desc_story_frame, text="Critical Success:").pack(anchor="w", padx=5, pady=(10, 2))
+        desc_critical_text = scrolledtext.ScrolledText(desc_story_frame, width=80, height=4)
+        desc_critical_text.pack(fill=tk.X, padx=5, pady=2)
+        desc_critical_text.insert(tk.END, descriptions.get('critical_success', ''))
+        
+        # ========== PESTAÑA 5: CONSEQUENCES ==========
+        conseq_story_frame = ttk.Frame(story_notebook)
+        story_notebook.add(conseq_story_frame, text="Consequences")
+        
+        conseq_canvas = tk.Canvas(conseq_story_frame)
+        conseq_scrollbar = ttk.Scrollbar(conseq_story_frame, orient="vertical", command=conseq_canvas.yview)
+        conseq_scrollable = ttk.Frame(conseq_canvas)
+        conseq_scrollable.bind("<Configure>", lambda e: conseq_canvas.configure(scrollregion=conseq_canvas.bbox("all")))
+        conseq_canvas.create_window((0, 0), window=conseq_scrollable, anchor="nw")
+        conseq_canvas.configure(yscrollcommand=conseq_scrollbar.set)
+        conseq_canvas.pack(side="left", fill="both", expand=True)
+        conseq_scrollbar.pack(side="right", fill="y")
+        
+        consequences = story.get('consequences', {})
+        consequence_vars = {}
+        
+        outcomes = ['failure', 'mediocre', 'success', 'critical_success']
+        attributes = ['energy', 'health', 'joy', 'rebelliousness', 'romance', 'relationship', 'reputation', 'libido']
+        
+        row = 0
+        ttk.Label(conseq_scrollable, text="Consequences (attribute changes per outcome)", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=len(attributes)+1, sticky="w", padx=5, pady=5)
+        row += 1
+        
+        # Header
+        ttk.Label(conseq_scrollable, text="Outcome").grid(row=row, column=0, padx=5, pady=2)
+        for col, attr in enumerate(attributes):
+            ttk.Label(conseq_scrollable, text=attr.capitalize()[:6]).grid(row=row, column=col+1, padx=2, pady=2)
+        row += 1
+        
+        for outcome in outcomes:
+            outcome_data = consequences.get(outcome, {})
+            consequence_vars[outcome] = {}
+            
+            ttk.Label(conseq_scrollable, text=outcome.replace('_', ' ').title()).grid(row=row, column=0, sticky="w", padx=5, pady=2)
+            for col, attr in enumerate(attributes):
+                var = tk.IntVar(value=outcome_data.get(attr, 0))
+                consequence_vars[outcome][attr] = var
+                ttk.Spinbox(conseq_scrollable, from_=-20, to=20, textvariable=var, width=5).grid(row=row, column=col+1, padx=2, pady=2)
+            row += 1
+        
+        # ========== PESTAÑA 6: LOOT ==========
+        loot_story_frame = ttk.Frame(story_notebook)
+        story_notebook.add(loot_story_frame, text="Loot")
+        
+        loot_data = story.get('loot', {})
+        
+        row = 0
+        ttk.Label(loot_story_frame, text="Random Loot Rolls:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        loot_rolls_var = tk.IntVar(value=loot_data.get('rolls', 0))
+        ttk.Spinbox(loot_story_frame, from_=0, to=10, textvariable=loot_rolls_var, width=10).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(loot_story_frame, text="(0 = no random loot)").grid(row=row, column=2, sticky="w", padx=5)
+        row += 1
+        
+        ttk.Label(loot_story_frame, text="Bonus Items (specific items with chance):", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
+        row += 1
+        
+        bonus_items_frame = ttk.Frame(loot_story_frame)
+        bonus_items_frame.grid(row=row, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        
+        bonus_items_listbox = tk.Listbox(bonus_items_frame, height=8, width=60)
+        bonus_items_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        
+        # Load existing bonus items
+        bonus_items_data = loot_data.get('bonus_items', [])
+        for item in bonus_items_data:
+            item_str = f"{item.get('item_id', '?')} - {item.get('chance', 1.0)*100:.1f}%"
+            if item.get('nsfw'):
+                item_str += " [NSFW]"
+            if item.get('critical_only'):
+                item_str += " [Crit Only]"
+            bonus_items_listbox.insert(tk.END, item_str)
+        
+        bonus_buttons = ttk.Frame(bonus_items_frame)
+        bonus_buttons.pack(side=tk.LEFT, fill=tk.Y)
+        
+        def add_bonus_item():
+            item_window = tk.Toplevel(editor_window)
+            item_window.title("Add Bonus Item")
+            item_window.geometry("400x200")
+            
+            ttk.Label(item_window, text="Item ID:").grid(row=0, column=0, padx=5, pady=5)
+            item_id_var = tk.StringVar()
+            ttk.Entry(item_window, textvariable=item_id_var, width=30).grid(row=0, column=1, padx=5, pady=5)
+            
+            ttk.Label(item_window, text="Chance (0.01 = 1%):").grid(row=1, column=0, padx=5, pady=5)
+            chance_var = tk.DoubleVar(value=0.05)
+            ttk.Entry(item_window, textvariable=chance_var, width=10).grid(row=1, column=1, sticky="w", padx=5, pady=5)
+            
+            nsfw_var = tk.BooleanVar(value=False)
+            ttk.Checkbutton(item_window, text="NSFW Only", variable=nsfw_var).grid(row=2, column=1, sticky="w", padx=5, pady=5)
+            
+            crit_var = tk.BooleanVar(value=False)
+            ttk.Checkbutton(item_window, text="Critical Success Only", variable=crit_var).grid(row=3, column=1, sticky="w", padx=5, pady=5)
+            
+            def save_item():
+                new_item = {
+                    'item_id': item_id_var.get(),
+                    'chance': chance_var.get()
+                }
+                if nsfw_var.get():
+                    new_item['nsfw'] = True
+                if crit_var.get():
+                    new_item['critical_only'] = True
+                bonus_items_data.append(new_item)
+                
+                item_str = f"{new_item['item_id']} - {new_item['chance']*100:.1f}%"
+                if new_item.get('nsfw'):
+                    item_str += " [NSFW]"
+                if new_item.get('critical_only'):
+                    item_str += " [Crit Only]"
+                bonus_items_listbox.insert(tk.END, item_str)
+                item_window.destroy()
+            
+            ttk.Button(item_window, text="Add", command=save_item).grid(row=4, column=0, columnspan=2, pady=10)
+        
+        def remove_bonus_item():
+            sel = bonus_items_listbox.curselection()
+            if sel:
+                idx = sel[0]
+                bonus_items_listbox.delete(idx)
+                if idx < len(bonus_items_data):
+                    bonus_items_data.pop(idx)
+        
+        ttk.Button(bonus_buttons, text="Add Item", command=add_bonus_item).pack(pady=2)
+        ttk.Button(bonus_buttons, text="Remove", command=remove_bonus_item).pack(pady=2)
+        
+        loot_story_frame.columnconfigure(1, weight=1)
+        
+        # ========== BOTONES PRINCIPALES ==========
         buttons_frame = ttk.Frame(editor_window)
         buttons_frame.pack(fill=tk.X, padx=10, pady=10)
         
         def save_story():
+            # Basic
             story['id'] = story_id_var.get()
             story['report'] = story_report_var.get()
             story['weight'] = story_weight_var.get()
             story['difficulty_modifier'] = story_diff_mod_var.get()
+            story['story_image'] = story_image_var.get()
+            story['failure_image'] = failure_image_var.get()
             
             # Skill options
             skill_options = []
             for i in range(story_skill_options_listbox.size()):
                 skill_options.append(story_skill_options_listbox.get(i))
             story['skill_options'] = skill_options
+            
+            # Traits
+            relevant_traits = []
+            for i in range(story_traits_listbox.size()):
+                relevant_traits.append(story_traits_listbox.get(i))
+            story['relevant_traits'] = relevant_traits
+            story['trait_bonus'] = trait_bonus_var.get()
+            story['trait_success'] = trait_success_var.get()
             
             # Earnings
             story['earnings'] = {
@@ -3933,13 +4197,42 @@ Effects:
                 'mediocre': story_earnings_mediocre_var.get()
             }
             
+            # Descriptions
+            story['descriptions'] = {
+                'failure': desc_failure_text.get("1.0", tk.END).strip(),
+                'mediocre': desc_mediocre_text.get("1.0", tk.END).strip(),
+                'success': desc_success_text.get("1.0", tk.END).strip(),
+                'critical_success': desc_critical_text.get("1.0", tk.END).strip()
+            }
+            
+            # Consequences
+            story['consequences'] = {}
+            for outcome in outcomes:
+                story['consequences'][outcome] = {}
+                for attr in attributes:
+                    val = consequence_vars[outcome][attr].get()
+                    if val != 0:  # Only save non-zero values
+                        story['consequences'][outcome][attr] = val
+            
+            # Loot
+            story['loot'] = {
+                'rolls': loot_rolls_var.get(),
+                'bonus_items': bonus_items_data
+            }
+            
             self.refresh_daily_stories_list()
             self.has_unsaved_changes = True
             self.update_title()
             editor_window.destroy()
         
-        ttk.Button(buttons_frame, text="Save", command=save_story).pack(side=tk.LEFT, padx=5)
+        ttk.Button(buttons_frame, text="Save Story", command=save_story).pack(side=tk.LEFT, padx=5)
         ttk.Button(buttons_frame, text="Cancel", command=editor_window.destroy).pack(side=tk.LEFT, padx=5)
+    
+    def add_trait_to_listbox(self, listbox):
+        """Agregar trait a una listbox"""
+        trait = simpledialog.askstring("Add Trait", "Enter trait name:")
+        if trait:
+            listbox.insert(tk.END, trait)
     
     def add_story_skill_option(self, listbox):
         """Agregar skill option a story"""
@@ -4003,9 +4296,21 @@ Professions:
 - Professions define what workers can do in the building
 - Each profession has skills, daily stories, and earnings formulas
 
-Daily Stories:
-- Stories that occur during daily work
-- Each story has skill requirements, earnings, and consequences
+Daily Stories (v5.2 - Full Editor):
+- Basic: ID, Report, Weight, Difficulty Modifier, Images
+- Traits: Relevant traits, bonus formula, success message
+- Earnings: Formulas for each outcome (use 'skill', 'level' variables)
+- Descriptions: Text for failure, mediocre, success, critical_success
+- Consequences: Attribute changes per outcome:
+  * energy, health, joy, rebelliousness, romance, relationship, reputation, libido
+- Loot: Random rolls + bonus_items with:
+  * item_id: Item to potentially drop
+  * chance: 0.01 = 1%, 0.05 = 5%, etc.
+  * nsfw: Only drop if NSFW enabled
+  * critical_only: Only drop on critical success
+
+Variables in formulas: skill, level
+Variables in messages: {worker_name}, {skill}, {trait}
         """
         
         help_window = tk.Toplevel(self.root)
@@ -4205,6 +4510,15 @@ Daily Stories:
         ttk.Spinbox(event_scrollable, from_=1, to=10, textvariable=self.event_weight_var, width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
         
+        # Event Probability (percentage, 1-100) - Optional
+        ttk.Label(event_scrollable, text="Event Probability (%):").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        probability_frame = ttk.Frame(event_scrollable)
+        probability_frame.grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        self.event_probability_var = tk.IntVar(value=0)  # 0 means not set
+        ttk.Spinbox(probability_frame, from_=0, to=100, textvariable=self.event_probability_var, width=15).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Label(probability_frame, text="(0 = default, 1-100 = NOT affected by managers)", font=("Arial", 8), foreground="gray").pack(side=tk.LEFT)
+        row += 1
+        
         # NSFW
         self.event_nsfw_var = tk.BooleanVar()
         ttk.Checkbutton(event_scrollable, text="NSFW", variable=self.event_nsfw_var).grid(row=row, column=1, sticky="w", padx=5, pady=5)
@@ -4250,9 +4564,12 @@ Daily Stories:
         
         row = 0
         
-        # Limited
+        # Limited (Note: limited: false = NOT affected by managers, limited: true = affected by managers)
         self.event_limited_var = tk.BooleanVar()
-        ttk.Checkbutton(event_scrollable, text="Limited Event", variable=self.event_limited_var).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+        limited_frame = ttk.Frame(event_scrollable)
+        limited_frame.grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+        ttk.Checkbutton(limited_frame, text="Limited Event (affected by managers)", variable=self.event_limited_var).pack(side=tk.LEFT)
+        ttk.Label(limited_frame, text="(Unchecked = NOT affected by managers)", font=("Arial", 8), foreground="gray").pack(side=tk.LEFT, padx=(10, 0))
         row += 1
         
         # Max Occurrences
@@ -4317,6 +4634,14 @@ Daily Stories:
         self.event_description_text.delete(1.0, tk.END)
         self.event_description_text.insert(1.0, self.current_event.get('description', ''))
         self.event_weight_var.set(self.current_event.get('weight', 1))
+        
+        # Event Probability (optional, 1-100, 0 means not set)
+        event_probability = self.current_event.get('event_probability')
+        if event_probability is not None:
+            self.event_probability_var.set(event_probability)
+        else:
+            self.event_probability_var.set(0)  # 0 = not set (default behavior)
+        
         self.event_nsfw_var.set(self.current_event.get('nsfw', False))
         self.event_music_var.set(self.current_event.get('event_music', ''))
         self.event_bg_image_var.set(self.current_event.get('background_image', ''))
@@ -4324,6 +4649,8 @@ Daily Stories:
         self.event_failure_image_var.set(self.current_event.get('failure_image', ''))
         
         # Config
+        # Note: limited: false = NOT affected by managers, limited: true = affected by managers
+        # Default to False (not affected by managers) if not set
         self.event_limited_var.set(self.current_event.get('limited', False))
         self.event_max_occurrences_var.set(self.current_event.get('max_occurrences', 1))
         self.event_cooldown_var.set(self.current_event.get('cooldown_days', 7))
@@ -4393,8 +4720,16 @@ Daily Stories:
         
         new_choice = {
             'option': 'New Choice',
-            'message': 'Choice result message',
-            'effect': {}
+            'condition': '',
+            'threshold': 0,
+            'required_trait': '',
+            'message': 'Choice result message (for simple choices)',
+            'message_success': 'Success message (for skill checks)',
+            'message_failure': 'Failure message (for skill checks)',
+            'effect': {
+                'success': {},
+                'failure': {}
+            }
         }
         
         if 'choices' not in self.current_event:
@@ -4429,48 +4764,84 @@ Daily Stories:
                     self.update_title()
     
     def open_choice_editor(self, choice, index):
-        """Abrir editor de choice"""
+        """Abrir editor de choice - Version completa con threshold y required_trait"""
         editor_window = tk.Toplevel(self.root)
         editor_window.title(f"Edit Choice: {choice.get('option', 'Unknown')}")
-        editor_window.geometry("900x800")
+        editor_window.geometry("950x850")
         
         # Notebook para organizar
         choice_notebook = ttk.Notebook(editor_window)
         choice_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Pestaña básica
+        # ========== PESTAÑA 1: BASIC ==========
         basic_choice_frame = ttk.Frame(choice_notebook)
         choice_notebook.add(basic_choice_frame, text="Basic")
         
+        basic_canvas = tk.Canvas(basic_choice_frame)
+        basic_scrollbar = ttk.Scrollbar(basic_choice_frame, orient="vertical", command=basic_canvas.yview)
+        basic_scrollable = ttk.Frame(basic_canvas)
+        basic_scrollable.bind("<Configure>", lambda e: basic_canvas.configure(scrollregion=basic_canvas.bbox("all")))
+        basic_canvas.create_window((0, 0), window=basic_scrollable, anchor="nw")
+        basic_canvas.configure(yscrollcommand=basic_scrollbar.set)
+        basic_canvas.pack(side="left", fill="both", expand=True)
+        basic_scrollbar.pack(side="right", fill="y")
+        
         row = 0
-        ttk.Label(basic_choice_frame, text="Option Text:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="Option Text:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         choice_option_var = tk.StringVar(value=choice.get('option', ''))
-        ttk.Entry(basic_choice_frame, textvariable=choice_option_var, width=60).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        ttk.Entry(basic_scrollable, textvariable=choice_option_var, width=60).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_choice_frame, text="Condition:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        # ========== SKILL CHECK SECTION ==========
+        ttk.Label(basic_scrollable, text="Skill Check (optional)", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(15, 5))
+        row += 1
+        
+        ttk.Label(basic_scrollable, text="Condition (skill name):").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         choice_condition_var = tk.StringVar(value=choice.get('condition', ''))
-        ttk.Entry(basic_choice_frame, textvariable=choice_condition_var, width=60).grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        condition_combo = ttk.Combobox(basic_scrollable, textvariable=choice_condition_var, 
+                                       values=['', 'Combat', 'Charm', 'Clever', 'Agility', 'Service', 'Striptease', 
+                                               'Sex', 'Oral', 'Anal', 'BDSM', 'Hand', 'Homo', 'Group', 
+                                               'Extreme', 'Special', 'Craft'], width=30)
+        condition_combo.grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_choice_frame, text="Message:").grid(row=row, column=0, sticky="nw", padx=5, pady=5)
-        choice_message_text = scrolledtext.ScrolledText(basic_choice_frame, width=60, height=4)
+        ttk.Label(basic_scrollable, text="Threshold (min skill level):").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        choice_threshold_var = tk.IntVar(value=choice.get('threshold', 0))
+        ttk.Spinbox(basic_scrollable, from_=0, to=100, textvariable=choice_threshold_var, width=10).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="(0 = no minimum, worker just needs the condition skill)").grid(row=row, column=2, sticky="w", padx=5)
+        row += 1
+        
+        ttk.Label(basic_scrollable, text="Required Trait:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        choice_required_trait_var = tk.StringVar(value=choice.get('required_trait', ''))
+        ttk.Entry(basic_scrollable, textvariable=choice_required_trait_var, width=30).grid(row=row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(basic_scrollable, text="(worker MUST have this trait)").grid(row=row, column=2, sticky="w", padx=5)
+        row += 1
+        
+        # ========== MESSAGES SECTION ==========
+        ttk.Label(basic_scrollable, text="Messages", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(15, 5))
+        row += 1
+        
+        ttk.Label(basic_scrollable, text="Message (simple choices):").grid(row=row, column=0, sticky="nw", padx=5, pady=5)
+        choice_message_text = scrolledtext.ScrolledText(basic_scrollable, width=60, height=3)
         choice_message_text.insert(1.0, choice.get('message', ''))
         choice_message_text.grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_choice_frame, text="Message Success:").grid(row=row, column=0, sticky="nw", padx=5, pady=5)
-        choice_message_success_text = scrolledtext.ScrolledText(basic_choice_frame, width=60, height=4)
+        ttk.Label(basic_scrollable, text="Message Success:").grid(row=row, column=0, sticky="nw", padx=5, pady=5)
+        choice_message_success_text = scrolledtext.ScrolledText(basic_scrollable, width=60, height=4)
         choice_message_success_text.insert(1.0, choice.get('message_success', ''))
         choice_message_success_text.grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
-        ttk.Label(basic_choice_frame, text="Message Failure:").grid(row=row, column=0, sticky="nw", padx=5, pady=5)
-        choice_message_failure_text = scrolledtext.ScrolledText(basic_choice_frame, width=60, height=4)
+        ttk.Label(basic_scrollable, text="Message Failure:").grid(row=row, column=0, sticky="nw", padx=5, pady=5)
+        choice_message_failure_text = scrolledtext.ScrolledText(basic_scrollable, width=60, height=4)
         choice_message_failure_text.insert(1.0, choice.get('message_failure', ''))
         choice_message_failure_text.grid(row=row, column=1, sticky="ew", padx=5, pady=5)
+        row += 1
         
-        basic_choice_frame.columnconfigure(1, weight=1)
+        ttk.Label(basic_scrollable, text="Use: [acting_worker] for worker name in messages").grid(row=row, column=1, sticky="w", padx=5, pady=2)
+        
+        basic_scrollable.columnconfigure(1, weight=1)
         
         # Pestaña Effects
         effects_choice_frame = ttk.Frame(choice_notebook)
@@ -4505,12 +4876,20 @@ Daily Stories:
         
         success_effect = choice.get('effect', {}).get('success', {})
         success_vars = {}
-        for effect_name in ['money', 'reputation', 'health', 'energy', 'joy']:
-            ttk.Label(effects_scrollable, text=f"{effect_name.capitalize()}:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        for effect_name in ['money', 'reputation', 'servant_health', 'servant_energy', 'servant_joy', 'rebelliousness']:
+            display_name = effect_name.replace('servant_', '').capitalize()
+            ttk.Label(effects_scrollable, text=f"{display_name}:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
             var = tk.StringVar(value=str(success_effect.get(effect_name, '')))
             ttk.Entry(effects_scrollable, textvariable=var, width=20).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
             success_vars[effect_name] = var
             effect_row += 1
+        
+        # Add trait on success
+        ttk.Label(effects_scrollable, text="Add Trait on Success:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        success_add_trait_var = tk.StringVar(value=success_effect.get('add_trait', ''))
+        ttk.Entry(effects_scrollable, textvariable=success_add_trait_var, width=30).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(effects_scrollable, text="(trait name to add to worker)").grid(row=effect_row, column=2, sticky="w", padx=5)
+        effect_row += 1
         
         # Failure effects
         ttk.Label(effects_scrollable, text="Failure Effects", font=("Arial", 10, "bold")).grid(row=effect_row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
@@ -4518,8 +4897,9 @@ Daily Stories:
         
         failure_effect = choice.get('effect', {}).get('failure', {})
         failure_vars = {}
-        for effect_name in ['money', 'reputation', 'health', 'energy', 'joy']:
-            ttk.Label(effects_scrollable, text=f"{effect_name.capitalize()}:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        for effect_name in ['money', 'reputation', 'servant_health', 'servant_energy', 'servant_joy', 'rebelliousness']:
+            display_name = effect_name.replace('servant_', '').capitalize()
+            ttk.Label(effects_scrollable, text=f"{display_name}:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
             var = tk.StringVar(value=str(failure_effect.get(effect_name, '')))
             ttk.Entry(effects_scrollable, textvariable=var, width=20).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
             failure_vars[effect_name] = var
@@ -4536,10 +4916,44 @@ Daily Stories:
         
         def save_choice():
             choice['option'] = choice_option_var.get()
-            choice['condition'] = choice_condition_var.get()
-            choice['message'] = choice_message_text.get(1.0, tk.END).strip()
-            choice['message_success'] = choice_message_success_text.get(1.0, tk.END).strip()
-            choice['message_failure'] = choice_message_failure_text.get(1.0, tk.END).strip()
+            
+            # Condition and skill check fields
+            condition = choice_condition_var.get().strip()
+            if condition:
+                choice['condition'] = condition
+            elif 'condition' in choice:
+                del choice['condition']
+            
+            threshold = choice_threshold_var.get()
+            if threshold > 0:
+                choice['threshold'] = threshold
+            elif 'threshold' in choice:
+                del choice['threshold']
+            
+            required_trait = choice_required_trait_var.get().strip()
+            if required_trait:
+                choice['required_trait'] = required_trait
+            elif 'required_trait' in choice:
+                del choice['required_trait']
+            
+            # Messages
+            msg = choice_message_text.get(1.0, tk.END).strip()
+            if msg:
+                choice['message'] = msg
+            elif 'message' in choice:
+                del choice['message']
+            
+            msg_success = choice_message_success_text.get(1.0, tk.END).strip()
+            if msg_success:
+                choice['message_success'] = msg_success
+            elif 'message_success' in choice:
+                del choice['message_success']
+            
+            msg_failure = choice_message_failure_text.get(1.0, tk.END).strip()
+            if msg_failure:
+                choice['message_failure'] = msg_failure
+            elif 'message_failure' in choice:
+                del choice['message_failure']
             
             # Effects
             effect = {}
@@ -4553,8 +4967,8 @@ Daily Stories:
                     except ValueError:
                         effect[effect_name] = value
             
-            # Success effects
-            if any(v.get().strip() for v in success_vars.values()):
+            # Success effects (including add_trait)
+            if any(v.get().strip() for v in success_vars.values()) or success_add_trait_var.get().strip():
                 success_eff = {}
                 for effect_name, var in success_vars.items():
                     value = var.get().strip()
@@ -4563,6 +4977,9 @@ Daily Stories:
                             success_eff[effect_name] = int(value) if '.' not in value else float(value)
                         except ValueError:
                             success_eff[effect_name] = value
+                add_trait = success_add_trait_var.get().strip()
+                if add_trait:
+                    success_eff['add_trait'] = add_trait
                 if success_eff:
                     effect['success'] = success_eff
             
@@ -4605,6 +5022,15 @@ Daily Stories:
         self.current_event['id'] = self.event_id_var.get()
         self.current_event['description'] = self.event_description_text.get(1.0, tk.END).strip()
         self.current_event['weight'] = self.event_weight_var.get()
+        
+        # Event Probability (optional, only save if > 0)
+        event_probability = self.event_probability_var.get()
+        if event_probability > 0:
+            self.current_event['event_probability'] = event_probability
+        elif 'event_probability' in self.current_event:
+            # Remove if user set it to 0 (meaning "not set")
+            del self.current_event['event_probability']
+        
         self.current_event['nsfw'] = self.event_nsfw_var.get()
         self.current_event['event_music'] = self.event_music_var.get()
         self.current_event['background_image'] = self.event_bg_image_var.get()
@@ -4612,6 +5038,7 @@ Daily Stories:
         self.current_event['failure_image'] = self.event_failure_image_var.get()
         
         # Config
+        # Note: limited: false = NOT affected by managers, limited: true = affected by managers
         self.current_event['limited'] = self.event_limited_var.get()
         if self.event_limited_var.get():
             self.current_event['max_occurrences'] = self.event_max_occurrences_var.get()
@@ -4633,29 +5060,48 @@ Daily Stories:
     def show_event_help(self):
         """Mostrar ayuda para events"""
         help_text = """
-EVENT EDITOR HELP
+EVENT EDITOR HELP (v5.3)
 
 Basic Information:
 - ID: Unique event identifier
-- Description: Event description text
-- Weight: Event probability weight (1-10)
+- Description: Event description text (use [acting_worker] for worker name)
+- Weight: Event probability weight (1-10) - relative probability among events
+- Event Probability (%): Absolute probability (0-100). 
+  * 0 = Not set (default behavior, affected by managers)
+  * 1-100 = Set probability (event is NOT affected by managers, priority event)
 - NSFW: Mark if event is NSFW content
 - Event Music: Music file path
 - Background/Success/Failure Images: Image file paths
 
 Configuration:
-- Limited: If event can only occur a limited number of times
+- Limited Event: 
+  * UNCHECKED (limited: false) = Event is NOT affected by managers (priority event)
+  * CHECKED (limited: true) = Event IS affected by managers (normal event)
+  Note: Events with event_probability set are ALWAYS priority (not affected by managers)
 - Max Occurrences: Maximum times event can occur (if limited)
 - Cooldown Days: Days before event can occur again
 - Worker Selection: How worker is selected (choose/none/random)
 - Worker Gender: Required worker gender (any/male/female)
 - Building Types: Buildings where event can occur
 
-Choices:
-- Each event can have multiple choices
-- Choices have option text, messages, and effects
-- Effects can be direct, success-based, or failure-based
-- Success chance determines probability of success (0.0-1.0)
+Choices (v5.2 Enhanced):
+- Option Text: Text shown to player
+- Condition: Skill name for skill check (Combat, Charm, Clever, etc.)
+- Threshold: Minimum skill level (0 = no minimum, worker meets threshold = better chances)
+- Required Trait: Worker MUST have this trait to select this choice
+- Messages: message (simple), message_success, message_failure
+- Effects (Success/Failure):
+  * money, reputation: Manager resources
+  * servant_health, servant_energy, servant_joy: Worker stats
+  * rebelliousness: Worker rebelliousness change
+  * add_trait: Trait name to add to worker on success
+
+Example skill check choice:
+- Condition: "Combat", Threshold: 60, Required Trait: ""
+- Worker needs Combat skill, if Combat >= 60 they get better success chances
+- Add "Blademaster" trait on success
+
+Variables in messages: [acting_worker]
         """
         
         help_window = tk.Toplevel(self.root)

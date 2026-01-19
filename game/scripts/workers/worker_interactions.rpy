@@ -369,7 +369,13 @@ init python:
             interaction: The interaction data
             apply_costs: If True, apply energy/health/money costs. If False, skip costs.
             skip_daily_limit: If True, don't count this interaction towards daily limit (e.g., for "take a walk").
+        
+        Returns:
+            dict: Dictionary with stat changes (e.g., {"relationship": 5, "joy": 3})
         """
+        # Track stat changes for display
+        stat_changes = {}
+        
         # Increment daily interaction count (unless skipping limit)
         if not skip_daily_limit:
             increment_worker_interaction_count(worker)
@@ -378,7 +384,11 @@ init python:
         for stat, change in effects.items():
             if stat != "flags":  # Handle flags separately
                 current_value = worker.get(stat, 0)
-                worker[stat] = max(0, min(100, current_value + change))
+                new_value = max(0, min(100, current_value + change))
+                worker[stat] = new_value
+                # Only track non-zero changes
+                if change != 0:
+                    stat_changes[stat] = change
         
         # Apply flag changes
         flag_effects = effects.get("flags", {})
@@ -450,6 +460,8 @@ init python:
             store.money = max(0, store.money - interaction.get("cost_money", 0))
 
         # Tutorial: friendly chat completion is now handled when closing the interaction_result screen
+        
+        return stat_changes
 
     def get_interaction_image(worker, interaction):
         """

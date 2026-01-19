@@ -2073,23 +2073,36 @@ screen tooltip(message, xpos=None, ypos=None, screen_name=None):
             # Check screens in priority order using renpy.get_screen()
             # renpy.get_screen() returns the screen object if shown, None otherwise
             if renpy.get_screen("map_screen"):
-                screen_name = "map_screen"
+                detected_screen = "map_screen"
             elif renpy.get_screen("Manager"):
-                screen_name = "Manager"
+                detected_screen = "Manager"
             elif renpy.get_screen("tavern"):
-                screen_name = "tavern"
+                detected_screen = "tavern"
             elif renpy.get_screen("manager_inventory"):
-                screen_name = "manager_inventory"
+                detected_screen = "manager_inventory"
             elif renpy.get_screen("report_details"):
-                screen_name = "report_details"
+                detected_screen = "report_details"
             elif renpy.get_screen("worker_details"):
-                screen_name = "WorkerDetails"
+                detected_screen = "WorkerDetails"
             else:
                 # Fallback to default
-                screen_name = "default"
+                detected_screen = "default"
+            screen_name = detected_screen
+        else:
+            detected_screen = screen_name
         
-        # Check if tooltips are enabled for this screen (defaults to True if not set)
-        tooltips_enabled = get_tooltips_state_for_screen(screen_name)
+        # Guard: Hide tooltip if screen context changed (prevents tooltips from persisting across screens)
+        if not hasattr(store, '_last_tooltip_screen'):
+            store._last_tooltip_screen = detected_screen
+        elif store._last_tooltip_screen != detected_screen:
+            # Screen changed, hide tooltip
+            renpy.hide_screen("tooltip")
+            store._last_tooltip_screen = detected_screen
+            tooltips_enabled = False
+        else:
+            store._last_tooltip_screen = detected_screen
+            # Check if tooltips are enabled for this screen (defaults to True if not set)
+            tooltips_enabled = get_tooltips_state_for_screen(screen_name)
     
     # Only show tooltip content if tooltips are enabled for this screen
     if tooltips_enabled:
@@ -2100,15 +2113,16 @@ screen tooltip(message, xpos=None, ypos=None, screen_name=None):
                 # Tooltip max width is 250px, so we need to ensure it doesn't overflow
                 screen_width = config.screen_width
                 tooltip_max_width = 250
-                # If near right edge of screen, position tooltip to the left of mouse
-                if mouse_x > screen_width - (tooltip_max_width + 40):  # 40px margin
-                    # Position tooltip to the left of mouse, ensuring it stays on screen
-                    xpos = mouse_x - (tooltip_max_width + 30)  # Position to the left with margin
-                else:
+                # Position tooltip to the LEFT of mouse cursor to avoid blocking clicks
+                # Only position to the right if we're near the left edge of screen
+                if mouse_x < tooltip_max_width + 40:  # Near left edge, show on right
                     xpos = mouse_x + 20
+                else:
+                    # Show on left side of mouse
+                    xpos = mouse_x - (tooltip_max_width + 20)
             if ypos is None:
                 mouse_x, mouse_y = renpy.get_mouse_pos()
-                ypos = mouse_y - 50  # Offset above mouse
+                ypos = mouse_y - 60  # Offset above mouse (adjusted for better visibility)
         
         # Outer frame with beige background and dark border
         frame:
@@ -2669,6 +2683,13 @@ screen Building_select_global():
     modal True
     add Solid("#000000dd")
     
+    # Ensure buildings are synced when opening this screen
+    python:
+        try:
+            validate_and_sync_buildings()
+        except Exception as e:
+            renpy.log(f"Building_select_global: validate_and_sync_buildings error: {str(e)}")
+    
     frame:
         xalign 0.35  # Match journal positioning
         yalign 0.5
@@ -2883,8 +2904,20 @@ screen manager_inventory(shop_mode=None):
     default is_transferring = False  # Debounce flag
     default selected_category = None  # Filter category for shop items
     default show_test_items = False  # Toggle to show/hide test items
+    default trade_multiplier = 1  # x1, x10, x100 for buy/sell/transfer
 
     python:
+        def cycle_trade_multiplier():
+            """Cycle through x1 -> x10 -> x100 -> x1"""
+            current = renpy.get_screen_variable("trade_multiplier")
+            if current == 1:
+                renpy.set_screen_variable("trade_multiplier", 10)
+            elif current == 10:
+                renpy.set_screen_variable("trade_multiplier", 100)
+            else:
+                renpy.set_screen_variable("trade_multiplier", 1)
+            renpy.restart_interaction()
+        
         def get_item_action_elements(item, item_info, worker):
             item_type = item_info.get("type", "unknown")
             is_equipped = item[2]
@@ -2910,6 +2943,7 @@ screen manager_inventory(shop_mode=None):
 
         def transfer_to_right():
             smi = renpy.get_screen_variable("selected_manager_item")
+            multiplier = renpy.get_screen_variable("trade_multiplier")
             if smi is not None and (right_worker is not False) and not renpy.get_screen_variable("is_transferring"):
                 renpy.set_screen_variable("is_transferring", True)
                 renpy.set_screen_variable("selected_manager_item", None)
@@ -2924,7 +2958,9 @@ screen manager_inventory(shop_mode=None):
                             smi = source_inventory[i]
                             renpy.log(f"Refreshed smi after unequip: {smi}")
                             break
-                transfer_qty = 1
+                # Calculate actual transfer quantity (limited by available)
+                available_qty = smi[1]
+                transfer_qty = min(multiplier, available_qty)
                 renpy.log(f"Removing {smi[0]} (quantity: {transfer_qty}) from source: {source_inventory}")
                 remove_item_from_inventory(source_inventory, smi[0], quantity=transfer_qty)
                 renpy.log(f"Source after removal: {source_inventory}")
@@ -2932,7 +2968,7 @@ screen manager_inventory(shop_mode=None):
                 add_item_to_inventory(target_inventory, smi[0], quantity=transfer_qty)
                 renpy.log(f"Target after addition: {target_inventory}")
                 store.selected_description = ""
-                renpy.notify("Item transferred to right")
+                renpy.notify(f"Transferred {transfer_qty}x item to right")
                 # Track tutorial objective 5 - potion transfer
                 item_info = next((i for i in items_json["items"] if i["id"] == smi[0]), None)
                 if item_info and hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
@@ -2952,6 +2988,7 @@ screen manager_inventory(shop_mode=None):
 
         def transfer_to_left():
             swi = renpy.get_screen_variable("selected_worker_item")
+            multiplier = renpy.get_screen_variable("trade_multiplier")
             if swi is not None and (left_worker is not False) and not renpy.get_screen_variable("is_transferring"):
                 renpy.set_screen_variable("is_transferring", True)
                 renpy.set_screen_variable("selected_worker_item", None)
@@ -2966,7 +3003,9 @@ screen manager_inventory(shop_mode=None):
                             swi = source_inventory[i]
                             renpy.log(f"Refreshed swi after unequip: {swi}")
                             break
-                transfer_qty = 1
+                # Calculate actual transfer quantity (limited by available)
+                available_qty = swi[1]
+                transfer_qty = min(multiplier, available_qty)
                 renpy.log(f"Removing {swi[0]} (quantity: {transfer_qty}) from source: {source_inventory}")
                 remove_item_from_inventory(source_inventory, swi[0], quantity=transfer_qty)
                 renpy.log(f"Source after removal: {source_inventory}")
@@ -2974,7 +3013,7 @@ screen manager_inventory(shop_mode=None):
                 add_item_to_inventory(target_inventory, swi[0], quantity=transfer_qty)
                 renpy.log(f"Target after addition: {target_inventory}")
                 store.selected_description = ""
-                renpy.notify("Item transferred to left")
+                renpy.notify(f"Transferred {transfer_qty}x item to left")
                 # Track tutorial objective 5 - potion transfer
                 item_info = next((i for i in items_json["items"] if i["id"] == swi[0]), None)
                 if item_info and hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
@@ -2984,32 +3023,46 @@ screen manager_inventory(shop_mode=None):
                 renpy.restart_interaction()
                 renpy.set_screen_variable("is_transferring", False)
 
-        def sell_item(item_id, quantity=1):
+        def sell_item(item_id, quantity=None):
+            multiplier = renpy.get_screen_variable("trade_multiplier")
             item_info = next((i for i in items_json["items"] if i["id"] == item_id), None)
             if item_info:
                 sell_price = int(item_info.get("price", 0) * 0.5)  # 50% of buy price
                 source_inventory = manager_inventory if left_worker is None else left_worker.get("inventory", [])
-                store.money += sell_price * quantity
-                remove_item_from_inventory(source_inventory, item_id, quantity)
-                renpy.notify(f"Sold {item_info.get('name', 'Unknown')} for ${sell_price * quantity}")
+                # Find item in inventory to check available quantity
+                item_entry = next((item for item in source_inventory if item[0] == item_id), None)
+                available_qty = item_entry[1] if item_entry else 0
+                # Calculate actual sell quantity (limited by available)
+                actual_qty = min(multiplier if quantity is None else quantity, available_qty)
+                if actual_qty > 0:
+                    store.money += sell_price * actual_qty
+                    remove_item_from_inventory(source_inventory, item_id, actual_qty)
+                    renpy.notify(f"Sold {actual_qty}x {item_info.get('name', 'Unknown')} for ${sell_price * actual_qty}")
                 renpy.restart_interaction()
 
         def buy_item_from_shop(item_id):
+            multiplier = renpy.get_screen_variable("trade_multiplier")
             item_info = next((i for i in items_json["items"] if i["id"] == item_id), None)
-            if item_info and store.money >= item_info.get("price", 0):
-                store.money -= item_info.get("price", 0)
-                add_item_to_inventory(manager_inventory, item_id)
-                renpy.notify(f"Bought {item_info.get('name', 'Unknown')} for ${item_info.get('price', 0)}")
-                # Track tutorial objective 5 - potion purchase
-                if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
-                    store.potion_purchased = True
-                    renpy.log("DEBUG: Tutorial - Energy potion purchased")
-                    renpy.log(f"DEBUG: Tutorial - Item name: {item_info.get('name', 'Unknown')}")
-                    renpy.log(f"DEBUG: Tutorial - tutorial_active: {store.tutorial_active}, current_objective: {store.current_objective}")
-                    renpy.log(f"DEBUG: Tutorial - potion_purchased set to: {store.potion_purchased}")
-                    check_objective_completion()
-                else:
-                    renpy.log(f"DEBUG: Tutorial - Purchase conditions not met: tutorial_active={hasattr(store, 'tutorial_active')}, current_objective={store.current_objective if hasattr(store, 'current_objective') else 'NOT_SET'}, item_name={item_info.get('name', 'Unknown')}")
+            if item_info:
+                price = item_info.get("price", 0)
+                # Calculate how many we can afford (limited by multiplier)
+                max_affordable = store.money // price if price > 0 else multiplier
+                actual_qty = min(multiplier, max_affordable)
+                if actual_qty > 0 and store.money >= price * actual_qty:
+                    store.money -= price * actual_qty
+                    for _ in range(actual_qty):
+                        add_item_to_inventory(manager_inventory, item_id)
+                    renpy.notify(f"Bought {actual_qty}x {item_info.get('name', 'Unknown')} for ${price * actual_qty}")
+                    # Track tutorial objective 5 - potion purchase
+                    if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
+                        store.potion_purchased = True
+                        renpy.log("DEBUG: Tutorial - Energy potion purchased")
+                        renpy.log(f"DEBUG: Tutorial - Item name: {item_info.get('name', 'Unknown')}")
+                        renpy.log(f"DEBUG: Tutorial - tutorial_active: {store.tutorial_active}, current_objective: {store.current_objective}")
+                        renpy.log(f"DEBUG: Tutorial - potion_purchased set to: {store.potion_purchased}")
+                        check_objective_completion()
+                    else:
+                        renpy.log(f"DEBUG: Tutorial - Purchase conditions not met: tutorial_active={hasattr(store, 'tutorial_active')}, current_objective={store.current_objective if hasattr(store, 'current_objective') else 'NOT_SET'}, item_name={item_info.get('name', 'Unknown')}")
                 renpy.restart_interaction()
 
     modal True
@@ -3098,7 +3151,8 @@ screen manager_inventory(shop_mode=None):
                             yalign 0.5
                             spacing 10
                             text "{size=32}{b}[left_worker['name'] if left_worker and left_worker is not False else ('Storage' if left_worker is None else 'None')]{/b}{/size}" color "#ffffff" yalign 0.5
-                            text "{size=18}(Click to change){/size}" color "#ffffff" yalign 0.5
+                            if not shop_mode:
+                                text "{size=18}(Click to change){/size}" color "#ffffff" yalign 0.5
                         action If(not shop_mode, 
                             Show("worker_selection_popup", panel="left", current_left=left_worker, current_right=right_worker, shop_mode=shop_mode),
                             None
@@ -3231,16 +3285,30 @@ screen manager_inventory(shop_mode=None):
                 padding (10, 10)
                 vbox:
                     spacing 10
+                    # Multiplier button (x1 / x10 / x100)
+                    button:
+                        background Solid("#3c1f14")
+                        hover_background Solid("#5a3a2a")
+                        xsize 360
+                        ysize 45
+                        action Function(cycle_trade_multiplier)
+                        hbox:
+                            xalign 0.5
+                            yalign 0.5
+                            spacing 10
+                            text "Quantity:" size font_size(22) color "#ffffff" yalign 0.5
+                            text "x[trade_multiplier]" size font_size(24) color "#ffffff" yalign 0.5
+                            text "(click to cycle)" size font_size(18) color "#aaaaaa" yalign 0.5
                     frame:
                         background Solid("#1a1a1a")
                         xsize 360
-                        ysize 235
+                        ysize 190
                         padding (10, 10)
                         viewport:
                             scrollbars "vertical"
                             mousewheel True
                             draggable True
-                            ysize 215
+                            ysize 170
                             text "[selected_description]" size font_size(26) color "#ffffff"
                     # Item image box (50% of the right panel)
                     frame:
@@ -4433,6 +4501,17 @@ screen building_selection(worker):
             null height 15
             label "SELECT BUILDING" xalign 0.5 style "header_style"
             null height 10
+            textbutton "Unassign (No Building)":
+                xalign 0.5
+                xsize 500
+                text_size font_size(24)
+                text_color "#7a4b2a"
+                text_hover_color "#6b6528"
+                action [
+                    Function(unassign_worker, worker),
+                    Hide("building_selection"),
+                    Show("workers")
+                ]
             viewport:
                 scrollbars "vertical"
                 mousewheel True
@@ -4544,7 +4623,7 @@ screen rename_building(building_name):
                     action If(
                         new_name.strip() != "",
                         [
-                            Function(custom_names.update, {building_name: new_name}),
+                            Function(store.custom_names.update, {building_name: new_name}),
                             Hide("rename_building"),
                             Show("Manager", building_name=building_name)
                         ],
@@ -4602,8 +4681,7 @@ screen buy_buildings():
                                 [
                                     Function(add_new_building, building_name, price),
                                     SetVariable("money", money - price),
-                                    Function(store.custom_names.__setitem__, building_name, building_name),
-                                    Function(store.owned_buildings.append, building_name),
+                                    Function(register_new_building, building_name),
                                     SetVariable("buildings_owned", len(store.owned_buildings)),
                                     Hide("buy_buildings"),
                                 ])
@@ -4737,8 +4815,7 @@ screen buy_map_building(map_button_id):
                                             Function(add_new_building, building_name, price),
                                             SetVariable("money", money - price),
                                             Function(lambda bn=building_name, bt=btype["id"]: available_buildings[bn].update({"type": bt}) if bn in available_buildings else None),
-                                            Function(store.custom_names.__setitem__, building_name, building_name),
-                                            Function(store.owned_buildings.append, building_name),
+                                            Function(register_new_building, building_name),
                                             Function(store.map_button_buildings.__setitem__, map_button_id, building_name),
                                             SetVariable("buildings_owned", len(store.owned_buildings)),
                                             Hide("buy_map_building"),
@@ -4994,6 +5071,28 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
         interaction_messages = split_text_for_dialogue(interaction.get('description', 'No description available.'))
         current_message_index = message_index
         total_messages = len(interaction_messages)
+        is_last_message = current_message_index >= total_messages - 1
+        
+        # Get stat changes for display
+        stat_changes = getattr(store, '_last_interaction_changes', {})
+        stat_display_names = {
+            "relationship": "Relation",
+            "obedience": "Obedience",
+            "joy": "Joy",
+            "romance": "Romance",
+            "libido": "Libido"
+        }
+        # Build stat change text
+        stat_change_text = ""
+        if stat_changes:
+            change_parts = []
+            for stat, change in stat_changes.items():
+                if stat in stat_display_names and change != 0:
+                    sign = "+" if change > 0 else ""
+                    change_parts.append(f"{sign}{change} {stat_display_names[stat]}")
+            if change_parts:
+                stat_change_text = " | ".join(change_parts)
+        
         # Si show_image_only es True, significa que ya pasamos todos los mensajes
         if show_image_only:
             show_dialogue = False
@@ -5001,20 +5100,21 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                 close_action = [
                     Hide("interaction_result"),
                     Hide("interaction_menu"),
-                    Show("map_screen")
+                    Show("map_screen"),
+                    Function(lambda: setattr(store, '_last_interaction_changes', {}))
                 ]
             else:
                 close_action = [
                     Hide("interaction_result"),
                     Hide("interaction_menu"),
                     Show("worker_details", worker=worker, in_roster=True),
+                    Function(lambda: setattr(store, '_last_interaction_changes', {})),
                     Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
                     Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
                 ]
         else:
             show_dialogue = True
             display_message = interaction_messages[current_message_index] if current_message_index < total_messages else interaction_messages[-1] if interaction_messages else "No description available."
-            is_last_message = current_message_index >= total_messages - 1
             # Acción al hacer click: avanzar al siguiente mensaje o mostrar solo imagen si es el último
             if is_last_message:
                 click_action = Show("interaction_result", worker=worker, interaction=interaction, message_index=current_message_index, show_image_only=True, return_to_map=return_to_map)
@@ -5055,12 +5155,23 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                 yalign gui.textbox_yalign
                 ysize gui.textbox_height
                 
-                text display_message:
-                    id "what"
-                    style "say_dialogue"
+                vbox:
                     xpos gui.dialogue_xpos
                     xsize gui.dialogue_width
                     ypos gui.dialogue_ypos
+                    spacing 5
+                    
+                    text display_message:
+                        id "what"
+                        style "say_dialogue"
+                    
+                    # Show stat changes on last message
+                    if is_last_message and stat_change_text:
+                        text stat_change_text:
+                            style "say_dialogue"
+                            size 24
+                            color "#2a7a4b"
+                            xalign 0.5
     else:
         # Image-only mode: make the whole screen clickeable to close
         button:
@@ -5078,12 +5189,14 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
             [
                 Hide("interaction_result"),
                 Hide("interaction_menu"),
-                Show("map_screen")
+                Show("map_screen"),
+                Function(lambda: setattr(store, '_last_interaction_changes', {}))
             ],
             [
                 Hide("interaction_result"),
                 Hide("interaction_menu"),
                 Show("worker_details", worker=worker, in_roster=True),
+                Function(lambda: setattr(store, '_last_interaction_changes', {})),
                 Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
                 Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
             ]
@@ -5528,7 +5641,7 @@ screen interaction_category(worker, category_name, interactions_list):
                                 style "interaction_button"
                                 text_style "interaction_button_text"
                                 action [
-                                    Function(apply_interaction_effects, worker, interaction),
+                                    Function(lambda w=worker, i=interaction: setattr(store, '_last_interaction_changes', apply_interaction_effects(w, i))),
                                     Show("interaction_result", worker=worker, interaction=interaction),
                                     Hide("interaction_category")
                                 ]
@@ -6049,6 +6162,7 @@ screen workers():
     modal True
     add workers_bg
     add Solid("#00000099")
+    
     frame:
         xalign 0.5  # Center the frame horizontally
         yalign 0.5  # Center the frame vertically
@@ -6134,7 +6248,7 @@ screen workers():
                         unique_jobs = ["All Jobs"]
                         for worker in workers:
                             building_name = worker.get('assigned_building', 'Unassigned')
-                            if building_name != "Unassigned":
+                            if building_name != "Unassigned" and building_name in available_buildings:
                                 job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
                                 btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
                                 if job_id.lower() != "unassigned" and btype is not None:
@@ -6245,7 +6359,7 @@ screen workers():
                             job_match = True
                             if worker_job_filter != "All Jobs":
                                 building_name = worker.get('assigned_building', 'Unassigned')
-                                if building_name != "Unassigned":
+                                if building_name != "Unassigned" and building_name in available_buildings:
                                     job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
                                     btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
                                     if job_id.lower() != "unassigned" and btype is not None:
@@ -6287,8 +6401,12 @@ screen workers():
                                 action Show("building_selection", worker=worker)
                             if worker.get("assigned_building", "Unassigned") != "Unassigned":
                                 $ building_name = worker["assigned_building"]
-                                $ job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
-                                $ btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
+                                if building_name in available_buildings:
+                                    $ job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
+                                    $ btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
+                                else:
+                                    $ job_id = "Unassigned"
+                                    $ btype = None
                                 $ job_name = "Unassigned" if job_id.lower() == "unassigned" else (next((p["name"] for p in btype.get("professions", []) if p["id"] == job_id), job_id) if btype else job_id)
                                 # Calcular average skill para el trabajo asignado
                                 $ avg_skill = 0

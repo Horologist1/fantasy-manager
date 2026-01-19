@@ -9,6 +9,8 @@ init python:
         # Detect current screen context
         current_screen_context = "tavern"  # default
         try:
+            # Keep building data consistent before snapshotting
+            validate_and_sync_buildings()
             # Check which screens are currently shown using renpy.get_screen()
             # renpy.get_screen() returns the screen object if shown, None otherwise
             if renpy.get_screen("daily_report"):
@@ -56,6 +58,7 @@ init python:
             "_worker_trait_durations": _cp.deepcopy({w.get("name"): w.get("trait_durations", {}) for w in getattr(store, "workers", [])}),
             "_worker_temporary_traits": _cp.deepcopy({w.get("name"): w.get("temporary_traits", {}) for w in getattr(store, "workers", [])}),
             "_worker_skills": _cp.deepcopy({w.get("name"): w.get("skills", {}) for w in getattr(store, "workers", [])}),
+            "_worker_original_skills": _cp.deepcopy({w.get("name"): w.get("original_skills", w.get("skills", {}).copy()) for w in getattr(store, "workers", [])}),
             "_worker_secondary": _cp.deepcopy({
                 w.get("name"): {
                     "joy": w.get("joy", 50),
@@ -67,7 +70,9 @@ init python:
                     "libido": w.get("libido", 10),
                     "level": w.get("level", 1),
                     "health": w.get("health", 0),
-                    "energy": w.get("energy", 0)
+                    "energy": w.get("energy", 0),
+                    "assigned_building": w.get("assigned_building", "Unassigned"),
+                    "assigned_job": w.get("assigned_job", None)
                 }
                 for w in getattr(store, "workers", [])
             }),
@@ -75,6 +80,9 @@ init python:
             "_building_inventories": _cp.deepcopy({bname: b.get("inventory", []) for bname, b in getattr(store, "available_buildings", {}).items()}),
             "_building_skill_bonus": _cp.deepcopy({bname: b.get("skill_bonus", 0) for bname, b in getattr(store, "available_buildings", {}).items()}),
             "_building_base_levels": _cp.deepcopy({bname: b.get("base_level", 1) for bname, b in getattr(store, "available_buildings", {}).items()}),
+            "_building_reputation": _cp.deepcopy({bname: b.get("reputation", 0) for bname, b in getattr(store, "available_buildings", {}).items()}),
+            "_building_skill": _cp.deepcopy({bname: b.get("skill", 10) for bname, b in getattr(store, "available_buildings", {}).items()}),
+            "_building_event_limit": _cp.deepcopy({bname: b.get("event_limit", 0) for bname, b in getattr(store, "available_buildings", {}).items()}),
             # Event/journal flags and progress
             "_event_flags": _cp.deepcopy(getattr(store, "event_flags", {})),
             "_event_occurrences": _cp.deepcopy(getattr(store, "event_occurrences", {})),
@@ -133,6 +141,14 @@ init python:
         if store.unlocked_shops:
             persistent.unlocked_shops = _cp.deepcopy(store.unlocked_shops)
             renpy.log(f"SNAPSHOT: Synced persistent.unlocked_shops from snapshot: {persistent.unlocked_shops}")
+        
+        # IMPORTANTE: Validar y sincronizar edificios ANTES de procesar asignaciones
+        # Esto asegura que todos los edificios referenciados por workers existan
+        try:
+            validate_and_sync_buildings()
+            renpy.log("SNAPSHOT: validate_and_sync_buildings completed (early)")
+        except Exception as e:
+            renpy.log("SNAPSHOT: validate_and_sync_buildings error (early): " + str(e))
         store.player_name = s.get("player_name", "")
         store.player_title = s.get("player_title", "")
         store.current_day = s.get("current_day", 1)
@@ -154,6 +170,7 @@ init python:
             trait_durations_map = s.get("_worker_trait_durations", {}) or {}
             temporary_traits_map = s.get("_worker_temporary_traits", {}) or {}
             skills_map = s.get("_worker_skills", {}) or {}
+            original_skills_map = s.get("_worker_original_skills", {}) or {}
             secondary_map = s.get("_worker_secondary", {}) or {}
             for wname, uses in skill_uses_map.items():
                 if wname in name_to_worker and isinstance(uses, dict):
@@ -176,7 +193,9 @@ init python:
             for wname, sk in skills_map.items():
                 if wname in name_to_worker and isinstance(sk, dict):
                     name_to_worker[wname]["skills"] = sk
-                    name_to_worker[wname].setdefault("original_skills", sk.copy())
+            for wname, orig_sk in original_skills_map.items():
+                if wname in name_to_worker and isinstance(orig_sk, dict):
+                    name_to_worker[wname]["original_skills"] = orig_sk
             for wname, sec in secondary_map.items():
                 if wname in name_to_worker and isinstance(sec, dict):
                     for k, v in sec.items():
@@ -209,13 +228,26 @@ init python:
                 try:
                     inv_map = s.get("_building_inventories", {}) or {}
                     bonus_map = s.get("_building_skill_bonus", {}) or {}
+                    base_map = s.get("_building_base_levels", {}) or {}
+                    rep_map = s.get("_building_reputation", {}) or {}
+                    skill_map = s.get("_building_skill", {}) or {}
+                    event_limit_map = s.get("_building_event_limit", {}) or {}
+                    
                     if bname in inv_map:
                         b["inventory"] = inv_map[bname]
                     if bname in bonus_map:
                         b["skill_bonus"] = bonus_map[bname]
-                    base_map = s.get("_building_base_levels", {}) or {}
                     if bname in base_map:
                         b["base_level"] = base_map[bname]
+                    if bname in rep_map:
+                        b["reputation"] = rep_map[bname]
+                    if bname in skill_map:
+                        b["skill"] = skill_map[bname]
+                    if bname in event_limit_map:
+                        b["event_limit"] = event_limit_map[bname]
+                    # Note: max_workers is calculated dynamically via get_max_daily_workers() based on base_level
+                    # Note: costs is reset to 0 and recalculated daily in event_daily_exec.rpy
+                    
                     # Ensure base_level exists and is valid (persist building levels)
                     if "base_level" not in b or not isinstance(b.get("base_level"), int) or b["base_level"] < 1:
                         b["base_level"] = b.get("base_level", 1)
@@ -239,6 +271,14 @@ init python:
         except Exception as e:
             renpy.log("SNAPSHOT: journal/flags restore error: " + str(e))
 
+        # Validate and sync buildings BEFORE normalization
+        # This ensures all buildings referenced by workers or owned_buildings exist
+        try:
+            validate_and_sync_buildings()
+            renpy.log("SNAPSHOT: validate_and_sync_buildings completed")
+        except Exception as e:
+            renpy.log("SNAPSHOT: validate_and_sync_buildings error: " + str(e))
+        
         # Final normalization pass to ensure no duplicates
         try:
             normalize_building_assignments()
@@ -388,6 +428,32 @@ init python:
             
             if has_valid_data:
                 renpy.log(f"SNAPSHOT: Ren'Py already restored {len(current_workers)} workers, skipping snapshot apply")
+                # IMPORTANT: Even if Ren'Py restored data, we need to validate and sync buildings
+                # because the save file might be corrupted (missing buildings in available_buildings)
+                try:
+                    validate_and_sync_buildings()
+                    renpy.log("SNAPSHOT: validate_and_sync_buildings completed after Ren'Py restore")
+                except Exception as e:
+                    renpy.log(f"SNAPSHOT: validate_and_sync_buildings error after Ren'Py restore: {str(e)}")
+                # Merge custom building names from snapshot if Ren'Py did not restore them
+                try:
+                    snap_custom = (snap or {}).get("custom_names", {}) or {}
+                    if snap_custom:
+                        if not hasattr(store, "custom_names") or store.custom_names is None:
+                            store.custom_names = {}
+                        if not store.custom_names:
+                            store.custom_names = _cp.deepcopy(snap_custom)
+                            renpy.log("SNAPSHOT: restored custom_names from snapshot (store was empty)")
+                        else:
+                            for key, val in snap_custom.items():
+                                # If store has default name but snapshot has a custom name, prefer snapshot
+                                if key not in store.custom_names:
+                                    store.custom_names[key] = val
+                                elif store.custom_names.get(key) == key and val != key:
+                                    store.custom_names[key] = val
+                            renpy.log("SNAPSHOT: merged custom_names from snapshot")
+                except Exception as e:
+                    renpy.log(f"SNAPSHOT: custom_names merge error: {str(e)}")
             elif snap is not None:
                 # Only apply snapshot if Ren'Py didn't restore data
                 snap_player = snap.get("player_name", "")

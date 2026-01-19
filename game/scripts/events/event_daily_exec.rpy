@@ -467,6 +467,9 @@ init python:
                                 for bonus in bonus_items:
                                     item_id = bonus.get("item_id")
                                     chance = bonus.get("chance", 1.0)
+                                    # Skip NSFW items if NSFW is disabled
+                                    if bonus.get("nsfw", False) and not persistent.nsfw_enabled:
+                                        continue
                                     # Only on critical success if specified
                                     if bonus.get("critical_only", False) and outcome != "Critical Success":
                                         continue
@@ -658,8 +661,12 @@ init python:
 
         # Check for dead workers
         dead_workers = check_worker_health()
-        if dead_workers > 0:
-            renpy.say(None, f"{dead_workers} died and had to be let go.")
+        if dead_workers:
+            if len(dead_workers) == 1:
+                renpy.say(None, f"{dead_workers[0]} has died and had to be let go.")
+            else:
+                names_text = ", ".join(dead_workers[:-1]) + f" and {dead_workers[-1]}"
+                renpy.say(None, f"{names_text} have died and had to be let go.")
 
         # Update skill levels and worker levels
         update_skill_levels()
@@ -693,6 +700,26 @@ init python:
         if total_income >= 10000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
             store.event_flags["daily_revenue_10k_achieved"] = True
             renpy.log("ACHIEVEMENT: Daily revenue 10k achieved!")
+
+        # ===== GOVERNOR'S TENSION SYSTEM =====
+        # Update tension level based on current objective
+        try:
+            update_governor_attention()
+            
+            # Check for governor's retaliation event (one-time)
+            if check_governor_retaliation():
+                renpy.log("TENSION: Governor retaliation triggered!")
+                return "governor_retaliation"
+            
+            # Check for random tension events (from objective 10 onwards)
+            tension_event = process_governor_tension_event()
+            if tension_event:
+                renpy.log(f"TENSION: Triggering tension event: {tension_event}")
+                store._pending_tension_event = tension_event
+                return "governor_tension_event"
+        except Exception as e:
+            renpy.log(f"TENSION ERROR: {e}")
+        # ===================================
 
         # Check for random events only if at least one worker has an active profession
         has_active_professions = any_worker_has_active_profession()
@@ -755,15 +782,15 @@ init python:
         
         # Check for priority events (NOT affected by managers):
         # - Events with custom probability (event_probability defined)
-        # - Limited events (limited: true) - these are quest/story events
+        # - Events with limited: false (explicitly) - these are quest/story events that should not be blocked by managers
         # These are quest events, story events, etc. that should not be blocked by managers
         priority_events = [e for e in possible_events 
-                         if (e.get("event_probability") is not None or e.get("limited", False))
+                         if (e.get("event_probability") is not None or (e.get("limited") is not None and e.get("limited") == False))
                          and not e.get("guaranteed", False) 
                          and e.get("event_probability", 30) < 100]
         
-        # Events without custom probability and not limited (affected by managers)
-        normal_events = [e for e in possible_events if e.get("event_probability") is None and not e.get("limited", False)]
+        # Events without custom probability and limited: true (or not set) - affected by managers
+        normal_events = [e for e in possible_events if e.get("event_probability") is None and (e.get("limited") is None or e.get("limited") == True)]
         
         if guaranteed_events:
             renpy.log(f"Found {len(guaranteed_events)} guaranteed events, skipping probability check")

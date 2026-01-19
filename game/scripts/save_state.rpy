@@ -7,6 +7,8 @@ init -1 python:
         """
         state = {}
         try:
+            # Ensure building data is consistent before snapshotting
+            validate_and_sync_buildings()
             # Core economy and collections
             state["money"] = int(store.money) if hasattr(store, "money") else 5000
             state["workers"] = _copy.deepcopy(getattr(store, "workers", []))
@@ -39,6 +41,13 @@ init -1 python:
             state["objective_14_complete"] = getattr(store, "objective_14_complete", False)
             state["objective_15_complete"] = getattr(store, "objective_15_complete", False)
             state["objective_16_complete"] = getattr(store, "objective_16_complete", False)
+
+            # Governor's Tension System
+            state["governor_attention"] = getattr(store, "governor_attention", 0)
+            state["governor_retaliation_done"] = getattr(store, "governor_retaliation_done", False)
+            state["governor_tension_active"] = getattr(store, "governor_tension_active", False)
+            state["vengeance_path_chosen"] = getattr(store, "vengeance_path_chosen", False)
+            state["vengeance_path"] = getattr(store, "vengeance_path", "")
 
             # Calendar (redundant with persistent, but include for completeness)
             state["current_day"] = getattr(store, "current_day", 1)
@@ -115,6 +124,15 @@ init -1 python:
                 store.owned_buildings = _copy.deepcopy(state["owned_buildings"]) or []
             if "custom_names" in state:
                 store.custom_names = _copy.deepcopy(state["custom_names"]) or {}
+            
+            # IMPORTANTE: Validar y sincronizar edificios ANTES de normalizar asignaciones
+            # Esto asegura que todos los edificios en owned_buildings existan en available_buildings
+            # antes de que cualquier código intente acceder a ellos
+            try:
+                validate_and_sync_buildings()
+                renpy.log("SAVE_STATE: validate_and_sync_buildings completed (early)")
+            except Exception as e:
+                renpy.log("SAVE_STATE: validate_and_sync_buildings error (early): " + str(e))
             if "unlocked_shops" in state:
                 store.unlocked_shops = _copy.deepcopy(state["unlocked_shops"]) or {}
                 # Sync persistent.unlocked_shops with restored store.unlocked_shops
@@ -166,6 +184,18 @@ init -1 python:
             if "objective_16_complete" in state:
                 store.objective_16_complete = state["objective_16_complete"]
 
+            # Governor's Tension System
+            if "governor_attention" in state:
+                store.governor_attention = state["governor_attention"]
+            if "governor_retaliation_done" in state:
+                store.governor_retaliation_done = state["governor_retaliation_done"]
+            if "governor_tension_active" in state:
+                store.governor_tension_active = state["governor_tension_active"]
+            if "vengeance_path_chosen" in state:
+                store.vengeance_path_chosen = state["vengeance_path_chosen"]
+            if "vengeance_path" in state:
+                store.vengeance_path = state["vengeance_path"]
+
             # Calendar - sync both store and persistent
             if "current_day" in state:
                 store.current_day = state["current_day"]
@@ -191,6 +221,13 @@ init -1 python:
             if "event_flags" in state:
                 store.event_flags = _copy.deepcopy(state["event_flags"]) or store.event_flags
 
+            # Validate and sync buildings before normalization
+            try:
+                validate_and_sync_buildings()
+                renpy.log("SAVE_STATE: validate_and_sync_buildings completed")
+            except Exception as e:
+                renpy.log("SAVE_STATE: validate_and_sync_buildings error: " + str(e))
+            
             # Final normalization pass to ensure no duplicates
             try:
                 normalize_building_assignments()

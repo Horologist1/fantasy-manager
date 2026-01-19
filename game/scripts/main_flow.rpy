@@ -651,6 +651,9 @@ label show_ending_assassination:
     scene expression event_bg
     $ renpy.log("DEBUG: show_ending_assassination - STARTING EPIC ENDING")
     
+    # Resolve governor tension - remove fear traits from workers
+    $ healed_workers = resolve_governor_tension()
+    
     python:
         # Get the workers who participated in the assassination
         assassination_team = [w for w in store.workers if (w.get("skills", {}).get("Combat", 0) >= 65 or w.get("skills", {}).get("Craft", 0) >= 65)]
@@ -761,6 +764,9 @@ label show_ending_assassination:
 label show_ending_blackmail:
     scene expression event_bg
     $ renpy.log("DEBUG: show_ending_blackmail - STARTING EPIC ENDING")
+    
+    # Resolve governor tension - remove fear traits from workers
+    $ healed_workers = resolve_governor_tension()
     
     python:
         # Get the workers who participated in the blackmail

@@ -752,7 +752,15 @@ init python:
                     # Adjust current energy proportionally
                     worker["energy"] = int(worker["max_energy"] * current_energy_percentage)
                 elif effect_type == "add_trait":
-                    if isinstance(effect_value, dict):
+                    # Support array of traits, single trait string, or dict with name/duration
+                    if isinstance(effect_value, list):
+                        # Array of trait names
+                        for trait_name in effect_value:
+                            if isinstance(trait_name, dict):
+                                add_trait_with_duration(worker, trait_name.get("name", ""), trait_name.get("duration", 0))
+                            else:
+                                add_trait_with_duration(worker, trait_name, 0)
+                    elif isinstance(effect_value, dict):
                         add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
                     else:
                         add_trait_with_duration(worker, effect_value, 0)
@@ -780,8 +788,14 @@ init python:
                     worker["max_energy"] = calculate_max_energy(worker) - effect_value
                     # Adjust current energy proportionally
                     worker["energy"] = int(worker["max_energy"] * current_energy_percentage)
-                elif effect_type == "add_trait":
-                    remove_trait(worker, effect_value)
+                elif effect_type == "remove_trait":
+                    # Support array of traits or single trait string
+                    if isinstance(effect_value, list):
+                        # Array of trait names
+                        for trait_name in effect_value:
+                            remove_trait(worker, trait_name)
+                    else:
+                        remove_trait(worker, effect_value)
 
     def remove_item_from_inventory(inventory, item_id, quantity=1):
         # First, ensure every entry in the inventory is a tuple
@@ -934,12 +948,26 @@ init python:
                         # No need to modify base skills here
                         pass
                     elif effect_type == "add_trait":
-                        if isinstance(effect_value, dict):
+                        # Support array of traits, single trait string, or dict with name/duration
+                        if isinstance(effect_value, list):
+                            # Array of trait names
+                            for trait_name in effect_value:
+                                if isinstance(trait_name, dict):
+                                    add_trait_with_duration(worker, trait_name.get("name", ""), trait_name.get("duration", 0))
+                                else:
+                                    add_trait_with_duration(worker, trait_name, 0)
+                        elif isinstance(effect_value, dict):
                             add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
                         else:
                             add_trait_with_duration(worker, effect_value, 0)
                     elif effect_type == "remove_trait":
-                        remove_trait(worker, effect_value)
+                        # Support array of traits or single trait string
+                        if isinstance(effect_value, list):
+                            # Array of trait names
+                            for trait_name in effect_value:
+                                remove_trait(worker, trait_name)
+                        else:
+                            remove_trait(worker, effect_value)
             remove_item_from_inventory(worker.get("inventory", []), item_id)
         else:
             # If no worker and item is consumable, remove from manager inventory
@@ -1941,10 +1969,144 @@ init python:
         if "event_limit" not in building:
             building["event_limit"] = 0
 
+    def validate_and_sync_buildings():
+        """Ensure all buildings in owned_buildings exist in available_buildings.
+        Also checks workers for building references and creates missing buildings.
+        This fixes corrupted saves where buildings are missing from available_buildings."""
+        import re
+        try:
+            renpy.log("validate_and_sync_buildings: STARTING")
+            
+            # Collect all building names that should exist
+            buildings_to_check = set()
+            
+            # 1. Check owned_buildings
+            if hasattr(store, 'owned_buildings') and store.owned_buildings:
+                renpy.log(f"validate_and_sync_buildings: owned_buildings = {store.owned_buildings}")
+                for building_name in store.owned_buildings:
+                    buildings_to_check.add(building_name)
+            else:
+                renpy.log("validate_and_sync_buildings: owned_buildings is empty or doesn't exist")
+            
+            # 2. Check workers for assigned_building references
+            if hasattr(store, 'workers') and store.workers:
+                renpy.log(f"validate_and_sync_buildings: checking {len(store.workers)} workers")
+                for worker in store.workers:
+                    if hasattr(worker, "get"):
+                        assigned_building = worker.get("assigned_building", "Unassigned")
+                        worker_name = worker.get("name", "Unknown")
+                        renpy.log(f"validate_and_sync_buildings: worker {worker_name} has assigned_building = '{assigned_building}'")
+                        if assigned_building != "Unassigned":
+                            buildings_to_check.add(assigned_building)
+                            renpy.log(f"validate_and_sync_buildings: worker {worker_name} assigned to {assigned_building} - added to check list")
+            else:
+                renpy.log("validate_and_sync_buildings: workers is empty or doesn't exist")
+            
+            renpy.log(f"validate_and_sync_buildings: buildings_to_check = {buildings_to_check}")
+            renpy.log(f"validate_and_sync_buildings: available_buildings keys = {list(available_buildings.keys())}")
+            
+            # 3. Create missing buildings
+            created_count = 0
+            for building_name in buildings_to_check:
+                if building_name not in available_buildings:
+                    renpy.log(f"validate_and_sync_buildings: WARNING - {building_name} referenced but not in available_buildings, recreating...")
+                    # Recreate the building with default values
+                    # Try to determine if it's a special building (like Castle) or a regular building
+                    if "Castle" in building_name or building_name.startswith("Governor"):
+                        # Special building (Castle)
+                        available_buildings[building_name] = {
+                            "price": 0,
+                            "reputation": 0,
+                            "base_level": 5,
+                            "type": "governor_castle",
+                            "assigned_servants": [],
+                            "servant_jobs": {},
+                            "max_workers": 10,
+                            "costs": 0,
+                            "owned": True,
+                            "skill": 50,
+                            "skill_bonus": 0
+                        }
+                    else:
+                        # Regular building - use default values
+                        # Try to extract building number to estimate price
+                        match = re.search(r'Building (\d+)', building_name)
+                        if match:
+                            building_num = int(match.group(1))
+                            # Default price increases with building number
+                            default_price = 10000 + (building_num - 1) * 5000
+                        else:
+                            default_price = 10000
+                        
+                        available_buildings[building_name] = {
+                            "price": default_price,
+                            "reputation": 0,
+                            "base_level": 1,
+                            "assigned_servants": [],
+                            "servant_jobs": {},
+                            "type": None,
+                            "max_workers": {},
+                            "costs": 0,
+                            "owned": True,
+                            "skill": 10,
+                            "skill_bonus": 0,
+                            "event_limit": 0
+                        }
+                    
+                    # Ensure custom_names entry exists
+                    if not hasattr(store, 'custom_names'):
+                        store.custom_names = {}
+                    if building_name not in store.custom_names:
+                        store.custom_names[building_name] = building_name
+                    
+                    # If building is referenced by workers but not in owned_buildings, add it
+                    if hasattr(store, 'owned_buildings'):
+                        if building_name not in store.owned_buildings:
+                            store.owned_buildings.append(building_name)
+                            renpy.log(f"validate_and_sync_buildings: Added {building_name} to owned_buildings")
+                        else:
+                            renpy.log(f"validate_and_sync_buildings: {building_name} already in owned_buildings")
+                    else:
+                        store.owned_buildings = [building_name]
+                        renpy.log(f"validate_and_sync_buildings: Created owned_buildings list with {building_name}")
+                    
+                    renpy.log(f"validate_and_sync_buildings: Recreated {building_name} in available_buildings")
+                    created_count += 1
+                else:
+                    renpy.log(f"validate_and_sync_buildings: {building_name} already exists in available_buildings")
+            
+            renpy.log(f"validate_and_sync_buildings: COMPLETED - created {created_count} buildings")
+            renpy.log(f"validate_and_sync_buildings: Final owned_buildings = {store.owned_buildings if hasattr(store, 'owned_buildings') else 'N/A'}")
+            renpy.log(f"validate_and_sync_buildings: Final available_buildings keys = {list(available_buildings.keys())}")
+        except Exception as e:
+            renpy.log(f"validate_and_sync_buildings error: {str(e)}")
+            import traceback
+            renpy.log(f"validate_and_sync_buildings traceback: {traceback.format_exc()}")
+    
     def normalize_building_assignments():
-        """Deduplicate assigned_servants per building by worker name."""
+        """Deduplicate assigned_servants per building by worker name.
+        Also clean up workers with invalid building references.
+        NOTE: This should be called AFTER validate_and_sync_buildings() to avoid
+        incorrectly cleaning up references to buildings that can be recreated."""
         try:
             name_to_worker = {w.get("name"): w for w in store.workers}
+            
+            # IMPORTANT: First ensure all referenced buildings exist
+            # This prevents us from incorrectly cleaning up valid references
+            try:
+                validate_and_sync_buildings()
+            except Exception as e:
+                renpy.log(f"normalize_building_assignments: validate_and_sync_buildings error: {str(e)}")
+            
+            # Now clean up workers with invalid building references
+            # (should be none after validate_and_sync_buildings, but just in case)
+            for worker in store.workers:
+                assigned_building = worker.get("assigned_building", "Unassigned")
+                if assigned_building != "Unassigned" and assigned_building not in available_buildings:
+                    renpy.log(f"normalize_building_assignments: Worker {worker.get('name')} has invalid building reference '{assigned_building}', cleaning up")
+                    worker["assigned_building"] = "Unassigned"
+            
+            # Deduplicate assigned_servants per building
             for bname in store.owned_buildings:
                 building = available_buildings.get(bname)
                 if not isinstance(building, dict):
@@ -1984,15 +2146,17 @@ init python:
     def check_worker_health():
         global workers
         to_remove = []
+        dead_names = []
         for worker in workers:
             if worker["health"] <= 0:
                 unassign_worker(worker)
                 to_remove.append(worker)
+                dead_names.append(worker["name"])
                 # Add the worker to the dead workers list
                 add_to_dead_workers(worker["name"])
         for worker in to_remove:
             workers.remove(worker)
-        return len(to_remove)
+        return dead_names  # Return list of names instead of count
 
     def add_new_building(name, price, reputation=0):
         available_buildings[name] = {
@@ -2010,6 +2174,18 @@ init python:
             "event_limit": 0  # Event limit: 0 = unlimited (with reputation bonus), 1 = limit to 1, 2 = limit to 2
         }
         calculate_reputation(name)  # Set initial value
+
+    def register_new_building(name):
+        """Ensure new building is registered in owned_buildings and custom_names."""
+        if not hasattr(store, "custom_names") or store.custom_names is None:
+            store.custom_names = {}
+        store.custom_names.setdefault(name, name)
+        if not hasattr(store, "owned_buildings") or store.owned_buildings is None:
+            store.owned_buildings = []
+        if name not in store.owned_buildings:
+            store.owned_buildings.append(name)
+        if name in available_buildings and isinstance(available_buildings[name], dict):
+            available_buildings[name].setdefault("owned", True)
 
     def get_available_businesses_for_map_button(button_id):
         """
@@ -2574,6 +2750,14 @@ init python:
                     store.current_worker = selected_worker 
                 # ----------------------------------
 
+                # Check required_trait if specified
+                required_trait = choice.get("required_trait")
+                if required_trait and selected_worker:
+                    worker_traits = selected_worker.get("traits", [])
+                    if required_trait not in worker_traits:
+                        renpy.log(f"Worker {selected_worker['name']} missing required trait '{required_trait}'")
+                        return {"message": f"This task requires someone with the '{required_trait}' trait. {selected_worker['name']} does not have this trait.", "outcome": "failure"}
+
                 # Use skill name directly - no conversion needed
                 skill_name = choice["condition"]
                 
@@ -3020,13 +3204,19 @@ init python:
                 renpy.log(f"Unlocked shop3 - persistent: {persistent.unlocked_shops}, store: {store.unlocked_shops}")
                 renpy.notify("The Elite Emporium is now available!")
             elif custom_action == "give_item":
-                # Add a specific item to the manager inventory
+                # Add a specific item to the manager inventory (with optional chance)
                 item_id = effect_dict.get("item_id")
+                chance = effect_dict.get("chance", 1.0)  # Default 100% if not specified
                 try:
                     if item_id:
-                        add_item_to_inventory(manager_inventory, item_id)
-                        renpy.notify(f"Received {item_id.replace('_',' ').title()}!")
-                        renpy.log(f"Custom give_item: added {item_id} to inventory")
+                        # Roll for chance if specified
+                        if renpy.random.random() <= chance:
+                            add_item_to_inventory(manager_inventory, item_id)
+                            item_name = item_id.replace('_', ' ').title()
+                            renpy.notify(f"Received {item_name}!")
+                            renpy.log(f"Custom give_item: added {item_id} to inventory (chance: {chance*100}%)")
+                        else:
+                            renpy.log(f"Custom give_item: {item_id} roll failed (chance: {chance*100}%)")
                     else:
                         renpy.log("Custom give_item: missing item_id")
                 except Exception as e:
@@ -3672,20 +3862,21 @@ default recruit_workers_text_hover = False  # Controls hover state of PlazaFount
 default take_a_walk_text_hover = False  # Controls hover state of PlazaFountain imagebutton when "Take a Walk" textbutton is hovered
 default buy_buildings_text_hover = False  # Controls hover state of buyable buildings when "Buy Buildings" textbutton is hovered
 default tooltips_enabled_by_screen = {}  # Dictionary to store tooltip state per screen (defaults to True if not set)
+default _last_tooltip_screen = None  # Track last screen for tooltip context guard
 
 init python:
     def toggle_tooltips_for_screen(screen_name):
         """Toggle tooltips for a specific screen. Does not return anything."""
-        # Default state: False for "tavern" and "Manager", True for all others
-        default_state = False if screen_name in ["tavern", "Manager"] else True
+        # Default state: True only for map_screen, False for all others
+        default_state = True if screen_name == "map_screen" else False
         current_state = tooltips_enabled_by_screen.get(screen_name, default_state)
         tooltips_enabled_by_screen[screen_name] = not current_state
         # Don't return anything - Ren'Py actions should not return values
     
     def get_tooltips_state_for_screen(screen_name):
         """Get tooltips state for a specific screen. Returns True if enabled (default)."""
-        # Default state: False for "tavern" and "Manager", True for all others
-        default_state = False if screen_name in ["tavern", "Manager"] else True
+        # Default state: True only for map_screen, False for all others
+        default_state = True if screen_name == "map_screen" else False
         return tooltips_enabled_by_screen.get(screen_name, default_state)
 default event_worker_name = ""  # Variable to store the name of the worker being discussed in an event
 default current_affected_building = None  # Variable to store the currently affected building in an event

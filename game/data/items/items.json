@@ -19,12 +19,12 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Combat": 5
+          "Combat": 8
         }
       },
-      "description": "A sturdy sword made of iron. (+5 Combat)",
-      "durability": 100,
-      "price": 450,
+      "description": "A sturdy sword made of iron. (+8 Combat)",
+      "durability": 120,
+      "price": 550,
       "weight": 10
     },
     {
@@ -80,6 +80,19 @@
       "description": "Restores 5 energy when consumed. (+5 Energy)",
       "price": 60,
       "weight": 10
+    },
+    {
+      "id": "antidote",
+      "name": "Antidote",
+      "display_name": "Antidote",
+      "type": "consumable",
+      "effect": {
+        "remove_trait": ["Poisoned"],
+        "health": 5
+      },
+      "description": "A powerful remedy that neutralizes poisons and restores some health. (+5 Health, removes Poisoned)",
+      "price": 250,
+      "weight": 5
     },
     {
       "id": "stamina_elixir",
@@ -1781,6 +1794,143 @@
       "description": "Legendary gauntlets crafted from dragon scales, maximizing combat effectiveness. (+9 Combat)",
       "price": 4600,
       "weight": 3
+    },
+    {
+      "id": "amulet_wanderer",
+      "name": "Amulet of the Wanderer",
+      "display_name": "Amulet of the Wanderer",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 10,
+          "Clever": 10,
+          "Agility": 5
+        },
+        "add_trait": "Adventurer"
+      },
+      "description": "A mystical amulet found in ancient ruins, imbued with the spirit of countless adventurers. Grants the Adventurer trait. (+10 Combat, +10 Clever, +5 Agility)",
+      "price": 0,
+      "weight": 1,
+      "shop_available": false,
+      "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)"
+    },
+    {
+      "id": "collar_endless_desire",
+      "name": "Collar of Endless Desire",
+      "display_name": "Collar of Endless Desire",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Sex": 15,
+          "Charm": 10,
+          "Anal": 8
+        },
+        "add_trait": "High Libido"
+      },
+      "description": "An enchanted collar that awakens insatiable desires in its wearer. Grants the High Libido trait. (+15 Sex, +10 Charm, +8 Anal)",
+      "price": 0,
+      "weight": 1,
+      "shop_available": false,
+      "nsfw": true,
+      "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)"
+    },
+    {
+      "id": "blade_fallen_king",
+      "name": "Blade of the Fallen King",
+      "display_name": "Blade of the Fallen King",
+      "type": "weapon",
+      "effect": {
+        "health": 50,
+        "skill_modifiers": {
+          "Combat": 18
+        },
+        "add_trait": ["Strong", "Brawler", "Tough"]
+      },
+      "description": "The legendary sword of a king who fell in battle but never surrendered. Grants Strong, Brawler, and Tough traits. (+18 Combat, +50 Health)",
+      "durability": 500,
+      "price": 0,
+      "weight": 8,
+      "shop_available": false,
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+    },
+    {
+      "id": "crown_dominion",
+      "name": "Crown of Dominion",
+      "display_name": "Crown of Dominion",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Charm": 15,
+          "Clever": 10,
+          "Service": 10
+        },
+        "add_trait": ["Charismatic", "Smooth Talker", "Elegant"]
+      },
+      "description": "A crown worn by ancient rulers who commanded absolute loyalty. Grants Charismatic, Smooth Talker, and Elegant traits. (+15 Charm, +10 Clever, +10 Service)",
+      "price": 0,
+      "weight": 2,
+      "shop_available": false,
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+    },
+    {
+      "id": "cloak_shadows",
+      "name": "Cloak of Shadows",
+      "display_name": "Cloak of Shadows",
+      "type": "armor",
+      "effect": {
+        "health": 30,
+        "skill_modifiers": {
+          "Agility": 12,
+          "Combat": 10
+        },
+        "add_trait": ["Agile", "Clever", "Graceful"]
+      },
+      "description": "A cloak woven from pure darkness, allowing its wearer to move unseen. Grants Agile, Clever, and Graceful traits. (+12 Agility, +10 Combat, +30 Health)",
+      "durability": 300,
+      "price": 0,
+      "weight": 2,
+      "shop_available": false,
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+    },
+    {
+      "id": "staff_archmage",
+      "name": "Staff of the Archmage",
+      "display_name": "Staff of the Archmage",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 20,
+          "Craft": 10
+        },
+        "add_trait": ["Magical", "Powerful Magic", "Mystical"]
+      },
+      "description": "The ultimate staff of magical mastery, wielded by the greatest archmages in history. Grants Magical, Powerful Magic, and Mystical traits. (+20 Clever, +10 Craft)",
+      "durability": 400,
+      "price": 0,
+      "weight": 4,
+      "shop_available": false,
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+    },
+    {
+      "id": "chains_submission",
+      "name": "Chains of Submission",
+      "display_name": "Chains of Submission",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "BDSM": 20,
+          "Sex": 15,
+          "Group": 12,
+          "Extreme": 10
+        },
+        "add_trait": ["Obedient", "Meek", "Dependant"]
+      },
+      "description": "Enchanted chains that bind the wearer's will, making them utterly submissive. Grants Obedient, Meek, and Dependant traits. (+20 BDSM, +15 Sex, +12 Group, +10 Extreme)",
+      "price": 0,
+      "weight": 3,
+      "shop_available": false,
+      "nsfw": true,
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
     }
   ],
   "excluded_from_shops": [
@@ -1788,6 +1938,13 @@
     "debug_complete_tutorial",
     "gold_coin",
     "silver_coin",
-    "bronze_coin"
+    "bronze_coin",
+    "amulet_wanderer",
+    "collar_endless_desire",
+    "blade_fallen_king",
+    "crown_dominion",
+    "cloak_shadows",
+    "staff_archmage",
+    "chains_submission"
   ]
 }
