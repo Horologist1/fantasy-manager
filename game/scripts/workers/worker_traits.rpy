@@ -127,9 +127,17 @@ init python:
 
     def remove_trait(worker, trait_name):
         """Remove a trait from the worker."""
-        if trait_name in worker.get("traits", []):
+        if not worker:
+            renpy.log(f"remove_trait: Worker is None, cannot remove trait '{trait_name}'")
+            return
+        if not trait_name:
+            renpy.log(f"remove_trait: Trait name is empty, cannot remove from worker '{worker.get('name', 'Unknown')}'")
+            return
+        
+        worker_traits = worker.get("traits", [])
+        if trait_name in worker_traits:
             worker["traits"].remove(trait_name)
-            renpy.log(f"Removed trait '{trait_name}' from worker '{worker.get('name', 'Unknown')}'.")
+            renpy.log(f"Removed trait '{trait_name}' from worker '{worker.get('name', 'Unknown')}'. Remaining traits: {len(worker['traits'])}")
             
             # Remove duration if it exists
             if "trait_durations" in worker and trait_name in worker["trait_durations"]:
@@ -137,6 +145,8 @@ init python:
             
             # Recalculate trait modifiers
             recalculate_trait_modifiers(worker)
+        else:
+            renpy.log(f"Trait '{trait_name}' not found in worker '{worker.get('name', 'Unknown')}' traits: {worker_traits}")
 
     def apply_trait_secondary_modifiers_once(worker):
         """
@@ -238,9 +248,24 @@ init python:
         """Set an attribute value while respecting caps and minimums from traits."""
         # Apply trait-based caps
         cap = get_attribute_cap(worker, attribute)
+        
+        # Apply default caps if no trait cap is defined
+        if cap is None:
+            if attribute == "joy":
+                cap = 100
+            elif attribute == "rebelliousness":
+                cap = 100
+            elif attribute == "romance":
+                cap = 100
+            elif attribute == "relationship":
+                cap = 100
+        
         if cap is not None and value > cap:
             value = cap
-            renpy.log(f"Capped {attribute} at {cap} for {worker.get('name', 'Unknown')} due to trait restrictions")
+            if get_attribute_cap(worker, attribute) is not None:
+                renpy.log(f"Capped {attribute} at {cap} for {worker.get('name', 'Unknown')} due to trait restrictions")
+            else:
+                renpy.log(f"Capped {attribute} at {cap} for {worker.get('name', 'Unknown')} (default maximum)")
         
         # Apply trait-based minimums
         minimum = get_attribute_minimum(worker, attribute)

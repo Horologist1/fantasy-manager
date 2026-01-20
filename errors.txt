@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 7050: 'else' is not a keyword argument or valid child of the vbox statement.
-    else:
-        ^
+File "game/scripts/save_snapshot.rpy", line 598: expected an indented block
+                renpy.log(f"SNAPSHOT: Ren'Py already restored {len(current_workers)} workers, skipping snapshot apply")
+                 ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Sun Jan 18 17:12:37 2026
+Tue Jan 20 22:05:05 2026

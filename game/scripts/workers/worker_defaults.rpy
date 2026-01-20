@@ -54,6 +54,23 @@ init python:
         else:
             worker["inventory"] = list(worker["inventory"])
 
+        # Remove max_health/max_energy if they exist to force recalculation from items
+        # This prevents duplicate bonuses when items are re-applied after loading
+        if "max_health" in worker:
+            del worker["max_health"]
+        if "max_energy" in worker:
+            del worker["max_energy"]
+        
+        # Cap secondary attributes to their maximum values (100 by default, or trait-defined)
+        # This fixes any existing saves where attributes exceeded their limits
+        # Note: set_attribute_with_caps is defined in worker_traits.rpy and available globally
+        for attr in ["joy", "rebelliousness", "romance", "relationship"]:
+            if attr in worker:
+                current_value = worker[attr]
+                set_attribute_with_caps(worker, attr, current_value)
+                if worker[attr] != current_value:
+                    renpy.log(f"Fixed {attr} for {worker.get('name', 'Unknown')}: {current_value} -> {worker[attr]} (capped)")
+        
         # Fixed health initialization - only set to max if doesn't exist
         max_health = calculate_max_health(worker)
         if "health" not in worker:

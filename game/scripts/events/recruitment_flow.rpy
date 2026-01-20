@@ -2,14 +2,18 @@
 
 label start_recruitment_system:
     # Load events and workers using Python
+    # IMPORTANT: This label is entered via Jump from UI (not call_in_new_context).
+    # So we must NOT use renpy.return_statement() for early exits (it can break flow).
+    $ store._recruitment_abort = False
+    $ store._recruitment_abort_message = ""
     python:
         try:
             recruitment_events = load_events_from_folder("data/events", subfolder="recruit")
             recruit_candidates = load_recruit_workers()
             
             if not recruitment_events or not recruit_candidates:
-                renpy.show_screen("error_popup", message="No recruitment data found")
-                renpy.return_statement()
+                store._recruitment_abort = True
+                store._recruitment_abort_message = "No recruitment data found"
             
             # Filter events: only include events where the specific worker is available (if event requires specific worker)
             available_events = []
@@ -33,8 +37,8 @@ label start_recruitment_system:
             
             if not available_events:
                 renpy.log("No recruitment events available (all specific workers unavailable)")
-                renpy.show_screen("error_popup", message="No recruitment events available")
-                renpy.return_statement()
+                store._recruitment_abort = True
+                store._recruitment_abort_message = "No recruitment events available"
             
             # IMPORTANT: Prioritize specific worker events over generic events
             # First, select a random worker from candidates
@@ -59,8 +63,8 @@ label start_recruitment_system:
                 generic_events = [e for e in available_events if e.get("random_worker", True)]
                 if not generic_events:
                     renpy.log("No generic recruitment events available")
-                    renpy.show_screen("error_popup", message="No recruitment events available")
-                    renpy.return_statement()
+                    store._recruitment_abort = True
+                    store._recruitment_abort_message = "No recruitment events available"
                 
                 # Select random generic event based on weight
                 total_weight = sum(event.get("weight", 1) for event in generic_events)
@@ -82,8 +86,8 @@ label start_recruitment_system:
                         selected_worker = random.choice(filtered_candidates)
                     else:
                         renpy.log(f"No workers available matching gender requirement: {worker_gender_requirement}")
-                        renpy.show_screen("error_popup", message="No suitable workers available for this event")
-                        renpy.return_statement()
+                        store._recruitment_abort = True
+                        store._recruitment_abort_message = "No suitable workers available for this event"
             
             # Store globally
             store.current_recruitment_event = selected_event
@@ -91,8 +95,15 @@ label start_recruitment_system:
             
         except Exception as e:
             renpy.log(f"Error in start_recruitment_system: {e}")
-            renpy.show_screen("error_popup", message="Recruitment system error")
-            renpy.return_statement()
+            store._recruitment_abort = True
+            store._recruitment_abort_message = "Recruitment system error"
+    
+    # If recruitment setup failed, notify and return safely to tavern.
+    if getattr(store, "_recruitment_abort", False):
+        $ renpy.log(f"RECRUITMENT: aborting start_recruitment_system: {getattr(store, '_recruitment_abort_message', '')}")
+        $ renpy.notify(getattr(store, "_recruitment_abort_message", "Recruitment error"))
+        $ store.in_recruitment = False
+        jump tavern_screen
     
     # Mark recruitment context active
     $ store.in_recruitment = True

@@ -1,44 +1,86 @@
 # Define helper function in store namespace to avoid pickling errors
 init python:
-    def _split_for_narrator(msg: str, limit: int = 220):
+    def _split_for_narrator(msg: str, limit: int = 180):
         """
         Split a message into chunks for narrator display, respecting sentence boundaries.
-        Falls back to word splitting if sentences are too long.
+        Falls back to splitting by natural pauses (commas/semicolons/colons), then by words.
         """
         try:
             import re
-            # First attempt: split by sentence boundaries
+
+            msg = str(msg or "")
+            if not msg or len(msg) <= limit:
+                return [msg]
+
+            chunks = []
+            current = ""
+
+            # 1) Sentence split first
             sentences = re.split(r'(?<=[\.!?])\s+', msg)
-            chunks, current = [], ""
-            for s in sentences:
-                if len(current) + len(s) + 1 <= limit:
-                    current = (current + " " + s).strip()
-                else:
-                    if current:
-                        chunks.append(current)
-                    # If a single sentence is too long, fall back to word split
-                    if len(s) > limit:
-                        words = s.split()
-                        buf = ""
-                        for w in words:
-                            if len(buf) + len(w) + 1 <= limit:
-                                buf = (buf + " " + w).strip()
-                            else:
-                                if buf:
-                                    chunks.append(buf)
-                                buf = w
-                        if buf:
-                            chunks.append(buf)
-                        current = ""
+
+            def flush(buf):
+                if buf:
+                    chunks.append(buf.strip())
+
+            def split_by_words(text):
+                words = text.split()
+                buf = ""
+                for w in words:
+                    if buf and (len(buf) + len(w) + 1) > limit:
+                        flush(buf)
+                        buf = w
                     else:
-                        current = s
-            if current:
-                chunks.append(current)
+                        buf = (buf + " " + w).strip()
+                flush(buf)
+
+            for s in sentences:
+                s = s.strip()
+                if not s:
+                    continue
+
+                # If sentence fits in current chunk, add it
+                if current and (len(current) + len(s) + 1) <= limit:
+                    current = (current + " " + s).strip()
+                    continue
+
+                # Otherwise, flush current and handle s
+                flush(current)
+                current = ""
+
+                if len(s) <= limit:
+                    current = s
+                    continue
+
+                # 2) Split long sentence by natural pauses
+                parts = re.split(r'(?<=[,;:])\s+', s)
+                part_buf = ""
+                for p in parts:
+                    p = p.strip()
+                    if not p:
+                        continue
+
+                    if part_buf and (len(part_buf) + len(p) + 1) <= limit:
+                        part_buf = (part_buf + " " + p).strip()
+                        continue
+
+                    flush(part_buf)
+                    part_buf = ""
+
+                    if len(p) <= limit:
+                        part_buf = p
+                    else:
+                        # 3) Split too-long part by words
+                        split_by_words(p)
+
+                flush(part_buf)
+
+            flush(current)
+
             if not chunks:
-                chunks = [msg]
+                return [msg]
             return chunks
         except Exception:
-            return [msg]
+            return [str(msg or "")]
 
 label handle_random_event:
     # Mark start of new conversation for history navigation
@@ -125,7 +167,7 @@ label handle_random_event:
         # Then display the event description (split into chunks to avoid overflow)
         if store.temp_narrator_text:
             python:
-                for _chunk in _split_for_narrator(store.temp_narrator_text, limit=220):
+                for _chunk in _split_for_narrator(store.temp_narrator_text, limit=180):
                     renpy.say(narrator, _chunk)
 
     # Prepare choices (Python)
@@ -416,7 +458,7 @@ label handle_random_event:
 
     # --- Show the final outcome message (split into chunks if long) ---
     python:
-        _chunks = _split_for_narrator(outcome_message, limit=260)
+        _chunks = _split_for_narrator(outcome_message, limit=180)
     python:
         for _chunk in _chunks:
             renpy.say(narrator, _chunk)

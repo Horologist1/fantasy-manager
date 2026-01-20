@@ -219,7 +219,7 @@
     "description": "The merchant from the Adventurer's Market approaches you with a gleam in her eye. 'Your patronage has been a blessing,' she says, 'but I have grander visions. With an investment, I could expand my emporium into something truly magnificent—a place where only the finest goods are sold. Ten thousand coins would secure the location, permits, and the initial inventory. In return, you'll have exclusive access to the Elite Emporium, where treasures beyond the ordinary await.'",
     "weight": 10,
     "limited": true,
-    "event_probability": 50,
+        "event_probability": 20,
     "max_occurrences": 1,
     "worker_selection": "none",
     "building_type": [

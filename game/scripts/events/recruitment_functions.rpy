@@ -31,12 +31,16 @@ init python:
             return message_text
 
     def launch_recruitment_via_label():
-        """Launches the start_recruitment_system label safely from UI action."""
+        """
+        Deprecated: Recruitment is now launched via Ren'Py `Jump("start_recruitment_system")`
+        directly from UI actions to avoid stacking contexts (call_in_new_context), which was
+        a major source of post-load frozen/black screens after recruitment.
+        Kept for compatibility if any old screen still calls it.
+        """
         try:
-            renpy.call_in_new_context("start_recruitment_system")
+            renpy.jump("start_recruitment_system")
         except Exception as e:
             renpy.log(f"launch_recruitment_via_label error: {e}")
-            # Don't show error popup to avoid issues during shutdown
     def get_filtered_recruit_workers(event):
         """
         Get recruitment workers filtered by event requirements.

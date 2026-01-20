@@ -2073,10 +2073,11 @@
   },
   {
     "name": "Blademaster",
-    "description": "Trained by a legendary warrior in the ancient arts of combat. Their blade becomes an extension of their will, striking with precision and power that few can match.",
+    "description": "Trained by a legendary warrior in the ancient arts of combat. Their blade becomes an extension of their will, striking with precision and power.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "health": 15,
       "skill_modifiers": {
@@ -2087,11 +2088,12 @@
   },
   {
     "name": "Arcane Adept",
-    "description": "Initiated into the arcane mysteries by a true archmage. They channel magical energies with newfound mastery, their spells crackling with amplified power.",
+    "description": "Initiated into the arcane mysteries by a true archmage. They channel magical energies with newfound mastery.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
     "requires_traits": ["Magical"],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Clever": 6,
@@ -2102,10 +2104,11 @@
   },
   {
     "name": "Shadowdancer",
-    "description": "Trained in the arts of shadow and misdirection by the guild's masters. They move like smoke, strike like lightning, and vanish before their presence is even noticed.",
+    "description": "Trained in the arts of shadow and misdirection by the guild's masters. They move like smoke and strike like lightning.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Agility": 5,
@@ -2117,10 +2120,11 @@
   },
   {
     "name": "Divine Touched",
-    "description": "Blessed by divine powers through a high priest's sacred ritual. They radiate warmth and serenity, their very presence bringing comfort and healing to those around them.",
+    "description": "Blessed by divine powers through a high priest's ritual. Radiates warmth and serenity, bringing comfort to those around them.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "health_regeneration": 5,
       "joy": 10,
@@ -2132,10 +2136,11 @@
   },
   {
     "name": "Pathfinder",
-    "description": "Trained in wilderness survival and precision combat by a master ranger. They read the land like a book and strike their targets with unerring accuracy.",
+    "description": "Trained in wilderness survival and precision combat by a master ranger. They read the land like a book and strike with unerring accuracy.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "health": 5,
       "skill_modifiers": {
@@ -2147,10 +2152,11 @@
   },
   {
     "name": "Barkeep's Wisdom",
-    "description": "Initiated into the ancient secrets of tavern-keeping by the legendary Old Morrow, whose insights prevented wars and forged alliances. This worker sees through facades, reads intentions before they're spoken, and knows exactly what every patron needs—sometimes before they do. Their presence alone makes a tavern feel like home, and their service turns strangers into regulars. A truly rare gift that transforms any establishment.",
+    "description": "Trained by the legendary Old Morrow. Sees through facades and knows exactly what every patron needs.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Charm": 8,
@@ -2165,10 +2171,11 @@
   },
   {
     "name": "People's Champion",
-    "description": "Blessed by a legendary hero who recognized the spark of greatness within. This worker radiates an aura of confidence and inspiration that draws others to them like moths to flame. Patrons feel braver, happier, and more generous in their presence. They have become the kind of person that stories are told about—someone who makes everyone around them feel like they're part of something special.",
+    "description": "Blessed by a legendary hero. Radiates confidence and inspiration that draws others to them.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "health": 25,
       "skill_modifiers": {
@@ -2185,10 +2192,11 @@
   },
   {
     "name": "Tale Weaver",
-    "description": "Apprenticed to the Wandering Muse, whose songs toppled tyrants and united kingdoms. This worker has mastered the ancient art of weaving words into magic—their stories don't just entertain, they transform. Listeners forget their troubles, open their purses freely, and return again and again hoping to recapture that transcendent feeling. A Tale Weaver turns any venue into a destination.",
+    "description": "Trained by the Wandering Muse. Has mastered the ancient art of weaving words into magic.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Charm": 10,
@@ -2203,10 +2211,11 @@
   },
   {
     "name": "Master Chef",
-    "description": "Trained by the legendary Master Ambrose Laurent, whose coronation feasts are still spoken of in hushed, reverent tones. This worker doesn't merely cook—they create edible memories. Each dish tells a story, evokes emotions, and creates moments that patrons will remember for the rest of their lives. Their mere presence in a kitchen elevates the entire establishment's reputation.",
+    "description": "Trained by Master Ambrose Laurent. Doesn't merely cook—creates edible memories that patrons will remember forever.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Service": 8,
@@ -2222,10 +2231,11 @@
   },
   {
     "name": "Perfect Palate",
-    "description": "Awakened by the Countess Vermillion Ashford, whose supernatural sense of taste was legendary. This worker possesses an almost magical sensitivity to flavors—they can identify wines by vineyard and vintage, suggest pairings that seem impossible until tasted, and detect the subtlest imperfections before they reach patrons. Their expertise makes any restaurant feel like a royal dining experience.",
+    "description": "Trained by Countess Vermillion Ashford. Possesses an almost magical sensitivity to flavors.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Clever": 8,
@@ -2240,10 +2250,11 @@
   },
   {
     "name": "Graceful Server",
-    "description": "Perfected under the legendary Sebastian Crane, whose servants became the standard by which all others are measured. This worker moves like flowing water—present exactly when needed, invisible otherwise. They anticipate needs before they arise, make every patron feel like royalty, and transform mere dining into an experience of pure elegance. Their service is an art form in itself.",
+    "description": "Trained by Sebastian Crane. Moves like flowing water, anticipating needs and making every patron feel like royalty.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Service": 10,
@@ -2259,10 +2270,11 @@
   },
   {
     "name": "Fortune's Favorite",
-    "description": "Initiated into the mysteries of probability by 'Lucky' Mathias Cross, who could sense the turning of fate itself. This worker possesses an uncanny intuition for timing—they know when to push, when to fold, and when fortune is about to shift. This supernatural sense extends beyond gambling to all aspects of their work, helping them make perfect decisions instinctively.",
+    "description": "Trained by 'Lucky' Mathias Cross. Possesses an uncanny intuition for timing and fortune.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Clever": 9,
@@ -2278,10 +2290,11 @@
   },
   {
     "name": "Card Shark",
-    "description": "Mastered under the Phantom Dealer, whose hands moved faster than thought itself. This worker's fingers have become instruments of impossible precision—cards dance and flow between them like living things. Whether dealing honestly or demonstrating sleight of hand, their skill is mesmerizing to watch. They can spot cheaters instantly and run games with flawless efficiency.",
+    "description": "Trained by the Phantom Dealer. Fingers move with impossible precision—cards dance and flow like living things.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Agility": 10,
@@ -2296,10 +2309,11 @@
   },
   {
     "name": "High Roller's Eye",
-    "description": "Cultivated by Victoria Sterling, the Casino Queen whose empire spans continents. This worker has developed an almost supernatural ability to identify valuable patrons and understand exactly what keeps them coming back. They know wealth by subtle signs invisible to others, and they transform high rollers into loyal regulars who spend freely and return often.",
+    "description": "Trained by Victoria Sterling, the Casino Queen. Has developed a supernatural ability to identify valuable patrons.",
     "nsfw": false,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Charm": 10,
@@ -2315,10 +2329,11 @@
   },
   {
     "name": "Courtesan's Grace",
-    "description": "Perfected under Madame Celestine, whose legendary grace enchanted emperors and deities alike. This worker has mastered the art of refined seduction—every movement, word, and glance is calculated to intoxicate. They understand that true intimacy is a dance of minds before bodies, and their presence alone can make patrons feel like the most important person in the world.",
+    "description": "Trained by Madame Celestine, whose grace enchanted emperors. Has mastered the art of refined seduction.",
     "nsfw": true,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Charm": 10,
@@ -2336,10 +2351,11 @@
   },
   {
     "name": "Sacred Touch",
-    "description": "Initiated into millennia-old techniques by a temple practitioner of the Sacred Arts. This worker's touch carries ancient wisdom—they can read bodies like maps, finding paths to pleasure that clients never knew existed. Their ministrations transcend the physical, creating experiences that feel spiritual, healing, and transformative. Many who experience their touch describe it as life-changing.",
+    "description": "Trained in millennia-old techniques by a temple practitioner. Touch carries ancient wisdom, creating transformative experiences.",
     "nsfw": true,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Special": 10,
@@ -2357,10 +2373,11 @@
   },
   {
     "name": "Desire Whisperer",
-    "description": "Taught by the legendary Desire Whisperer, who could draw out secrets and fantasies with mere conversation. This worker has mastered the art of intimate communication—they can sense hidden desires before they're spoken, create anticipation that amplifies pleasure tenfold, and make every client feel truly understood. Their words alone can bring clients to the edge.",
+    "description": "Trained by the legendary Desire Whisperer. Has mastered the art of intimate communication, sensing hidden desires.",
     "nsfw": true,
     "conflicts": [],
     "removes_traits": [],
+    "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
         "Charm": 9,

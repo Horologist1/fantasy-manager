@@ -557,8 +557,7 @@ screen main_menu():
     imagebutton auto "gui/main_menu/buttons/gallery_%s.png" xalign 0.5 ypos 569 focus_mask True action ShowMenu("gallery")
     imagebutton auto "gui/main_menu/buttons/about_%s.png" xalign 0.5 ypos 622 focus_mask True action ShowMenu("about")
     imagebutton auto "gui/main_menu/buttons/help_%s.png" xalign 0.5 ypos 675 focus_mask True action ShowMenu("help")
-    # Quit button disabled - close window instead
-    # imagebutton auto "gui/main_menu/buttons/quit_%s.png" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=False)
+    imagebutton auto "gui/main_menu/buttons/quit_%s.png" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=False)
 
     if gui.show_name:
 
@@ -2757,7 +2756,7 @@ screen Building_select(worker):
             $ bnames = sorted(available_buildings.keys())
             for building_name in bnames:
                 if available_buildings[building_name]["owned"]:
-                    textbutton "[custom_names[building_name]]":
+                    textbutton "[custom_names.get(building_name, building_name)]":
                         action [
                             # Remove the worker from any current building.
                             Function(remove_worker_from_building, worker),
@@ -2769,7 +2768,7 @@ screen Building_select(worker):
                             Show("workers")
                         ]
                 else:
-                    textbutton "[custom_names[building_name]] (Not Available)":
+                    textbutton "[custom_names.get(building_name, building_name)] (Not Available)":
                         style "nav_button_text"
                         text_size font_size(24)
                         xalign 0.0
@@ -2849,6 +2848,8 @@ screen job_selection(worker):
                                     $ avg_skill = total // count
                                 else:
                                     $ avg_skill = 0
+                                # For rest job, show "-" instead of skill value
+                                $ avg_skill_display = "-" if profession.get("id") == "rest" else f"{avg_skill}/100"
                                 $ current_count = len([w for w in building["assigned_servants"] if building["servant_jobs"].get(w["name"], "") == profession["id"]])
                                 $ max_limit = get_max_daily_workers(building, profession)
                                 vbox:  # Wrap each profession entry in a vbox
@@ -2868,7 +2869,7 @@ screen job_selection(worker):
                                                 Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
                                                 Hide("job_selection")
                                             ]
-                                        text "{size=16}{color=#7a4b2a}[prof_description]{/color}{/size}\n{color=#5a3a1a}{size=18}Skills Used: [required_skills]{/size}{/color}\n{size=16}{color=#6b6528}Average Skill: [avg_skill]/100{/color}{/size}":
+                                        text "{size=16}{color=#7a4b2a}[prof_description]{/color}{/size}\n{color=#5a3a1a}{size=18}Skills Used: [required_skills]{/size}{/color}\n{size=16}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}":
                                             xsize 500  # Match the textbutton width for alignment
                                             xalign 0.0  # Align left to match textbutton
                                             xoffset 5
@@ -2879,7 +2880,7 @@ screen job_selection(worker):
                                             text_color "#7a4b2a"
                                             text_hover_color "#6b6528"
                                             sensitive False
-                                        text "{size=16}{color=#7a4b2a}[prof_description]{/color}{/size}\n{color=#5a3a1a}{size=18}Skills Used: [required_skills]{/size}{/color}\n{size=16}{color=#6b6528}Average Skill: [avg_skill]/100{/color}{/size}\n{size=16}{color=#ff0000}Role Full{/color}{/size}":
+                                        text "{size=16}{color=#7a4b2a}[prof_description]{/color}{/size}\n{color=#5a3a1a}{size=18}Skills Used: [required_skills]{/size}{/color}\n{size=16}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}\n{size=16}{color=#ff0000}Role Full{/color}{/size}":
                                             xsize 500  # Match the textbutton width for alignment
                                             xalign 0.0  # Align left to match textbutton
                         else:
@@ -4501,17 +4502,6 @@ screen building_selection(worker):
             null height 15
             label "SELECT BUILDING" xalign 0.5 style "header_style"
             null height 10
-            textbutton "Unassign (No Building)":
-                xalign 0.5
-                xsize 500
-                text_size font_size(24)
-                text_color "#7a4b2a"
-                text_hover_color "#6b6528"
-                action [
-                    Function(unassign_worker, worker),
-                    Hide("building_selection"),
-                    Show("workers")
-                ]
             viewport:
                 scrollbars "vertical"
                 mousewheel True
@@ -4524,6 +4514,16 @@ screen building_selection(worker):
                     spacing 10
                     xsize 580
                     yoffset 25
+                    textbutton "Unassigned: No Building":
+                        xsize 500
+                        text_size font_size(28)
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action [
+                            Function(unassign_worker, worker),
+                            Hide("building_selection"),
+                            Show("workers")
+                        ]
                     $ bnames = sorted(available_buildings.keys())
                     for building_name in bnames:
                         # Fallback: If "owned" key is missing, assume the building is owned
@@ -4569,7 +4569,7 @@ screen building_selection(worker):
 screen rename_building(building_name):
     modal True
     zorder 99
-    default new_name = custom_names[building_name]
+    default new_name = custom_names.get(building_name, building_name)
     add Solid("#000000dd")
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
@@ -4593,7 +4593,7 @@ screen rename_building(building_name):
         vbox:
             spacing 15
             null height 15  # Push title down like journal
-            label "Rename [custom_names[building_name]]" xalign 0.5 style "header_style"
+            label "Rename [custom_names.get(building_name, building_name)]" xalign 0.5 style "header_style"
             null height 10  # Less space after title like journal
             
             vbox:
@@ -4734,8 +4734,8 @@ screen recruitment_menu():
                         text_hover_color "#6b6528"
                         action If(can_recruit_today,
                             [
-                                Function(launch_recruitment_via_label),
-                                Hide("recruitment_menu")
+                                Hide("recruitment_menu"),
+                                Jump("start_recruitment_system")
                             ],
                             Show("error_popup", message="You can only recruit once per day"))
                         sensitive can_recruit_today
@@ -4938,21 +4938,6 @@ screen buy_servants_table():
 screen shop_selection():
     modal True
     zorder 100
-    python:
-        # Sync store.unlocked_shops with persistent.unlocked_shops
-        # This ensures shops unlocked by events are properly displayed
-        # Initialize persistent.unlocked_shops if it doesn't exist
-        if not hasattr(persistent, 'unlocked_shops') or persistent.unlocked_shops is None:
-            persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
-            renpy.log("Initialized persistent.unlocked_shops in shop_selection screen")
-        
-        # Sync from persistent to store
-        if persistent.unlocked_shops:
-            for shop_key in ["shop1", "shop2", "shop3"]:
-                if shop_key in persistent.unlocked_shops and persistent.unlocked_shops[shop_key]:
-                    store.unlocked_shops[shop_key] = True
-                    renpy.log(f"Synced {shop_key} unlock from persistent to store: {store.unlocked_shops[shop_key]}")
-        renpy.log(f"Final shop unlock state - persistent: {persistent.unlocked_shops}, store: {store.unlocked_shops}")
     
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
@@ -5115,6 +5100,9 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
         else:
             show_dialogue = True
             display_message = interaction_messages[current_message_index] if current_message_index < total_messages else interaction_messages[-1] if interaction_messages else "No description available."
+            # Append stat changes to last message with color formatting
+            if is_last_message and stat_change_text:
+                display_message = display_message + " {color=#2a7a4b}(" + stat_change_text + "){/color}"
             # Acción al hacer click: avanzar al siguiente mensaje o mostrar solo imagen si es el último
             if is_last_message:
                 click_action = Show("interaction_result", worker=worker, interaction=interaction, message_index=current_message_index, show_image_only=True, return_to_map=return_to_map)
@@ -5155,23 +5143,11 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                 yalign gui.textbox_yalign
                 ysize gui.textbox_height
                 
-                vbox:
+                text display_message:
+                    id "what"
                     xpos gui.dialogue_xpos
                     xsize gui.dialogue_width
-                    ypos gui.dialogue_ypos
-                    spacing 5
-                    
-                    text display_message:
-                        id "what"
-                        style "say_dialogue"
-                    
-                    # Show stat changes on last message
-                    if is_last_message and stat_change_text:
-                        text stat_change_text:
-                            style "say_dialogue"
-                            size 24
-                            color "#2a7a4b"
-                            xalign 0.5
+                    yalign 0.5
     else:
         # Image-only mode: make the whole screen clickeable to close
         button:
@@ -5505,8 +5481,7 @@ screen adjust_comfort(worker):
                             spacing 0
                             textbutton "+" style "game_menu_button":
                                 action [
-                                    SetDict(worker, "comfort_level", current_comfort + 1),
-                                    SetDict(worker, "relationship", max(10, 10 + current_comfort + 1))
+                                    Function(lambda: adjust_comfort_and_recalculate_relationship(worker, current_comfort + 1))
                                 ]
                                 xsize 25
                                 text_size font_size(28)
@@ -5517,8 +5492,7 @@ screen adjust_comfort(worker):
                                 sensitive current_comfort < 20
                             textbutton "-" style "game_menu_button":
                                 action [
-                                    SetDict(worker, "comfort_level", max(1, current_comfort - 1)),
-                                    SetDict(worker, "relationship", max(10, 10 + max(1, current_comfort - 1)))
+                                    Function(lambda: adjust_comfort_and_recalculate_relationship(worker, max(1, current_comfort - 1)))
                                 ]
                                 xsize 25
                                 text_size font_size(28)
@@ -6066,10 +6040,10 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         scrollbars "vertical"
                                         mousewheel True
                                         draggable True
-                                        ysize 435
+                                        ysize 500
                                         xfill True
                                         vbox:
-                                            spacing 10
+                                            spacing 15
                                             # Filter traits: show all if NSFW enabled, otherwise only SFW traits
                                             for trait in [t for t in worker.get("traits", []) if persistent.nsfw_enabled or any(t == tr["name"] and not tr.get("nsfw", False) for tr in traits_list)]:
                                                 $ desc = get_trait_desc(trait)
@@ -6078,12 +6052,12 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                     button:
                                                         background "tablebutton.png"
                                                         xsize 150
-                                                        ysize 60
+                                                        ysize 95
                                                         text "[trait]" size font_size(22)
                                                     button:
                                                         background "tablebutton.png"
                                                         xsize 320
-                                                        ysize 60
+                                                        ysize 95
                                                         text "[desc]" size font_size(20)
 
                     # Action Buttons Section
@@ -6198,7 +6172,7 @@ screen workers():
                 # Filtro por edificio (izquierda)
                 hbox:
                     spacing 10
-                    text "Filter by Building:" size font_size(20) color "#7a4b2a" yalign 0.5
+                    text "Filter by Building:" size font_size(18) color "#7a4b2a" yalign 0.5
                     
                     # Crear lista de edificios únicos
                     python:
@@ -6231,14 +6205,14 @@ screen workers():
                             background "#5a3a1a"
                             hover_background "#6b4a2a"
                             
-                            text "[worker_building_filter]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                            text "[worker_building_filter]" size font_size(16) color "#ffffff" xalign 0.5 yalign 0.5
                             
                             action Show("worker_building_filter_menu", buildings=unique_buildings)
                 
                 # Filtro por trabajo (derecha)
                 hbox:
                     spacing 10
-                    text "Filter by Job:" size font_size(20) color "#7a4b2a" yalign 0.5
+                    text "Filter by Job:" size font_size(18) color "#7a4b2a" yalign 0.5
                     
                     # Crear lista de trabajos únicos
                     python:
@@ -6270,7 +6244,7 @@ screen workers():
                             background "#5a3a1a"
                             hover_background "#6b4a2a"
                             
-                            text "[worker_job_filter]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                            text "[worker_job_filter]" size font_size(16) color "#ffffff" xalign 0.5 yalign 0.5
                             
                             action Show("worker_job_filter_menu", jobs=unique_jobs)
             
@@ -6288,31 +6262,31 @@ screen workers():
                     background "tablebutton4.png"
                     xsize 180
                     ysize 50
-                    text "Name (Level)" size font_size(26) color "#7a4b2a"
+                    text "Name (Level)" size font_size(22) color "#7a4b2a"
                     sensitive False
                 button:
                     background "tablebutton4.png"
                     xsize 180
                     ysize 50
-                    text "Building" size font_size(26) color "#7a4b2a"
+                    text "Building" size font_size(22) color "#7a4b2a"
                     sensitive False
                 button:
                     background "tablebutton4.png"
                     xsize 180
                     ysize 50
-                    text "Job (Skill)" size font_size(26) color "#7a4b2a"
+                    text "Job (Skill)" size font_size(22) color "#7a4b2a"
                     sensitive False
                 button:
                     background "tablebutton4.png"
                     xsize 180
                     ysize 50
-                    text "Energy - Health" size font_size(26) color "#7a4b2a"
+                    text "Energy - Health" size font_size(22) color "#7a4b2a"
                     sensitive False
                 button:
                     background "tablebutton4.png"
                     xsize 180
                     ysize 50
-                    text "Type / Action" size font_size(26) color "#7a4b2a"
+                    text "Type / Action" size font_size(22) color "#7a4b2a"
                     sensitive False
             
             # Main content area (viewport)
@@ -6389,7 +6363,7 @@ screen workers():
                                 background "tablebutton1b.png"
                                 xsize 180
                                 ysize 50
-                                text "[worker['name']] ([worker_level])" size font_size(24) color "#7a4b2a" hover_color "#6b6528"
+                                text "[worker['name']] ([worker_level])" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
                                 action Show("worker_details", worker=worker, in_roster=True)
                             $ assigned_building = worker.get("assigned_building", "Unassigned")
                             $ building_display_name = custom_names.get(assigned_building, assigned_building)
@@ -6397,7 +6371,7 @@ screen workers():
                                 background "tablebutton1b.png"
                                 xsize 180
                                 ysize 50
-                                text "[building_display_name]" size font_size(24) color "#7a4b2a" hover_color "#6b6528"
+                                text "[building_display_name]" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
                                 action Show("building_selection", worker=worker)
                             if worker.get("assigned_building", "Unassigned") != "Unassigned":
                                 $ building_name = worker["assigned_building"]
@@ -6421,19 +6395,20 @@ screen workers():
                                             $ count += 1
                                         if count > 0:
                                             $ avg_skill = total // count
-                                $ job_name_with_skill = job_name if avg_skill == 0 or job_id.lower() == "unassigned" else f"{job_name} ({avg_skill})"
+                                # For rest job, don't show skill value
+                                $ job_name_with_skill = job_name if avg_skill == 0 or job_id.lower() == "unassigned" or job_id == "rest" else f"{job_name} ({avg_skill})"
                                 button:
                                     background "tablebutton1b.png"
                                     xsize 180
                                     ysize 50
-                                    text "[job_name_with_skill]" size font_size(24) color "#7a4b2a" hover_color "#6b6528"
+                                    text "[job_name_with_skill]" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
                                     action Show("job_selection", worker=worker)
                             else:
                                 button:
                                     background "tablebutton1b.png"
                                     xsize 180
                                     ysize 50
-                                    text "Unassigned" size font_size(24) color "#7a4b2a" hover_color "#6b6528"
+                                    text "Unassigned" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
                                     action Show("job_selection", worker=worker)
                             # Energy - Health column (split into two buttons)
                             hbox:
@@ -6444,7 +6419,7 @@ screen workers():
                                     background "tablebutton1b.png"
                                     xsize 89
                                     ysize 50
-                                    text_size font_size(22)
+                                    text_size font_size(18)
                                     text_color "#7a4b2a"
                                     text_hover_color "#2c4aa6"
                                     action use_or_buy_potion_action(worker, "energy_potion")
@@ -6452,7 +6427,7 @@ screen workers():
                                     background "tablebutton1b.png"
                                     xsize 89
                                     ysize 50
-                                    text_size font_size(22)
+                                    text_size font_size(18)
                                     text_color "#7a4b2a"
                                     text_hover_color "#a63c3c"
                                     action use_or_buy_potion_action(worker, "health_potion")
@@ -6468,9 +6443,9 @@ screen workers():
                                     xalign 0.0
                                     yalign 0.5
                                     spacing 0
-                                    text "[worker_type] / " size font_size(24) color "#7a4b2a" yalign 0.5
+                                    text "[worker_type] / " size font_size(20) color "#7a4b2a" yalign 0.5
                                     textbutton "[action_text]":
-                                        text_size font_size(24)
+                                        text_size font_size(20)
                                         text_color "#7a4b2a"
                                         text_hover_color "#6b6528"
                                         action Show("confirm_sell_worker", worker=worker)
@@ -6908,7 +6883,7 @@ screen map_screen():
                 unhovered SetVariable("plaza_servants_text_hover", False)
             textbutton "Recruit Workers":
                 action If(can_recruit_today,
-                    Function(launch_recruitment_via_label),
+                    [Hide("map_screen"), Jump("start_recruitment_system")],
                     Show("error_popup", message="You can only recruit once per day"))
                 xsize 300
                 text_size 42
@@ -7573,13 +7548,9 @@ screen report_details(report):
 
 screen tavern():
     $ renpy.log("Tavern screen displayed")
-    # Only clear persistent flags if we're actually in tavern context
-    # (not if we're being shown as fallback from another screen)
-    if not getattr(persistent, "_context_restored", False):
-        $ persistent._slot_to_apply = None
-        $ persistent.loaded_via_save = False
-        $ renpy.save_persistent()
-    else:
+    # Persistent flags are now cleared at the start of _apply_pending_snapshot_and_show_tavern
+    # Just ensure _context_restored is cleared if it was set
+    if getattr(persistent, "_context_restored", False):
         $ persistent._context_restored = False
         $ renpy.save_persistent()
     # Ensure calendar is initialized

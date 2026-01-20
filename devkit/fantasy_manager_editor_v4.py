@@ -31,10 +31,11 @@ import shutil
 from pathlib import Path
 import subprocess
 import sys
+import random
 import xml.etree.ElementTree as ET
 from typing import Dict, List, Optional, Tuple, Any
 
-VERSION = "5.3"
+VERSION = "5.4"
 
 # Intentar importar PIL para previsualización de imágenes (opcional)
 try:
@@ -54,6 +55,7 @@ WM_SKILL_MAPPING = {
     "Strip": "Striptease", "Magic": "Craft", "Medicine": "Clever",
     "Performance": "Charm", "Crafting": "Craft", "Farming": "Service",
     "Cooking": "Service", "Herbalism": "Craft", "Brewing": "Clever", "AnimalHandling": "Craft",
+    "Card": "Clever", "Sport": "Agility",  # Card -> Clever, Sport -> Agility
     # Skills que ya existen en FM pero faltaban en el mapeo
     "Anal": "Anal", "BDSM": "BDSM", "Group": "Group", "Service": "Service", "Combat": "Combat",
 }
@@ -85,6 +87,55 @@ WM_TRAIT_MAPPING = {
     "Retarded": "Dumb",
     "Mind Fucked": "Crazy",
 }
+
+# Female names pool for procedural workers (.rgirlsx)
+FEMALE_NAMES = [
+    "Elizabeth", "Victoria", "Charlotte", "Emma", "Isabella",
+    "Sophia", "Amelia", "Margaret", "Catherine", "Eleanor",
+    "Beatrice", "Clara", "Florence", "Grace", "Helena",
+    "Alice", "Mary", "Anne", "Jane", "Caroline",
+    "Lucy", "Sarah", "Rebecca", "Julia", "Laura",
+    "Diana", "Rose", "Lily", "Agnes", "Martha",
+    "Edith", "Frances", "Louise", "Marie", "Ethel",
+    "Ada", "Mabel", "Pearl", "Ruby", "Violet",
+    "Elsie", "Maud", "Gertrude", "Bertha", "Jessie",
+    "Harriet", "Constance", "Evelyn", "Dorothy", "Gladys",
+    "Irene", "Stella", "Blanche", "Olive", "Mildred",
+    "Hazel", "Edna", "Lillian", "Ruth", "Helen",
+    "Esther", "Anna", "Eva", "Nora", "Ida",
+    "Cora", "Nell", "Dora", "May", "Minnie",
+    "Flora", "Daisy", "Hilda", "Vera", "Bessie",
+    "Aaliyah", "Abbey", "Abigail", "Adeline", "Adriana",
+    "Agatha", "Aileen", "Aimee", "Alexandra", "Alexis",
+    "Amanda", "Amber", "Amy", "Andrea", "Angela",
+    "Anita", "Annabelle", "Ariana", "Ashley", "Audrey",
+    "Barbara", "Belinda", "Beth", "Betty", "Beverly",
+    "Bianca", "Bonnie", "Brenda", "Brittany", "Brooke",
+    "Camilla", "Candace", "Carmen", "Carol", "Cassandra",
+    "Cecilia", "Cheryl", "Christina", "Christine", "Claire",
+    "Claudia", "Colleen", "Cynthia", "Danielle", "Dawn",
+    "Deborah", "Denise", "Diane", "Donna", "Doris",
+    "Elena", "Eliza", "Ellen", "Emily", "Erica",
+    "Erin", "Estelle", "Faith", "Felicia", "Fiona",
+    "Francine", "Gabrielle", "Gail", "Gemma", "Georgia",
+    "Gina", "Gloria", "Haley", "Hannah", "Heather",
+    "Heidi", "Holly", "Hope", "Ingrid", "Isabel",
+    "Ivy", "Jacqueline", "Jamie", "Janet", "Jasmine",
+    "Jean", "Jennifer", "Jessica", "Jill", "Joan",
+    "Joanna", "Joyce", "Judith", "Julie", "Karen",
+    "Katherine", "Kathleen", "Kelly", "Kimberly", "Kristen",
+    "Lauren", "Leah", "Leslie", "Linda", "Lisa",
+    "Lois", "Lorraine", "Lynn", "Madison", "Maria",
+    "Marilyn", "Marina", "Maureen", "Megan", "Melanie",
+    "Melissa", "Michelle", "Monica", "Nancy", "Natalie",
+    "Nicole", "Norma", "Olivia", "Pamela", "Patricia",
+    "Paula", "Penelope", "Rachel", "Rita", "Roberta",
+    "Rosa", "Samantha", "Sandra", "Sara", "Shannon",
+    "Sharon", "Sheila", "Shirley", "Stephanie", "Susan",
+    "Sylvia", "Tamara", "Teresa", "Theresa", "Tiffany",
+    "Tracy", "Valerie", "Vanessa", "Veronica", "Virginia",
+    "Vivian", "Wendy"
+]
 
 # =============================================================================
 # UTILITY FUNCTIONS
@@ -373,8 +424,15 @@ def rename_wm_images_in_folder(folder: Path) -> int:
         # Lowercase the result for consistency
         new_name_lower = new_name.lower()
         
-        # Handle numbered files: "Sex (2)" -> "sex (2)" not "sex(2)"
-        # Keep the space before parentheses for consistency
+        # Clean up problematic number patterns:
+        # Remove numbers in parentheses: "bdsm (2)" -> "bdsm"
+        new_name_lower = re.sub(r'\s*\(\d+\)\s*', '', new_name_lower)
+        # Remove trailing underscores with numbers: "bdsm_2" -> "bdsm"
+        new_name_lower = re.sub(r'_+\d+$', '', new_name_lower)
+        # Remove multiple consecutive underscores or spaces
+        new_name_lower = re.sub(r'[_\s]+', '_', new_name_lower)
+        # Remove leading/trailing underscores
+        new_name_lower = new_name_lower.strip('_')
         
         if new_name_lower != original_name.lower() or file.suffix != file.suffix.lower():
             new_filename = new_name_lower + file.suffix.lower()
@@ -382,10 +440,10 @@ def rename_wm_images_in_folder(folder: Path) -> int:
             
             # Avoid overwriting existing files
             if new_path.exists() and new_path != file:
-                # Add counter to avoid collision
-                counter = 2
+                # Add counter to avoid collision using (1), (2), etc.
+                counter = 1
                 while new_path.exists():
-                    new_filename = f"{new_name_lower}_{counter}{file.suffix.lower()}"
+                    new_filename = f"{new_name_lower} ({counter}){file.suffix.lower()}"
                     new_path = file.parent / new_filename
                     counter += 1
             
@@ -408,8 +466,28 @@ def parse_wm_girl_xml(xml_path: Path) -> Optional[Dict]:
             return None
         
         is_random = xml_path.suffix.lower() == '.rgirlsx'
+        # Get name from XML (prefer FirstName, then Name)
+        xml_firstname = girl.get('FirstName', '')
+        xml_name = girl.get('Name', 'Unknown')
+        
+        # Use FirstName if available, otherwise full Name
+        base_name = xml_firstname if xml_firstname else xml_name
+        
+        # If name is too long (more than 15 chars), use only first name (before first space)
+        MAX_NAME_LENGTH = 15
+        if len(base_name) > MAX_NAME_LENGTH:
+            # Split by space and take first part
+            first_space_idx = base_name.find(' ')
+            if first_space_idx > 0:
+                preferred_name = base_name[:first_space_idx]
+            else:
+                preferred_name = base_name  # No space found, use as is
+        else:
+            preferred_name = base_name
+        
         data = {
-            'name': girl.get('Name', 'Unknown'),
+            'name': preferred_name,
+            'xml_name': xml_name,  # Keep XML name for reference (for image folder lookup)
             'description': girl.get('Desc', ''),
             'is_random': is_random,
             'stats': {}, 'skills': {}, 'traits': []
@@ -476,8 +554,17 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
     else:
         comfort_desired = 3  # Default
     
+    # For .rgirlsx (procedural templates), assign random name from female names pool
+    if is_random:
+        worker_name = random.choice(FEMALE_NAMES)
+        names_list = "western_female"  # Set names_list so procedural workers use this pool
+    else:
+        # For .girlsx (unique workers), use the processed name from XML
+        worker_name = wm_data.get('name', 'Unknown')
+        names_list = None  # Unique workers don't need names_list
+    
     fm_worker = {
-        "name": wm_data.get('name', 'Unknown'), "folder": folder_name, "cost": 1000,
+        "name": worker_name, "folder": folder_name, "cost": 1000,
         "nsfw": True, 
         "unique": not is_random,           # .girlsx = unique, .rgirlsx = not unique
         "encounter_only": not is_random,   # .girlsx = encounter_only, .rgirlsx = can be bought
@@ -487,6 +574,10 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
         "description": wm_data.get('description', ''), "gender": "female", 
         "comfort_desired": comfort_desired
     }
+    
+    # Add names_list for procedural workers so generated workers use the same name pool
+    if names_list:
+        fm_worker["names_list"] = names_list
     
     for skill_name in all_skills:
         fm_worker["skills"][skill_name] = 20
@@ -831,7 +922,9 @@ class FantasyManagerEditorV4:
                 
                 # Copy images if enabled
                 if self.import_copy_images.get():
-                    img_folder = wm_path / wm_data['name']
+                    # Use XML name for image folder (WM folders use full XML name)
+                    if 'xml_name' in wm_data:
+                        img_folder = wm_path / wm_data['xml_name']
                     if img_folder.exists():
                         dest_folder = images_dest / folder_name
                         if not dest_folder.exists():
@@ -1253,6 +1346,8 @@ Requirements:
             try:
                 with open(traits_path, 'r', encoding='utf-8') as f:
                     self.traits_data = json.load(f)
+                # Update item trait combos if they exist
+                self.update_item_trait_combos()
             except Exception as e:
                 print(f"Error loading traits: {e}")
                 self.traits_data = []
@@ -2543,6 +2638,23 @@ Images Tab:
                 for trait in self.traits_data:
                     name = trait.get('name', 'Unknown')
                     self.traits_listbox.insert(tk.END, name)
+        
+        # Update item trait comboboxes with loaded traits
+        self.update_item_trait_combos()
+    
+    def update_item_trait_combos(self):
+        """Update trait comboboxes in Items editor with loaded traits"""
+        trait_names = []
+        if isinstance(self.traits_data, list):
+            trait_names = sorted([trait.get('name', '') for trait in self.traits_data if trait.get('name', '')])
+        
+        # Update add trait combobox if it exists
+        if hasattr(self, 'item_add_trait_combo'):
+            self.item_add_trait_combo['values'] = trait_names
+        
+        # Update remove trait combobox if it exists
+        if hasattr(self, 'item_remove_trait_combo'):
+            self.item_remove_trait_combo['values'] = trait_names
     
     def on_trait_select(self, event):
         """Manejar selección de trait"""
@@ -2962,24 +3074,26 @@ Modifiers:
         traits_frame.grid(row=row, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         
         # Add Traits
-        ttk.Label(traits_frame, text="Add Traits:").pack(anchor="w", padx=5, pady=(5, 2))
+        ttk.Label(traits_frame, text="Add Traits (select from loaded traits):").pack(anchor="w", padx=5, pady=(5, 2))
         self.item_add_traits_listbox = tk.Listbox(traits_frame, height=3)
         self.item_add_traits_listbox.pack(fill=tk.X, padx=5, pady=2)
         add_trait_buttons = ttk.Frame(traits_frame)
         add_trait_buttons.pack(fill=tk.X, padx=5, pady=2)
         self.item_add_trait_var = tk.StringVar()
-        ttk.Entry(add_trait_buttons, textvariable=self.item_add_trait_var, width=20).pack(side=tk.LEFT, padx=(0, 5))
+        self.item_add_trait_combo = ttk.Combobox(add_trait_buttons, textvariable=self.item_add_trait_var, width=25, state="readonly")
+        self.item_add_trait_combo.pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(add_trait_buttons, text="Add", command=self.add_item_trait).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(add_trait_buttons, text="Remove", command=self.remove_item_add_trait).pack(side=tk.LEFT)
         
         # Remove Traits
-        ttk.Label(traits_frame, text="Remove Traits:").pack(anchor="w", padx=5, pady=(10, 2))
+        ttk.Label(traits_frame, text="Remove Traits (select from loaded traits):").pack(anchor="w", padx=5, pady=(10, 2))
         self.item_remove_traits_listbox = tk.Listbox(traits_frame, height=3)
         self.item_remove_traits_listbox.pack(fill=tk.X, padx=5, pady=2)
         remove_trait_buttons = ttk.Frame(traits_frame)
         remove_trait_buttons.pack(fill=tk.X, padx=5, pady=2)
         self.item_remove_trait_var = tk.StringVar()
-        ttk.Entry(remove_trait_buttons, textvariable=self.item_remove_trait_var, width=20).pack(side=tk.LEFT, padx=(0, 5))
+        self.item_remove_trait_combo = ttk.Combobox(remove_trait_buttons, textvariable=self.item_remove_trait_var, width=25, state="readonly")
+        self.item_remove_trait_combo.pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(remove_trait_buttons, text="Add", command=self.add_item_remove_trait).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(remove_trait_buttons, text="Remove", command=self.remove_item_remove_trait).pack(side=tk.LEFT)
         row += 1
@@ -3046,7 +3160,13 @@ Modifiers:
         add_trait = effect.get('add_trait', '')
         if isinstance(add_trait, list):
             for trait in add_trait:
-                self.item_add_traits_listbox.insert(tk.END, trait)
+                trait_name = trait.get("name", "") if isinstance(trait, dict) else trait
+                if trait_name:
+                    self.item_add_traits_listbox.insert(tk.END, trait_name)
+        elif isinstance(add_trait, dict):
+            trait_name = add_trait.get("name", "")
+            if trait_name:
+                self.item_add_traits_listbox.insert(tk.END, trait_name)
         elif add_trait:
             self.item_add_traits_listbox.insert(tk.END, add_trait)
         
@@ -3054,7 +3174,13 @@ Modifiers:
         remove_trait = effect.get('remove_trait', '')
         if isinstance(remove_trait, list):
             for trait in remove_trait:
-                self.item_remove_traits_listbox.insert(tk.END, trait)
+                trait_name = trait.get("name", "") if isinstance(trait, dict) else trait
+                if trait_name:
+                    self.item_remove_traits_listbox.insert(tk.END, trait_name)
+        elif isinstance(remove_trait, dict):
+            trait_name = remove_trait.get("name", "")
+            if trait_name:
+                self.item_remove_traits_listbox.insert(tk.END, trait_name)
         elif remove_trait:
             self.item_remove_traits_listbox.insert(tk.END, remove_trait)
     
@@ -3260,9 +3386,14 @@ Basic Information:
 Effects:
 - Health/Energy/Libido: Direct stat modifications
 - Skill Modifiers: Skill bonuses/penalties
-- Add Traits: Traits to add when item is used
-- Remove Traits: Traits to remove when item is used
+- Add Traits: Select traits from loaded traits.json to add when item is equipped
+  (use the dropdown selector to avoid typos, traits are saved as array)
+- Remove Traits: Select traits to remove when item is equipped
+  (useful for items that cure negative traits)
 - Custom: Custom action identifier for special effects
+
+Note: Make sure to load traits.json first (File > Load Traits) to populate
+the trait selectors with available traits from your game data.
         """
         
         help_window = tk.Toplevel(self.root)
@@ -4590,8 +4721,8 @@ Variables in messages: {worker_name}, {skill}, {trait}
         ttk.Combobox(event_scrollable, textvariable=self.event_worker_selection_var, values=["choose", "none", "random"], state="readonly", width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
         
-        # Worker Gender
-        ttk.Label(event_scrollable, text="Worker Gender:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+        # Worker Gender Requirement
+        ttk.Label(event_scrollable, text="Worker Gender Requirement:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         self.event_worker_gender_var = tk.StringVar(value="any")
         ttk.Combobox(event_scrollable, textvariable=self.event_worker_gender_var, values=["any", "male", "female"], state="readonly", width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
@@ -4655,7 +4786,7 @@ Variables in messages: {worker_name}, {skill}, {trait}
         self.event_max_occurrences_var.set(self.current_event.get('max_occurrences', 1))
         self.event_cooldown_var.set(self.current_event.get('cooldown_days', 7))
         self.event_worker_selection_var.set(self.current_event.get('worker_selection', 'choose'))
-        self.event_worker_gender_var.set(self.current_event.get('worker_gender', 'any'))
+        self.event_worker_gender_var.set(self.current_event.get('worker_gender_requirement', 'any'))
         
         # Building types
         self.event_building_types_listbox.delete(0, tk.END)
@@ -4799,7 +4930,7 @@ Variables in messages: {worker_name}, {skill}, {trait}
         ttk.Label(basic_scrollable, text="Condition (skill name):").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         choice_condition_var = tk.StringVar(value=choice.get('condition', ''))
         condition_combo = ttk.Combobox(basic_scrollable, textvariable=choice_condition_var, 
-                                       values=['', 'Combat', 'Charm', 'Clever', 'Agility', 'Service', 'Striptease', 
+                                       values=['', 'building_skill', 'Combat', 'Charm', 'Clever', 'Agility', 'Service', 'Striptease', 
                                                'Sex', 'Oral', 'Anal', 'BDSM', 'Hand', 'Homo', 'Group', 
                                                'Extreme', 'Special', 'Craft'], width=30)
         condition_combo.grid(row=row, column=1, sticky="w", padx=5, pady=5)
@@ -4869,6 +5000,50 @@ Variables in messages: {worker_name}, {skill}, {trait}
             ttk.Entry(effects_scrollable, textvariable=var, width=20).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
             effect_vars[effect_name] = var
             effect_row += 1
+
+        # Helper to load trait fields
+        def _parse_trait_fields(trait_value):
+            name = ""
+            duration = 0
+            target = ""
+            if isinstance(trait_value, dict):
+                name = trait_value.get("name", "")
+                duration = trait_value.get("duration", 0)
+                target = trait_value.get("target", "")
+            elif isinstance(trait_value, str):
+                name = trait_value
+            elif isinstance(trait_value, list) and trait_value:
+                # Use first entry for display
+                first = trait_value[0]
+                if isinstance(first, dict):
+                    name = first.get("name", "")
+                    duration = first.get("duration", 0)
+                    target = first.get("target", "")
+                else:
+                    name = first
+            return name, duration, target
+
+        # Trait list for dropdowns (optional)
+        trait_names = []
+        if isinstance(self.traits_data, list):
+            trait_names = sorted([t.get("name", "") for t in self.traits_data if t.get("name")])
+
+        # Direct add_trait
+        direct_add_trait = choice.get('effect', {}).get('add_trait', '')
+        direct_name, direct_duration, direct_target = _parse_trait_fields(direct_add_trait)
+        ttk.Label(effects_scrollable, text="Add Trait (Direct):").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        direct_add_trait_var = tk.StringVar(value=direct_name)
+        ttk.Combobox(effects_scrollable, textvariable=direct_add_trait_var, values=trait_names, width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        effect_row += 1
+        ttk.Label(effects_scrollable, text="Duration (days):").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        direct_add_trait_duration_var = tk.IntVar(value=direct_duration)
+        ttk.Spinbox(effects_scrollable, from_=0, to=9999, textvariable=direct_add_trait_duration_var, width=10).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        effect_row += 1
+        ttk.Label(effects_scrollable, text="Target:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        direct_add_trait_target_var = tk.StringVar(value=direct_target)
+        ttk.Combobox(effects_scrollable, textvariable=direct_add_trait_target_var,
+                     values=["", "random_worker", "random_worker_female", "random_worker_male", "selected_worker"], width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+            effect_row += 1
         
         # Success effects
         ttk.Label(effects_scrollable, text="Success Effects", font=("Arial", 10, "bold")).grid(row=effect_row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
@@ -4885,11 +5060,22 @@ Variables in messages: {worker_name}, {skill}, {trait}
             effect_row += 1
         
         # Add trait on success
+        success_add_trait = success_effect.get('add_trait', '')
+        success_name, success_duration, success_target = _parse_trait_fields(success_add_trait)
         ttk.Label(effects_scrollable, text="Add Trait on Success:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
-        success_add_trait_var = tk.StringVar(value=success_effect.get('add_trait', ''))
-        ttk.Entry(effects_scrollable, textvariable=success_add_trait_var, width=30).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
-        ttk.Label(effects_scrollable, text="(trait name to add to worker)").grid(row=effect_row, column=2, sticky="w", padx=5)
+        success_add_trait_var = tk.StringVar(value=success_name)
+        ttk.Combobox(effects_scrollable, textvariable=success_add_trait_var, values=trait_names, width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(effects_scrollable, text="(trait name)").grid(row=effect_row, column=2, sticky="w", padx=5)
         effect_row += 1
+        ttk.Label(effects_scrollable, text="Duration (days):").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        success_add_trait_duration_var = tk.IntVar(value=success_duration)
+        ttk.Spinbox(effects_scrollable, from_=0, to=9999, textvariable=success_add_trait_duration_var, width=10).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        effect_row += 1
+        ttk.Label(effects_scrollable, text="Target:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        success_add_trait_target_var = tk.StringVar(value=success_target)
+        ttk.Combobox(effects_scrollable, textvariable=success_add_trait_target_var,
+                     values=["", "random_worker", "random_worker_female", "random_worker_male", "selected_worker"], width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+            effect_row += 1
         
         # Failure effects
         ttk.Label(effects_scrollable, text="Failure Effects", font=("Arial", 10, "bold")).grid(row=effect_row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
@@ -4903,6 +5089,24 @@ Variables in messages: {worker_name}, {skill}, {trait}
             var = tk.StringVar(value=str(failure_effect.get(effect_name, '')))
             ttk.Entry(effects_scrollable, textvariable=var, width=20).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
             failure_vars[effect_name] = var
+            effect_row += 1
+
+        # Add trait on failure
+        failure_add_trait = failure_effect.get('add_trait', '')
+        failure_name, failure_duration, failure_target = _parse_trait_fields(failure_add_trait)
+        ttk.Label(effects_scrollable, text="Add Trait on Failure:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        failure_add_trait_var = tk.StringVar(value=failure_name)
+        ttk.Combobox(effects_scrollable, textvariable=failure_add_trait_var, values=trait_names, width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        ttk.Label(effects_scrollable, text="(trait name)").grid(row=effect_row, column=2, sticky="w", padx=5)
+        effect_row += 1
+        ttk.Label(effects_scrollable, text="Duration (days):").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        failure_add_trait_duration_var = tk.IntVar(value=failure_duration)
+        ttk.Spinbox(effects_scrollable, from_=0, to=9999, textvariable=failure_add_trait_duration_var, width=10).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
+        effect_row += 1
+        ttk.Label(effects_scrollable, text="Target:").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)
+        failure_add_trait_target_var = tk.StringVar(value=failure_target)
+        ttk.Combobox(effects_scrollable, textvariable=failure_add_trait_target_var,
+                     values=["", "random_worker", "random_worker_female", "random_worker_male", "selected_worker"], width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
             effect_row += 1
         
         # Success chance
@@ -4957,6 +5161,21 @@ Variables in messages: {worker_name}, {skill}, {trait}
             
             # Effects
             effect = {}
+
+            def build_trait_payload(name_var, duration_var, target_var):
+                name = name_var.get().strip()
+                if not name:
+                    return None
+                duration = duration_var.get() if duration_var else 0
+                target = target_var.get().strip() if target_var else ""
+                if duration > 0 or target:
+                    payload = {"name": name}
+                    if duration > 0:
+                        payload["duration"] = duration
+                    if target:
+                        payload["target"] = target
+                    return payload
+                return name
             
             # Direct effects
             for effect_name, var in effect_vars.items():
@@ -4967,8 +5186,21 @@ Variables in messages: {worker_name}, {skill}, {trait}
                     except ValueError:
                         effect[effect_name] = value
             
+            direct_trait_payload = build_trait_payload(
+                direct_add_trait_var,
+                direct_add_trait_duration_var,
+                direct_add_trait_target_var
+            )
+            if direct_trait_payload is not None:
+                effect["add_trait"] = direct_trait_payload
+            
             # Success effects (including add_trait)
-            if any(v.get().strip() for v in success_vars.values()) or success_add_trait_var.get().strip():
+            success_trait_payload = build_trait_payload(
+                success_add_trait_var,
+                success_add_trait_duration_var,
+                success_add_trait_target_var
+            )
+            if any(v.get().strip() for v in success_vars.values()) or success_trait_payload is not None:
                 success_eff = {}
                 for effect_name, var in success_vars.items():
                     value = var.get().strip()
@@ -4977,14 +5209,18 @@ Variables in messages: {worker_name}, {skill}, {trait}
                             success_eff[effect_name] = int(value) if '.' not in value else float(value)
                         except ValueError:
                             success_eff[effect_name] = value
-                add_trait = success_add_trait_var.get().strip()
-                if add_trait:
-                    success_eff['add_trait'] = add_trait
+                if success_trait_payload is not None:
+                    success_eff['add_trait'] = success_trait_payload
                 if success_eff:
                     effect['success'] = success_eff
             
             # Failure effects
-            if any(v.get().strip() for v in failure_vars.values()):
+            failure_trait_payload = build_trait_payload(
+                failure_add_trait_var,
+                failure_add_trait_duration_var,
+                failure_add_trait_target_var
+            )
+            if any(v.get().strip() for v in failure_vars.values()) or failure_trait_payload is not None:
                 failure_eff = {}
                 for effect_name, var in failure_vars.items():
                     value = var.get().strip()
@@ -4993,6 +5229,8 @@ Variables in messages: {worker_name}, {skill}, {trait}
                             failure_eff[effect_name] = int(value) if '.' not in value else float(value)
                         except ValueError:
                             failure_eff[effect_name] = value
+                if failure_trait_payload is not None:
+                    failure_eff["add_trait"] = failure_trait_payload
                 if failure_eff:
                     effect['failure'] = failure_eff
             
@@ -5044,8 +5282,11 @@ Variables in messages: {worker_name}, {skill}, {trait}
             self.current_event['max_occurrences'] = self.event_max_occurrences_var.get()
         self.current_event['cooldown_days'] = self.event_cooldown_var.get()
         self.current_event['worker_selection'] = self.event_worker_selection_var.get()
-        if self.event_worker_selection_var.get() != 'any':
-            self.current_event['worker_gender'] = self.event_worker_gender_var.get()
+        worker_gender_req = self.event_worker_gender_var.get()
+        if worker_gender_req and worker_gender_req != 'any':
+            self.current_event['worker_gender_requirement'] = worker_gender_req
+        else:
+            self.current_event.pop('worker_gender_requirement', None)
         
         # Building types
         building_types = []
@@ -5081,20 +5322,20 @@ Configuration:
 - Max Occurrences: Maximum times event can occur (if limited)
 - Cooldown Days: Days before event can occur again
 - Worker Selection: How worker is selected (choose/none/random)
-- Worker Gender: Required worker gender (any/male/female)
+- Worker Gender Requirement: Required worker gender (any/male/female)
 - Building Types: Buildings where event can occur
 
 Choices (v5.2 Enhanced):
 - Option Text: Text shown to player
-- Condition: Skill name for skill check (Combat, Charm, Clever, etc.)
+- Condition: Skill name for skill check (Combat, Charm, Clever, etc.) or "building_skill"
 - Threshold: Minimum skill level (0 = no minimum, worker meets threshold = better chances)
 - Required Trait: Worker MUST have this trait to select this choice
 - Messages: message (simple), message_success, message_failure
-- Effects (Success/Failure):
+- Effects (Direct/Success/Failure):
   * money, reputation: Manager resources
   * servant_health, servant_energy, servant_joy: Worker stats
   * rebelliousness: Worker rebelliousness change
-  * add_trait: Trait name to add to worker on success
+  * add_trait: Trait to add (supports duration and target)
 
 Example skill check choice:
 - Condition: "Combat", Threshold: 60, Required Trait: ""

@@ -1,5 +1,22 @@
 init python:
     import copy as _cp
+    import hashlib
+    import json
+
+    SNAPSHOT_VERSION = 2
+
+    def _compute_snapshot_hash(snap: dict) -> str:
+        """Compute a stable hash for snapshot integrity checks."""
+        try:
+            # Exclude hash field itself
+            snap_copy = _cp.deepcopy(snap)
+            if "_snapshot_hash" in snap_copy:
+                del snap_copy["_snapshot_hash"]
+            payload = json.dumps(snap_copy, sort_keys=True, separators=(",", ":"))
+            return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        except Exception as e:
+            renpy.log(f"SNAPSHOT: hash computation failed: {e}")
+            return ""
 
     # Ensure snapshot store is a dict (older persistents may hold None or other)
     if not isinstance(getattr(persistent, "_slot_snapshots", None), dict):
@@ -34,7 +51,17 @@ init python:
             renpy.log(f"SNAPSHOT: error detecting screen context: {e}")
             current_screen_context = "tavern"  # fallback
         
+        # Add timestamp for validation
+        import time
+        snapshot_timestamp = time.time()
+        
         return {
+            "_snapshot_version": SNAPSHOT_VERSION,
+            # Timestamp for validation (prevents loading old snapshots)
+            "_snapshot_timestamp": snapshot_timestamp,
+            "_snapshot_day": getattr(store, "current_day", 1),
+            "_snapshot_month": getattr(store, "current_month", 1),
+            "_snapshot_year": getattr(store, "current_year", 1),
             # Screen context - NEW!
             "screen_context": current_screen_context,
             "money": int(store.money) if hasattr(store, "money") else 5000,
@@ -71,6 +98,10 @@ init python:
                     "level": w.get("level", 1),
                     "health": w.get("health", 0),
                     "energy": w.get("energy", 0),
+                    # NOTE: max_health and max_energy are NOT saved - they are recalculated
+                    # from equipped items to avoid duplicate bonuses when items are re-applied
+                    "daily_cost": w.get("daily_cost", w.get("comfort_level", 1) * 20),
+                    "flags": _cp.deepcopy(w.get("flags", {})),
                     "assigned_building": w.get("assigned_building", "Unassigned"),
                     "assigned_job": w.get("assigned_job", None)
                 }
@@ -87,6 +118,9 @@ init python:
             "_event_flags": _cp.deepcopy(getattr(store, "event_flags", {})),
             "_event_occurrences": _cp.deepcopy(getattr(store, "event_occurrences", {})),
             "_event_last_occurred": _cp.deepcopy(getattr(store, "event_last_occurred", {})),
+            # Daily interaction tracking
+            "_worker_interactions_today": _cp.deepcopy(getattr(store, "worker_interactions_today", {})),
+            "_last_take_a_walk_day": getattr(store, "last_take_a_walk_day", None),
             "_journal_state": {
                 "tutorial_active": getattr(store, "tutorial_active", False),
                 "current_objective": getattr(store, "current_objective", 0),
@@ -137,10 +171,6 @@ init python:
         store.owned_buildings = _cp.deepcopy(s.get("owned_buildings", []))
         store.custom_names = _cp.deepcopy(s.get("custom_names", {}))
         store.unlocked_shops = _cp.deepcopy(s.get("unlocked_shops", {}))
-        # Sync persistent.unlocked_shops with restored store.unlocked_shops
-        if store.unlocked_shops:
-            persistent.unlocked_shops = _cp.deepcopy(store.unlocked_shops)
-            renpy.log(f"SNAPSHOT: Synced persistent.unlocked_shops from snapshot: {persistent.unlocked_shops}")
         
         # IMPORTANTE: Validar y sincronizar edificios ANTES de procesar asignaciones
         # Esto asegura que todos los edificios referenciados por workers existan
@@ -151,14 +181,26 @@ init python:
             renpy.log("SNAPSHOT: validate_and_sync_buildings error (early): " + str(e))
         store.player_name = s.get("player_name", "")
         store.player_title = s.get("player_title", "")
-        store.current_day = s.get("current_day", 1)
-        store.current_month = s.get("current_month", 1)
-        store.current_year = s.get("current_year", 1)
         
-        # Sync calendar with persistent variables
-        persistent.current_day = store.current_day
-        persistent.current_month = store.current_month
-        persistent.current_year = store.current_year
+        # IMPORTANT: JSON (save_state.rpy) always restores the calendar if it exists in the save file
+        # The snapshot should ONLY restore the calendar if JSON didn't restore it
+        # Check if calendar was already restored (JSON would have set it)
+        current_day_exists = hasattr(store, "current_day") and store.current_day is not None
+        current_month_exists = hasattr(store, "current_month") and store.current_month is not None
+        current_year_exists = hasattr(store, "current_year") and store.current_year is not None
+        
+        # Only restore calendar from snapshot if it wasn't already restored from JSON
+        # This prevents snapshot from overwriting the correct date from JSON
+        if not (current_day_exists and current_month_exists and current_year_exists):
+            store.current_day = s.get("current_day", 1)
+            store.current_month = s.get("current_month", 1)
+            store.current_year = s.get("current_year", 1)
+            renpy.log(f"SNAPSHOT: Restored calendar from snapshot (JSON didn't restore it): {store.current_day}/{store.current_month}/{store.current_year}")
+        else:
+            # Calendar was already restored from JSON, keep it (don't overwrite with potentially older snapshot)
+            renpy.log(f"SNAPSHOT: Keeping calendar from JSON (not overwriting): {store.current_day}/{store.current_month}/{store.current_year}")
+        
+        # Do not sync calendar to persistent to avoid cross-save bleed
 
         # Restore per-worker tracking structures and attributes
         try:
@@ -262,9 +304,41 @@ init python:
 
         # Restore event/journal state
         try:
-            store.event_flags = _cp.deepcopy(s.get("_event_flags", {})) or {}
-            store.event_occurrences = s.get("_event_occurrences", {}) or {}
-            store.event_last_occurred = s.get("_event_last_occurred", {}) or {}
+            # Only restore if JSON didn't already restore them (JSON takes priority)
+            # JSON is the primary save source and executes before snapshot
+            if not hasattr(store, "event_flags") or not store.event_flags:
+                store.event_flags = _cp.deepcopy(s.get("_event_flags", {})) or {}
+            else:
+                # Merge flags from snapshot if JSON didn't have them
+                snap_flags = s.get("_event_flags", {}) or {}
+                for flag_name, flag_value in snap_flags.items():
+                    if flag_name not in store.event_flags:
+                        store.event_flags[flag_name] = flag_value
+            
+            if not hasattr(store, "event_occurrences") or not store.event_occurrences:
+                store.event_occurrences = s.get("_event_occurrences", {}) or {}
+            else:
+                # Merge occurrences from snapshot if JSON didn't have them (prefer higher values)
+                snap_occurrences = s.get("_event_occurrences", {}) or {}
+                for event_id, snap_count in snap_occurrences.items():
+                    current_count = store.event_occurrences.get(event_id, 0)
+                    # Use the higher count (more recent data)
+                    store.event_occurrences[event_id] = max(current_count, snap_count)
+            
+            if not hasattr(store, "event_last_occurred") or not store.event_last_occurred:
+                store.event_last_occurred = s.get("_event_last_occurred", {}) or {}
+            else:
+                # Merge last_occurred from snapshot if JSON didn't have them (prefer more recent dates)
+                snap_last_occurred = s.get("_event_last_occurred", {}) or {}
+                for event_id, snap_date in snap_last_occurred.items():
+                    current_date = store.event_last_occurred.get(event_id, 0)
+                    # Use the more recent date (higher value = more recent)
+                    store.event_last_occurred[event_id] = max(current_date, snap_date)
+            # Daily interaction tracking
+            if "_worker_interactions_today" in s:
+                store.worker_interactions_today = _cp.deepcopy(s.get("_worker_interactions_today", {})) or {}
+            if "_last_take_a_walk_day" in s:
+                store.last_take_a_walk_day = s.get("_last_take_a_walk_day", None)
             j = s.get("_journal_state", {}) or {}
             for key, val in j.items():
                 setattr(store, key, val)
@@ -278,7 +352,7 @@ init python:
             renpy.log("SNAPSHOT: validate_and_sync_buildings completed")
         except Exception as e:
             renpy.log("SNAPSHOT: validate_and_sync_buildings error: " + str(e))
-        
+
         # Final normalization pass to ensure no duplicates
         try:
             normalize_building_assignments()
@@ -291,7 +365,10 @@ init python:
             # Build snapshot safely without generators and with only JSON-serializable structures
             if not isinstance(getattr(persistent, "_slot_snapshots", None), dict):
                 persistent._slot_snapshots = {}
+            store.last_save_slot = str(int(slot_number))
             snap = _build_snapshot()
+            snap["_snapshot_slot"] = str(int(slot_number))
+            snap["_snapshot_hash"] = _compute_snapshot_hash(snap)
             persistent._slot_snapshots[int(slot_number)] = snap
             persistent._last_snapshot = snap
             renpy.log(f"SNAPSHOT: saved for slot {slot_number}")
@@ -313,13 +390,21 @@ init python:
         try:
             if not isinstance(getattr(persistent, "_slot_snapshots", None), dict):
                 persistent._slot_snapshots = {}
+            store.last_save_slot = str(slot_name)
             snap = _build_snapshot()
+            snap["_snapshot_slot"] = str(slot_name)
+            snap["_snapshot_hash"] = _compute_snapshot_hash(snap)
+            snap_day = snap.get("_snapshot_day", 0)
+            snap_month = snap.get("_snapshot_month", 0)
+            snap_year = snap.get("_snapshot_year", 0)
             persistent._slot_snapshots[str(slot_name)] = snap
             persistent._last_snapshot = snap
-            renpy.log(f"SNAPSHOT: saved for slot '{slot_name}'")
+            renpy.log(f"SNAPSHOT: saved for slot '{slot_name}' with date {snap_day}/{snap_month}/{snap_year} (timestamp: {snap.get('_snapshot_timestamp', 'N/A')})")
             renpy.save_persistent()
         except Exception as e:
             renpy.log("SNAPSHOT: error pre_save_name: " + str(e))
+            import traceback
+            renpy.log("SNAPSHOT: traceback: " + traceback.format_exc())
 
     def snapshot_mark_load_name(slot_name: str):
         try:
@@ -343,7 +428,10 @@ init python:
             except (ValueError, TypeError):
                 page = 1
             slot_name = f"{page}-{slot_num}"
-        renpy.log(f"SNAPSHOT: pre_save_slot called with slot_num={slot_num}, page={page}, slot_name='{slot_name}'")
+        current_day = getattr(store, "current_day", 0)
+        current_month = getattr(store, "current_month", 0)
+        current_year = getattr(store, "current_year", 0)
+        renpy.log(f"SNAPSHOT: pre_save_slot called with slot_num={slot_num}, page={page}, slot_name='{slot_name}', game_date={current_day}/{current_month}/{current_year}")
         snapshot_pre_save_name(slot_name)
 
     def snapshot_mark_load_slot(slot_num):
@@ -368,31 +456,37 @@ init python:
             self.slot_num = slot_num
         
         def __call__(self):
-            try:
-                # Check if slot has a save file by trying to get its time
-                # FileTime returns "empty slot" if there's no save
-                from renpy.store import FileTime
-                slot_time = FileTime(self.slot_num, empty="empty slot")
-                slot_has_data = (slot_time != "empty slot")
-                
-                if slot_has_data:
-                    # Slot has data - this will likely LOAD (unless user overwrites)
-                    # Mark for load - if user overwrites, the save will create new snapshot anyway
-                    renpy.log(f"SNAPSHOT: PageAwareFileAction detected slot {self.slot_num} has data - preparing for LOAD")
-                    snapshot_mark_load_slot(self.slot_num)
-                    # Also prepare save snapshot in case user overwrites (confirms overwrite dialog)
-                    snapshot_pre_save_slot(self.slot_num)
-                else:
-                    # Slot is empty - this will SAVE
-                    renpy.log(f"SNAPSHOT: PageAwareFileAction detected slot {self.slot_num} is empty - preparing for SAVE")
-                    snapshot_pre_save_slot(self.slot_num)
-                
-            except Exception as e:
-                renpy.log(f"SNAPSHOT: PageAwareFileAction error: {str(e)}, defaulting to save")
-                # On error, default to save (safer)
-                snapshot_pre_save_slot(self.slot_num)
+            """
+            IMPORTANT:
+            - When user is in the Save screen, clicking a slot must create a snapshot for THAT save.
+            - When user is in the Load screen, clicking a slot must ONLY mark load.
             
-            # Then execute the native FileAction (which will save or load accordingly)
+            The old logic tried to infer "save vs load" from whether the slot had data, which is wrong:
+            in Save mode, occupied slots still mean "save overwrite", and in Load mode we must never
+            write a pre-save snapshot (it can overwrite the slot snapshot with current session state).
+            """
+            try:
+                in_save = bool(renpy.get_screen("save"))
+                in_load = bool(renpy.get_screen("load"))
+
+                if in_save:
+                    renpy.log(f"SNAPSHOT: PageAwareFileAction slot {self.slot_num} in SAVE screen -> pre_save snapshot")
+                    snapshot_pre_save_slot(self.slot_num)
+                elif in_load:
+                    renpy.log(f"SNAPSHOT: PageAwareFileAction slot {self.slot_num} in LOAD screen -> mark_load snapshot")
+                    snapshot_mark_load_slot(self.slot_num)
+                else:
+                    # Fallback: default to pre_save (safer than marking load)
+                    renpy.log(f"SNAPSHOT: PageAwareFileAction slot {self.slot_num} unknown context -> default pre_save")
+                    snapshot_pre_save_slot(self.slot_num)
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: PageAwareFileAction error: {str(e)} (defaulting to pre_save)")
+                try:
+                    snapshot_pre_save_slot(self.slot_num)
+                except Exception as e2:
+                    renpy.log(f"SNAPSHOT: PageAwareFileAction fallback pre_save error: {str(e2)}")
+            
+            # Execute the native FileAction (Ren'Py decides save vs load based on current menu).
             return renpy.store.FileAction(self.slot_num)()
         
         def get_sensitive(self):
@@ -402,6 +496,34 @@ init python:
         try:
             slot = getattr(persistent, "_slot_to_apply", None)
             renpy.log(f"SNAPSHOT: _apply_pending start, slot={slot}, keys={list((getattr(persistent, '_slot_snapshots', {}) or {}).keys())}")
+            
+            # CRITICAL: Only proceed if this is actually a load operation
+            # If slot is None and loaded_via_save is False, this shouldn't be executing
+            if slot is None and not getattr(persistent, "loaded_via_save", False):
+                renpy.log("SNAPSHOT: WARNING - _apply_pending called but no load detected! This might be a new game. Skipping.")
+                return
+            
+            # CRITICAL: Reset ALL state variables at the start of each load to prevent cross-save contamination
+            # This ensures clean state even when loading multiple times without closing the game
+            try:
+                # Clear persistent flags IMMEDIATELY (but save slot first for validation)
+                saved_slot = slot  # Save for later use
+                persistent._slot_to_apply = None
+                persistent.loaded_via_save = False
+                persistent._context_restored = False
+                renpy.save_persistent()
+                
+                # Do NOT reset store flags here.
+                # At this point, Ren'Py + JSON callbacks may have already restored state.
+                # Resetting store.game_initialized would make us treat a valid load as "empty"
+                # and incorrectly apply an older snapshot on top.
+                renpy.log("SNAPSHOT: Cleared persistent load flags at start of load (store flags preserved)")
+            except Exception as e_clear:
+                renpy.log(f"SNAPSHOT: error resetting state flags: {str(e_clear)}")
+            
+            # Use saved_slot instead of slot (which is now None)
+            slot = saved_slot
+            
             snap = None
             d = getattr(persistent, "_slot_snapshots", {}) or {}
             
@@ -421,41 +543,87 @@ init python:
                 else:
                     renpy.log(f"SNAPSHOT: no snapshot found for slot '{slot}', Ren'Py data preserved")
             
-            # Check if Ren'Py/save_state already restored valid data
-            # If workers list is populated, data was already restored - don't overwrite
+            # Validate snapshot version/slot/hash if present
+            if snap is not None:
+                snap_version = snap.get("_snapshot_version", None)
+                expected_slot = str(slot) if slot is not None else None
+                snap_slot = snap.get("_snapshot_slot", None)
+                if snap_version != SNAPSHOT_VERSION:
+                    renpy.log(f"SNAPSHOT: version mismatch (snap={snap_version}, expected={SNAPSHOT_VERSION}) - skipping apply")
+                    snap = None
+                elif expected_slot is not None and snap_slot is not None and str(snap_slot) != str(expected_slot):
+                    renpy.log(f"SNAPSHOT: slot mismatch (snap={snap_slot}, expected={expected_slot}) - skipping apply")
+                    snap = None
+                else:
+                    expected_hash = _compute_snapshot_hash(snap)
+                    snap_hash = snap.get("_snapshot_hash", "")
+                    if expected_hash and snap_hash and expected_hash != snap_hash:
+                        renpy.log("SNAPSHOT: hash mismatch - skipping apply to prevent corrupted data")
+                        snap = None
+            
+            # Check if Ren'Py/save_state already restored valid data.
+            #
+            # IMPORTANT:
+            # Using "len(workers) > 0" as a proxy is WRONG (early-game saves can legitimately have 0 workers),
+            # and it causes us to treat valid loads as "empty" and apply an older snapshot on top.
+            #
+            # The JSON load path sets store.game_initialized = True when it successfully applies state.
+            has_valid_data = bool(getattr(store, "game_initialized", False))
             current_workers = getattr(store, "workers", None)
-            has_valid_data = current_workers and len(current_workers) > 0
+            renpy.log(f"SNAPSHOT: has_valid_data={has_valid_data} (game_initialized={getattr(store,'game_initialized',None)}), workers_len={len(current_workers) if isinstance(current_workers, list) else 'N/A'}")
+            
+            # Validate snapshot age if it exists
+            snapshot_is_older = False
+            if snap is not None and has_valid_data:
+                # Compare snapshot date with current game date
+                snap_day = snap.get("_snapshot_day", 0)
+                snap_month = snap.get("_snapshot_month", 0)
+                snap_year = snap.get("_snapshot_year", 0)
+                current_day = getattr(store, "current_day", 0)
+                current_month = getattr(store, "current_month", 0)
+                current_year = getattr(store, "current_year", 0)
+                
+                # Calculate days difference (simple approximation: year*365 + month*30 + day)
+                snap_days = snap_year * 365 + snap_month * 30 + snap_day
+                current_days = current_year * 365 + current_month * 30 + current_day
+                
+                if snap_days < current_days - 1:  # Allow 1 day difference for safety
+                    snapshot_is_older = True
+                    renpy.log(f"SNAPSHOT: WARNING - Snapshot is older than current game state! Snapshot: Day {snap_day}/{snap_month}/{snap_year}, Current: Day {current_day}/{current_month}/{current_year}. NOT applying snapshot to prevent data loss.")
             
             if has_valid_data:
-                renpy.log(f"SNAPSHOT: Ren'Py already restored {len(current_workers)} workers, skipping snapshot apply")
-                # IMPORTANT: Even if Ren'Py restored data, we need to validate and sync buildings
-                # because the save file might be corrupted (missing buildings in available_buildings)
-                try:
-                    validate_and_sync_buildings()
-                    renpy.log("SNAPSHOT: validate_and_sync_buildings completed after Ren'Py restore")
-                except Exception as e:
-                    renpy.log(f"SNAPSHOT: validate_and_sync_buildings error after Ren'Py restore: {str(e)}")
-                # Merge custom building names from snapshot if Ren'Py did not restore them
-                try:
-                    snap_custom = (snap or {}).get("custom_names", {}) or {}
-                    if snap_custom:
-                        if not hasattr(store, "custom_names") or store.custom_names is None:
-                            store.custom_names = {}
-                        if not store.custom_names:
-                            store.custom_names = _cp.deepcopy(snap_custom)
-                            renpy.log("SNAPSHOT: restored custom_names from snapshot (store was empty)")
-                        else:
-                            for key, val in snap_custom.items():
-                                # If store has default name but snapshot has a custom name, prefer snapshot
-                                if key not in store.custom_names:
-                                    store.custom_names[key] = val
-                                elif store.custom_names.get(key) == key and val != key:
-                                    store.custom_names[key] = val
-                            renpy.log("SNAPSHOT: merged custom_names from snapshot")
-                except Exception as e:
-                    renpy.log(f"SNAPSHOT: custom_names merge error: {str(e)}")
+                if snapshot_is_older:
+                    renpy.log(f"SNAPSHOT: Ren'Py restored {len(current_workers)} workers with newer data than snapshot. Keeping Ren'Py data, ignoring old snapshot.")
+                else:
+                    renpy.log(f"SNAPSHOT: Ren'Py already restored {len(current_workers)} workers, skipping snapshot apply")
+                    # IMPORTANT: Even if Ren'Py restored data, we need to validate and sync buildings
+                    # because the save file might be corrupted (missing buildings in available_buildings)
+                    try:
+                        validate_and_sync_buildings()
+                        renpy.log("SNAPSHOT: validate_and_sync_buildings completed after Ren'Py restore")
+                    except Exception as e:
+                        renpy.log(f"SNAPSHOT: validate_and_sync_buildings error after Ren'Py restore: {str(e)}")
+                    # Merge custom building names from snapshot if Ren'Py did not restore them
+                    try:
+                        snap_custom = (snap or {}).get("custom_names", {}) or {}
+                        if snap_custom:
+                            if not hasattr(store, "custom_names") or store.custom_names is None:
+                                store.custom_names = {}
+                            if not store.custom_names:
+                                store.custom_names = _cp.deepcopy(snap_custom)
+                                renpy.log("SNAPSHOT: restored custom_names from snapshot (store was empty)")
+                            else:
+                                for key, val in snap_custom.items():
+                                    # If store has default name but snapshot has a custom name, prefer snapshot
+                                    if key not in store.custom_names:
+                                        store.custom_names[key] = val
+                                    elif store.custom_names.get(key) == key and val != key:
+                                        store.custom_names[key] = val
+                                renpy.log("SNAPSHOT: merged custom_names from snapshot")
+                    except Exception as e:
+                        renpy.log(f"SNAPSHOT: custom_names merge error: {str(e)}")
             elif snap is not None:
-                # Only apply snapshot if Ren'Py didn't restore data
+                # Apply snapshot if Ren'Py didn't restore data
                 snap_player = snap.get("player_name", "")
                 current_player = getattr(store, "player_name", "")
                 if snap_player == current_player or not current_player:
@@ -472,77 +640,37 @@ init python:
             # NOTE: Objective sync for old saves is now handled generically in save_state.rpy
             # (syncs ALL previous objectives based on current_objective)
             
-            # Ensure we don't re-run init path in this session
+            # Mark that this is a loaded game (not a new game)
+            # This was already set at the start, but ensure it's correct
             store.is_new_game = False
-            # NOTE: Do NOT clear persistent flags here; clear them once screen is shown
+            # game_initialized will be set by save_state.rpy after successful load
             
-            # Restore the correct screen based on saved context
+            # Restore the correct screen based on saved context.
+            # IMPORTANT: Do NOT try to manage screens/scenes from here.
+            # If something goes wrong during screen restoration, Ren'Py can end up on a black screen.
+            # Instead, always jump into the normal game flow label, which will show the proper screen.
             screen_context = "tavern"  # default fallback
             if snap and "screen_context" in snap:
                 screen_context = snap["screen_context"]
             
-            renpy.log(f"SNAPSHOT: restoring screen context = {screen_context}")
+            # Store desired context for later (optional) use by tavern_screen.
+            store._post_load_screen_context = screen_context
+            renpy.log(f"SNAPSHOT: post-load context='{screen_context}'. Will jump to tavern_screen from label after_load for safe UI restoration.")
 
-            # Clear existing UI/state before showing the restored screen to avoid stale overlays
+            # Mark context restored so tavern() doesn't try to do old flag logic.
             try:
-                for _screen in [
-                    "daily_report",
-                    "workers",
-                    "Building_select_global",
-                    "map_screen",
-                    "journal_panel",
-                    "manager_inventory",
-                    "tavern",
-                    "Building_select",
-                    "job_selection",
-                    "building_selection",
-                    "worker_details",
-                    "more_details_screen",
-                    "report_details",
-                ]:
-                    if renpy.get_screen(_screen):
-                        renpy.hide_screen(_screen)
-                renpy.scene()
-            except Exception as e_reset:
-                renpy.log("SNAPSHOT: UI reset error: " + str(e_reset))
-            
-            try:
-                # Clear persistent flags before transferring control to a screen/label
-                persistent._slot_to_apply = None
-                persistent.loaded_via_save = False
                 persistent._context_restored = True
                 renpy.save_persistent()
-                renpy.log("SNAPSHOT: persistent flags cleared before screen restoration")
+            except Exception as e_ctx:
+                renpy.log("SNAPSHOT: could not set _context_restored: " + str(e_ctx))
 
-                if screen_context == "daily_report":
-                    renpy.call_screen("daily_report")
-                    renpy.log("SNAPSHOT: daily_report screen called successfully")
-                elif screen_context == "workers":
-                    renpy.call_screen("workers")
-                    renpy.log("SNAPSHOT: workers screen called successfully")
-                elif screen_context == "buildings":
-                    renpy.call_screen("Building_select_global")
-                    renpy.log("SNAPSHOT: buildings screen called successfully")
-                elif screen_context == "map":
-                    renpy.call_screen("map_screen")
-                    renpy.log("SNAPSHOT: map screen called successfully")
-                elif screen_context == "journal":
-                    renpy.call_screen("journal_panel")
-                    renpy.log("SNAPSHOT: journal screen called successfully")
-                elif screen_context == "inventory":
-                    renpy.call_screen("manager_inventory")
-                    renpy.log("SNAPSHOT: inventory screen called successfully")
-                else:
-                    # Default to tavern flow label (handles setup and calls screen)
-                    renpy.jump("tavern_screen")
-            except Exception as e_show:
-                renpy.log(f"SNAPSHOT: show_screen error for {screen_context}: " + str(e_show))
-                try:
-                    # Fallback to tavern flow if specific screen fails
-                    renpy.jump("tavern_screen")
-                except Exception as e_fallback:
-                    renpy.log("SNAPSHOT: fallback tavern error: " + str(e_fallback))
+            # IMPORTANT: Do not renpy.jump() from inside this python function.
+            # We'll jump using Ren'Py script flow in label after_load to avoid control-flow exceptions being swallowed.
+            return
         except Exception as e:
+            # IMPORTANT: Don't swallow Ren'Py control-flow exceptions (jump/return), or you'll get a black/frozen screen.
+            if e.__class__.__name__ in ("JumpException", "ReturnException", "EndInteraction", "RestartInteraction"):
+                raise
             renpy.log("SNAPSHOT: post-load apply error: " + str(e))
 
     # Fallback: ensure application via after-load callback in case label after_load is bypassed
@@ -564,16 +692,27 @@ init python:
     # generically in save_state.rpy for ALL objectives based on current_objective
 
 label after_load:
+    $ renpy.log("AFTER_LOAD: entered")
     python:
-        renpy.log("AFTER_LOAD: entered")
+        # Apply snapshot merge only if our load-marker is present (page-aware slot load).
+        # But ALWAYS jump to tavern_screen after any load to avoid resuming old call stacks
+        # (which can result in black/frozen screens).
+        slot_to_apply = getattr(persistent, "_slot_to_apply", None)
+        loaded_via_save = getattr(persistent, "loaded_via_save", False)
+        if slot_to_apply is not None or loaded_via_save:
+            renpy.log(f"AFTER_LOAD: Load marker present (slot={slot_to_apply}, loaded_via_save={loaded_via_save}), running snapshot merge")
         try:
             _apply_pending_snapshot_and_show_tavern()
         except Exception as e:
-            renpy.log("AFTER_LOAD direct apply error: " + str(e))
+                renpy.log("AFTER_LOAD snapshot merge error: " + str(e))
+        else:
+            renpy.log("AFTER_LOAD: No snapshot load marker present; skipping snapshot merge")
     
     # Show the ESC key handler screen after loading
     show screen esc_key_handler
-    return
+
+    # ALWAYS restore via normal label flow to avoid frozen/black screens.
+    jump tavern_screen
 
 # Screen removed - no longer needed since we apply directly in after_load
 

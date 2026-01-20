@@ -23,15 +23,6 @@ init python:
     if not hasattr(store, "debug_event_loading_logging"):
         store.debug_event_loading_logging = False
 
-    # Initialize dialogue history navigation offset
-    if not hasattr(store, "dialogue_history_offset"):
-        store.dialogue_history_offset = 0
-    
-    # Initialize dialogue history start index (marks start of current conversation)
-    # This is the index in _history_list where the current conversation started
-    if not hasattr(store, "dialogue_history_start_index"):
-        store.dialogue_history_start_index = 0
-
     # Keep a reference to the original logger
     if not hasattr(store, "_original_renpy_log"):
         store._original_renpy_log = renpy.log
@@ -136,7 +127,7 @@ init python:
             "Building_select_global": [Hide("Building_select_global"), Show("tavern")],
             
             # Daily report with transition
-            "daily_report": Jump("day_transition"),
+            "daily_report": [Hide("daily_report"), Jump("day_transition")],
             
             # Shop and building screens
             "shop_selection": Hide("shop_selection"),
@@ -165,8 +156,6 @@ init python:
             "more_details_screen": Return(),
             "building_filter_menu": Return(),
             "worker_building_filter_menu": Return(),
-            "worker_job_filter_menu": Return(),
-            "daily_report_job_filter_menu": Return(),
             "report_details": Return(),
             "manager_inventory": Hide("manager_inventory"),
             
@@ -205,7 +194,7 @@ init python:
             "journal_panel", "worker_selection_popup", "building_type_selection", "adjust_skill_bonus",
             "adjust_comfort", "rename_building", "interaction_result", "interaction_menu",
             "interaction_category", "more_details_screen", "building_filter_menu",
-            "worker_building_filter_menu", "worker_job_filter_menu", "daily_report_job_filter_menu", "report_details", "manager_inventory", "worker_details",
+            "worker_building_filter_menu", "report_details", "manager_inventory", "worker_details",
             
             # Shop and building screens (HIGH PRIORITY - user wants these to close easily)
             "shop_selection", "buy_buildings", "buy_servants_table",
@@ -264,34 +253,6 @@ init python:
     
     # We'll use a screen-based approach instead of modifying keymap directly
     
-    # Reset dialogue navigation offset when new dialogue appears
-    def reset_dialogue_history_offset(event, interact=True, **kwargs):
-        """Reset history navigation when advancing to a new dialogue line."""
-        if event == "begin" and interact:
-            # Simply reset offset to 0 when new dialogue appears
-            store.dialogue_history_offset = 0
-            # Ensure offset is valid (in case history changed)
-            if hasattr(renpy.store, 'clamp_history_offset'):
-                clamp_history_offset()
-    
-    # Register the callback to reset on new dialogue
-    config.say_menu_text_filter = None  # Ensure we don't conflict
-    config.all_character_callbacks.append(reset_dialogue_history_offset)
-    
-    # Function to mark start of new conversation (can be called from labels)
-    def start_new_conversation():
-        """Mark the current point as the start of a new conversation."""
-        # Simply save the current history size - all messages from this point forward
-        # will be part of this conversation
-        old_start = store.dialogue_history_start_index
-        store.dialogue_history_start_index = len(_history_list)
-        store.dialogue_history_offset = 0
-        renpy.log(f"==========================================")
-        renpy.log(f"NEW CONVERSATION STARTED")
-        renpy.log(f"Start index: {old_start} -> {store.dialogue_history_start_index}")
-        renpy.log(f"Current history size: {len(_history_list)}")
-        renpy.log(f"==========================================")
-    
     # Money formatting utility to prevent double $ symbols
     def format_money(amount):
         """
@@ -313,6 +274,31 @@ init python:
             # It's a number, format it
             return f"${amount:g}"
 
+    # Function to mark start of new conversation (can be called from labels)
+    def start_new_conversation():
+        """Mark the current point as the start of a new conversation."""
+        # Simply save the current history size - all messages from this point forward
+        # will be part of this conversation
+        if hasattr(store, "dialogue_history_start_index"):
+            old_start = store.dialogue_history_start_index
+        else:
+            old_start = 0
+            store.dialogue_history_start_index = 0
+        
+        # Get current history size
+        try:
+            current_history_size = len(_history_list)
+        except:
+            current_history_size = 0
+        
+        store.dialogue_history_start_index = current_history_size
+        store.dialogue_history_offset = 0
+        renpy.log(f"==========================================")
+        renpy.log(f"NEW CONVERSATION STARTED")
+        renpy.log(f"Start index: {old_start} -> {store.dialogue_history_start_index}")
+        renpy.log(f"Current history size: {current_history_size}")
+        renpy.log(f"==========================================")
+
 # ESC key handler screen - this will be shown as an overlay
 screen esc_key_handler():
     zorder 1000
@@ -321,8 +307,3 @@ screen esc_key_handler():
     key "K_ESCAPE" action Function(custom_escape_action)
     # Emergency music stop with Ctrl+M
     key "K_m" action Function(emergency_stop_all_music)
-    # Dialogue history navigation with safe functions
-    key "K_h" action ShowMenu("history")  # Full history screen
-    key "K_LEFT" action Function(safe_increment_history_offset)  # Previous message
-    key "K_RIGHT" action Function(safe_decrement_history_offset)  # Next message
-    key "K_DOWN" action SetVariable("dialogue_history_offset", 0)  # Return to current message

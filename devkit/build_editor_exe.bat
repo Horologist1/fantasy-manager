@@ -2,7 +2,7 @@
 chcp 65001 >nul
 echo.
 echo ============================================================
-echo    FANTASY MANAGER EDITOR v5.1 - BUILD EXE
+echo    FANTASY MANAGER EDITOR v5.4 - BUILD EXE
 echo ============================================================
 echo.
 
@@ -21,7 +21,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo Building Fantasy Manager Editor v5.1...
+echo Building Fantasy Manager Editor v5.4...
 echo This may take a few minutes...
 echo.
 

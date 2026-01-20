@@ -334,6 +334,28 @@ label day_transition:
 
 label start:
     $ renpy.log("Game started at label start")
+    
+    # If a load path ever ends up at start, skip the intro and go to tavern.
+    python:
+        if getattr(store, "_just_loaded", False):
+            store._just_loaded = False
+            renpy.log("START: Detected _just_loaded=True, skipping intro and jumping to tavern_screen")
+            renpy.jump("tavern_screen")
+    
+    # CRITICAL: Clear player_name and player_title FIRST, before anything else
+    # This prevents Ren'Py from restoring old values from persistent/defaults
+    # We'll set them properly later if this is actually a load, or leave them empty for new game
+    python:
+        # Only clear if this appears to be a new game (no load flags set)
+        slot_to_apply = getattr(persistent, "_slot_to_apply", None)
+        loaded_via_save = getattr(persistent, "loaded_via_save", False)
+        
+        if slot_to_apply is None and not loaded_via_save:
+            # This looks like a new game, clear player data immediately
+            store.player_name = ""
+            store.player_title = ""
+            renpy.log("START: Cleared player_name and player_title for new game")
+    
     # Start BGM at game start (only plays once, no loops)
     $ start_bgm_simple("audio/BGM.ogg")
     
@@ -346,41 +368,45 @@ label start:
     else:
         $ renpy.log("Age verification already completed, skipping")
     
-    # Fallback: if we reached start due to a load, apply snapshot and jump to tavern
-    if getattr(persistent, 'loaded_via_save', False):
-        $ renpy.log("Start reached during load - applying snapshot fallback INLINE and jumping to tavern")
-        python:
-            try:
-                slot = getattr(persistent, "_slot_to_apply", None)
-                snap = None
-                d = getattr(persistent, "_slot_snapshots", {}) or {}
-                if slot is not None:
-                    if slot in d:
-                        snap = d.get(slot)
-                    elif isinstance(slot, int) and str(slot) in d:
-                        snap = d.get(str(slot))
-                    elif isinstance(slot, str) and slot.isdigit() and int(slot) in d:
-                        snap = d.get(int(slot))
-                if snap is None:
-                    snap = getattr(persistent, "_last_snapshot", None)
-                if snap:
-                    _apply_snapshot(snap)
-                    renpy.log("START SNAPSHOT: applied inline")
-                else:
-                    renpy.log("START SNAPSHOT: no snapshot found inline")
-                store.is_new_game = False
-                # Flags will be cleared in tavern screen
-            except Exception as e:
-                renpy.log("START SNAPSHOT FALLBACK error: " + str(e))
-        # Show the ESC key handler screen for loaded snapshots too
-        show screen esc_key_handler
-        jump tavern_screen
-    # If the engine jumped to start during a load, avoid re-initializing
-    if not is_new_game:
-        $ renpy.log("Start reached during load - skipping initialization and going to tavern_screen")
-        # Show the ESC key handler screen for loaded games too
-        show screen esc_key_handler
-        jump tavern_screen
+    # IMPORTANT: Do not use is_new_game to decide skipping the intro here.
+    # Use store._just_loaded instead (set during actual load). This prevents "New Game"
+    # from accidentally inheriting state and skipping the intro.
+
+    # CRITICAL: Ensure this is a new game by explicitly setting flags
+    # This prevents contamination from previous loads
+    python:
+        # Clear ALL persistent flags related to loading to prevent cross-contamination
+        persistent._slot_to_apply = None
+        persistent.loaded_via_save = False
+        persistent._context_restored = False
+        # Note: We don't clear _slot_snapshots or _last_snapshot as they're needed for saves
+        # But we ensure load flags are cleared
+        
+        # CRITICAL: Clear store data from previous games to prevent contamination
+        # This ensures a truly fresh start
+        store.workers = []
+        store.available_workers = []
+        store.owned_buildings = ["Building 1"]
+        store.custom_names = {}
+        store.player_name = ""
+        store.player_title = ""
+        store.money = 6000
+        store.current_day = 1
+        store.current_month = 1
+        store.current_year = 1
+        store.event_flags = {}
+        store.event_occurrences = {}
+        store.event_last_occurred = {}
+        store.worker_interactions_today = {}
+        store.last_take_a_walk_day = None
+        store.last_save_slot = None
+        
+        # Set new game flags explicitly
+        store.is_new_game = True
+        store.game_initialized = False
+        
+        renpy.save_persistent()
+        renpy.log("NEW GAME: Cleared all load-related persistent flags, reset store data, and set is_new_game=True")
 
     scene expression workers_bg
     show expression Solid("#00000080")  # Semi-transparent black overlay
@@ -405,6 +431,13 @@ label start:
     # Start with the inheritance scene
     call tutorial_start from _call_tutorial_start
     
+    # CRITICAL: Ensure player_name and player_title are empty before asking for input
+    # This prevents old values from appearing in the input field
+    python:
+        store.player_name = ""
+        store.player_title = ""
+        renpy.log("NEW GAME: Cleared player_name and player_title before input")
+    
     menu:
         "Choose your title"
         "Lord":
@@ -413,10 +446,14 @@ label start:
             $ player_title = "Lady"
 
     python:
-        player_name = renpy.input("Enter your name:", length=32)
+        # Ensure we're using a fresh input, not a restored value
+        store.player_name = ""
+        player_name = renpy.input("Enter your name:", length=32, default="")
         player_name = player_name.strip()
         if not player_name:
             player_name = "Manager"
+        store.player_name = player_name
+        renpy.log(f"NEW GAME: Player set name to '{player_name}' with title '{player_title}'")
 
     "Very well, [player_title] [player_name]. Let's take back our emporium."
 
@@ -431,28 +468,28 @@ label start:
     hide daytext
     scene expression Solid('#000000') with dissolve
 
-    # Initialize the calendar with forced reset for new game
-    $ initialize_calendar(force_reset=True) if getattr(store, 'is_new_game', True) else initialize_calendar(False)
-
-    # Only reset persistent.unlocked_shops for a NEW GAME, not when loading
+    # Initialize the calendar with forced reset ONLY for new game
+    # When loading, the calendar should already be restored by _apply_game_state
+    # Only call initialize_calendar if it's a new game, otherwise trust the loaded date
     if getattr(store, 'is_new_game', True):
-        $ persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
-        $ store.unlocked_shops = persistent.unlocked_shops
-        $ renpy.log("Initialized persistent.unlocked_shops for NEW GAME: " + str(persistent.unlocked_shops))
+        $ initialize_calendar(force_reset=True)
     else:
-        # When loading, sync persistent with store (store was restored from save)
-        if hasattr(store, 'unlocked_shops') and store.unlocked_shops:
-            $ persistent.unlocked_shops = _copy.deepcopy(store.unlocked_shops)
-            $ renpy.log("Synced persistent.unlocked_shops from loaded save: " + str(persistent.unlocked_shops))
-        elif hasattr(persistent, 'unlocked_shops') and persistent.unlocked_shops:
-            # Fallback: if store doesn't have it but persistent does, sync the other way
-            $ store.unlocked_shops = _copy.deepcopy(persistent.unlocked_shops)
-            $ renpy.log("Synced store.unlocked_shops from persistent: " + str(store.unlocked_shops))
+        # For loaded games, only initialize if calendar is truly missing/invalid
+        # This prevents overwriting a date that was just restored from save
+        $ initialize_calendar(force_reset=False)
+
+    # Initialize unlocked_shops ONLY in store (per-save, NOT in persistent to avoid cross-save bleed)
+    if getattr(store, 'is_new_game', True):
+        # New game: initialize default shops
+        $ store.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
+        $ renpy.log("Initialized unlocked_shops for NEW GAME: " + str(store.unlocked_shops))
+    else:
+        # Loaded game: ensure unlocked_shops exists (should be restored from JSON save)
+        if not hasattr(store, 'unlocked_shops') or not store.unlocked_shops:
+            $ store.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
+            $ renpy.log("Initialized unlocked_shops as fallback for loaded game: " + str(store.unlocked_shops))
         else:
-            # Last resort: initialize both
-            $ persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
-            $ store.unlocked_shops = persistent.unlocked_shops
-            $ renpy.log("Initialized unlocked_shops as fallback: " + str(persistent.unlocked_shops))
+            $ renpy.log("unlocked_shops restored from save: " + str(store.unlocked_shops))
 
     # FIXED: Do NOT reinitialize workers - they're already defined with 'default workers = []'
     # The line below was causing workers to reset on load:

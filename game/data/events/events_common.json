@@ -603,7 +603,7 @@
         "description": "The contact emerges from shadow like a figure from a half-remembered dream, their face hidden beneath a hood that seems to drink light rather than merely block it. In their hands, something glimmers with inner fire—a crystal that pulses with the rhythm of a captured heartbeat. They speak in whispers of challenges and tests, of proving worthiness through deed rather than coin. The Binding Gem hangs between you like a star fallen to earth, waiting for the right hand to claim it.",
         "weight": 10,
         "limited": true,
-        "event_probability": 50,
+        "event_probability": 5,
         "max_occurrences": 1,
         "cooldown_days": 7,
         "worker_selection": "choose",

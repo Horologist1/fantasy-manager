@@ -35,27 +35,51 @@ init python:
         return base + bonus  # Total can exceed 100 with bonuses
 
     def calculate_max_health(worker):
-        """Return effective maximum health (base from level plus trait bonus)."""
-        if "max_health" in worker:
-            return worker["max_health"]
+        """Return effective maximum health (base from level plus trait bonus plus item bonuses).
+        Always recalculates from scratch to avoid duplicate bonuses when items are re-applied."""
         base_health = 10 + (worker.get("level", 1) * 5)
         bonus = 0
+        
+        # Add trait bonuses
         for trait_name in worker.get("traits", []):
             for trait in traits_list:
                 if trait["name"] == trait_name:
                     bonus += trait.get("modifiers", {}).get("health", 0)
+        
+        # Add item bonuses from equipped items
+        inventory = worker.get("inventory", [])
+        for item in inventory:
+            if item[2]:  # Item is equipped (third element is equipped flag)
+                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+                if item_data and "effect" in item_data:
+                    health_bonus = item_data["effect"].get("health", 0)
+                    if health_bonus > 0:  # Only positive bonuses (max_health increases)
+                        bonus += health_bonus
+        
         return base_health + bonus
 
     def calculate_max_energy(worker):
-        """Calculate maximum energy based on level and traits."""
-        if "max_energy" in worker:
-            return worker["max_energy"]
+        """Calculate maximum energy based on level, traits, and item bonuses.
+        Always recalculates from scratch to avoid duplicate bonuses when items are re-applied."""
         base_energy = worker.get("level", 1) * 5
         bonus_energy = 0
+        
+        # Add trait bonuses
         for trait_name in worker.get("traits", []):
             trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
             if trait_def and "modifiers" in trait_def and "energy" in trait_def["modifiers"]:
                 bonus_energy += trait_def["modifiers"]["energy"]
+        
+        # Add item bonuses from equipped items
+        inventory = worker.get("inventory", [])
+        for item in inventory:
+            if item[2]:  # Item is equipped (third element is equipped flag)
+                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+                if item_data and "effect" in item_data:
+                    energy_bonus = item_data["effect"].get("energy", 0)
+                    if energy_bonus > 0:  # Only positive bonuses (max_energy increases)
+                        bonus_energy += energy_bonus
+        
         return base_energy + bonus_energy
 
     def calculate_health_regeneration(worker):

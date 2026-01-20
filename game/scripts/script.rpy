@@ -82,52 +82,36 @@ default current_day = 1
 default current_month = 1  # 1-based (Frostveil = 1)
 default current_year = 1
 
-# Initialize persistent calendar variables if they don't exist
 init python:
-    if not hasattr(persistent, "current_day") or persistent.current_day is None:
-        persistent.current_day = 1
-    if not hasattr(persistent, "current_month") or persistent.current_month is None:
-        persistent.current_month = 1
-    if not hasattr(persistent, "current_year") or persistent.current_year is None:
-        persistent.current_year = 1
-
     def initialize_calendar(force_reset=False):
-        """Initialize or sync calendar variables."""
+        """Initialize calendar variables without cross-save persistent bleed."""
         # Reset explicitly only when requested
         if force_reset:
             store.current_day = 1
             store.current_month = 1
             store.current_year = 1
-            persistent.current_day = 1
-            persistent.current_month = 1
-            persistent.current_year = 1
-            renpy.save_persistent()
             renpy.log("Calendar reset for new game (forced)")
             return
 
-        # If the game already has a valid calendar in store, keep it and just sync persistent
-        if (hasattr(store, 'current_day') and hasattr(store, 'current_month') and hasattr(store, 'current_year')
-            and isinstance(store.current_day, int) and isinstance(store.current_month, int) and isinstance(store.current_year, int)
-            and store.current_day > 0 and store.current_month > 0 and store.current_year > 0):
-            persistent.current_day = store.current_day
-            persistent.current_month = store.current_month
-            persistent.current_year = store.current_year
-            renpy.save_persistent()
+        # If the game already has a valid calendar in store, keep it
+        # Check for valid values (must be > 0, not None, and integers)
+        has_valid_day = hasattr(store, 'current_day') and store.current_day is not None and isinstance(store.current_day, int) and store.current_day > 0
+        has_valid_month = hasattr(store, 'current_month') and store.current_month is not None and isinstance(store.current_month, int) and store.current_month > 0
+        has_valid_year = hasattr(store, 'current_year') and store.current_year is not None and isinstance(store.current_year, int) and store.current_year > 0
+        
+        if has_valid_day and has_valid_month and has_valid_year:
             renpy.log(f"Calendar init (kept store): Day {store.current_day}, {month_names[store.current_month - 1]} {store.current_year}")
             return
 
-        # Otherwise, ensure persistent exists and seed store from it (without resetting existing values)
-        if not hasattr(persistent, "current_day") or persistent.current_day is None or persistent.current_day <= 0:
-            persistent.current_day = 1
-        if not hasattr(persistent, "current_month") or persistent.current_month is None or persistent.current_month <= 0:
-            persistent.current_month = 1
-        if not hasattr(persistent, "current_year") or persistent.current_year is None or persistent.current_year <= 0:
-            persistent.current_year = 1
-
-        store.current_day = persistent.current_day
-        store.current_month = persistent.current_month
-        store.current_year = persistent.current_year
-        renpy.log(f"Calendar initialized: Day {store.current_day}, {month_names[store.current_month - 1]} {store.current_year}")
+        # Only set defaults if calendar is truly uninitialized (0, None, or missing)
+        # This prevents overwriting a date that was just restored from save
+        if not has_valid_day:
+            store.current_day = 1
+        if not has_valid_month:
+            store.current_month = 1
+        if not has_valid_year:
+            store.current_year = 1
+        renpy.log(f"Calendar initialized/updated: Day {store.current_day}, {month_names[store.current_month - 1]} {store.current_year}")
 
     # Initialize event tracking dictionaries
     if not hasattr(store, "event_flags"):
@@ -139,22 +123,13 @@ init python:
     
     def reset_calendar_to_start():
         """Reset calendar to the very beginning (Day 1, Month 1, Year 1)"""
-        persistent.current_day = 1
-        persistent.current_month = 1  # 1-based (Frostveil = 1)
-        persistent.current_year = 1
         store.current_day = 1
         store.current_month = 1
         store.current_year = 1
-        renpy.save_persistent()  # Force save persistent data
         renpy.log("Calendar manually reset to Day 1, Frostveil Year 1")
 
     def sync_calendar():
-        """Synchronize calendar between store and persistent variables"""
-        # Always use store as the source of truth and sync to persistent
-        persistent.current_day = store.current_day
-        persistent.current_month = store.current_month
-        persistent.current_year = store.current_year
-        renpy.save_persistent()  # Force save persistent data
+        """Synchronize calendar (store is the single source of truth)."""
         renpy.log(f"Calendar synced: Day {store.current_day}, {month_names[store.current_month - 1]} {store.current_year}")
 
     def calculate_total_days():
@@ -731,8 +706,16 @@ init python:
     def apply_item_effects(worker, item_id):
         """Apply the effects of an equipped item to a worker."""
         item = next((i for i in items_json["items"] if i["id"] == item_id), None)
+        if not item:
+            renpy.log(f"apply_item_effects: Item '{item_id}' not found in items_json")
+            return
+        if "effect" not in item:
+            renpy.log(f"apply_item_effects: Item '{item_id}' has no 'effect' key")
+            return
+        renpy.log(f"apply_item_effects: Processing effects for '{item_id}': {list(item['effect'].keys())}")
         if item and "effect" in item:
             for effect_type, effect_value in item["effect"].items():
+                renpy.log(f"apply_item_effects: Processing effect_type='{effect_type}'")
                 if effect_type == "skill_modifiers":
                     # Equipment bonuses are handled in calculate_skill_with_traits()
                     # No need to modify base skills here
@@ -753,17 +736,45 @@ init python:
                     worker["energy"] = int(worker["max_energy"] * current_energy_percentage)
                 elif effect_type == "add_trait":
                     # Support array of traits, single trait string, or dict with name/duration
-                    if isinstance(effect_value, list):
+                    renpy.log(f"add_trait effect_value type: {type(effect_value)}, is list: {isinstance(effect_value, list)}, value: {str(effect_value)[:100]}")
+                    # Use type check that works with Ren'Py's JSON loading
+                    if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
                         # Array of trait names
+                        renpy.log(f"Processing {len(effect_value)} traits from list")
                         for trait_name in effect_value:
-                            if isinstance(trait_name, dict):
+                            if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
                                 add_trait_with_duration(worker, trait_name.get("name", ""), trait_name.get("duration", 0))
                             else:
+                                renpy.log(f"Adding trait: {trait_name}")
                                 add_trait_with_duration(worker, trait_name, 0)
-                    elif isinstance(effect_value, dict):
+                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
                         add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
                     else:
                         add_trait_with_duration(worker, effect_value, 0)
+                elif effect_type == "remove_trait":
+                    # Support array of traits or single trait string - removes traits when equipping
+                    renpy.log(f"remove_trait effect_value type: {type(effect_value)}, is list: {isinstance(effect_value, list)}, value: {str(effect_value)[:100]}")
+                    # Use type check that works with Ren'Py's JSON loading
+                    if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
+                        # Array of trait names
+                        renpy.log(f"Processing {len(effect_value)} traits to remove from list")
+                        for trait_name in effect_value:
+                            if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
+                                trait_name_to_remove = trait_name.get("name", "")
+                            else:
+                                trait_name_to_remove = trait_name
+                            if trait_name_to_remove:
+                                renpy.log(f"Removing trait: '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
+                                remove_trait(worker, trait_name_to_remove)
+                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
+                        trait_name_to_remove = effect_value.get("name", "")
+                        if trait_name_to_remove:
+                            renpy.log(f"Removing trait (dict): '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
+                            remove_trait(worker, trait_name_to_remove)
+                    else:
+                        if effect_value:
+                            renpy.log(f"Removing trait (string): '{effect_value}' from worker '{worker.get('name', 'Unknown')}'")
+                            remove_trait(worker, effect_value)
 
     def remove_item_effects(worker, item_id):
         """Remove the effects of an unequipped item from a worker."""
@@ -788,14 +799,41 @@ init python:
                     worker["max_energy"] = calculate_max_energy(worker) - effect_value
                     # Adjust current energy proportionally
                     worker["energy"] = int(worker["max_energy"] * current_energy_percentage)
-                elif effect_type == "remove_trait":
-                    # Support array of traits or single trait string
-                    if isinstance(effect_value, list):
+                elif effect_type == "add_trait":
+                    # When unequipping, remove the traits that were added when equipping
+                    renpy.log(f"remove_item_effects: Removing traits added by item '{item_id}': {effect_value}")
+                    if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
                         # Array of trait names
                         for trait_name in effect_value:
-                            remove_trait(worker, trait_name)
+                            if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
+                                trait_name_to_remove = trait_name.get("name", "")
+                            else:
+                                trait_name_to_remove = trait_name
+                            if trait_name_to_remove:
+                                renpy.log(f"remove_item_effects: Removing trait '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
+                                remove_trait(worker, trait_name_to_remove)
+                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
+                        trait_name_to_remove = effect_value.get("name", "")
+                        if trait_name_to_remove:
+                            renpy.log(f"remove_item_effects: Removing trait '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
+                            remove_trait(worker, trait_name_to_remove)
                     else:
-                        remove_trait(worker, effect_value)
+                        if effect_value:
+                            renpy.log(f"remove_item_effects: Removing trait '{effect_value}' from worker '{worker.get('name', 'Unknown')}'")
+                            remove_trait(worker, effect_value)
+                elif effect_type == "remove_trait":
+                    # When unequipping, add back the traits that were removed when equipping
+                    renpy.log(f"remove_item_effects: Re-adding traits removed by item '{item_id}': {effect_value}")
+                    if isinstance(effect_value, list):
+                        # Array of trait names - add them back
+                        for trait_name in effect_value:
+                            if trait_name:
+                                renpy.log(f"remove_item_effects: Re-adding trait '{trait_name}' to worker '{worker.get('name', 'Unknown')}'")
+                                add_trait_with_duration(worker, trait_name, 0)
+                    else:
+                        if effect_value:
+                            renpy.log(f"remove_item_effects: Re-adding trait '{effect_value}' to worker '{worker.get('name', 'Unknown')}'")
+                            add_trait_with_duration(worker, effect_value, 0)
 
     def remove_item_from_inventory(inventory, item_id, quantity=1):
         # First, ensure every entry in the inventory is a tuple
@@ -1207,8 +1245,19 @@ init python:
 
     
 
-    
-
+    def assign_random_traits(worker):
+        """Assign random traits to a worker, excluding only_assigned traits."""
+        # Load traits from JSON
+        traits_json_path = os.path.join(renpy.config.gamedir, "data", "traits.json")
+        if not os.path.exists(traits_json_path):
+            renpy.log(f"Traits JSON not found at {traits_json_path}")
+            return worker
+        
+        with open(traits_json_path, 'r', encoding='utf-8') as f:
+            traits_data = json.load(f)
+        
+        traits_list = traits_data.get("traits", [])
+        
         # Filter traits that are not marked as only_assigned and are not NSFW (if applicable)
         possible_traits = [
             t for t in traits_list
@@ -2143,6 +2192,36 @@ init python:
             building = available_buildings[worker["assigned_building"]]
             _remove_worker_from_building_by_name(building, worker.get("name"))
 
+    def adjust_comfort_and_recalculate_relationship(worker, new_comfort):
+        """
+        Adjust worker's comfort level and recalculate relationship maintaining the current difference.
+        Relationship minimum is 10 + comfort, but if it was higher, we maintain that difference.
+        Also updates daily_cost to reflect the new comfort level.
+        """
+        current_comfort = worker.get("comfort_level", 1)
+        current_relationship = worker.get("relationship", 10 + current_comfort)
+        
+        # Calculate the minimum relationship for current comfort
+        current_min_relationship = 10 + current_comfort
+        
+        # Calculate how much above minimum the relationship currently is
+        relationship_bonus = max(0, current_relationship - current_min_relationship)
+        
+        # Set new comfort
+        worker["comfort_level"] = new_comfort
+        
+        # Calculate new minimum relationship
+        new_min_relationship = 10 + new_comfort
+        
+        # Recalculate relationship maintaining the bonus
+        new_relationship = max(10, new_min_relationship + relationship_bonus)
+        worker["relationship"] = new_relationship
+        
+        # Update daily_cost based on new comfort level (comfort * 20)
+        worker["daily_cost"] = new_comfort * 20
+        
+        renpy.log(f"Comfort adjusted: {current_comfort} -> {new_comfort}, Relationship: {current_relationship} -> {new_relationship} (bonus: {relationship_bonus}), Daily Cost: ${worker['daily_cost']}")
+
     def check_worker_health():
         global workers
         to_remove = []
@@ -2300,7 +2379,7 @@ init python:
         else:
             return f"{shop_name} (Closed)"
 
-    def split_text_for_dialogue(text, max_chars=200):
+    def split_text_for_dialogue(text, max_chars=120):
         """
         Divide un texto largo en múltiples mensajes que quepan en el cuadro de diálogo.
         Intenta dividir por frases completas primero, luego por palabras.
@@ -2448,7 +2527,8 @@ init python:
         # The get_max_daily_workers() function will always return the correct value
 
         calculate_reputation(building_name)
-        renpy.notify(f"Upgraded {custom_names[building_name]} to level {building['base_level']}!")
+        building_display_name = custom_names.get(building_name, building_name)
+        renpy.notify(f"Upgraded {building_display_name} to level {building['base_level']}!")
 
     def process_choice(choice, event, acting_worker=None):
         renpy.log(f"process_choice received acting_worker: {acting_worker}, Type: {type(acting_worker)}")
@@ -2619,13 +2699,13 @@ init python:
                 
                 # Split long messages into multiple narrator bubbles to avoid overflow
                 try:
-                    if len(outcome_message) > 260:
+                    if len(outcome_message) > 180:
                         import re
                         sentences = re.split(r'(?<=[\.!?])\s+', outcome_message)
                         chunks = []
                         current = ""
                         for s in sentences:
-                            if len(current) + len(s) + 1 <= 260:
+                            if len(current) + len(s) + 1 <= 180:
                                 current = (current + " " + s).strip()
                             else:
                                 if current:
@@ -2949,13 +3029,30 @@ init python:
         # Add new traits
         if "add_trait" in effects:
             trait_data = effects["add_trait"]
-            new_trait = trait_data["name"]
-            duration = trait_data.get("duration", 0)
             
-            # Only add if not already present and meets conditions
-            if new_trait not in worker.get("traits", []):
-                add_trait_with_duration(worker, new_trait, duration)
-                renpy.notify(f"{worker['name']} gained {new_trait} from expired trait")
+            def process_trait_entry(trait_entry):
+                """Process a single trait entry (string, dict, or list element)."""
+                if isinstance(trait_entry, dict):
+                    trait_name = trait_entry.get("name")
+                    duration = trait_entry.get("duration", 0)
+                else:
+                    # trait_entry is a string (trait name)
+                    trait_name = trait_entry
+                    duration = 0
+                
+                if trait_name and trait_name not in worker.get("traits", []):
+                    add_trait_with_duration(worker, trait_name, duration)
+                    renpy.notify(f"{worker['name']} gained {trait_name} from expired trait")
+            
+            # Handle different formats: string, list, or dict
+            if isinstance(trait_data, list):
+                for trait_entry in trait_data:
+                    process_trait_entry(trait_entry)
+            elif isinstance(trait_data, dict):
+                process_trait_entry(trait_data)
+            else:
+                # Single string (trait name)
+                process_trait_entry(trait_data)
 
         # Add new workers with proper condition checking
         if "add_worker" in effects:
@@ -3119,45 +3216,84 @@ init python:
             # Add traits with duration
             if "add_trait" in effect_dict:
                 trait_data = effect_dict["add_trait"]
-                trait_name = trait_data.get("name")
-                duration = trait_data.get("duration", 0)  # Default to 0 if duration is not specified
-                target = trait_data.get("target", None)
-                
-                # Handle different target types
-                target_worker = worker
-                
-                if target == "random_worker":
-                    # Choose a random worker from all available
-                    if store.workers:
-                        target_worker = random.choice(store.workers)
-                        renpy.log(f"Selected random worker {target_worker['name']} for trait application")
-                
-                elif target == "random_worker_female":
-                    # Choose a random female worker
-                    female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
-                    if female_workers:
-                        target_worker = random.choice(female_workers)
-                        renpy.log(f"Selected random female worker {target_worker['name']} for trait application")
+
+                def apply_trait_entry(trait_entry):
+                    # Robust type checking for Ren'Py JSON-loaded data
+                    is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
+                    is_string = isinstance(trait_entry, str) and not is_dict
+                    
+                    if is_dict:
+                        try:
+                            trait_name = trait_entry.get("name") if hasattr(trait_entry, 'get') else None
+                            duration = trait_entry.get("duration", 0) if hasattr(trait_entry, 'get') else 0
+                            target = trait_entry.get("target", None) if hasattr(trait_entry, 'get') else None
+                            if not trait_name:
+                                renpy.log(f"ERROR: add_trait dict missing 'name' key: {trait_entry}")
+                                return
+                        except (AttributeError, TypeError) as e:
+                            renpy.log(f"ERROR: add_trait dict access failed: {e}, type: {type(trait_entry)}, value: {trait_entry}")
+                            return
+                    elif is_string:
+                        trait_name = trait_entry
+                        duration = 0
+                        target = None
                     else:
-                        renpy.log("No female workers available for trait application - skipping")
-                        target_worker = None
-                
-                elif target == "random_worker_male":
-                    # Choose a random male worker
-                    male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
-                    if male_workers:
-                        target_worker = random.choice(male_workers)
-                        renpy.log(f"Selected random male worker {target_worker['name']} for trait application")
+                        renpy.log(f"ERROR: add_trait entry has invalid type: {type(trait_entry)}, value: {trait_entry}")
+                        return
+
+                    # Handle different target types
+                    target_worker = worker
+
+                    if target == "random_worker":
+                        # Choose a random worker from all available
+                        if store.workers:
+                            target_worker = random.choice(store.workers)
+                            renpy.log(f"Selected random worker {target_worker['name']} for trait application")
+
+                    elif target == "random_worker_female":
+                        # Choose a random female worker
+                        female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
+                        if female_workers:
+                            target_worker = random.choice(female_workers)
+                            renpy.log(f"Selected random female worker {target_worker['name']} for trait application")
+                        else:
+                            renpy.log("No female workers available for trait application - skipping")
+                            target_worker = None
+
+                    elif target == "random_worker_male":
+                        # Choose a random male worker
+                        male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
+                        if male_workers:
+                            target_worker = random.choice(male_workers)
+                            renpy.log(f"Selected random male worker {target_worker['name']} for trait application")
+                        else:
+                            renpy.log("No male workers available for trait application - skipping")
+                            target_worker = None
+
+                    if trait_name and target_worker:
+                        add_trait_with_duration(target_worker, trait_name, duration)
+                    elif trait_name:
+                        renpy.log(f"Could not add trait '{trait_name}' - no suitable worker found")
                     else:
-                        renpy.log("No male workers available for trait application - skipping")
-                        target_worker = None
+                        renpy.log("Error: 'add_trait' effect is missing 'name' key.")
+
+                # Robust type checking for Ren'Py JSON-loaded data
+                is_list = isinstance(trait_data, list) or (hasattr(trait_data, '__iter__') and not isinstance(trait_data, str) and not isinstance(trait_data, dict))
+                is_dict = isinstance(trait_data, dict) or (hasattr(trait_data, 'get') and callable(getattr(trait_data, 'get', None)) and not isinstance(trait_data, str))
+                is_string = isinstance(trait_data, str) and not is_dict
                 
-                if trait_name and target_worker:
-                    add_trait_with_duration(target_worker, trait_name, duration)
-                elif trait_name:
-                    renpy.log(f"Could not add trait '{trait_name}' - no suitable worker found")
-                else:
-                    renpy.log("Error: 'add_trait' effect is missing 'name' key.")
+                try:
+                    if is_list:
+                        for trait_entry in trait_data:
+                            apply_trait_entry(trait_entry)
+                    elif is_dict or is_string:
+                        apply_trait_entry(trait_data)
+                    else:
+                        renpy.log(f"ERROR: add_trait has invalid type: {type(trait_data)}, value: {trait_data}")
+                except Exception as e:
+                    renpy.log(f"ERROR processing add_trait: {e}, type: {type(trait_data)}, value: {trait_data}")
+                    import traceback
+                    renpy.log(traceback.format_exc())
 
         # Handle event flags - add, remove, or modify flags used for event chains and conditions
         if "event_flags" in effect_dict:
@@ -3188,20 +3324,12 @@ init python:
         if "custom" in effect_dict:
             custom_action = effect_dict["custom"]
             if custom_action == "unlock_shop2":
-                # Ensure persistent.unlocked_shops exists before accessing it
-                if not hasattr(persistent, 'unlocked_shops') or persistent.unlocked_shops is None:
-                    persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
-                persistent.unlocked_shops["shop2"] = True
                 store.unlocked_shops["shop2"] = True  # Sync to store variable
-                renpy.log(f"Unlocked shop2 - persistent: {persistent.unlocked_shops}, store: {store.unlocked_shops}")
+                renpy.log(f"Unlocked shop2 - store: {store.unlocked_shops}")
                 renpy.notify("The Adventurer's Market is now available!")
             elif custom_action == "unlock_shop3":
-                # Ensure persistent.unlocked_shops exists before accessing it
-                if not hasattr(persistent, 'unlocked_shops') or persistent.unlocked_shops is None:
-                    persistent.unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
-                persistent.unlocked_shops["shop3"] = True
                 store.unlocked_shops["shop3"] = True  # Sync to store variable
-                renpy.log(f"Unlocked shop3 - persistent: {persistent.unlocked_shops}, store: {store.unlocked_shops}")
+                renpy.log(f"Unlocked shop3 - store: {store.unlocked_shops}")
                 renpy.notify("The Elite Emporium is now available!")
             elif custom_action == "give_item":
                 # Add a specific item to the manager inventory (with optional chance)
@@ -3328,17 +3456,74 @@ init python:
                         else:
                             renpy.notify(f"Worker {worker_name} could not be found to recruit.")
 
-        # Handle trait addition with duration
+        # Handle trait addition with duration (OUTSIDE worker block - for events without workers)
         if "add_trait" in effect_dict:
             trait_data = effect_dict["add_trait"]
-            trait_name = trait_data["name"]
-            trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
             
-            if trait_def and worker is not None:  # Check if worker is not None before adding trait
-                duration = trait_data.get("duration", trait_def.get("duration", 0))
-                add_trait_with_duration(worker, trait_name, duration)
-            elif worker is None:
-                renpy.log(f"Cannot add trait '{trait_name}' - worker is None")
+            def apply_trait_entry(trait_entry, target_worker_override=None):
+                """Helper function to apply a single trait entry."""
+                # Robust type checking for Ren'Py JSON-loaded data
+                # Check if it's a dict-like object (has 'get' method)
+                is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
+                # Check if it's a string (but not a dict that happens to have get)
+                is_string = isinstance(trait_entry, str) and not is_dict
+                
+                if is_dict:
+                    try:
+                        trait_name = trait_entry.get("name") if hasattr(trait_entry, 'get') else None
+                        duration = trait_entry.get("duration", 0) if hasattr(trait_entry, 'get') else 0
+                        if not trait_name:
+                            renpy.log(f"ERROR: add_trait dict missing 'name' key: {trait_entry}")
+                            return
+                    except (AttributeError, TypeError) as e:
+                        renpy.log(f"ERROR: add_trait dict access failed: {e}, type: {type(trait_entry)}, value: {trait_entry}")
+                        return
+                elif is_string:
+                    # trait_entry is a string (trait name)
+                    trait_name = trait_entry
+                    duration = 0
+                else:
+                    renpy.log(f"ERROR: add_trait entry has invalid type: {type(trait_entry)}, value: {trait_entry}")
+                    return
+                
+                target_worker = target_worker_override if target_worker_override is not None else worker
+                
+                if trait_name and target_worker:
+                    trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
+                    if trait_def:
+                        if duration == 0:
+                            duration = trait_def.get("duration", 0)
+                        add_trait_with_duration(target_worker, trait_name, duration)
+                    else:
+                        renpy.log(f"Trait '{trait_name}' not found in traits_list")
+                elif trait_name:
+                    renpy.log(f"Cannot add trait '{trait_name}' - worker is None")
+            
+            # Robust type checking for Ren'Py JSON-loaded data
+            # Check if it's a list (but not a string, which is also iterable)
+            is_list = isinstance(trait_data, list) or (hasattr(trait_data, '__iter__') and not isinstance(trait_data, str) and not isinstance(trait_data, dict))
+            # Check if it's a dict-like object
+            is_dict = isinstance(trait_data, dict) or (hasattr(trait_data, 'get') and callable(getattr(trait_data, 'get', None)) and not isinstance(trait_data, str))
+            # Check if it's a string (but not a dict that happens to have get)
+            is_string = isinstance(trait_data, str) and not is_dict
+            
+            try:
+                if is_list:
+                    # Array of trait names or dicts
+                    for trait_entry in trait_data:
+                        apply_trait_entry(trait_entry)
+                elif is_dict:
+                    # Single dict with name/duration
+                    apply_trait_entry(trait_data)
+                elif is_string:
+                    # Single string (trait name)
+                    apply_trait_entry(trait_data)
+                else:
+                    renpy.log(f"ERROR: add_trait has invalid type: {type(trait_data)}, value: {trait_data}")
+            except Exception as e:
+                renpy.log(f"ERROR processing add_trait: {e}, type: {type(trait_data)}, value: {trait_data}")
+                import traceback
+                renpy.log(traceback.format_exc())
         
         # Return applied values for dynamic message replacement
         return applied_values

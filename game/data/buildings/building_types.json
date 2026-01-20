@@ -1069,7 +1069,7 @@
               "report": "Attended Clients",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Clever"
+                "Charm"
               ],
               "relevant_traits": [
                 "Hardworking",
@@ -1084,8 +1084,8 @@
                 "mediocre": "40 + skill * 2",
                 "failure": "-5"
               },
-              "story_image": "service_story1",
-              "failure_image": "service_story1_failure",
+              "story_image": "charm",
+              "failure_image": "charm_failure",
               "descriptions": {
                 "failure": "{worker_name} can't deliver the service expected. The lack of charm and poor customer attention results in a disappointing experience that leaves the client unsatisfied with the place.",
                 "mediocre": "{worker_name} provides basic customer service. Handles the minimum tasks but lacks the charisma and personal touch that would make the experience memorable.",
@@ -1279,7 +1279,7 @@
               "report": "Served Regulars",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Clever"
+                "Charm"
               ],
               "relevant_traits": [
                 "Hardworking",
@@ -1294,8 +1294,8 @@
                 "mediocre": "40 + skill * 2",
                 "failure": "-5"
               },
-              "story_image": "service_story1_restaurant",
-              "failure_image": "service_story1_restaurant_failure",
+              "story_image": "charm",
+              "failure_image": "charm_failure",
               "descriptions": {
                 "failure": "{worker_name} struggles to handle multiple tables of regulars. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the dining experience for several groups of customers.",
                 "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",

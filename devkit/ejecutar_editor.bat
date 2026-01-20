@@ -1,14 +1,14 @@
 @echo off
 cd /d "%~dp0"
-echo Fantasy Manager Editor v5.1 - Complete Edition
+echo Fantasy Manager Editor v5.4 - Complete Edition
 echo.
 echo Features:
-echo  - Only Assigned field for traits
-echo  - Manual worker file loading
-echo  - Save only current worker
+echo  - Workers, Traits, Events, Items, Buildings editors
+echo  - Trait selectors for items (dropdown menus)
+echo  - Daily Stories editor with loot and consequences
+echo  - Event editor with cooldowns, occurrences, probabilities
 echo  - Whoremaster Import
 echo  - GIF to WebM conversion
-echo  - Workers, Traits, Events, Items editors
 echo.
 python fantasy_manager_editor_v4.py
 if errorlevel 1 (

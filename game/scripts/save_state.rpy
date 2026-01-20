@@ -53,6 +53,16 @@ init -1 python:
             state["current_day"] = getattr(store, "current_day", 1)
             state["current_month"] = getattr(store, "current_month", 1)
             state["current_year"] = getattr(store, "current_year", 1)
+            state["last_save_slot"] = getattr(store, "last_save_slot", None)
+
+            # Event tracking (critical for event system)
+            state["event_flags"] = _copy.deepcopy(getattr(store, "event_flags", {}))
+            state["event_occurrences"] = _copy.deepcopy(getattr(store, "event_occurrences", {}))
+            state["event_last_occurred"] = _copy.deepcopy(getattr(store, "event_last_occurred", {}))
+
+            # Daily interaction tracking
+            state["worker_interactions_today"] = _copy.deepcopy(getattr(store, "worker_interactions_today", {}))
+            state["last_take_a_walk_day"] = getattr(store, "last_take_a_walk_day", None)
 
             # Flags
             state["game_initialized"] = True
@@ -135,10 +145,6 @@ init -1 python:
                 renpy.log("SAVE_STATE: validate_and_sync_buildings error (early): " + str(e))
             if "unlocked_shops" in state:
                 store.unlocked_shops = _copy.deepcopy(state["unlocked_shops"]) or {}
-                # Sync persistent.unlocked_shops with restored store.unlocked_shops
-                if store.unlocked_shops:
-                    persistent.unlocked_shops = _copy.deepcopy(store.unlocked_shops)
-                    renpy.log(f"SAVE_STATE: Synced persistent.unlocked_shops from JSON: {persistent.unlocked_shops}")
 
             # Meta
             if "player_name" in state:
@@ -196,16 +202,23 @@ init -1 python:
             if "vengeance_path" in state:
                 store.vengeance_path = state["vengeance_path"]
 
-            # Calendar - sync both store and persistent
+            # Calendar - keep per-save, do not sync to persistent (avoids cross-save bleed)
             if "current_day" in state:
-                store.current_day = state["current_day"]
-                persistent.current_day = state["current_day"]
+                old_day = getattr(store, "current_day", None)
+                store.current_day = int(state["current_day"])
+                renpy.log(f"SAVE_STATE: Restored current_day from JSON: {old_day} -> {store.current_day}")
             if "current_month" in state:
-                store.current_month = state["current_month"]
-                persistent.current_month = state["current_month"]
+                old_month = getattr(store, "current_month", None)
+                store.current_month = int(state["current_month"])
+                renpy.log(f"SAVE_STATE: Restored current_month from JSON: {old_month} -> {store.current_month}")
             if "current_year" in state:
-                store.current_year = state["current_year"]
-                persistent.current_year = state["current_year"]
+                old_year = getattr(store, "current_year", None)
+                store.current_year = int(state["current_year"])
+                renpy.log(f"SAVE_STATE: Restored current_year from JSON: {old_year} -> {store.current_year}")
+            if "current_day" in state or "current_month" in state or "current_year" in state:
+                renpy.log(f"SAVE_STATE: Calendar fully restored from JSON: Day {store.current_day}/{store.current_month}/{store.current_year}")
+            if "last_save_slot" in state:
+                store.last_save_slot = state["last_save_slot"]
 
             # SYNC OBJECTIVES FOR OLD SAVES: If current_objective > N, all objectives 1 to N-1 must be complete
             # This fixes old saves where objective completion states weren't saved
@@ -217,9 +230,19 @@ init -1 python:
                         setattr(store, obj_var, True)
                         renpy.log(f"SAVE_STATE: Synced {obj_var} to True (current_objective={current_obj})")
 
-            # Optional: flags if present (future-proof)
+            # Event tracking (critical for event system)
             if "event_flags" in state:
-                store.event_flags = _copy.deepcopy(state["event_flags"]) or store.event_flags
+                store.event_flags = _copy.deepcopy(state["event_flags"]) or {}
+            if "event_occurrences" in state:
+                store.event_occurrences = _copy.deepcopy(state["event_occurrences"]) or {}
+            if "event_last_occurred" in state:
+                store.event_last_occurred = _copy.deepcopy(state["event_last_occurred"]) or {}
+
+            # Daily interaction tracking
+            if "worker_interactions_today" in state:
+                store.worker_interactions_today = _copy.deepcopy(state["worker_interactions_today"]) or {}
+            if "last_take_a_walk_day" in state:
+                store.last_take_a_walk_day = state["last_take_a_walk_day"]
 
             # Validate and sync buildings before normalization
             try:
@@ -227,7 +250,7 @@ init -1 python:
                 renpy.log("SAVE_STATE: validate_and_sync_buildings completed")
             except Exception as e:
                 renpy.log("SAVE_STATE: validate_and_sync_buildings error: " + str(e))
-            
+
             # Final normalization pass to ensure no duplicates
             try:
                 normalize_building_assignments()
@@ -235,10 +258,12 @@ init -1 python:
             except Exception as e:
                 renpy.log("SAVE_STATE: normalize error: " + str(e))
 
-            # Guard
+            # Mark game as initialized AFTER successful load
+            # Note: persistent.loaded_via_save is already cleared by snapshot system
             store.game_initialized = True
-            persistent.loaded_via_save = True
-            renpy.log("SAVE_STATE: state applied during load")
+            # Mark that we just loaded (used to prevent "Start" from re-running the intro)
+            store._just_loaded = True
+            renpy.log("SAVE_STATE: state applied during load, game_initialized set to True")
         except Exception as e:
             renpy.log("SAVE_STATE: error applying state: " + str(e))
 
