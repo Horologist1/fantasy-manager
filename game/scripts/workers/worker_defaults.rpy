@@ -25,9 +25,11 @@ init python:
             for skill_name in base_skills:
                 worker["skills"].setdefault(skill_name, 5)
 
-        # Store original skills before any modifications
-        if "original_skills" not in worker:
-            worker["original_skills"] = worker["skills"].copy()
+        # NOTE: original_skills has been removed - skills is now the single source of truth
+        # Item and trait bonuses are calculated dynamically in calculate_skill_with_traits()
+        # Clean up original_skills from old saves to keep data clean
+        if "original_skills" in worker:
+            del worker["original_skills"]
 
         # Monster-specific defaults
         if worker.get("monster", False):
@@ -38,16 +40,26 @@ init python:
             worker.setdefault("description", f"A {worker['name'].lower()} captured from the wild.")
 
         # Initialize skill_uses with skill names only
+        # IMPORTANT: Preserve existing skill_uses values - don't reset progress when changing professions
         if "skill_uses" not in worker:
             worker["skill_uses"] = {skill_name: 0 for skill_name in base_skills.keys()}
         else:
-            # Only keep valid skill names in skill_uses
-            new_skill_uses = {}
+            # Preserve ALL existing skill_uses values, only initialize missing ones
+            # This ensures progress is not lost when changing professions
             for skill_name in base_skills.keys():
-                new_skill_uses[skill_name] = int(worker["skill_uses"].get(skill_name, 0))
-            worker["skill_uses"] = new_skill_uses
+                if skill_name not in worker["skill_uses"]:
+                    worker["skill_uses"][skill_name] = 0
+                else:
+                    # Ensure it's an integer
+                    worker["skill_uses"][skill_name] = int(worker["skill_uses"][skill_name])
+            # Don't remove skills that aren't in base_skills - preserve all progress
 
         worker["level"] = max(1, int(worker.get("level", 1)))
+        
+        # Initialize daily_sexual_work if not present (for libido calculation)
+        # This is separate from skill_uses which accumulates for level ups
+        if "daily_sexual_work" not in worker:
+            worker["daily_sexual_work"] = 0
 
         if "inventory" not in worker or not isinstance(worker["inventory"], list):
             worker["inventory"] = []
@@ -107,12 +119,22 @@ init python:
             elif "traits" not in worker:
                 worker["traits"] = []
         else:
-            # Non-unique workers can get random traits if they don't have any
-            if "traits" not in worker or not worker["traits"]:
-                assign_random_traits(worker)
-            else:
+            # Non-unique workers: validate existing traits first
+            if "traits" in worker and worker["traits"]:
                 valid_traits = [trait for trait in worker["traits"] if trait in [t["name"] for t in traits_list]]
                 worker["traits"] = valid_traits
+            else:
+                worker["traits"] = []
+            
+            # Ensure non-unique workers have at least 3 traits
+            # If they have fewer than 3, add random traits to reach 3-4 total
+            current_trait_count = len(worker.get("traits", []))
+            if current_trait_count < 3:
+                # Assign random traits to fill up to 3-4 total (preserving existing traits)
+                store.assign_random_traits_with_limits(worker, target_min=3, target_max=4)
+                # After assignment, log final count
+                final_count = len(worker.get("traits", []))
+                renpy.log(f"TRAITS: Worker {worker.get('name', 'Unknown')} - Started with {current_trait_count}, now has {final_count} traits")
 
         # Preserve existing comfort_level if it exists, otherwise set to comfort_desired or default to 1
         if "comfort_level" not in worker:

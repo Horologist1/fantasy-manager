@@ -335,23 +335,49 @@ label day_transition:
 label start:
     $ renpy.log("Game started at label start")
     
-    # If a load path ever ends up at start, skip the intro and go to tavern.
+    # CRITICAL: Check if this is a load operation before doing ANYTHING else
     python:
+        # Check multiple indicators that this might be a load
+        is_load_operation = False
+        
+        # Method 1: Check if _just_loaded was set by after_load
         if getattr(store, "_just_loaded", False):
+            is_load_operation = True
+            renpy.log("START: _just_loaded=True detected")
+        
+        # Method 2: Check if Ren'Py's loadname is set
+        try:
+            if getattr(renpy.loadsave, "loadname", None):
+                is_load_operation = True
+                renpy.log("START: Ren'Py loadname detected")
+        except:
+            pass
+        
+        # Method 3: Check if game_initialized without explicit new game flag
+        if not getattr(store, "_force_new_game_reset", False) and getattr(store, "game_initialized", False):
+            is_load_operation = True
+            renpy.log("START: game_initialized=True without new_game flag")
+        
+        # Method 4: Check if we have save data (money != default, or workers exist)
+        if getattr(store, "money", 6000) != 6000 or len(getattr(store, "workers", [])) > 0:
+            is_load_operation = True
+            renpy.log(f"START: Non-default state detected (money={getattr(store, 'money', 6000)}, workers={len(getattr(store, 'workers', []))})")
+        
+        # If this is a load, skip ALL reset logic and go straight to tavern
+        if is_load_operation:
             store._just_loaded = False
-            renpy.log("START: Detected _just_loaded=True, skipping intro and jumping to tavern_screen")
+            store.is_new_game = False
+            store.game_initialized = True
+            store._force_new_game_reset = False
+            renpy.log("START: Load operation detected, skipping all reset logic and jumping to tavern_screen")
             renpy.jump("tavern_screen")
     
     # CRITICAL: Clear player_name and player_title FIRST, before anything else
     # This prevents Ren'Py from restoring old values from persistent/defaults
     # We'll set them properly later if this is actually a load, or leave them empty for new game
     python:
-        # Only clear if this appears to be a new game (no load flags set)
-        slot_to_apply = getattr(persistent, "_slot_to_apply", None)
-        loaded_via_save = getattr(persistent, "loaded_via_save", False)
-        
-        if slot_to_apply is None and not loaded_via_save:
-            # This looks like a new game, clear player data immediately
+        if getattr(store, "_force_new_game_reset", False):
+            # This is an explicit new game start; clear player data immediately
             store.player_name = ""
             store.player_title = ""
             renpy.log("START: Cleared player_name and player_title for new game")
@@ -375,38 +401,47 @@ label start:
     # CRITICAL: Ensure this is a new game by explicitly setting flags
     # This prevents contamination from previous loads
     python:
-        # Clear ALL persistent flags related to loading to prevent cross-contamination
-        persistent._slot_to_apply = None
-        persistent.loaded_via_save = False
-        persistent._context_restored = False
-        # Note: We don't clear _slot_snapshots or _last_snapshot as they're needed for saves
-        # But we ensure load flags are cleared
-        
-        # CRITICAL: Clear store data from previous games to prevent contamination
-        # This ensures a truly fresh start
-        store.workers = []
-        store.available_workers = []
-        store.owned_buildings = ["Building 1"]
-        store.custom_names = {}
-        store.player_name = ""
-        store.player_title = ""
-        store.money = 6000
-        store.current_day = 1
-        store.current_month = 1
-        store.current_year = 1
-        store.event_flags = {}
-        store.event_occurrences = {}
-        store.event_last_occurred = {}
-        store.worker_interactions_today = {}
-        store.last_take_a_walk_day = None
-        store.last_save_slot = None
-        
-        # Set new game flags explicitly
-        store.is_new_game = True
-        store.game_initialized = False
-        
-        renpy.save_persistent()
-        renpy.log("NEW GAME: Cleared all load-related persistent flags, reset store data, and set is_new_game=True")
+        # Only reset data when this is truly a new game (explicit flag).
+        if getattr(store, "_force_new_game_reset", False):
+            # Clear ALL persistent flags related to loading to prevent cross-contamination
+            persistent._slot_to_apply = None
+            persistent.loaded_via_save = False
+            persistent._context_restored = False
+            # Note: We don't clear _slot_snapshots or _last_snapshot as they're needed for saves
+            # But we ensure load flags are cleared
+            
+            # CRITICAL: Clear store data from previous games to prevent contamination
+            # This ensures a truly fresh start
+            store.workers = []
+            store.available_workers = []
+            store.owned_buildings = ["Building 1"]
+            store.custom_names = {"Building 1": "Building 1"}
+            store.map_button_buildings = {}
+            store.player_name = ""
+            store.player_title = ""
+            store.money = 6000
+            store.current_day = 1
+            store.current_month = 1
+            store.current_year = 1
+            # Clear calendar restore flags to avoid cross-save confusion
+            store._calendar_restored_from_json = False
+            store._calendar_restored_values = None
+            store.event_flags = {}
+            store.event_occurrences = {}
+            store.event_last_occurred = {}
+            store.worker_interactions_today = {}
+            store.last_take_a_walk_day = None
+            store.last_save_slot = None
+            
+            # Set new game flags explicitly
+            store.is_new_game = True
+            store.game_initialized = False
+            
+            renpy.save_persistent()
+            renpy.log("NEW GAME: Cleared all load-related persistent flags, reset store data, and set is_new_game=True")
+            store._force_new_game_reset = False
+        else:
+            renpy.log("START: game_initialized=True, skipping new game reset")
 
     scene expression workers_bg
     show expression Solid("#00000080")  # Semi-transparent black overlay
@@ -987,13 +1022,28 @@ label next_day:
         if result == "game_over":
             renpy.log("DEBUG: next_day - jumping to game_over")
             renpy.jump("game_over")
+        elif result == "governor_retaliation":
+            renpy.log("DEBUG: next_day - governor retaliation event detected, jumping to governor_retaliation")
+            # Call the event, then show daily report and continue
+            renpy.call("governor_retaliation")
+            # After event, show daily report then go to tavern
+            renpy.call_screen("daily_report")
+            renpy.jump("tavern_screen")
+        elif result == "governor_tension_event":
+            renpy.log("DEBUG: next_day - governor tension event detected, jumping to governor_tension_event")
+            # Call the event, then show daily report and continue
+            renpy.call("governor_tension_event")
+            # After event, show daily report then go to tavern
+            renpy.call_screen("daily_report")
+            renpy.jump("tavern_screen")
         elif result == "handle_random_event":
             renpy.log("DEBUG: next_day - event detected, handling event first then continuing with daily report")
             renpy.jump("handle_event_then_daily_report")
         else:
-            # Check tutorial progress before returning to tavern
-            renpy.log("DEBUG: next_day - jumping to tavern_screen")
-            renpy.jump("tavern_screen")  # Default to tavern for any other return value
+            # No event, show daily report then go to tavern
+            renpy.log("DEBUG: next_day - no event, showing daily report then going to tavern_screen")
+            renpy.call_screen("daily_report")
+            renpy.jump("tavern_screen")
 
 label handle_event_then_daily_report:
     $ renpy.log("DEBUG: handle_event_then_daily_report - STARTING")

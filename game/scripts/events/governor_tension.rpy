@@ -16,7 +16,7 @@ label governor_retaliation:
     scene black
     with fade
     
-    centered "{color=#8b0000}A shadow falls upon your establishment...{/color}"
+    centered "A shadow falls upon your establishment..."
     
     pause 1.0
     
@@ -28,7 +28,7 @@ label governor_retaliation:
     
     "Messenger" "M-my lord... there's been an incident. The Governor... he knows."
     
-    "You" "Knows what, exactly?"
+    "Knows what, exactly?"
     
     "Messenger" "Your workers... some of them fell ill this morning. Violently ill."
     
@@ -82,7 +82,7 @@ label governor_retaliation:
     scene black
     with fade
     
-    centered "{color=#8b0000}A message has been delivered.{/color}"
+    centered "A message has been delivered."
     
     pause 0.8
     
@@ -96,18 +96,23 @@ label governor_retaliation:
     
     "You crumple the note in your fist."
     
-    "You" "So be it. If the Governor wants a war, he shall have one."
+    "So be it. If the Governor wants a war, he shall have one."
     
-    "You" "But I will be the one left standing."
+    "But I will be the one left standing."
     
     pause 0.5
     
-    centered "{color=#f4c594}The Governor is now aware of your plans.\nRandom incidents may occur as you progress.\nStay vigilant.{/color}"
+    centered "The Governor is now aware of your plans.\nRandom incidents may occur as you progress.\nStay vigilant."
     
     pause 1.5
     
     # Clean up
     $ store._retaliation_victims = None
+    
+    # Show daily report if it exists, then return to tavern
+    python:
+        if hasattr(store, 'daily_report') and store.daily_report:
+            renpy.call_screen("daily_report")
     
     # Return to tavern
     jump tavern
@@ -153,14 +158,14 @@ label governor_poison_event:
         
         "[vname] collapses onto a chair, clutching their stomach."
         
-        "You" "What happened? What did you eat?"
+        "What happened? What did you eat?"
         
         "[vname]" "Just... the usual breakfast... but... the water had a strange taste..."
         
         "You recognize the symptoms. The Governor's agents have struck again."
         
-        "{color=#8b0000}[vname] has been poisoned!{/color}"
-        "{color=#888888}They will suffer health and energy penalties until the poison wears off.{/color}"
+        "[vname] has been poisoned!"
+        "They will suffer health and energy penalties until the poison wears off."
     else:
         "But when you check on them, they seem fine. Perhaps it was just fatigue."
         "You remain vigilant. The Governor's shadow looms over everything."
@@ -168,7 +173,12 @@ label governor_poison_event:
     $ store._tension_victim = None
     
     pause 1.0
-    
+
+    # Show daily report if it exists, then return to tavern
+    python:
+        if hasattr(store, 'daily_report') and store.daily_report:
+            renpy.call_screen("daily_report")
+
     jump tavern
 
 
@@ -195,10 +205,10 @@ label governor_sabotage_event:
         
         "Guard" "By the time we noticed the damage, they were long gone."
         
-        "You" "The Governor's agents. They grow bolder."
+        "The Governor's agents. They grow bolder."
         
-        "{color=#8b0000}[bname] has been sabotaged!{/color}"
-        "{color=#888888}The building's effectiveness has been temporarily reduced.{/color}"
+        "[bname] has been sabotaged!"
+        "Its building skill bonus is temporarily reduced (hurting daily results for a few days)."
     else:
         "But when you investigate, everything seems in order."
         "Perhaps it was just a false alarm. Still, you remain on guard."
@@ -206,7 +216,12 @@ label governor_sabotage_event:
     $ store._tension_building = None
     
     pause 1.0
-    
+
+    # Show daily report if it exists, then return to tavern
+    python:
+        if hasattr(store, 'daily_report') and store.daily_report:
+            renpy.call_screen("daily_report")
+
     jump tavern
 
 
@@ -229,10 +244,10 @@ label governor_spy_event:
         
         "...vanished sometime during the night, along with a significant sum."
         
-        "You" "A spy. The Governor placed a spy among my people."
+        "A spy. The Governor placed a spy among my people."
         
-        "{color=#8b0000}${amount} has been stolen by the Governor's spy!{/color}"
-        "{color=#888888}Be careful - the Governor has eyes everywhere.{/color}"
+        "$[amount] has been stolen by the Governor's spy!"
+        "Be careful - the Governor has eyes everywhere."
     else:
         "After careful counting, everything seems to be in order."
         "But you can't shake the feeling of being watched."
@@ -240,5 +255,10 @@ label governor_spy_event:
     $ store._tension_stolen = None
     
     pause 1.0
-    
+
+    # Show daily report if it exists, then return to tavern
+    python:
+        if hasattr(store, 'daily_report') and store.daily_report:
+            renpy.call_screen("daily_report")
+
     jump tavern

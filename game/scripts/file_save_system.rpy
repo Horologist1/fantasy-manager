@@ -58,96 +58,16 @@ init python:
     import datetime
     
     def export_save_to_file(filename=None):
-        """Export current game state to an external JSON file"""
-        try:
-            # Generate filename if not provided
-            if filename is None:
-                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"fantasy_manager_save_{timestamp}.json"
-            
-            # Ensure .json extension
-            if not filename.endswith('.json'):
-                filename += '.json'
-            
-            # Build complete snapshot
-            snapshot = _build_snapshot()
-            
-            # Add metadata
-            export_data = {
-                "metadata": {
-                    "export_date": datetime.datetime.now().isoformat(),
-                    "game_version": "Fantasy Manager v0.9.3.2",
-                    "save_type": "external_file"
-                },
-                "game_state": snapshot
-            }
-            
-            # Save to file in game/saves directory
-            saves_dir = os.path.join(config.basedir, "game", "saves")
-            filepath = os.path.join(saves_dir, filename)
-            with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(export_data, f, indent=2, ensure_ascii=False)
-            
-            renpy.log(f"EXPORT: Game saved to {filepath}")
-            renpy.notify(f"Game exported to: {filename}")
-            return True, filepath
-            
-        except Exception as e:
-            error_msg = f"Export error: {str(e)}"
-            renpy.log(f"EXPORT ERROR: {error_msg}")
-            renpy.notify(f"Export failed: {str(e)}")
-            return False, error_msg
+        """External export disabled (native Ren'Py saves only)."""
+        renpy.notify("External export disabled. Use normal Save slots.")
+        renpy.log("EXPORT: disabled (native saves only)")
+        return False, "External export disabled"
     
     def import_save_from_file(filename):
-        """Import game state from an external JSON file"""
-        try:
-            renpy.log(f"IMPORT: Starting import of file: {filename}")
-            # Construct full path
-            saves_dir = os.path.join(config.basedir, "game", "saves")
-            filepath = os.path.join(saves_dir, filename)
-            renpy.log(f"IMPORT: Full path: {filepath}")
-            
-            if not os.path.exists(filepath):
-                error_msg = f"File not found: {filename}"
-                renpy.log(f"IMPORT ERROR: {error_msg}")
-                renpy.notify(error_msg)
-                return False, error_msg
-            
-            # Load and parse JSON
-            with open(filepath, 'r', encoding='utf-8') as f:
-                import_data = json.load(f)
-            
-            # Validate structure
-            if "game_state" not in import_data:
-                error_msg = "Invalid save file format"
-                renpy.log(f"IMPORT ERROR: {error_msg}")
-                renpy.notify(error_msg)
-                return False, error_msg
-            
-            # Extract game state
-            snapshot = import_data["game_state"]
-            
-            # Apply the snapshot
-            _apply_snapshot(snapshot)
-            
-            # Log metadata if available
-            if "metadata" in import_data:
-                metadata = import_data["metadata"]
-                renpy.log(f"IMPORT: Loaded save from {metadata.get('export_date', 'unknown date')}")
-            
-            renpy.log(f"IMPORT: Game loaded from {filepath}")
-            renpy.notify(f"Game imported from: {filename}")
-            
-            # Set flags to indicate successful import
-            store.is_new_game = False
-            
-            return True, "Import successful"
-            
-        except Exception as e:
-            error_msg = f"Import error: {str(e)}"
-            renpy.log(f"IMPORT ERROR: {error_msg}")
-            renpy.notify(f"Import failed: {str(e)}")
-            return False, error_msg
+        """External import disabled (native Ren'Py saves only)."""
+        renpy.notify("External import disabled. Use normal Load slots.")
+        renpy.log("IMPORT: disabled (native saves only)")
+        return False, "External import disabled"
     
     def list_save_files():
         """List all .json save files in the game directory"""

@@ -1,24 +1,20 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
-While running game code:
-  File "game/scripts/main_flow.rpy", line 974, in script
+While processing the hover_color property of anonymous style:
+  File "game/scripts/events/recruitment_flow.rpy", line 220, in script call
+    label recruitment_choice_loop:
+  File "game/scripts/main_flow.rpy", line 1009, in script
     call screen tavern
   File "renpy/common/000statements.rpy", line 671, in execute_call_screen
     store._return = renpy.call_screen(name, *args, **kwargs)
-  File "game/scripts/core/screens.rpy", line 4569, in execute
-    screen rename_building(building_name):
-  File "game/scripts/core/screens.rpy", line 4569, in execute
-    screen rename_building(building_name):
-  File "game/scripts/core/screens.rpy", line 4572, in execute
-    default new_name = custom_names[building_name]
-  File "game/scripts/core/screens.rpy", line 4572, in <module>
-    default new_name = custom_names[building_name]
-KeyError: 'Building 1'
+Exception: Color string '[right_name_hover]' must be 3, 4, 6, or 8 hex digits long.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/main_flow.rpy", line 974, in script
+  File "game/scripts/events/recruitment_flow.rpy", line 220, in script call
+    label recruitment_choice_loop:
+  File "game/scripts/main_flow.rpy", line 1009, in script
     call screen tavern
   File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
     self.call("execute")
@@ -42,25 +38,31 @@ Full traceback:
     d.visit_all(callback, seen)
   File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
     d.visit_all(callback, seen)
-  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 480, in visit_all
+  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 485, in visit_all
+    self.child.visit_all(callback, seen=None)
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
+    d.visit_all(callback, seen)
+  [Previous line repeated 4 more times]
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 436, in visit_all
     callback(self)
   File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2748, in <lambda>
     root_widget.visit_all(lambda d : d.per_interact())
-  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 491, in per_interact
-    self.update()
-  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 700, in update
-    self.screen.function(**self.scope)
-  File "game/scripts/core/screens.rpy", line 4569, in execute
-    screen rename_building(building_name):
-  File "game/scripts/core/screens.rpy", line 4569, in execute
-    screen rename_building(building_name):
-  File "game/scripts/core/screens.rpy", line 4572, in execute
-    default new_name = custom_names[building_name]
-  File "game/scripts/core/screens.rpy", line 4572, in <module>
-    default new_name = custom_names[building_name]
-KeyError: 'Building 1'
+  File "D:\renpy-8.3.4-sdk\renpy\text\text.py", line 2245, in per_interact
+    if self.style.slow_abortable:
+  File "gen3-static/styleclass.pxi", line 613, in renpy.styledata.styleclass.Style.slow_abortable.__get__
+  File "style.pyx", line 493, in renpy.style.StyleCore._get
+  File "style.pyx", line 717, in renpy.style.build_style
+  File "style.pyx", line 714, in renpy.style.build_style
+  File "gen3-static/style_hover_functions.pyx", line 245, in style_hover_functions.hover_color_property
+  File "D:\renpy-8.3.4-sdk\renpy\color.py", line 165, in __new__
+    raise Exception("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
+Exception: Color string '[right_name_hover]' must be 3, 4, 6, or 8 hex digits long.
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
-Fantasy Manager 0.9.3.2c
-Tue Jan 20 19:58:58 2026
+Fantasy Manager 0.9.4.0.2
+Sun Jan 25 05:23:48 2026

@@ -514,9 +514,8 @@
         "custom": "breach_fortress"
       },
       "description": "Alchemical explosive powerful enough to breach fortress walls and shatter magical barriers.",
-      "price": 0,
-      "weight": 10,
-      "shop_available": false
+      "price": 3650,
+      "weight": 10
     },
     {
       "id": "test_skill_boost",
@@ -589,18 +588,6 @@
         "money": 50000
       },
       "description": "A test item that adds 50,000 money when used. For testing purposes only.",
-      "price": 1,
-      "weight": 1
-    },
-    {
-      "id": "debug_complete_tutorial",
-      "name": "Debug: Complete Tutorial",
-      "display_name": "Debug: Complete Tutorial",
-      "type": "consumable",
-      "effect": {
-        "custom": "complete_tutorial"
-      },
-      "description": "DEBUG ITEM: Completes all tutorial objectives and enables 'Buy Buildings Abroad'. For testing purposes only.",
       "price": 1,
       "weight": 1
     },
@@ -1053,7 +1040,7 @@
           "Service": 10
         }
       },
-      "description": "Legend says this blade was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Service)",
+      "description": "Legend says this Kitchen Knife was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Service)",
       "durability": 220,
       "price": 3000,
       "weight": 5
@@ -1809,9 +1796,8 @@
         "add_trait": "Adventurer"
       },
       "description": "A mystical amulet found in ancient ruins, imbued with the spirit of countless adventurers. Grants the Adventurer trait. (+10 Combat, +10 Clever, +5 Agility)",
-      "price": 0,
+      "price": 3650,
       "weight": 1,
-      "shop_available": false,
       "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)"
     },
     {
@@ -1828,9 +1814,8 @@
         "add_trait": "High Libido"
       },
       "description": "An enchanted collar that awakens insatiable desires in its wearer. Grants the High Libido trait. (+15 Sex, +10 Charm, +8 Anal)",
-      "price": 0,
+      "price": 3650,
       "weight": 1,
-      "shop_available": false,
       "nsfw": true,
       "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)"
     },
@@ -1848,9 +1833,8 @@
       },
       "description": "The legendary sword of a king who fell in battle but never surrendered. Grants Strong, Brawler, and Tough traits. (+18 Combat, +50 Health)",
       "durability": 500,
-      "price": 0,
+      "price": 3650,
       "weight": 8,
-      "shop_available": false,
       "obtain_hint": "Extremely rare drop from boss battles only (1%)"
     },
     {
@@ -1867,9 +1851,8 @@
         "add_trait": ["Charismatic", "Smooth Talker", "Elegant"]
       },
       "description": "A crown worn by ancient rulers who commanded absolute loyalty. Grants Charismatic, Smooth Talker, and Elegant traits. (+15 Charm, +10 Clever, +10 Service)",
-      "price": 0,
+      "price": 3650,
       "weight": 2,
-      "shop_available": false,
       "obtain_hint": "Extremely rare drop from boss battles only (1%)"
     },
     {
@@ -1887,9 +1870,8 @@
       },
       "description": "A cloak woven from pure darkness, allowing its wearer to move unseen. Grants Agile, Clever, and Graceful traits. (+12 Agility, +10 Combat, +30 Health)",
       "durability": 300,
-      "price": 0,
+      "price": 3650,
       "weight": 2,
-      "shop_available": false,
       "obtain_hint": "Extremely rare drop from boss battles only (1%)"
     },
     {
@@ -1906,9 +1888,8 @@
       },
       "description": "The ultimate staff of magical mastery, wielded by the greatest archmages in history. Grants Magical, Powerful Magic, and Mystical traits. (+20 Clever, +10 Craft)",
       "durability": 400,
-      "price": 0,
+      "price": 3650,
       "weight": 4,
-      "shop_available": false,
       "obtain_hint": "Extremely rare drop from boss battles only (1%)"
     },
     {
@@ -1926,16 +1907,33 @@
         "add_trait": ["Obedient", "Meek", "Dependant"]
       },
       "description": "Enchanted chains that bind the wearer's will, making them utterly submissive. Grants Obedient, Meek, and Dependant traits. (+20 BDSM, +15 Sex, +12 Group, +10 Extreme)",
-      "price": 0,
+      "price": 3650,
       "weight": 3,
-      "shop_available": false,
       "nsfw": true,
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+    },
+    {
+      "id": "crown_machine",
+      "name": "Crown of the Machine",
+      "display_name": "Crown of the Machine",
+      "type": "accessory",
+      "effect": {
+        "health": 60,
+        "skill_modifiers": {
+          "Craft": 15,
+          "Clever": 12,
+          "Combat": 10
+        },
+        "add_trait": ["Construct", "Tough"]
+      },
+      "description": "An ancient mechanical crown forged by master artificers. Transforms the wearer into an artificial construct with triple health. Grants Construct and Tough traits. (+15 Craft, +12 Clever, +10 Combat, +60 Health)",
+      "price": 3650,
+      "weight": 3,
       "obtain_hint": "Extremely rare drop from boss battles only (1%)"
     }
   ],
   "excluded_from_shops": [
     "binding_gem",
-    "debug_complete_tutorial",
     "gold_coin",
     "silver_coin",
     "bronze_coin",
@@ -1945,6 +1943,7 @@
     "crown_dominion",
     "cloak_shadows",
     "staff_archmage",
-    "chains_submission"
+    "chains_submission",
+    "crown_machine"
   ]
 }

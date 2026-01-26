@@ -18,7 +18,80 @@ init python:
             self.buildings = []  # List of buildings
 
     store.player = Player()
+    
+    def _is_equipped(item):
+        """Check if an item is equipped. Must be defined at module level for pickling."""
+        if not isinstance(item, (list, tuple)) or len(item) < 3:
+            return False
+        eq = item[2]
+        if isinstance(eq, bool):
+            return eq
+        if isinstance(eq, str):
+            return eq.lower() in ("true", "1", "yes")
+        if isinstance(eq, (int, float)):
+            return bool(eq) and eq != 0
+        return False
+    
+    store._is_equipped = _is_equipped
 
+    def rebuild_assigned_servants():
+        """Rebuild assigned_servants for all buildings from workers' assigned_building.
+        If workers don't have assigned_building set, restore from snapshot file."""
+        import json
+        import os
+        try:
+            if not hasattr(store, 'workers') or not hasattr(store, 'available_buildings'):
+                return
+            
+            # Check if we need to restore assigned_building from snapshot
+            needs_restore = True
+            for w in store.workers[:5]:
+                if hasattr(w, 'get') and w.get("assigned_building") not in (None, "", "Unassigned"):
+                    needs_restore = False
+                    break
+            
+            if needs_restore:
+                # Find and load the most recent snapshot
+                save_dir = renpy.config.savedir
+                snapshots = [f for f in os.listdir(save_dir) if f.startswith("snapshot_") and f.endswith(".json")]
+                if snapshots:
+                    snapshots.sort(key=lambda x: os.path.getmtime(os.path.join(save_dir, x)), reverse=True)
+                    snapshot_path = os.path.join(save_dir, snapshots[0])
+                    if os.path.exists(snapshot_path):
+                        with open(snapshot_path, 'r', encoding='utf-8') as f:
+                            snap_data = json.load(f)
+                        # Build name -> assigned_building map from snapshot
+                        name_to_building = {}
+                        for sw in snap_data.get("workers", []):
+                            if hasattr(sw, 'get'):
+                                name = sw.get("name")
+                                ab = sw.get("assigned_building")
+                                if name and ab and ab != "Unassigned":
+                                    name_to_building[name] = ab
+                        # Apply to current workers
+                        for w in store.workers:
+                            if hasattr(w, 'get'):
+                                wname = w.get("name")
+                                if wname in name_to_building:
+                                    w["assigned_building"] = name_to_building[wname]
+            
+            # Rebuild assigned_servants from workers' assigned_building
+            workers_by_building = {}
+            for w in store.workers:
+                if hasattr(w, 'get'):
+                    ab = w.get("assigned_building", "Unassigned")
+                    if ab != "Unassigned" and ab in store.available_buildings:
+                        if ab not in workers_by_building:
+                            workers_by_building[ab] = []
+                        workers_by_building[ab].append(w)
+            
+            for bname, bdata in store.available_buildings.items():
+                if hasattr(bdata, '__setitem__'):
+                    bdata["assigned_servants"] = workers_by_building.get(bname, [])
+        except Exception as e:
+            renpy.log("rebuild_assigned_servants error: " + str(e))
+
+    store.rebuild_assigned_servants = rebuild_assigned_servants
 
 ################################################################################
 ## Styles
@@ -207,6 +280,12 @@ screen say(who, what):
             
     ## History navigation buttons - navigate through previous messages without undoing actions
     use dialogue_history_nav
+
+## Optional message window for scripted show/hide calls.
+screen message_window():
+    window:
+        id "window"
+        style "say_window"
 
 
 ## Make the namebox available for styling through the Character object.
@@ -447,7 +526,7 @@ style choice_button_text is default:
 ## The quick menu is displayed in-game to provide easy access to the out-of-game
 ## menus.
 
-screen quick_menu:
+screen quick_menu():
     pass
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -488,7 +567,7 @@ screen navigation():
 
         if main_menu:
 
-            textbutton _("Start") action Start()
+            textbutton _("Start") action [Function(mark_new_game_start), Start()]
 
         else:
 
@@ -551,7 +630,7 @@ screen main_menu():
     on "hide" action SetVariable("at_main_menu", False)
 
     ## Use imagebuttons with centered positions
-    imagebutton auto "gui/main_menu/buttons/start_%s.png" xpos 761 ypos 345 focus_mask True action Start()
+    imagebutton auto "gui/main_menu/buttons/start_%s.png" xpos 761 ypos 345 focus_mask True action [Function(mark_new_game_start), Start()]
     imagebutton auto "gui/main_menu/buttons/load_%s.png" xalign 0.5 ypos 456 focus_mask True action ShowMenu("load")
     imagebutton auto "gui/main_menu/buttons/options_%s.png" xalign 0.5 ypos 516 focus_mask True action ShowMenu("preferences")
     imagebutton auto "gui/main_menu/buttons/gallery_%s.png" xalign 0.5 ypos 569 focus_mask True action ShowMenu("gallery")
@@ -927,38 +1006,33 @@ screen save():
                     color "#f0e6c8"
 
         ## Save slots
-        # File save slot (replaces slot 1)
-        hotspot (468, 312, 393, 207) action Show("file_save_dialog"):
-            frame:
-                background "#d4a574"  # Color del frame de save al hacer hover
-                hover_background "#d4a574"
-                xsize 393
-                ysize 207
-                vbox:
-                    spacing 10
-                    xalign 0.5
-                    yalign 0.5
-                    textbutton "Save to File":
-                        text_size font_size(26)
-                        text_color "#5d4037"
-                        text_hover_color "#314311"
-                        background None
-                        hover_background None
-                        xalign 0.5
-                        action Show("file_save_dialog")
-                    textbutton "Export game to external file":
-                        text_size font_size(18)
-                        text_color "#5d4037"
-                        text_hover_color "#314311"
-                        background None
-                        hover_background None
-                        xalign 0.5
-                        action Show("file_save_dialog")
-        hotspot (468, 620, 393, 207) action [Function(snapshot_pre_save_slot, 2), FileAction(2)]:
+        $ slot1_has_save = FileTime(1, empty=None) is not None
+        $ slot2_has_save = FileTime(2, empty=None) is not None
+        $ slot3_has_save = FileTime(3, empty=None) is not None
+        $ slot4_has_save = FileTime(4, empty=None) is not None
+        hotspot (468, 312, 393, 207) action If(
+            slot1_has_save,
+            Confirm(_("Overwrite this save?"), SnapshotFileSave(1, confirm=False), None),
+            SnapshotFileSave(1, confirm=False)
+        ):
+            use load_save_slot(number=1)
+        hotspot (468, 620, 393, 207) action If(
+            slot2_has_save,
+            Confirm(_("Overwrite this save?"), SnapshotFileSave(2, confirm=False), None),
+            SnapshotFileSave(2, confirm=False)
+        ):
             use load_save_slot(number=2)
-        hotspot (1055, 312, 393, 207) action [Function(snapshot_pre_save_slot, 3), FileAction(3)]:
+        hotspot (1055, 312, 393, 207) action If(
+            slot3_has_save,
+            Confirm(_("Overwrite this save?"), SnapshotFileSave(3, confirm=False), None),
+            SnapshotFileSave(3, confirm=False)
+        ):
             use load_save_slot(number=3)
-        hotspot (1055, 620, 393, 207) action [Function(snapshot_pre_save_slot, 4), FileAction(4)]:
+        hotspot (1055, 620, 393, 207) action If(
+            slot4_has_save,
+            Confirm(_("Overwrite this save?"), SnapshotFileSave(4, confirm=False), None),
+            SnapshotFileSave(4, confirm=False)
+        ):
             use load_save_slot(number=4)
 
         ## Navigation buttons
@@ -1034,33 +1108,8 @@ screen load():
                     color "#f0e6c8"
 
         ## Load slots
-        # File load slot (replaces slot 1)
-        hotspot (468, 312, 393, 207) action Show("file_load_dialog"):
-            frame:
-                background "#d4a574"  # Color del frame de save al hacer hover
-                hover_background "#d4a574"
-                xsize 393
-                ysize 207
-                vbox:
-                    spacing 10
-                    xalign 0.5
-                    yalign 0.5
-                    textbutton "Load from File":
-                        text_size font_size(26)
-                        text_color "#5d4037"
-                        text_hover_color "#314311"
-                        background None
-                        hover_background None
-                        xalign 0.5
-                        action Show("file_load_dialog")
-                    textbutton "Import game from external file":
-                        text_size font_size(18)
-                        text_color "#5d4037"
-                        text_hover_color "#314311"
-                        background None
-                        hover_background None
-                        xalign 0.5
-                        action Show("file_load_dialog")
+        hotspot (468, 312, 393, 207) action [Function(snapshot_mark_load_slot, 1), FileAction(1)]:
+            use load_save_slot(number=1)
         hotspot (468, 620, 393, 207) action [Function(snapshot_mark_load_slot, 2), FileAction(2)]:
             use load_save_slot(number=2)
         hotspot (1055, 312, 393, 207) action [Function(snapshot_mark_load_slot, 3), FileAction(3)]:
@@ -1121,7 +1170,7 @@ screen file_slots(title):
                     $ slot = i + 1
 
                     button:
-                        action PageAwareFileAction(slot)
+                        action [Function(snapshot_mark_load_slot, slot), FileAction(slot)]
 
                         has vbox
 
@@ -1133,7 +1182,7 @@ screen file_slots(title):
                         text FileSaveName(slot):
                             style "slot_name_text"
 
-                        key "save_delete" action FileDelete(slot)
+                        key "save_delete" action [Function(snapshot_pre_delete_slot, slot), FileDelete(slot)]
 
             ## Buttons to access other pages.
             vbox:
@@ -2525,10 +2574,20 @@ screen choose_worker_for_event(skill_name, threshold):
 screen recruitment_event_screen(event, worker):
     modal True
     zorder 98
-    
-
-    
-    add event_bg
+    python:
+        bg_name = event.get("background_image", "event_bg")
+        if bg_name and not bg_name.startswith("images/"):
+            if hasattr(store, bg_name):
+                recruitment_bg = getattr(store, bg_name)
+            else:
+                recruitment_bg = f"images/{bg_name}.png"
+        else:
+            recruitment_bg = bg_name
+        if not renpy.loadable(recruitment_bg):
+            recruitment_bg = getattr(store, "event_bg", "images/event_bg.png")
+        if not renpy.loadable(recruitment_bg):
+            recruitment_bg = "images/event_bg.png"
+    add recruitment_bg
     add Solid("#000000dd")
     
     $ comfort_level = worker.get("comfort_level", worker.get("comfort_desired", 1))
@@ -2685,7 +2744,7 @@ screen Building_select_global():
     # Ensure buildings are synced when opening this screen
     python:
         try:
-            validate_and_sync_buildings()
+            validate_and_sync_buildings(include_worker_refs=False)
         except Exception as e:
             renpy.log(f"Building_select_global: validate_and_sync_buildings error: {str(e)}")
     
@@ -2764,6 +2823,7 @@ screen Building_select(worker):
                             Function(add_worker_to_building, worker, building_name),
                             # Set the worker's assigned_building field.
                             SetDict(worker, "assigned_building", building_name),
+                            Function(sync_assigned_servants_for_building, building_name),
                             Hide("Building_select"),
                             Show("workers")
                         ]
@@ -2808,8 +2868,37 @@ screen job_selection(worker):
                     $ building_name = worker.get("assigned_building", "Unassigned")
                     if building_name != "Unassigned":
                         $ building = available_buildings.get(building_name, {})
+                        # CRITICAL: Sync assigned_servants before calculating role counts
+                        $ sync_assigned_servants_for_building(building_name)
                     else:
                         $ building = None
+                    
+                    # If worker has no building assigned, show building selection first
+                    if building is None:
+                        text "{color=#7a4b2a}{size=20}Select a building first:{/size}{/color}":
+                            xsize 500
+                            xalign 0.0
+                        null height 10
+                        for b_name in store.owned_buildings:
+                            $ b = available_buildings.get(b_name, {})
+                            if b:
+                                textbutton f"{b.get('display_name', b_name)}":
+                                    xsize 500
+                                    text_size font_size(28)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    sensitive True
+                                    action [
+                                        Function(add_worker_to_building, worker, b_name),
+                                        SetDict(worker, "assigned_building", b_name),
+                                        Function(sync_assigned_servants_for_building, b_name),
+                                        Hide("job_selection"),
+                                        Show("job_selection", worker=worker)
+                                    ]
+                        null height 20
+                        text "{color=#5a3a1a}{size=16}After selecting a building, you can assign a job.{/size}{/color}":
+                            xsize 500
+                            xalign 0.0
                     
                     # Universal Unassign option (available for all buildings)
                     if building is not None:
@@ -2822,7 +2911,10 @@ screen job_selection(worker):
                                 text_hover_color "#6b6528"
                                 sensitive True
                                 action [
-                                    SetDict(building["servant_jobs"], worker["name"], "unassigned"),
+                                    # CRITICAL: Use function to set job, ensuring we modify the real dict
+                                    Function(set_worker_job, worker, building_name, "unassigned"),
+                                    # Clear autorest state when manually unassigning
+                                    Function(clear_worker_autorest_state, worker),
                                     Hide("job_selection")
                                 ]
                             text "{color=#000000}{size=18}No specific role assigned{/size}{/color}\n{size=16}{color=#7a4b2a}Worker will not participate in daily activities{/color}{/size}":
@@ -2850,7 +2942,18 @@ screen job_selection(worker):
                                     $ avg_skill = 0
                                 # For rest job, show "-" instead of skill value
                                 $ avg_skill_display = "-" if profession.get("id") == "rest" else f"{avg_skill}/100"
-                                $ current_count = len([w for w in building["assigned_servants"] if building["servant_jobs"].get(w["name"], "") == profession["id"]])
+                                # Count workers with this specific job - use servant_jobs as source of truth
+                                # Only count if the worker actually exists and is assigned to this building
+                                python:
+                                    _current_count = 0
+                                    _servant_jobs = building.get("servant_jobs", {})
+                                    for _wname, _job in _servant_jobs.items():
+                                        if _job == profession["id"]:
+                                            # Verify worker exists and is assigned to this building
+                                            _worker_exists = any(w.get("name") == _wname and w.get("assigned_building") == building_name for w in store.workers)
+                                            if _worker_exists:
+                                                _current_count += 1
+                                    current_count = _current_count
                                 $ max_limit = get_max_daily_workers(building, profession)
                                 vbox:  # Wrap each profession entry in a vbox
                                     spacing 2  # Tight spacing between lines
@@ -2864,7 +2967,11 @@ screen job_selection(worker):
                                             action [
                                                 # Add worker to building with dedup protection
                                                 Function(add_worker_to_building, worker, building_name),
-                                                SetDict(building["servant_jobs"], worker["name"], profession["id"]),
+                                                # CRITICAL: Use function to set job, ensuring we modify the real dict
+                                                Function(set_worker_job, worker, building_name, profession["id"]),
+                                                Function(sync_assigned_servants_for_building, building_name),
+                                                # Clear autorest state when manually changing profession
+                                                Function(clear_worker_autorest_state, worker),
                                                 # Always recalculate and check objectives when assigning workers during tutorial
                                                 Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
                                                 Hide("job_selection")
@@ -2902,10 +3009,15 @@ screen manager_inventory(shop_mode=None):
     default selected_manager_item = None
     default selected_worker_item = None
     default selected_description = ""
+    default selected_manager_index = None
+    default selected_worker_index = None
     default is_transferring = False  # Debounce flag
     default selected_category = None  # Filter category for shop items
     default show_test_items = False  # Toggle to show/hide test items
     default trade_multiplier = 1  # x1, x10, x100 for buy/sell/transfer
+    default item_search_text = ""  # Search filter for items by name
+    default left_sort_by_name = False  # False = arrival order, True = alphabetical
+    default right_sort_by_name = False  # False = arrival order, True = alphabetical
 
     python:
         def cycle_trade_multiplier():
@@ -2918,6 +3030,8 @@ screen manager_inventory(shop_mode=None):
             else:
                 renpy.set_screen_variable("trade_multiplier", 1)
             renpy.restart_interaction()
+
+        # _is_equipped is now defined at module level (init python) to avoid pickling issues
         
         def get_item_action_elements(item, item_info, worker):
             item_type = item_info.get("type", "unknown")
@@ -2944,29 +3058,120 @@ screen manager_inventory(shop_mode=None):
 
         def transfer_to_right():
             smi = renpy.get_screen_variable("selected_manager_item")
+            smi_index = renpy.get_screen_variable("selected_manager_index")
             multiplier = renpy.get_screen_variable("trade_multiplier")
             if smi is not None and (right_worker is not False) and not renpy.get_screen_variable("is_transferring"):
                 renpy.set_screen_variable("is_transferring", True)
                 renpy.set_screen_variable("selected_manager_item", None)
-                source_inventory = manager_inventory if left_worker is None else left_worker.get("inventory", [])
-                target_inventory = manager_inventory if right_worker is None else right_worker.get("inventory", [])
-                renpy.log(f"Transfer to right: Left={left_worker['name'] if left_worker else 'Storage'}, Right={right_worker['name'] if right_worker else 'Storage'}, Source={source_inventory}, Target={target_inventory}, Item={smi}")
-                if smi[2] and left_worker and left_worker is not False:
-                    renpy.log(f"Unequipping {smi[0]} from left worker")
-                    toggle_equip_item(source_inventory, smi[0], worker=left_worker)
-                    for i, item in enumerate(source_inventory):
-                        if item[0] == smi[0]:
-                            smi = source_inventory[i]
-                            renpy.log(f"Refreshed smi after unequip: {smi}")
+                renpy.set_screen_variable("selected_manager_index", None)
+                
+                # CRITICAL: Create a fresh copy of smi to break any reference sharing
+                # This ensures we're working with the actual item data, not a shared reference
+                if isinstance(smi, (list, tuple)) and len(smi) >= 2:
+                    smi = (str(smi[0]), int(smi[1]), bool(smi[2] if len(smi) > 2 else False))
+                    renpy.log(f"transfer_to_right: Normalized smi to {smi}")
+                
+                # Get references to the actual store inventories (not local copies)
+                if left_worker is None:
+                    source_inventory = store.manager_inventory
+                else:
+                    # Find the worker in store.workers and use their inventory
+                    source_worker = None
+                    for w in store.workers:
+                        if w.get("name") == left_worker.get("name"):
+                            source_worker = w
                             break
+                    if source_worker:
+                        if "inventory" not in source_worker:
+                            source_worker["inventory"] = []
+                        source_inventory = source_worker["inventory"]
+                    else:
+                        source_inventory = left_worker.get("inventory", [])
+                
+                if right_worker is None:
+                    target_inventory = store.manager_inventory
+                else:
+                    # Find the worker in store.workers and use their inventory
+                    target_worker = None
+                    for w in store.workers:
+                        if w.get("name") == right_worker.get("name"):
+                            target_worker = w
+                            break
+                    if target_worker:
+                        if "inventory" not in target_worker:
+                            target_worker["inventory"] = []
+                        target_inventory = target_worker["inventory"]
+                    else:
+                        target_inventory = right_worker.get("inventory", [])
+                
+                # Ensure smi reflects the exact selected index (avoid equality collisions)
+                if smi_index is not None and smi_index < len(source_inventory):
+                    try:
+                        smi = source_inventory[smi_index]
+                    except Exception:
+                        pass
+
+                renpy.log(f"Transfer to right: Left={left_worker['name'] if left_worker else 'Storage'}, Right={right_worker['name'] if right_worker else 'Storage'}, Source={source_inventory}, Target={target_inventory}, Item={smi}")
+                if store._is_equipped(smi) and left_worker and left_worker is not False:
+                    renpy.log(f"Unequipping selected copy of {smi[0]} from left worker")
+                    # Prefer exact index match to avoid desequipping a different copy
+                    did_unequip = False
+                    if smi_index is not None and smi_index < len(source_inventory):
+                        try:
+                            inv_item = source_inventory[smi_index]
+                            if isinstance(inv_item, (list, tuple)) and len(inv_item) >= 3 and str(inv_item[0]) == str(smi[0]):
+                                source_inventory[smi_index] = (inv_item[0], inv_item[1], False)
+                                if source_worker or left_worker:
+                                    remove_item_effects(source_worker if source_worker else left_worker, inv_item[0])
+                                did_unequip = True
+                        except Exception:
+                            pass
+                    if not did_unequip:
+                        unequip_item_by_match(
+                            source_inventory,
+                            smi[0],
+                            quantity=smi[1],
+                            worker=source_worker if source_worker else left_worker
+                        )
+                    # Keep smi consistent after unequip
+                    smi = (str(smi[0]), int(smi[1]), False)
                 # Calculate actual transfer quantity (limited by available)
                 available_qty = smi[1]
                 transfer_qty = min(multiplier, available_qty)
-                renpy.log(f"Removing {smi[0]} (quantity: {transfer_qty}) from source: {source_inventory}")
-                remove_item_from_inventory(source_inventory, smi[0], quantity=transfer_qty)
+                renpy.log(f"transfer_to_right: Removing {smi[0]} (quantity: {transfer_qty}) from source")
+                
+                # Remove the exact selected entry when possible
+                removed_exact = False
+                if smi_index is not None:
+                    removed_exact = remove_item_from_inventory_by_index(source_inventory, smi_index, quantity=transfer_qty)
+                if not removed_exact:
+                    # Fallback to id-based removal
+                    remove_item_from_inventory(source_inventory, smi[0], quantity=transfer_qty)
+
+                # If source is manager_inventory and we removed by index, refresh store list
+                if left_worker is None and removed_exact:
+                    store.manager_inventory = list(store.manager_inventory)
+                    renpy.store.manager_inventory = store.manager_inventory
+                
+                # Verify the removal worked
+                if left_worker is None:
+                    # Double-check that the item was actually removed
+                    remaining_count = sum(item[1] for item in store.manager_inventory if isinstance(item, (list, tuple)) and len(item) >= 2 and item[0] == smi[0])
+                    renpy.log(f"transfer_to_right: After removal, {smi[0]} remaining in manager_inventory: {remaining_count}")
                 renpy.log(f"Source after removal: {source_inventory}")
                 renpy.log(f"Adding {smi[0]} (quantity: {transfer_qty}) to target: {target_inventory}")
                 add_item_to_inventory(target_inventory, smi[0], quantity=transfer_qty)
+                # CRITICAL: Force Ren'Py to recognize changes if target is manager_inventory
+                if right_worker is None:
+                    # Also recreate target inventory to break references
+                    new_inv = []
+                    for item in store.manager_inventory:
+                        if isinstance(item, (list, tuple)) and len(item) >= 2:
+                            new_inv.append((str(item[0]), int(item[1]), bool(item[2] if len(item) > 2 else False)))
+                        else:
+                            new_inv.append(item)
+                    store.manager_inventory = new_inv
+                    renpy.store.manager_inventory = store.manager_inventory
                 renpy.log(f"Target after addition: {target_inventory}")
                 store.selected_description = ""
                 renpy.notify(f"Transferred {transfer_qty}x item to right")
@@ -2989,29 +3194,114 @@ screen manager_inventory(shop_mode=None):
 
         def transfer_to_left():
             swi = renpy.get_screen_variable("selected_worker_item")
+            swi_index = renpy.get_screen_variable("selected_worker_index")
             multiplier = renpy.get_screen_variable("trade_multiplier")
             if swi is not None and (left_worker is not False) and not renpy.get_screen_variable("is_transferring"):
                 renpy.set_screen_variable("is_transferring", True)
                 renpy.set_screen_variable("selected_worker_item", None)
-                source_inventory = manager_inventory if right_worker is None else right_worker.get("inventory", [])
-                target_inventory = manager_inventory if left_worker is None else left_worker.get("inventory", [])
-                renpy.log(f"Transfer to left: Left={left_worker['name'] if left_worker else 'Storage'}, Right={right_worker['name'] if right_worker else 'Storage'}, Source={source_inventory}, Target={target_inventory}, Item={swi}")
-                if swi[2] and right_worker and right_worker is not False:
-                    renpy.log(f"Unequipping {swi[0]} from right worker")
-                    toggle_equip_item(source_inventory, swi[0], worker=right_worker)
-                    for i, item in enumerate(source_inventory):
-                        if item[0] == swi[0]:
-                            swi = source_inventory[i]
-                            renpy.log(f"Refreshed swi after unequip: {swi}")
+                renpy.set_screen_variable("selected_worker_index", None)
+                
+                # Get references to the actual store inventories (not local copies)
+                if right_worker is None:
+                    source_inventory = store.manager_inventory
+                else:
+                    # Find the worker in store.workers and use their inventory
+                    source_worker = None
+                    for w in store.workers:
+                        if w.get("name") == right_worker.get("name"):
+                            source_worker = w
                             break
+                    if source_worker:
+                        if "inventory" not in source_worker:
+                            source_worker["inventory"] = []
+                        source_inventory = source_worker["inventory"]
+                    else:
+                        source_inventory = right_worker.get("inventory", [])
+                
+                if left_worker is None:
+                    target_inventory = store.manager_inventory
+                else:
+                    # Find the worker in store.workers and use their inventory
+                    target_worker = None
+                    for w in store.workers:
+                        if w.get("name") == left_worker.get("name"):
+                            target_worker = w
+                            break
+                    if target_worker:
+                        if "inventory" not in target_worker:
+                            target_worker["inventory"] = []
+                        target_inventory = target_worker["inventory"]
+                    else:
+                        target_inventory = left_worker.get("inventory", [])
+                
+                # Ensure swi reflects the exact selected index (avoid equality collisions)
+                if swi_index is not None and swi_index < len(source_inventory):
+                    try:
+                        swi = source_inventory[swi_index]
+                    except Exception:
+                        pass
+
+                renpy.log(f"Transfer to left: Left={left_worker['name'] if left_worker else 'Storage'}, Right={right_worker['name'] if right_worker else 'Storage'}, Source={source_inventory}, Target={target_inventory}, Item={swi}")
+                if store._is_equipped(swi) and right_worker and right_worker is not False:
+                    renpy.log(f"Unequipping selected copy of {swi[0]} from right worker")
+                    # Prefer exact index match to avoid desequipping a different copy
+                    did_unequip = False
+                    if swi_index is not None and swi_index < len(source_inventory):
+                        try:
+                            inv_item = source_inventory[swi_index]
+                            if isinstance(inv_item, (list, tuple)) and len(inv_item) >= 3 and str(inv_item[0]) == str(swi[0]):
+                                source_inventory[swi_index] = (inv_item[0], inv_item[1], False)
+                                if source_worker or right_worker:
+                                    remove_item_effects(source_worker if source_worker else right_worker, inv_item[0])
+                                did_unequip = True
+                        except Exception:
+                            pass
+                    if not did_unequip:
+                        unequip_item_by_match(
+                            source_inventory,
+                            swi[0],
+                            quantity=swi[1],
+                            worker=source_worker if source_worker else right_worker
+                        )
+                    # Keep swi consistent after unequip
+                    swi = (str(swi[0]), int(swi[1]), False)
                 # Calculate actual transfer quantity (limited by available)
                 available_qty = swi[1]
                 transfer_qty = min(multiplier, available_qty)
-                renpy.log(f"Removing {swi[0]} (quantity: {transfer_qty}) from source: {source_inventory}")
-                remove_item_from_inventory(source_inventory, swi[0], quantity=transfer_qty)
+                renpy.log(f"transfer_to_left: Removing {swi[0]} (quantity: {transfer_qty}) from source")
+                
+                # Remove the exact selected entry when possible
+                removed_exact = False
+                if swi_index is not None:
+                    removed_exact = remove_item_from_inventory_by_index(source_inventory, swi_index, quantity=transfer_qty)
+                if not removed_exact:
+                    # Fallback to id-based removal
+                    remove_item_from_inventory(source_inventory, swi[0], quantity=transfer_qty)
+
+                # If source is manager_inventory and we removed by index, refresh store list
+                if right_worker is None and removed_exact:
+                    store.manager_inventory = list(store.manager_inventory)
+                    renpy.store.manager_inventory = store.manager_inventory
+                
+                # Verify the removal worked
+                if right_worker is None:
+                    # Double-check that the item was actually removed
+                    remaining_count = sum(item[1] for item in store.manager_inventory if isinstance(item, (list, tuple)) and len(item) >= 2 and item[0] == swi[0])
+                    renpy.log(f"transfer_to_left: After removal, {swi[0]} remaining in manager_inventory: {remaining_count}")
                 renpy.log(f"Source after removal: {source_inventory}")
                 renpy.log(f"Adding {swi[0]} (quantity: {transfer_qty}) to target: {target_inventory}")
                 add_item_to_inventory(target_inventory, swi[0], quantity=transfer_qty)
+                # CRITICAL: Force Ren'Py to recognize changes if target is manager_inventory
+                if left_worker is None:
+                    # Also recreate target inventory to break references
+                    new_inv = []
+                    for item in store.manager_inventory:
+                        if isinstance(item, (list, tuple)) and len(item) >= 2:
+                            new_inv.append((str(item[0]), int(item[1]), bool(item[2] if len(item) > 2 else False)))
+                        else:
+                            new_inv.append(item)
+                    store.manager_inventory = new_inv
+                    renpy.store.manager_inventory = store.manager_inventory
                 renpy.log(f"Target after addition: {target_inventory}")
                 store.selected_description = ""
                 renpy.notify(f"Transferred {transfer_qty}x item to left")
@@ -3165,8 +3455,14 @@ screen manager_inventory(shop_mode=None):
                             background "tablebutton.png"
                             xsize 180
                             ysize 40
-                            text "Name" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff"
-                            action None
+                            hbox:
+                                spacing 3
+                                yalign 0.5
+                                text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color "#ffd700"
+                                if left_sort_by_name:
+                                    add "gui/arrowdown.png" zoom 0.1 yalign 0.5
+                            action ToggleScreenVariable("left_sort_by_name")
+                            tooltip "Click to toggle: Alphabetical / Arrival order"
                         button:
                             background "tablebutton.png"
                             xsize 90
@@ -3196,11 +3492,37 @@ screen manager_inventory(shop_mode=None):
                             spacing 5
                             xoffset 5 # shift entire table (headers + rows) 5px to the right
                             $ left_inventory = [] if left_worker is False else (manager_inventory if left_worker is None else left_worker.get("inventory", []))
-                            $ equipped_items = [item for item in left_inventory if item[2]]
-                            $ unequipped_items = [item for item in left_inventory if not item[2]]
+                            # Sort and filter items - alphabetically or by arrival order based on toggle
+                            python:
+                                def get_item_name_for_sort(idx_item):
+                                    item = idx_item[1]
+                                    item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                    return item_info.get("name", "ZZZ").lower()
+                                
+                                def item_matches_search(idx_item, search_text):
+                                    if not search_text:
+                                        return True
+                                    item = idx_item[1]
+                                    item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                    item_name = item_info.get("name", "").lower()
+                                    return search_text.lower() in item_name
+                                
+                                search_text = item_search_text if item_search_text else ""
+                                # Filter items first
+                                equipped_list = [(idx, item) for idx, item in enumerate(left_inventory) if store._is_equipped(item) and item_matches_search((idx, item), search_text)]
+                                unequipped_list = [(idx, item) for idx, item in enumerate(left_inventory) if not store._is_equipped(item) and item_matches_search((idx, item), search_text)]
+                                # Sort by name only if toggle is on, otherwise keep arrival order (by index)
+                                if left_sort_by_name:
+                                    equipped_items = sorted(equipped_list, key=get_item_name_for_sort)
+                                    unequipped_items = sorted(unequipped_list, key=get_item_name_for_sort)
+                                else:
+                                    equipped_items = equipped_list  # Keep original order (arrival)
+                                    unequipped_items = unequipped_list
 
-                            for item in equipped_items:
+                            for idx, item in equipped_items:
                                 $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                $ _item_name = item_info.get("name", "Unknown")
+                                $ _item_name_display = _item_name[:12] + "..." if len(_item_name) > 14 else _item_name
                                 $ bg_button = Solid("#d4a574")
                                 button:
                                     background bg_button
@@ -3208,17 +3530,19 @@ screen manager_inventory(shop_mode=None):
                                     ysize 40
                                     padding (0, 0, 0, 0)
                                     hover_background Solid("#c0c0c0cc")
-                                    action If(selected_manager_item != item,
+                                    action If(selected_manager_index != idx,
                                             [SetScreenVariable("selected_manager_item", item),
+                                            SetScreenVariable("selected_manager_index", idx),
                                             SetScreenVariable("selected_description", item_info.get("description", ""))],
                                             [SetScreenVariable("selected_manager_item", None),
+                                            SetScreenVariable("selected_manager_index", None),
                                             SetScreenVariable("selected_description", "")])
                                     hbox:
                                         spacing 0
                                         frame:
                                             xsize 180
                                             background None
-                                            text ("{b}" + item_info.get("name", "Unknown") + "{/b}" if selected_manager_item == item else item_info.get("name", "Unknown")) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                            text ("{b}" + _item_name_display + "{/b}" if selected_manager_index == idx else _item_name_display) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
                                         frame:
                                             xsize 90
                                             background None
@@ -3230,14 +3554,17 @@ screen manager_inventory(shop_mode=None):
                                         button:
                                             xsize 140
                                             background None
-                                            text ("{u}{b}Sell{/b}{/u}" if shop_mode and selected_manager_item == item else "{u}{b}Right{/b}{/u}" if selected_manager_item == item else "Sell" if shop_mode else "Right") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                            action If(selected_manager_item == item and not is_transferring,
+                                            text ("{u}{b}Sell{/b}{/u}" if shop_mode and selected_manager_index == idx else "{u}{b}Right{/b}{/u}" if selected_manager_index == idx else "Sell" if shop_mode else "Right") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                            action If(selected_manager_index == idx and not is_transferring,
                                                         Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)
                                                     )
-                                            sensitive (selected_manager_item == item and (right_worker is not False or shop_mode) and not is_transferring)
+                                            sensitive (selected_manager_index == idx and (right_worker is not False or shop_mode) and not is_transferring)
 
-                            for i, item in enumerate(unequipped_items):
+                            for i, idx_item in enumerate(unequipped_items):
+                                $ idx, item = idx_item
                                 $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                $ _item_name = item_info.get("name", "Unknown")
+                                $ _item_name_display = _item_name[:12] + "..." if len(_item_name) > 14 else _item_name
                                 $ bg_button = Solid("#777777") if i % 2 == 0 else Solid("#555555")
                                 button:
                                     background bg_button
@@ -3245,14 +3572,16 @@ screen manager_inventory(shop_mode=None):
                                     ysize 40
                                     padding (0, 0, 0, 0)
                                     hover_background Solid("#c0c0c0cc")
-                                    action If(selected_manager_item != item,
+                                    action If(selected_manager_index != idx,
                                                 [
                                                     SetScreenVariable("selected_manager_item", item),
+                                                    SetScreenVariable("selected_manager_index", idx),
                                                     SetScreenVariable("selected_description",
                                                     item_info.get("description", ""))
                                                 ],
                                                 [
                                                     SetScreenVariable("selected_manager_item", None),
+                                                    SetScreenVariable("selected_manager_index", None),
                                                     SetScreenVariable("selected_description", "")
                                                 ]
                                             )
@@ -3261,7 +3590,7 @@ screen manager_inventory(shop_mode=None):
                                         frame:
                                             xsize 180
                                             background None
-                                            text ("{b}" + item_info.get("name", "Unknown") + "{/b}" if selected_manager_item == item else item_info.get("name", "Unknown")) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                            text ("{b}" + _item_name_display + "{/b}" if selected_manager_index == idx else _item_name_display) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
                                         frame:
                                             xsize 90
                                             background None
@@ -3273,11 +3602,11 @@ screen manager_inventory(shop_mode=None):
                                         button:
                                             xsize 140
                                             background None
-                                            text ("{u}{b}Sell{/b}{/u}" if shop_mode and selected_manager_item == item else "{u}{b}Right{/b}{/u}" if selected_manager_item == item else "Sell" if shop_mode else "Right") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                            action If(selected_manager_item == item and not is_transferring,
+                                            text ("{u}{b}Sell{/b}{/u}" if shop_mode and selected_manager_index == idx else "{u}{b}Right{/b}{/u}" if selected_manager_index == idx else "Sell" if shop_mode else "Right") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                            action If(selected_manager_index == idx and not is_transferring,
                                                         Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)
                                                     )
-                                            sensitive (selected_manager_item == item and (right_worker is not False or shop_mode) and not is_transferring)
+                                            sensitive (selected_manager_index == idx and (right_worker is not False or shop_mode) and not is_transferring)
 
             frame:
                 xsize 380
@@ -3310,7 +3639,20 @@ screen manager_inventory(shop_mode=None):
                             mousewheel True
                             draggable True
                             ysize 170
-                            text "[selected_description]" size font_size(26) color "#ffffff"
+                            # Get selected item name for header
+                            python:
+                                _sel_item = selected_worker_item if selected_worker_item is not None else selected_manager_item
+                                _sel_item_name = ""
+                                if _sel_item:
+                                    _sel_item_info = next((i for i in items_json["items"] if i["id"] == _sel_item[0]), {})
+                                    _sel_item_name = _sel_item_info.get("name", "")
+                            if _sel_item_name:
+                                vbox:
+                                    spacing 5
+                                    text "{b}[_sel_item_name]{/b}" size font_size(24) color "#d4a574"
+                                    text "[selected_description]" size font_size(24) color "#ffffff"
+                            else:
+                                text "[selected_description]" size font_size(26) color "#ffffff"
                     # Item image box (50% of the right panel)
                     frame:
                         background Solid("#1a1a1a")
@@ -3355,14 +3697,25 @@ screen manager_inventory(shop_mode=None):
                     if right_worker is False and shop_mode is None:
                         text "No worker selected." size font_size(26) xalign 0.5 yalign 0.5
                     else:
+                        # Calculate right panel sort settings
+                        $ right_show_arrow = shop_mode or right_sort_by_name
+                        $ right_name_action = None if shop_mode else ToggleScreenVariable("right_sort_by_name")
+                        $ right_name_hover = "#ffffff" if shop_mode else "#ffd700"
                         hbox:
                             spacing 0
                             button:
                                 background "tablebutton.png"
                                 xsize 180
                                 ysize 40
-                                text "Name" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff"
-                                action None
+                                hbox:
+                                    spacing 3
+                                    yalign 0.5
+                                    text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color right_name_hover
+                                    if right_show_arrow:
+                                        add "gui/arrowdown.png" zoom 0.1 yalign 0.5
+                                action right_name_action
+                                if not shop_mode:
+                                    tooltip "Click to toggle: Alphabetical / Arrival order"
                             button:
                                 background "tablebutton.png"
                                 xsize 90
@@ -3409,9 +3762,16 @@ screen manager_inventory(shop_mode=None):
                                     # Filter out test items if show_test_items is False
                                     if not show_test_items:
                                         $ filtered_items = [item for item in filtered_items if "test" not in item.get("id", "").lower() and "debug" not in item.get("id", "").lower()]
+                                    # Sort filtered_items alphabetically by name before creating shop_items
+                                    $ filtered_items = sorted(filtered_items, key=lambda x: x.get("name", "ZZZ").lower())
+                                    # Apply search filter if search text is provided
+                                    if item_search_text:
+                                        $ filtered_items = [item for item in filtered_items if item_search_text.lower() in item.get("name", "").lower()]
                                     $ shop_items = [(item["id"], 1, False) for item in filtered_items if item.get("price", 0) <= price_limit and is_item_available_in_shop(item, shop_mode)]
                                     for item in shop_items:
                                         $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                        $ _item_name = item_info.get("name", "Unknown")
+                                        $ _item_name_display = _item_name[:12] + "..." if len(_item_name) > 14 else _item_name
                                         $ bg_button = Solid("#777777") if shop_items.index(item) % 2 == 0 else Solid("#555555")
                                         button:
                                             background bg_button
@@ -3435,7 +3795,7 @@ screen manager_inventory(shop_mode=None):
                                                 frame:
                                                     xsize 180
                                                     background None
-                                                    text ("{b}" + item_info.get("name", "Unknown") + "{/b}" if selected_worker_item == item else item_info.get("name", "Unknown")) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                                    text ("{b}" + _item_name_display + "{/b}" if selected_worker_item == item else _item_name_display) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
                                                 frame:
                                                     xsize 90
                                                     background None
@@ -3454,11 +3814,37 @@ screen manager_inventory(shop_mode=None):
                                                     sensitive (selected_worker_item == item and not is_transferring and store.money >= item_info.get("price", 0))
                                 else:
                                     $ right_inventory = [] if right_worker is False else (manager_inventory if right_worker is None else right_worker.get("inventory", []))
-                                    $ equipped_items = [item for item in right_inventory if item[2]]
-                                    $ unequipped_items = [item for item in right_inventory if not item[2]]
+                                    # Sort and filter items - alphabetically or by arrival order based on toggle
+                                    python:
+                                        def get_item_name_for_sort_right(idx_item):
+                                            item = idx_item[1]
+                                            item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                            return item_info.get("name", "ZZZ").lower()
+                                        
+                                        def item_matches_search_right(idx_item, search_text):
+                                            if not search_text:
+                                                return True
+                                            item = idx_item[1]
+                                            item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                            item_name = item_info.get("name", "").lower()
+                                            return search_text.lower() in item_name
+                                        
+                                        search_text_r = item_search_text if item_search_text else ""
+                                        # Filter items first
+                                        equipped_list_r = [(idx, item) for idx, item in enumerate(right_inventory) if store._is_equipped(item) and item_matches_search_right((idx, item), search_text_r)]
+                                        unequipped_list_r = [(idx, item) for idx, item in enumerate(right_inventory) if not store._is_equipped(item) and item_matches_search_right((idx, item), search_text_r)]
+                                        # Sort by name only if toggle is on, otherwise keep arrival order (by index)
+                                        if right_sort_by_name:
+                                            equipped_items = sorted(equipped_list_r, key=get_item_name_for_sort_right)
+                                            unequipped_items = sorted(unequipped_list_r, key=get_item_name_for_sort_right)
+                                        else:
+                                            equipped_items = equipped_list_r  # Keep original order (arrival)
+                                            unequipped_items = unequipped_list_r
 
-                                    for item in equipped_items:
+                                    for idx, item in equipped_items:
                                         $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                        $ _item_name = item_info.get("name", "Unknown")
+                                        $ _item_name_display = _item_name[:12] + "..." if len(_item_name) > 14 else _item_name
                                         $ label, the_action, is_sens, btn_bg = get_item_action_elements(item, item_info, right_worker)
                                         $ bg_button = Solid("#d4a574")
                                         button:
@@ -3468,13 +3854,15 @@ screen manager_inventory(shop_mode=None):
                                             padding (0, 0, 0, 0)
                                             hover_background Solid("#c0c0c0cc")
                                             action If(
-                                                        selected_worker_item != item,
+                                                        selected_worker_index != idx,
                                                         [
                                                             SetScreenVariable("selected_worker_item", item),
+                                                            SetScreenVariable("selected_worker_index", idx),
                                                             SetScreenVariable("selected_description", item_info.get("description", ""))
                                                         ],
                                                         [
                                                             SetScreenVariable("selected_worker_item", None),
+                                                            SetScreenVariable("selected_worker_index", None),
                                                             SetScreenVariable("selected_description", "")
                                                         ]
                                                     )
@@ -3483,7 +3871,7 @@ screen manager_inventory(shop_mode=None):
                                                 frame:
                                                     xsize 180
                                                     background None
-                                                    text ("{b}" + item_info.get("name", "Unknown") + "{/b}" if selected_worker_item == item else item_info.get("name", "Unknown")) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                                    text ("{b}" + _item_name_display + "{/b}" if selected_worker_index == idx else _item_name_display) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
                                                 frame:
                                                     xsize 90
                                                     background None
@@ -3497,12 +3885,15 @@ screen manager_inventory(shop_mode=None):
                                                 button:
                                                     xsize 140
                                                     background None
-                                                    text ("{u}{b}Left{/b}{/u}" if selected_worker_item == item else "Left") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                                    action If(selected_worker_item == item and (left_worker is not False) and not is_transferring, Function(transfer_to_left))
-                                                    sensitive (selected_worker_item == item and (left_worker is not False) and not is_transferring)
+                                                    text ("{u}{b}Left{/b}{/u}" if selected_worker_index == idx else "Left") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                                    action If(selected_worker_index == idx and (left_worker is not False) and not is_transferring, Function(transfer_to_left))
+                                                    sensitive (selected_worker_index == idx and (left_worker is not False) and not is_transferring)
 
-                                    for i, item in enumerate(unequipped_items):
+                                    for i, idx_item in enumerate(unequipped_items):
+                                        $ idx, item = idx_item
                                         $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                        $ _item_name = item_info.get("name", "Unknown")
+                                        $ _item_name_display = _item_name[:14] + "..." if len(_item_name) > 16 else _item_name
                                         $ label, the_action, is_sens, btn_bg = get_item_action_elements(item, item_info, right_worker)
                                         $ bg_button = Solid("#777777") if i % 2 == 0 else Solid("#555555")
                                         button:
@@ -3512,13 +3903,15 @@ screen manager_inventory(shop_mode=None):
                                             padding (0, 0, 0, 0)
                                             hover_background Solid("#c0c0c0cc")
                                             action If(
-                                                        selected_worker_item != item,
+                                                        selected_worker_index != idx,
                                                         [
                                                             SetScreenVariable("selected_worker_item", item),
+                                                            SetScreenVariable("selected_worker_index", idx),
                                                             SetScreenVariable("selected_description", item_info.get("description", ""))
                                                         ],
                                                         [
                                                             SetScreenVariable("selected_worker_item", None),
+                                                            SetScreenVariable("selected_worker_index", None),
                                                             SetScreenVariable("selected_description", "")
                                                         ]
                                                     )
@@ -3527,7 +3920,7 @@ screen manager_inventory(shop_mode=None):
                                                 frame:
                                                     xsize 200
                                                     background None
-                                                    text ("{b}" + item_info.get("name", "Unknown") + "{/b}" if selected_worker_item == item else item_info.get("name", "Unknown")) size font_size(22) xalign 0.0 yalign 0.5 yoffset 3
+                                                    text ("{b}" + _item_name_display + "{/b}" if selected_worker_index == idx else _item_name_display) size font_size(22) xalign 0.0 yalign 0.5 yoffset 3
                                                 frame:
                                                     xsize 100
                                                     background None
@@ -3541,9 +3934,9 @@ screen manager_inventory(shop_mode=None):
                                                 button:
                                                     xsize 150
                                                     background None
-                                                    text ("{u}{b}Left{/b}{/u}" if selected_worker_item == item else "Left") size font_size(22) xalign 0.0 yalign 0.5 yoffset 3
-                                                    action If(selected_worker_item == item and (left_worker is not False) and not is_transferring, Function(transfer_to_left))
-                                                    sensitive (selected_worker_item == item and (left_worker is not False) and not is_transferring)
+                                                    text ("{u}{b}Left{/b}{/u}" if selected_worker_index == idx else "Left") size font_size(22) xalign 0.0 yalign 0.5 yoffset 3
+                                                    action If(selected_worker_index == idx and (left_worker is not False) and not is_transferring, Function(transfer_to_left))
+                                                    sensitive (selected_worker_index == idx and (left_worker is not False) and not is_transferring)
 
     # Context menu drawn last so it appears on top
     fixed:
@@ -3668,6 +4061,28 @@ screen manager_inventory(shop_mode=None):
                         text_color "#3c1f14"
                         text_hover_color "#6b6528"
                         align (0.5, 0.5)
+            
+            # Search field for filtering items by name
+            null height 5
+            vbox:
+                xalign 0.0
+                xoffset 10
+                xsize 280
+                spacing 3
+                text "Search:" color "#3c1f14" size font_size(16) xalign 0.0
+                frame:
+                    xsize 280
+                    ysize 32
+                    background Solid("#f5e6d3")
+                    padding (8, 4)
+                    input:
+                        value ScreenVariableInputValue("item_search_text")
+                        pixel_width 260
+                        size font_size(16)
+                        color "#3c1f14"
+                        allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
+            null height 5
+            
             textbutton "Close":
                 action [Hide("manager_inventory"), Show("map_screen")]
                 xsize 300
@@ -3976,10 +4391,34 @@ screen confirm_buy_worker(worker, return_screen=None):
                     Hide("confirm_buy_worker")
                 )
 
-    key "game_menu" action If(return_screen,
-        [Hide("confirm_buy_worker"), Show(return_screen, worker=worker)],
-        Hide("confirm_buy_worker")
-    )
+screen confirm_refresh_workers():
+    modal True
+    zorder 200
+    style_prefix "confirm"
+    add "gui/overlay/confirm.png"
+
+    frame:
+        style "confirm_frame"
+        vbox:
+            xalign 0.5
+            yalign 0.5
+            spacing 45
+
+            label "Refresh the worker list for $2500?":
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 150
+
+                textbutton "Yes" action If(hasattr(store, 'money') and store.money >= 2500,
+                    [Function(store.refresh_buy_workers), Hide("confirm_refresh_workers"), Function(renpy.restart_interaction)],
+                    Show("error_popup", message="You do not have enough money to refresh the worker list.")
+                )
+                textbutton "No" action Hide("confirm_refresh_workers")
+
+    key "game_menu" action Hide("confirm_refresh_workers")
 
 screen confirm_sell_worker(worker, return_screen=None):
     modal True
@@ -4119,6 +4558,8 @@ screen adjust_skill_bonus(building_name):
 
 screen Manager(building_name):
     zorder 5
+    $ manager_servants = available_buildings.get(building_name, {}).get("assigned_servants", [])
+
     # Building background adjusted to 1515px width to account for side panel
     # Exception: default.png shows at full size (1920x1080)
     $ bg_image = get_building_bg(building_name)
@@ -4181,7 +4622,7 @@ screen Manager(building_name):
                     spacing 10
                     text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color "#7a4b2a"
                 $ fixed_cost = int(building["price"] * 0.01)
-                $ worker_costs = sum(worker["comfort_level"] * 20 for worker in building["assigned_servants"])
+                $ worker_costs = sum(worker["comfort_level"] * 20 for worker in manager_servants)
                 $ bonus_cost = (building["skill_bonus"] // 10) * 100
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
                 text "Costs: $[total_costs] {size=18}(Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size=}" size font_size(24) color "#ffffff" xalign 0.0 yalign 0.5
@@ -4225,7 +4666,7 @@ screen Manager(building_name):
                         $ building_type_entry = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == building_type_id), None)
                         if building_type_entry is not None:
                             for profession in building_type_entry.get("professions", []):
-                                $ current_count = len([s for s in building["assigned_servants"] if building["servant_jobs"].get(s["name"], "") == profession["id"]])
+                                $ current_count = len([s for s in manager_servants if building["servant_jobs"].get(s["name"], "") == profession["id"]])
                                 $ max_limit = get_max_daily_workers(building, profession)
                                 text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color "#7a4b2a"
                                 frame:
@@ -4267,7 +4708,7 @@ screen Manager(building_name):
                                                     ysize 50
                                                     text "Actions" size font_size(24) color "#7a4b2a"
                                                     sensitive False
-                                            for worker in [w for w in building["assigned_servants"] if building["servant_jobs"].get(w["name"], "") == profession["id"]]:
+                                            for worker in [w for w in manager_servants if building["servant_jobs"].get(w["name"], "") == profession["id"]]:
                                                 $ worker_level = worker.get('level', 1)
                                                 hbox:
                                                     spacing 5
@@ -4312,12 +4753,14 @@ screen Manager(building_name):
                                                             text_color "#ffffff"
                                                             text_hover_color "#2c4aa6"
                                                             action use_or_buy_potion_action(worker, "energy_potion")
+                                                            sensitive worker["energy"] < calculate_max_energy(worker)
                                                         textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
                                                             xsize 137
                                                             text_size font_size(20)
                                                             text_color "#ffffff"
                                                             text_hover_color "#a63c3c"
                                                             action use_or_buy_potion_action(worker, "health_potion")
+                                                            sensitive worker["health"] < calculate_max_health(worker)
                                                     textbutton "Change / View skills":
                                                         xsize 275
                                                         text_size font_size(21)
@@ -4376,7 +4819,7 @@ screen Manager(building_name):
                 yalign 0.5
                 spacing 10
                 textbutton "Rename Building":
-                    action Show("rename_building", building_name=building_name)
+                    action [Function(ensure_custom_name_for_building, building_name), Show("rename_building", building_name=building_name)]
                     xsize 300
                     text_size 42
                     text_color "#3c1f14"
@@ -4545,6 +4988,7 @@ screen building_selection(worker):
                                     # Add worker to building with dedup protection
                                     Function(add_worker_to_building, worker, building_name),
                                     SetDict(worker, "assigned_building", building_name),
+                                    Function(sync_assigned_servants_for_building, building_name),
                                     Hide("building_selection"),
                                     Show("workers")
                                 ]
@@ -4692,7 +5136,11 @@ screen buy_buildings():
 screen recruitment_menu():
     modal True
     zorder 99
-    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    python:
+        recruitment_menu_bg = "gui/Journalback.png"
+        if not renpy.loadable(recruitment_menu_bg):
+            recruitment_menu_bg = "images/parchment.png"
+    add Transform(recruitment_menu_bg, align=(0.5, 0.5))
     frame:
         xalign 0.5
         yalign 0.5
@@ -4784,9 +5232,7 @@ screen buy_map_building(map_button_id):
                     yoffset 25
                     python:
                         available_businesses = get_available_businesses_for_map_button(map_button_id)
-                        renpy.log(f"DEBUG: map_button_id={map_button_id}, available_businesses count={len(available_businesses)}")
                         num = len(owned_buildings)
-                        renpy.log(f"DEBUG: owned_buildings count={num}, owned_buildings={owned_buildings}")
                         # Precios fijos según tipo de botón
                         if "Tavern" in map_button_id:
                             price = 15000
@@ -4799,7 +5245,6 @@ screen buy_map_building(map_button_id):
                         else:
                             # Default para otros tipos (Shop, Servants, etc.)
                             price = 20000
-                        renpy.log(f"DEBUG: Calculated price={price} for map_button_id={map_button_id}")
                         building_name = f"Building {str(num + 1)}"
                     
                     if num < max_building:
@@ -4822,7 +5267,9 @@ screen buy_map_building(map_button_id):
                                             Hide("map_screen"),
                                             Function(renpy.notify, f"Purchased {building_name} as {btype['name']}!"),
                                             Show("Manager", building_name=building_name)
-                                        ])
+                                        ],
+                                        Show("error_popup", message=f"Not enough money. Cost: ${price}")
+                                    )
                                     sensitive (money >= price)
                         else:
                             text "No businesses available for this location." size font_size(28) xalign 0.5 color "#7a4b2a"
@@ -4834,6 +5281,10 @@ screen buy_servants_table():
     modal True
     
     on "show" action Function(_ensure_buy_workers_loaded)
+    default _buy_servants_initialized = False
+    if not _buy_servants_initialized:
+        $ _buy_servants_initialized = True
+        $ _ensure_buy_workers_loaded()
     
     add Solid("#00000099")
     frame:
@@ -4858,7 +5309,51 @@ screen buy_servants_table():
             xalign 0.5
             spacing 15
             null height 80
-            label "Buy Servants" xalign 0.5 style "header_style"
+            fixed:
+                xsize 870
+                ysize 50
+                label "Buy Servants" xalign 0.5 yalign 0.5 style "header_style"
+                # Refresh button (right side)
+                python:
+                    # Check if it's a new day - reset counter if so
+                    if store.last_map_refill_day != store.current_day:
+                        store.map_worker_refill_count = 0
+                        store.last_map_refill_day = store.current_day
+                    
+                    # Use store variable to ensure consistency
+                    refresh_count = store.map_worker_refill_count
+                    can_refresh = refresh_count < 2
+                    has_money = hasattr(store, 'money') and store.money >= 2500
+                    
+                    # Calculate button text based on refresh count
+                    if refresh_count == 0:
+                        refresh_text = "Refresh (Free)"
+                    elif refresh_count == 1:
+                        refresh_text = "Refresh ($2500)"
+                    else:
+                        refresh_text = "Refresh (Limit reached)"
+                    
+                    # Can only refresh if under limit AND (free OR has money for paid)
+                    can_refresh = can_refresh and (refresh_count == 0 or (refresh_count == 1 and has_money))
+                
+                # Dynamic button text and action based on refresh count
+                textbutton "[refresh_text]":
+                    xalign 1.0
+                    yalign 0.5
+                    style "game_menu_button"
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action If(
+                        store.map_worker_refill_count == 0,
+                        Function(store.refresh_buy_workers),
+                        If(
+                            store.map_worker_refill_count == 1,
+                            Show("confirm_refresh_workers"),
+                            NullAction()
+                        )
+                    )
+                    sensitive can_refresh
             null height 10
             
             # Header row (outside the viewport)
@@ -5481,7 +5976,7 @@ screen adjust_comfort(worker):
                             spacing 0
                             textbutton "+" style "game_menu_button":
                                 action [
-                                    Function(lambda: adjust_comfort_and_recalculate_relationship(worker, current_comfort + 1))
+                                    Function(lambda w=worker, c=current_comfort: adjust_comfort_and_recalculate_relationship(w, c + 1))
                                 ]
                                 xsize 25
                                 text_size font_size(28)
@@ -5492,7 +5987,7 @@ screen adjust_comfort(worker):
                                 sensitive current_comfort < 20
                             textbutton "-" style "game_menu_button":
                                 action [
-                                    Function(lambda: adjust_comfort_and_recalculate_relationship(worker, max(1, current_comfort - 1)))
+                                    Function(lambda w=worker, c=current_comfort: adjust_comfort_and_recalculate_relationship(w, max(1, c - 1)))
                                 ]
                                 xsize 25
                                 text_size font_size(28)
@@ -6134,6 +6629,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
 screen workers():
     zorder 10
     modal True
+    on "show" action [Function(process_manager_auto_rest), renpy.restart_interaction]
     add workers_bg
     add Solid("#00000099")
     
@@ -6209,19 +6705,40 @@ screen workers():
                             
                             action Show("worker_building_filter_menu", buildings=unique_buildings)
                 
-                # Filtro por trabajo (derecha)
+                # Filtro por trabajo (derecha) - DEPENDIENTE del filtro de building
                 hbox:
                     spacing 10
                     text "Filter by Job:" size font_size(18) color "#7a4b2a" yalign 0.5
                     
-                    # Crear lista de trabajos únicos
+                    # Crear lista de trabajos únicos - filtrada por building si hay uno seleccionado
                     python:
                         # Ensure worker_job_filter is set to default if not defined
                         if not hasattr(store, 'worker_job_filter') or store.worker_job_filter is None:
                             store.worker_job_filter = "All Jobs"
                         unique_jobs = ["All Jobs"]
+                        
+                        # Si hay un building seleccionado, obtener su nombre interno
+                        selected_building_internal = None
+                        if worker_building_filter != "All Workers":
+                            for bname, bdata in available_buildings.items():
+                                btype_id = bdata.get("type")
+                                type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
+                                parts = bname.split('_')
+                                default_name = f"Building {parts[1]}" if len(parts) > 1 else bname
+                                building_display_name = store.custom_names.get(bname, default_name)
+                                full_display_name = f"{type_name}: {building_display_name}"
+                                if full_display_name == worker_building_filter:
+                                    selected_building_internal = bname
+                                    break
+                        
                         for worker in workers:
                             building_name = worker.get('assigned_building', 'Unassigned')
+                            
+                            # Si hay building seleccionado, solo mostrar jobs de ese building
+                            if selected_building_internal is not None:
+                                if building_name != selected_building_internal:
+                                    continue
+                            
                             if building_name != "Unassigned" and building_name in available_buildings:
                                 job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
                                 btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
@@ -6232,6 +6749,10 @@ screen workers():
                             else:
                                 if "Unassigned" not in unique_jobs:
                                     unique_jobs.append("Unassigned")
+                        
+                        # Si el job seleccionado ya no está en la lista, resetear a "All Jobs"
+                        if worker_job_filter not in unique_jobs:
+                            store.worker_job_filter = "All Jobs"
                     
                     # Menú desplegable para seleccionar trabajo
                     frame:
@@ -6350,6 +6871,52 @@ screen workers():
                             # Aplicar ambos filtros (AND lógico)
                             if building_match and job_match:
                                 filtered_workers.append(worker)
+                        
+                        # Sort workers by Building Type > Building Number > Job > Skill level (descending)
+                        # Rest job always goes last
+                        def get_worker_sort_key(w):
+                            # Get building name and type for sorting
+                            b_name = w.get('assigned_building', 'Unassigned')
+                            if b_name != "Unassigned" and b_name in available_buildings:
+                                b_data = available_buildings[b_name]
+                                b_type_id = b_data.get("type")
+                                b_type_name = next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == b_type_id), "ZZZ") if b_type_id else "ZZZ"
+                                
+                                # Extract building number (e.g., "building_1" -> 1, "building_2" -> 2)
+                                try:
+                                    parts = b_name.split('_')
+                                    b_number = int(parts[-1]) if parts[-1].isdigit() else 999
+                                except:
+                                    b_number = 999
+                                
+                                # Get job name
+                                j_id = b_data.get("servant_jobs", {}).get(w["name"], "Unassigned")
+                                b_type_def = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == b_type_id), None)
+                                if j_id.lower() != "unassigned" and b_type_def:
+                                    j_name = next((p["name"] for p in b_type_def.get("professions", []) if p["id"] == j_id), "ZZZ")
+                                    # Get skill level for this job
+                                    j_def = next((p for p in b_type_def.get("professions", []) if p["id"] == j_id), None)
+                                    if j_def:
+                                        skill_sum = sum(calculate_skill_with_traits(w, sk) for sk in j_def.get("skills", []))
+                                    else:
+                                        skill_sum = 0
+                                else:
+                                    j_name = "ZZZ"
+                                    skill_sum = 0
+                            else:
+                                b_type_name = "ZZZ"
+                                b_number = 999
+                                j_name = "ZZZ"
+                                skill_sum = 0
+                            
+                            # Make "Rest" sort last by prefixing with "zzz_"
+                            j_sort_name = "zzz_rest" if j_name.lower() == "rest" else j_name.lower()
+                            
+                            # Return tuple: (building_type, building_number, job_name, -skill_sum)
+                            # Negative skill_sum for descending order
+                            return (b_type_name.lower(), b_number, j_sort_name, -skill_sum)
+                        
+                        filtered_workers = sorted(filtered_workers, key=get_worker_sort_key)
                     
                     for worker in filtered_workers:
                         $ worker_level = worker.get('level', 1)
@@ -6423,6 +6990,7 @@ screen workers():
                                     text_color "#7a4b2a"
                                     text_hover_color "#2c4aa6"
                                     action use_or_buy_potion_action(worker, "energy_potion")
+                                    sensitive worker["energy"] < calculate_max_energy(worker)
                                 textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
                                     background "tablebutton1b.png"
                                     xsize 89
@@ -6431,6 +6999,7 @@ screen workers():
                                     text_color "#7a4b2a"
                                     text_hover_color "#a63c3c"
                                     action use_or_buy_potion_action(worker, "health_potion")
+                                    sensitive worker["health"] < calculate_max_health(worker)
                             # Type / Action column (fused)
                             frame:
                                 background "tablebutton1b.png"
@@ -6457,6 +7026,24 @@ screen map_screen():
     zorder 2
     modal True
     add map_bg
+    
+    # Ensure workers are loaded when map opens (auto-refill doesn't count as manual refresh)
+    python:
+        # Check if it's a new day - reset counter if so
+        if store.last_map_refill_day != store.current_day:
+            store.map_worker_refill_count = 0
+            store.last_map_refill_day = store.current_day
+        
+        # Only auto-refill if available_workers is empty
+        # Auto-refill does NOT count as a manual refresh - it's just initial population
+        should_refill = (not available_workers or len(available_workers) == 0)
+        
+        if should_refill:
+            renpy.log(f"MAP: Auto-refilling workers (initial load, does not count as refresh)")
+            load_buy_workers()
+            update_displayed_workers()
+            # Do NOT increment map_worker_refill_count - auto-refill is free and doesn't count
+            renpy.log(f"MAP: Workers auto-refilled. Manual refresh count: {store.map_worker_refill_count}/2, available: {len(available_workers)}")
     
     # Map building buttons with focus_mask
     # Images are full map size with transparent areas, so they auto-position correctly
@@ -7083,21 +7670,39 @@ screen daily_report():
                                 
                                 action Show("building_filter_menu", buildings=unique_buildings)
                     
-                    # Filtro por profesión (derecha)
+                    # Filtro por profesión (derecha) - DEPENDIENTE del filtro de building
                     hbox:
                         spacing 10
                         text "Filter by Job:" size font_size(20) color "#7a4b2a" yalign 0.5
                         
-                        # Crear lista de profesiones únicas
+                        # Crear lista de profesiones únicas - filtrada por building si hay uno seleccionado
                         python:
                             # Ensure daily_report_job_filter is set to default if not defined
                             if not hasattr(store, 'daily_report_job_filter') or store.daily_report_job_filter is None:
                                 store.daily_report_job_filter = "All Jobs"
                             unique_jobs = ["All Jobs"]
+                            
                             for report in daily_report:
+                                # Si hay building seleccionado, solo incluir jobs de ese building
+                                if building_filter != "All Buildings":
+                                    report_building_name = report.get('building', 'Unknown Building')
+                                    report_building = available_buildings.get(report_building_name, {})
+                                    btype_id = report_building.get("type")
+                                    type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
+                                    parts = report_building_name.split('_')
+                                    default_name = f"Building {parts[1]}" if len(parts) > 1 else report_building_name
+                                    building_display_name = store.custom_names.get(report_building_name, default_name)
+                                    full_display_name = f"{type_name}: {building_display_name}"
+                                    if full_display_name != building_filter:
+                                        continue
+                                
                                 job_name = report.get('profession', 'N/A')
                                 if job_name and job_name != 'N/A' and job_name not in unique_jobs:
                                     unique_jobs.append(job_name)
+                            
+                            # Si el job seleccionado ya no está en la lista, resetear a "All Jobs"
+                            if daily_report_job_filter not in unique_jobs:
+                                store.daily_report_job_filter = "All Jobs"
                         
                         # Menú desplegable para seleccionar profesión
                         frame:
@@ -7344,6 +7949,7 @@ screen building_filter_menu(buildings):
                     text_hover_color "#6b6528"
                     action [
                         SetVariable("building_filter", building),
+                        SetVariable("daily_report_job_filter", "All Jobs"),  # Reset job filter when building changes
                         Hide("building_filter_menu")
                     ]
             
@@ -7650,6 +8256,7 @@ screen tavern():
             textbutton "Buildings":
                 action [
                     Function(renpy.log, "Manage Buildings button clicked"),
+                    Function(rebuild_assigned_servants),
                     Show("Building_select_global")
                 ]
                 xsize 300
@@ -7800,6 +8407,7 @@ screen worker_building_filter_menu(buildings):
                     text_hover_color "#6b6528"
                     action [
                         SetVariable("worker_building_filter", building),
+                        SetVariable("worker_job_filter", "All Jobs"),  # Reset job filter when building changes
                         Hide("worker_building_filter_menu")
                     ]
             

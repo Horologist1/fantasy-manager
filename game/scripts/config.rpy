@@ -34,6 +34,20 @@ init python:
 
     def _should_suppress_log_message(message):
         text = str(message)
+        # Always keep essential errors/warnings
+        if "ERROR" in text or "WARNING" in text or "Traceback" in text or "Exception" in text:
+            return False
+
+        # Suppress generic UI/debug spam
+        generic_terms = (
+            "DEBUG:", "DEBUG ", "Tavern screen displayed", "Workers button clicked",
+            "validate_and_sync_buildings:", "Secondary attributes", "Files Ren'Py sees",
+            "Calendar synced:", "Date advanced to:", "BGM DEBUG:",
+            "Added trait", "Successfully added", "Cleared daily_report",
+            "Updated displayed_workers", "Reloaded available_workers"
+        )
+        if any(term in text for term in generic_terms):
+            return True
         # Suppress image/folder search noise unless explicitly enabled
         if not getattr(store, "debug_image_logging", False):
             image_terms = (
@@ -73,6 +87,32 @@ init python:
             if any(term in text for term in event_terms):
                 return True
 
+        # Suppress daily event execution noise (very verbose)
+        # BUT keep profession/worker matching logs for debugging
+        daily_terms = (
+            "process_daily_events() starting",
+            "ENERGY SNAPSHOT:",
+            "Event: ", "EARNINGS DEBUG:", 
+            "Rebelliousness decay:", "SKILL USE:", "Bonus loot:"
+        )
+        if any(term in text for term in daily_terms):
+            # Allow profession matching and processing logs through
+            if ("Checking profession" in text or "Worker " in text and "has job" in text or 
+                "Matched!" in text or "Processing worker:" in text or "DAILY:" in text):
+                return False
+            return True
+
+        # Suppress snapshot chatter (keep errors/warnings)
+        # AUTOREST logs are NOT suppressed for debugging
+        snapshot_terms = (
+            "SNAPSHOT:", "AFTER_LOAD:", "SAVE_STATE:"
+        )
+        if any(term in text for term in snapshot_terms):
+            # But allow AUTOREST through
+            if "AUTOREST:" in text:
+                return False
+            return True
+
         return False
 
     def _filtered_renpy_log(message):
@@ -83,6 +123,13 @@ init python:
 
     # Install filtered logger
     renpy.log = _filtered_renpy_log
+
+    # Disable Ren'Py autosaves (only manual slot saves are supported)
+    config.has_autosave = False
+    try:
+        config.autosave_slots = 0
+    except Exception:
+        pass
 
     # Custom quit handler with confirmation that actually works
     def reliable_quit():

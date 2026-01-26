@@ -162,7 +162,8 @@ init python:
             flag_value = worker.get("flags", {}).get(flag_name)
             
             if flag_value is not None:
-                if isinstance(flag_value, dict) and "value" in flag_value:
+                # Use hasattr instead of isinstance to handle RevertableDict
+                if hasattr(flag_value, 'get') and "value" in flag_value:
                     current_uses = flag_value.get("value", 0)
                 elif isinstance(flag_value, (int, float)):
                     current_uses = flag_value
@@ -216,7 +217,8 @@ init python:
             flag_value = worker.get("flags", {}).get(previous_level_flag)
             
             if flag_value is not None:
-                if isinstance(flag_value, dict) and "value" in flag_value:
+                # Use hasattr instead of isinstance to handle RevertableDict
+                if hasattr(flag_value, 'get') and "value" in flag_value:
                     previous_uses = flag_value.get("value", 0)
                 elif isinstance(flag_value, (int, float)):
                     previous_uses = flag_value
@@ -337,10 +339,17 @@ init python:
             return 0
         
         day_data = store.worker_interactions_today[worker_name]
-        if current_day not in day_data:
+        # Handle both string and int keys (JSON may store as strings)
+        day_key = str(current_day)
+        if day_key not in day_data and current_day not in day_data:
             return 0
         
-        return day_data[current_day]
+        # Try both string and int key
+        if day_key in day_data:
+            return day_data[day_key]
+        elif current_day in day_data:
+            return day_data[current_day]
+        return 0
     
     def can_interact_with_worker(worker):
         """Check if we can interact with a worker today (limit not reached)."""
@@ -356,10 +365,17 @@ init python:
         if worker_name not in store.worker_interactions_today:
             store.worker_interactions_today[worker_name] = {}
         
-        if current_day not in store.worker_interactions_today[worker_name]:
-            store.worker_interactions_today[worker_name][current_day] = 0
+        # Use string key for consistency (JSON stores as strings)
+        day_key = str(current_day)
+        if day_key not in store.worker_interactions_today[worker_name]:
+            # Also check int key and migrate if needed
+            if current_day in store.worker_interactions_today[worker_name]:
+                store.worker_interactions_today[worker_name][day_key] = store.worker_interactions_today[worker_name][current_day]
+                del store.worker_interactions_today[worker_name][current_day]
+            else:
+                store.worker_interactions_today[worker_name][day_key] = 0
         
-        store.worker_interactions_today[worker_name][current_day] += 1
+        store.worker_interactions_today[worker_name][day_key] += 1
 
     def apply_interaction_effects(worker, interaction, apply_costs=True, skip_daily_limit=False):
         """Apply the effects of an interaction to a worker.
@@ -402,10 +418,12 @@ init python:
                     del worker["flags"][flag_name]
             else:
                 # Handle incremental flags (for usage counting)
-                if isinstance(flag_value, dict) and flag_value.get("increment"):
+                # Use hasattr instead of isinstance to handle RevertableDict
+                if hasattr(flag_value, 'get') and flag_value.get("increment"):
                     current_flag = worker["flags"].get(flag_name)
                     if current_flag is not None:
-                        if isinstance(current_flag, dict) and "value" in current_flag:
+                        # Use hasattr instead of isinstance to handle RevertableDict
+                        if hasattr(current_flag, 'get') and "value" in current_flag:
                             # Increment existing dict flag
                             new_value = current_flag["value"] + flag_value["value"]
                             worker["flags"][flag_name] = {
@@ -442,7 +460,8 @@ init python:
             flag_value = worker["flags"].get(level_flag)
             
             if flag_value is not None:
-                if isinstance(flag_value, dict) and "value" in flag_value:
+                # Use hasattr instead of isinstance to handle RevertableDict
+                if hasattr(flag_value, 'get') and "value" in flag_value:
                     current_uses = flag_value.get("value", 0)
                 elif isinstance(flag_value, (int, float)):
                     current_uses = flag_value
@@ -502,10 +521,11 @@ init python:
             pass
         
         # Extraer el folder del worker exactamente como lo hace get_worker_image
+        fallback = get_fallback_folder(worker)
         if hasattr(worker, "get") and callable(worker.get):
-                worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
+            worker_folder = worker.get("folder", fallback)
         else:
-            worker_folder = "aspen"  # Fallback to aspen instead of default
+            worker_folder = fallback
         
         # Definir base folder del trabajador
         base_folder = f"images/workers/{worker_folder}/"

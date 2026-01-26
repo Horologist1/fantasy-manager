@@ -176,8 +176,9 @@ init python:
             "extreme": ["extreme", "beast"]  # Extreme busca "extreme" o "beast"
         }
         
-        if skill_name in special_patterns:
-            return special_patterns[skill_name]
+        skill_lower = skill_name.lower() if skill_name else skill_name
+        if skill_lower in special_patterns:
+            return special_patterns[skill_lower]
         else:
             return [skill_name]
 
@@ -361,15 +362,16 @@ init python:
             return None
         
         # Get worker folder
+        fallback = get_fallback_folder(worker)
         if hasattr(worker, 'get'):
-            worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
+            worker_folder = worker.get("folder", fallback)
             renpy.log(f"Worker folder: {worker_folder}")
         else:
-            worker_folder = "aspen"  # Fallback to aspen instead of default
-            renpy.log("Worker has no get method, using aspen folder as fallback")
+            worker_folder = fallback
+            renpy.log(f"Worker has no get method, using {fallback} folder as fallback")
         
         base_folder = f"images/workers/{worker_folder}/"
-        default_folder = "images/workers/aspen/"  # Use aspen as fallback instead of default
+        default_folder = f"images/workers/{fallback}/"  # Use gender-appropriate fallback
         
         renpy.log(f"Worker: {worker['name']}, Outcome: {outcome}, Skill: {skill_name}, Folder: {base_folder}")
         

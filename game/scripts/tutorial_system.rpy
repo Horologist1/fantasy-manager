@@ -67,6 +67,7 @@ default vengeance_path = ""  # "Blade" or "Shadow"
 default governor_attention = 0  # 0-100, increases as player progresses
 default governor_retaliation_done = False  # Has the retaliation event occurred?
 default governor_tension_active = False  # Is the tension system active?
+default days_since_last_tension_event = 0  # Track days without tension events (guarantee after 10)
 
 # Objective content
 default objective_titles = {
@@ -155,6 +156,20 @@ init python:
                 # Handle old string format for backwards compatibility
                 if entry == item_id:
                     found = True
+                # Handle string representation of list/tuple (e.g., "['obsidian_blade', 1, False]")
+                elif entry.strip().startswith(('[', '(')) and item_id in entry:
+                    # Try to safely parse the string representation
+                    try:
+                        # Use ast.literal_eval for safe evaluation
+                        import ast
+                        parsed = ast.literal_eval(entry)
+                        if isinstance(parsed, (list, tuple)) and len(parsed) > 0 and parsed[0] == item_id:
+                            found = True
+                    except (ValueError, SyntaxError, ImportError):
+                        # If parsing fails, check if item_id appears in the string with quotes
+                        # This handles cases like "['obsidian_blade', 1, False]" or "('obsidian_blade', 1, False)"
+                        if f"'{item_id}'" in entry or f'"{item_id}"' in entry:
+                            found = True
             
             if found:
                 renpy.log(f"DEBUG has_item_anywhere: Found {item_id} in manager_inventory as {type(entry).__name__}: {entry}")
@@ -178,9 +193,23 @@ init python:
                     if entry.get("item_id") == item_id:
                         found = True
                 elif isinstance(entry, str):
-                    # Handle old string format
+                    # Handle old string format for backwards compatibility
                     if entry == item_id:
                         found = True
+                    # Handle string representation of list/tuple (e.g., "['obsidian_blade', 1, False]")
+                    elif entry.strip().startswith(('[', '(')) and item_id in entry:
+                        # Try to safely parse the string representation
+                        try:
+                            # Use ast.literal_eval for safe evaluation
+                            import ast
+                            parsed = ast.literal_eval(entry)
+                            if isinstance(parsed, (list, tuple)) and len(parsed) > 0 and parsed[0] == item_id:
+                                found = True
+                        except (ValueError, SyntaxError, ImportError):
+                            # If parsing fails, check if item_id appears in the string with quotes
+                            # This handles cases like "['obsidian_blade', 1, False]" or "('obsidian_blade', 1, False)"
+                            if f"'{item_id}'" in entry or f'"{item_id}"' in entry:
+                                found = True
                 
                 if found:
                     renpy.log(f"DEBUG has_item_anywhere: Found {item_id} in {worker_name}'s inventory as {type(entry).__name__}: {entry}")
@@ -188,6 +217,93 @@ init python:
         
         renpy.log(f"DEBUG has_item_anywhere: {item_id} NOT FOUND in any inventory")
         return False
+    
+    def _objective_12_flag_name(item_id):
+        return f"objective12_{item_id}_collected"
+    
+    def mark_objective_12_item_collected(item_id):
+        if not hasattr(store, "event_flags") or store.event_flags is None:
+            store.event_flags = {}
+        store.event_flags[_objective_12_flag_name(item_id)] = True
+    
+    def has_objective_12_item_flag(item_id):
+        return getattr(store, "event_flags", {}).get(_objective_12_flag_name(item_id), False)
+    
+    def sync_objective_12_flags_from_inventory():
+        required_items = ["binding_gem", "obsidian_blade", "enchanted_ring"]
+        for item_id in required_items:
+            if has_item_anywhere(item_id):
+                mark_objective_12_item_collected(item_id)
+    
+    def validate_objective_12_items():
+        """
+        Validate and fix items for objective 12 (binding gem quest).
+        This function checks if the required items exist and logs detailed information.
+        It's called when the player is on objective 12 to ensure items are properly tracked.
+        """
+        required_items = ["binding_gem", "obsidian_blade", "enchanted_ring"]
+        
+        renpy.log("=== OBJECTIVE 12 ITEM VALIDATION ===")
+        
+        # Ensure manager_inventory exists
+        if not hasattr(store, 'manager_inventory') or store.manager_inventory is None:
+            store.manager_inventory = []
+            renpy.log("OBJECTIVE 12: manager_inventory was None, initialized to []")
+        
+        # Log current state
+        renpy.log(f"OBJECTIVE 12: manager_inventory type: {type(store.manager_inventory)}, length: {len(store.manager_inventory)}")
+        if len(store.manager_inventory) > 0:
+            renpy.log(f"OBJECTIVE 12: manager_inventory items: {[str(item)[:50] for item in store.manager_inventory[:10]]}")
+        
+        # Check each required item
+        for item_id in required_items:
+            found = has_item_anywhere(item_id)
+            renpy.log(f"OBJECTIVE 12: {item_id} - Found: {found}")
+            
+            if not found:
+                # Item is missing - log detailed information
+                renpy.log(f"OBJECTIVE 12: WARNING - {item_id} is MISSING!")
+                
+                # Check if it might be in manager_inventory but in wrong format
+                found_in_manager = False
+                for i, entry in enumerate(store.manager_inventory):
+                    item_str = str(entry).lower()
+                    if item_id.replace("_", " ") in item_str or item_id in item_str:
+                        renpy.log(f"OBJECTIVE 12: Found potential match in manager_inventory at index {i}: {entry}")
+                        found_in_manager = True
+                        # Try to normalize string representations to actual lists
+                        if isinstance(entry, str) and entry.strip().startswith(('[', '(')):
+                            try:
+                                import ast
+                                parsed = ast.literal_eval(entry)
+                                if isinstance(parsed, (list, tuple)) and len(parsed) > 0 and parsed[0] == item_id:
+                                    # Convert to list format and replace in inventory
+                                    store.manager_inventory[i] = list(parsed) if isinstance(parsed, tuple) else parsed
+                                    renpy.log(f"OBJECTIVE 12: Normalized item at index {i} from string to list: {store.manager_inventory[i]}")
+                            except (ValueError, SyntaxError, ImportError):
+                                pass
+                
+                # Check worker inventories
+                found_in_workers = False
+                for worker in store.workers:
+                    worker_name = worker.get("name", "Unknown")
+                    worker_inventory = worker.get("inventory", [])
+                    for entry in worker_inventory:
+                        item_str = str(entry).lower()
+                        if item_id.replace("_", " ") in item_str or item_id in item_str:
+                            renpy.log(f"OBJECTIVE 12: Found potential match in {worker_name}'s inventory: {entry}")
+                            found_in_workers = True
+                
+                if not found_in_manager and not found_in_workers:
+                    renpy.log(f"OBJECTIVE 12: ERROR - {item_id} completely missing from all inventories!")
+        
+        # Sync persistent flags from inventory for older saves
+        sync_objective_12_flags_from_inventory()
+
+        renpy.log("=== END OBJECTIVE 12 VALIDATION ===")
+    
+    # Make function available in store
+    store.validate_objective_12_items = validate_objective_12_items
     
     def count_workers_with_skill(skill_name, threshold):
         """Count workers with skill >= threshold (including bonuses and equipment)"""
@@ -250,9 +366,13 @@ init python:
             actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
             return f"Progress: {actual_workers}/20 Workers"
         elif current_objective == 12:
-            has_binding_gem = has_item_anywhere("binding_gem")
-            has_obsidian_blade = has_item_anywhere("obsidian_blade")
-            has_enchanted_ring = has_item_anywhere("enchanted_ring")
+            # Validate and fix items when checking objective 12 progress
+            validate_objective_12_items()
+            
+            sync_objective_12_flags_from_inventory()
+            has_binding_gem = has_objective_12_item_flag("binding_gem")
+            has_obsidian_blade = has_objective_12_item_flag("obsidian_blade")
+            has_enchanted_ring = has_objective_12_item_flag("enchanted_ring")
             items_collected = sum([has_binding_gem, has_obsidian_blade, has_enchanted_ring])
             check_gem = "✓" if has_binding_gem else "✗"
             check_blade = "✓" if has_obsidian_blade else "✗"
@@ -357,9 +477,13 @@ init python:
             renpy.log(f"DEBUG Objective 12: Objective 11 not complete (objective_11_complete={objective_11_complete})")
             return False
         
-        has_binding_gem = has_item_anywhere("binding_gem")
-        has_obsidian_blade = has_item_anywhere("obsidian_blade")
-        has_enchanted_ring = has_item_anywhere("enchanted_ring")
+        # Validate items before checking
+        validate_objective_12_items()
+        sync_objective_12_flags_from_inventory()
+        
+        has_binding_gem = has_objective_12_item_flag("binding_gem")
+        has_obsidian_blade = has_objective_12_item_flag("obsidian_blade")
+        has_enchanted_ring = has_objective_12_item_flag("enchanted_ring")
         
         renpy.log(f"DEBUG Objective 12: binding_gem={has_binding_gem}, obsidian_blade={has_obsidian_blade}, enchanted_ring={has_enchanted_ring}")
         renpy.log(f"DEBUG Objective 12: manager_inventory length={len(getattr(store, 'manager_inventory', []))}")
@@ -473,9 +597,15 @@ init python:
             return False
         
         # Only trigger when player has chosen a path (assassination or blackmail)
-        if store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False):
+        # Also check if objective 9 is complete (player may have completed it before this system was added)
+        has_path = store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False)
+        obj_9_complete = getattr(store, 'objective_9_complete', False)
+        
+        # Trigger if path is chosen OR if objective 9 is complete (for players who completed it before)
+        if has_path or (obj_9_complete and store.current_objective >= 9):
             store.governor_retaliation_done = True
             store.governor_tension_active = True
+            renpy.log(f"TENSION: Governor retaliation check - has_path={has_path}, obj_9_complete={obj_9_complete}, current_obj={store.current_objective}")
             return True
         return False
     
@@ -491,6 +621,42 @@ init python:
         if store.current_objective > 16 or store.event_flags.get("quest_complete", False):
             store.governor_tension_active = False
             return None
+        
+        # Track days since last tension event (guarantee event after 10 days)
+        if not hasattr(store, 'days_since_last_tension_event'):
+            store.days_since_last_tension_event = 0
+        
+        store.days_since_last_tension_event += 1
+        
+        # Guarantee an event after 10 days without one
+        if store.days_since_last_tension_event >= 10:
+            renpy.log(f"TENSION: Guaranteed event after {store.days_since_last_tension_event} days without one")
+            store.days_since_last_tension_event = 0
+            # Choose event type
+            event_types = ["poison", "sabotage", "spy"]
+            event_type = random.choice(event_types)
+            renpy.log(f"TENSION: Governor tension event triggered (guaranteed): {event_type}")
+            return event_type
+        
+        # Calculate probability based on attention (max 25% chance at 100 attention, increased from 15%)
+        probability = store.governor_attention / 100.0 * 0.25
+        
+        renpy.log(f"TENSION: Checking for event - attention: {store.governor_attention}, probability: {probability:.2%}, days since last: {store.days_since_last_tension_event}")
+        
+        roll = random.random()
+        if roll > probability:
+            renpy.log(f"TENSION: No event today (rolled {roll:.3f} > {probability:.3f})")
+            return None  # No event today
+        
+        # Event triggered - reset counter
+        store.days_since_last_tension_event = 0
+        
+        # Choose event type
+        event_types = ["poison", "sabotage", "spy"]
+        event_type = random.choice(event_types)
+        
+        renpy.log(f"TENSION: Governor tension event triggered: {event_type}")
+        return event_type
     
     def resolve_governor_tension():
         """Called when the governor storyline ends - removes fear traits from workers"""
@@ -505,25 +671,12 @@ init python:
             worker_traits = worker.get("traits", [])
             for trait_name in traits_to_remove:
                 if trait_name in worker_traits:
-                    remove_trait(worker, trait_name)
+                    remove_trait_safe(worker, trait_name)
                     if worker["name"] not in workers_healed:
                         workers_healed.append(worker["name"])
         
         renpy.log(f"TENSION: Governor storyline resolved. Healed workers: {workers_healed}")
         return workers_healed
-        
-        # Calculate probability based on attention (max 15% chance at 100 attention)
-        probability = store.governor_attention / 100.0 * 0.15
-        
-        if random.random() > probability:
-            return None  # No event today
-        
-        # Choose event type
-        event_types = ["poison", "sabotage", "spy"]
-        event_type = random.choice(event_types)
-        
-        renpy.log(f"TENSION: Governor tension event triggered: {event_type}")
-        return event_type
     
     def apply_governor_poison_event():
         """Apply poison effect to a random worker"""
@@ -594,6 +747,11 @@ init python:
         
         renpy.log(f"TENSION: Governor's spy stole ${stolen}!")
         return stolen
+    
+    # Make governor functions available in store (after all functions are defined)
+    store.check_governor_retaliation = check_governor_retaliation
+    store.update_governor_attention = update_governor_attention
+    store.process_governor_tension_event = process_governor_tension_event
     
     def jump_to_ending():
         """Jump to the appropriate ending based on chosen path"""
@@ -708,18 +866,16 @@ init python:
                 renpy.call_in_new_context("show_objective_4_dialogue")
                 store.pending_objective_4_dialogue = False  # Clear flag if dialogue was shown
             
-        elif current_objective == 4 and is_previous_objective_complete(4) and money >= 5000 and not objective_4_complete:
-            # Double-check that objective 3 is actually complete
-            if not objective_3_complete:
-                renpy.log(f"DEBUG: Objective 4 check failed - objective 3 not complete! (objective_3_complete={objective_3_complete})")
-                return
-            # Additional safety check: verify we're actually on objective 4 and previous objectives are done
-            if current_objective != 4:
-                renpy.log(f"DEBUG: Objective 4 check failed - current_objective is {current_objective}, not 4!")
-                return
-            renpy.log(f"DEBUG: Objective 4 completed! (money={money}, objective_3_complete={objective_3_complete})")
+        # Objective 4: Can complete if objective 3 is done and money >= 5000
+        # This check works even if current_objective has advanced past 4
+        # Use store.money to ensure we get the correct value
+        elif objective_3_complete and getattr(store, 'money', money) >= 5000 and not objective_4_complete:
+            store_money = getattr(store, 'money', money)
+            renpy.log(f"DEBUG: Objective 4 completed! (money={store_money}, objective_3_complete={objective_3_complete}, current_objective={current_objective})")
             objective_4_complete = True
-            current_objective = 5
+            # Only advance current_objective if we're still on objective 4 or earlier
+            if current_objective <= 4:
+                current_objective = 5
             # Always show the dialogue when objective 4 is completed
             renpy.log("DEBUG: About to show objective 4 dialogue")
             # Set flag to show dialogue - will be checked in tavern_screen
@@ -1292,19 +1448,19 @@ label check_tutorial_progress:
     if objective_just_completed > 0:
         if objective_just_completed == 1:
             $ objective_just_completed = 0
-            call objective_1_complete_dialogue from _call_objective_1_complete_dialogue
+            call show_objective_1_dialogue from _call_show_objective_1_dialogue
         elif objective_just_completed == 2:
             $ objective_just_completed = 0
-            call objective_2_complete_dialogue from _call_objective_2_complete_dialogue
+            call show_objective_2_dialogue from _call_show_objective_2_dialogue
         elif objective_just_completed == 3:
             $ objective_just_completed = 0
-            call objective_3_complete_dialogue from _call_objective_3_complete_dialogue
+            call show_objective_3_dialogue from _call_show_objective_3_dialogue
         elif objective_just_completed == 4:
             $ objective_just_completed = 0
-            call objective_4_complete_dialogue from _call_objective_4_complete_dialogue
+            call show_objective_4_dialogue from _call_show_objective_4_dialogue_1
         elif objective_just_completed == 5:
             $ objective_just_completed = 0
-            call objective_5_complete_dialogue from _call_objective_5_complete_dialogue
+            call show_objective_5_dialogue from _call_show_objective_5_dialogue
     return
 
 # ===== NEW OBJECTIVE DIALOGUES =====

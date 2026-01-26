@@ -17,56 +17,6 @@ init python:
 
     traits_list = load_traits()
 
-    def assign_random_traits(worker):
-        """
-        Assign between 3 and 5 random traits to the worker, ensuring no conflicts.
-        If fewer than 3 traits are available, assign as many as possible without conflicts.
-        """
-        if not worker.get("traits"):
-            worker["traits"] = []
-
-        possible_traits = [
-            t for t in traits_list
-            if not t.get("only_assigned", False) and (persistent.nsfw_enabled or not t.get("nsfw", False))
-        ]
-        random.shuffle(possible_traits)
-
-        selected_traits = []
-        attempts = 0
-        max_attempts = 100
-
-        target_count = random.randint(3, 5)
-
-        while len(selected_traits) < target_count and attempts < max_attempts:
-            attempts += 1
-            trait = random.choice(possible_traits)
-            trait_name = trait["name"]
-
-            # Check gender restriction
-            if not can_assign_trait_to_worker(trait, worker):
-                continue
-
-            # Check if trait conflicts with existing traits
-            conflicts = False
-            for existing_trait_name in worker["traits"] + selected_traits:
-                existing_trait = next((t for t in traits_list if t["name"] == existing_trait_name), None)
-                if existing_trait and trait_name in existing_trait.get("conflicts", []):
-                    conflicts = True
-                    break
-                if trait_name in trait.get("conflicts", []) and existing_trait_name in [t["name"] for t in traits_list if trait_name in t.get("conflicts", [])]:
-                    conflicts = True
-                    break
-
-            if not conflicts and trait_name not in selected_traits:
-                selected_traits.append(trait_name)
-
-        # Only add traits that aren't already in worker["traits"]
-        for trait_name in selected_traits:
-            if trait_name not in worker["traits"]:
-                worker["traits"].append(trait_name)
-        
-        return worker["traits"]
-
     def get_trait_desc(trait_name):
         """Get the description of a trait by name."""
         for t in traits_list:
@@ -112,7 +62,7 @@ init python:
             if trait["name"] == trait_name:
                 for conflict in trait.get("conflicts", []):
                     if conflict in worker["traits"]:
-                        remove_trait(worker, conflict)
+                        remove_trait_safe(worker, conflict)
 
         if trait_name not in worker["traits"]:
             worker["traits"].append(trait_name)
@@ -147,6 +97,25 @@ init python:
             recalculate_trait_modifiers(worker)
         else:
             renpy.log(f"Trait '{trait_name}' not found in worker '{worker.get('name', 'Unknown')}' traits: {worker_traits}")
+
+    def remove_trait_safe(worker, trait_name):
+        """Remove a trait with case-insensitive cleanup of durations."""
+        if not worker or not trait_name:
+            return
+        remove_trait(worker, trait_name)
+        removed_any = False
+        worker_traits = worker.get("traits", [])
+        for existing in list(worker_traits):
+            if isinstance(existing, str) and existing.lower() == str(trait_name).lower():
+                worker_traits.remove(existing)
+                removed_any = True
+        if "trait_durations" in worker:
+            for key in list(worker["trait_durations"].keys()):
+                if isinstance(key, str) and key.lower() == str(trait_name).lower():
+                    del worker["trait_durations"][key]
+                    removed_any = True
+        if removed_any:
+            recalculate_trait_modifiers(worker)
 
     def apply_trait_secondary_modifiers_once(worker):
         """

@@ -40,20 +40,27 @@ init python:
         except Exception as e:
             renpy.log("ENERGY SNAPSHOT error: " + str(e))
 
+        # 1. Agrupar trabajadores REALES (de store.workers) por su edificio asignado
+        workers_by_building = {}
+        for w in store.workers:
+            b_name = w.get("assigned_building", "Unassigned")
+            if b_name != "Unassigned":
+                if b_name not in workers_by_building:
+                    workers_by_building[b_name] = []
+                workers_by_building[b_name].append(w)
+
         for building_name in store.owned_buildings:
             building = available_buildings.get(building_name)
+            workers_here = workers_by_building.get(building_name, [])
             if not building:
                 renpy.log(f"DAILY: Skipping {building_name} - not found in available_buildings")
                 continue
-            # Debug building assignment snapshot
-            try:
-                assigned_names = [w.get("name") for w in (building.get("assigned_servants") or [])]
-                renpy.log(f"DAILY: Building {building_name} type={building.get('type')} assigned={assigned_names}")
-                renpy.log(f"DAILY: servant_jobs={ {k:v for k,v in (building.get('servant_jobs') or {}).items()} }")
-            except Exception as e:
-                renpy.log("DAILY: assignment snapshot error: " + str(e))
-            if not building.get("assigned_servants"):
-                renpy.log(f"DAILY: {building_name} has no assigned_servants -> skipping")
+
+            # Sincronizamos la lista visual por si acaso, pero no dependemos de ella
+            building["assigned_servants"] = workers_here
+            
+            if not workers_here:
+                renpy.log(f"DAILY: {building_name} has no workers assigned in store.workers -> skipping")
                 continue
 
             btype_id = building.get("type")
@@ -79,15 +86,14 @@ init python:
                     break
             
             if rest_profession:
-                # Get all workers in rest for this building, ensuring no duplicates
+                # Get all workers in rest for this building from the robust workers_here list
                 workers_in_rest = []
-                seen_worker_names = set()
-                for w in building["assigned_servants"]:
+                for w in workers_here:
                     worker_name = w.get("name", "")
-                    job = building["servant_jobs"].get(worker_name, "").lower()
-                    if job == "rest" and worker_name not in seen_worker_names:
+                    job_raw = building.get("servant_jobs", {}).get(worker_name, "")
+                    job_norm = str(job_raw).lower()
+                    if "rest" in job_norm:
                         workers_in_rest.append(w)
-                        seen_worker_names.add(worker_name)
                         renpy.log(f"DAILY: Found worker in rest: {worker_name} in {building_name}")
                 
                 # Process each worker in rest exactly once
@@ -409,11 +415,22 @@ init python:
                         full_description = base_description
                         if trait_success_messages:
                             full_description += "\n" + "\n".join(trait_success_messages)
+                        # Determine color based on outcome (matching daily report colors)
+                        if outcome in ["Critical Success", "Success", "Rest"]:
+                            outcome_color = "#006600"  # Verde
+                        elif outcome == "Mediocre":
+                            outcome_color = "#666600"  # Amarillo
+                        elif outcome == "Failure":
+                            outcome_color = "#660000"  # Rojo
+                        elif outcome == "Refused":
+                            outcome_color = "#663333"  # Rojo claro
+                        else:
+                            outcome_color = "#ffffff"  # Blanco por defecto
                         # Show skill name and value before skill roll
                         if selected_skill and skill_value > 0:
-                            full_description += "\n\n{{color=#006600}}{{size=18}}({}: {} - Skill roll: {} - {}){{/size}}{{/color}}".format(selected_skill, skill_value, roll, outcome)
+                            full_description += "\n\n{{color={}}}{{size=18}}({}: {} - Skill roll: {} - {}){{/size}}{{/color}}".format(outcome_color, selected_skill, skill_value, roll, outcome)
                         else:
-                            full_description += "\n\n{{color=#006600}}{{size=18}}(Skill roll: {} - {}){{/size}}{{/color}}".format(roll, outcome)
+                            full_description += "\n\n{{color={}}}{{size=18}}(Skill roll: {} - {}){{/size}}{{/color}}".format(outcome_color, roll, outcome)
 
                         # Use skill name directly
                         if selected_skill is not None:
@@ -426,7 +443,17 @@ init python:
                                 worker["skill_uses"] = {}
                             old_uses = worker["skill_uses"].get(selected_skill, 0)
                             worker["skill_uses"][selected_skill] = old_uses + 1
-                            renpy.log(f"SKILL USE: {worker.get('name', 'Unknown')} used {selected_skill} (now {worker['skill_uses'][selected_skill]} uses)")
+                            
+                            # Track daily sexual work separately for libido calculation
+                            # This allows skill_uses to accumulate for level ups
+                            sexual_skills = get_sexual_skill_names()
+                            if selected_skill in sexual_skills:
+                                worker["daily_sexual_work"] = worker.get("daily_sexual_work", 0) + 1
+                            
+                            # Get current base skill level for debugging
+                            current_level = worker.get("skills", {}).get(selected_skill, 0)
+                            uses_needed = max(1, current_level // 15 + 1) if current_level <= 75 else 6 + int((current_level - 75) ** 1.8 / 5)
+                            renpy.log(f"SKILL USE: {worker.get('name', 'Unknown')} used {selected_skill} - uses: {old_uses} -> {worker['skill_uses'][selected_skill]}, level: {current_level}, needs: {uses_needed}")
 
                         # Update building reputation, capped at 1000
                         new_reputation = building["reputation"] + reputation_change
@@ -586,12 +613,25 @@ init python:
         # Regenerate energy/health and update stats BEFORE events
         for worker in store.workers:
             old_health = worker["health"]
-            health_regen = worker.get("level", 1) + calculate_health_regeneration(worker)
-            worker["health"] = min(worker["health"] + health_regen, calculate_max_health(worker))
+            base_regen = worker.get("level", 1)
+            trait_regen = calculate_health_regeneration(worker)
+            health_regen = base_regen + trait_regen
+            max_health = calculate_max_health(worker)
+            new_health = min(worker["health"] + health_regen, max_health)
+            worker["health"] = new_health
+            # Always log health regeneration to verify it's working
+            if old_health != new_health:
+                renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} -> {new_health} (regen: +{health_regen} = level {base_regen} + trait {trait_regen}, max: {max_health})")
+            else:
+                renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} (already at max {max_health}, regen would be +{health_regen} = level {base_regen} + trait {trait_regen})")
 
             old_energy = worker["energy"]
             energy_regen = worker.get("level", 1)
-            worker["energy"] = min(worker["energy"] + energy_regen, calculate_max_energy(worker))
+            max_energy = calculate_max_energy(worker)
+            new_energy = min(worker["energy"] + energy_regen, max_energy)
+            worker["energy"] = new_energy
+            if old_energy != new_energy:
+                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen}, max: {max_energy})")
 
             if persistent.nsfw_enabled:
                 regenerate_libido(worker)
@@ -903,7 +943,7 @@ init python:
                     manager_count = count_active_managers()
                     manager_reduction = manager_count * 10
                     base_event_prob = max(1, 30 - manager_reduction)  # Minimum 1%
-                    
+
                     for event, worker in valid_events:
                         # If event has custom probability (fixed chance), use it as-is (NOT affected by managers)
                         # If not, use the effective base probability (reduced by managers)
@@ -915,7 +955,7 @@ init python:
                             # Has custom probability (fixed chance) - use it exactly as defined, NOT affected by managers
                             # Only ensure it's not below 1% for safety
                             event_probability = max(1, event_probability)
-                        
+
                         if event.get("guaranteed", False) or event_probability >= 100:
                             # Guaranteed events always pass
                             probability_filtered_events.append((event, worker))
@@ -925,10 +965,14 @@ init python:
                             individual_roll = renpy.random.randint(1, 100)
                             if individual_roll <= event_probability:
                                 probability_filtered_events.append((event, worker))
-                                renpy.log(f"Event {event.get('id')} passed individual probability check ({individual_roll} <= {event_probability}%)")
+                                renpy.log(
+                                    f"Event {event.get('id')} passed individual probability check ({individual_roll} <= {event_probability}%)"
+                                )
                             else:
-                                renpy.log(f"Event {event.get('id')} failed individual probability check ({individual_roll} > {event_probability}%)")
-                    
+                                renpy.log(
+                                    f"Event {event.get('id')} failed individual probability check ({individual_roll} > {event_probability}%)"
+                                )
+
                     if probability_filtered_events:
                         # Use weight-based selection among events that passed probability check
                         total_weight = sum(event.get("weight", 1) for event, _ in probability_filtered_events)
@@ -941,7 +985,7 @@ init python:
                                 if choice_val <= cumulative_weight:
                                     chosen_event_tuple = event_tuple
                                     break
-                        
+
                         if chosen_event_tuple:
                             event, worker = chosen_event_tuple
                             renpy.log(f"Selected random event: {event.get('id')}")
@@ -967,7 +1011,6 @@ init python:
 
         if money < -5000:
             return "game_over"
-
-        renpy.call_screen("daily_report")
         
+        # Daily report will be shown in next_day label after this returns
         return "tavern"

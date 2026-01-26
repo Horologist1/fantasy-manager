@@ -94,70 +94,96 @@ init python:
         }.get(event_result.lower(), 0)
         # Update stored reputation
         building["reputation"] = max(0, building["reputation"] + reputation_change)
-        renpy.log(f"Updated {building_name} reputation to {building['reputation']} after {event_result}")
 
-    def process_manager_auto_rest():
-        """
-        Automatic rest management when a Manager is assigned to a building.
-        
-        If a building has a worker with profession 'manager', the manager will:
-        - Automatically assign workers with energy < 2 to 'rest'
-        - Save their previous profession for restoration
-        - Restore workers to their previous profession when energy recovers
-        """
-        for building_name in store.owned_buildings:
-            building = available_buildings.get(building_name)
-            if not building or not building.get("assigned_servants"):
+    def process_manager_auto_rest(restore_only=False):
+        """Sistema robusto: Usa store.workers como única fuente de verdad."""
+        # 1. Agrupar trabajadores por edificio usando store.workers
+        workers_by_building = {}
+        for w in store.workers:
+            b_name = w.get("assigned_building", "Unassigned")
+            if b_name != "Unassigned":
+                if b_name not in workers_by_building:
+                    workers_by_building[b_name] = []
+                workers_by_building[b_name].append(w)
+
+        for b_name in store.owned_buildings:
+            building = available_buildings.get(b_name)
+            workers_here = workers_by_building.get(b_name, [])
+            if not building or not workers_here:
                 continue
             
-            servant_jobs = building.get("servant_jobs", {})
+            if "servant_jobs" not in building:
+                building["servant_jobs"] = {}
+            jobs = building["servant_jobs"]
             
-            # Check if there's a manager in this building
+            # 2. ¿Hay un manager trabajando aquí? (activo o en rest)
             has_manager = False
-            for worker in building["assigned_servants"]:
-                worker_name = worker.get("name")
-                if servant_jobs.get(worker_name, "") == "manager":
+            for w in workers_here:
+                job_id = str(jobs.get(w["name"], "")).lower()
+                previous_prof = str(w.get("previous_profession", "")).lower()
+                # Detecta "manager" o "manager (39)" en el job actual
+                # o en el trabajo previo cuando está en "rest"
+                if "manager" in job_id or "manager" in previous_prof:
                     has_manager = True
-                    renpy.log(f"Manager detected in {building_name}: {worker_name}")
                     break
             
             if not has_manager:
                 continue
-            
-            # Manager found - process all other workers in the building
-            for worker in building["assigned_servants"]:
-                worker_name = worker.get("name")
-                current_job = servant_jobs.get(worker_name, "")
+
+            # 3. El manager procesa a todos los trabajadores de este edificio
+            for w in workers_here:
+                name = w["name"]
+                current_job_raw = jobs.get(name, "")
+                current_job_norm = str(current_job_raw).lower()
                 
-                # Skip the manager themselves
-                if current_job == "manager":
+                # No procesar si no tiene trabajo asignado
+                if not current_job_raw or current_job_norm == "unassigned":
                     continue
+
+                energy = w.get("energy", 0)
+                max_e = calculate_max_energy(w)
                 
-                worker_energy = worker.get("energy", 0)
-                max_energy = calculate_max_energy(worker)
+                # Umbrales
+                rest_threshold = max_e * 0.35
+                restore_threshold = max_e * 0.95
                 
-                # Calculate percentage-based thresholds that scale with level
-                rest_threshold = max_energy * 0.35  # Put to rest when below 35% energy
-                restore_threshold = max_energy * 0.95  # Restore to work when at 95% energy (almost full recovery)
+                # Caso A: Poner a descansar (solo si no es restore_only)
+                if not restore_only and energy < rest_threshold and "rest" not in current_job_norm:
+                    w["previous_profession"] = current_job_raw
+                    jobs[name] = "rest"
+                    renpy.log(f"AUTOREST: {name} puesto a descansar (Energía {energy}/{max_e})")
                 
-                # Initialize previous_profession field if it doesn't exist
-                if "previous_profession" not in worker:
-                    worker["previous_profession"] = None
-                
-                # Case 1: Worker has low energy and is not resting - put them to rest
-                if worker_energy < rest_threshold and current_job not in ["rest", "unassigned"]:
-                    # Save current profession
-                    worker["previous_profession"] = current_job
-                    # Change to rest
-                    servant_jobs[worker_name] = "rest"
-                    renpy.log(f"Manager auto-rest: {worker_name} moved to rest (energy: {worker_energy}/{max_energy} < {rest_threshold:.1f}, saved profession: {current_job})")
-                
-                # Case 2: Worker is resting (managed by manager) and has recovered - restore profession
-                elif current_job == "rest" and worker["previous_profession"] is not None:
-                    # Check if worker has recovered (energy at reasonable level)
-                    if worker_energy >= restore_threshold:
-                        # Restore previous profession
-                        restored_profession = worker["previous_profession"]
-                        servant_jobs[worker_name] = restored_profession
-                        worker["previous_profession"] = None
-                        renpy.log(f"Manager auto-restore: {worker_name} returned to {restored_profession} (energy: {worker_energy}/{max_energy} >= {restore_threshold:.1f})")
+                # Caso B: Restaurar trabajo
+                elif "rest" in current_job_norm and w.get("previous_profession"):
+                    if energy >= restore_threshold:
+                        jobs[name] = w["previous_profession"]
+                        w["previous_profession"] = None
+                        renpy.log(f"AUTOREST: {name} vuelve a {jobs[name]} (Energía {energy}/{max_e})")
+
+    def clear_worker_autorest_state(worker):
+        if worker:
+            worker["previous_profession"] = None
+
+    def set_worker_job(worker, building_name, job_id):
+        if not building_name or building_name not in available_buildings:
+            return
+        
+        # Check if worker has dict-like interface (works for dict, RevertableDict, etc.)
+        # Use hasattr instead of isinstance to handle Ren'Py's RevertableDict
+        if not hasattr(worker, 'get'):
+            return
+        
+        worker_name = worker.get("name")
+        if not worker_name:
+            return
+        
+        # CRITICAL: Ensure worker_name is always a string (hashable)
+        if not isinstance(worker_name, str):
+            worker_name = str(worker_name)
+        
+        building = available_buildings[building_name]
+        if "servant_jobs" not in building:
+            building["servant_jobs"] = {}
+        
+        building["servant_jobs"][worker_name] = job_id
+        renpy.restart_interaction()

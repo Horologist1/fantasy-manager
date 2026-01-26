@@ -27,7 +27,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 3,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -843,7 +843,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -1351,7 +1351,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -1626,7 +1626,7 @@
           ],
           "max_daily_workers": 5,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -1662,7 +1662,7 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": -10,
+                  "health": -5,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -1731,7 +1731,7 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": -10,
+                  "health": -5,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -1798,7 +1798,7 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": -15,
+                  "health": -8,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -1838,6 +1838,237 @@
           ]
         },
         {
+          "id": "treasure_hunter",
+          "name": "Treasure Hunter",
+          "description": "Explores abandoned tombs and temples in search of valuable treasures. Uses stealth and combat skills to navigate traps and avoid danger. Lower risk than adventuring but still rewarding.",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Combat",
+            "Agility"
+          ],
+          "max_daily_workers": 4,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 100"
+          },
+          "daily_stories": [
+            {
+              "id": "treasure_hunter_story1",
+              "weight": 3,
+              "report": "Tomb Exploration",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat",
+                "Agility"
+              ],
+              "relevant_traits": [
+                "Nimble",
+                "Determined",
+                "Mystical",
+                "Lucky"
+              ],
+              "trait_bonus": "level * 120",
+              "trait_success": "{worker_name}'s {trait} proves invaluable in navigating the ancient tomb.",
+              "earnings": {
+                "success": "150 + skill * 8",
+                "critical_success": "150 + skill * 12",
+                "mediocre": "75 + skill * 4",
+                "failure": "-5"
+              },
+              "descriptions": {
+                "failure": "{worker_name} struggles with the tomb's ancient traps and mechanisms. Poor navigation and timing lead to triggering multiple traps, forcing a hasty retreat empty-handed and exhausted from the failed exploration.",
+                "mediocre": "{worker_name} manages to explore some chambers of the tomb but struggles with the challenges. Avoids the worst traps and finds a few minor treasures, but the cautious approach means limited rewards from the expedition.",
+                "success": "{worker_name} successfully navigates the tomb's dangerous passages. Skillfully avoids traps, disarms mechanisms, and emerges with valuable ancient artifacts and treasures from the forgotten burial site.",
+                "critical_success": "{worker_name} becomes a master tomb raider with this expedition. Perfectly navigates every trap, discovers hidden chambers, and returns with legendary treasures and artifacts that make them famous among treasure hunters."
+              },
+              "story_image": "solo_quest",
+              "failure_image": "solo_quest_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 4,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 1,
+                "bonus_items": [
+                  { "item_id": "amulet_wanderer", "chance": 0.03 },
+                  { "item_id": "collar_endless_desire", "chance": 0.03, "nsfw": true }
+                ]
+              }
+            },
+            {
+              "id": "treasure_hunter_story2",
+              "weight": 2,
+              "report": "Temple Raid",
+              "difficulty_modifier": 0,
+              "skill_options": [
+                "Combat",
+                "Agility"
+              ],
+              "relevant_traits": [
+                "Nimble",
+                "Determined",
+                "Mystical",
+                "Lucky"
+              ],
+              "trait_bonus": "level * 120",
+              "trait_success": "{worker_name}'s {trait} helps uncover hidden treasures in the temple.",
+              "earnings": {
+                "success": "150 + skill * 8",
+                "critical_success": "150 + skill * 12",
+                "mediocre": "75 + skill * 4",
+                "failure": "-5"
+              },
+              "descriptions": {
+                "failure": "{worker_name} gets overwhelmed by the temple's ancient defenses and magical traps. The complex mechanisms prove too difficult to navigate, forcing a retreat with no treasures and exhaustion from the failed raid.",
+                "mediocre": "{worker_name} manages to explore some areas of the abandoned temple but struggles with the magical traps and guardians. Finds a few minor artifacts but the cautious approach limits the rewards from the expedition.",
+                "success": "{worker_name} successfully raids the abandoned temple. Skillfully avoids magical traps, outmaneuvers ancient guardians, and emerges with valuable relics and treasures from the forgotten sanctuary.",
+                "critical_success": "{worker_name} becomes a legendary temple raider with this expedition. Perfectly navigates all magical defenses, discovers secret chambers, and returns with rare artifacts and treasures that make them renowned among treasure hunters."
+              },
+              "story_image": "party_quest",
+              "failure_image": "party_quest_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 4,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 1,
+                "bonus_items": [
+                  { "item_id": "amulet_wanderer", "chance": 0.03 },
+                  { "item_id": "collar_endless_desire", "chance": 0.03, "nsfw": true }
+                ]
+              }
+            },
+            {
+              "id": "treasure_hunter_story3",
+              "weight": 1,
+              "report": "Ancient Crypt Discovery",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Combat",
+                "Agility"
+              ],
+              "relevant_traits": [
+                "Nimble",
+                "Determined",
+                "Mystical",
+                "Lucky"
+              ],
+              "trait_bonus": "level * 120",
+              "trait_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
+              "earnings": {
+                "success": "200 + skill * 10",
+                "critical_success": "200 + skill * 15",
+                "mediocre": "100 + skill * 5",
+                "failure": "-10"
+              },
+              "descriptions": {
+                "failure": "{worker_name} discovers an ancient crypt but struggles with its complex defenses. The traps and mechanisms prove too advanced, forcing a retreat with exhaustion and no treasures from the failed discovery.",
+                "mediocre": "{worker_name} manages to explore parts of the ancient crypt but finds it heavily trapped. Carefully navigates some areas and finds moderate treasures, but the difficulty limits the full potential of the discovery.",
+                "success": "{worker_name} successfully explores the ancient crypt. Skillfully navigates all traps, solves complex mechanisms, and emerges with valuable ancient treasures and artifacts from the forgotten burial site.",
+                "critical_success": "{worker_name} becomes a master crypt explorer with this discovery. Perfectly navigates every trap, unlocks secret chambers, and returns with legendary treasures and artifacts that make them famous among treasure hunters."
+              },
+              "story_image": "party_quest",
+              "failure_image": "party_quest_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 6,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 12,
+                  "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 1,
+                "bonus_items": [
+                  { "item_id": "amulet_wanderer", "chance": 0.05 },
+                  { "item_id": "collar_endless_desire", "chance": 0.05, "nsfw": true }
+                ]
+              }
+            }
+          ]
+        },
+        {
           "id": "boss_hunting",
           "name": "Boss Hunting",
           "description": "Hunts legendary mythical beasts. Extreme risk with the highest rewards. Can obtain rare loot and legendary materials. Very dangerous.",
@@ -1856,7 +2087,7 @@
               "id": "boss_hunting_story1",
               "weight": 1,
               "report": "Mythical Beast Hunt",
-              "difficulty_modifier": 0,
+              "difficulty_modifier": -15,
               "skill_options": [
                 "Combat"
               ],
@@ -2230,7 +2461,8 @@
           "nsfw": false,
           "difficulty": "easy",
           "skills": [
-            "Clever"
+            "Charm",
+            "Service"
           ],
           "max_daily_workers": 4,
           "daily_story_count": 1,
@@ -2241,7 +2473,8 @@
               "report": "Tended the Bar",
               "difficulty_modifier": 0,
               "skill_options": [
-                "Clever"
+                "Charm",
+                "Service"
               ],
               "relevant_traits": [
                 "Charming",
@@ -2313,7 +2546,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -2588,7 +2821,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -2670,7 +2903,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -2946,7 +3179,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 3,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -3230,7 +3463,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 3,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -3514,7 +3747,7 @@
           ],
           "max_daily_workers": 5,
           "daily_story_count": {
-            "base": 3,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -3600,7 +3833,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 3,
+            "base": 1,
             "bonus_formula": "reputation / 100"
           },
           "daily_stories": [
@@ -3724,7 +3957,7 @@
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
-            "base": 2,
+            "base": 1,
             "bonus_formula": "reputation / 200"
           },
           "daily_stories": [

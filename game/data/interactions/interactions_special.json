@@ -3,7 +3,7 @@
     "id": "violet_special",
     "name": "Violet's Special Performance",
     "description": "Violet performs a unique dance routine that showcases her exceptional talents, creating an unforgettable moment.",
-    "cost_energy": 3,
+    "cost_energy": 0,
     "effect": {
       "romance": 30,
       "relationship": 15,
@@ -37,7 +37,7 @@
     "id": "charming_beauty",
     "name": "Enchanting Presence",
     "description": "You spend time with this exceptionally charming and beautiful worker, creating a unique and captivating atmosphere.",
-    "cost_energy": 3,
+    "cost_energy": 0,
     "effect": {
       "romance": 35,
       "joy": 20,

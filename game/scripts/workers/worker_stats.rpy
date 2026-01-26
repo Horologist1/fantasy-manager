@@ -1,27 +1,57 @@
 # worker_stats.rpy - Extended version with secondary attributes support
 init python:
+    DEBUG_WORKER_STATS = False
 
     def calculate_skill_with_traits(worker, skill_name):
         """Return effective skill level (base + trait bonus + equipment bonus + libido bonus). Base skills are capped at 100, but total can exceed 100 with bonuses."""
-        base_skills = worker.get("original_skills", worker["skills"])
+        # Ensure we're using the real worker from store.workers to get current equipment state
+        if hasattr(store, 'workers') and worker:
+            worker_name = worker.get("name")
+            if worker_name:
+                real_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+                if real_worker:
+                    worker = real_worker
+        
+        # Use skills directly as the source of truth (original_skills is deprecated)
+        base_skills = worker.get("skills", {})
         
         # Only use skill names, no numeric ID compatibility
         base = int(base_skills.get(skill_name, 0))
         bonus = 0
 
-        # Add trait bonuses
+        # Add trait bonuses - read from traits.json definitions
         for trait_name in worker.get("traits", []):
-            if trait_name in worker.get("trait_modifiers", {}):
-                trait_bonus = worker["trait_modifiers"][trait_name].get(skill_name, 0)
-                bonus += trait_bonus
+            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            if trait_def and "modifiers" in trait_def:
+                if "skill_modifiers" in trait_def["modifiers"]:
+                    trait_bonus = trait_def["modifiers"]["skill_modifiers"].get(skill_name, 0)
+                    if trait_bonus != 0 and DEBUG_WORKER_STATS:
+                        renpy.log(f"calculate_skill_with_traits: Adding {trait_bonus} bonus from trait '{trait_name}' to {skill_name} for {worker.get('name', 'Unknown')}")
+                    bonus += trait_bonus
 
         # Add equipment bonuses
         for item in worker.get("inventory", []):
-            if isinstance(item, tuple) and len(item) >= 3 and item[2]:  # Check if item is equipped
-                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+            # Handle both lists (from JSON) and tuples (from Python)
+            is_equipped = False
+            item_id = None
+            if isinstance(item, (list, tuple)) and len(item) >= 3:
+                item_id = item[0]
+                equipped_flag = item[2]
+                # Convert to boolean if needed
+                if isinstance(equipped_flag, bool):
+                    is_equipped = equipped_flag
+                elif isinstance(equipped_flag, str):
+                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
+                elif isinstance(equipped_flag, (int, float)):
+                    is_equipped = bool(equipped_flag) and equipped_flag != 0
+            
+            if is_equipped and item_id:
+                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
                 if item_data and "effect" in item_data:
                     if "skill_modifiers" in item_data["effect"]:
                         equip_bonus = item_data["effect"]["skill_modifiers"].get(skill_name, 0)
+                        if equip_bonus != 0 and DEBUG_WORKER_STATS:
+                            renpy.log(f"calculate_skill_with_traits: Adding {equip_bonus} bonus from equipped item '{item_id}' to {skill_name} for {worker.get('name', 'Unknown')}")
                         bonus += equip_bonus
 
         # Add libido bonus to sexual skills (only in NSFW mode)
@@ -39,48 +69,96 @@ init python:
         Always recalculates from scratch to avoid duplicate bonuses when items are re-applied."""
         base_health = 10 + (worker.get("level", 1) * 5)
         bonus = 0
+        health_cap = None
         
         # Add trait bonuses
         for trait_name in worker.get("traits", []):
             for trait in traits_list:
                 if trait["name"] == trait_name:
-                    bonus += trait.get("modifiers", {}).get("health", 0)
+                    modifiers = trait.get("modifiers", {})
+                    bonus += modifiers.get("health", 0)
+                    bonus += modifiers.get("health_max", 0)
+                    if "health_max_cap" in modifiers:
+                        cap_val = modifiers.get("health_max_cap")
+                        if isinstance(cap_val, (int, float)):
+                            health_cap = cap_val if health_cap is None else min(health_cap, cap_val)
         
         # Add item bonuses from equipped items
         inventory = worker.get("inventory", [])
         for item in inventory:
-            if item[2]:  # Item is equipped (third element is equipped flag)
-                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+            # Handle both lists (from JSON) and tuples (from Python)
+            is_equipped = False
+            item_id = None
+            if isinstance(item, (list, tuple)) and len(item) >= 3:
+                item_id = item[0]
+                equipped_flag = item[2]
+                # Convert to boolean if needed
+                if isinstance(equipped_flag, bool):
+                    is_equipped = equipped_flag
+                elif isinstance(equipped_flag, str):
+                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
+                elif isinstance(equipped_flag, (int, float)):
+                    is_equipped = bool(equipped_flag) and equipped_flag != 0
+            
+            if is_equipped and item_id:
+                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
                 if item_data and "effect" in item_data:
                     health_bonus = item_data["effect"].get("health", 0)
                     if health_bonus > 0:  # Only positive bonuses (max_health increases)
                         bonus += health_bonus
         
-        return base_health + bonus
+        max_health = base_health + bonus
+        if health_cap is not None:
+            max_health = min(max_health, health_cap)
+        return max(1, int(max_health))
 
     def calculate_max_energy(worker):
         """Calculate maximum energy based on level, traits, and item bonuses.
         Always recalculates from scratch to avoid duplicate bonuses when items are re-applied."""
         base_energy = worker.get("level", 1) * 5
         bonus_energy = 0
+        energy_cap = None
         
         # Add trait bonuses
         for trait_name in worker.get("traits", []):
             trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
-            if trait_def and "modifiers" in trait_def and "energy" in trait_def["modifiers"]:
-                bonus_energy += trait_def["modifiers"]["energy"]
+            if trait_def and "modifiers" in trait_def:
+                modifiers = trait_def["modifiers"]
+                bonus_energy += modifiers.get("energy", 0)
+                bonus_energy += modifiers.get("energy_max", 0)
+                if "energy_max_cap" in modifiers:
+                    cap_val = modifiers.get("energy_max_cap")
+                    if isinstance(cap_val, (int, float)):
+                        energy_cap = cap_val if energy_cap is None else min(energy_cap, cap_val)
         
         # Add item bonuses from equipped items
         inventory = worker.get("inventory", [])
         for item in inventory:
-            if item[2]:  # Item is equipped (third element is equipped flag)
-                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+            # Handle both lists (from JSON) and tuples (from Python)
+            is_equipped = False
+            item_id = None
+            if isinstance(item, (list, tuple)) and len(item) >= 3:
+                item_id = item[0]
+                equipped_flag = item[2]
+                # Convert to boolean if needed
+                if isinstance(equipped_flag, bool):
+                    is_equipped = equipped_flag
+                elif isinstance(equipped_flag, str):
+                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
+                elif isinstance(equipped_flag, (int, float)):
+                    is_equipped = bool(equipped_flag) and equipped_flag != 0
+            
+            if is_equipped and item_id:
+                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
                 if item_data and "effect" in item_data:
                     energy_bonus = item_data["effect"].get("energy", 0)
                     if energy_bonus > 0:  # Only positive bonuses (max_energy increases)
                         bonus_energy += energy_bonus
         
-        return base_energy + bonus_energy
+        max_energy = base_energy + bonus_energy
+        if energy_cap is not None:
+            max_energy = min(max_energy, energy_cap)
+        return max(0, int(max_energy))
 
     def calculate_health_regeneration(worker):
         """Return effective health regeneration (base 1 plus trait bonus)."""
@@ -160,13 +238,13 @@ init python:
         return ["Sex", "Anal", "BDSM", "Hand", "Oral", "Homo", "Special", "Group", "Extreme", "Striptease"]
 
     def count_sexual_work_today(worker):
-        """Count how many times this worker used sexual skills today."""
-        sexual_skills = get_sexual_skill_names()
-        skill_uses = worker.get("skill_uses", {})
-        total = 0
-        for skill_name in sexual_skills:
-            total += skill_uses.get(skill_name, 0)
-        return total
+        """Count how many times this worker used sexual skills today.
+        
+        Uses daily_sexual_work counter which is separate from skill_uses.
+        This allows skill_uses to accumulate for level ups while
+        daily_sexual_work tracks only today's work for libido calculation.
+        """
+        return worker.get("daily_sexual_work", 0)
 
     def calculate_libido_regeneration(worker):
         """
@@ -191,8 +269,22 @@ init python:
         
         # Item bonuses
         for item in worker.get("inventory", []):
-            if isinstance(item, tuple) and len(item) >= 3 and item[2]:
-                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+            # Handle both lists (from JSON) and tuples (from Python)
+            is_equipped = False
+            item_id = None
+            if isinstance(item, (list, tuple)) and len(item) >= 3:
+                item_id = item[0]
+                equipped_flag = item[2]
+                # Convert to boolean if needed
+                if isinstance(equipped_flag, bool):
+                    is_equipped = equipped_flag
+                elif isinstance(equipped_flag, str):
+                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
+                elif isinstance(equipped_flag, (int, float)):
+                    is_equipped = bool(equipped_flag) and equipped_flag != 0
+            
+            if is_equipped and item_id:
+                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
                 if item_data and "effect" in item_data and isinstance(item_data["effect"], dict):
                     bonus += item_data["effect"].get("libido_regeneration", 0)
         
@@ -217,8 +309,22 @@ init python:
                     extra += trait.get("modifiers", {}).get("libido_max", 0)
         # Item-based max bonuses
         for item in worker.get("inventory", []):
-            if isinstance(item, tuple) and len(item) >= 3 and item[2]:
-                item_data = next((i for i in items_json["items"] if i["id"] == item[0]), None)
+            # Handle both lists (from JSON) and tuples (from Python)
+            is_equipped = False
+            item_id = None
+            if isinstance(item, (list, tuple)) and len(item) >= 3:
+                item_id = item[0]
+                equipped_flag = item[2]
+                # Convert to boolean if needed
+                if isinstance(equipped_flag, bool):
+                    is_equipped = equipped_flag
+                elif isinstance(equipped_flag, str):
+                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
+                elif isinstance(equipped_flag, (int, float)):
+                    is_equipped = bool(equipped_flag) and equipped_flag != 0
+            
+            if is_equipped and item_id:
+                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
                 if item_data and "effect" in item_data and isinstance(item_data["effect"], dict):
                     extra += item_data["effect"].get("libido_max", 0)
         max_libido = base_max + extra
@@ -261,19 +367,15 @@ init python:
             else:
                 renpy.log(f"Libido drain for {worker.get('name', 'Unknown')}: {current_libido} -> {new_libido} ({regen_amount}), sexual work: {sexual_work}")
         
-        # Clear skill uses counter for next day
-        worker["skill_uses"] = {}
+        # Reset daily_sexual_work counter after libido calculation
+        # skill_uses is NOT reset here - it accumulates for skill level ups
+        worker["daily_sexual_work"] = 0
 
     def modify_base_skill(worker, skill_name, change):
         """Modify a base skill while ensuring it doesn't exceed SKILL_MAX (100)."""
         current = worker["skills"].get(skill_name, 0)
         new_value = max(0, min(SKILL_MAX, current + change))  # Cap between 0 and 100
         worker["skills"][skill_name] = new_value
-        
-        # Also update original_skills to maintain consistency
-        if "original_skills" in worker:
-            worker["original_skills"][skill_name] = new_value
-            
         renpy.log(f"Modified {skill_name} for {worker.get('name', 'Unknown')}: {current} -> {new_value} (change: {change})")
         return new_value
 
@@ -281,11 +383,6 @@ init python:
         """Set a base skill while ensuring it doesn't exceed SKILL_MAX (100)."""
         capped_value = max(0, min(SKILL_MAX, value))  # Cap between 0 and 100
         worker["skills"][skill_name] = capped_value
-        
-        # Also update original_skills to maintain consistency
-        if "original_skills" in worker:
-            worker["original_skills"][skill_name] = capped_value
-            
         renpy.log(f"Set {skill_name} for {worker.get('name', 'Unknown')} to {capped_value} (requested: {value})")
         return capped_value
 

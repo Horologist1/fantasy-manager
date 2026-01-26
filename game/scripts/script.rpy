@@ -78,6 +78,8 @@ init python:
     month_names = ["Frostveil", "Glimmerthaw", "Eldergreen", "Blossomire", "Solstara", "Mistralune", "Harvestide", "Duskmoor", "Shadowfen", "Crystalfell", "Emberwane", "Nightspire"]
 
 # Default calendar variables - these will persist between saves
+# CRITICAL: These MUST be default (not define) so Ren'Py saves them per-save.
+# DO NOT reset these except in a true new game.
 default current_day = 1
 default current_month = 1  # 1-based (Frostveil = 1)
 default current_year = 1
@@ -229,14 +231,24 @@ init python:
             return int(base_size * 1.25)
         return base_size
 
+    def get_fallback_folder(worker=None):
+        """Get the appropriate fallback folder based on worker gender.
+        Returns 'aspen' for males, 'blossom' for females/unknown."""
+        if worker and isinstance(worker, dict):
+            gender = worker.get("gender", "").lower()
+            if gender == "male":
+                return "aspen"
+        return "blossom"  # Default for females or unknown
+    
     def get_worker_folder(worker):
         """Resolve the worker's folder based on their data."""
+        fallback = get_fallback_folder(worker)
         if isinstance(worker, dict):
-            folder_name = worker.get("folder", "aspen")  # Fallback to aspen instead of default
+            folder_name = worker.get("folder", fallback)
             renpy.log(f"Worker name: {worker.get('name', 'Unknown')}, folder resolved: {folder_name}")
         else:
-            folder_name = "aspen"  # Fallback to aspen instead of default
-            renpy.log(f"Worker is not a dictionary, using aspen folder as fallback")
+            folder_name = fallback
+            renpy.log(f"Worker is not a dictionary, using {fallback} folder as fallback")
         
         full_folder = f"images/workers/{folder_name}/"
         renpy.log(f"Resolved worker folder: {full_folder}")
@@ -252,11 +264,13 @@ init python:
             "homo": ["les", "gay"],           # Homosexual busca "les" o "gay"
             "service": ["wait", "service", "maid"],      # Service busca "wait", "service" o "maid"
             "special": ["special", "titty"],  # Special busca "special" o "titty"
-            "striptease": ["strip", "striptease"]  # Striptease busca "strip" o "striptease"
+            "striptease": ["strip", "striptease"],  # Striptease busca "strip" o "striptease"
+            "extreme": ["extreme", "beast"]   # Extreme busca "extreme" o "beast"
         }
         
-        if skill_name in special_patterns:
-            return special_patterns[skill_name]
+        skill_lower = skill_name.lower() if skill_name else skill_name
+        if skill_lower in special_patterns:
+            return special_patterns[skill_lower]
         else:
             return [skill_name]
 
@@ -276,11 +290,12 @@ init python:
             return None
             
         # Get worker folder
+        fallback = get_fallback_folder(worker)
         if hasattr(worker, 'get'):
-            worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
+            worker_folder = worker.get("folder", fallback)
             worker_name = worker.get("name", "Unknown")
         else:
-            worker_folder = "aspen"  # Fallback to aspen instead of default
+            worker_folder = fallback
             worker_name = "Unknown"
         
         base_folder = f"images/workers/{worker_folder}/"
@@ -416,15 +431,16 @@ init python:
             return get_worker_image(worker)  # Fallback to regular function
         
         # Get worker folder using the same logic as get_event_image
+        fallback = get_fallback_folder(worker)
         if hasattr(worker, 'get'):
-            worker_folder = worker.get("folder", "aspen")  # Fallback to aspen instead of default
+            worker_folder = worker.get("folder", fallback)
             worker_name = worker.get("name", "Unknown")
         else:
-            worker_folder = "aspen"  # Fallback to aspen instead of default
+            worker_folder = fallback
             worker_name = "Unknown"
         
         base_folder = f"images/workers/{worker_folder}/"
-        default_folder = "images/workers/default/"
+        default_folder = f"images/workers/{fallback}/"
         
         renpy.log(f"get_worker_image_random: Worker {worker_name}, Skill {skill_name}, Folder {base_folder}")
         
@@ -625,21 +641,67 @@ init python:
         if not item_data:
             renpy.log("add_item_to_inventory: Item not found: " + item_id)
             return
+        
+        def _mark_objective_12_item_if_needed(mark_item_id):
+            if mark_item_id in ("binding_gem", "obsidian_blade", "enchanted_ring"):
+                if not hasattr(store, "event_flags") or store.event_flags is None:
+                    store.event_flags = {}
+                flag_name = f"objective12_{mark_item_id}_collected"
+                if not store.event_flags.get(flag_name, False):
+                    store.event_flags[flag_name] = True
+                    renpy.log(f"Objective 12: Marked {mark_item_id} as collected.")
 
         item_type = item_data.get("type", "unknown")
+        is_manager_inventory = (hasattr(store, 'manager_inventory') and 
+                               (inventory is store.manager_inventory or 
+                                id(inventory) == id(getattr(store, 'manager_inventory', None))))
+        
         if item_type in ["currency", "consumable"]:
             for i, entry in enumerate(inventory):
                 if entry[0] == item_id:
-                    new_quantity = entry[1] + quantity
+                    # CRITICAL: Validate existing quantity before adding
+                    existing_qty = entry[1]
+                    try:
+                        existing_qty = int(existing_qty)
+                        if existing_qty < 0:
+                            existing_qty = 0  # Fix negative quantities
+                            renpy.log(f"WARNING: Fixed negative quantity for {item_id}, resetting to 0")
+                        if existing_qty > 999999:
+                            existing_qty = 999999  # Cap excessive quantities
+                            renpy.log(f"WARNING: Capped excessive quantity for {item_id} to 999999")
+                    except (ValueError, TypeError):
+                        existing_qty = 0
+                        renpy.log(f"WARNING: Invalid quantity for {item_id}, resetting to 0")
+                    
+                    new_quantity = existing_qty + quantity
+                    # Cap at reasonable maximum
+                    if new_quantity > 999999:
+                        new_quantity = 999999
+                        renpy.log(f"WARNING: Capped total quantity for {item_id} to 999999")
+                    
+                    # CRITICAL: Create a NEW tuple to break any reference sharing
                     inventory[i] = (entry[0], new_quantity, entry[2])
                     renpy.log(f"Added {quantity} of {item_id} to existing stack (new quantity: {new_quantity}).")
+                    # CRITICAL: Force Ren'Py to recognize changes if this is manager_inventory
+                    if is_manager_inventory:
+                        # Also ensure the entire list is a new list to break references
+                        store.manager_inventory = list(store.manager_inventory)
+                        renpy.store.manager_inventory = store.manager_inventory
+                    _mark_objective_12_item_if_needed(item_id)
                     return
             inventory.append((item_id, quantity, False))
             renpy.log(f"Added new stack of {item_id} (quantity: {quantity}).")
+            # CRITICAL: Force Ren'Py to recognize changes if this is manager_inventory
+            if is_manager_inventory:
+                # Also ensure the entire list is a new list to break references
+                store.manager_inventory = list(store.manager_inventory)
+                renpy.store.manager_inventory = store.manager_inventory
+            _mark_objective_12_item_if_needed(item_id)
         else:
             for _ in range(quantity):
                 inventory.append((item_id, 1, False))
             renpy.log(f"Added equipment item {item_id} {quantity} time(s).")
+            _mark_objective_12_item_if_needed(item_id)
 
     def toggle_equip_item(inventory, item_id, worker=None):
         """
@@ -649,6 +711,16 @@ init python:
         If a worker is provided, apply (or remove) the item's effects accordingly.
         Assumes inventory items are tuples: (item_id, quantity, equipped).
         """
+        # CRITICAL: Ensure we're working with the actual worker in store.workers, not a copy
+        if worker is not None and hasattr(store, 'workers'):
+            worker_name = worker.get("name")
+            if worker_name:
+                real_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+                if real_worker:
+                    worker = real_worker
+                    inventory = worker.get("inventory", [])
+                    renpy.log(f"toggle_equip_item: Using real worker from store.workers: {worker_name}")
+        
         # Look up the item data for the given item_id.
         item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
         if not item_data:
@@ -657,10 +729,29 @@ init python:
         item_type = item_data.get("type", "")
 
         # Ensure all inventory entries are tuples.
+        # After JSON restore, entries are lists: [item_id, quantity, equipped]
+        # They may also be dicts: {"item_id": ..., "quantity": ..., "equipped": ...}
         for i, entry in enumerate(inventory):
             if not isinstance(entry, tuple):
-                converted = (entry.get("item_id"), entry.get("quantity"), entry.get("equipped", False))
-                inventory[i] = converted
+                if isinstance(entry, list) and len(entry) >= 2:
+                    # Convert list to tuple: [item_id, quantity, equipped] -> (item_id, quantity, equipped)
+                    equipped = entry[2] if len(entry) >= 3 else False
+                    converted = (entry[0], entry[1], equipped)
+                    inventory[i] = converted
+                elif isinstance(entry, dict):
+                    # Convert dict to tuple
+                    converted = (entry.get("item_id"), entry.get("quantity"), entry.get("equipped", False))
+                    inventory[i] = converted
+                else:
+                    renpy.log(f"toggle_equip_item: Unknown entry type {type(entry)}: {entry}")
+                    # Try to convert anyway if it has index access
+                    try:
+                        if len(entry) >= 2:
+                            equipped = entry[2] if len(entry) >= 3 else False
+                            converted = (entry[0], entry[1], equipped)
+                            inventory[i] = converted
+                    except:
+                        renpy.log(f"toggle_equip_item: Could not convert entry: {entry}")
 
         # Find the target item index in the inventory.
         target_index = None
@@ -702,6 +793,78 @@ init python:
             renpy.log(f"Unequipped item {target_item[0]}; new inventory entry: {inventory[target_index]}")
 
         renpy.restart_interaction()
+
+    def unequip_item_by_match(inventory, item_id, quantity=None, worker=None):
+        """
+        Unequip a specific equipped item by matching item_id and (optionally) quantity.
+        Avoids unequipping another copy with the same item_id.
+        """
+        for i, item in enumerate(inventory):
+            if isinstance(item, (list, tuple)) and len(item) >= 3:
+                if str(item[0]) == str(item_id) and bool(item[2]) is True:
+                    if quantity is None or item[1] == quantity:
+                        inventory[i] = (item[0], item[1], False)
+                        if worker is not None:
+                            remove_item_effects(worker, item[0])
+                        renpy.log(f"unequip_item_by_match: Unequipped item at index {i}: {inventory[i]}")
+                        renpy.restart_interaction()
+                        return True
+        renpy.log(f"unequip_item_by_match: No equipped match for item_id={item_id}, quantity={quantity}")
+        return False
+
+    def _get_trait_def_cache():
+        """Cache traits.json lookups for item effects."""
+        if not hasattr(store, "_trait_def_cache") or not store._trait_def_cache:
+            try:
+                traits_json_path = os.path.join(renpy.config.gamedir, "data", "traits.json")
+                with open(traits_json_path, "r", encoding="utf-8") as f:
+                    traits_data = json.load(f)
+                traits_get = getattr(traits_data, "get", None)
+                if callable(traits_get):
+                    trait_list = traits_get("traits", [])
+                elif isinstance(traits_data, (list, tuple)):
+                    trait_list = list(traits_data)
+                else:
+                    renpy.log(f"TRAITS: traits.json unexpected type: {type(traits_data)}")
+                    trait_list = []
+                store._trait_def_cache = {t.get("name"): t for t in trait_list if t.get("name")}
+            except Exception as e:
+                renpy.log(f"TRAITS: Failed to load traits.json for item effects: {e}")
+                store._trait_def_cache = {}
+        return store._trait_def_cache
+
+    def _get_trait_conflicts(trait_name):
+        trait_def = _get_trait_def_cache().get(trait_name, {})
+        return trait_def.get("conflicts", []) if trait_def else []
+
+    def _record_removed_conflicts(worker, item_id, trait_name):
+        """Record conflicts removed by add_trait so they can be restored on unequip."""
+        if not worker or not trait_name:
+            return
+        conflicts = _get_trait_conflicts(trait_name)
+        if not conflicts:
+            return
+        current_traits = worker.get("traits", [])
+        removed = [t for t in conflicts if t in current_traits]
+        if removed:
+            if "_removed_conflicts_by_item" not in worker:
+                worker["_removed_conflicts_by_item"] = {}
+            existing = worker["_removed_conflicts_by_item"].get(item_id, [])
+            # Deduplicate while preserving order
+            for t in removed:
+                if t not in existing:
+                    existing.append(t)
+            worker["_removed_conflicts_by_item"][item_id] = existing
+            renpy.log(f"TRAITS: Recorded conflicts removed by '{item_id}': {existing}")
+
+    def _can_restore_trait(worker, trait_name):
+        if not worker or not trait_name:
+            return False
+        conflicts = _get_trait_conflicts(trait_name)
+        if not conflicts:
+            return True
+        current_traits = worker.get("traits", [])
+        return not any(conflict in current_traits for conflict in conflicts)
                 
     def apply_item_effects(worker, item_id):
         """Apply the effects of an equipped item to a worker."""
@@ -743,17 +906,22 @@ init python:
                         renpy.log(f"Processing {len(effect_value)} traits from list")
                         for trait_name in effect_value:
                             if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
+                                _record_removed_conflicts(worker, item_id, trait_name.get("name", ""))
                                 add_trait_with_duration(worker, trait_name.get("name", ""), trait_name.get("duration", 0))
                             else:
                                 renpy.log(f"Adding trait: {trait_name}")
+                                _record_removed_conflicts(worker, item_id, trait_name)
                                 add_trait_with_duration(worker, trait_name, 0)
                     elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
+                        _record_removed_conflicts(worker, item_id, effect_value.get("name", ""))
                         add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
                     else:
+                        _record_removed_conflicts(worker, item_id, effect_value)
                         add_trait_with_duration(worker, effect_value, 0)
                 elif effect_type == "remove_trait":
                     # Support array of traits or single trait string - removes traits when equipping
                     renpy.log(f"remove_trait effect_value type: {type(effect_value)}, is list: {isinstance(effect_value, list)}, value: {str(effect_value)[:100]}")
+                    removed_traits = []
                     # Use type check that works with Ren'Py's JSON loading
                     if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
                         # Array of trait names
@@ -765,16 +933,27 @@ init python:
                                 trait_name_to_remove = trait_name
                             if trait_name_to_remove:
                                 renpy.log(f"Removing trait: '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
-                                remove_trait(worker, trait_name_to_remove)
+                                if trait_name_to_remove in worker.get("traits", []):
+                                    removed_traits.append(trait_name_to_remove)
+                                remove_trait_safe(worker, trait_name_to_remove)
                     elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
                         trait_name_to_remove = effect_value.get("name", "")
                         if trait_name_to_remove:
                             renpy.log(f"Removing trait (dict): '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
-                            remove_trait(worker, trait_name_to_remove)
+                            if trait_name_to_remove in worker.get("traits", []):
+                                removed_traits.append(trait_name_to_remove)
+                            remove_trait_safe(worker, trait_name_to_remove)
                     else:
                         if effect_value:
                             renpy.log(f"Removing trait (string): '{effect_value}' from worker '{worker.get('name', 'Unknown')}'")
-                            remove_trait(worker, effect_value)
+                            if effect_value in worker.get("traits", []):
+                                removed_traits.append(effect_value)
+                            remove_trait_safe(worker, effect_value)
+                    if removed_traits:
+                        if "_removed_traits_by_item" not in worker:
+                            worker["_removed_traits_by_item"] = {}
+                        worker["_removed_traits_by_item"][item_id] = removed_traits
+                        renpy.log(f"remove_trait: Recorded removed traits for '{item_id}': {removed_traits}")
 
     def remove_item_effects(worker, item_id):
         """Remove the effects of an unequipped item from a worker."""
@@ -811,32 +990,78 @@ init python:
                                 trait_name_to_remove = trait_name
                             if trait_name_to_remove:
                                 renpy.log(f"remove_item_effects: Removing trait '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
-                                remove_trait(worker, trait_name_to_remove)
+                                remove_trait_safe(worker, trait_name_to_remove)
                     elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
                         trait_name_to_remove = effect_value.get("name", "")
                         if trait_name_to_remove:
                             renpy.log(f"remove_item_effects: Removing trait '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
-                            remove_trait(worker, trait_name_to_remove)
+                            remove_trait_safe(worker, trait_name_to_remove)
                     else:
                         if effect_value:
                             renpy.log(f"remove_item_effects: Removing trait '{effect_value}' from worker '{worker.get('name', 'Unknown')}'")
-                            remove_trait(worker, effect_value)
+                            remove_trait_safe(worker, effect_value)
+                    # Restore conflicts that were removed by the added trait(s), if safe
+                    removed_conflicts = None
+                    if "_removed_conflicts_by_item" in worker:
+                        removed_conflicts = worker["_removed_conflicts_by_item"].pop(item_id, None)
+                        if not worker["_removed_conflicts_by_item"]:
+                            del worker["_removed_conflicts_by_item"]
+                    if removed_conflicts:
+                        renpy.log(f"remove_item_effects: Restoring conflicts removed by '{item_id}': {removed_conflicts}")
+                        for trait_name in removed_conflicts:
+                            if trait_name and trait_name not in worker.get("traits", []):
+                                if _can_restore_trait(worker, trait_name):
+                                    add_trait_with_duration(worker, trait_name, 0)
+                                else:
+                                    renpy.log(f"remove_item_effects: Skipping restore of '{trait_name}' due to current conflicts")
                 elif effect_type == "remove_trait":
                     # When unequipping, add back the traits that were removed when equipping
-                    renpy.log(f"remove_item_effects: Re-adding traits removed by item '{item_id}': {effect_value}")
-                    if isinstance(effect_value, list):
-                        # Array of trait names - add them back
-                        for trait_name in effect_value:
+                    removed_by_item = None
+                    if "_removed_traits_by_item" in worker:
+                        removed_by_item = worker["_removed_traits_by_item"].pop(item_id, None)
+                        if not worker["_removed_traits_by_item"]:
+                            del worker["_removed_traits_by_item"]
+                    if removed_by_item:
+                        renpy.log(f"remove_item_effects: Re-adding recorded traits for '{item_id}': {removed_by_item}")
+                        for trait_name in removed_by_item:
                             if trait_name:
-                                renpy.log(f"remove_item_effects: Re-adding trait '{trait_name}' to worker '{worker.get('name', 'Unknown')}'")
                                 add_trait_with_duration(worker, trait_name, 0)
                     else:
-                        if effect_value:
-                            renpy.log(f"remove_item_effects: Re-adding trait '{effect_value}' to worker '{worker.get('name', 'Unknown')}'")
-                            add_trait_with_duration(worker, effect_value, 0)
+                        renpy.log(f"remove_item_effects: Re-adding traits removed by item '{item_id}': {effect_value}")
+                        if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
+                            for trait_name in effect_value:
+                                if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
+                                    trait_name_to_add = trait_name.get("name", "")
+                                else:
+                                    trait_name_to_add = trait_name
+                                if trait_name_to_add:
+                                    add_trait_with_duration(worker, trait_name_to_add, 0)
+                        elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
+                            trait_name_to_add = effect_value.get("name", "")
+                            if trait_name_to_add:
+                                add_trait_with_duration(worker, trait_name_to_add, 0)
+                        else:
+                            if effect_value:
+                                add_trait_with_duration(worker, effect_value, 0)
 
     def remove_item_from_inventory(inventory, item_id, quantity=1):
-        # First, ensure every entry in the inventory is a tuple
+        # CRITICAL: Check if this is manager_inventory and ALWAYS work directly with store.manager_inventory
+        is_manager_inventory = (hasattr(store, 'manager_inventory') and 
+                               (inventory is store.manager_inventory or 
+                                id(inventory) == id(getattr(store, 'manager_inventory', None))))
+        
+        # If this is manager_inventory, work DIRECTLY with store.manager_inventory
+        if is_manager_inventory:
+            # Convert to a normal list if needed
+            try:
+                if 'RevertableList' in str(type(store.manager_inventory)) or not isinstance(store.manager_inventory, list):
+                    store.manager_inventory = list(store.manager_inventory)
+                # Always work with store.manager_inventory directly
+                inventory = store.manager_inventory
+            except Exception:
+                pass
+        
+        # First, ensure every entry in the inventory is a tuple and normalize quantities
         for i, entry in enumerate(inventory):
             if not isinstance(entry, tuple):
                 if isinstance(entry, dict):
@@ -857,16 +1082,108 @@ init python:
                 elif isinstance(entry, str):
                     # Handle old string format: just the item_id
                     inventory[i] = (entry, 1, False)
+                elif hasattr(entry, '__getitem__') and hasattr(entry, '__len__'):
+                    # Handle list-like objects (e.g., RevertableList)
+                    try:
+                        entry_list = list(entry)
+                        if len(entry_list) == 1:
+                            converted = (entry_list[0], 1, False)
+                        elif len(entry_list) == 2:
+                            converted = (entry_list[0], entry_list[1], False)
+                        elif len(entry_list) >= 3:
+                            converted = (entry_list[0], entry_list[1], entry_list[2])
+                        else:
+                            continue
+                        inventory[i] = converted
+                    except Exception:
+                        continue
+            else:
+                # Normalize tuple quantities to int to avoid comparison issues
+                try:
+                    entry_id = entry[0]
+                    entry_qty = entry[1] if len(entry) > 1 else 1
+                    entry_eq = entry[2] if len(entry) > 2 else False
+                    entry_qty = int(entry_qty) if entry_qty is not None else 1
+                    entry_eq = bool(entry_eq) if entry_eq is not None else False
+                    inventory[i] = (entry_id, entry_qty, entry_eq)
+                except Exception:
+                    continue
         
         # Now remove the item
-        for i, entry in enumerate(inventory):
-            if isinstance(entry, tuple) and entry[0] == item_id:
-                new_quantity = entry[1] - quantity
-                if new_quantity <= 0:
-                    inventory.pop(i)
+        # CRITICAL: Find ALL items with this item_id and remove quantity from them
+        # This handles cases where there are multiple separate items with the same id
+        remaining_to_remove = quantity
+        items_to_remove = []
+        
+        # Work with a copy of indices to avoid modification during iteration
+        for i in range(len(inventory)):
+            entry = inventory[i]
+            if isinstance(entry, tuple) and str(entry[0]) == str(item_id):
+                if remaining_to_remove > 0:
+                    try:
+                        entry_quantity = int(entry[1]) if entry[1] is not None else 1
+                    except Exception:
+                        entry_quantity = 1
+                    if entry_quantity <= remaining_to_remove:
+                        # This item will be completely removed
+                        items_to_remove.append(i)
+                        remaining_to_remove -= entry_quantity
+                    else:
+                        # Reduce this item's quantity
+                        new_quantity = entry_quantity - remaining_to_remove
+                        # CRITICAL: Create a completely NEW tuple to break reference sharing
+                        inventory[i] = (str(entry[0]), int(new_quantity), bool(entry[2] if len(entry) > 2 else False))
+                        remaining_to_remove = 0
+                        renpy.log(f"remove_item_from_inventory: Reduced {item_id} from {entry_quantity} to {new_quantity} at index {i}")
+        
+        # Remove items that were completely consumed (in reverse order to maintain indices)
+        for i in reversed(items_to_remove):
+            inventory.pop(i)
+            renpy.log(f"remove_item_from_inventory: Removed {item_id} completely at index {i}")
+        
+        # CRITICAL: For manager_inventory, ALWAYS recreate the entire list to break ALL references
+        # This ensures Ren'Py recognizes the changes
+        if is_manager_inventory:
+            # Create a completely new list with new tuples for each item
+            new_inv = []
+            for item in inventory:
+                if isinstance(item, (list, tuple)) and len(item) >= 2:
+                    try:
+                        item_id = str(item[0]) if item[0] is not None else ""
+                        qty = int(item[1]) if item[1] is not None else 1
+                        eq = bool(item[2]) if len(item) > 2 and item[2] is not None else False
+                        new_inv.append((item_id, qty, eq))
+                    except Exception:
+                        new_inv.append(item)
                 else:
-                    inventory[i] = (entry[0], new_quantity, entry[2])
-                return
+                    new_inv.append(item)
+            store.manager_inventory = new_inv
+            renpy.store.manager_inventory = store.manager_inventory
+            renpy.log(f"remove_item_from_inventory: Recreated manager_inventory with {len(new_inv)} items (removed {quantity} of {item_id})")
+        
+        return
+
+    def remove_item_from_inventory_by_index(inventory, index, quantity=1):
+        """
+        Remove quantity from a specific inventory entry by index.
+        Falls back safely if index is invalid.
+        """
+        if inventory is None:
+            return False
+        if index is None or index < 0 or index >= len(inventory):
+            return False
+        entry = inventory[index]
+        if not isinstance(entry, tuple) or len(entry) < 2:
+            return False
+        try:
+            entry_qty = int(entry[1]) if entry[1] is not None else 1
+        except Exception:
+            entry_qty = 1
+        if entry_qty <= quantity:
+            inventory.pop(index)
+        else:
+            inventory[index] = (entry[0], entry_qty - quantity, entry[2] if len(entry) > 2 else False)
+        return True
 
     def use_potion_from_inventory(worker, potion_id):
         """
@@ -937,6 +1254,13 @@ init python:
         Looks up the item in items_json; if its type is 'consumable', it applies any effect
         to the provided worker (if not None) and then removes one unit from the inventory.
         """
+        # Ensure we operate on the canonical worker object from store.workers
+        if worker is not None and hasattr(store, "workers"):
+            worker_name = worker.get("name") if isinstance(worker, dict) else None
+            if worker_name:
+                canonical_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+                if canonical_worker is not None and canonical_worker is not worker:
+                    worker = canonical_worker
         # Look up the item in our loaded items_json.
         item = next((i for i in items_json["items"] if i["id"] == item_id), None)
         if not item:
@@ -1000,12 +1324,16 @@ init python:
                             add_trait_with_duration(worker, effect_value, 0)
                     elif effect_type == "remove_trait":
                         # Support array of traits or single trait string
-                        if isinstance(effect_value, list):
-                            # Array of trait names
+                        if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
                             for trait_name in effect_value:
-                                remove_trait(worker, trait_name)
+                                if isinstance(trait_name, dict):
+                                    remove_trait_safe(worker, trait_name.get("name", ""))
+                                else:
+                                    remove_trait_safe(worker, trait_name)
+                        elif isinstance(effect_value, dict):
+                            remove_trait_safe(worker, effect_value.get("name", ""))
                         else:
-                            remove_trait(worker, effect_value)
+                            remove_trait_safe(worker, effect_value)
             remove_item_from_inventory(worker.get("inventory", []), item_id)
         else:
             # If no worker and item is consumable, remove from manager inventory
@@ -1245,8 +1573,46 @@ init python:
 
     
 
-    def assign_random_traits(worker):
-        """Assign random traits to a worker, excluding only_assigned traits."""
+    def get_inherited_traits_from_json_workers():
+        """
+        Get up to 3 traits from a random JSON non-unique worker.
+        This makes procedural workers inherit traits from JSON workers.
+        If you add Elf, Dwarf, etc. to JSON workers, procedural workers will automatically use them.
+        """
+        try:
+            # Load all non-unique workers from JSON
+            all_workers = load_workers(include_unique=False, include_encounter_only=True)
+            
+            if not all_workers:
+                renpy.log("PROCEDURAL: No JSON non-unique workers found, defaulting to Human")
+                return ["Human"]
+            
+            # Get traits from a random JSON non-unique worker (up to 3)
+            random_worker = random.choice(all_workers)
+            traits = random_worker.get("traits", [])
+            
+            if traits and len(traits) > 0:
+                # Take up to 3 traits
+                inherited_traits = traits[:3]
+                renpy.log(f"PROCEDURAL: Inherited {len(inherited_traits)} traits {inherited_traits} from JSON worker '{random_worker.get('name', 'Unknown')}'")
+                return inherited_traits
+            else:
+                renpy.log("PROCEDURAL: Random JSON worker has no traits, defaulting to Human")
+                return ["Human"]
+        except Exception as e:
+            renpy.log(f"PROCEDURAL: Error getting inherited traits from JSON workers: {e}, defaulting to Human")
+            return ["Human"]
+    
+    def assign_random_traits_with_limits(worker, target_min=3, target_max=5):
+        """
+        Assign random traits to a worker, excluding only_assigned traits.
+        If worker already has traits, adds additional ones to reach target_min-target_max total.
+        
+        Args:
+            worker: Worker dictionary
+            target_min: Minimum total traits (default 3)
+            target_max: Maximum total traits (default 5)
+        """
         # Load traits from JSON
         traits_json_path = os.path.join(renpy.config.gamedir, "data", "traits.json")
         if not os.path.exists(traits_json_path):
@@ -1255,49 +1621,89 @@ init python:
         
         with open(traits_json_path, 'r', encoding='utf-8') as f:
             traits_data = json.load(f)
+
+        traits_get = getattr(traits_data, "get", None)
+        if callable(traits_get):
+            traits_list = traits_get("traits", [])
+        elif isinstance(traits_data, (list, tuple)):
+            traits_list = list(traits_data)
+        else:
+            renpy.log(f"Traits JSON unexpected type: {type(traits_data)}")
+            traits_list = []
         
-        traits_list = traits_data.get("traits", [])
+        # Get existing traits (to avoid duplicates and check conflicts)
+        existing_traits = worker.get("traits", [])
+        if not isinstance(existing_traits, list):
+            existing_traits = []
         
-        # Filter traits that are not marked as only_assigned and are not NSFW (if applicable)
+        # Filter traits that are not marked as only_assigned, are not NSFW (if applicable), and not already present
         possible_traits = [
             t for t in traits_list
-            if not t.get("only_assigned", False) and (persistent.nsfw_enabled or not t.get("nsfw", False))
+            if not t.get("only_assigned", False) 
+            and (persistent.nsfw_enabled or not t.get("nsfw", False))
+            and t["name"] not in existing_traits
         ]
         random.shuffle(possible_traits)  # Shuffle to ensure randomness
 
-        selected_traits = []
+        selected_traits = list(existing_traits)  # Start with existing traits
         attempts = 0
-        max_attempts = 100  # Prevent infinite loops
+        max_attempts = 200  # Prevent infinite loops
 
-        # Ensure at least 3 traits are assigned
-        while len(selected_traits) < 3 and attempts < max_attempts and possible_traits:
+        # Calculate how many more traits we need
+        traits_needed = max(0, target_min - len(existing_traits))
+        
+        # Ensure at least target_min traits total (existing + new)
+        while len(selected_traits) < target_min and attempts < max_attempts and possible_traits:
             trait = possible_traits.pop()
             trait_name = trait["name"]
 
             # Check if the trait conflicts with any already selected traits
-            if not any(conflict in selected_traits for conflict in trait.get("conflicts", [])):
+            conflicts = False
+            for existing_trait_name in selected_traits:
+                existing_trait = next((t for t in traits_list if t["name"] == existing_trait_name), None)
+                if existing_trait and trait_name in existing_trait.get("conflicts", []):
+                    conflicts = True
+                    break
+                if trait_name in trait.get("conflicts", []):
+                    conflicts = True
+                    break
+            
+            if not conflicts:
                 add_trait_with_duration(worker, trait_name, 0)
                 selected_traits.append(trait_name)
-                renpy.log(f"Assigned trait '{trait_name}' to {worker.get('name', 'Unknown')}")
+                renpy.log(f"Assigned trait '{trait_name}' to {worker.get('name', 'Unknown')} (total: {len(selected_traits)})")
 
             attempts += 1
 
-        # If we couldn't assign 3 traits due to conflicts, log a warning
-        if len(selected_traits) < 3:
-            renpy.log(f"Warning: Only {len(selected_traits)} traits assigned to {worker.get('name', 'Unknown')} due to conflicts or lack of available traits.")
+        # If we couldn't assign enough traits due to conflicts, log a warning
+        if len(selected_traits) < target_min:
+            renpy.log(f"Warning: Only {len(selected_traits)} traits assigned to {worker.get('name', 'Unknown')} (target: {target_min}) due to conflicts or lack of available traits.")
 
-        # Try to add more traits up to 5, if possible
-        while len(selected_traits) < 5 and possible_traits:
+        # Try to add more traits up to target_max, if possible
+        while len(selected_traits) < target_max and possible_traits:
             trait = possible_traits.pop()
             trait_name = trait["name"]
 
             # Check if the trait conflicts with any already selected traits
-            if not any(conflict in selected_traits for conflict in trait.get("conflicts", [])):
+            conflicts = False
+            for existing_trait_name in selected_traits:
+                existing_trait = next((t for t in traits_list if t["name"] == existing_trait_name), None)
+                if existing_trait and trait_name in existing_trait.get("conflicts", []):
+                    conflicts = True
+                    break
+                if trait_name in trait.get("conflicts", []):
+                    conflicts = True
+                    break
+
+            if not conflicts:
                 add_trait_with_duration(worker, trait_name, 0)
                 selected_traits.append(trait_name)
-                renpy.log(f"Assigned additional trait '{trait_name}' to {worker.get('name', 'Unknown')}")
+                renpy.log(f"Assigned additional trait '{trait_name}' to {worker.get('name', 'Unknown')} (total: {len(selected_traits)})")
 
         return worker
+
+    # Expose the extended trait assignment helper to avoid name collisions
+    store.assign_random_traits_with_limits = assign_random_traits_with_limits
 
    
 
@@ -1315,11 +1721,14 @@ init python:
   
     
 
-    def load_buy_workers():
+    def load_buy_workers(force_refresh=False):
         """
         Load workers available for purchase, prioritizing workers defined in JSON files.
         Generates procedural workers when needed, respecting the daily spawn limit.
         Refills once per day.
+        
+        Args:
+            force_refresh: If True, always generate new workers even if it's the same day
         """
         global daily_spawns, available_workers
         
@@ -1328,57 +1737,137 @@ init python:
         last_refill = (store.last_worker_refill_day, store.last_worker_refill_month, store.last_worker_refill_year)
         
         is_new_day = (last_refill[0] is None or current_date != last_refill)
+        stored_workers = getattr(store, "available_workers", [])
+        is_missing_pool = not stored_workers
         
-        renpy.log(f"WORKER REFILL CHECK - Current: {current_date}, Last: {last_refill}, New day: {is_new_day}")
+        renpy.log(
+            f"WORKER REFILL CHECK - Current: {current_date}, Last: {last_refill}, "
+            f"New day: {is_new_day}, Missing pool: {is_missing_pool}, Force refresh: {force_refresh}"
+        )
         
-        if not is_new_day:
+        if not is_new_day and not is_missing_pool and not force_refresh:
             # Same day - return existing workers, filter out hired ones
             hired_names = {w["name"] for w in workers}
             available_workers = [w for w in store.available_workers if w.get("name") not in hired_names]
             renpy.log(f"Same day - using existing workers: {[w.get('name') for w in available_workers]}")
             return available_workers
         
-        # NEW DAY - Refill workers
-        renpy.log(f"NEW DAY - Refilling workers")
+        # NEW DAY or FORCED REFRESH - Refill workers
+        if force_refresh:
+            renpy.log(f"FORCED REFRESH - Generating new workers")
+        else:
+            renpy.log(f"NEW DAY - Refilling workers")
         
         # Load all workers from JSON
         all_workers = load_workers(include_unique=True, include_encounter_only=False)
         hired_names = {w["name"] for w in workers}
         
+        renpy.log(f"BUY WORKERS: Total workers loaded: {len(all_workers)}")
+        renpy.log(f"BUY WORKERS: Hired workers: {len(hired_names)}")
+        
+        # Count JSON workers before filtering
+        total_json_before_filter = [w for w in all_workers if not w.get("procedural", False)]
+        renpy.log(f"BUY WORKERS: Total JSON workers (before filters): {len(total_json_before_filter)}")
+        
         # Get available JSON workers (not hired, not dead, not recruit_only, not unique, not monsters)
         # Unique workers should only appear in special recruitment events, not in the normal buy menu
         # Monsters should ONLY appear in monster capture events, never in buy menu or recruitment events
-        json_workers = [
-            w for w in all_workers
-            if not w.get("procedural", False)
-            and not w.get("recruit_only", False)  # Exclude recruit_only workers
-            and not w.get("unique", False)  # Exclude unique workers (they appear in recruitment events only)
-            and not w.get("monster", False)  # Exclude monsters (they only appear in capture events)
-            and w["name"] not in hired_names  # Exclude ALL hired workers
-            and not is_worker_dead(w["name"])
-        ]
+        json_workers = []
+        filtered_out = {
+            "procedural": 0,
+            "recruit_only": 0,
+            "unique": 0,
+            "monster": 0,
+            "hired": 0,
+            "dead": 0
+        }
         
-        renpy.log(f"Available JSON workers: {len(json_workers)}")
+        for w in all_workers:
+            if w.get("procedural", False):
+                filtered_out["procedural"] += 1
+                continue
+            if w.get("recruit_only", False):
+                filtered_out["recruit_only"] += 1
+                continue
+            if w.get("unique", False):
+                filtered_out["unique"] += 1
+                continue
+            if w.get("monster", False):
+                filtered_out["monster"] += 1
+                continue
+            if w["name"] in hired_names:
+                filtered_out["hired"] += 1
+                continue
+            if is_worker_dead(w["name"]):
+                filtered_out["dead"] += 1
+                continue
+            json_workers.append(w)
+        
+        renpy.log(f"BUY WORKERS: Filtered out - procedural: {filtered_out['procedural']}, recruit_only: {filtered_out['recruit_only']}, unique: {filtered_out['unique']}, monster: {filtered_out['monster']}, hired: {filtered_out['hired']}, dead: {filtered_out['dead']}")
+        renpy.log(f"BUY WORKERS: Available JSON workers: {len(json_workers)}")
+        if len(json_workers) > 0:
+            renpy.log(f"BUY WORKERS: JSON worker names: {[w['name'] for w in json_workers[:10]]}")  # Log first 10
+        else:
+            renpy.log("BUY WORKERS: WARNING - No JSON workers available! Check filters.")
+            if filtered_out["hired"] > 0:
+                renpy.log(f"BUY WORKERS: All {filtered_out['hired']} JSON workers are hired. Consider firing some to see them in the market.")
         
         # Start fresh
         available_workers = []
         
+        # Mixed system: JSON workers have maximum priority
+        # Strategy: Fill as many slots as possible with JSON workers (guarantee 3-5 if available)
+        target_count = 5
+        json_selected = []
+        procedural_selected = []
+        
         if len(json_workers) > 0:
-            # Use random JSON workers (up to 5) - shuffle for variety each day
+            # Shuffle JSON workers for variety
             random.shuffle(json_workers)
-            available_workers = json_workers[:5]
-            renpy.log(f"Using {len(available_workers)} JSON workers: {[w['name'] for w in available_workers]}")
+            
+            # Prioritize JSON workers: use as many as possible (up to 5)
+            # If we have 5+ JSON workers available, use all 5 slots for JSON
+            # If we have 3-4 JSON workers, use all of them
+            # If we have 1-2 JSON workers, use all of them and fill rest with procedural
+            json_count_to_use = min(len(json_workers), target_count)
+            
+            # Select the JSON workers (guaranteed selection, not probabilistic)
+            for i in range(json_count_to_use):
+                if len(available_workers) >= target_count:
+                    break
+                json_selected.append(json_workers[i])
+                available_workers.append(json_workers[i])
+            
+            renpy.log(f"JSON workers available: {len(json_workers)}, using {len(json_selected)}: {[w['name'] for w in json_selected]}")
         else:
-            # JSON exhausted - generate procedural workers
-            renpy.log("JSON workers exhausted - generating procedural workers")
-            while len(available_workers) < 5 and daily_spawns < 5:
+            renpy.log("No JSON workers available (all hired, dead, or filtered out)")
+        
+        renpy.log(f"Selected {len(json_selected)} JSON workers: {[w['name'] for w in json_selected]}")
+        
+        # Fill remaining slots with procedural workers if needed
+        remaining_slots = target_count - len(available_workers)
+        if remaining_slots > 0:
+            renpy.log(f"Filling {remaining_slots} remaining slots with procedural workers (daily_spawns: {daily_spawns})")
+            attempts = 0
+            max_attempts = 20  # Prevent infinite loop
+            while len(available_workers) < target_count and attempts < max_attempts:
+                attempts += 1
                 new_worker = spawn_new_worker()
                 if new_worker:
                     new_worker["market_worker"] = True
                     new_worker["procedural"] = True
                     available_workers.append(new_worker)
-                    daily_spawns += 1
-                    renpy.log(f"Generated procedural worker: {new_worker['name']}")
+                    procedural_selected.append(new_worker)
+                    # Only increment daily_spawns if we haven't exceeded the daily limit
+                    if daily_spawns < 5:
+                        daily_spawns += 1
+                    renpy.log(f"Generated procedural worker: {new_worker['name']} (daily_spawns: {daily_spawns}, attempt: {attempts})")
+                else:
+                    renpy.log(f"spawn_new_worker() returned None (attempt: {attempts})")
+            if len(available_workers) < target_count:
+                renpy.log(f"WARNING: Only generated {len(available_workers)} workers out of {target_count} requested (attempts: {attempts})")
+        
+        renpy.log(f"Final selection: {len(json_selected)} JSON + {len(procedural_selected)} procedural = {len(available_workers)} total")
         
         # Apply defaults
         for worker in available_workers:
@@ -1401,6 +1890,62 @@ init python:
             update_displayed_workers()
         except Exception as e:
             renpy.log(f"Error in _ensure_buy_workers_loaded: {e}")
+    
+    def refresh_buy_workers():
+        """Refresh the buy workers list: 1 free, 1 paid (2500$)."""
+        global map_worker_refill_count, last_map_refill_day, available_workers
+        
+        renpy.log("BUY SERVANTS: refresh_buy_workers called")
+        
+        # Check if it's a new day - reset counter if so
+        if store.last_map_refill_day != store.current_day:
+            store.map_worker_refill_count = 0
+            store.last_map_refill_day = store.current_day
+            renpy.log(f"BUY SERVANTS: New day detected, reset counter")
+        
+        # Use store variable to ensure consistency
+        current_count = store.map_worker_refill_count
+        
+        # Check if we can refresh (max 2 times per day: 1 free, 1 paid)
+        if current_count >= 2:
+            renpy.log("BUY SERVANTS: Refresh limit reached (2/2)")
+            return
+        
+        # Check if this is the paid refresh (second one)
+        is_paid_refresh = (current_count == 1)
+        refresh_cost = 2500 if is_paid_refresh else 0
+        
+        # Check if player has enough money for paid refresh
+        if is_paid_refresh:
+            if not hasattr(store, 'money') or store.money < refresh_cost:
+                renpy.log(f"BUY SERVANTS: Not enough money for paid refresh. Need {refresh_cost}, have {getattr(store, 'money', 0)}")
+                return
+        
+        # Charge money for paid refresh
+        if is_paid_refresh:
+            store.money -= refresh_cost
+            renpy.log(f"BUY SERVANTS: Charged {refresh_cost}$ for refresh. Remaining money: {store.money}")
+        
+        # Refresh workers - force generation of new workers
+        refresh_type = "paid" if is_paid_refresh else "free"
+        renpy.log(f"BUY SERVANTS: Refreshing workers ({refresh_type}, count: {current_count + 1}/2)")
+        try:
+            load_buy_workers(force_refresh=True)  # Force refresh to generate new workers
+            update_displayed_workers()
+            # Update store variable directly
+            store.map_worker_refill_count = current_count + 1
+            # Also update global for compatibility
+            map_worker_refill_count = store.map_worker_refill_count
+            renpy.log(f"BUY SERVANTS: Workers refreshed. New count: {store.map_worker_refill_count}/2, available: {len(available_workers)}")
+            # Force screen refresh to update button text and state
+            renpy.restart_interaction()
+        except Exception as e:
+            renpy.log(f"BUY SERVANTS: Error refreshing workers: {e}")
+            import traceback
+            renpy.log(f"BUY SERVANTS: Traceback: {traceback.format_exc()}")
+    
+    # Make sure function is in store
+    store.refresh_buy_workers = refresh_buy_workers
 
     def load_recruit_workers():
         """
@@ -1626,12 +2171,9 @@ init python:
                 worker["skill_uses"] = {}
                 renpy.log(f"Initialized skill_uses for {worker_name}")
             
-            # Get the base skills (use original_skills if available, otherwise skills)
-            # Always read from the actual dict, not a reference, to ensure we get current values
-            if "original_skills" in worker and worker["original_skills"]:
-                base_skills = worker["original_skills"]
-            else:
-                base_skills = worker.get("skills", {})
+            # Use worker["skills"] as the single source of truth for base skill levels
+            # Trait and item bonuses are calculated dynamically in calculate_skill_with_traits()
+            base_skills = worker.get("skills", {})
             
             if not base_skills:
                 renpy.log(f"WARNING: {worker_name} has no skills!")
@@ -1679,12 +2221,6 @@ init python:
                     new_rebelliousness = max(0, current_rebelliousness - comfort)
                     set_attribute_with_caps(worker, "rebelliousness", new_rebelliousness)
                     renpy.log(f"Skill level up reduces {worker_name}'s rebelliousness: {current_rebelliousness} -> {new_rebelliousness} (-{comfort} from comfort)")
-                    
-                    # Re-read base_skills after modification to ensure we have the latest value
-                    if "original_skills" in worker and worker["original_skills"]:
-                        base_skills = worker["original_skills"]
-                    else:
-                        base_skills = worker.get("skills", {})
         renpy.log("=== update_skill_levels() finished ===")
 
     def update_worker_levels():
@@ -1803,32 +2339,57 @@ init python:
         
         # Create new worker based on template
         new_worker = template.copy()
+        
+        # Use template traits as the base so procedural workers match the template's race/theme
+        base_traits = template.get("traits", [])
+        if not isinstance(base_traits, list) or not base_traits:
+            base_traits = ["Human"]
+        
+        # Generate skills with guarantee that at least 2 have minimum 35
+        skills = {}
+        skill_names_list = list(template["skills"].keys())
+        random.shuffle(skill_names_list)  # Shuffle to randomize which skills get the guarantee
+        
+        # First, generate all skills normally
+        for skill_name in skill_names_list:
+            roll = random.random()
+            skills[skill_name] = (
+                random.randint(12, 28) if roll < 0.5
+                else random.randint(25, 40) if roll < 0.8
+                else random.randint(35, 50)
+            )
+        
+        # Guarantee at least 2 skills have minimum 35
+        skills_under_35 = [name for name, value in skills.items() if value < 35]
+        if len(skills_under_35) >= 2:
+            # Randomly select 2 skills to boost to at least 35
+            skills_to_boost = random.sample(skills_under_35, 2)
+            for skill_name in skills_to_boost:
+                skills[skill_name] = random.randint(35, 50)  # Boost to 35-50
+        elif len(skills_under_35) == 1:
+            # Only 1 skill under 35, boost it and find another to boost
+            skills[skills_under_35[0]] = random.randint(35, 50)
+            # Find a skill that's already >= 35 but could be higher, or boost another
+            other_skills = [name for name in skill_names_list if name not in skills_under_35]
+            if other_skills:
+                skills[random.choice(other_skills)] = random.randint(35, 50)
+        
         new_worker.update({
             "name": final_name,
             "procedural": True,
             "unique": False,
             "encounter_only": False,
-            # Randomize stats with high potential:
-            # 50% chance: decent (12-28)
-            # 30% chance: great (25-40)
-            # 20% chance: exceptional (35-50)
-            "skills": {
-                skill_name: (
-                    random.randint(12, 28) if (roll := random.random()) < 0.5
-                    else random.randint(25, 40) if roll < 0.8
-                    else random.randint(35, 50)
-                )
-                for skill_name in template["skills"].keys()
-            },
-            "cost": random.randint(500, 1500),
+            "skills": skills,
+            "cost": random.randint(1000, 1500),  # Minimum price increased to 1000
             "rebelliousness": random.randint(20, 80),
             "joy": random.randint(20, 80),
             "comfort_desired": random.randint(1, 5),
-            "description": f"A skilled worker from the {template.get('folder', 'unknown')} region."
+            "description": f"A skilled worker from the {template.get('folder', 'unknown')} region.",
+            "traits": list(base_traits)  # Keep template traits (e.g., race) for image consistency
         })
         
-        # Assign random traits
-        new_worker["traits"] = assign_random_traits(new_worker)
+        # Assign additional random traits if needed (to reach 3 total max)
+        store.assign_random_traits_with_limits(new_worker, target_min=3, target_max=3)
         
         # Ensure all defaults are properly set
         ensure_worker_defaults(new_worker)
@@ -1859,26 +2420,51 @@ init python:
             available_folders = ["aspen"]  # Fallback to default
         assigned_folder = random.choice(available_folders)
         
+        # Try to align traits with a worker that uses the same folder
+        folder_template = next((w for w in all_workers if w.get("folder") == assigned_folder and w.get("traits")), None)
+        base_traits = folder_template.get("traits", []) if folder_template else []
+        if not isinstance(base_traits, list) or not base_traits:
+            base_traits = get_inherited_traits_from_json_workers()
+        
         # Create the new worker with named skills only
-        # 50% chance: decent (12-28)
-        # 30% chance: great (25-40)
-        # 20% chance: exceptional (35-50)
+        # Generate skills with guarantee that at least 2 have minimum 35
+        skill_names_list = list(skill_names.keys())
+        random.shuffle(skill_names_list)  # Shuffle to randomize which skills get the guarantee
+        
+        # First, generate all skills normally
+        skills = {}
+        for skill_name in skill_names_list:
+            roll = random.random()
+            skills[skill_name] = (
+                random.randint(12, 28) if roll < 0.5
+                else random.randint(25, 40) if roll < 0.8
+                else random.randint(35, 50)
+            )
+        
+        # Guarantee at least 2 skills have minimum 35
+        skills_under_35 = [name for name, value in skills.items() if value < 35]
+        if len(skills_under_35) >= 2:
+            # Randomly select 2 skills to boost to at least 35
+            skills_to_boost = random.sample(skills_under_35, 2)
+            for skill_name in skills_to_boost:
+                skills[skill_name] = random.randint(35, 50)  # Boost to 35-50
+        elif len(skills_under_35) == 1:
+            # Only 1 skill under 35, boost it and find another to boost
+            skills[skills_under_35[0]] = random.randint(35, 50)
+            # Find a skill that's already >= 35 but could be higher, or boost another
+            other_skills = [name for name in skill_names_list if name not in skills_under_35]
+            if other_skills:
+                skills[random.choice(other_skills)] = random.randint(35, 50)
+        
         new_worker = {
             "name": final_name,
             "folder": assigned_folder,
             "gender": gender,
             "names_list": f"{name_category}_{gender}",
-            "skills": {
-                skill_name: (
-                    random.randint(12, 28) if (roll := random.random()) < 0.5
-                    else random.randint(25, 40) if roll < 0.8
-                    else random.randint(35, 50)
-                )
-                for skill_name in skill_names.keys()
-            },
-            "traits": [],  # Will be filled by assign_random_traits
+            "skills": skills,
+            "traits": list(base_traits),
             "description": f"A {final_name} from the {name_category} region.",
-            "cost": random.randint(500, 1500),
+            "cost": random.randint(1000, 1500),  # Minimum price increased to 1000
             "level": 1,
             "energy": 50,
             "health": 100,
@@ -1897,8 +2483,8 @@ init python:
             "nsfw": persistent.nsfw_enabled  # Set NSFW based on game mode
         }
         
-        # Assign random traits
-        new_worker["traits"] = assign_random_traits(new_worker)
+        # Assign additional random traits if needed (to reach 3 total max)
+        store.assign_random_traits_with_limits(new_worker, target_min=3, target_max=3)
         
         # Ensure all defaults are properly set
         ensure_worker_defaults(new_worker)
@@ -1995,30 +2581,154 @@ init python:
 
     def _remove_worker_from_building_by_name(building, worker_name):
         """Remove all instances of a worker by name from a building assignment list."""
-        if not building:
+        if not building or not worker_name:
             return
         assigned = building.get("assigned_servants", []) or []
         if not assigned:
             return
-        building["assigned_servants"] = [w for w in assigned if w.get("name") != worker_name]
+        filtered = []
+        for w in assigned:
+            if isinstance(w, dict):
+                wname = w.get("name")
+            else:
+                wname = str(w) if w is not None else None
+            if wname != worker_name:
+                filtered.append(w)
+        building["assigned_servants"] = filtered
 
     def add_worker_to_building(worker, building_name):
         """Assign worker to a building, ensuring no duplicates by name."""
         if not building_name or building_name not in available_buildings:
             return
+        if not hasattr(worker, "get"):
+            renpy.log("add_worker_to_building: invalid worker object, missing get()")
+            return
         building = available_buildings[building_name]
         if "assigned_servants" not in building or not isinstance(building["assigned_servants"], list):
             building["assigned_servants"] = []
         worker_name = worker.get("name")
+        if not worker_name:
+            renpy.log("add_worker_to_building: worker name missing, skipping assignment")
+            return
+        # Always operate on the canonical worker object from store.workers if available.
+        canonical_worker = None
+        for w in store.workers:
+            if isinstance(w, dict) and w.get("name") == worker_name:
+                canonical_worker = w
+                break
+        if canonical_worker is None:
+            canonical_worker = worker
         # Remove any stale duplicates by name before adding
         _remove_worker_from_building_by_name(building, worker_name)
-        building["assigned_servants"].append(worker)
-        if "servant_jobs" not in building or not isinstance(building["servant_jobs"], dict):
+        building["assigned_servants"].append(canonical_worker)
+        # CRITICAL: Set the assigned_building on the worker
+        canonical_worker["assigned_building"] = building_name
+        # CRITICAL: Only initialize servant_jobs if it doesn't exist, don't replace it
+        # This prevents clearing all jobs when adding a worker
+        if "servant_jobs" not in building:
             building["servant_jobs"] = {}
         if "event_limit" not in building:
             building["event_limit"] = 0
 
-    def validate_and_sync_buildings():
+        # Ensure the worker has a job entry (default unassigned).
+        try:
+            if worker_name not in building.get("servant_jobs", {}):
+                building["servant_jobs"][worker_name] = "unassigned"
+        except Exception as e:
+            renpy.log("add_worker_to_building: ensure servant_jobs error: " + str(e))
+
+    def sync_assigned_servants_for_building(building_name):
+        """Rebuild assigned_servants for a single building from servant_jobs and store.workers."""
+        try:
+            if not building_name or building_name not in available_buildings:
+                return
+            building = available_buildings.get(building_name)
+            if not isinstance(building, dict):
+                return
+            name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
+            rebuilt = []
+            seen = set()
+            
+            # Source 1: Workers in servant_jobs
+            for wname in list(building.get("servant_jobs", {}) or {}):
+                if not wname or wname in seen:
+                    continue
+                worker_obj = name_to_worker.get(wname)
+                if worker_obj:
+                    rebuilt.append(worker_obj)
+                    seen.add(wname)
+                    if worker_obj.get("assigned_building", "Unassigned") != building_name:
+                        worker_obj["assigned_building"] = building_name
+            
+            # Source 2: Workers with assigned_building matching this building
+            for worker in store.workers:
+                if not isinstance(worker, dict):
+                    continue
+                wname = worker.get("name")
+                if not wname or wname in seen:
+                    continue
+                if worker.get("assigned_building") == building_name:
+                    rebuilt.append(worker)
+                    seen.add(wname)
+                    # Ensure they have an entry in servant_jobs
+                    if "servant_jobs" not in building:
+                        building["servant_jobs"] = {}
+                    if wname not in building["servant_jobs"]:
+                        building["servant_jobs"][wname] = "unassigned"
+            
+            building["assigned_servants"] = rebuilt
+        except Exception as e:
+            renpy.log("sync_assigned_servants_for_building error: " + str(e))
+
+    def get_building_servants(building_name):
+        """Return a deduped list of canonical workers for a building.
+        Uses both servant_jobs AND worker assigned_building as sources for robustness.
+        This ensures workers show even if servant_jobs is incomplete (e.g., old saves)."""
+        try:
+            if not building_name or building_name not in available_buildings:
+                return []
+            building = available_buildings.get(building_name, {})
+            if not isinstance(building, dict):
+                return []
+            name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
+            servants = []
+            seen = set()
+            
+            # Source 1: servant_jobs dictionary (primary source)
+            jobs = building.get("servant_jobs", {}) or {}
+            for wname, job_id in jobs.items():
+                if not wname or wname in seen:
+                    continue
+                # Only skip truly empty placeholders (None or empty string), NOT "unassigned"
+                # Workers with job_id="unassigned" ARE assigned to the building, just without a role
+                if job_id is None or (isinstance(job_id, str) and job_id.strip() == ""):
+                    continue
+                worker_obj = name_to_worker.get(wname)
+                if worker_obj:
+                    servants.append(worker_obj)
+                    seen.add(wname)
+            
+            # Source 2: workers with assigned_building matching this building (fallback)
+            # This ensures workers show even if servant_jobs is incomplete
+            for worker in store.workers:
+                if not isinstance(worker, dict):
+                    continue
+                wname = worker.get("name")
+                if not wname or wname in seen:
+                    continue
+                if worker.get("assigned_building") == building_name:
+                    servants.append(worker)
+                    seen.add(wname)
+                    # Also ensure they have an entry in servant_jobs for consistency
+                    if wname not in jobs:
+                        building.setdefault("servant_jobs", {})[wname] = "unassigned"
+            
+            return servants
+        except Exception as e:
+            renpy.log("get_building_servants error: " + str(e))
+            return []
+
+    def validate_and_sync_buildings(include_worker_refs=True):
         """Ensure all buildings in owned_buildings exist in available_buildings.
         Also checks workers for building references and creates missing buildings.
         This fixes corrupted saves where buildings are missing from available_buildings."""
@@ -2037,19 +2747,20 @@ init python:
             else:
                 renpy.log("validate_and_sync_buildings: owned_buildings is empty or doesn't exist")
             
-            # 2. Check workers for assigned_building references
-            if hasattr(store, 'workers') and store.workers:
-                renpy.log(f"validate_and_sync_buildings: checking {len(store.workers)} workers")
-                for worker in store.workers:
-                    if hasattr(worker, "get"):
-                        assigned_building = worker.get("assigned_building", "Unassigned")
-                        worker_name = worker.get("name", "Unknown")
-                        renpy.log(f"validate_and_sync_buildings: worker {worker_name} has assigned_building = '{assigned_building}'")
-                        if assigned_building != "Unassigned":
-                            buildings_to_check.add(assigned_building)
-                            renpy.log(f"validate_and_sync_buildings: worker {worker_name} assigned to {assigned_building} - added to check list")
-            else:
-                renpy.log("validate_and_sync_buildings: workers is empty or doesn't exist")
+            # 2. Optionally include worker assigned_building references
+            if include_worker_refs:
+                if hasattr(store, 'workers') and store.workers:
+                    renpy.log(f"validate_and_sync_buildings: checking {len(store.workers)} workers")
+                    for worker in store.workers:
+                        if hasattr(worker, "get"):
+                            assigned_building = worker.get("assigned_building", "Unassigned")
+                            worker_name = worker.get("name", "Unknown")
+                            renpy.log(f"validate_and_sync_buildings: worker {worker_name} has assigned_building = '{assigned_building}'")
+                            if assigned_building != "Unassigned":
+                                buildings_to_check.add(assigned_building)
+                                renpy.log(f"validate_and_sync_buildings: worker {worker_name} assigned to {assigned_building} - added to check list")
+                else:
+                    renpy.log("validate_and_sync_buildings: workers is empty or doesn't exist")
             
             renpy.log(f"validate_and_sync_buildings: buildings_to_check = {buildings_to_check}")
             renpy.log(f"validate_and_sync_buildings: available_buildings keys = {list(available_buildings.keys())}")
@@ -2131,7 +2842,58 @@ init python:
             renpy.log(f"validate_and_sync_buildings error: {str(e)}")
             import traceback
             renpy.log(f"validate_and_sync_buildings traceback: {traceback.format_exc()}")
+
+    def sync_building_assignments_from_workers():
+        """Simple rebuild: clear assigned_servants and repopulate from workers' assigned_building.
+        Deduplicates by worker name to prevent display issues."""
+        try:
+            if not hasattr(store, 'workers') or not store.workers:
+                renpy.log("sync_building_assignments_from_workers: no workers")
+                return
+
+            # Step 1: Clear all assigned_servants
+            for building_name, building in available_buildings.items():
+                if isinstance(building, dict):
+                    building["assigned_servants"] = []
+
+            # Step 2: Add each worker to their building's assigned_servants (dedupe by name)
+            seen_per_building = {}  # {building_name: set of worker names}
+            for worker in store.workers:
+                if not isinstance(worker, dict):
+                    continue
+                wname = worker.get("name")
+                if not wname:
+                    continue
+                assigned_building = worker.get("assigned_building", "Unassigned")
+                if assigned_building == "Unassigned":
+                    continue
+                if assigned_building not in available_buildings:
+                    worker["assigned_building"] = "Unassigned"
+                    continue
+                # Deduplicate by name per building
+                if assigned_building not in seen_per_building:
+                    seen_per_building[assigned_building] = set()
+                if wname in seen_per_building[assigned_building]:
+                    continue  # Skip duplicate
+                seen_per_building[assigned_building].add(wname)
+                building = available_buildings[assigned_building]
+                if isinstance(building, dict):
+                    building["assigned_servants"].append(worker)
+            
+            renpy.log("sync_building_assignments_from_workers: done")
+        except Exception as e:
+            renpy.log(f"sync_building_assignments_from_workers error: {e}")
     
+    def ensure_custom_name_for_building(building_name):
+        """Ensure custom_names has a default entry for building_name."""
+        try:
+            if not hasattr(store, "custom_names") or store.custom_names is None:
+                store.custom_names = {}
+            if building_name not in store.custom_names:
+                store.custom_names[building_name] = building_name
+        except Exception as e:
+            renpy.log(f"ensure_custom_name_for_building error: {str(e)}")
+
     def normalize_building_assignments():
         """Deduplicate assigned_servants per building by worker name.
         Also clean up workers with invalid building references.
@@ -3623,11 +4385,12 @@ init python:
             renpy.log("roll_loot: No items found in items_json. Please check your items JSON file.")
             return []
         
-        # Filter out test items (items with "test" in their id)
+        # Filter out test items and debug items (items with "test" or "debug" in their id)
         filtered_items = []
         for item in items_list:
             item_id = item.get("id", "").lower()
-            if "test" not in item_id:
+            # Skip test items and debug items
+            if "test" not in item_id and "debug" not in item_id:
                 filtered_items.append(item)
         
         if not filtered_items:
@@ -3739,18 +4502,30 @@ init python:
         """Count how many workers are assigned as Manager, which reduces event probability"""
         manager_count = 0
         manager_names = []
-        for worker in store.workers:
-            building_name = worker.get("assigned_building", "Unassigned")
-            if building_name == "Unassigned":
+        # Prefer servant_jobs maps to avoid relying on worker.assigned_building
+        seen_names = set()
+        for building in available_buildings.values():
+            if not isinstance(building, dict):
                 continue
-            
-            building = available_buildings.get(building_name, {})
-            servant_job = building.get("servant_jobs", {}).get(worker["name"], "")
-            
-            # Check if the job is "manager" (case-insensitive)
-            if servant_job and servant_job.lower() == "manager":
-                manager_count += 1
-                manager_names.append(worker["name"])
+            for worker_name, job_id in (building.get("servant_jobs") or {}).items():
+                if job_id and job_id.lower() == "manager" and worker_name and worker_name not in seen_names:
+                    manager_count += 1
+                    manager_names.append(worker_name)
+                    seen_names.add(worker_name)
+        # Fallback: if no managers found via servant_jobs, use worker.assigned_building
+        if manager_count == 0:
+            for worker in store.workers:
+                building_name = worker.get("assigned_building", "Unassigned")
+                if building_name == "Unassigned":
+                    continue
+                
+                building = available_buildings.get(building_name, {})
+                servant_job = building.get("servant_jobs", {}).get(worker["name"], "")
+                
+                # Check if the job is "manager" (case-insensitive)
+                if servant_job and servant_job.lower() == "manager":
+                    manager_count += 1
+                    manager_names.append(worker["name"])
         
         if manager_count > 0:
             renpy.log(f"DEBUG: Found {manager_count} active Manager(s): {', '.join(manager_names)}")
@@ -3910,6 +4685,10 @@ init python:
             renpy.log(traceback.format_exc())
 
     def after_load_callback():
+        import copy as _cp
+        import os
+        import json
+        
         # Sync worker folders from JSON first (fixes Selene and any other mismatched folders)
         sync_worker_folders_from_json()
         # Then ensure defaults
@@ -3917,6 +4696,67 @@ init python:
             ensure_worker_defaults(worker)
         for worker in store.available_workers:
             ensure_worker_defaults(worker)
+        
+        # CRITICAL: Restore worker flags from snapshot
+        # This ensures interaction progress is preserved after loading
+        try:
+            renpy.log("AFTER_LOAD_CALLBACK: Starting flags restoration")
+            
+            # Get the slot that was loaded
+            slot_name = getattr(persistent, "_loading_slot", None)
+            if not slot_name:
+                slot_name = getattr(persistent, "_last_loaded_snapshot_slot", None)
+            
+            renpy.log(f"AFTER_LOAD_CALLBACK: slot_name = {slot_name}")
+            
+            if slot_name:
+                # Build snapshot path
+                save_dir = os.path.join(renpy.config.gamedir, "saves")
+                filepath = os.path.join(save_dir, f"snapshot_{slot_name}.json")
+                renpy.log(f"AFTER_LOAD_CALLBACK: Looking for snapshot at {filepath}")
+                
+                if os.path.exists(filepath):
+                    try:
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            snap = json.load(f)
+                        
+                        if snap and "workers" in snap:
+                            snapshot_workers = snap["workers"]
+                            renpy.log(f"AFTER_LOAD_CALLBACK: Found {len(snapshot_workers)} workers in snapshot")
+                            
+                            # Create a mapping of snapshot workers by name for quick lookup
+                            snapshot_by_name = {w.get("name"): w for w in snapshot_workers if w.get("name")}
+                            
+                            # Restore flags for each current worker
+                            flags_restored = 0
+                            for worker in store.workers:
+                                worker_name = worker.get("name")
+                                if worker_name and worker_name in snapshot_by_name:
+                                    snapshot_worker = snapshot_by_name[worker_name]
+                                    snapshot_flags = snapshot_worker.get("flags", {})
+                                    if snapshot_flags:
+                                        worker["flags"] = _cp.deepcopy(snapshot_flags)
+                                        flags_restored += 1
+                                        renpy.log(f"AFTER_LOAD_CALLBACK: Restored flags for {worker_name}: {list(snapshot_flags.keys())}")
+                                    elif "flags" not in worker:
+                                        worker["flags"] = {}
+                                elif "flags" not in worker:
+                                    worker["flags"] = {}
+                            
+                            renpy.log(f"AFTER_LOAD_CALLBACK: Restored flags for {flags_restored} workers")
+                        else:
+                            renpy.log("AFTER_LOAD_CALLBACK: No workers in snapshot")
+                    except Exception as e:
+                        renpy.log(f"AFTER_LOAD_CALLBACK: Error reading snapshot: {e}")
+                else:
+                    renpy.log(f"AFTER_LOAD_CALLBACK: Snapshot file not found: {filepath}")
+            else:
+                renpy.log("AFTER_LOAD_CALLBACK: No slot_name found")
+        except Exception as e:
+            renpy.log(f"AFTER_LOAD_CALLBACK: Error restoring flags: {e}")
+            import traceback
+            renpy.log(traceback.format_exc())
+    
     config.after_load_callbacks.append(after_load_callback)
 
     
@@ -3936,6 +4776,16 @@ define skill_names = {
     "Specialty 9": "Specialty 9", "Specialty 10": "Specialty 10", "Specialty 11": "Specialty 11",
     "Specialty 12": "Specialty 12"
 }
+
+# Canonical order of skills for display purposes
+define skill_order = [
+    "Sex", "Anal", "BDSM", "Hand", "Oral", "Homo",
+    "Special", "Group", "Extreme", "Striptease",
+    "Combat", "Clever", "Charm", "Service", "Agility", "Craft",
+    "Specialty 4", "Specialty 5", "Specialty 6",
+    "Specialty 7", "Specialty 8", "Specialty 9",
+    "Specialty 10", "Specialty 11", "Specialty 12"
+]
 
 # Eliminado: Mapeo de IDs numéricos a nombres de skills - solo se usan nombres
 
@@ -3972,10 +4822,19 @@ init python:
     def get_visible_skills(worker):
         """
         Get a filtered list of visible skills for a worker.
-        Returns a list of (skill_name, level) tuples.
+        Returns a list of (skill_name, level) tuples in canonical order.
         """
-        base_skills = worker.get("original_skills", worker.get("skills", {}))
-        return [(sid, lvl) for sid, lvl in base_skills.items() if is_skill_visible(sid)]
+        base_skills = worker.get("skills", {})
+        # Return skills in canonical order defined by skill_order
+        result = []
+        for skill_name in skill_order:
+            if skill_name in base_skills and is_skill_visible(skill_name):
+                result.append((skill_name, base_skills[skill_name]))
+        # Add any skills not in skill_order (shouldn't happen, but safe fallback)
+        for skill_name, lvl in base_skills.items():
+            if skill_name not in skill_order and is_skill_visible(skill_name):
+                result.append((skill_name, lvl))
+        return result
 
 ################################################################################
 ### GLOBAL VARIABLES
@@ -4032,6 +4891,8 @@ define MAX_DAILY_SPAWNS = 5
 default last_worker_refill_day = None
 default last_worker_refill_month = None
 default last_worker_refill_year = None
+default map_worker_refill_count = 0  # Count how many times workers were refilled from map today
+default last_map_refill_day = None  # Track which day the map refill count was reset
 default take_a_walk_in_progress = False
 default last_take_a_walk_day = None
 default worker_interactions_today = {}  # Track daily interactions per worker: {worker_name: {day: count}}
@@ -4039,6 +4900,7 @@ default MAX_DAILY_INTERACTIONS = 2  # Maximum interactions per worker per day
 default custom_names = {
     "Building 1": "Building 1"
 }
+default _force_new_game_reset = False
 default acting_worker = ""  # Default value for acting_worker
 default event_flags = {}  # Storage for event flags/tokens that are used for event chains and conditions
 default plaza_servants_text_hover = False  # Controls hover state of PlazaServants imagebutton when textbutton is hovered
@@ -4050,6 +4912,69 @@ default tooltips_enabled_by_screen = {}  # Dictionary to store tooltip state per
 default _last_tooltip_screen = None  # Track last screen for tooltip context guard
 
 init python:
+    class SafeNameDict(dict):
+        """Legacy compatibility class (do not store in persistent)."""
+        def __missing__(self, key):
+            self[key] = key
+            return key
+
+    def _sanitize_persistent_obj(obj):
+        """Convert SafeNameDict to plain dict inside persistent data."""
+        try:
+            if isinstance(obj, dict):
+                if obj.__class__.__name__ == "SafeNameDict":
+                    obj = dict(obj)
+                return {k: _sanitize_persistent_obj(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [_sanitize_persistent_obj(v) for v in obj]
+            if isinstance(obj, tuple):
+                return tuple(_sanitize_persistent_obj(v) for v in obj)
+            if isinstance(obj, set):
+                return set(_sanitize_persistent_obj(v) for v in obj)
+        except Exception as e:
+            renpy.log(f"_sanitize_persistent_obj error: {str(e)}")
+        return obj
+
+    # Clean any legacy SafeNameDict from persistent at init
+    try:
+        for k, v in list(getattr(persistent, "__dict__", {}).items()):
+            setattr(persistent, k, _sanitize_persistent_obj(v))
+        # Drop legacy snapshot fields from persistent (no longer used)
+        if hasattr(persistent, "_slot_snapshots"):
+            persistent._slot_snapshots = {}
+        if hasattr(persistent, "_last_snapshot"):
+            persistent._last_snapshot = None
+        if hasattr(persistent, "_slot_to_apply"):
+            persistent._slot_to_apply = None
+        if hasattr(persistent, "loaded_via_save"):
+            persistent.loaded_via_save = False
+        if hasattr(persistent, "_context_restored"):
+            persistent._context_restored = False
+    except Exception as e:
+        renpy.log(f"persistent sanitize error: {str(e)}")
+
+    def mark_new_game_start():
+        """Mark that the user explicitly started a new game."""
+        try:
+            store._force_new_game_reset = True
+            store._just_loaded = False
+        except Exception as e:
+            renpy.log(f"mark_new_game_start error: {str(e)}")
+
+    def _mark_loaded():
+        """Ensure loaded saves don't trigger new-game reset."""
+        try:
+            store._just_loaded = True
+            store.is_new_game = False
+            store.game_initialized = True
+        except Exception as e:
+            renpy.log(f"_mark_loaded error: {str(e)}")
+
+    # Register after-load marker to prevent start reset after load.
+    try:
+        config.after_load_callbacks.append(_mark_loaded)
+    except Exception as e:
+        renpy.log(f"after_load callback register error: {str(e)}")
     def toggle_tooltips_for_screen(screen_name):
         """Toggle tooltips for a specific screen. Does not return anything."""
         # Default state: True only for map_screen, False for all others
@@ -4217,7 +5142,7 @@ label explore:
     
     menu:
         "Visit Shops":
-            call screen market
+            call screen shop_selection
         "Return to Tavern":
             jump tavern_screen
     

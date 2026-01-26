@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/save_snapshot.rpy", line 598: expected an indented block
-                renpy.log(f"SNAPSHOT: Ren'Py already restored {len(current_workers)} workers, skipping snapshot apply")
-                 ^
+File "game/scripts/core/screens.rpy", line 3447: a non-constant keyword argument like 'action ToggleScreenVariable("left_sort_by_name")' is not allowed after a python block.
+    action ToggleScreenVariable("left_sort_by_name")
+                                                    ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Tue Jan 20 22:05:05 2026
+Sun Jan 25 05:22:29 2026
