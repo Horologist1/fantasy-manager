@@ -317,6 +317,32 @@ label day_transition:
     scene expression Solid('#000000')
     # NOW hide daily_report (it's covered by black, so no transparency)
     $ renpy.hide_screen("daily_report")
+
+    # Start-of-new-day auto-consume hook (player closes the daily report).
+    # This is intentionally NOT "during work": it happens right after the report, before returning control.
+    python:
+        try:
+            renpy.log("AUTO_CONSUME_AFTER_REPORT_HOOK: running")
+            # Keep building->worker references consistent (prevents UI seeing stale worker dicts)
+            relink = getattr(store, "_relink_assigned_servants_to_store_workers", None)
+            if callable(relink):
+                relink()
+            thr = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+            ac = getattr(store, "auto_consume_start_of_day", None)
+            if callable(ac):
+                for w in getattr(store, "workers", []) or []:
+                    ac(w, threshold=thr)
+            # If anyone was put into rest, let the manager restore their job now that energy/HP may be refilled.
+            pm = getattr(store, "process_manager_auto_rest", None)
+            if callable(pm):
+                pm(restore_only=True)
+            # Force UI refresh so screens don't show stale worker dicts/values.
+            renpy.restart_interaction()
+        except Exception as e:
+            try:
+                renpy.log(f"AUTO_CONSUME_AFTER_REPORT_HOOK error: {e}")
+            except Exception:
+                pass
     # Show date text with fade in
     $ day_name = day_names[(store.current_day - 1) % 7]
     $ month_name = month_names[store.current_month]
@@ -655,16 +681,20 @@ label show_objective_7_intro:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_7_intro - STARTING DIALOGUE")
     "Time to meet the people who make this place run."
-    "I'll have a Friendly Chat with one of my workers to get a feel for their mood and motivations."
+    "I shall invite one of my workers to a Friendly Lunch—breaking bread together—to learn their hearts and motivations."
     "Journal has been updated with the next objective."
     $ renpy.log("DEBUG: show_objective_7_intro - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_7_dialogue:
     scene expression workers_bg
+    show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_7_dialogue - STARTING DIALOGUE")
-    "Excellent. Taking the time to commune with my workers doth yield its rewards."
-    "Now, 'tis time to establish the emporium — expand to multiple buildings and swell our coffers with gold."
+    "We have broken bread together. Over food and drink, they spoke of their hopes, their past, and what binds them to this house."
+    "To share a meal is to offer trust—and to receive it in return. I have seen the face behind the servant, the person beneath the duty."
+    "Such understanding is the foundation upon which loyalty is built. Those who eat at my table are no longer merely workers; they are souls I know, and who know me in turn."
+    "The governor rules through fear and gold. I shall build something different: a circle of those who have chosen to stand with me, beginning with this simple act of fellowship."
+    "My journal hath been inscribed with the next duty. The path to the grand design lies ahead."
     $ renpy.log("DEBUG: show_objective_7_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1028,6 +1058,14 @@ label next_day:
             renpy.call("governor_retaliation")
             # After event, show daily report then go to tavern
             renpy.call_screen("daily_report")
+            # "Start of day" as player experiences it: right after closing daily report.
+            try:
+                _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+                for w in store.workers:
+                    if hasattr(store, "auto_consume_start_of_day"):
+                        store.auto_consume_start_of_day(w, threshold=_th)
+            except Exception as e:
+                renpy.log(f"AUTO_CONSUME post-report error: {e}")
             renpy.jump("tavern_screen")
         elif result == "governor_tension_event":
             renpy.log("DEBUG: next_day - governor tension event detected, jumping to governor_tension_event")
@@ -1035,6 +1073,14 @@ label next_day:
             renpy.call("governor_tension_event")
             # After event, show daily report then go to tavern
             renpy.call_screen("daily_report")
+            # "Start of day" as player experiences it: right after closing daily report.
+            try:
+                _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+                for w in store.workers:
+                    if hasattr(store, "auto_consume_start_of_day"):
+                        store.auto_consume_start_of_day(w, threshold=_th)
+            except Exception as e:
+                renpy.log(f"AUTO_CONSUME post-report error: {e}")
             renpy.jump("tavern_screen")
         elif result == "handle_random_event":
             renpy.log("DEBUG: next_day - event detected, handling event first then continuing with daily report")
@@ -1043,6 +1089,14 @@ label next_day:
             # No event, show daily report then go to tavern
             renpy.log("DEBUG: next_day - no event, showing daily report then going to tavern_screen")
             renpy.call_screen("daily_report")
+            # "Start of day" as player experiences it: right after closing daily report.
+            try:
+                _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+                for w in store.workers:
+                    if hasattr(store, "auto_consume_start_of_day"):
+                        store.auto_consume_start_of_day(w, threshold=_th)
+            except Exception as e:
+                renpy.log(f"AUTO_CONSUME post-report error: {e}")
             renpy.jump("tavern_screen")
 
 label handle_event_then_daily_report:
@@ -1060,6 +1114,14 @@ label handle_event_then_daily_report:
         # Continue processing the day from where it was interrupted
         # Show daily report
         renpy.call_screen("daily_report")
+        # "Start of day" as player experiences it: right after closing daily report.
+        try:
+            _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+            for w in store.workers:
+                if hasattr(store, "auto_consume_start_of_day"):
+                    store.auto_consume_start_of_day(w, threshold=_th)
+        except Exception as e:
+            renpy.log(f"AUTO_CONSUME post-report error: {e}")
     
     # After daily report, go to tavern
     jump tavern_screen

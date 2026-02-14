@@ -93,6 +93,66 @@ init python:
 
     store.rebuild_assigned_servants = rebuild_assigned_servants
 
+    def calculate_specialty_buyer_sale_price(worker):
+        """
+        Sale price formula:
+        (original_cost + sum(skills)) * level * 3
+        """
+        try:
+            base_cost = int(worker.get("cost", 0) or 0)
+        except Exception:
+            base_cost = 0
+
+        skills_sum = 0
+        try:
+            skills = worker.get("skills", {}) or {}
+            if hasattr(skills, "items"):
+                for _, v in skills.items():
+                    try:
+                        skills_sum += int(v)
+                    except Exception:
+                        continue
+        except Exception:
+            skills_sum = 0
+
+        try:
+            lvl = int(worker.get("level", 1) or 1)
+        except Exception:
+            lvl = 1
+
+        try:
+            return int((base_cost + skills_sum) * lvl * 3)
+        except Exception:
+            return 0
+
+    store.calculate_specialty_buyer_sale_price = calculate_specialty_buyer_sale_price
+
+    def sell_worker_to_specialty_buyer(worker):
+        """Apply sale payout and remove worker from roster. Returns sale price (int)."""
+        price = calculate_specialty_buyer_sale_price(worker)
+        try:
+            store.money = int(getattr(store, "money", 0) or 0) + int(price or 0)
+        except Exception:
+            pass
+
+        try:
+            wname = worker.get("name")
+            if wname and hasattr(store, "workers") and store.workers is not None:
+                # Mutate in-place to preserve Ren'Py reactivity (RevertableList)
+                store.workers[:] = [w for w in store.workers if (hasattr(w, "get") and w.get("name") != wname)]
+        except Exception as e:
+            renpy.log("sell_worker_to_specialty_buyer error: " + str(e))
+
+        try:
+            if hasattr(store, "rebuild_assigned_servants"):
+                store.rebuild_assigned_servants()
+        except Exception:
+            pass
+
+        return price
+
+    store.sell_worker_to_specialty_buyer = sell_worker_to_specialty_buyer
+
 ################################################################################
 ## Styles
 ################################################################################
@@ -3018,8 +3078,14 @@ screen manager_inventory(shop_mode=None):
     default item_search_text = ""  # Search filter for items by name
     default left_sort_by_name = False  # False = arrival order, True = alphabetical
     default right_sort_by_name = False  # False = arrival order, True = alphabetical
+    default quick_panel_mode = "stats"  # Compact worker panel: "stats" or "skills"
 
     python:
+        # Store-backed inventory filter (used in non-shop mode).
+        # Using store var allows modal popup to update it reliably.
+        if not hasattr(store, "inventory_filter_category"):
+            store.inventory_filter_category = None
+
         def cycle_trade_multiplier():
             """Cycle through x1 -> x10 -> x100 -> x1"""
             current = renpy.get_screen_variable("trade_multiplier")
@@ -3071,12 +3137,15 @@ screen manager_inventory(shop_mode=None):
                     smi = (str(smi[0]), int(smi[1]), bool(smi[2] if len(smi) > 2 else False))
                     renpy.log(f"transfer_to_right: Normalized smi to {smi}")
                 
+                # Ensure locals exist even when transferring to/from storage
+                source_worker = None
+                target_worker = None
+
                 # Get references to the actual store inventories (not local copies)
                 if left_worker is None:
                     source_inventory = store.manager_inventory
                 else:
                     # Find the worker in store.workers and use their inventory
-                    source_worker = None
                     for w in store.workers:
                         if w.get("name") == left_worker.get("name"):
                             source_worker = w
@@ -3092,7 +3161,6 @@ screen manager_inventory(shop_mode=None):
                     target_inventory = store.manager_inventory
                 else:
                     # Find the worker in store.workers and use their inventory
-                    target_worker = None
                     for w in store.workers:
                         if w.get("name") == right_worker.get("name"):
                             target_worker = w
@@ -3161,6 +3229,16 @@ screen manager_inventory(shop_mode=None):
                 renpy.log(f"Source after removal: {source_inventory}")
                 renpy.log(f"Adding {smi[0]} (quantity: {transfer_qty}) to target: {target_inventory}")
                 add_item_to_inventory(target_inventory, smi[0], quantity=transfer_qty)
+                
+                # Auto-consume on receive when item has auto_consume_on_receive and target is a worker
+                try:
+                    item_info = next((i for i in items_json["items"] if i["id"] == smi[0]), None)
+                    if target_worker and item_info and item_info.get("auto_consume_on_receive", False):
+                        for _ in range(int(transfer_qty)):
+                            store.use_item(smi[0], target_worker)
+                except Exception as e:
+                    renpy.log(f"auto_consume_on_receive error (to right): {e}")
+
                 # CRITICAL: Force Ren'Py to recognize changes if target is manager_inventory
                 if right_worker is None:
                     # Also recreate target inventory to break references
@@ -3200,13 +3278,16 @@ screen manager_inventory(shop_mode=None):
                 renpy.set_screen_variable("is_transferring", True)
                 renpy.set_screen_variable("selected_worker_item", None)
                 renpy.set_screen_variable("selected_worker_index", None)
+
+                # Ensure locals exist even when transferring to/from storage
+                source_worker = None
+                target_worker = None
                 
                 # Get references to the actual store inventories (not local copies)
                 if right_worker is None:
                     source_inventory = store.manager_inventory
                 else:
                     # Find the worker in store.workers and use their inventory
-                    source_worker = None
                     for w in store.workers:
                         if w.get("name") == right_worker.get("name"):
                             source_worker = w
@@ -3222,7 +3303,6 @@ screen manager_inventory(shop_mode=None):
                     target_inventory = store.manager_inventory
                 else:
                     # Find the worker in store.workers and use their inventory
-                    target_worker = None
                     for w in store.workers:
                         if w.get("name") == left_worker.get("name"):
                             target_worker = w
@@ -3291,6 +3371,16 @@ screen manager_inventory(shop_mode=None):
                 renpy.log(f"Source after removal: {source_inventory}")
                 renpy.log(f"Adding {swi[0]} (quantity: {transfer_qty}) to target: {target_inventory}")
                 add_item_to_inventory(target_inventory, swi[0], quantity=transfer_qty)
+                
+                # Auto-consume on receive when item has auto_consume_on_receive and target is a worker
+                try:
+                    item_info = next((i for i in items_json["items"] if i["id"] == swi[0]), None)
+                    if target_worker and item_info and item_info.get("auto_consume_on_receive", False):
+                        for _ in range(int(transfer_qty)):
+                            store.use_item(swi[0], target_worker)
+                except Exception as e:
+                    renpy.log(f"auto_consume_on_receive error (to left): {e}")
+
                 # CRITICAL: Force Ren'Py to recognize changes if target is manager_inventory
                 if left_worker is None:
                     # Also recreate target inventory to break references
@@ -3455,14 +3545,14 @@ screen manager_inventory(shop_mode=None):
                             background "tablebutton.png"
                             xsize 180
                             ysize 40
+                            action ToggleScreenVariable("left_sort_by_name")
+                            tooltip "Click to toggle: Alphabetical / Arrival order"
                             hbox:
                                 spacing 3
                                 yalign 0.5
                                 text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color "#ffd700"
                                 if left_sort_by_name:
                                     add "gui/arrowdown.png" zoom 0.1 yalign 0.5
-                            action ToggleScreenVariable("left_sort_by_name")
-                            tooltip "Click to toggle: Alphabetical / Arrival order"
                         button:
                             background "tablebutton.png"
                             xsize 90
@@ -3499,18 +3589,22 @@ screen manager_inventory(shop_mode=None):
                                     item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
                                     return item_info.get("name", "ZZZ").lower()
                                 
-                                def item_matches_search(idx_item, search_text):
-                                    if not search_text:
-                                        return True
+                                def item_matches_search(idx_item, search_text, category_filter=None):
                                     item = idx_item[1]
                                     item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                    if category_filter is not None:
+                                        if item_info.get("type") != category_filter:
+                                            return False
+                                    if not search_text:
+                                        return True
                                     item_name = item_info.get("name", "").lower()
                                     return search_text.lower() in item_name
                                 
                                 search_text = item_search_text if item_search_text else ""
+                                category_filter = getattr(store, "inventory_filter_category", None) if shop_mode is None else None
                                 # Filter items first
-                                equipped_list = [(idx, item) for idx, item in enumerate(left_inventory) if store._is_equipped(item) and item_matches_search((idx, item), search_text)]
-                                unequipped_list = [(idx, item) for idx, item in enumerate(left_inventory) if not store._is_equipped(item) and item_matches_search((idx, item), search_text)]
+                                equipped_list = [(idx, item) for idx, item in enumerate(left_inventory) if store._is_equipped(item) and item_matches_search((idx, item), search_text, category_filter)]
+                                unequipped_list = [(idx, item) for idx, item in enumerate(left_inventory) if not store._is_equipped(item) and item_matches_search((idx, item), search_text, category_filter)]
                                 # Sort by name only if toggle is on, otherwise keep arrival order (by index)
                                 if left_sort_by_name:
                                     equipped_items = sorted(equipped_list, key=get_item_name_for_sort)
@@ -3700,20 +3794,19 @@ screen manager_inventory(shop_mode=None):
                         # Calculate right panel sort settings
                         $ right_show_arrow = shop_mode or right_sort_by_name
                         $ right_name_action = None if shop_mode else ToggleScreenVariable("right_sort_by_name")
-                        $ right_name_hover = "#ffffff" if shop_mode else "#ffd700"
                         hbox:
                             spacing 0
                             button:
                                 background "tablebutton.png"
                                 xsize 180
                                 ysize 40
+                                action right_name_action
                                 hbox:
                                     spacing 3
                                     yalign 0.5
-                                    text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color right_name_hover
+                                    text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color ("#ffffff" if shop_mode else "#ffd700")
                                     if right_show_arrow:
                                         add "gui/arrowdown.png" zoom 0.1 yalign 0.5
-                                action right_name_action
                                 if not shop_mode:
                                     tooltip "Click to toggle: Alphabetical / Arrival order"
                             button:
@@ -3821,18 +3914,22 @@ screen manager_inventory(shop_mode=None):
                                             item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
                                             return item_info.get("name", "ZZZ").lower()
                                         
-                                        def item_matches_search_right(idx_item, search_text):
-                                            if not search_text:
-                                                return True
+                                        def item_matches_search_right(idx_item, search_text, category_filter=None):
                                             item = idx_item[1]
                                             item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                            if category_filter is not None:
+                                                if item_info.get("type") != category_filter:
+                                                    return False
+                                            if not search_text:
+                                                return True
                                             item_name = item_info.get("name", "").lower()
                                             return search_text.lower() in item_name
                                         
                                         search_text_r = item_search_text if item_search_text else ""
+                                        category_filter_r = getattr(store, "inventory_filter_category", None) if shop_mode is None else None
                                         # Filter items first
-                                        equipped_list_r = [(idx, item) for idx, item in enumerate(right_inventory) if store._is_equipped(item) and item_matches_search_right((idx, item), search_text_r)]
-                                        unequipped_list_r = [(idx, item) for idx, item in enumerate(right_inventory) if not store._is_equipped(item) and item_matches_search_right((idx, item), search_text_r)]
+                                        equipped_list_r = [(idx, item) for idx, item in enumerate(right_inventory) if store._is_equipped(item) and item_matches_search_right((idx, item), search_text_r, category_filter_r)]
+                                        unequipped_list_r = [(idx, item) for idx, item in enumerate(right_inventory) if not store._is_equipped(item) and item_matches_search_right((idx, item), search_text_r, category_filter_r)]
                                         # Sort by name only if toggle is on, otherwise keep arrival order (by index)
                                         if right_sort_by_name:
                                             equipped_items = sorted(equipped_list_r, key=get_item_name_for_sort_right)
@@ -3982,6 +4079,8 @@ screen manager_inventory(shop_mode=None):
         vbox:
             xalign 0.5
             yalign 0.5
+            xoffset -17
+            yoffset 30
             spacing 10
             if shop_mode:
                 # Category filter buttons
@@ -4043,21 +4142,182 @@ screen manager_inventory(shop_mode=None):
                         background category_bg
                         align (0.5, 0.5)
             elif shop_mode is None:
-                if left_worker is not None and left_worker is not False:
-                    textbutton "View [left_worker['name']]":
-                        action Show("worker_details", worker=left_worker, in_roster=True)
+                # Compact worker summary panel (for quick stats/skills while trading)
+                $ summary_worker = right_worker if (right_worker is not None and right_worker is not False) else (left_worker if (left_worker is not None and left_worker is not False) else None)
+                if summary_worker is not None:
+                    null height 8
+                    frame:
+                        background "#00000033"
+                        xsize 300
+                        ysize 340
+                        padding (10, 10)
+                        vbox:
+                            spacing 6
+                            # Energy / Health mini bars
+                            hbox:
+                                spacing 6
+                                button:
+                                    background "#00000044"
+                                    xsize 140
+                                    ysize 32
+                                    padding (5, 5)
+                                    action NullAction()
+                                    fixed:
+                                        xsize 130
+                                        ysize 22
+                                        bar:
+                                            value summary_worker.get("energy", 0)
+                                            range calculate_max_energy(summary_worker)
+                                            xsize 130
+                                            ysize 22
+                                            left_bar "#4a6fa5"
+                                            right_bar "#444444"
+                                        text "E [summary_worker.get('energy',0)]/[calculate_max_energy(summary_worker)]" size font_size(14) color "#ffffff" xalign 0.5 yalign 0.5
+                                button:
+                                    background "#00000044"
+                                    xsize 140
+                                    ysize 32
+                                    padding (5, 5)
+                                    action NullAction()
+                                    fixed:
+                                        xsize 130
+                                        ysize 22
+                                        bar:
+                                            value summary_worker.get("health", 0)
+                                            range calculate_max_health(summary_worker)
+                                            xsize 130
+                                            ysize 22
+                                            left_bar "#a54a4a"
+                                            right_bar "#444444"
+                                        text "H [summary_worker.get('health',0)]/[calculate_max_health(summary_worker)]" size font_size(14) color "#ffffff" xalign 0.5 yalign 0.5
+
+                            textbutton "Switch to [quick_panel_mode == 'skills' and 'Stats' or 'Skills']":
+                                text_size font_size(18)
+                                text_color "#ffffff"
+                                text_hover_color "#6b6528"
+                                background None
+                                xalign 0.0
+                                action SetScreenVariable("quick_panel_mode", quick_panel_mode == "skills" and "stats" or "skills")
+
+                            if quick_panel_mode == "stats":
+                                vbox:
+                                    spacing 6
+                                    # Rebelliousness
+                                    vbox:
+                                        spacing 2
+                                        text "Rebelliousness: [summary_worker.get('rebelliousness',0)]/100" size font_size(14) color "#ffffff"
+                                        bar:
+                                            value summary_worker.get("rebelliousness", 0)
+                                            range 100
+                                            xsize 270
+                                            ysize 10
+                                            left_bar "#6b6528"
+                                            right_bar "#444444"
+                                    # Joy
+                                    vbox:
+                                        spacing 2
+                                        text "Joy: [summary_worker.get('joy',0)]/100" size font_size(14) color "#ffffff"
+                                        bar:
+                                            value summary_worker.get("joy", 0)
+                                            range 100
+                                            xsize 270
+                                            ysize 10
+                                            left_bar "#6b6528"
+                                            right_bar "#444444"
+                                    # Romance
+                                    vbox:
+                                        spacing 2
+                                        text "Romance: [summary_worker.get('romance',0)]/100" size font_size(14) color "#ffffff"
+                                        bar:
+                                            value summary_worker.get("romance", 0)
+                                            range 100
+                                            xsize 270
+                                            ysize 10
+                                            left_bar "#6b6528"
+                                            right_bar "#444444"
+                                    # Libido (NSFW)
+                                    if persistent.nsfw_enabled:
+                                        vbox:
+                                            spacing 2
+                                            text "Libido: [summary_worker.get('libido',0)]/20" size font_size(14) color "#ffffff"
+                                            bar:
+                                                value summary_worker.get("libido", 0)
+                                                range 20
+                                                xsize 270
+                                                ysize 10
+                                                left_bar "#6b6528"
+                                                right_bar "#444444"
+                                    # Relationship
+                                    vbox:
+                                        spacing 2
+                                        text "Relationship: [summary_worker.get('relationship',0)]/100" size font_size(14) color "#ffffff"
+                                        bar:
+                                            value summary_worker.get("relationship", 0)
+                                            range 100
+                                            xsize 270
+                                            ysize 10
+                                            left_bar "#6b6528"
+                                            right_bar "#444444"
+                            else:
+                                frame:
+                                    background "#00000022"
+                                    xsize 280
+                                    ysize 210
+                                    padding (6, 6)
+                                    viewport:
+                                        scrollbars "vertical"
+                                        mousewheel True
+                                        draggable True
+                                        ysize 198
+                                        xfill True
+                                        vbox:
+                                            spacing 6
+                                            for skill_name, level in get_visible_skills(summary_worker):
+                                                $ total_skill = calculate_skill_with_traits(summary_worker, skill_name)
+                                                $ skill_uses = summary_worker.get("skill_uses", {}).get(skill_name, 0)
+                                                $ uses_needed = level if level and int(level) > 0 else 1
+                                                $ progress = min(1.0, (skill_uses / float(uses_needed)) if uses_needed > 0 else 0.0)
+                                                vbox:
+                                                    spacing 2
+                                                    text "[skill_name]: [total_skill]/100" size font_size(14) color "#ffffff"
+                                                    bar:
+                                                        value progress
+                                                        range 1.0
+                                                        xsize 260
+                                                        ysize 6
+                                                        left_bar "#6b6528"
+                                                        right_bar "#444444"
+                            null height 2
+
+                    # Original "View [name]" button, moved below the summary panel
+                    textbutton "View [summary_worker['name']]":
+                        action Show("worker_details", worker=summary_worker, in_roster=True)
                         xsize 300
                         ysize 50
-                        text_size 42
+                        text_size 34
                         text_color "#3c1f14"
                         text_hover_color "#6b6528"
                         align (0.5, 0.5)
-                if right_worker is not None and right_worker is not False:
-                    textbutton "View [right_worker['name']]":
-                        action Show("worker_details", worker=right_worker, in_roster=True)
+
+                    # Filter button (opens modal picker like shop filters)
+                    python:
+                        _cat = getattr(store, "inventory_filter_category", None)
+                        _cat_names = {
+                            "weapon": "Weapons",
+                            "armor": "Armor",
+                            "clothing": "Clothing",
+                            "accessory": "Accessories",
+                            "consumable": "Consumables",
+                            "currency": "Currency",
+                            "quest_item": "Quest Items",
+                            "misc": "Misc"
+                        }
+                        _cat_label = "All Items" if _cat is None else _cat_names.get(_cat, str(_cat).replace("_", " ").title())
+                    textbutton "Filter: [_cat_label]":
+                        action Show("inventory_filter_popup")
                         xsize 300
                         ysize 50
-                        text_size 42
+                        text_size 34
                         text_color "#3c1f14"
                         text_hover_color "#6b6528"
                         align (0.5, 0.5)
@@ -4187,6 +4447,80 @@ screen worker_selection_popup(panel, current_left, current_right, shop_mode=None
             xoffset -15
             yoffset 5
 
+screen inventory_filter_popup():
+    modal True
+    zorder 110
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 720
+        ysize 720
+        background None
+        padding (40, 40)
+
+        # Close button (top-right)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action Hide("inventory_filter_popup")
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+        
+        vbox:
+            spacing 15
+            null height 15
+            label "FILTER ITEMS" xalign 0.5 style "header_style"
+            null height 10
+            
+            python:
+                if not hasattr(store, "inventory_filter_category"):
+                    store.inventory_filter_category = None
+                current_cat = getattr(store, "inventory_filter_category", None)
+                category_names = {
+                    None: "All Items",
+                    "weapon": "Weapons",
+                    "armor": "Armor",
+                    "clothing": "Clothing",
+                    "accessory": "Accessories",
+                    "consumable": "Consumables",
+                    "currency": "Currency",
+                    "quest_item": "Quest Items",
+                    "misc": "Misc"
+                }
+                option_ids = [None, "weapon", "armor", "clothing", "accessory", "consumable", "currency", "quest_item", "misc"]
+            
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                ysize 480
+                xsize 625
+                xoffset -5
+                yoffset -20
+                
+                vbox:
+                    spacing 10
+                    for cid in option_ids:
+                        $ lbl = category_names.get(cid, str(cid).replace("_", " ").title())
+                        button:
+                            xsize 580
+                            ysize 44
+                            background None
+                            hover_background None
+                            action [
+                                SetVariable("inventory_filter_category", cid),
+                                Hide("inventory_filter_popup"),
+                                Function(renpy.restart_interaction)
+                            ]
+                            hbox:
+                                spacing 0
+                                null width 20
+                                text "[lbl]" size font_size(28) color ("#6b6528" if cid == current_cat else "#7a4b2a") hover_color "#6b6528"
+            
 screen confirm_upgrade(building_name):
     modal True
     zorder 200
@@ -4348,8 +4682,8 @@ screen confirm_buy_potion(worker, potion_id):
                 textbutton "Yes" action If(money >= potion_price,
                     [
                         Function(lambda p=potion_price: setattr(store, 'money', store.money - p)),
-                        Function(lambda pid=potion_id: add_item_to_inventory(manager_inventory, pid)),
-                        Function(use_potion_from_inventory, worker, potion_id),
+                        Function(lambda pid=potion_id: add_item_to_inventory(manager_inventory, pid, 1)),
+                        Function(lambda w=worker, pid=potion_id: use_potion_from_inventory(w, pid)),
                         Hide("confirm_buy_potion")
                     ],
                     [
@@ -5356,6 +5690,36 @@ screen buy_servants_table():
                     sensitive can_refresh
             null height 10
             
+            # Gender filter (same idea as item category filter in inventory) - selected filter in hover green
+            python:
+                _gf = getattr(store, "buy_servants_filter_gender", None)
+                _color_all = "#6b6528" if _gf is None else "#7a4b2a"
+                _color_male = "#6b6528" if _gf == "male" else "#7a4b2a"
+                _color_female = "#6b6528" if _gf == "female" else "#7a4b2a"
+            hbox:
+                xalign 0.5
+                spacing 15
+                text "Filter: " size font_size(22) color "#7a4b2a" yalign 0.5
+                textbutton "All":
+                    style "game_menu_button"
+                    text_size font_size(20)
+                    text_color _color_all
+                    text_hover_color "#6b6528"
+                    action [SetVariable("buy_servants_filter_gender", None), Function(renpy.restart_interaction)]
+                textbutton "Male":
+                    style "game_menu_button"
+                    text_size font_size(20)
+                    text_color _color_male
+                    text_hover_color "#6b6528"
+                    action [SetVariable("buy_servants_filter_gender", "male"), Function(renpy.restart_interaction)]
+                textbutton "Female":
+                    style "game_menu_button"
+                    text_size font_size(20)
+                    text_color _color_female
+                    text_hover_color "#6b6528"
+                    action [SetVariable("buy_servants_filter_gender", "female"), Function(renpy.restart_interaction)]
+            null height 5
+            
             # Header row (outside the viewport)
             fixed:
                 xalign 0.5
@@ -5392,41 +5756,47 @@ screen buy_servants_table():
                         sensitive False
                 
             
-            # Main content area without scroll
-            vbox:
-                xalign 0.5
-                spacing 8
-                for worker in displayed_workers:
-                    hbox:
-                        xalign 0.5
-                        spacing 30
-                        xoffset 0
-                        xsize 870
-                        yalign 0.5
-                        button:
-                            background "tablebutton1b.png"
-                            xsize 200
-                            ysize 50
-                            text "[worker['name']] [('(M)' if worker.get('gender', '') == 'male' else '(F)' if worker.get('gender', '') == 'female' else '(?)')]" size 26 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
-                            action Show("worker_details", worker=worker, in_roster=False, from_buy_workers=True)
-                        button:
-                            background "tablebutton1b.png"
-                            xsize 200
-                            ysize 50
-                            text "$[worker['cost']]" size 26 color "#7a4b2a" text_align 0.0
-                        button:
-                            background "tablebutton1b.png"
-                            xsize 200
-                            ysize 50
-                            $ trait_text = ", ".join(worker.get("traits", [])[:2]) if worker.get("traits") else "No Traits"
-                            text "[trait_text]" size 26 color "#7a4b2a" text_align 0.0
-                        button:
-                            background "tablebutton1b.png"
-                            xsize 200
-                            ysize 50
-                            text "Buy" size 26 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
-                            action Show("confirm_buy_worker", worker=worker)
-                            sensitive (money >= worker["cost"])
+            # Main content area without scroll (filter by gender like item filter)
+            python:
+                _gender_filter = getattr(store, "buy_servants_filter_gender", None)
+                filtered_displayed_workers = [w for w in displayed_workers if (_gender_filter is None or w.get("gender") == _gender_filter)]
+            if not filtered_displayed_workers and displayed_workers:
+                text "No workers match the selected filter." size font_size(22) color "#7a4b2a" xalign 0.5
+            else:
+                vbox:
+                    xalign 0.5
+                    spacing 8
+                    for worker in filtered_displayed_workers:
+                        hbox:
+                            xalign 0.5
+                            spacing 30
+                            xoffset 0
+                            xsize 870
+                            yalign 0.5
+                            button:
+                                background "tablebutton1b.png"
+                                xsize 200
+                                ysize 50
+                                text "[worker['name']] [('(M)' if worker.get('gender', '') == 'male' else '(F)' if worker.get('gender', '') == 'female' else '(?)')]" size 26 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
+                                action Show("worker_details", worker=worker, in_roster=False, from_buy_workers=True)
+                            button:
+                                background "tablebutton1b.png"
+                                xsize 200
+                                ysize 50
+                                text "$[worker['cost']]" size 26 color "#7a4b2a" text_align 0.0
+                            button:
+                                background "tablebutton1b.png"
+                                xsize 200
+                                ysize 50
+                                $ trait_text = ", ".join(worker.get("traits", [])[:2]) if worker.get("traits") else "No Traits"
+                                text "[trait_text]" size 20 color "#7a4b2a" text_align 0.0
+                            button:
+                                background "tablebutton1b.png"
+                                xsize 200
+                                ysize 50
+                                text "Buy" size 26 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
+                                action Show("confirm_buy_worker", worker=worker)
+                                sensitive (money >= worker["cost"])
 
 
 
@@ -5544,6 +5914,17 @@ screen more_details_screen(worker):
                 else:
                     text "Type: Predefined Character" size font_size(18) color "#7a4b2a" xalign 0.0
 
+init python:
+    def _apply_discipline_final_and_close(worker, trait_name, close_actions):
+        """Apply discipline finale choice (Harem Member or House Servant) and close the interaction."""
+        worker.setdefault("flags", {})
+        worker["flags"]["discipline_final_done"] = {"value": True, "duration": -1}
+        store.add_trait_with_duration(worker, trait_name, 0)
+        store.set_attribute_with_caps(worker, "rebelliousness", worker.get("rebelliousness", 0))
+        renpy.notify("Trait gained: " + trait_name)
+        for a in close_actions:
+            renpy.run(a)
+
 screen interaction_result(worker, interaction, message_index=0, show_image_only=False, return_to_map=False):
     modal True
     zorder 99
@@ -5553,6 +5934,22 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
         total_messages = len(interaction_messages)
         is_last_message = current_message_index >= total_messages - 1
         
+        # Special-case: Romance finale (Confess Feelings) -> show a choice at the end
+        interaction_id = interaction.get("id", "") or ""
+        is_romance_confess = "_confess" in interaction_id and interaction_id.startswith("romance_level5_")
+        is_friendship_final = interaction_id == "friendship_level5"
+        is_discipline_final_harem = interaction_id == "discipline_level5_finale_harem_member"
+        is_discipline_final_servant = interaction_id == "discipline_level5_finale_house_servant"
+        is_discipline_final = is_discipline_final_harem or is_discipline_final_servant
+        is_discipline_sell = interaction_id == "discipline_level5_sell_specialty_buyer"
+
+        sale_price = None
+        if is_discipline_sell:
+            try:
+                sale_price = store.calculate_specialty_buyer_sale_price(worker)
+            except Exception:
+                sale_price = 0
+        
         # Get stat changes for display
         stat_changes = getattr(store, '_last_interaction_changes', {})
         stat_display_names = {
@@ -5560,7 +5957,8 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
             "obedience": "Obedience",
             "joy": "Joy",
             "romance": "Romance",
-            "libido": "Libido"
+            "libido": "Libido",
+            "rebelliousness": "Rebelliousness"
         }
         # Build stat change text
         stat_change_text = ""
@@ -5589,9 +5987,16 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                     Hide("interaction_menu"),
                     Show("worker_details", worker=worker, in_roster=True),
                     Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                    Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
-                    Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
+                    Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
+                    Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
                 ]
+            sale_close_action = [
+                Hide("interaction_result"),
+                Hide("interaction_menu"),
+                Hide("worker_details"),
+                Show("tavern"),
+                Function(lambda: setattr(store, "_last_interaction_changes", {}))
+            ]
         else:
             show_dialogue = True
             display_message = interaction_messages[current_message_index] if current_message_index < total_messages else interaction_messages[-1] if interaction_messages else "No description available."
@@ -5644,33 +6049,125 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                     xsize gui.dialogue_width
                     yalign 0.5
     else:
-        # Image-only mode: make the whole screen clickeable to close
-        button:
-            xfill True
-            yfill True
-            background None
-            action close_action
+        # Image-only mode:
+        # - Normally: whole screen is clickable to close.
+        # - Finale/confirm overlays: keep the image on-screen and show a choice instead.
+        if is_romance_confess or is_friendship_final or is_discipline_final or is_discipline_sell:
+            button:
+                xfill True
+                yfill True
+                background None
+                action NullAction()
+        else:
+            button:
+                xfill True
+                yfill True
+                background None
+                action close_action
+    
+    # Romance finale choice overlay (same style as event/recruitment choices)
+    if show_image_only and is_romance_confess:
+        vbox:
+            style_prefix "choice"
+            xalign 0.5
+            yalign 0.85
+            spacing gui.choice_spacing
+            textbutton "Make it official: gain trait (Earnings x1.5, Libido cap 5, Rebelliousness cap 20).":
+                action ([
+                    Function(lambda w=worker: w.setdefault("flags", {}).update({"romance_confess_done": {"value": True, "duration": -1}})),
+                    Function(add_trait_with_duration, worker, "Loves you", 0),
+                    Function(lambda w=worker: set_attribute_with_caps(w, "libido", w.get("libido", 0))),
+                    Function(lambda w=worker: set_attribute_with_caps(w, "rebelliousness", w.get("rebelliousness", 0))),
+                    Function(lambda: renpy.notify("Trait gained: Loves you")),
+                ] + close_action)
+            textbutton "Keep it private: set Rebelliousness to 0 and gain +40 Joy.":
+                action ([
+                    Function(lambda w=worker: w.setdefault("flags", {}).update({"romance_confess_done": {"value": True, "duration": -1}})),
+                    Function(lambda w=worker: set_attribute_with_caps(w, "rebelliousness", 0)),
+                    Function(lambda w=worker: apply_attribute_change(w, "joy", 40)),
+                    Function(lambda: renpy.notify("You keep it private. (+40 Joy, Rebelliousness set to 0)")),
+                ] + close_action)
+
+    # Friendship finale choice overlay (same style as event/recruitment choices)
+    if show_image_only and is_friendship_final:
+        vbox:
+            style_prefix "choice"
+            xalign 0.5
+            yalign 0.85
+            spacing gui.choice_spacing
+            textbutton "Make it permanent: gain trait (Daily +1 Joy; +2 Energy/day, +5 Max Energy).":
+                action ([
+                    Function(lambda w=worker: w.setdefault("flags", {}).update({"friendship_final_done": {"value": True, "duration": -1}})),
+                    Function(add_trait_with_duration, worker, "Best Friends", 0),
+                    Function(lambda: renpy.notify("Trait gained: Best Friends")),
+                ] + close_action)
+            textbutton "Keep it simple.":
+                action close_action
+
+    # Discipline finale: dos interacciones distintas (Harem Member / House Servant). Una sola opción según la elegida.
+    if show_image_only and is_discipline_final:
+        vbox:
+            style_prefix "choice"
+            xalign 0.5
+            yalign 0.85
+            spacing gui.choice_spacing
+            if is_discipline_final_harem:
+                textbutton "Assign their place: Harem Member.":
+                    action Confirm(
+                        "Assign this worker as Harem Member?",
+                        Function(_apply_discipline_final_and_close, worker, "Harem Member", close_action)
+                    )
+            else:
+                textbutton "Assign their place: House Servant.":
+                    action Confirm(
+                        "Assign this worker as House Servant?",
+                        Function(_apply_discipline_final_and_close, worker, "House Servant", close_action)
+                    )
+            textbutton "Cancel.":
+                action close_action
+
+    # Discipline sale confirmation overlay (same style as event/recruitment choices). Only Confirm Sale or Cancel.
+    if show_image_only and is_discipline_sell:
+        vbox:
+            style_prefix "choice"
+            xalign 0.5
+            yalign 0.85
+            spacing gui.choice_spacing
+            textbutton "Confirm Sale. (Sale price: [sale_price])":
+                action Confirm(
+                    "Sell this worker to a specialty buyer?",
+                    [
+                        Function(lambda w=worker: setattr(store, "_last_sale_price", store.sell_worker_to_specialty_buyer(w))),
+                        Function(lambda: renpy.notify("Sold to a specialty buyer for " + str(getattr(store, "_last_sale_price", 0)))),
+                    ] + sale_close_action
+                )
+            textbutton "Cancel.":
+                action close_action
     
     # Return button (top-right corner) - always available, on top of everything
     imagebutton:
         idle Transform("gui/button/return_idle.png", zoom=0.5)
         hover Transform("gui/button/return_hover.png", zoom=0.5)
         action If(
-            return_to_map,
-            [
-                Hide("interaction_result"),
-                Hide("interaction_menu"),
-                Show("map_screen"),
-                Function(lambda: setattr(store, '_last_interaction_changes', {}))
-            ],
-            [
-                Hide("interaction_result"),
-                Hide("interaction_menu"),
-                Show("worker_details", worker=worker, in_roster=True),
-                Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
-                Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() == "Friendly Chat" or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
-            ]
+            is_romance_confess or is_friendship_final or is_discipline_final or is_discipline_sell,
+            NullAction(),
+            If(
+                return_to_map,
+                [
+                    Hide("interaction_result"),
+                    Hide("interaction_menu"),
+                    Show("map_screen"),
+                    Function(lambda: setattr(store, '_last_interaction_changes', {}))
+                ],
+                [
+                    Hide("interaction_result"),
+                    Hide("interaction_menu"),
+                    Show("worker_details", worker=worker, in_roster=True),
+                    Function(lambda: setattr(store, '_last_interaction_changes', {})),
+                    Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
+                    Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
+                ]
+            )
         )
         xalign 1.0
         yalign 0.0
@@ -6028,17 +6525,7 @@ screen interaction_menu(worker):
         vbox:
             spacing 15
             label "Interact with [worker['name']]" xalign 0.5 style "header_style"
-            $ interactions = load_interactions()
-            $ player_gender = "male" if player_title.lower() == "lord" else "female"
-            $ filtered_interactions = filter_interactions_by_gender(interactions, player_gender)
-            $ filtered_interactions = filter_interactions_by_worker_gender(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_stats(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_flags(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_traits(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_items(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_usage_limits(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_unlock_level(filtered_interactions, worker)
-            $ filtered_interactions = filter_interactions_by_worker_name(filtered_interactions, worker)
+            $ filtered_interactions = get_available_interactions_for_worker(worker)
             
             if not filtered_interactions:
                 text "No interactions available for this worker." style "interaction_text" xalign 0.5
@@ -6091,49 +6578,81 @@ screen interaction_category(worker, category_name, interactions_list):
             
             null height 5  # Small spacing between message and interactions list
             
+            # Normal category display
             viewport:
-                scrollbars "vertical"
-                mousewheel True
-                draggable True
-                ysize 500
-                xsize 600
-                vbox:
-                    spacing 10
-                    # Calculate interaction count once for all interactions
-                    $ interaction_count = get_worker_interaction_count(worker)
-                    $ can_interact = can_interact_with_worker(worker)
-                    $ remaining_interactions = store.MAX_DAILY_INTERACTIONS - interaction_count
-                    for interaction in interactions_list:
-                        vbox:
-                            spacing 5
-                            textbutton "[interaction['name']]":
-                                style "interaction_button"
-                                text_style "interaction_button_text"
-                                action [
-                                    Function(lambda w=worker, i=interaction: setattr(store, '_last_interaction_changes', apply_interaction_effects(w, i))),
-                                    Show("interaction_result", worker=worker, interaction=interaction),
-                                    Hide("interaction_category")
-                                ]
-                                sensitive (can_interact
-                                            and worker["energy"] >= interaction.get("cost_energy", 0)
-                                            and 
-                                            worker["health"] >= interaction.get("cost_health", 0) 
-                                            and
-                                            (interaction.get("cost_money", 0) <= 0 or store.money >= interaction.get("cost_money", 0))
-                                        )
-                                xalign 0.0
-                                text_xalign 0.0
-                            
-                            # Show costs below each interaction
-                            hbox:
-                                spacing 10
-                                xalign 0.0
-                                if interaction.get("cost_energy", 0) > 0:
-                                    text "Energy: [interaction.get('cost_energy', 0)]" style "interaction_text" size font_size(14) color "#2c4aa6"
-                                if interaction.get("cost_health", 0) > 0:
-                                    text "Health: [interaction.get('cost_health', 0)]" style "interaction_text" size font_size(14) color "#a63c3c"
-                                if interaction.get("cost_money", 0) > 0:
-                                    text "Money: $[interaction.get('cost_money', 0)]" style "interaction_text" size font_size(14) color "#2a6b2a"
+                    scrollbars "vertical"
+                    mousewheel True
+                    draggable True
+                    ysize 500
+                    xsize 600
+                    vbox:
+                        spacing 10
+                        # Calculate interaction count once for all interactions
+                        $ interaction_count = get_worker_interaction_count(worker)
+                        $ can_interact = can_interact_with_worker(worker)
+                        $ remaining_interactions = store.MAX_DAILY_INTERACTIONS - interaction_count
+                        for interaction in interactions_list:
+                            vbox:
+                                spacing 5
+                                textbutton "[interaction['name']]":
+                                    style "interaction_button"
+                                    text_style "interaction_button_text"
+                                    action [
+                                        Function(lambda w=worker, i=interaction: setattr(store, '_last_interaction_changes', apply_interaction_effects(w, i))),
+                                        Show("interaction_result", worker=worker, interaction=interaction),
+                                        Hide("interaction_category")
+                                    ]
+                                    sensitive (can_interact
+                                                and worker["energy"] >= interaction.get("cost_energy", 0)
+                                                and 
+                                                worker["health"] >= interaction.get("cost_health", 0) 
+                                                and
+                                                (interaction.get("cost_money", 0) <= 0 or store.money >= interaction.get("cost_money", 0))
+                                            )
+                                    xalign 0.0
+                                    text_xalign 0.0
+                                
+                                # Show costs and effects below each interaction
+                                vbox:
+                                    spacing 3
+                                    xalign 0.0
+                                    # Costs
+                                    hbox:
+                                        spacing 10
+                                        xalign 0.0
+                                        if interaction.get("cost_energy", 0) > 0:
+                                            text "Energy: [interaction.get('cost_energy', 0)]" style "interaction_text" size font_size(14) color "#2c4aa6"
+                                        if interaction.get("cost_health", 0) > 0:
+                                            text "Health: [interaction.get('cost_health', 0)]" style "interaction_text" size font_size(14) color "#a63c3c"
+                                        if interaction.get("cost_money", 0) > 0:
+                                            text "Money: $[interaction.get('cost_money', 0)]" style "interaction_text" size font_size(14) color "#2a6b2a"
+                                    # Effects (stats gained)
+                                    $ effects = interaction.get("effect", {})
+                                    hbox:
+                                        spacing 10
+                                        xalign 0.0
+                                        # Fixed order + stable colors per stat (except Rebelliousness sign color)
+                                        $ rom_val = effects.get("romance", 0)
+                                        if rom_val != 0:
+                                            $ rom_text = f"Romance: {rom_val:+d}"
+                                            text "[rom_text]" style "interaction_text" size font_size(14) color "#c2185b"
+
+                                        $ rel_val = effects.get("relationship", 0)
+                                        if rel_val != 0:
+                                            $ rel_text = f"Relationship: {rel_val:+d}"
+                                            text "[rel_text]" style "interaction_text" size font_size(14) color "#1976d2"
+
+                                        $ reb_val = effects.get("rebelliousness", 0)
+                                        if reb_val != 0:
+                                            $ reb_color = "#d32f2f" if reb_val < 0 else "#388e3c"
+                                            $ reb_text = f"Rebelliousness: {reb_val:+d}"
+                                            text "[reb_text]" style "interaction_text" size font_size(14) color reb_color
+
+                                        # Joy last (secondary stat) + brown color for readability
+                                        $ joy_val = effects.get("joy", 0)
+                                        if joy_val != 0:
+                                            $ joy_text = f"Joy: {joy_val:+d}"
+                                            text "[joy_text]" style "interaction_text" size font_size(14) color "#7a4b2a"
                 
             hbox:
                 spacing 20
@@ -6142,7 +6661,7 @@ screen interaction_category(worker, category_name, interactions_list):
                     style "interaction_button"
                     text_style "interaction_button_text"
                     action Hide("interaction_category")
-                textbutton "Close All":
+                textbutton "Close":
                     style "interaction_button"
                     text_style "interaction_button_text"
                     action [Hide("interaction_category"), Hide("interaction_menu")]
@@ -6416,12 +6935,11 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                     text "[total_skill]/100" size font_size(20) xalign 0.0 yalign 0.5  # Display total skill
                                     null height 50
 
-                    # Stats Panel
+                    # Stats Panel (no fixed height: frame fits content, no giant empty space)
                     elif panel_mode == "stats":
                         frame:
                             background "#00000044"
                             xsize 540
-                            ysize 580
                             padding (15, 10)
                             vbox:
                                 spacing 5
@@ -6525,35 +7043,47 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         ysize 44
                                         text "Description" size font_size(23)
                                         sensitive False
-                                # Subtle translucent overlay behind traits list
-                                frame:
-                                    background "#00000022"
-                                    padding (0, 4)
-                                    xfill True
-                                    yoffset 0
-                                    viewport:
-                                        scrollbars "vertical"
-                                        mousewheel True
-                                        draggable True
-                                        ysize 500
+                                # Traits list: height fits content (max ~4 rows), no giant empty space
+                                python:
+                                    _filtered_traits = [t for t in worker.get("traits", []) if persistent.nsfw_enabled or any(t == tr["name"] and not tr.get("nsfw", False) for tr in traits_list)]
+                                if _filtered_traits:
+                                    frame:
+                                        background "#00000022"
+                                        padding (0, 4)
                                         xfill True
-                                        vbox:
-                                            spacing 15
-                                            # Filter traits: show all if NSFW enabled, otherwise only SFW traits
-                                            for trait in [t for t in worker.get("traits", []) if persistent.nsfw_enabled or any(t == tr["name"] and not tr.get("nsfw", False) for tr in traits_list)]:
-                                                $ desc = get_trait_desc(trait)
-                                                hbox:
-                                                    spacing 10
-                                                    button:
-                                                        background "tablebutton.png"
-                                                        xsize 150
-                                                        ysize 95
-                                                        text "[trait]" size font_size(22)
-                                                    button:
-                                                        background "tablebutton.png"
-                                                        xsize 320
-                                                        ysize 95
-                                                        text "[desc]" size font_size(20)
+                                        yoffset 0
+                                        viewport:
+                                            scrollbars "vertical"
+                                            mousewheel True
+                                            draggable True
+                                            ysize 240
+                                            xfill True
+                                            vbox:
+                                                spacing 8
+                                                for trait in _filtered_traits:
+                                                    $ desc = get_trait_desc(trait)
+                                                    hbox:
+                                                        spacing 10
+                                                        align (0.0, 0.0)
+                                                        frame:
+                                                            background "tablebutton.png"
+                                                            xsize 150
+                                                            yminimum 40
+                                                            padding (6, 6)
+                                                            text "[trait]" size font_size(22) text_align 0.0 xalign 0.0 yalign 0.0
+                                                        frame:
+                                                            background "tablebutton.png"
+                                                            xsize 320
+                                                            padding (8, 6)
+                                                            text "[desc]" size font_size(20) text_align 0.0 xalign 0.0 xsize 304 color "#5a4a2a"
+                                else:
+                                    frame:
+                                        background "#00000022"
+                                        padding (8, 8)
+                                        xfill True
+                                        ysize 48
+                                        yoffset 0
+                                        text "No traits" size font_size(20) color "#7a6a4a" xalign 0.0 yalign 0.5
 
                     # Action Buttons Section
                     vbox:
@@ -6872,49 +7402,27 @@ screen workers():
                             if building_match and job_match:
                                 filtered_workers.append(worker)
                         
-                        # Sort workers by Building Type > Building Number > Job > Skill level (descending)
-                        # Rest job always goes last
+                        # Sort: Building (edificio) > Profession (job) > Skill in that profession (descending)
+                        # Rest job always goes last within each building
                         def get_worker_sort_key(w):
-                            # Get building name and type for sorting
                             b_name = w.get('assigned_building', 'Unassigned')
                             if b_name != "Unassigned" and b_name in available_buildings:
                                 b_data = available_buildings[b_name]
                                 b_type_id = b_data.get("type")
-                                b_type_name = next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == b_type_id), "ZZZ") if b_type_id else "ZZZ"
-                                
-                                # Extract building number (e.g., "building_1" -> 1, "building_2" -> 2)
-                                try:
-                                    parts = b_name.split('_')
-                                    b_number = int(parts[-1]) if parts[-1].isdigit() else 999
-                                except:
-                                    b_number = 999
-                                
-                                # Get job name
                                 j_id = b_data.get("servant_jobs", {}).get(w["name"], "Unassigned")
                                 b_type_def = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == b_type_id), None)
                                 if j_id.lower() != "unassigned" and b_type_def:
                                     j_name = next((p["name"] for p in b_type_def.get("professions", []) if p["id"] == j_id), "ZZZ")
-                                    # Get skill level for this job
                                     j_def = next((p for p in b_type_def.get("professions", []) if p["id"] == j_id), None)
-                                    if j_def:
-                                        skill_sum = sum(calculate_skill_with_traits(w, sk) for sk in j_def.get("skills", []))
-                                    else:
-                                        skill_sum = 0
+                                    skill_sum = sum(calculate_skill_with_traits(w, sk) for sk in j_def.get("skills", [])) if j_def else 0
+                                    j_sort_name = "zzz_rest" if j_name.lower() == "rest" else j_name.lower()
                                 else:
-                                    j_name = "ZZZ"
+                                    j_sort_name = "zzz"
                                     skill_sum = 0
                             else:
-                                b_type_name = "ZZZ"
-                                b_number = 999
-                                j_name = "ZZZ"
+                                j_sort_name = "zzz"
                                 skill_sum = 0
-                            
-                            # Make "Rest" sort last by prefixing with "zzz_"
-                            j_sort_name = "zzz_rest" if j_name.lower() == "rest" else j_name.lower()
-                            
-                            # Return tuple: (building_type, building_number, job_name, -skill_sum)
-                            # Negative skill_sum for descending order
-                            return (b_type_name.lower(), b_number, j_sort_name, -skill_sum)
+                            return (b_name, j_sort_name, -skill_sum)
                         
                         filtered_workers = sorted(filtered_workers, key=get_worker_sort_key)
                     

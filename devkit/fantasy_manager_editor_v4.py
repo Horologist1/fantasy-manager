@@ -50,14 +50,14 @@ except ImportError:
 # =============================================================================
 
 WM_SKILL_MAPPING = {
-    "NormalSex": "Sex", "OralSex": "Oral", "Lesbian": "Homo", "Handjob": "Hand",
-    "TittySex": "Special", "Footjob": "Special", "Beastiality": "Extreme",
-    "Strip": "Striptease", "Magic": "Craft", "Medicine": "Clever",
-    "Performance": "Charm", "Crafting": "Craft", "Farming": "Service",
-    "Cooking": "Service", "Herbalism": "Craft", "Brewing": "Clever", "AnimalHandling": "Craft",
-    "Card": "Clever", "Sport": "Agility",  # Card -> Clever, Sport -> Agility
+    "NormalSex": "sex", "OralSex": "oral", "Lesbian": "homo", "Handjob": "hand",
+    "TittySex": "special", "Footjob": "special", "Beastiality": "extreme",
+    "Strip": "striptease", "Magic": "craft", "Medicine": "clever",
+    "Performance": "charm", "Crafting": "craft", "Farming": "service",
+    "Cooking": "service", "Herbalism": "craft", "Brewing": "clever", "AnimalHandling": "craft",
+    "Card": "clever", "Sport": "agility",  # Card -> clever, Sport -> agility
     # Skills que ya existen en FM pero faltaban en el mapeo
-    "Anal": "Anal", "BDSM": "BDSM", "Group": "Group", "Service": "Service", "Combat": "Combat",
+    "Anal": "anal", "BDSM": "bdsm", "Group": "group", "Service": "service", "Combat": "combat",
 }
 
 WM_TRAIT_MAPPING = {
@@ -583,8 +583,11 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
         fm_worker["skills"][skill_name] = 20
     
     for wm_skill, value in wm_data.get('skills', {}).items():
-        fm_skill = WM_SKILL_MAPPING.get(wm_skill, wm_skill)
-        if fm_skill in all_skills:
+        fm_skill = WM_SKILL_MAPPING.get(wm_skill, wm_skill.lower())
+        fm_skill = fm_skill.lower()  # Ensure all skills are lowercase
+        # Case-insensitive check against all_skills
+        all_skills_lower = [s.lower() for s in all_skills]
+        if fm_skill in all_skills_lower:
             if isinstance(value, dict):
                 fm_worker["skills"][fm_skill] = min(100, (value.get('min', 0) + value.get('max', 100)) // 2)
             else:
@@ -5043,7 +5046,7 @@ Variables in messages: {worker_name}, {skill}, {trait}
         direct_add_trait_target_var = tk.StringVar(value=direct_target)
         ttk.Combobox(effects_scrollable, textvariable=direct_add_trait_target_var,
                      values=["", "random_worker", "random_worker_female", "random_worker_male", "selected_worker"], width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
-            effect_row += 1
+        effect_row += 1
         
         # Success effects
         ttk.Label(effects_scrollable, text="Success Effects", font=("Arial", 10, "bold")).grid(row=effect_row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
@@ -5075,7 +5078,7 @@ Variables in messages: {worker_name}, {skill}, {trait}
         success_add_trait_target_var = tk.StringVar(value=success_target)
         ttk.Combobox(effects_scrollable, textvariable=success_add_trait_target_var,
                      values=["", "random_worker", "random_worker_female", "random_worker_male", "selected_worker"], width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
-            effect_row += 1
+        effect_row += 1
         
         # Failure effects
         ttk.Label(effects_scrollable, text="Failure Effects", font=("Arial", 10, "bold")).grid(row=effect_row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
@@ -5107,7 +5110,7 @@ Variables in messages: {worker_name}, {skill}, {trait}
         failure_add_trait_target_var = tk.StringVar(value=failure_target)
         ttk.Combobox(effects_scrollable, textvariable=failure_add_trait_target_var,
                      values=["", "random_worker", "random_worker_female", "random_worker_male", "selected_worker"], width=25).grid(row=effect_row, column=1, sticky="w", padx=5, pady=5)
-            effect_row += 1
+        effect_row += 1
         
         # Success chance
         ttk.Label(effects_scrollable, text="Success Chance (0.0-1.0):").grid(row=effect_row, column=0, sticky="w", padx=5, pady=5)

@@ -170,6 +170,15 @@ init python:
                     bonus += trait.get("modifiers", {}).get("health_regeneration", 0)
         return base_regen + bonus
 
+    def calculate_energy_regeneration(worker):
+        """Return additional daily energy regeneration from traits (added on top of level-based regen)."""
+        bonus = 0
+        for trait_name in worker.get("traits", []):
+            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            if trait_def and "modifiers" in trait_def:
+                bonus += trait_def["modifiers"].get("energy_regeneration", 0)
+        return bonus
+
     def calculate_earnings(worker, base_earnings, client_seeked_traits=[]):
         """
         Return earnings after applying trait multipliers.
@@ -181,11 +190,11 @@ init python:
             for trait in traits_list:
                 if trait["name"] == trait_name:
                     per_trait = trait.get("modifiers", {}).get("earnings_multiplier", 1.0)
-                    per_trait = min(per_trait, 1.15)  # cap per-trait impact
+                    per_trait = min(per_trait, 1.5)  # cap per-trait impact
                     multiplier *= per_trait
                     if trait_name in client_seeked_traits:
                         multiplier *= 1.2
-        multiplier = min(multiplier, 1.6)
+        multiplier = min(multiplier, 2.0)
         return base_earnings * multiplier
 
     # Extended functions for secondary attributes
@@ -222,7 +231,8 @@ init python:
             renpy.log(f"  {attr}: {value}{cap_text}")
 
     def apply_libido_overflow(worker, negative_libido):
-        """Handle libido overflow to rebelliousness when libido goes below 0."""
+        """Handle libido overflow to rebelliousness when libido goes BELOW 0 (negative).
+        NOTE: This is NOT 'excess over max' (e.g. 35/20). Only negative libido adds to rebelliousness."""
         if negative_libido < 0:
             overflow_amount = abs(negative_libido)
             # Add overflow to rebelliousness
@@ -341,15 +351,23 @@ init python:
         - Regeneration can be negative if worker did lots of sexual work
         - If libido goes below 0, overflow converts to rebelliousness
         - Clears skill_uses counter after processing
+        - Current libido is clamped to max before calculation so over-cap (e.g. 35/20)
+          does not create unfair overflow when regen goes negative.
         """
-        current_libido = worker.get("libido", 10)
-        regen_amount = calculate_libido_regeneration(worker)
+        raw_libido = worker.get("libido", 10)
         max_lib = get_max_libido(worker)
+        # Clamp current to max so we never use "over cap" in the formula (fixes 35/20 scenarios)
+        current_libido = min(raw_libido, max_lib)
+        if raw_libido > max_lib:
+            worker["libido"] = current_libido
+            renpy.log(f"Libido clamped from {raw_libido} to max {max_lib} for {worker.get('name', 'Unknown')} before regen")
+        
+        regen_amount = calculate_libido_regeneration(worker)
         
         # Count work for logging
         sexual_work = count_sexual_work_today(worker)
         
-        # Calculate new libido
+        # Calculate new libido (using clamped current)
         new_libido = current_libido + regen_amount
         
         # Handle overflow to rebelliousness if libido goes negative

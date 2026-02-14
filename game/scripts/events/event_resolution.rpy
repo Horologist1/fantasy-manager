@@ -1,24 +1,8 @@
 # event_resolution.rpy
+# NOTE: apply_interaction_effects is defined in worker_interactions.rpy (full implementation
+# with level scaling / flags). Do not redefine it here or the interaction level unlock system breaks.
 
 init python:
-
-    def apply_interaction_effects(worker, interaction):
-        """Apply the effects of an interaction to a worker."""
-        if "effect" in interaction:
-            for stat, value in interaction["effect"].items():
-                if stat in worker:
-                    worker[stat] += value
-                    worker[stat] = max(0, min(100, worker[stat]))  # Ensure stats stay within bounds
-
-        if "cost_energy" in interaction:
-            worker["energy"] = max(0, worker["energy"] - interaction["cost_energy"])
-
-        if "cost_health" in interaction:
-            worker["health"] = max(0, worker["health"] - interaction["cost_health"])
-
-        if "cost_money" in interaction:
-            store.money = max(0, store.money - interaction["cost_money"])
-
 
     def render_event_text(event, result="success", extra_replacements=None):
         # Determine worker_name from the event; assume individual event.

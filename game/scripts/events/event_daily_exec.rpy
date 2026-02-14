@@ -554,6 +554,239 @@ init python:
         except Exception as e:
             renpy.log("RELINK: error while relinking assigned_servants: " + str(e))
 
+    _DAILY_EFFECT_STATS = ("joy", "rebelliousness", "romance", "relationship")
+
+    def _coerce_int_or_none(value):
+        try:
+            return int(value)
+        except Exception:
+            return None
+
+    def get_worker_daily_effects(worker):
+        """
+        Returns summed daily effects from:
+        - Traits: trait_def["daily_effects"]
+        - Equipped items: item["effect"]["daily_effects"]
+        """
+        totals = {s: 0 for s in _DAILY_EFFECT_STATS}
+        if not isinstance(worker, dict):
+            return totals
+
+        # Traits
+        for trait_name in worker.get("traits", []) or []:
+            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            if not trait_def:
+                continue
+            daily_effects = trait_def.get("daily_effects") or {}
+            if not isinstance(daily_effects, dict):
+                continue
+            for stat, delta in daily_effects.items():
+                if stat not in totals:
+                    continue
+                d = _coerce_int_or_none(delta)
+                if d is None:
+                    continue
+                totals[stat] += d
+
+        # Equipped items (inventory entries are typically (item_id, qty, equipped))
+        for inv_entry in worker.get("inventory", []) or []:
+            item_id = None
+            equipped = False
+            if isinstance(inv_entry, (list, tuple)) and len(inv_entry) >= 3:
+                item_id = inv_entry[0]
+                equipped = bool(inv_entry[2])
+            elif isinstance(inv_entry, dict):
+                item_id = inv_entry.get("id") or inv_entry.get("item_id")
+                equipped = bool(inv_entry.get("equipped", False))
+
+            if not equipped or not item_id:
+                continue
+
+            item_data = next((i for i in items_json.get("items", []) if i.get("id") == item_id), None)
+            if not item_data:
+                continue
+
+            effect = item_data.get("effect") or {}
+            daily_effects = effect.get("daily_effects") or {}
+            if not isinstance(daily_effects, dict):
+                continue
+
+            for stat, delta in daily_effects.items():
+                if stat not in totals:
+                    continue
+                d = _coerce_int_or_none(delta)
+                if d is None:
+                    continue
+                totals[stat] += d
+
+        return totals
+
+    def apply_worker_daily_effects(worker):
+        totals = get_worker_daily_effects(worker)
+        for stat, delta in totals.items():
+            if not delta:
+                continue
+            old = worker.get(stat, 0)
+            apply_attribute_change(worker, stat, delta)
+            renpy.log(f"DAILY_EFFECTS: {worker.get('name', 'Unknown')} {stat} {old} -> {worker.get(stat)} ({delta:+d})")
+
+    AUTO_CONSUME_THRESHOLD = 0.30
+    AUTO_CONSUME_REST_GUARD_THRESHOLD = 0.35
+
+    def _inventory_quantity(inv, item_id):
+        try:
+            for e in inv or []:
+                # Common format: [item_id, qty, equipped?] or (item_id, qty, equipped?)
+                if isinstance(e, (list, tuple)) and len(e) >= 2:
+                    if str(e[0]) == str(item_id):
+                        return int(e[1])
+                    continue
+                # Alternate format: {"id": "...", "qty": 3, ...} (or Ren'Py RevertableDict)
+                if hasattr(e, "get"):
+                    eid = e.get("id") or e.get("item_id")
+                    if str(eid) != str(item_id):
+                        continue
+                    qty = (
+                        e.get("qty")
+                        if e.get("qty") is not None
+                        else e.get("quantity")
+                        if e.get("quantity") is not None
+                        else e.get("count")
+                        if e.get("count") is not None
+                        else e.get("amount")
+                    )
+                    if qty is None:
+                        qty = 1
+                    return int(qty)
+            return 0
+        except Exception:
+            return 0
+
+    def auto_consume_start_of_day(worker, threshold=AUTO_CONSUME_THRESHOLD):
+        """
+        Start-of-day auto-consume (runs when the player closes the daily report).
+        - Only when worker's health or energy ratio is BELOW threshold (e.g. 0.30 = 30%).
+        - Consumes potions ONLY from the worker's own inventory (never from manager_inventory).
+        - Tops up until cap or potions run out; avoids wasting a potion when deficit < potion amount (unless stat < 5).
+        """
+        # Accept dict-like objects (Ren'Py often uses RevertableDict)
+        if not hasattr(worker, "get"):
+            return
+
+        try:
+            max_h = calculate_max_health(worker)
+            max_e = calculate_max_energy(worker)
+        except Exception as e:
+            try:
+                renpy.log(f"AUTO_CONSUME_DAYSTART_ERROR: cannot compute caps for {worker.get('name','Unknown')}: {e}")
+            except Exception:
+                pass
+            return
+
+        # Health: only auto-consume when health ratio is below threshold, and only from worker inventory
+        try:
+            if max_h > 0:
+                def _get_health_potion_amount():
+                    try:
+                        potion = next((i for i in items_json.get("items", []) if i.get("id") == "health_potion"), None)
+                        eff = potion.get("effect", {}) if potion else {}
+                        amt = eff.get("health", 20)
+                        return max(1, int(amt))
+                    except Exception:
+                        return 20
+
+                potion_amt = _get_health_potion_amount()
+                cur = int(worker.get("health", 0) or 0)
+                cap = int(max_h)
+                deficit = cap - cur
+                inv_q = _inventory_quantity(worker.get("inventory", []), "health_potion")
+                # Only run when health is below threshold and worker has potions in their own inventory
+                health_ratio = cur / cap if cap > 0 else 1.0
+                if cap > 0 and deficit > 0 and health_ratio < threshold and inv_q > 0:
+                    must_use = cur < 5
+                    should_use = must_use or (deficit >= potion_amt)
+                    would_waste = (not must_use) and (deficit < potion_amt)
+                    renpy.log(
+                        f"AUTO_HEALTH_DAYSTART_CHECK: {worker.get('name','Unknown')} "
+                        f"health={cur}/{cap} ratio={health_ratio:.2f}<{threshold} inv={inv_q} "
+                        f"must_use={must_use} would_waste={would_waste}"
+                    )
+                    if should_use and not would_waste:
+                        used = 0
+                        while int(worker.get("health", 0) or 0) < cap:
+                            cur_now = int(worker.get("health", 0) or 0)
+                            deficit_now = cap - cur_now
+                            if cur_now >= 5 and deficit_now < potion_amt:
+                                break
+                            inv_q_now = _inventory_quantity(worker.get("inventory", []), "health_potion")
+                            if inv_q_now <= 0:
+                                break
+                            before = cur_now
+                            store.use_item("health_potion", worker)
+                            after = int(worker.get("health", 0) or 0)
+                            used += 1
+                            if after <= before:
+                                break
+                        if used:
+                            renpy.log(
+                                f"AUTO_HEALTH_DAYSTART: {worker.get('name','Unknown')} used health_potion x{used} "
+                                f"-> {int(worker.get('health', 0) or 0)}/{cap}"
+                            )
+        except Exception as e:
+            renpy.log(f"AUTO_CONSUME health error for {worker.get('name','Unknown')}: {e}")
+
+        # Energy: only auto-consume when energy ratio is below threshold, and only from worker inventory
+        try:
+            if max_e > 0:
+                def _get_energy_potion_amount():
+                    try:
+                        potion = next((i for i in items_json.get("items", []) if i.get("id") == "energy_potion"), None)
+                        eff = potion.get("effect", {}) if potion else {}
+                        amt = eff.get("energy", 5)
+                        return max(1, int(amt))
+                    except Exception:
+                        return 5
+
+                potion_amt = _get_energy_potion_amount()
+                cur = int(worker.get("energy", 0) or 0)
+                cap = int(max_e)
+                deficit = cap - cur
+                inv_q = _inventory_quantity(worker.get("inventory", []), "energy_potion")
+                # Only run when energy is below threshold and worker has potions in their own inventory
+                energy_ratio = cur / cap if cap > 0 else 1.0
+                if cap > 0 and deficit > 0 and energy_ratio < threshold and inv_q > 0:
+                    must_use = cur < 5
+                    should_use = must_use or (deficit >= potion_amt)
+                    would_waste = (not must_use) and (deficit < potion_amt)
+                    renpy.log(
+                        f"AUTO_ENERGY_DAYSTART_CHECK: {worker.get('name','Unknown')} "
+                        f"energy={cur}/{cap} ratio={energy_ratio:.2f}<{threshold} inv={inv_q} "
+                        f"must_use={must_use} would_waste={would_waste}"
+                    )
+                    if should_use and not would_waste:
+                        used = 0
+                        while int(worker.get("energy", 0) or 0) < cap:
+                            cur_now = int(worker.get("energy", 0) or 0)
+                            deficit_now = cap - cur_now
+                            if cur_now >= 5 and deficit_now < potion_amt:
+                                break
+                            inv_q_now = _inventory_quantity(worker.get("inventory", []), "energy_potion")
+                            if inv_q_now <= 0:
+                                break
+                            before = cur_now
+                            store.use_item("energy_potion", worker)
+                            after = int(worker.get("energy", 0) or 0)
+                            used += 1
+                            if after <= before:
+                                break
+                        if used:
+                            renpy.log(
+                                f"AUTO_ENERGY_DAYSTART: {worker.get('name','Unknown')} used energy_potion x{used} "
+                                f"-> {int(worker.get('energy', 0) or 0)}/{cap}"
+                            )
+        except Exception as e:
+            renpy.log(f"AUTO_CONSUME energy error for {worker.get('name','Unknown')}: {e}")
+
     def process_next_day():
         # Ensure necessary variables are global (removed filtered_building)
         global daily_report, displayed_workers, money, can_recruit_today, available_workers, daily_spawns
@@ -577,6 +810,9 @@ init python:
 
         total_income = 0 # Initialize income for the day
         total_building_costs = 0  # Track total building costs
+
+        # Ensure building assigned_servants reference live worker objects before daily processing.
+        _relink_assigned_servants_to_store_workers()
 
         # Update building skills based on level, cap level at 5
         for building_name in store.owned_buildings:
@@ -626,12 +862,18 @@ init python:
                 renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} (already at max {max_health}, regen would be +{health_regen} = level {base_regen} + trait {trait_regen})")
 
             old_energy = worker["energy"]
-            energy_regen = worker.get("level", 1)
+            base_energy_regen = worker.get("level", 1)
+            trait_energy_regen = 0
+            try:
+                trait_energy_regen = calculate_energy_regeneration(worker)
+            except Exception:
+                trait_energy_regen = 0
+            energy_regen = base_energy_regen + trait_energy_regen
             max_energy = calculate_max_energy(worker)
             new_energy = min(worker["energy"] + energy_regen, max_energy)
             worker["energy"] = new_energy
             if old_energy != new_energy:
-                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen}, max: {max_energy})")
+                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen} = level {base_energy_regen} + trait {trait_energy_regen}, max: {max_energy})")
 
             if persistent.nsfw_enabled:
                 regenerate_libido(worker)
@@ -656,6 +898,11 @@ init python:
                 set_attribute_with_caps(worker, "relationship", minimum_relationship)
             else:
                 set_attribute_with_caps(worker, "relationship", relationship)
+
+            # Apply daily effects from traits + equipped items (then re-enforce minimum relationship)
+            apply_worker_daily_effects(worker)
+            if worker.get("relationship", 0) < minimum_relationship:
+                set_attribute_with_caps(worker, "relationship", minimum_relationship)
 
             comfort_desired = worker.get("comfort_desired", 1)
             comfort_bonus = max(0, comfort - comfort_desired)

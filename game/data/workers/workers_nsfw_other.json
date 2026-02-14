@@ -133,7 +133,7 @@
     },
     {
         "name": "Seraphina",
-        "folder": "victoria",
+        "folder": "violet",
         "cost": 1900,
         "nsfw": true,
         "unique": false,
@@ -221,7 +221,7 @@
     },
     {
         "name": "Lyria",
-        "folder": "victoria",
+        "folder": "violet",
         "cost": 1700,
         "nsfw": true,
         "unique": false,
@@ -309,7 +309,7 @@
     },
     {
         "name": "Selene",
-        "folder": "victoria",
+        "folder": "violet",
         "cost": 1850,
         "nsfw": true,
         "unique": false,
@@ -440,7 +440,7 @@
         "comfort_desired": 1
     },
     {
-        "name": "Goblin Girl",
+        "name": "Amanita",
         "folder": "amanita",
         "cost": 1200,
         "nsfw": true,

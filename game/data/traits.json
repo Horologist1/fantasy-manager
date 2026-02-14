@@ -229,10 +229,9 @@
       "Lazy"
     ],
     "modifiers": {
-      "energy": 10,
-      "joy": 10
+      "energy": 10
     },
-    "description": "An energetic servant has an extra boost in energy, allowing for more client engagements per day. [+10 Energy, +10 Joy]",
+    "description": "An energetic servant has an extra boost in energy, allowing for more client engagements per day. [+10 Energy]",
     "nsfw": false
   },
   {
@@ -2414,5 +2413,82 @@
       "libido": 20,
       "health_regeneration": 2
     }
+  },
+  {
+    "name": "Loves you",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "earnings_multiplier": 1.3
+    },
+    "attribute_caps": {
+      "libido": 5,
+      "rebelliousness": 20
+    },
+    "description": "Deeply in love with the manager. Works with unwavering dedication, but has little desire to entertain clients. [Earnings x1.3, Libido capped at 5, Rebelliousness capped at 20]",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Best Friends",
+    "conflicts": [],
+    "removes_traits": [],
+    "daily_effects": {
+      "joy": 1
+    },
+    "modifiers": {
+      "energy_regeneration": 2,
+      "energy_max": 5
+    },
+    "description": "A deep bond of trust and companionship. Brings steady happiness and helps them recover from the day's strain. [Daily: +1 Joy | +2 Energy/day, +5 Max Energy]",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "House Servant",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": 10,
+        "Charm": 5,
+        "Clever": 5
+      }
+    },
+    "attribute_caps": {
+      "rebelliousness": 20,
+      "comfort_desired": 1
+    },
+    "attribute_minimums": {
+      "comfort_desired": 1
+    },
+    "description": "A trained house servant: discreet, orderly, and reliable. Excels at housework and presentation, with low tolerance for disorder. [+10 Service, +5 Charm, +5 Clever | Rebelliousness capped at 20 | Comfort Desired set to 1]",
+    "nsfw": false,
+    "only_assigned": true
+  },
+  {
+    "name": "Harem Member",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Sex": 5,
+        "Anal": 5,
+        "BDSM": 5,
+        "Hand": 5,
+        "Oral": 5,
+        "Homo": 5,
+        "Special": 5,
+        "Group": 5,
+        "Extreme": 5,
+        "Striptease": 5
+      }
+    },
+    "attribute_caps": {
+      "rebelliousness": 20
+    },
+    "description": "A kept member of the manager's harem. Highly trained for intimate work, and kept under strict control. [+5 to all sexual skills | Rebelliousness capped at 20]",
+    "nsfw": true,
+    "only_assigned": true
   }
 ]

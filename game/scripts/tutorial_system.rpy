@@ -77,7 +77,7 @@ default objective_titles = {
     4: "The Foundation - Amassing Fortune's Favor",
     5: "The Mastery - Learning the Arts of Provision",
     6: "The Stronghold - Fortifying Thy Realm",
-    7: "The Understanding - Knowing Thy Faithful",
+    7: "The Understanding - Breaking Bread With Thy Faithful",
     8: "The Grand Design - Expanding Thy Empire",
     9: "The Final Gambit - The Governor's Reckoning",
     10: "The Shadow's Wealth - Amassing the War Chest",
@@ -102,7 +102,7 @@ default objective_descriptions = {
     
     6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its Building skill for the trials ahead. To elevate a building's level shall cost one thousand coins of the realm. Then, I must increase the building's Building skill bonus by ten measures, be they equipment, ingredients, or Hag Potions - whatever the establishment requires to weather the storms of fortune.",
     
-    7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. A cordial discourse shall reveal their true nature, their motivations, and the depths of their loyalty. I should speak with any of my workers - beginning with gentle conversation to understand the souls who would follow me into darkness.",
+    7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. Sharing a meal together shall reveal their true nature, their motivations, and the depths of their loyalty. I must invite one of my workers to a Friendly Lunch—breaking bread at my table—to understand the souls who would follow me into darkness. The repast shall cost one hundred fifty coins.",
     
     8: "Behold, the grand design reveals itself at last! Two buildings under my dominion, ten loyal workers in my service, and ten thousand coins to fuel my ambitions. With such resources at my command, I may at last move against the governor who destroyed all that was dear to me.",
     
@@ -349,7 +349,7 @@ init python:
             else:
                 return "Progress: 0/2 - Upgrade building level, Increase Building skill bonus"
         elif current_objective == 7:
-            return "Progress: Have a Friendly Chat with any worker\nGuidance: Workers -> Details -> Interactions -> Friendly Chat"
+            return "Progress: Invite a worker to Friendly Lunch ($150)\nGuidance: Workers -> Details -> Interactions -> Friendship -> Friendly Lunch"
         elif current_objective == 8:
             actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
             actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
@@ -1057,12 +1057,13 @@ screen journal_panel():
                         text "Tutorial:":
                             size font_size(24)
                             color "#7a4b2a"
-                        textbutton "Workers > Worker Name > Details > Interactions > Friendly Chat":
+                        textbutton "Workers > Worker Name > Details > Interactions > Friendship > Friendly Lunch":
                             xsize 520
                             text_size font_size(22)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
+                        text "Tip: Friendly Lunch costs $150. Choose a worker, open Interactions, then Friendship, and select Friendly Lunch." size font_size(20) color "#6b6528"
 
                     # MARK AS COMPLETE buttons for objectives 8+
                     if current_objective == 8:
@@ -1464,6 +1465,8 @@ label check_tutorial_progress:
     return
 
 # ===== NEW OBJECTIVE DIALOGUES =====
+# Note: show_objective_7_dialogue is defined in main_flow.rpy
+
 label show_objective_10_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")

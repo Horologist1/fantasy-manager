@@ -61,18 +61,30 @@ init python:
         return [interaction for interaction in interactions if interaction.get("worker_gender") is None or interaction["worker_gender"] == worker_gender]
 
     def filter_interactions_by_stats(interactions, worker):
-        """Filter interactions based on worker's stats."""
+        """Filter interactions based on worker's stats.
+        Most categories use 'stat >= threshold'. Discipline uses 'rebelliousness < threshold'
+        (lower rebelliousness = more compliant = unlock next level; e.g. less than 80, less than 75).
+        """
         filtered = []
         for interaction in interactions:
-            # Check stat requirements
             stat_requirements = interaction.get("stat_requirements", {})
             meets_requirements = True
-            
+            categories = interaction.get("categories", [])
+            is_discipline = "Discipline" in categories
+
             for stat, required_value in stat_requirements.items():
-                if worker.get(stat, 0) < required_value:
-                    meets_requirements = False
-                    break
-            
+                worker_value = worker.get(stat, 0)
+                # Discipline + rebelliousness: requirement is "less than" (worker must be below threshold)
+                if is_discipline and stat == "rebelliousness":
+                    if worker_value >= required_value:
+                        meets_requirements = False
+                        break
+                else:
+                    # Normal: worker stat must be >= required value
+                    if worker_value < required_value:
+                        meets_requirements = False
+                        break
+
             if meets_requirements:
                 filtered.append(interaction)
         
@@ -179,9 +191,9 @@ init python:
         Filter interactions based on unlock level system.
         Each category has 4 levels:
         - Level 1: Always available
-        - Level 2: Unlocked after 5 uses of level 1
-        - Level 3: Unlocked after 5 uses of level 2
-        - Level 4: Unlocked after 5 uses of level 3 (farmeable, optimal cost/benefit)
+        - Level 2: Unlocked after 3 uses of level 1
+        - Level 3: Unlocked after 3 uses of level 2
+        - Level 4: Unlocked after 3 uses of level 3 (farmeable, optimal cost/benefit)
         """
         filtered = []
         if not worker.get("flags"):
@@ -201,6 +213,38 @@ init python:
             
             # Build flag name for tracking uses in this category
             category_flag_base = f"{main_category.lower()}_uses"
+
+            # Branch finale exclusivity:
+            # If the worker has completed a level 5 "finale" in one branch,
+            # block level 5 interactions in the other branches. This makes
+            # reaching level 5 a meaningful, mutually exclusive choice.
+            if interaction_level >= 5:
+                interaction_id = interaction.get("id", "") or ""
+
+                # Exception: selling is not a "finale" and must remain available
+                # even after choosing a Discipline L5 outcome.
+                if interaction_id != "discipline_level5_sell_specialty_buyer":
+                    def _flag_is_true(flag_name):
+                        v = worker.get("flags", {}).get(flag_name)
+                        if v is None:
+                            return False
+                        # Handle dict-style flags: {"value": X, "duration": Y}
+                        if hasattr(v, 'get') and "value" in v:
+                            return bool(v.get("value", False))
+                        return bool(v)
+
+                    # Currently implemented finales:
+                    # - Romance: "Confess Feelings" sets romance_confess_done
+                    # - Friendship: "Become Confidants" sets friendship_final_done
+                    # - Discipline: choosing a path sets discipline_final_done
+                    romance_final_done = _flag_is_true("romance_confess_done")
+                    friendship_final_done = _flag_is_true("friendship_final_done")
+                    discipline_final_done = _flag_is_true("discipline_final_done")
+
+                    if romance_final_done or friendship_final_done or discipline_final_done:
+                        # If any branch finale is done, prevent reaching level 5 in other branches.
+                        # (The exception above keeps the Discipline sale action visible.)
+                        continue
             
             # Level 1 is always available
             if interaction_level == 1:
@@ -208,7 +252,7 @@ init python:
                 continue
             
             # For levels 2, 3, and 4, check if previous level has been used enough
-            required_uses = 5
+            required_uses = 3
             previous_level = interaction_level - 1
             
             # Check uses of previous level
@@ -281,6 +325,24 @@ init python:
                 renpy.log(f"✗ Skipped specific interaction, not for {worker_name}: {interaction.get('name')} (looking for {specific_workers})")
         
         return filtered
+
+    def get_available_interactions_for_worker(worker):
+        """
+        Return the list of interactions available for this worker (same logic as the interaction menu).
+        Use this for both the interaction menu and Take a walk so filtering stays in one place.
+        """
+        interactions = load_interactions()
+        player_gender = "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+        filtered = filter_interactions_by_gender(interactions, player_gender)
+        filtered = filter_interactions_by_worker_gender(filtered, worker)
+        filtered = filter_interactions_by_stats(filtered, worker)
+        filtered = filter_interactions_by_flags(filtered, worker)
+        filtered = filter_interactions_by_traits(filtered, worker)
+        filtered = filter_interactions_by_items(filtered, worker)
+        filtered = filter_interactions_by_usage_limits(filtered, worker)
+        filtered = filter_interactions_by_unlock_level(filtered, worker)
+        filtered = filter_interactions_by_worker_name(filtered, worker)
+        return filtered
         
     def categorize_interactions(interactions):
         """
@@ -291,7 +353,7 @@ init python:
             "Discipline": [],
             "Romance": [],
             "Friendship": [],
-            "Joy": [],
+            # "Joy": [],  # Commented out: Joy category removed - romance and relationship already influence joy
             "Other": []
         }
         
@@ -319,16 +381,17 @@ init python:
             if "romance" in effects and effects["romance"] > 0:
                 categories["Romance"].append(interaction)
                 categorized = True
-            if "joy" in effects and effects["joy"] > 0:
-                categories["Joy"].append(interaction)
-                categorized = True
+            # Joy category commented out - interactions with joy effects will go to Other or their explicit categories
+            # if "joy" in effects and effects["joy"] > 0:
+            #     categories["Joy"].append(interaction)
+            #     categorized = True
             
             # If not categorized by effects, put in Other
             if not categorized:
                 categories["Other"].append(interaction)
         
-        # Remove empty categories
-        return {k: v for k, v in categories.items() if v}
+        # Remove empty categories (and commented out categories)
+        return {k: v for k, v in categories.items() if v and k != "Joy"}
 
     def get_worker_interaction_count(worker):
         """Get the number of interactions a worker has had today."""
@@ -389,6 +452,14 @@ init python:
         Returns:
             dict: Dictionary with stat changes (e.g., {"relationship": 5, "joy": 3})
         """
+        # Ensure we update the canonical worker in store.workers so flags/levels persist
+        if worker is not None and hasattr(store, "workers"):
+            worker_name = worker.get("name") if isinstance(worker, dict) else None
+            if worker_name:
+                canonical = next((w for w in store.workers if w.get("name") == worker_name), None)
+                if canonical is not None:
+                    worker = canonical
+        
         # Track stat changes for display
         stat_changes = {}
         
@@ -417,6 +488,21 @@ init python:
                 if flag_name in worker["flags"]:
                     del worker["flags"][flag_name]
             else:
+                # If a *_cooldown flag has duration 0, keep the system intact
+                # but make it effectively non-blocking (do not set the flag).
+                try:
+                    if (
+                        isinstance(flag_name, str)
+                        and flag_name.endswith("_cooldown")
+                        and hasattr(flag_value, 'get')
+                        and int(flag_value.get("duration", -1)) == 0
+                    ):
+                        if flag_name in worker["flags"]:
+                            del worker["flags"][flag_name]
+                        continue
+                except Exception:
+                    pass
+
                 # Handle incremental flags (for usage counting)
                 # Use hasattr instead of isinstance to handle RevertableDict
                 if hasattr(flag_value, 'get') and flag_value.get("increment"):
@@ -478,7 +564,7 @@ init python:
             worker["health"] = max(0, worker["health"] - interaction.get("cost_health", 0))
             store.money = max(0, store.money - interaction.get("cost_money", 0))
 
-        # Tutorial: friendly chat completion is now handled when closing the interaction_result screen
+        # Tutorial: Friendly Lunch completion is now handled when closing the interaction_result screen
         
         return stat_changes
 
@@ -500,25 +586,9 @@ init python:
         interaction_id = interaction.get("id", "unknown") if hasattr(interaction, "get") else "unknown"
         cache_key = f"{worker_name}_{interaction_id}_interaction_image"
         
-        # PRIMERO: Verificar si ya tenemos una imagen en caché para esta interacción
-        # Usar get_cached_choice con una lista temporal para verificar el caché
-        # Si existe en caché, devolverlo directamente sin verificar opciones
-        try:
-            # Intentar obtener del caché directamente
-            # image_selection_cache está definido en event_visuals.rpy en init python
-            # En Ren'Py, está disponible en el store global
-            if hasattr(store, 'image_selection_cache') and cache_key in store.image_selection_cache:
-                cached_image = store.image_selection_cache[cache_key]
-                # Verificar que la imagen cached aún existe
-                if renpy.loadable(cached_image):
-                    renpy.log(f"Usando imagen en caché para interacción: {cached_image}")
-                    return cached_image
-                else:
-                    # Si el archivo cached ya no existe, limpiar caché
-                    del store.image_selection_cache[cache_key]
-        except (AttributeError, KeyError, NameError):
-            # Si el caché no está disponible, continuar con búsqueda normal
-            pass
+        # NOTE: We intentionally do NOT early-return a cached image here.
+        # We want to respect priority (interaction-specific > category fallback),
+        # and only use the cache within the chosen priority tier.
         
         # Extraer el folder del worker exactamente como lo hace get_worker_image
         fallback = get_fallback_folder(worker)
@@ -535,13 +605,17 @@ init python:
         categories = interaction.get("categories", []) or []
         worker_gender = (worker.get("gender", "").lower() if hasattr(worker, "get") else "").lower()
         is_player_male = store.player_title and store.player_title.lower().strip() == "lord"
-        player_gendered_suffix = "_male" if is_player_male else "_female"
+        # Prefer Lord/Lady suffixes for player-facing interaction images.
+        # Keep legacy _male/_female as fallback for older assets.
+        player_title_suffix = "_lord" if is_player_male else "_lady"
+        legacy_player_gendered_suffix = "_male" if is_player_male else "_female"
 
         # Preparar candidatos por prioridad
         candidate_bases = []
         if image_base:
             # 1) Imagen específica del interaction (con y sin sufijo de género del jugador)
-            candidate_bases.append(f"{image_base}{player_gendered_suffix}")
+            candidate_bases.append(f"{image_base}{player_title_suffix}")
+            candidate_bases.append(f"{image_base}{legacy_player_gendered_suffix}")
             candidate_bases.append(image_base)
 
         # 2) Fallback por categoría (basado en género del jugador para Romance, género del trabajador para otros)
@@ -553,39 +627,23 @@ init python:
                 candidate_bases.append("romance_female")
         elif "Friendship" in categories:
             candidate_bases.append("friendship")
-        elif "Joy" in categories:
-            if worker_gender == "female":
-                candidate_bases.append("joy_female")
-            elif worker_gender == "male":
-                candidate_bases.append("joy_male")
-            else:
-                candidate_bases.extend(["joy_female", "joy_male"])
         elif "Discipline" in categories:
             candidate_bases.append("obedience")
         
-        # Recopilar TODAS las posibles imágenes de todas las bases candidatas
-        all_possible_matches = []
+        # Priority-based search:
+        # pick the FIRST candidate base that has matches, and choose (cached) within that tier.
+        chosen_matches = []
         for base in candidate_bases:
             if not base:
                 continue
-            matches = get_pattern_matches_flexible(base_folder, base)
+            matches = get_image_matches_flexible(base_folder, base)
             if matches:
-                all_possible_matches.extend(matches)
-        
-        # Eliminar duplicados manteniendo el orden
-        seen = set()
-        unique_matches = []
-        for match in all_possible_matches:
-            if match not in seen:
-                seen.add(match)
-                unique_matches.append(match)
-        all_possible_matches = unique_matches
-        
-        # Si encontramos imágenes, usar get_cached_choice con TODAS las opciones
-        # Esto asegura que siempre use la misma imagen, incluso si diferentes bases tienen matches
-        if all_possible_matches:
-            renpy.log(f"DEBUG: Cache key: {cache_key}, Total matches: {len(all_possible_matches)}")
-            selected_media = get_cached_choice(all_possible_matches, cache_key)
+                chosen_matches = matches
+                break
+
+        if chosen_matches:
+            renpy.log(f"DEBUG: Cache key: {cache_key}, Matches: {len(chosen_matches)}")
+            selected_media = get_cached_choice(chosen_matches, cache_key)
             renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta del trabajador: {selected_media}")
             return selected_media
         
@@ -625,21 +683,8 @@ init python:
         selected_worker = random.choice(store.workers)
         worker_name = selected_worker.get("name", "Unknown")
         
-        # Load and filter interactions
-        interactions = load_interactions()
-        player_gender = "male" if store.player_title and store.player_title.lower().strip() == "lord" else "female"
-        filtered_interactions = filter_interactions_by_gender(interactions, player_gender)
-        filtered_interactions = filter_interactions_by_worker_gender(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_stats(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_flags(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_traits(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_items(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_usage_limits(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_unlock_level(filtered_interactions, selected_worker)
-        filtered_interactions = filter_interactions_by_worker_name(filtered_interactions, selected_worker)
-        
-        # For "take a walk", we don't filter by costs - all available interactions are valid
-        available_interactions = filtered_interactions
+        # Use the same list as the interaction menu: only interactions this worker has available
+        available_interactions = get_available_interactions_for_worker(selected_worker)
         
         if not available_interactions:
             renpy.notify(f"{worker_name} doesn't have any interactions available at the moment.")
@@ -661,9 +706,9 @@ init python:
         # Store the interaction data for the screen to display
         store.walk_worker = selected_worker
         store.walk_interaction = chosen_interaction
-        store.walk_intro_text_1 = "You take a walk through the city..."
-        store.walk_intro_text_2 = f"...and you encounter {worker_name}."
-        store.walk_intro_text_3 = f"You decide it's time to have a {interaction_name_lower} with {worker_name}."
+        store.walk_intro_text_1 = "I take a walk through the city..."
+        store.walk_intro_text_2 = f"...and I encounter {worker_name}."
+        store.walk_intro_text_3 = f"I decide it's time to have a {interaction_name_lower} with {worker_name}."
         
         # Reset the flag
         store.take_a_walk_in_progress = False

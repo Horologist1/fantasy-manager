@@ -83,6 +83,17 @@ init python:
                 if worker[attr] != current_value:
                     renpy.log(f"Fixed {attr} for {worker.get('name', 'Unknown')}: {current_value} -> {worker[attr]} (capped)")
         
+        # Cap libido to max (fixes saves where libido was over cap, e.g. 35/20 after losing item/trait)
+        if "libido" in worker:
+            try:
+                max_lib = get_max_libido(worker)
+                if worker["libido"] > max_lib:
+                    old_lib = worker["libido"]
+                    worker["libido"] = max_lib
+                    renpy.log(f"Fixed libido for {worker.get('name', 'Unknown')}: {old_lib} -> {max_lib} (capped to max)")
+            except Exception:
+                pass
+        
         # Fixed health initialization - only set to max if doesn't exist
         max_health = calculate_max_health(worker)
         if "health" not in worker:

@@ -5,6 +5,12 @@ init python:
     # Variable to store pending tension event type
     store._pending_tension_event = None
 
+# Overlay so "message on the door" text is readable over governor_event background
+screen governor_message_overlay():
+    zorder 5
+    modal False
+    add Solid("#c4b89e", alpha=0.80)
+
 # ==========================================
 # GOVERNOR'S RETALIATION - One-time event
 # Triggered when player chooses assassination/blackmail path
@@ -13,7 +19,8 @@ init python:
 label governor_retaliation:
     $ start_new_conversation()
     
-    scene black
+    $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
+    scene expression _gov_bg
     with fade
     
     centered "A shadow falls upon your establishment..."
@@ -79,9 +86,11 @@ label governor_retaliation:
         
         pause 0.5
     
-    scene black
+    $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
+    scene expression _gov_bg
     with fade
     
+    show screen governor_message_overlay
     centered "A message has been delivered."
     
     pause 0.8
@@ -94,6 +103,7 @@ label governor_retaliation:
     
     pause 1.0
     
+    hide screen governor_message_overlay
     "You crumple the note in your fist."
     
     "So be it. If the Governor wants a war, he shall have one."
@@ -102,9 +112,11 @@ label governor_retaliation:
     
     pause 0.5
     
+    show screen governor_message_overlay
     centered "The Governor is now aware of your plans.\nRandom incidents may occur as you progress.\nStay vigilant."
     
     pause 1.5
+    hide screen governor_message_overlay
     
     # Clean up
     $ store._retaliation_victims = None
@@ -142,7 +154,8 @@ label governor_tension_event:
 
 
 label governor_poison_event:
-    scene black
+    $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
+    scene expression _gov_bg
     with fade
     
     "A worker stumbles into your office, their face pale and covered in sweat."
@@ -183,7 +196,8 @@ label governor_poison_event:
 
 
 label governor_sabotage_event:
-    scene black
+    $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
+    scene expression _gov_bg
     with fade
     
     "You hear a commotion from one of your buildings..."
@@ -197,11 +211,11 @@ label governor_sabotage_event:
         
         "When you arrive at [bname], you find the place in disarray."
         
-        "Equipment has been tampered with. Supplies have been spoiled."
+        "Equipment has been tampered with. Supplies have been spoiled. Someone has deliberately damaged your establishment."
         
         "A guard approaches you, looking ashamed."
         
-        "Guard" "My lord, a stranger was seen leaving the premises last night."
+        "Guard" "My lord, a stranger was seen leaving the premises last night. We have no proof, but... it has the Governor's mark written all over it."
         
         "Guard" "By the time we noticed the damage, they were long gone."
         
@@ -226,7 +240,8 @@ label governor_sabotage_event:
 
 
 label governor_spy_event:
-    scene black
+    $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
+    scene expression _gov_bg
     with fade
     
     "Something feels wrong when you count the day's earnings..."
@@ -238,16 +253,16 @@ label governor_spy_event:
     if store._tension_stolen and store._tension_stolen > 0:
         $ amount = store._tension_stolen
         
-        "The numbers don't add up. Someone has been skimming from your coffers."
+        "The numbers don't add up. The ledgers have been tampered with — someone has been skimming from your coffers."
         
-        "Upon investigation, you find that a \"new hire\" in your accounting staff..."
+        "Upon investigation, you discover that a trusted accountant, a \"new hire\" who had access to your books..."
         
-        "...vanished sometime during the night, along with a significant sum."
+        "...vanished sometime during the night, along with a significant sum. The Governor had placed a spy in your counting-house."
         
         "A spy. The Governor placed a spy among my people."
         
         "$[amount] has been stolen by the Governor's spy!"
-        "Be careful - the Governor has eyes everywhere."
+        "Be careful — the Governor has eyes everywhere."
     else:
         "After careful counting, everything seems to be in order."
         "But you can't shake the feeling of being watched."

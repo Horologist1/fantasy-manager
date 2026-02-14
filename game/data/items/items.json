@@ -108,6 +108,59 @@
       "weight": 8
     },
     {
+      "id": "chocolates",
+      "name": "Box of Chocolates",
+      "display_name": "Box of Chocolates",
+      "type": "consumable",
+      "auto_consume_on_receive": true,
+      "effect": {
+        "joy": 1
+      },
+      "description": "A small gift that lifts the mood. (+1 Joy)",
+      "price": 120,
+      "weight": 4
+    },
+    {
+      "id": "bonbons_box",
+      "name": "Luxury Bonbons",
+      "display_name": "Luxury Bonbons",
+      "type": "consumable",
+      "auto_consume_on_receive": true,
+      "effect": {
+        "joy": 1
+      },
+      "description": "Sugar-spun sweets with a faint arcane shimmer. (+1 Joy)",
+      "price": 750,
+      "weight": 1
+    },
+    {
+      "id": "flower_bouquet",
+      "name": "Perfect Flower Bouquet",
+      "display_name": "Perfect Flower Bouquet",
+      "type": "consumable",
+      "auto_consume_on_receive": true,
+      "effect": {
+        "romance": 1
+      },
+      "description": "Enchanted blooms that whisper sweet feelings. (+1 Romance)",
+      "price": 750,
+      "weight": 1
+    },
+    {
+      "id": "calming_charm",
+      "name": "Calming Charm",
+      "display_name": "Calming Charm",
+      "type": "accessory",
+      "effect": {
+        "daily_effects": {
+          "rebelliousness": -1
+        }
+      },
+      "description": "A soothing charm that helps keep emotions in check. (Daily: -1 Rebelliousness)",
+      "price": 220,
+      "weight": 2
+    },
+    {
       "id": "potion_vitality",
       "name": "Potion of Vitality",
       "display_name": "Potion of Vitality",
@@ -391,7 +444,7 @@
         "add_trait": "Energetic",
         "remove_trait": "Lazy"
       },
-      "description": "Grants a burst of energy, making the user Energetic and removing Lazy. (+10 Energy)",
+      "description": "Grants a burst of energy. Grants the Energetic trait and removes the Lazy trait. (+10 Energy)",
       "price": 140,
       "weight": 3
     },
@@ -405,7 +458,7 @@
         },
         "add_trait": "Charming"
       },
-      "description": "Grants an enchanted allure. (+2 Striptease)",
+      "description": "Grants an enchanted allure. Grants the Charming trait. (+2 Striptease)",
       "price": 252,
       "weight": 3
     },
@@ -420,7 +473,7 @@
         },
         "add_trait": "Expecting Visit"
       },
-      "description": "A beautifully crafted invitation promising a visit from a distinguished guest. (+4 Clever)",
+      "description": "A beautifully crafted invitation promising a visit from a distinguished guest. Grants the Expecting Visit trait. (+4 Clever)",
       "price": 200,
       "weight": 1
     },

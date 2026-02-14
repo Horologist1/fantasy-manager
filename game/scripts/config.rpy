@@ -12,6 +12,8 @@ define workers_bg = "images/workers_bg.png"  # Background for the worker screens
 # Show the full PNG; positioning is handled per-screen
 define context_menu_bg = "images/context_menu.png"
 define event_bg = "images/event_bg.png"
+# Governor tension events (sabotage, spy, poison) - castle/power theme
+define governor_event_bg = "images/events/governor_event.png"
 
 init python:
     # Global debug flags to control noisy logging

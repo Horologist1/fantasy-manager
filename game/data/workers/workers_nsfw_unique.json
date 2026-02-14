@@ -97,7 +97,7 @@
     },
     {
         "name": "Violet",
-        "folder": "victoria",
+        "folder": "violet",
         "cost": 1300,
         "nsfw": true,
         "unique": true,
@@ -289,8 +289,8 @@
         "comfort_desired": 5
     },
     {
-        "name": "Erinya",
-        "folder": "succubus",
+        "name": "Lotus",
+        "folder": "lotus",
         "cost": 2000,
         "nsfw": true,
         "unique": true,

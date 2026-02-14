@@ -9,11 +9,17 @@ label start_recruitment_system:
     python:
         try:
             recruitment_events = load_events_from_folder("data/events", subfolder="recruit")
-            recruit_candidates = load_recruit_workers()
+            renpy.log(f"RECRUITMENT: Loaded {len(recruitment_events)} recruitment events")
             
-            if not recruitment_events or not recruit_candidates:
+            recruit_candidates = load_recruit_workers()
+            renpy.log(f"RECRUITMENT: Loaded {len(recruit_candidates)} recruit candidates: {[w.get('name', 'Unknown') for w in recruit_candidates]}")
+            
+            if not recruitment_events:
                 store._recruitment_abort = True
-                store._recruitment_abort_message = "No recruitment data found"
+                store._recruitment_abort_message = "No recruitment events found"
+            elif not recruit_candidates:
+                store._recruitment_abort = True
+                store._recruitment_abort_message = "No workers available for recruitment"
             
             # Filter events: only include events where the specific worker is available (if event requires specific worker)
             available_events = []
@@ -40,9 +46,42 @@ label start_recruitment_system:
                 store._recruitment_abort = True
                 store._recruitment_abort_message = "No recruitment events available"
             
-            # IMPORTANT: Prioritize specific worker events over generic events
-            # First, select a random worker from candidates
-            selected_worker = random.choice(recruit_candidates)
+            # IMPORTANT: Prioritize in this order:
+            # 1. Workers with specific events (highest priority)
+            # 2. JSON-defined workers (unique/encounter_only) without specific events
+            # 3. Procedural workers (lowest priority)
+            workers_with_events = []
+            json_defined_workers = []
+            procedural_workers = []
+            
+            for worker in recruit_candidates:
+                worker_name = worker.get("name", "")
+                is_procedural = worker.get("procedural", False)
+                has_specific_event = any(
+                    not event.get("random_worker", True) 
+                    and event.get("worker_name") == worker_name
+                    for event in available_events
+                )
+                
+                if has_specific_event:
+                    workers_with_events.append(worker)
+                elif is_procedural:
+                    procedural_workers.append(worker)
+                else:
+                    # JSON-defined worker (unique or encounter_only) without specific event
+                    json_defined_workers.append(worker)
+            
+            # Prioritize in order: specific events > JSON-defined > procedural
+            if workers_with_events:
+                selected_worker = random.choice(workers_with_events)
+                renpy.log(f"Selected worker with specific event: {selected_worker.get('name')}")
+            elif json_defined_workers:
+                selected_worker = random.choice(json_defined_workers)
+                renpy.log(f"Selected JSON-defined worker (no specific event): {selected_worker.get('name')}")
+            else:
+                selected_worker = random.choice(recruit_candidates)
+                renpy.log(f"Selected procedural worker: {selected_worker.get('name')}")
+            
             worker_name = selected_worker.get("name", "")
             
             # Check if there's a specific event for this worker
@@ -124,7 +163,11 @@ label recruitment_event_flow(event, worker):
     
     # Set up the scene with background
     python:
-        bg_image = event.get("background_image", "images/event_bg.png")
+        bg_image = event.get("background_image", "event_bg")
+        # Ensure we have a valid background - default to event_bg if missing or invalid
+        if not bg_image:
+            bg_image = "event_bg"
+        
         # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path
         if bg_image and not bg_image.startswith("images/"):
             # Try to get the variable from store first (for defined backgrounds like tavern_bg)
@@ -135,6 +178,11 @@ label recruitment_event_flow(event, worker):
                 current_bg = f"images/{bg_image}.png"
         else:
             current_bg = bg_image
+        
+        # Fallback to event_bg if the image doesn't exist
+        if not renpy.loadable(current_bg):
+            renpy.log(f"Background image {current_bg} not found, using event_bg")
+            current_bg = store.event_bg if hasattr(store, "event_bg") else "images/event_bg.png"
     scene expression current_bg with dissolve
     show expression Solid("#00000080")  # Semi-transparent black overlay
     
@@ -244,7 +292,11 @@ label recruitment_event_simple(event, worker):
     $ start_new_conversation()
     
     python:
-        bg_image = event.get("background_image", "images/event_bg.png")
+        bg_image = event.get("background_image", "event_bg")
+        # Ensure we have a valid background - default to event_bg if missing or invalid
+        if not bg_image:
+            bg_image = "event_bg"
+        
         # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path
         if bg_image and not bg_image.startswith("images/"):
             # Try to get the variable from store first (for defined backgrounds like tavern_bg)
@@ -255,6 +307,11 @@ label recruitment_event_simple(event, worker):
                 current_bg = f"images/{bg_image}.png"
         else:
             current_bg = bg_image
+        
+        # Fallback to event_bg if the image doesn't exist
+        if not renpy.loadable(current_bg):
+            renpy.log(f"Background image {current_bg} not found, using event_bg")
+            current_bg = store.event_bg if hasattr(store, "event_bg") else "images/event_bg.png"
     scene expression current_bg with dissolve
     show expression Solid("#00000080")  # Semi-transparent black overlay
     

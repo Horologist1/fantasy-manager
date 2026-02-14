@@ -196,9 +196,6 @@ init python:
     # Debug: log all loaded item IDs.
     renpy.log("Items available for loot: " + str([item["id"] for item in items_json.get("items", [])]))
     renpy.log("Items excluded from shops: " + str(items_json.get("excluded_from_shops", [])))
-
-
-
    
 
     
@@ -1219,41 +1216,49 @@ init python:
 
     def use_or_buy_potion_action(worker, potion_id):
         """
-        Returns an action to use a potion or show buy confirmation.
-        Use this in button actions instead of calling use_or_buy_potion directly.
-        
-        Args:
-            worker: Worker dict to use the potion on
-            potion_id: Item ID of the potion ("energy_potion" or "health_potion")
+        Returns an action to use a potion (from manager inventory) or show buy confirmation.
         """
-        # Check if potion exists in items_json
         potion_item = next((i for i in items_json["items"] if i["id"] == potion_id), None)
         if not potion_item:
             return Function(lambda: renpy.notify(f"Potion {potion_id} not found!"))
-        
-        # Check if we have the potion in manager_inventory
-        has_potion = False
-        potion_quantity = 0
+        canonical = next((w for w in store.workers if w.get("name") == worker.get("name")), worker)
+        has_in_manager = False
         for item_entry in manager_inventory:
-            if isinstance(item_entry, tuple) and len(item_entry) >= 2:
-                if item_entry[0] == potion_id:
-                    has_potion = True
-                    potion_quantity = item_entry[1]
-                    break
-        
-        if has_potion and potion_quantity > 0:
-            # We have the potion, use it directly
-            return Function(use_potion_from_inventory, worker, potion_id)
-        else:
-            # We don't have the potion, show confirmation dialog
-            return Show("confirm_buy_potion", worker=worker, potion_id=potion_id)
+            if isinstance(item_entry, (list, tuple)) and len(item_entry) >= 2 and item_entry[0] == potion_id and item_entry[1] > 0:
+                has_in_manager = True
+                break
+        if has_in_manager:
+            return Function(use_potion_from_inventory, canonical, potion_id)
+        return Show("confirm_buy_potion", worker=canonical, potion_id=potion_id)
 
     def use_item(item_id, worker=None):
         """
         Uses a consumable item.
-        Looks up the item in items_json; if its type is 'consumable', it applies any effect
-        to the provided worker (if not None) and then removes one unit from the inventory.
+        Applies consumable effects to a target worker when provided.
+        Removes 1 unit from the inventory that actually contains the item.
         """
+        def _inv_has(inv, _item_id):
+            try:
+                for e in inv or []:
+                    if isinstance(e, (list, tuple)) and len(e) >= 1 and str(e[0]) == str(_item_id):
+                        # If quantity present, ensure > 0
+                        if len(e) >= 2:
+                            try:
+                                return int(e[1]) > 0
+                            except Exception:
+                                return True
+                        return True
+                return False
+            except Exception:
+                return False
+
+        def _remove_one(_item_id):
+            # Prefer removing from worker inventory if the item is there; otherwise from manager inventory.
+            if worker and _inv_has(worker.get("inventory", []), _item_id):
+                remove_item_from_inventory(worker.get("inventory", []), _item_id)
+            else:
+                remove_item_from_inventory(manager_inventory, _item_id)
+
         # Ensure we operate on the canonical worker object from store.workers
         if worker is not None and hasattr(store, "workers"):
             worker_name = worker.get("name") if isinstance(worker, dict) else None
@@ -1261,84 +1266,113 @@ init python:
                 canonical_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
                 if canonical_worker is not None and canonical_worker is not worker:
                     worker = canonical_worker
-        # Look up the item in our loaded items_json.
+
         item = next((i for i in items_json["items"] if i["id"] == item_id), None)
         if not item:
             renpy.log(f"ERROR: Item {item_id} not found in items_json")
             return
-        
-        if item.get("type") == "consumable":
-            renpy.notify("Used " + item.get("name", "Unknown"))
-        
-        # Handle custom effects (like shop unlocks) - these don't require a worker
-        if "effect" in item and "custom" in item["effect"]:
-            custom_action = item["effect"]["custom"]
-            # Create a temporary effect dict for apply_effects
-            effect_dict = {"custom": custom_action}
-            apply_effects(effect_dict, worker=worker)
-            # Remove from manager inventory if it's a manager item
-            remove_item_from_inventory(manager_inventory, item_id)
+
+        # Only consumables are usable
+        if item.get("type") != "consumable":
             return
-        
-        if worker:
-            # Track tutorial objective 5 - potion usage
-            if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item.get("name", "").lower().find("energy") != -1:
-                store.potion_used_on_worker = True
-                renpy.log("DEBUG: Tutorial - Energy potion used on worker")
-                check_objective_completion()
-            # Apply effects
-            if "effect" in item:
-                for effect_type, effect_value in item["effect"].items():
-                    if effect_type == "money":
-                        # Money effects go to the manager when used by a worker
-                        money_change = effect_value
-                        store.money += money_change
-                        renpy.notify(f"Money changed by ${money_change}")
-                        renpy.log(f"use_item: Applied money effect: ${money_change} (used by {worker.get('name', 'worker')})")
-                        # Check objective completion after money change (for Objective 4: 5000 coins)
-                        if hasattr(store, 'tutorial_active') and store.tutorial_active:
-                            try:
-                                check_objective_completion()
-                            except Exception as e:
-                                renpy.log(f"Error checking objective completion after item money effect: {e}")
-                    elif effect_type == "health":
-                        worker["health"] = min(calculate_max_health(worker), worker["health"] + effect_value)
-                    elif effect_type == "energy":
-                        worker["energy"] = min(calculate_max_energy(worker), worker["energy"] + effect_value)
-                    elif effect_type == "skill_modifiers":
-                        # Equipment bonuses are handled in calculate_skill_with_traits()
-                        # No need to modify base skills here
-                        pass
-                    elif effect_type == "add_trait":
-                        # Support array of traits, single trait string, or dict with name/duration
-                        if isinstance(effect_value, list):
-                            # Array of trait names
-                            for trait_name in effect_value:
-                                if isinstance(trait_name, dict):
-                                    add_trait_with_duration(worker, trait_name.get("name", ""), trait_name.get("duration", 0))
-                                else:
-                                    add_trait_with_duration(worker, trait_name, 0)
-                        elif isinstance(effect_value, dict):
-                            add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
-                        else:
-                            add_trait_with_duration(worker, effect_value, 0)
-                    elif effect_type == "remove_trait":
-                        # Support array of traits or single trait string
-                        if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
-                            for trait_name in effect_value:
-                                if isinstance(trait_name, dict):
-                                    remove_trait_safe(worker, trait_name.get("name", ""))
-                                else:
-                                    remove_trait_safe(worker, trait_name)
-                        elif isinstance(effect_value, dict):
-                            remove_trait_safe(worker, effect_value.get("name", ""))
-                        else:
-                            remove_trait_safe(worker, effect_value)
-            remove_item_from_inventory(worker.get("inventory", []), item_id)
+
+        renpy.notify("Used " + item.get("name", "Unknown"))
+
+        # Ren'Py may load JSON dicts as revertable dict-like objects, so be robust here.
+        effect_raw = item.get("effect", None)
+        if effect_raw is None:
+            effect = {}
+        elif isinstance(effect_raw, dict) or type(effect_raw).__name__ == "dict":
+            effect = effect_raw
+        elif hasattr(effect_raw, "items") and callable(getattr(effect_raw, "items", None)):
+            try:
+                effect = dict(effect_raw)
+            except Exception:
+                effect = {}
         else:
-            # If no worker and item is consumable, remove from manager inventory
-            if item.get("type") == "consumable":
-                remove_item_from_inventory(manager_inventory, item_id)
+            effect = {}
+
+        # Custom effects: keep using the shared system (it knows about story flags, unlocks, etc.)
+        if effect and "custom" in effect:
+            apply_effects({"custom": effect.get("custom")}, worker=worker)
+            _remove_one(item_id)
+            return
+
+        # If no worker target, fall back to shared system for money/other global effects.
+        if not worker:
+            if effect:
+                apply_effects(effect, worker=None)
+            _remove_one(item_id)
+            return
+
+        # Apply worker-directed effects directly (this is what Wakeful Powder needs).
+        for effect_type, effect_value in (effect or {}).items():
+            if effect_type == "health":
+                try:
+                    worker["health"] = min(calculate_max_health(worker), worker.get("health", 0) + int(effect_value))
+                except Exception:
+                    pass
+            elif effect_type == "energy":
+                try:
+                    worker["energy"] = min(calculate_max_energy(worker), worker.get("energy", 0) + int(effect_value))
+                except Exception:
+                    pass
+            elif effect_type in ("joy", "rebelliousness", "romance", "relationship"):
+                try:
+                    apply_attribute_change(worker, effect_type, int(effect_value))
+                except Exception:
+                    pass
+            elif effect_type == "add_trait":
+                # Support list, dict, or string
+                try:
+                    if type(effect_value).__name__ == "list" or isinstance(effect_value, (list, tuple)):
+                        for t in effect_value:
+                            if isinstance(t, dict) or type(t).__name__ == "dict":
+                                store.add_trait_with_duration(worker, t.get("name", ""), t.get("duration", 0))
+                            else:
+                                store.add_trait_with_duration(worker, t, 0)
+                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == "dict":
+                        store.add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
+                    else:
+                        store.add_trait_with_duration(worker, effect_value, 0)
+                except Exception:
+                    try:
+                        renpy.log(f"ERROR: use_item add_trait failed for '{item_id}' on '{worker.get('name','?')}' value={effect_value}")
+                    except Exception:
+                        pass
+            elif effect_type == "remove_trait":
+                try:
+                    if type(effect_value).__name__ == "list" or isinstance(effect_value, (list, tuple)):
+                        for t in effect_value:
+                            if isinstance(t, dict) or type(t).__name__ == "dict":
+                                store.remove_trait_safe(worker, t.get("name", ""))
+                            else:
+                                store.remove_trait_safe(worker, t)
+                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == "dict":
+                        store.remove_trait_safe(worker, effect_value.get("name", ""))
+                    else:
+                        store.remove_trait_safe(worker, effect_value)
+                except Exception:
+                    try:
+                        renpy.log(f"ERROR: use_item remove_trait failed for '{item_id}' on '{worker.get('name','?')}' value={effect_value}")
+                    except Exception:
+                        pass
+            else:
+                # Ignore non-consumable fields like "cap" or "skill_modifiers"
+                pass
+
+        _remove_one(item_id)
+
+        # Tutorial objective 5: mark when energy potion is used from a worker's inventory
+        if worker and hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5:
+            item_name = item.get("name", "") or ""
+            if item_name.lower().find("energy") != -1 or item_id == "energy_potion":
+                store.potion_used_on_worker = True
+                renpy.log("DEBUG: Tutorial - Energy potion used on worker (from worker inventory)")
+                try:
+                    check_objective_completion()
+                except Exception as e:
+                    renpy.log(f"DEBUG: Tutorial - check_objective_completion error: {e}")
 
 
     def evaluate_condition(condition_str):
@@ -1721,7 +1755,7 @@ init python:
   
     
 
-    def load_buy_workers(force_refresh=False):
+    def load_buy_workers(force_refresh=False, exclude_names=None):
         """
         Load workers available for purchase, prioritizing workers defined in JSON files.
         Generates procedural workers when needed, respecting the daily spawn limit.
@@ -1729,6 +1763,7 @@ init python:
         
         Args:
             force_refresh: If True, always generate new workers even if it's the same day
+            exclude_names: Set of worker names to avoid when possible (used on refresh to guarantee new/different workers)
         """
         global daily_spawns, available_workers
         
@@ -1753,10 +1788,12 @@ init python:
             return available_workers
         
         # NEW DAY or FORCED REFRESH - Refill workers
+        exclude_set = set(exclude_names) if exclude_names else set()
+        gender_filter = getattr(store, "buy_servants_filter_gender", None)  # When set, only load/generate workers of this gender
         if force_refresh:
-            renpy.log(f"FORCED REFRESH - Generating new workers")
+            renpy.log(f"FORCED REFRESH - Generating new workers (exclude {len(exclude_set)} previous, gender_filter={gender_filter})")
         else:
-            renpy.log(f"NEW DAY - Refilling workers")
+            renpy.log(f"NEW DAY - Refilling workers (gender_filter={gender_filter})")
         
         # Load all workers from JSON
         all_workers = load_workers(include_unique=True, include_encounter_only=False)
@@ -1804,6 +1841,10 @@ init python:
             json_workers.append(w)
         
         renpy.log(f"BUY WORKERS: Filtered out - procedural: {filtered_out['procedural']}, recruit_only: {filtered_out['recruit_only']}, unique: {filtered_out['unique']}, monster: {filtered_out['monster']}, hired: {filtered_out['hired']}, dead: {filtered_out['dead']}")
+        # Apply gender filter so refresh guarantees only workers of selected gender (when filter is set)
+        if gender_filter:
+            json_workers = [w for w in json_workers if w.get("gender") == gender_filter]
+            renpy.log(f"BUY WORKERS: After gender filter '{gender_filter}': {len(json_workers)} JSON workers")
         renpy.log(f"BUY WORKERS: Available JSON workers: {len(json_workers)}")
         if len(json_workers) > 0:
             renpy.log(f"BUY WORKERS: JSON worker names: {[w['name'] for w in json_workers[:10]]}")  # Log first 10
@@ -1816,29 +1857,32 @@ init python:
         available_workers = []
         
         # Mixed system: JSON workers have maximum priority
-        # Strategy: Fill as many slots as possible with JSON workers (guarantee 3-5 if available)
+        # On refresh (exclude_set): prefer workers NOT in exclude_set so at least half / all change
         target_count = 5
         json_selected = []
         procedural_selected = []
         
         if len(json_workers) > 0:
-            # Shuffle JSON workers for variety
-            random.shuffle(json_workers)
-            
-            # Prioritize JSON workers: use as many as possible (up to 5)
-            # If we have 5+ JSON workers available, use all 5 slots for JSON
-            # If we have 3-4 JSON workers, use all of them
-            # If we have 1-2 JSON workers, use all of them and fill rest with procedural
-            json_count_to_use = min(len(json_workers), target_count)
-            
-            # Select the JSON workers (guaranteed selection, not probabilistic)
-            for i in range(json_count_to_use):
-                if len(available_workers) >= target_count:
-                    break
-                json_selected.append(json_workers[i])
-                available_workers.append(json_workers[i])
-            
-            renpy.log(f"JSON workers available: {len(json_workers)}, using {len(json_selected)}: {[w['name'] for w in json_selected]}")
+            # On refresh, split into "new" (not in previous list) and "old" (in previous list)
+            if exclude_set:
+                json_new = [w for w in json_workers if w["name"] not in exclude_set]
+                random.shuffle(json_new)
+                # On refresh: only use workers NOT in the previous list; fill the rest with procedural (never reuse excluded)
+                for w in json_new:
+                    if len(available_workers) >= target_count:
+                        break
+                    json_selected.append(w)
+                    available_workers.append(w)
+                renpy.log(f"BUY WORKERS (refresh): {len(json_new)} new (excluded previous), rest will be procedural. Selected so far: {[w['name'] for w in json_selected]}")
+            else:
+                random.shuffle(json_workers)
+                json_count_to_use = min(len(json_workers), target_count)
+                for i in range(json_count_to_use):
+                    if len(available_workers) >= target_count:
+                        break
+                    json_selected.append(json_workers[i])
+                    available_workers.append(json_workers[i])
+                renpy.log(f"JSON workers available: {len(json_workers)}, using {len(json_selected)}: {[w['name'] for w in json_selected]}")
         else:
             renpy.log("No JSON workers available (all hired, dead, or filtered out)")
         
@@ -1850,12 +1894,14 @@ init python:
             renpy.log(f"Filling {remaining_slots} remaining slots with procedural workers (daily_spawns: {daily_spawns})")
             attempts = 0
             max_attempts = 20  # Prevent infinite loop
+            spawn_filters = {"gender": gender_filter} if gender_filter else {}
             while len(available_workers) < target_count and attempts < max_attempts:
                 attempts += 1
-                new_worker = spawn_new_worker()
+                new_worker = spawn_new_worker(filters=spawn_filters)
                 if new_worker:
                     new_worker["market_worker"] = True
                     new_worker["procedural"] = True
+                    new_worker["comfort_desired"] = 1  # Buy servants workers always require comfort level 1
                     available_workers.append(new_worker)
                     procedural_selected.append(new_worker)
                     # Only increment daily_spawns if we haven't exceeded the daily limit
@@ -1873,6 +1919,7 @@ init python:
         for worker in available_workers:
             ensure_worker_defaults(worker)
             worker["market_worker"] = True
+            worker["comfort_desired"] = 1  # Buy servants workers always require comfort level 1
         
         # Update store
         store.available_workers = available_workers
@@ -1926,11 +1973,12 @@ init python:
             store.money -= refresh_cost
             renpy.log(f"BUY SERVANTS: Charged {refresh_cost}$ for refresh. Remaining money: {store.money}")
         
-        # Refresh workers - force generation of new workers
+        # Refresh workers - force new pool, excluding current ones so at least half / all change
         refresh_type = "paid" if is_paid_refresh else "free"
-        renpy.log(f"BUY SERVANTS: Refreshing workers ({refresh_type}, count: {current_count + 1}/2)")
+        exclude_names = {w["name"] for w in (getattr(store, "available_workers", []) or [])}
+        renpy.log(f"BUY SERVANTS: Refreshing workers ({refresh_type}, count: {current_count + 1}/2), excluding: {exclude_names}")
         try:
-            load_buy_workers(force_refresh=True)  # Force refresh to generate new workers
+            load_buy_workers(force_refresh=True, exclude_names=exclude_names)
             update_displayed_workers()
             # Update store variable directly
             store.map_worker_refill_count = current_count + 1
@@ -1973,10 +2021,13 @@ init python:
         ]
         
         # Log available workers for debugging
-        renpy.log(f"NSFW mode enabled: {persistent.nsfw_enabled}")
-        renpy.log(f"Total workers before NSFW filter: {len(recruit_pool)}")
-        renpy.log(f"Available workers for recruitment: {[w['name'] for w in available_recruit]}")
-        renpy.log(f"NSFW status of available workers: {[(w['name'], w.get('nsfw', False)) for w in available_recruit]}")
+        renpy.log(f"LOAD RECRUIT WORKERS: NSFW mode enabled: {persistent.nsfw_enabled}")
+        renpy.log(f"LOAD RECRUIT WORKERS: Total workers loaded: {len(all_workers)}")
+        renpy.log(f"LOAD RECRUIT WORKERS: Worker names loaded: {[w.get('name', 'Unknown') for w in all_workers[:20]]}")  # First 20
+        renpy.log(f"LOAD RECRUIT WORKERS: Total workers before NSFW filter: {len(recruit_pool)}")
+        renpy.log(f"LOAD RECRUIT WORKERS: Recruited workers: {[w['name'] for w in store.workers]}")
+        renpy.log(f"LOAD RECRUIT WORKERS: Available workers for recruitment: {[w['name'] for w in available_recruit]}")
+        renpy.log(f"LOAD RECRUIT WORKERS: NSFW status of available workers: {[(w['name'], w.get('nsfw', False)) for w in available_recruit]}")
         
         # Only generate procedural workers if no JSON-defined workers are available
         if not available_recruit:
@@ -2311,20 +2362,42 @@ init python:
         filters = filters or {}
         
         # Get available non-unique workers as templates
+        # IMPORTANT: Include ALL non-unique workers as templates, even if already recruited
+        # This ensures variety in procedural worker generation
+        # Load workers WITHOUT filtering by recruitment status - we want ALL templates
         all_workers = load_workers(include_unique=True, include_encounter_only=True)
+        
+        # Filter for non-unique, non-monster, non-procedural workers that match NSFW setting
         template_workers = [
             w for w in all_workers
             if not w.get("unique", False) 
             and not w.get("monster", False)
+            and not w.get("procedural", False)  # Don't use procedural workers as templates
             and w.get("nsfw", False) == persistent.nsfw_enabled  # Match NSFW setting
         ]
+        # When gender filter is set (e.g. from Buy Servants), only use templates of that gender so procedural worker matches
+        if filters and filters.get("gender"):
+            requested_gender = filters.get("gender")
+            template_workers = [w for w in template_workers if w.get("gender") == requested_gender]
+            if not template_workers:
+                renpy.log(f"SPAWN NEW WORKER: No templates for gender '{requested_gender}', using default spawn")
+                return spawn_new_worker_default(filters)
+            renpy.log(f"SPAWN NEW WORKER: Filtered to {len(template_workers)} templates for gender '{requested_gender}'")
+        
+        renpy.log(f"SPAWN NEW WORKER: Total workers loaded: {len(all_workers)}")
+        renpy.log(f"SPAWN NEW WORKER: Found {len(template_workers)} template workers")
+        renpy.log(f"SPAWN NEW WORKER: Template names: {[w.get('name', 'Unknown') for w in template_workers]}")
         
         if not template_workers:
+            renpy.log("SPAWN NEW WORKER: No templates available, using default")
             # Fallback to default creation if no templates available
             return spawn_new_worker_default(filters)
         
-        # Choose a random template
+        # Choose a random template to ensure variety
+        # Shuffle to avoid always picking the same template
+        random.shuffle(template_workers)
         template = random.choice(template_workers)
+        renpy.log(f"SPAWN NEW WORKER: Selected template: {template.get('name', 'Unknown')} from {len(template_workers)} options")
         
         # Generate unique name using improved algorithm
         existing_names = {w["name"] for w in store.workers}
@@ -2383,7 +2456,7 @@ init python:
             "cost": random.randint(1000, 1500),  # Minimum price increased to 1000
             "rebelliousness": random.randint(20, 80),
             "joy": random.randint(20, 80),
-            "comfort_desired": random.randint(1, 5),
+            "comfort_desired": 5,  # Procedural workers always require comfort level 5
             "description": f"A skilled worker from the {template.get('folder', 'unknown')} region.",
             "traits": list(base_traits)  # Keep template traits (e.g., race) for image consistency
         })
@@ -2399,8 +2472,8 @@ init python:
     def spawn_new_worker_default(filters=None):
         """Fallback: Generate a basic procedural worker when no templates available."""
         filters = filters or {}
-        # Choose a random gender
-        gender = random.choice(["male", "female"])
+        # Use requested gender from filter (e.g. Buy Servants) or random
+        gender = (filters.get("gender") if filters else None) or random.choice(["male", "female"])
         name_category = random.choice(["western", "eastern", "fantasy"])
         
         # Get name from appropriate pool
@@ -2473,7 +2546,7 @@ init python:
             "romance": 0,
             "relationship": 10,
             "comfort_level": 1,
-            "comfort_desired": 1,
+            "comfort_desired": 5,  # Procedural workers always require comfort level 5
             "skill_uses": {skill_name: 0 for skill_name in skill_names.keys()},
             "success_count": 0,
             "procedural": True,
@@ -3141,11 +3214,12 @@ init python:
         else:
             return f"{shop_name} (Closed)"
 
-    def split_text_for_dialogue(text, max_chars=120):
+    def split_text_for_dialogue(text, max_chars=200, min_chunk_chars=60):
         """
         Divide un texto largo en múltiples mensajes que quepan en el cuadro de diálogo.
         Intenta dividir por frases completas primero, luego por palabras.
-        max_chars: caracteres máximos por mensaje (aproximadamente 3-4 líneas)
+        max_chars: caracteres máximos por mensaje (conservador para evitar overflow en UI)
+        min_chunk_chars: si el último trozo queda demasiado corto, se fusiona con el anterior
         """
         if not text:
             return [""]
@@ -3212,7 +3286,25 @@ init python:
         # Añadir el último mensaje si existe
         if current_message:
             messages.append(current_message)
-        
+
+        # Evitar trozos finales ridículamente cortos (ej. "been.")
+        # Importante: nunca eliminamos texto. Solo fusionamos si cabe; si no cabe, se deja como último mensaje.
+        try:
+            if (
+                messages
+                and len(messages) >= 2
+                and isinstance(messages[-1], str)
+                and len(messages[-1].strip()) > 0
+                and len(messages[-1].strip()) < int(min_chunk_chars)
+            ):
+                merged = (messages[-2].rstrip() + " " + messages[-1].lstrip()).strip()
+                # Solo fusionar si cabe en el límite (si no cabe, mantener el último trozo aunque sea corto)
+                if len(merged) <= int(max_chars):
+                    messages[-2] = merged
+                    messages.pop()
+        except Exception:
+            pass
+
         return messages if messages else [text]
 
     def get_building_bg(building_name):
@@ -4893,6 +4985,7 @@ default last_worker_refill_month = None
 default last_worker_refill_year = None
 default map_worker_refill_count = 0  # Count how many times workers were refilled from map today
 default last_map_refill_day = None  # Track which day the map refill count was reset
+default buy_servants_filter_gender = None  # None = All, "male" = Male only, "female" = Female only (filter for Buy Servants list)
 default take_a_walk_in_progress = False
 default last_take_a_walk_day = None
 default worker_interactions_today = {}  # Track daily interactions per worker: {worker_name: {day: count}}

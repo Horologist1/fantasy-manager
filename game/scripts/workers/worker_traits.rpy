@@ -240,9 +240,10 @@ init python:
         minimum = get_attribute_minimum(worker, attribute)
         
         # Handle special case for libido overflow before applying minimums
+        # NOTE: "Overflow" here means libido going BELOW 0 (negative), not excess over max (e.g. 35/20).
         if attribute == "libido" and value < 0:
             if persistent.nsfw_enabled:
-                # Handle overflow: add negative value to rebelliousness and reset libido to minimum or 0
+                # Handle overflow: add abs(negative value) to rebelliousness and reset libido to minimum or 0
                 overflow_amount = abs(value)
                 current_rebelliousness = worker.get("rebelliousness", 50)
                 new_rebelliousness = current_rebelliousness + overflow_amount
