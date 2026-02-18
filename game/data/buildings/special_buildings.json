@@ -1,0 +1,109 @@
+{
+  "building_types": [
+    {
+      "id": "academy",
+      "name": "Academy",
+      "skill_name": "Academy Training",
+      "skill_description": "The Academy offers structured courses: Academics (Clever + random skill), Amatory Arts (sex skills), and Hospitality Arts (Charm & Service). Assign workers to a course to gain experience daily.",
+      "nsfw": false,
+      "show_in_manage_buildings": false,
+      "allowed_map_locations": ["N5academy"],
+      "professions": [
+        {
+          "id": "academy_academics",
+          "name": "Academics",
+          "description": "A teacher will sharpen the student's mind and broaden their knowledge in a random discipline. (Adds experience to Clever and one random skill)",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": ["Clever"],
+          "training_skills_distribution": {"Clever": 5, "random_one": 5},
+          "max_daily_workers": 99,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {
+              "id": "academy_academics",
+              "weight": 1,
+              "used_skill": "Clever",
+              "report": "Academics: Clever & Logic",
+              "description": "{worker_name} spent the day in the Academy's lecture halls and scriptorium, working through logic puzzles and dialectics. By evening they could feel their wits sharpening—and the tutors had them practise one other discipline at random, to keep the mind supple.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {"rolls": 0},
+              "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}
+            }
+          ]
+        },
+        {
+          "id": "academy_amatory",
+          "name": "Amatory Arts",
+          "description": "A teacher will show the student the ways of amatory arts, teaching sexual techniques and ways to satisfy partners in bed. (Adds experience split across sex skills)",
+          "nsfw": true,
+          "difficulty": "medium",
+          "skills": ["Sex", "Anal", "BDSM", "Special", "Extreme", "Homo", "Striptease"],
+          "training_skills_distribution": {"Sex": 5, "Anal": 5, "BDSM": 5, "Special": 5, "Extreme": 5, "Homo": 5, "Striptease": 5},
+          "max_daily_workers": 99,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {"id": "academy_amatory_sex", "weight": 1, "used_skill": "Sex", "report": "Amatory Arts: Core Intimacy", "description": "{worker_name} joined the discreet amatory class today. The instructor led them through core intimate techniques—breath, touch, and presence—and paired them with exercises in another art, so each lesson stays focused yet varied.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_amatory_anal", "weight": 1, "used_skill": "Anal", "report": "Amatory Arts: Anal Techniques", "description": "{worker_name} attended the amatory module on anal techniques: safety, pacing, and communication. The tutor then wove in practice from another discipline, leaving them a little flushed but clearer on how to blend skills.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_amatory_bdsm", "weight": 1, "used_skill": "BDSM", "report": "Amatory Arts: BDSM & Control", "description": "{worker_name} spent the day in the BDSM and control module—negotiation, boundaries, and the theatre of power exchange. The instructor combined it with drills from another amatory art, so the lesson felt coherent but never repetitive.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_amatory_special", "weight": 1, "used_skill": "Special", "report": "Amatory Arts: Special Techniques", "description": "{worker_name} worked on special techniques in the amatory wing: the kind that require patience and finesse. Today's focus was paired with another discipline at the tutor's choice, and they left with new ideas to try when the moment is right.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_amatory_extreme", "weight": 1, "used_skill": "Extreme", "report": "Amatory Arts: Extreme Practices", "description": "{worker_name} attended the module on more intense practices—always within the Academy's strict rules of consent and aftercare. The tutor rounded the session with practice in another art, so they left stirred but grounded.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_amatory_homo", "weight": 1, "used_skill": "Homo", "report": "Amatory Arts: Same-Sex Arts", "description": "{worker_name} joined the same-sex arts class today. The instructor emphasised desire, respect, and technique regardless of who shares the bed, and combined it with drills from another amatory discipline so the lesson stayed varied.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_amatory_striptease", "weight": 1, "used_skill": "Striptease", "report": "Amatory Arts: Seduction & Dance", "description": "{worker_name} spent the day on seduction and striptease—presence, gaze, and the art of undressing for an audience. The tutor wove in practice from another amatory art, so they left with a sharper sense of how to hold a room.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}}
+          ]
+        },
+        {
+          "id": "academy_hospitality",
+          "name": "Hospitality Arts",
+          "description": "A teacher will show the student how to greet clients and offer them what they need. (Adds experience split across Charm & Service)",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": ["Charm", "Service"],
+          "training_skills_distribution": {"Charm": 5, "Service": 5},
+          "max_daily_workers": 99,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {"id": "academy_hospitality_charm", "weight": 1, "used_skill": "Charm", "report": "Hospitality: Charm & Etiquette", "description": "{worker_name} was in the hospitality wing today, practising charm and etiquette—how to greet guests, read a room, and put strangers at ease. They paired it with service drills so both presence and attentiveness improved by evening.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
+            {"id": "academy_hospitality_service", "weight": 1, "used_skill": "Service", "report": "Hospitality: Service & Care", "description": "{worker_name} trained in service and attentive care: anticipating needs, carrying trays and messages, and staying one step ahead of the house. The instructors mixed in charm and poise so they left feeling both useful and presentable.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "arena",
+      "name": "Arena",
+      "skill_name": "Arena",
+      "skill_description": "The Arena hosts combat and spectacle. Workers can train or perform here. (To be developed.)",
+      "nsfw": false,
+      "show_in_manage_buildings": true,
+      "allowed_map_locations": ["arena"],
+      "professions": [
+        {
+          "id": "arena_gladiator",
+          "name": "Gladiator",
+          "description": "Fight or perform in the arena. (To be developed.)",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": ["Combat"],
+          "training_skills_distribution": {"Combat": 5},
+          "max_daily_workers": 5,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {
+              "id": "arena_gladiator_training",
+              "weight": 1,
+              "used_skill": "Combat",
+              "report": "Arena: Training",
+              "description": "{worker_name} spent the day training in the arena.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {"rolls": 0},
+              "consequences": {"success": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,16 @@
 
 init python:
 
+    def get_difficulty_comfort_mult():
+        """Return the comfort cost multiplier for the current difficulty (used in process_next_day and UI)."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "story":
+            return 5
+        if diff == "hard":
+            return 30
+        # easy and normal: same cost per design
+        return 20
+
     def process_daily_events():
         global daily_report, manager_inventory
         renpy.log("process_daily_events() starting...")
@@ -313,53 +323,47 @@ init python:
                         outcome_key = outcome.lower().replace(" ", "_")
 
                         earnings_formula = chosen_story.get("earnings", {}).get(outcome_key, "0")
-                        env = {"skill": effective_skill, "level": worker.get("level", 1)}
+                        env = {"skill": effective_skill, "level": worker.get("level", 1), "roll": roll}
                         try:
                             earnings = eval(earnings_formula, {"__builtins__": None}, env)
                         except Exception:
                             earnings = 0
 
-                        # Outcome-based earnings scaling and stronger penalties
-                        if outcome == "Critical Success":
-                            earnings = int(earnings * 0.65)
-                        elif outcome == "Success":
-                            earnings = int(earnings * 0.75)
-                        elif outcome == "Mediocre":
-                            earnings = int(earnings * 0.75)
-                        else:  # Failure
-                            if earnings < 0:
-                                earnings = int(earnings * 2)  # increase penalty
-                            elif earnings == 0:
-                                earnings = -10
+                        # Earnings from JSON are used as-is (formulas already encode tier scaling)
+                        earnings = int(earnings)
+                        if outcome == "Failure" and earnings == 0:
+                            earnings = -10
 
-                        # Trait bonus
+                        # Trait bonus: each relevant trait adds level * 25 to earnings (Success/Critical Success only)
                         trait_bonus = 0
                         trait_success_messages = []
                         trait_roll = None
                         if outcome in ["Success", "Critical Success"]:
                             # Always count successes towards leveling
                             worker["success_count"] = worker.get("success_count", 0) + 1
-                            trait_roll = random.random()
-                            if trait_roll < 0.5:
-                                for trait in worker.get("traits", []):
-                                    if trait in chosen_story.get("relevant_traits", []):
-                                        tb_formula = chosen_story.get("trait_bonus", "0")
-                                        try:
-                                            bonus_val = eval(tb_formula, {"__builtins__": None}, {"level": worker.get("level", 1)})
-                                        except Exception:
-                                            bonus_val = 0
-                                        # Scale down trait bonuses to reduce snowball
-                                        bonus_val = int(bonus_val * 0.3)
-                                        trait_bonus += bonus_val
-                                        trait_success_messages.append(
-                                            chosen_story.get("trait_success", "").format(worker_name=worker["name"], trait=trait)
-                                            + f" (+${bonus_val})"
-                                        )
-                                # Counted once above; do not double-increment
+                            worker_level = worker.get("level", 1)
+                            bonus_per_trait = worker_level * 25
+                            for trait in worker.get("traits", []):
+                                if trait in chosen_story.get("relevant_traits", []):
+                                    trait_bonus += bonus_per_trait
+                                    trait_success_messages.append(
+                                        chosen_story.get("trait_success", "").format(worker_name=worker["name"], trait=trait)
+                                        + f" (+${bonus_per_trait})"
+                                    )
                         earnings += trait_bonus
                         
                         # Apply trait earnings multipliers
                         earnings = calculate_earnings(worker, earnings)
+                        
+                        # Easy difficulty: cap how much workers can lose on failure (normal -20, vip -30, premium -40)
+                        if outcome == "Failure" and earnings < 0 and getattr(persistent, "difficulty", "normal") == "easy":
+                            failure_formula = chosen_story.get("earnings", {}).get("failure", "")
+                            if "200" in failure_formula:
+                                earnings = max(earnings, -40)
+                            elif "150" in failure_formula:
+                                earnings = max(earnings, -30)
+                            else:
+                                earnings = max(earnings, -20)
                         
                         # Log individual earnings for debugging
                         renpy.log(f"EARNINGS DEBUG: {worker['name']} earned ${earnings} (outcome: {outcome}, skill: {effective_skill}, roll: {roll})")
@@ -522,6 +526,67 @@ init python:
                                             report_entry["description"] += f"\n\n{{color=#00ff00}}Captured {looted_worker['name']}!{{/color}}"
                                             report_entry["loot"].append(f"Monster Worker: {looted_worker['name']}")
                                             renpy.notify(f"Captured {looted_worker['name']}!")
+                        daily_report.append(report_entry)
+                        processed_events += 1
+
+        # Academy: process workers assigned to Academy (building not in owned_buildings)
+        ACADEMY_DAILY_COST_PER_WORKER = 300
+        if getattr(store, "academy_enrolled", False) and "Academy" in available_buildings:
+            academy_building = available_buildings["Academy"]
+            academy_workers = workers_by_building.get("Academy", [])
+            btype_academy = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == "academy"), None)
+            if btype_academy and academy_workers:
+                academy_building["assigned_servants"] = academy_workers
+                for worker in academy_workers:
+                    job_id = (academy_building.get("servant_jobs") or {}).get(worker.get("name"), "")
+                    if not job_id:
+                        continue
+                    profession = next((p for p in btype_academy.get("professions", []) if p.get("id") == job_id), None)
+                    if profession and profession.get("training_skills_distribution"):
+                        daily_stories = profession.get("daily_stories") or []
+                        compatible_stories = []
+                        for story in daily_stories:
+                            story_gender_req = story.get("worker_gender_requirement", None)
+                            if story_gender_req is None or story_gender_req == worker.get("gender", ""):
+                                compatible_stories.append(story)
+                        chosen_story = select_weighted_event(compatible_stories) if compatible_stories else None
+                        primary_skill = chosen_story.get("used_skill") if chosen_story else None
+                        applied_uses = {}
+                        if hasattr(store, "add_academy_training_skill_uses"):
+                            applied_uses = store.add_academy_training_skill_uses(worker, profession, primary_skill=primary_skill) or {}
+                        story_name = f"Academy: {profession.get('name', 'Training')}"
+                        desc_base = f"{worker.get('name', 'Unknown')} attended {profession.get('name', 'Training')} at the Academy."
+                        if chosen_story:
+                            story_name = chosen_story.get("report") or story_name
+                            desc_tpl = chosen_story.get("description") or desc_base
+                            desc_base = desc_tpl.replace("{worker_name}", worker.get("name", "Unknown"))
+                        if applied_uses:
+                            parts = [f"{sk}: +{amt} experience" for sk, amt in sorted(applied_uses.items())]
+                            desc_base += " Gained: " + ", ".join(parts) + "."
+                        else:
+                            desc_base += " Gained experience in relevant skills."
+                        if not primary_skill and profession.get("skills"):
+                            primary_skill = profession["skills"][0]
+                        if not primary_skill:
+                            primary_skill = "Clever"
+                        report_entry = {
+                            "building": "Academy",
+                            "profession": profession.get("name", "Training"),
+                            "worker_name": worker.get("name", "Unknown"),
+                            "worker": worker,
+                            "event_data": chosen_story if chosen_story else {"report": story_name},
+                            "report": story_name,
+                            "description": desc_base,
+                            "result": "Success",
+                            "earnings": -ACADEMY_DAILY_COST_PER_WORKER,
+                            "used_skill": primary_skill,
+                            "roll": "N/A",
+                            "trait_roll": None,
+                            "trait_success_messages": [],
+                            "group_event": False,
+                            "loot": [],
+                            "story_image": get_event_image(worker, chosen_story or {}, outcome="success", skill_name=primary_skill)
+                        }
                         daily_report.append(report_entry)
                         processed_events += 1
 
@@ -802,6 +867,8 @@ init python:
         displayed_workers = []  # Clear displayed_workers at the start
         can_recruit_today = True  # Reset recruitment flag each day
         daily_spawns = 0  # Reset daily spawns counter
+        if hasattr(store, "academy_haggle_available"):
+            store.academy_haggle_available = True  # Reset Academy haggle option each day
 
         # --- ENSURE REPORT LIST IS CLEARED HERE ---
         daily_report = []
@@ -827,13 +894,18 @@ init python:
                 building["costs"] = 0
                 renpy.log(f"Reset costs for {building_name} to 0")
 
-                # Add base maintenance cost (100 per building level)
-                base_cost = 100 * building["base_level"]
+                # Difficulty: Story (comfort x5), Easy/Normal (x20, base 100), Hard (x30, base 200)
+                comfort_mult = get_difficulty_comfort_mult()
+                diff = getattr(persistent, "difficulty", "normal")
+                base_per_level = 100 if diff != "hard" else 200
+
+                # Add base maintenance cost (per building level; Hard doubles it)
+                base_cost = base_per_level * building["base_level"]
                 building["costs"] += base_cost
 
-                # Add worker costs based on comfort level (increased) and upkeep per worker (differs by source)
+                # Add worker costs based on comfort level and upkeep per worker (differs by source)
                 if "assigned_servants" in building:
-                    comfort_costs = sum(worker.get("comfort_level", 1) * 20 for worker in building["assigned_servants"])  # 20x comfort
+                    comfort_costs = sum(worker.get("comfort_level", 1) * comfort_mult for worker in building["assigned_servants"])
                     upkeep_costs = 0
                     for w in building["assigned_servants"]:
                         source = w.get("source", "bought")

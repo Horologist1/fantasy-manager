@@ -45,13 +45,12 @@
                 "Elegant",
                 "Sensual"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The client is really into {worker_name}'s {trait}.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-10"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_vanilla",
               "failure_image": "prostitute_vanilla_failure",
@@ -112,13 +111,12 @@
                 "Confident",
                 "Energetic"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} makes him an incredible top for the anal session.",
               "earnings": {
-                "success": "150 + skill * 6",
-                "critical_success": "150 + skill * 12",
-                "mediocre": "75 + skill * 3",
-                "failure": "-15"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_anal",
               "failure_image": "prostitute_anal_failure",
@@ -179,13 +177,12 @@
                 "Tough",
                 "Submissive"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the client.",
               "earnings": {
-                "success": "150 + skill * 6",
-                "critical_success": "150 + skill * 12",
-                "mediocre": "75 + skill * 3",
-                "failure": "-15"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_anal",
               "failure_image": "prostitute_anal_failure",
@@ -245,13 +242,12 @@
                 "Experienced",
                 "Masochist"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
               "earnings": {
-                "success": "200 + skill * 8",
-                "critical_success": "200 + skill * 15",
-                "mediocre": "100 + skill * 4",
-                "failure": "-20"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "prostitute_bdsm",
               "failure_image": "prostitute_bdsm_failure",
@@ -311,13 +307,12 @@
                 "Submissive",
                 "Beautiful"
               ],
-              "trait_bonus": "level * 80",
               "trait_success": "The client can't get enough of {worker_name}'s {trait} during the blowjob.",
               "earnings": {
-                "success": "100 + skill * 4",
-                "critical_success": "100 + skill * 8",
-                "mediocre": "50 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_oral",
               "failure_image": "prostitute_oral_failure",
@@ -378,13 +373,12 @@
                 "Dominant",
                 "Confident"
               ],
-              "trait_bonus": "level * 80",
               "trait_success": "The female client is amazed by {worker_name}'s {trait} technique.",
               "earnings": {
-                "success": "90 + skill * 4",
-                "critical_success": "90 + skill * 8",
-                "mediocre": "45 + skill * 2",
-                "failure": "-6"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_hand",
               "failure_image": "prostitute_hand_failure",
@@ -445,13 +439,12 @@
                 "Teasing",
                 "Sensual"
               ],
-              "trait_bonus": "level * 80",
               "trait_success": "The male client is amazed by {worker_name}'s {trait} touch.",
               "earnings": {
-                "success": "90 + skill * 4",
-                "critical_success": "90 + skill * 8",
-                "mediocre": "45 + skill * 2",
-                "failure": "-6"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_hand",
               "failure_image": "prostitute_hand_failure",
@@ -512,13 +505,12 @@
                 "Passionate",
                 "Confident"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The male client is thrilled by {worker_name}'s {trait} approach to gay intimacy.",
               "earnings": {
-                "success": "130 + skill * 5",
-                "critical_success": "130 + skill * 10",
-                "mediocre": "65 + skill * 2",
-                "failure": "-12"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_homo",
               "failure_image": "prostitute_homo_failure",
@@ -579,13 +571,12 @@
                 "Passionate",
                 "Sensual"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
               "earnings": {
-                "success": "130 + skill * 5",
-                "critical_success": "130 + skill * 10",
-                "mediocre": "65 + skill * 2",
-                "failure": "-12"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "prostitute_homo",
               "failure_image": "prostitute_homo_failure",
@@ -645,13 +636,12 @@
                 "Tough",
                 "Energetic"
               ],
-              "trait_bonus": "level * 200",
               "trait_success": "The group is blown away by {worker_name}'s {trait} in handling multiple partners.",
               "earnings": {
-                "success": "400 + skill * 10",
-                "critical_success": "400 + skill * 20",
-                "mediocre": "200 + skill * 5",
-                "failure": "-25"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "prostitute_group",
               "failure_image": "prostitute_group_failure",
@@ -711,13 +701,12 @@
                 "Magnetic",
                 "Sophisticated"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "The VIP client is captivated by {worker_name}'s {trait} and considers making her his regular.",
               "earnings": {
-                "success": "300 + skill * 8",
-                "critical_success": "300 + skill * 15",
-                "mediocre": "150 + skill * 4",
-                "failure": "-30"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "prostitute_vip",
               "failure_image": "prostitute_vip_failure",
@@ -778,13 +767,12 @@
                 "Adventurous",
                 "Wild"
               ],
-              "trait_bonus": "level * 200",
               "trait_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
               "earnings": {
-                "success": "500 + skill * 15",
-                "critical_success": "500 + skill * 25",
-                "mediocre": "250 + skill * 8",
-                "failure": "-50"
+                "success": "400 + skill * 4",
+                "critical_success": "400 + skill * 8",
+                "mediocre": "200 + skill * 2",
+                "failure": "-(200 + roll)"
               },
               "story_image": "prostitute_extreme",
               "failure_image": "prostitute_extreme_failure",
@@ -862,13 +850,12 @@
                 "Sensual",
                 "Beautiful"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The client is totally mesmerized by {worker_name}'s {trait} during her performance.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "stripper_regular",
               "failure_image": "stripper_regular_failure",
@@ -928,13 +915,12 @@
                 "Charming",
                 "Seductive"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} makes the private dance incredibly intimate and hot.",
               "earnings": {
-                "success": "180 + skill * 6",
-                "critical_success": "180 + skill * 12",
-                "mediocre": "90 + skill * 3",
-                "failure": "-12"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "stripper_private",
               "failure_image": "stripper_private_failure",
@@ -994,13 +980,12 @@
                 "Magnetic",
                 "Charming"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "The VIP client is blown away by {worker_name}'s {trait} and considers making her his regular dancer.",
               "earnings": {
-                "success": "300 + skill * 8",
-                "critical_success": "300 + skill * 15",
-                "mediocre": "150 + skill * 4",
-                "failure": "-20"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "stripper_vip",
               "failure_image": "stripper_vip_failure",
@@ -1076,13 +1061,12 @@
                 "Robust",
                 "Energetic"
               ],
-              "trait_bonus": "level * 50",
               "trait_success": "The client appreciates {worker_name}'s {trait}.",
               "earnings": {
-                "success": "80 + skill * 5",
-                "critical_success": "80 + skill * 10",
-                "mediocre": "40 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "charm",
               "failure_image": "charm_failure",
@@ -1159,13 +1143,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The establishment benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "manager_brothel",
               "failure_image": "manager_brothel_failure",
@@ -1286,13 +1269,12 @@
                 "Robust",
                 "Energetic"
               ],
-              "trait_bonus": "level * 50",
               "trait_success": "The client appreciates {worker_name}'s {trait}.",
               "earnings": {
-                "success": "80 + skill * 5",
-                "critical_success": "80 + skill * 10",
-                "mediocre": "40 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "charm",
               "failure_image": "charm_failure",
@@ -1368,13 +1350,12 @@
                 "Hardworking",
                 "Precise"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The clients are amazed by {worker_name}'s {trait} in the kitchen.",
               "earnings": {
-                "success": "100 + skill * 5",
-                "critical_success": "100 + skill * 10",
-                "mediocre": "50 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "cook_story1",
               "failure_image": "cook_story1_failure",
@@ -1433,13 +1414,12 @@
                 "Elegant",
                 "Perfectionist"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The VIP client praises {worker_name}'s {trait} in crafting the meal.",
               "earnings": {
-                "success": "500 + skill * 5",
-                "critical_success": "500 + skill * 10",
-                "mediocre": "250 + skill * 2",
-                "failure": "-5"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "cook_story2",
               "failure_image": "cook_story2_failure",
@@ -1516,13 +1496,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The restaurant benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "manager_restaurant",
               "failure_image": "manager_restaurant_failure",
@@ -1643,13 +1622,12 @@
                 "Determined",
                 "Mystical"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "The adventurer's {trait} proves invaluable in the battle.",
               "earnings": {
-                "success": "200 + skill * 10",
-                "critical_success": "200 + skill * 15",
-                "mediocre": "100 + skill * 5",
-                "failure": "-10"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} gets overwhelmed by the monster's ferocity. The creature proves too dangerous and cunning, forcing a hasty retreat with wounds and no bounty to show for the failed hunt.",
@@ -1712,13 +1690,12 @@
                 "Determined",
                 "Mystical"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "{worker_name}'s display of {trait} proves decisive.",
               "earnings": {
-                "success": "200 + skill * 10",
-                "critical_success": "200 + skill * 15",
-                "mediocre": "100 + skill * 5",
-                "failure": "-10"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} gets lost in the dungeon's twisting passages and deadly traps. Poor navigation and combat skills lead to a dangerous retreat from the depths, returning empty-handed and badly wounded from the failed expedition.",
@@ -1781,13 +1758,12 @@
                 "Determined",
                 "Mystical"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "{worker_name}'s decisive {trait} turns the tide of battle.",
               "earnings": {
-                "success": "300 + skill * 15",
-                "critical_success": "300 + skill * 20",
-                "mediocre": "150 + skill * 0.08",
-                "failure": "-20"
+                "success": "400 + skill * 4",
+                "critical_success": "400 + skill * 8",
+                "mediocre": "200 + skill * 2",
+                "failure": "-(200 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} stumbles upon something far beyond their capabilities - an ancient guardian, a cursed entity, or forces of nature that should not be trifled with. The encounter is brief and terrifying - a desperate flight for survival leaves them shaken and wounded, but alive. The experience serves as a harsh reminder of the true dangers that lurk in the wilds.",
@@ -1868,13 +1844,12 @@
                 "Mystical",
                 "Lucky"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} proves invaluable in navigating the ancient tomb.",
               "earnings": {
-                "success": "150 + skill * 8",
-                "critical_success": "150 + skill * 12",
-                "mediocre": "75 + skill * 4",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} struggles with the tomb's ancient traps and mechanisms. Poor navigation and timing lead to triggering multiple traps, forcing a hasty retreat empty-handed and exhausted from the failed exploration.",
@@ -1939,13 +1914,12 @@
                 "Mystical",
                 "Lucky"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} helps uncover hidden treasures in the temple.",
               "earnings": {
-                "success": "150 + skill * 8",
-                "critical_success": "150 + skill * 12",
-                "mediocre": "75 + skill * 4",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} gets overwhelmed by the temple's ancient defenses and magical traps. The complex mechanisms prove too difficult to navigate, forcing a retreat with no treasures and exhaustion from the failed raid.",
@@ -2010,13 +1984,12 @@
                 "Mystical",
                 "Lucky"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
               "earnings": {
-                "success": "200 + skill * 10",
-                "critical_success": "200 + skill * 15",
-                "mediocre": "100 + skill * 5",
-                "failure": "-10"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} discovers an ancient crypt but struggles with its complex defenses. The traps and mechanisms prove too advanced, forcing a retreat with exhaustion and no treasures from the failed discovery.",
@@ -2097,7 +2070,6 @@
                 "Mystical",
                 "Fearless"
               ],
-              "trait_bonus": "level * 200",
               "trait_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
               "earnings": {
                 "success": "400 + skill * 20",
@@ -2191,13 +2163,12 @@
                 "Sadistic",
                 "Robust"
               ],
-              "trait_bonus": "level * 200",
               "trait_success": "{worker_name}'s {trait} makes the capture particularly effective.",
               "earnings": {
-                "success": "250 + skill * 15",
-                "critical_success": "250 + skill * 20",
-                "mediocre": "125 + skill * 5",
-                "failure": "-15"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} attempts to capture a monster but the creature proves too wild and dangerous. The failed expedition sets back the guild's monster acquisition efforts and leaves the team wounded and discouraged.",
@@ -2265,13 +2236,12 @@
                 "Charming",
                 "Beautiful"
               ],
-              "trait_bonus": "level * 250",
               "trait_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
               "earnings": {
-                "success": "300 + skill * 20",
-                "critical_success": "300 + skill * 30",
-                "mediocre": "150 + skill * 8",
-                "failure": "-30"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} ventures into the wilderness to lure a wild creature with seductive displays. But the seduction works too well - instead of becoming docile, the beast's lust turns aggressive. {worker_name} loses control as the creature mounts them roughly, taking what it wants before disappearing into the forest. No servant gained, only bruises and shame.",
@@ -2355,13 +2325,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The guild benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "manager_adventurers_guild",
               "failure_image": "manager_adventurers_guild_failure",
@@ -2481,13 +2450,12 @@
                 "Smooth Talker",
                 "Playful"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The client is delighted by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "100 + skill * 5",
-                "critical_success": "100 + skill * 10",
-                "mediocre": "50 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} struggles behind the bar, spilling drinks and mixing up orders. The poor service and lack of tavern atmosphere management disappoints patrons who expected better hospitality.",
@@ -2563,13 +2531,12 @@
                 "Smooth Talker",
                 "Playful"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The crowd is delighted by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
-                "success": "100 + skill * 5",
-                "critical_success": "100 + skill * 10",
-                "mediocre": "50 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "entertainer_story1_tavern",
               "failure_image": "entertainer_story1_tavern_failure",
@@ -2628,13 +2595,12 @@
                 "Elegant",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The VIP guests are mesmerized by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
-                "success": "500 + skill * 5",
-                "critical_success": "500 + skill * 10",
-                "mediocre": "250 + skill * 2",
-                "failure": "-5"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "entertainer_story2_tavern",
               "failure_image": "entertainer_story2_tavern_failure",
@@ -2711,13 +2677,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The tavern benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "manager_tavern",
               "failure_image": "manager_tavern_failure",
@@ -2838,13 +2803,12 @@
                 "Smooth Talker",
                 "Clever"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The gamblers are impressed by {worker_name}'s {trait} at the table.",
               "earnings": {
-                "success": "100 + skill * 5",
-                "critical_success": "100 + skill * 10",
-                "mediocre": "50 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "descriptions": {
                 "failure": "{worker_name} struggles as croupier, making dealing mistakes and losing control of the table. Poor card handling and confused rules explanations frustrate the gamblers and hurt the casino's reputation.",
@@ -2920,13 +2884,12 @@
                 "Robust",
                 "Alert"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The disruptive patron backs down, intimidated by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "100 + skill * 5",
-                "critical_success": "100 + skill * 10",
-                "mediocre": "50 + skill * 2",
-                "failure": "-5"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "guard_story1_casino",
               "failure_image": "guard_story1_casino_failure",
@@ -2985,13 +2948,12 @@
                 "Clever",
                 "Determined"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The cheating gambler is caught off-guard by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 5",
-                "critical_success": "200 + skill * 10",
-                "mediocre": "100 + skill * 2",
-                "failure": "-10"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "guard_story2_casino",
               "failure_image": "guard_story2_casino_failure",
@@ -3068,13 +3030,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The casino benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "manager_casino",
               "failure_image": "manager_casino_failure",
@@ -3198,13 +3159,12 @@
                 "Clever",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "The trade delegation is impressed by {worker_name}'s {trait} during negotiations.",
               "earnings": {
-                "success": "80 + skill * 3",
-                "critical_success": "80 + skill * 5",
-                "mediocre": "40 + skill * 1",
-                "failure": "-10"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "ambassador_trade",
               "failure_image": "ambassador_trade_failure",
@@ -3265,13 +3225,12 @@
                 "Smooth Talker",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 160",
               "trait_success": "The foreign delegation is won over by {worker_name}'s {trait} during the alliance talks.",
               "earnings": {
-                "success": "100 + skill * 4",
-                "critical_success": "100 + skill * 6",
-                "mediocre": "50 + skill * 2",
-                "failure": "-15"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "ambassador_alliance",
               "failure_image": "ambassador_alliance_failure",
@@ -3332,13 +3291,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 170",
               "trait_success": "The conflicting parties are persuaded by {worker_name}'s {trait} mediation.",
               "earnings": {
-                "success": "90 + skill * 3",
-                "critical_success": "90 + skill * 5",
-                "mediocre": "45 + skill * 1",
-                "failure": "-12"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "ambassador_conflict",
               "failure_image": "ambassador_conflict_failure",
@@ -3398,13 +3356,12 @@
                 "Magnetic",
                 "Charming"
               ],
-              "trait_bonus": "level * 140",
               "trait_success": "The cultural delegation is inspired by {worker_name}'s {trait} during the exchange.",
               "earnings": {
-                "success": "70 + skill * 3",
-                "critical_success": "70 + skill * 5",
-                "mediocre": "35 + skill * 1",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "ambassador_cultural",
               "failure_image": "ambassador_cultural_failure",
@@ -3481,13 +3438,12 @@
                 "Charming",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "The noble is captivated by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "300 + skill * 8",
-                "critical_success": "300 + skill * 15",
-                "mediocre": "150 + skill * 4",
-                "failure": "-20"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "courtesan_noble",
               "failure_image": "courtesan_noble_failure",
@@ -3547,13 +3503,12 @@
                 "Smooth Talker",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 140",
               "trait_success": "The diplomatic guests are impressed by {worker_name}'s {trait} at the soiree.",
               "earnings": {
-                "success": "350 + skill * 9",
-                "critical_success": "350 + skill * 16",
-                "mediocre": "175 + skill * 4",
-                "failure": "-25"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "courtesan_soiree",
               "failure_image": "courtesan_soiree_failure",
@@ -3614,13 +3569,12 @@
                 "Passionate",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 200",
               "trait_success": "The aristocratic patron is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
               "earnings": {
-                "success": "500 + skill * 10",
-                "critical_success": "500 + skill * 20",
-                "mediocre": "250 + skill * 5",
-                "failure": "-30"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "courtesan_seduction",
               "failure_image": "courtesan_seduction_failure",
@@ -3682,13 +3636,12 @@
                 "Experienced",
                 "Beautiful"
               ],
-              "trait_bonus": "level * 180",
               "trait_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
               "earnings": {
-                "success": "600 + skill * 12",
-                "critical_success": "600 + skill * 22",
-                "mediocre": "300 + skill * 6",
-                "failure": "-35"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "courtesan_vip_chamber",
               "failure_image": "courtesan_vip_chamber_failure",
@@ -3764,13 +3717,12 @@
                 "Elegant",
                 "Precise"
               ],
-              "trait_bonus": "level * 80",
               "trait_success": "The aristocratic guests appreciate {worker_name}'s {trait} service.",
               "earnings": {
-                "success": "120 + skill * 5",
-                "critical_success": "120 + skill * 10",
-                "mediocre": "60 + skill * 2",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "servant_aristocratic",
               "failure_image": "servant_aristocratic_failure",
@@ -3854,13 +3806,12 @@
                 "Experienced",
                 "Beautiful"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "The noble client is enthralled by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 6",
-                "critical_success": "200 + skill * 12",
-                "mediocre": "100 + skill * 3",
-                "failure": "-15"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "pleasure_servant_noble",
               "failure_image": "pleasure_servant_noble_failure",
@@ -3974,13 +3925,12 @@
                 "Robust",
                 "Alert"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "{worker_name}'s {trait} proves decisive in capturing the intruder.",
               "earnings": {
-                "success": "180 + skill * 8",
-                "critical_success": "180 + skill * 15",
-                "mediocre": "90 + skill * 4",
-                "failure": "-12"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "guards_intruder",
               "failure_image": "guards_intruder_failure",
@@ -4045,13 +3995,12 @@
                 "Determined",
                 "Robust"
               ],
-              "trait_bonus": "level * 150",
               "trait_success": "{worker_name}'s {trait} proves decisive in apprehending the criminal.",
               "earnings": {
-                "success": "200 + skill * 9",
-                "critical_success": "200 + skill * 16",
-                "mediocre": "100 + skill * 4",
-                "failure": "-15"
+                "success": "300 + skill * 3",
+                "critical_success": "300 + skill * 6",
+                "mediocre": "150 + skill",
+                "failure": "-(150 + roll)"
               },
               "story_image": "guards_criminal",
               "failure_image": "guards_criminal_failure",
@@ -4116,13 +4065,12 @@
                 "Robust",
                 "Determined"
               ],
-              "trait_bonus": "level * 120",
               "trait_success": "{worker_name}'s {trait} ensures thorough security during the patrol.",
               "earnings": {
-                "success": "150 + skill * 7",
-                "critical_success": "150 + skill * 12",
-                "mediocre": "75 + skill * 3",
-                "failure": "-8"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "guards_patrol",
               "failure_image": "guards_patrol_failure",
@@ -4198,13 +4146,12 @@
                 "Sophisticated",
                 "Magnetic"
               ],
-              "trait_bonus": "level * 100",
               "trait_success": "The castle benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "150 + skill * 6",
-                "critical_success": "150 + skill * 12",
-                "mediocre": "75 + skill * 3",
-                "failure": "-10"
+                "success": "200 + skill * 2",
+                "critical_success": "200 + skill * 4",
+                "mediocre": "100 + skill",
+                "failure": "-(100 + roll)"
               },
               "story_image": "chamberlain_castle",
               "failure_image": "chamberlain_castle_failure",

@@ -2274,6 +2274,64 @@ init python:
                     renpy.log(f"Skill level up reduces {worker_name}'s rebelliousness: {current_rebelliousness} -> {new_rebelliousness} (-{comfort} from comfort)")
         renpy.log("=== update_skill_levels() finished ===")
 
+    def add_academy_training_skill_uses(worker, profession, primary_skill=None):
+        """
+        Add skill_uses to a worker based on Academy profession. Total experience per day ~10.
+        - Academics: Clever + one random skill (from distribution).
+        - Amatory: the daily story's skill (primary_skill) + one other random sex skill (5 each).
+        - Hospitality: Charm + Service (from distribution).
+        Returns a dict of {skill_name: uses_added} for use in daily report description.
+        """
+        import random
+        applied = {}
+        dist = profession.get("training_skills_distribution") or {}
+        worker.setdefault("skill_uses", {})
+        profession_id = profession.get("id", "")
+
+        # Amatory: each daily story affects the chosen skill + one other random sex skill (5 each, total 10)
+        if profession_id == "academy_amatory" and primary_skill:
+            uses_per_skill = 5
+            amatory_skills = [s for s in (profession.get("skills") or []) if s in worker.get("skills", {})]
+            if primary_skill in worker.get("skills", {}):
+                worker["skill_uses"][primary_skill] = worker["skill_uses"].get(primary_skill, 0) + uses_per_skill
+                applied[primary_skill] = applied.get(primary_skill, 0) + uses_per_skill
+                renpy.log(f"Academy training: {worker.get('name','Unknown')} +{uses_per_skill} uses to {primary_skill} (story focus)")
+            other_candidates = [s for s in amatory_skills if s != primary_skill]
+            if other_candidates:
+                chosen = random.choice(other_candidates)
+                worker["skill_uses"][chosen] = worker["skill_uses"].get(chosen, 0) + uses_per_skill
+                applied[chosen] = applied.get(chosen, 0) + uses_per_skill
+                renpy.log(f"Academy training: {worker.get('name','Unknown')} +{uses_per_skill} uses to {chosen} (random other)")
+            return applied
+
+        if not dist:
+            return applied
+        # Academics / Hospitality: use distribution (already scaled to 10 total in JSON)
+        if "random_one" in dist:
+            uses_random = int(dist.get("random_one", 0))
+            skill_names_list = list(worker.get("skills", {}).keys())
+            if skill_names_list:
+                exclude = [s for s in dist.keys() if s != "random_one"]
+                candidates = [s for s in skill_names_list if s not in exclude]
+                if not candidates:
+                    candidates = skill_names_list
+                chosen = random.choice(candidates)
+                worker["skill_uses"][chosen] = worker["skill_uses"].get(chosen, 0) + uses_random
+                applied[chosen] = applied.get(chosen, 0) + uses_random
+                renpy.log(f"Academy training: {worker.get('name','Unknown')} +{uses_random} uses to {chosen} (random_one)")
+        for skill_name, uses in dist.items():
+            if skill_name == "random_one":
+                continue
+            if skill_name not in worker.get("skills", {}):
+                continue
+            add_val = int(uses) if uses else 0
+            if add_val <= 0:
+                continue
+            worker["skill_uses"][skill_name] = worker["skill_uses"].get(skill_name, 0) + add_val
+            applied[skill_name] = applied.get(skill_name, 0) + add_val
+            renpy.log(f"Academy training: {worker.get('name','Unknown')} +{add_val} uses to {skill_name}")
+        return applied
+
     def update_worker_levels():
         """
         For each worker, if the overall success_count reaches or exceeds 20 * (current level),
@@ -3027,6 +3085,29 @@ init python:
             building = available_buildings[worker["assigned_building"]]
             _remove_worker_from_building_by_name(building, worker.get("name"))
 
+    def remove_workers_of_other_gender_for_filter():
+        """
+        When the player chooses 'Continue playing' after loading a save with both genders
+        but filter is Only Male or Only Female: unassign and sell/fire all workers of the
+        other gender so they no longer occupy space or cost money.
+        """
+        mode = getattr(persistent, "worker_gender_filter", "both")
+        if mode == "both":
+            return
+        other_gender = "female" if mode == "male" else "male"
+        workers_list = getattr(store, "workers", [])
+        to_remove = [w for w in list(workers_list) if hasattr(w, "get") and (w.get("gender") or "").strip().lower() == other_gender]
+        for w in to_remove:
+            try:
+                sell_worker(w)
+            except Exception as e:
+                renpy.log(f"remove_workers_of_other_gender_for_filter: error selling {w.get('name', '?')}: {e}")
+        if to_remove and hasattr(store, "rebuild_assigned_servants") and callable(store.rebuild_assigned_servants):
+            try:
+                store.rebuild_assigned_servants()
+            except Exception as e:
+                renpy.log(f"remove_workers_of_other_gender_for_filter: rebuild_assigned_servants error: {e}")
+
     def adjust_comfort_and_recalculate_relationship(worker, new_comfort):
         """
         Adjust worker's comfort level and recalculate relationship maintaining the current difference.
@@ -3100,6 +3181,97 @@ init python:
             store.owned_buildings.append(name)
         if name in available_buildings and isinstance(available_buildings[name], dict):
             available_buildings[name].setdefault("owned", True)
+
+    def add_academy_building():
+        """Create the Academy in available_buildings (not in owned_buildings). Call when player pays tuition."""
+        if "Academy" in available_buildings:
+            return
+        available_buildings["Academy"] = {
+            "price": 0,
+            "base_level": 1,
+            "assigned_servants": [],
+            "servant_jobs": {},
+            "type": "academy",
+            "reputation": 0,
+            "max_workers": {},
+            "costs": 0,
+            "owned": True,
+            "skill": 10,
+            "skill_bonus": 0,
+            "event_limit": 0
+        }
+        if not hasattr(store, "custom_names") or store.custom_names is None:
+            store.custom_names = {}
+        store.custom_names.setdefault("Academy", "Academy")
+        store.academy_enrolled = True
+        renpy.log("Academy added to available_buildings (not in owned_buildings)")
+
+    def try_academy_haggle():
+        """50% chance to succeed. On failure, haggle option is removed until next day. Returns (success, discounted_price)."""
+        import random
+        if random.random() < 0.5:
+            return (True, 7500)  # Success: pay 7500
+        store.academy_haggle_available = False
+        return (False, 15000)  # Failure: still 15000, haggle locked until next day
+
+    def add_arena_building():
+        """Add the Arena to available_buildings when the player unlocks it (first visit)."""
+        if "Arena" in available_buildings:
+            return
+        available_buildings["Arena"] = {
+            "price": 0,
+            "base_level": 1,
+            "assigned_servants": [],
+            "servant_jobs": {},
+            "type": "arena",
+            "reputation": 0,
+            "max_workers": {},
+            "costs": 0,
+            "owned": True,
+            "skill": 10,
+            "skill_bonus": 0,
+            "event_limit": 0
+        }
+        if not hasattr(store, "custom_names") or store.custom_names is None:
+            store.custom_names = {}
+        store.custom_names.setdefault("Arena", "Arena")
+        store.arena_unlocked = True
+        renpy.log("Arena added to available_buildings")
+
+    def run_arena_trial(worker):
+        """
+        Run the arena trial combat roll. Uses worker's Combat skill.
+        Returns one of: "critical_success", "success", "mediocre", "failure", "critical_failure".
+        """
+        import random
+        skill_level = calculate_skill_with_traits(worker, "Combat")
+        effective = min(100, skill_level + EVENT_SUCCESS_BASE_BONUS_WORKER)
+        roll = random.randint(1, 100)
+        # Bands: critical_success <= 15% of effective, success <= effective, mediocre <= effective+25, else failure/crit_fail
+        crit_threshold = max(1, int(effective * 0.15))
+        if roll <= crit_threshold:
+            return "critical_success"
+        if roll <= effective:
+            return "success"
+        if roll <= effective + 25:
+            return "mediocre"
+        return "critical_failure" if roll > effective + 50 else "failure"
+
+    def academy_try_haggle_and_continue():
+        """Try to haggle Academy tuition; on success pay 7500 and show academy menu, on failure notify and return to map."""
+        success, price = try_academy_haggle()
+        if hasattr(store, "academy_director_intro_done"):
+            store.academy_director_intro_done = False
+        if success:
+            add_academy_building()
+            store.money = int(store.money) - int(price)
+            renpy.hide_screen("academy_first_dialogue")
+            renpy.show_screen("academy_menu")
+            renpy.notify("The director agreed! You paid $7,500 for tuition.")
+        else:
+            renpy.notify("The director refused. You cannot haggle again until tomorrow.")
+            renpy.hide_screen("academy_first_dialogue")
+            renpy.show_screen("map_screen")
 
     def get_available_businesses_for_map_button(button_id):
         """
@@ -4851,6 +5023,71 @@ init python:
     
     config.after_load_callbacks.append(after_load_callback)
 
+    def get_manager_portrait():
+        """Return the manager portrait image path. Uses manager_portrait if set, else lord.png/lady.png from images/manager_portraits/."""
+        custom = getattr(store, "manager_portrait", "") or ""
+        if custom and renpy.loadable(custom):
+            return custom
+        title = (getattr(store, "player_title", "") or "").lower()
+        if "lady" in title or title == "lady":
+            path = "images/manager_portraits/lady.png"
+        else:
+            path = "images/manager_portraits/lord.png"
+        if renpy.loadable(path):
+            return path
+        return None  # No portrait; screen will show placeholder
+
+    def add_management_skill_point(skill_id):
+        """Add +1 to a management skill. Called from confirm_all_management_skill_points or legacy single confirm."""
+        skills = getattr(store, "management_skills", None)
+        if not isinstance(skills, dict):
+            store.management_skills = {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0}
+            skills = store.management_skills
+        current = skills.get(skill_id, 0)
+        skills[skill_id] = current + 1
+        store.manager_start_skill_chosen = True
+
+    def add_pending_management_skill(skill_id):
+        """Add one pending point to a skill (multiple + clicks accumulate). Only if remaining points allow."""
+        keys = ["business_acumen", "whore_mastery", "combat_instruction", "servant_training", "gang_leader"]
+        skills = getattr(store, "management_skills", None) or {}
+        spent = sum(skills.get(k, 0) for k in keys)
+        pending = getattr(store, "manager_pending_skills", None) or {}
+        if not isinstance(pending, dict):
+            store.manager_pending_skills = {}
+            pending = store.manager_pending_skills
+        total_pending = sum(pending.values())
+        level = getattr(store, "manager_level", 1)
+        remaining = level - spent - total_pending
+        if remaining > 0:
+            pending[skill_id] = pending.get(skill_id, 0) + 1
+            store.manager_pending_skills = dict(pending)
+        renpy.restart_interaction()
+
+    def confirm_all_management_skill_points():
+        """Apply all pending skill points (from multiple + clicks) and clear pending."""
+        pending = getattr(store, "manager_pending_skills", None) or {}
+        if not isinstance(pending, dict):
+            store.manager_pending_skills = {}
+            return
+        for sid, count in list(pending.items()):
+            for _ in range(count):
+                add_management_skill_point(sid)
+        store.manager_pending_skill_id = None
+        store.manager_pending_skills = {}
+        check_objective_completion()
+        renpy.restart_interaction()
+
+    def manager_has_unspent_skill_points():
+        """True if manager has skill points to assign (manager_level minus spent points)."""
+        skills = getattr(store, "management_skills", None) or {}
+        if not isinstance(skills, dict):
+            return False
+        keys = ["business_acumen", "whore_mastery", "combat_instruction", "servant_training", "gang_leader"]
+        spent = sum(skills.get(k, 0) for k in keys)
+        level = getattr(store, "manager_level", 1)
+        return level > spent
+
     
 
 ################################################################################
@@ -4934,6 +5171,18 @@ init python:
 default player_title = ""
 default player_name = ""
 default money = 6000
+# Manager character sheet: Management Skills (all start at 0; +1 to one at game start)
+default management_skills = {
+    "business_acumen": 0,
+    "whore_mastery": 0,
+    "combat_instruction": 0,
+    "servant_training": 0,
+    "gang_leader": 0
+}
+default manager_portrait = ""  # Custom path; empty = use lord.png/lady.png from images/manager_portraits/
+default manager_start_skill_chosen = False  # True after player picks +1 management skill at game start
+default manager_level = 1  # Manager level; level 1 gives 1 point to assign at game start
+default manager_pending_skill_id = None  # Skill selected with + but not yet confirmed (for discard warning)
 default current_bg = tavern_bg
 default manager_inventory = []
 default is_new_game = True
@@ -5003,6 +5252,12 @@ default take_a_walk_text_hover = False  # Controls hover state of PlazaFountain 
 default buy_buildings_text_hover = False  # Controls hover state of buyable buildings when "Buy Buildings" textbutton is hovered
 default tooltips_enabled_by_screen = {}  # Dictionary to store tooltip state per screen (defaults to True if not set)
 default _last_tooltip_screen = None  # Track last screen for tooltip context guard
+default academy_enrolled = False  # True after player pays Academy tuition (Academy appears in building_selection, not in Manage Buildings)
+default academy_haggle_available = True  # Reset each day; False after a failed haggle until next day
+default arena_unlocked = False  # True after arena trial succeeds/mediocre/critical
+default arena_lanista_paid = False  # True after player pays Lanista permit
+define LANISTA_PERMIT_COST = 10000  # Cost to obtain Lanista permit for the coliseum
+default _arena_chosen_worker = None  # Worker chosen in choose_worker_for_arena_trial (set by screen, read by arena_do_trial)
 
 init python:
     class SafeNameDict(dict):
@@ -5240,4 +5495,131 @@ label explore:
             jump tavern_screen
     
     return
-    return
+
+# Academy tuition: Ren'Py say (dialogue box + name) + menu (same style as recruitment). After pay → map + academy_menu overlay.
+label academy_tuition_dialogue:
+    $ _academy_bg = "images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png"
+    scene expression _academy_bg
+    academy_director "Welcome, traveller. I am the Academy Director. Our institution offers structured courses in Academics, Amatory Arts, and Hospitality. Your workers may attend and gain experience under our teachers."
+    academy_director "To enrol your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here."
+    jump academy_tuition_menu
+
+label academy_tuition_menu:
+    menu:
+        academy_director "What will you do?"
+        "Pay the tuition ($15,000).":
+            if money >= 15000:
+                $ add_academy_building()
+                $ money -= 15000
+                $ renpy.show_screen("map_screen")
+                $ renpy.show_screen("academy_menu")
+                jump tavern_screen
+            else:
+                academy_director "You need $15,000 to pay the tuition."
+                jump academy_tuition_menu
+        "Try to haggle (50%% chance: $7,500; if it fails, locked until tomorrow)." if academy_haggle_available:
+            if money < 7500:
+                academy_director "You need at least $7,500 to try haggling."
+                jump academy_tuition_menu
+            $ _haggle_success, _haggle_price = try_academy_haggle()
+            if _haggle_success:
+                $ add_academy_building()
+                $ money -= _haggle_price
+                $ renpy.show_screen("map_screen")
+                $ renpy.show_screen("academy_menu")
+                $ renpy.notify("The director agreed! You paid $7,500 for tuition.")
+                jump tavern_screen
+            else:
+                $ renpy.notify("The director refused. You cannot haggle again until tomorrow.")
+                $ renpy.show_screen("map_screen")
+                jump tavern_screen
+        "Leave.":
+            $ renpy.show_screen("map_screen")
+            jump tavern_screen
+
+# Arena: Lanista permit then trial by combat. First dialogue asks for permit payment; then requests a combatant (potentially lethal).
+label arena_first_dialogue:
+    $ _arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png"
+    scene expression _arena_bg
+    if not arena_lanista_paid:
+        arena_promoter "Welcome to the coliseum. I am the master of the sands. To operate gladiators here you need a Lanista permit."
+        arena_promoter "The permit costs [LANISTA_PERMIT_COST] coins. Pay once and we can discuss proof of worth—a trial by combat."
+        jump arena_permit_menu
+    # Already paid permit, need trial
+    arena_promoter "You have the permit. Now I need proof. Send me one of your people for a trial by combat before the crowd."
+    arena_promoter "The fight may be to the death. If your fighter survives—or falls with honour—the Arena will be open to you. Do you accept?"
+    jump arena_combatant_menu
+
+label arena_permit_menu:
+    menu:
+        arena_promoter "What will you do?"
+        "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins)." if money >= LANISTA_PERMIT_COST:
+            $ money -= LANISTA_PERMIT_COST
+            $ arena_lanista_paid = True
+            arena_promoter "Done. Now bring me a combatant worthy of the sands. The trial may be lethal—choose wisely."
+            jump arena_combatant_menu
+        "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins)." if money < LANISTA_PERMIT_COST:
+            arena_promoter "You do not have enough coins."
+            jump arena_permit_menu
+        "Leave.":
+            $ renpy.show_screen("map_screen")
+            jump tavern_screen
+
+label arena_combatant_menu:
+    menu:
+        "Send a combatant to the trial.":
+            jump arena_do_trial
+        "Leave.":
+            $ renpy.show_screen("map_screen")
+            jump tavern_screen
+
+label arena_do_trial:
+    $ renpy.call_screen("choose_worker_for_arena_trial")
+    $ _worker = _arena_chosen_worker
+    $ _arena_chosen_worker = None
+    if _worker is None or not isinstance(_worker, dict) or not _worker.get("name"):
+        $ renpy.show_screen("map_screen")
+        jump tavern_screen
+    jump arena_run_trial_and_result
+
+# Run from screen action when user picks a worker; worker_name is passed so the new context has it.
+label arena_run_trial_and_result(worker_name=None):
+    $ _worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+    if _worker is None or not _worker.get("name"):
+        $ renpy.show_screen("map_screen")
+        jump tavern_screen
+    $ _outcome = run_arena_trial(_worker)
+    $ _arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png"
+    scene expression _arena_bg
+    if _outcome == "critical_success":
+        $ add_arena_building()
+        $ add_item_to_inventory(manager_inventory, "arena_champion_blade")
+        $ renpy.say(narrator, _worker["name"] + " stepped into the sands with cold focus. Blow after blow, they turned the trial into a masterclass—the crowd roared with each parry and strike. When the dust settled, they stood unmarked, and the Lanista himself rose from his seat.")
+        $ renpy.say(narrator, "The Arena is yours. As a token of the sands, he grants you a champion's blade from his own armoury.")
+        $ renpy.notify("Arena unlocked! You received Arena Champion's Blade.")
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("arena_menu")
+        jump tavern_screen
+    elif _outcome == "success":
+        $ add_arena_building()
+        $ renpy.say(narrator, _worker["name"] + " took the sand and gave as good as they got. Bloodied but unbowed, they outlasted their opponent and raised their weapon to the crowd's approval.")
+        $ renpy.say(narrator, "The trial is won. The Arena opens its gates to you—you may use it from the map from now on.")
+        $ renpy.notify("Arena unlocked!")
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("arena_menu")
+        jump tavern_screen
+    elif _outcome == "mediocre":
+        $ add_arena_building()
+        $ add_trait_with_duration(_worker, "Scarred", 0)
+        $ renpy.say(narrator, _worker["name"] + " was thrown to the sand more than once, but each time they staggered back to their feet. The fight was ugly, but they endured until the Lanista called it.")
+        $ renpy.say(narrator, "The sands have left their mark. They will carry the scars, but the Arena is yours. Honour was earned the hard way.")
+        $ renpy.notify("Arena unlocked. " + _worker["name"] + " was injured and gained Scarred.")
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("arena_menu")
+        jump tavern_screen
+    else:
+        $ _worker["health"] = 0
+        $ renpy.say(narrator, _worker["name"] + " fought with everything they had, but the sands are unforgiving. When the dust settled, they did not rise again.")
+        $ renpy.say(narrator, "The Arena remains closed. When you are ready, send another combatant—or pay the permit again and try once more.")
+        $ renpy.show_screen("map_screen")
+        jump tavern_screen

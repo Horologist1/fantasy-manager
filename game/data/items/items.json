@@ -1983,6 +1983,21 @@
       "price": 3650,
       "weight": 3,
       "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+    },
+    {
+      "id": "arena_champion_blade",
+      "name": "Arena Champion's Blade",
+      "display_name": "Arena Champion's Blade",
+      "type": "weapon",
+      "effect": {
+        "skill_modifiers": {
+          "Combat": 10
+        }
+      },
+      "description": "A blade bestowed by the arena's master for a flawless trial. Favoured by gladiators. (+10 Combat)",
+      "durability": 180,
+      "price": 12000,
+      "weight": 6
     }
   ],
   "excluded_from_shops": [

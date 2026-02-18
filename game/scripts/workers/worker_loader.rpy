@@ -43,6 +43,14 @@ init python:
                         if not persistent.nsfw_enabled and worker.get("nsfw", False):
                             continue
                         
+                        # Apply worker gender filter (Both / Only Male / Only Female)
+                        if getattr(persistent, "worker_gender_filter", "both") != "both":
+                            wgender = (worker.get("gender") or "").strip().lower()
+                            if persistent.worker_gender_filter == "male" and wgender == "female":
+                                continue
+                            if persistent.worker_gender_filter == "female" and wgender == "male":
+                                continue
+                        
                         # Apply existing filters
                         if worker.get("unique", False) and not include_unique:
                             continue
@@ -108,6 +116,14 @@ init python:
                             if not persistent.nsfw_enabled and worker.get("nsfw", False):
                                 renpy.log(f"Filtered out {worker_name} from {worker_file}: NSFW disabled but worker is NSFW")
                                 continue
+                            
+                            # Apply worker gender filter (Both / Only Male / Only Female)
+                            if getattr(persistent, "worker_gender_filter", "both") != "both":
+                                wgender = (worker.get("gender") or "").strip().lower()
+                                if persistent.worker_gender_filter == "male" and wgender == "female":
+                                    continue
+                                if persistent.worker_gender_filter == "female" and wgender == "male":
+                                    continue
                             
                             # Apply existing filters
                             if worker.get("unique", False) and not include_unique:
@@ -263,4 +279,28 @@ init python:
         print("=== END DEBUG INFO ===")
         
         return info
+
+    def workers_filtered_by_gender(workers_list):
+        """
+        Return a list of workers that match the persistent worker_gender_filter.
+        Use this when displaying the roster so that Only Male / Only Female behaves
+        as if the other gender doesn't exist.
+        """
+        if not workers_list:
+            return workers_list
+        mode = getattr(persistent, "worker_gender_filter", "both")
+        if mode == "both":
+            return list(workers_list)
+        result = []
+        for w in workers_list:
+            if not hasattr(w, "get"):
+                result.append(w)
+                continue
+            wgender = (w.get("gender") or "").strip().lower()
+            if mode == "male" and wgender == "female":
+                continue
+            if mode == "female" and wgender == "male":
+                continue
+            result.append(w)
+        return result
 

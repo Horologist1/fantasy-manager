@@ -4,6 +4,11 @@
 
 
 define player = Character("Manager")
+define academy_director = Character("Academy Director")
+define arena_promoter = Character("Arena Promoter")
+define narrator = Character(None)  # Narration / no speaker name (e.g. arena trial result)
+# Benefit/stat gain messages (same green #006600 as interaction success in event_daily_exec)
+define benefit_msg = Character(None, what_color="#006600", what_size=22)
 # Backgrounds
 define tavern_bg = "images/tavern.png"
 define tutorial_dialogue_bg = "tavern.png"

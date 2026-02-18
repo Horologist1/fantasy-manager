@@ -128,6 +128,8 @@ init -1 python:
     if getattr(persistent, '_file_page_reset_v2', None) is None:
         persistent._file_page = 1
         persistent._file_page_reset_v2 = True
+    if getattr(persistent, 'difficulty', None) is None:
+        persistent.difficulty = 'normal'
 
 
 ## The default auto-forward delay. Larger numbers lead to longer waits, with 0
@@ -237,8 +239,30 @@ init python:
     if persistent.nsfw_enabled is None:
         persistent.nsfw_enabled = True  # Default to True (NSFW content shown)
 
+    # Worker gender filter: "both", "male", "female" - filters workers as if the other gender didn't exist
+    if not hasattr(persistent, "worker_gender_filter") or persistent.worker_gender_filter not in ("both", "male", "female"):
+        persistent.worker_gender_filter = "both"
+
     # Optionally, customize the preferences screen to include this option
     def add_nsfw_preference():
         return [
             ("Show NSFW Content", "nsfw_enabled", True, False, "Toggle NSFW content visibility.")
         ]
+
+    # After loading a save: if Worker Gender is "Only Male" or "Only Female" and the save has workers of the other gender, show a warning and offer to go to Main Menu
+    def _after_load_check_gender_filter():
+        if getattr(persistent, "worker_gender_filter", "both") == "both":
+            return
+        mode = persistent.worker_gender_filter
+        workers = getattr(store, "workers", [])
+        if not workers:
+            return
+        other_gender = "female" if mode == "male" else "male"
+        has_other = any((w.get("gender") or "").strip().lower() == other_gender for w in workers if hasattr(w, "get"))
+        if has_other:
+            store._pending_gender_filter_load_warning = True
+            renpy.show_screen("gender_filter_after_load_warning")
+
+    if not hasattr(config, "after_load_callbacks"):
+        config.after_load_callbacks = []
+    config.after_load_callbacks.append(_after_load_check_gender_filter)

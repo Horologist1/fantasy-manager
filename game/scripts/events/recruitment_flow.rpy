@@ -186,10 +186,10 @@ label recruitment_event_flow(event, worker):
     scene expression current_bg with dissolve
     show expression Solid("#00000080")  # Semi-transparent black overlay
     
-    # Calculate cost
+    # Calculate cost (uses current difficulty multiplier)
     python:
         comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
-        daily_cost = comfort_level * 20  # Daily cost is comfort level * 20
+        daily_cost = comfort_level * get_difficulty_comfort_mult()
         worker["daily_cost"] = daily_cost
         
         # Replace placeholders in description and dialogue
@@ -317,7 +317,7 @@ label recruitment_event_simple(event, worker):
     
     python:
         comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
-        daily_cost = comfort_level * 20  # Daily cost is comfort level * 20
+        daily_cost = comfort_level * get_difficulty_comfort_mult()
         worker["daily_cost"] = daily_cost
         worker["comfort_level"] = comfort_level
         worker_name = worker.get("name", "Unknown")

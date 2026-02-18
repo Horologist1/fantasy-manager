@@ -90,7 +90,7 @@ default objective_titles = {
 }
 
 default objective_descriptions = {
-    1: "If ever I am to raise the dynasty's empire from the ashes of ruination, then verily, I shall require the hands and hearts of loyal workers. Three workers should suffice to begin this grand endeavor - some may be bought with coin from the market square's bustling commerce, whilst others might be recruited through providence's chance encounters that may span several days, yet oft prove more skilled in their craft.",
+    1: "If ever I am to raise the dynasty's empire from the ashes of ruination, then verily, I shall require the hands and hearts of loyal workers. Three workers should suffice to begin this grand endeavor - some may be bought with coin from the market square's bustling commerce, whilst others might be recruited through providence's chance encounters that may span several days, yet oft prove more skilled in their craft.\n\nEre I lead others, I must know mine own strengths. Let me reflect upon my best skills and qualities—those virtues that shall define my rule—and choose where my first mastery shall lie, that my domain may benefit from it.",
     
     2: "The hour of decision draws nigh, wherein I must decree what manner of building type this hallowed place shall become. Perchance a brothel, where secrets flow as freely as wine and influence is currency? Mayhap a restaurant, where respectable coin may be earned through honest trade? Or shall it be an adventurer's guild, where muscle and steel forge connections of power? Each path doth offer different opportunities... and different means by which to gather the strength needed for what is to come.",
     
@@ -317,7 +317,10 @@ init python:
     
     def get_current_objective_progress():
         if current_objective == 1:
-            return f"Progress: {workers_hired}/3 Workers Hired"
+            char_sheet_done = getattr(store, "manager_start_skill_chosen", False)
+            if workers_hired >= 3 and char_sheet_done:
+                return "Progress: Workers 3/3\nManager Assign Skill point 1/1 ->"
+            return f"Progress: Workers {workers_hired}/3\nManager Assign Skill point {1 if char_sheet_done else 0}/1"
         elif current_objective == 2:
             if building_1_type_set:
                 return "Progress: Building type hath been chosen ->"
@@ -808,7 +811,9 @@ init python:
             return prev_obj_complete
         
         # Objectives 1-7: Auto-complete with prerequisite checks
-        if current_objective == 1 and is_previous_objective_complete(1) and workers_hired >= 3 and not objective_1_complete:
+        # Objective 1: 3 workers + character sheet (assign first management skill)
+        manager_skill_done = getattr(store, "manager_start_skill_chosen", False)
+        if current_objective == 1 and is_previous_objective_complete(1) and workers_hired >= 3 and manager_skill_done and not objective_1_complete:
             renpy.log("DEBUG: Objective 1 completed!")
             objective_1_complete = True
             current_objective = 2
@@ -983,6 +988,12 @@ screen journal_panel():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("map_screen")]
+                        textbutton "Context menu (right) > [player_title] [player_name] (Character sheet) > Assign first management skill":
+                            xsize 520
+                            text_size font_size(22)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Show("map_screen")]
                     
                     elif current_objective == 2:
                         text "Tutorial:":
@@ -1033,7 +1044,7 @@ screen journal_panel():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
-                        text "Tip: For this tutorial, purchase the potion from the shop and transfer it manually. In the future, you can use potions directly from Manage Workers or Manage Buildings." size font_size(20) color "#6b6528"
+                        text "Tip: For this tutorial, purchase the potion from the shop and transfer it manually. In the future, you can use potions directly from Manage Workers or Manage Buildings." size font_size(20) color "#7a4b2a"
                     
                     elif current_objective == 6:
                         text "Tutorial:":
@@ -1051,7 +1062,7 @@ screen journal_panel():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
-                        text "Tip: Each +10 Building skill bonus costs $100/day." size font_size(20) color "#6b6528"
+                        text "Tip: Each +10 Building skill bonus costs $100/day." size font_size(20) color "#7a4b2a"
                     
                     elif current_objective == 7:
                         text "Tutorial:":
@@ -1063,7 +1074,7 @@ screen journal_panel():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
-                        text "Tip: Friendly Lunch costs $150. Choose a worker, open Interactions, then Friendship, and select Friendly Lunch." size font_size(20) color "#6b6528"
+                        text "Tip: Friendly Lunch costs $150. Choose a worker, open Interactions, then Friendship, and select Friendly Lunch." size font_size(20) color "#7a4b2a"
 
                     # MARK AS COMPLETE buttons for objectives 8+
                     if current_objective == 8:
@@ -1088,7 +1099,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 10:
                         $ can_complete_10 = can_complete_objective_10()
@@ -1110,7 +1121,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 11:
                         $ can_complete_11 = can_complete_objective_11()
@@ -1132,7 +1143,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 12:
                         $ can_complete_12 = can_complete_objective_12()
@@ -1154,7 +1165,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 13:
                         $ can_complete_13 = can_complete_objective_13()
@@ -1176,7 +1187,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 14:
                         $ can_complete_14 = can_complete_objective_14()
@@ -1198,7 +1209,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 15:
                         $ can_complete_15 = can_complete_objective_15()
@@ -1220,7 +1231,7 @@ screen journal_panel():
                             text "Complete the requirements above to mark this objective as complete.":
                                 xsize 520
                                 size font_size(20)
-                                color "#6b6528"
+                                color "#7a4b2a"
                     
                     elif current_objective == 9:
                         null height 10
@@ -1240,7 +1251,7 @@ screen journal_panel():
                             textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Magic)":
                                 xsize 530
                                 text_size font_size(24)
-                                text_color "#ffffff"
+                                text_color "#7a4b2a"
                                 text_hover_color "#f4c594"
                                 action [
                                     Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
@@ -1262,7 +1273,7 @@ screen journal_panel():
                             textbutton "Heist and Blackmail\n(requires 1 with 70+ Clever/Charm and 2 with 70+ Charm)":
                                 xsize 530
                                 text_size font_size(24)
-                                text_color "#ffffff"
+                                text_color "#7a4b2a"
                                 text_hover_color "#f4c594"
                                 action [
                                     Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
@@ -1274,7 +1285,7 @@ screen journal_panel():
                                 sensitive can_blackmail
                         
                         null height 10
-                        text "Tip: Check out shops for items to boost skills!" size font_size(18) color "#6b6528" italic True
+                        text "Tip: Check out shops for items to boost skills!" size font_size(18) color "#7a4b2a" italic True
                         
                         if store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False):
                             null height 15
@@ -1407,7 +1418,7 @@ screen skip_tutorial_confirm():
             
             text "Skip Tutorial?":
                 size 28
-                color "#ffffff"
+                color "#7a4b2a"
                 xalign 0.5
             
             text "Are you sure you want to skip the tutorial?\nYou'll jump to the final tutorial objective.":

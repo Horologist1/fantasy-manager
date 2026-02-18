@@ -1,6 +1,25 @@
 # building_logic.rpy
 # Cargar tipos de edificios y lógica asociada
 
+# Load building types from JSON (main file + special_buildings: academy, arena, etc.).
+# Always load from disk so we never use a truncated/corrupt building_types_json from a save.
+init 100 python:
+    import json
+    try:
+        with renpy.file("data/buildings/building_types.json") as f:
+            store.building_types_json = json.load(f)
+        with renpy.file("data/buildings/special_buildings.json") as f:
+            special_data = json.load(f)
+        special_list = special_data.get("building_types", [])
+        if special_list:
+            existing_ids = {bt.get("id") for bt in store.building_types_json.get("building_types", [])}
+            for bt in special_list:
+                if bt.get("id") not in existing_ids:
+                    store.building_types_json.setdefault("building_types", []).append(bt)
+                    existing_ids.add(bt.get("id"))
+    except Exception as e:
+        renpy.log("building_logic: Failed to load/merge building types (building_types + special_buildings): " + str(e))
+
 init python:
 
     def get_building(worker):
@@ -31,16 +50,33 @@ init python:
             # Clear all servant jobs
             building["servant_jobs"].clear()
 
+    def get_building_reputation_cap(building):
+        """Cap is the higher of: building level * 200, or manager level * 200 (same formula, max 1000 each)."""
+        if not building:
+            return 200
+        building_level = building.get("base_level", 1)
+        building_cap = min(1000, building_level * 200)
+        # Manager(s) in this building: worker level same formula
+        jobs = building.get("servant_jobs", {})
+        manager_level = 0
+        for w in building.get("assigned_servants", []):
+            job = str(jobs.get(w.get("name", ""), "")).lower()
+            if "manager" in job:
+                manager_level = max(manager_level, w.get("level", 1))
+        manager_cap = min(1000, manager_level * 200) if manager_level else 0
+        return max(building_cap, manager_cap)
+
     def calculate_reputation(building_name):
         building = available_buildings[building_name]
+        cap = get_building_reputation_cap(building)
         # Use stored reputation if present, otherwise calculate base
         total_reputation = building.get("reputation", building["base_level"] * 10)
         for worker in building["assigned_servants"]:
             total_reputation -= 5
             highest_skill = max(int(skill) for skill in worker["skills"].values())
             total_reputation += highest_skill // 10
-        # Store and clamp result
-        building["reputation"] = max(0, min(total_reputation, 1000))
+        # Store and clamp to level-based cap (no growth above cap until level up)
+        building["reputation"] = max(0, min(total_reputation, cap))
         return building["reputation"]
 
     def get_reputation_tier(reputation):
@@ -92,8 +128,9 @@ init python:
             "mediocre": 0,
             "failure": -5
         }.get(event_result.lower(), 0)
-        # Update stored reputation
-        building["reputation"] = max(0, building["reputation"] + reputation_change)
+        cap = get_building_reputation_cap(building)
+        # Update and clamp to level cap (no growth above cap until level up)
+        building["reputation"] = max(0, min(building["reputation"] + reputation_change, cap))
 
     def process_manager_auto_rest(restore_only=False):
         """Sistema robusto: Usa store.workers como única fuente de verdad."""

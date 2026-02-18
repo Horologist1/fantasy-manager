@@ -893,70 +893,69 @@ screen about():
         xoffset -135
         yoffset 140
 
-    ## Contenido alineado arriba a la izquierda
-    vbox:
-        xpos 160
-        ypos 210
-        spacing 20
+    ## Contenido en viewport para que entre todo y se pueda hacer scroll
+    fixed:
+        xpos 200
+        ypos 240
+        xmaximum config.screen_width - 360
+        ymaximum 660
+        viewport:
+            scrollbars "vertical"
+            mousewheel True
+            draggable True
+            vbox:
+                spacing 20
 
-        ## Título del juego
-        text "Fantasy Manager":
-            style "about_title"
-            xalign 0.0
+                ## Título del juego
+                text "Fantasy Manager":
+                    style "about_title"
+                    xalign 0.0
 
-        ## Versión
-        text "Version [config.version]":
-            style "about_version"
-            xalign 0.0
+                ## Versión
+                text "Version [config.version]":
+                    style "about_version"
+                    xalign 0.0
 
-        ## Información del juego
-        text "A fantasy management game where you build your empire. NSFW content is optional and can be enabled or disabled from this menu.":
-            style "about_description"
-            xalign 0.0
+                ## Información del juego
+                text "A fantasy management game where you build your empire. NSFW content is optional and can be enabled or disabled from Options → More Options.":
+                    style "about_description"
+                    xalign 0.0
 
-        ## NSFW toggle before Credits
-        textbutton ("NSFW: Enabled" if persistent.nsfw_enabled else "NSFW: Disabled"):
-            text_color "#3c1f14"
-            text_hover_color "#6b6528"
-            background None
-            hover_background None
-            action ToggleField(persistent, "nsfw_enabled")
+                ## Espacio antes de Credits
+                null height 20
 
-        ## Espacio antes de Credits
-        null height 20
+                ## Créditos
+                text "Credits:":
+                    style "about_section_header"
+                    xalign 0.0
+                text "Game development, AI + Digital illustration - Horologist":
+                    style "about_section_text"
+                    xalign 0.0
+                text "AI + Digital illustration - Annekka":
+                    style "about_section_text"
+                    xalign 0.0
+                text "Code Review - Bohnd":
+                    style "about_section_text"
+                    xalign 0.0
+                text "UI Assets - Skolaztika":
+                    style "about_section_text"
+                    xalign 0.0
 
-        ## Créditos
-        text "Credits:":
-            style "about_section_header"
-            xalign 0.0
-        text "Game development, AI + Digital illustration - Horologist":
-            style "about_section_text"
-            xalign 0.0
-        text "AI + Digital illustration - Annekka":
-            style "about_section_text"
-            xalign 0.0
-        text "Code Review - Bohnd":
-            style "about_section_text"
-            xalign 0.0
-        text "UI Assets - Skolaztika":
-            style "about_section_text"
-            xalign 0.0
+                ## Licencia
+                text "License:":
+                    style "about_section_header"
+                    xalign 0.0
+                text "This game is licensed under CC BY-NC-SA 4.0, you can find information online, and in the game folder.":
+                    style "about_section_text"
+                    xalign 0.0
 
-        ## Licencia
-        text "License:":
-            style "about_section_header"
-            xalign 0.0
-        text "This game is licensed under CC BY-NC-SA 4.0, you can find information online, and in the game folder.":
-            style "about_section_text"
-            xalign 0.0
+                ## Espacio antes de Ren'Py
+                null height 60
 
-        ## Espacio antes de Ren'Py
-        null height 60
-
-        ## Créditos con versión de Ren'Py
-        text "Made with Ren'Py [renpy.version_only]":
-            style "about_credits"
-            xalign 0.0
+                ## Créditos con versión de Ren'Py
+                text "Made with Ren'Py [renpy.version_only]":
+                    style "about_credits"
+                    xalign 0.0
 
 
 
@@ -997,6 +996,46 @@ style about_instruction:
     size 28
     color "#314311"
     xalign 0.5
+
+
+## Worker Gender: warning after loading a save that has both genders ###########
+screen gender_filter_after_load_warning():
+    modal True
+    zorder 200
+    $ _filter_label = "Only Male" if persistent.worker_gender_filter == "male" else "Only Female"
+    add Solid("#000000cc")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 700
+        padding (30, 30)
+        background Solid("#2a2a1acc")
+        vbox:
+            spacing 20
+            label "Worker Gender filter" xalign 0.5 style "header_style"
+            text "This save has workers of both genders, but your filter is set to '[_filter_label]'. If you continue, workers of the other gender will be unassigned and sold or fired (you keep refunds for servants). For the best experience, start a new game.":
+                size 22
+                color "#e8e8e8"
+                text_align 0.5
+                xalign 0.5
+            null height 10
+            hbox:
+                xalign 0.5
+                spacing 30
+                textbutton "Go to Main Menu":
+                    action [SetVariable("_pending_gender_filter_load_warning", False), Hide("gender_filter_after_load_warning"), MainMenu()]
+                    text_size 24
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                textbutton "Continue playing":
+                    action [
+                        Function(remove_workers_of_other_gender_for_filter),
+                        SetVariable("_pending_gender_filter_load_warning", False),
+                        Hide("gender_filter_after_load_warning")
+                    ]
+                    text_size 24
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
 
 
 ## Load and Save screens #######################################################
@@ -1364,7 +1403,171 @@ screen preferences():
         hotbar (1053, 728, 372, 37) value Preference('voice volume')
         hotbar (1053, 816, 372, 37) value Preference('auto-forward time')
 
+    ## More Options button (bottom right) – opens second options page
+    textbutton _("More Options"):
+        xalign 1.0
+        yalign 1.0
+        xoffset -410
+        yoffset -150
+        text_size 28
+        text_color "#3c1f14"
+        text_hover_color "#6b6528"
+        action ShowMenu("more_options")
     ## NSFW toggle removed from Preferences (moved to About screen)
+
+
+## More Options screen (second options page) #####################################
+##
+## Shown when the player clicks "More Options" on the Preferences screen.
+## Uses the image in gui/Config (e.g. config_page2.png). Back returns to Preferences.
+
+screen more_options():
+
+    tag menu
+
+    add "gui/Config/config_page2.png"
+
+    ## Options tab: full-screen image with transparent background, "Options" tab in correct position
+    add "gui/Config/options_hover.png"
+
+    ## Close button (top-right): same as preferences – idle/hover from config images, not color overlay
+    imagebutton:
+        idle Transform("gui/Config/config_idle.png", crop=(1448, 183, 64, 65))
+        hover Transform("gui/Config/config_hover.png", crop=(1448, 183, 64, 65))
+        xpos 1448
+        ypos 183
+        action Return()
+
+    ## Options content: three clearly separated blocks (NSFW, Gender, Difficulty)
+    fixed:
+        xmaximum 900
+        ## NSFW: Enabled / Disabled – 30 px más abajo
+        vbox:
+            xpos 475
+            ypos 275
+            spacing 14
+            hbox:
+                spacing 20
+                $ _nsfw_on = persistent.nsfw_enabled
+                $ _c_en = "#6b6528" if _nsfw_on else "#3c1f14"
+                $ _c_off = "#6b6528" if not _nsfw_on else "#3c1f14"
+                textbutton "Enabled":
+                    text_color _c_en
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "nsfw_enabled", True)
+                textbutton "Disabled":
+                    text_color _c_off
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "nsfw_enabled", False)
+
+        ## Worker Gender: Both / Only Female / Only Male
+        vbox:
+            xpos 475
+            ypos 505
+            spacing 14
+            hbox:
+                spacing 18
+                $ _wg = persistent.worker_gender_filter
+                $ _cb = "#6b6528" if _wg == "both" else "#3c1f14"
+                $ _cf = "#6b6528" if _wg == "female" else "#3c1f14"
+                $ _cm = "#6b6528" if _wg == "male" else "#3c1f14"
+                textbutton "Both":
+                    text_color _cb
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "worker_gender_filter", "both")
+                textbutton "Only Female":
+                    text_color _cf
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action If(main_menu,
+                        SetField(persistent, "worker_gender_filter", "female"),
+                        Confirm(_("For the best experience with 'Only Female', start a new game. Workers of the other gender in your current save will remain (costs, assignments) but won't appear in lists. Go to Main Menu to start a new game?"),
+                            [SetField(persistent, "worker_gender_filter", "female"), MainMenu()],
+                            SetField(persistent, "worker_gender_filter", "female")))
+                textbutton "Only Male":
+                    text_color _cm
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action If(main_menu,
+                        SetField(persistent, "worker_gender_filter", "male"),
+                        Confirm(_("For the best experience with 'Only Male', start a new game. Workers of the other gender in your current save will remain (costs, assignments) but won't appear in lists. Go to Main Menu to start a new game?"),
+                            [SetField(persistent, "worker_gender_filter", "male"), MainMenu()],
+                            SetField(persistent, "worker_gender_filter", "male")))
+
+        ## Difficulty: Story / Easy / Normal / Hard
+        vbox:
+            xpos 475
+            ypos 720
+            spacing 14
+            $ _diff = getattr(persistent, "difficulty", "normal")
+            $ _hovered = getattr(store, "_about_hovered_difficulty", None)
+            $ _display_diff = _hovered if _hovered else _diff
+            $ _cs = "#6b6528" if _diff == "story" else "#3c1f14"
+            $ _ce = "#6b6528" if _diff == "easy" else "#3c1f14"
+            $ _cn = "#6b6528" if _diff == "normal" else "#3c1f14"
+            $ _ch = "#6b6528" if _diff == "hard" else "#3c1f14"
+            $ _diff_descriptions = {
+                "story": "Comfort ×5. Low economic pressure.",
+                "easy": "Capped failure losses (-20/-30/-40). Same costs as Normal.",
+                "normal": "Default balance.",
+                "hard": "Comfort ×30, building upkeep ×2. Higher costs."
+            }
+            hbox:
+                spacing 18
+                textbutton "Story":
+                    text_color _cs
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "difficulty", "story")
+                    hovered SetVariable("_about_hovered_difficulty", "story")
+                    unhovered SetVariable("_about_hovered_difficulty", None)
+                textbutton "Easy":
+                    text_color _ce
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "difficulty", "easy")
+                    hovered SetVariable("_about_hovered_difficulty", "easy")
+                    unhovered SetVariable("_about_hovered_difficulty", None)
+                textbutton "Normal":
+                    text_color _cn
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "difficulty", "normal")
+                    hovered SetVariable("_about_hovered_difficulty", "normal")
+                    unhovered SetVariable("_about_hovered_difficulty", None)
+                textbutton "Hard":
+                    text_color _ch
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "difficulty", "hard")
+                    hovered SetVariable("_about_hovered_difficulty", "hard")
+                    unhovered SetVariable("_about_hovered_difficulty", None)
+            text _diff_descriptions.get(_display_diff, _diff_descriptions["normal"]):
+                size 20
+                color "#5D2E1A"
+                xalign 0.0
+
+    textbutton _("Back"):
+        xalign 1.0
+        yalign 1.0
+        xoffset -410
+        yoffset -150
+        text_size 28
+        text_color "#3c1f14"
+        text_hover_color "#6b6528"
+        action ShowMenu("preferences")
 
 
 style pref_label is gui_label
@@ -2373,6 +2576,8 @@ style slider_slider:
 ################################################################################
 ### SCREEN DEFINITIONS
 ################################################################################
+# Blink highlight for context-menu manager name when there are pending skill points
+default manager_name_blink_highlight = False
 
 screen error_popup(message):
     modal True
@@ -2417,6 +2622,9 @@ screen choose_event_worker_screen(eligible_workers):
     zorder 100
     
     python:
+        # Apply Worker Gender filter so only matching workers are shown (no caller can forget)
+        eligible_workers = workers_filtered_by_gender(eligible_workers)
+        
         # Get the building name for the title
         building_type = ""
         building_name = ""
@@ -2541,9 +2749,11 @@ screen choose_worker_for_event(skill_name, threshold):
         skill_name = str(skill_name)  # Ensure skill_name is a string
         threshold = int(threshold)  # Ensure threshold is an integer
         eligible_workers = []
+        # Use gender-filtered roster (Worker Gender preference)
+        roster = workers_filtered_by_gender(store.workers)
         
         # Find workers with the required skill level
-        for worker in store.workers:
+        for worker in roster:
             # Check if worker has an assigned job and is available
             if worker.get("assigned_job") is not None:
                 # If we have a specific affected building, only include workers from that building
@@ -2651,7 +2861,7 @@ screen recruitment_event_screen(event, worker):
     add Solid("#000000dd")
     
     $ comfort_level = worker.get("comfort_level", worker.get("comfort_desired", 1))
-    $ daily_cost = worker.get("daily_cost", comfort_level * 20)
+    $ daily_cost = worker.get("daily_cost", comfort_level * get_difficulty_comfort_mult())
     
     $ description = event["description"].replace("[event_worker]", worker.get("name", "Unknown"))
     $ description = description.replace("[X]", "$" + str(daily_cost) + " (Comfort: " + str(comfort_level) + ")")
@@ -2897,6 +3107,10 @@ screen Building_select(worker):
                 style "nav_button_text"
                 xalign 0.5
                 action [Hide("Building_select"), Show("workers")]
+
+# Alias so workers screen can call Show("building_selection", worker=worker)
+screen building_selection(worker):
+    use Building_select(worker)
 
 screen job_selection(worker):
     zorder 99
@@ -3426,14 +3640,27 @@ screen manager_inventory(shop_mode=None):
             item_info = next((i for i in items_json["items"] if i["id"] == item_id), None)
             if item_info:
                 price = item_info.get("price", 0)
-                # Calculate how many we can afford (limited by multiplier)
-                max_affordable = store.money // price if price > 0 else multiplier
-                actual_qty = min(multiplier, max_affordable)
+                consume_on_purchase = item_info.get("consume_on_purchase", False)
+                purchase_effect = item_info.get("purchase_effect", "")
+                # Consume-on-purchase: only buy 1 at a time and apply effect instead of adding to inventory
+                if consume_on_purchase:
+                    actual_qty = min(1, store.money // price if price > 0 else 1)
+                else:
+                    max_affordable = store.money // price if price > 0 else multiplier
+                    actual_qty = min(multiplier, max_affordable)
                 if actual_qty > 0 and store.money >= price * actual_qty:
                     store.money -= price * actual_qty
-                    for _ in range(actual_qty):
-                        add_item_to_inventory(manager_inventory, item_id)
-                    renpy.notify(f"Bought {actual_qty}x {item_info.get('name', 'Unknown')} for ${price * actual_qty}")
+                    if consume_on_purchase:
+                        if purchase_effect == "manager_level_up":
+                            for _ in range(actual_qty):
+                                store.manager_level = getattr(store, "manager_level", 1) + 1
+                            renpy.notify(f"Manager Level up! (consumed {actual_qty}x {item_info.get('name', 'Unknown')})")
+                        else:
+                            renpy.notify(f"Consumed {actual_qty}x {item_info.get('name', 'Unknown')}")
+                    else:
+                        for _ in range(actual_qty):
+                            add_item_to_inventory(manager_inventory, item_id)
+                        renpy.notify(f"Bought {actual_qty}x {item_info.get('name', 'Unknown')} for ${price * actual_qty}")
                     # Track tutorial objective 5 - potion purchase
                     if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
                         store.potion_purchased = True
@@ -3476,9 +3703,20 @@ screen manager_inventory(shop_mode=None):
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
-        # Player title and name
-        text "[player_title] [player_name]" color "#3c1f14" size 20 italic True
-    
+        # Player title and name (click to open character sheet) — blink when pending skill points
+        if manager_has_unspent_skill_points():
+            timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
+        python:
+            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+        textbutton "[player_title] [player_name]":
+            action Show("manager_character_sheet")
+            text_color _manager_name_color
+            text_hover_color "#6b6528"
+            text_size 20
+            text_italic True
+            background None
+            hover_background None
+
     # Toggle button for test items (discrete, bottom-right)
     if shop_mode:
         button:
@@ -4367,8 +4605,15 @@ screen manager_inventory(shop_mode=None):
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
-        # Player title and name
-        text "[player_title] [player_name]" color "#3c1f14" size 20 italic True
+        # Player title and name (click to open character sheet)
+        textbutton "[player_title] [player_name]":
+            action Show("manager_character_sheet")
+            text_color "#3c1f14"
+            text_hover_color "#6b6528"
+            text_size 20
+            text_italic True
+            background None
+            hover_background None
 
 screen worker_selection_popup(panel, current_left, current_right, shop_mode=None):
     modal True
@@ -4421,7 +4666,7 @@ screen worker_selection_popup(panel, current_left, current_right, shop_mode=None
                         
                         vbox:
                             spacing 10
-                            for worker in store.workers:
+                            for worker in workers_filtered_by_gender(store.workers):
                                 textbutton "[worker['name']]":
                                     action [
                                         SetVariable("left_worker" if panel == "left" else "right_worker", worker),
@@ -4592,7 +4837,8 @@ screen building_type_selection(building_name):
                     vbox:
                         spacing 10
                         for btype in building_types_json.get("building_types", []):
-                            if btype.get("id") != "governor_castle":  # Castle is only obtained through ending
+                            # Castle only via ending; Academy and Arena are map-only, not assignable to generic buildings
+                            if btype.get("id") not in ("governor_castle", "academy", "arena"):
                                 textbutton "[btype['name']]":
                                     xsize 580
                                     text_size font_size(28)
@@ -4765,9 +5011,9 @@ screen confirm_sell_worker(worker, return_screen=None):
         # Calculate daily cost savings
         daily_cost = worker.get("daily_cost", 0)
         if daily_cost == 0:
-            # Fallback calculation if daily_cost not set
+            # Fallback calculation if daily_cost not set (use current difficulty)
             comfort_level = worker.get("comfort_level", 1)
-            daily_cost = comfort_level * 20
+            daily_cost = comfort_level * get_difficulty_comfort_mult()
         
         if worker.get("is_servant", False):
             refund = worker.get("level", 1) * 500
@@ -4843,7 +5089,7 @@ screen adjust_skill_bonus(building_name):
                     spacing 10
                 $ total_skill = building["skill"] + building["skill_bonus"]
                 $ fixed_cost = int(building["price"] * 0.01)
-                $ worker_costs = sum(worker["comfort_level"] * 20 for worker in building["assigned_servants"])
+                $ worker_costs = sum(worker["comfort_level"] * get_difficulty_comfort_mult() for worker in building["assigned_servants"])
                 $ current_bonus_cost = (building["skill_bonus"] // 10) * 100
                 $ current_total_cost = fixed_cost + worker_costs + current_bonus_cost
                 $ new_bonus_cost = ((building["skill_bonus"] + 10) // 10) * 100 if building["skill_bonus"] < 50 else current_bonus_cost
@@ -4893,6 +5139,8 @@ screen adjust_skill_bonus(building_name):
 screen Manager(building_name):
     zorder 5
     $ manager_servants = available_buildings.get(building_name, {}).get("assigned_servants", [])
+    # List filtered by Worker Gender (Only Male / Only Female) so Manager matches Manage Workers
+    $ _displayed_servants = workers_filtered_by_gender(manager_servants)
 
     # Building background adjusted to 1515px width to account for side panel
     # Exception: default.png shows at full size (1920x1080)
@@ -4924,8 +5172,19 @@ screen Manager(building_name):
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
-        # Player title and name
-        text "[player_title] [player_name]" color "#3c1f14" size 20 italic True
+        # Player title and name (click to open character sheet) — blink when pending skill points
+        if manager_has_unspent_skill_points():
+            timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
+        python:
+            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+        textbutton "[player_title] [player_name]":
+            action Show("manager_character_sheet")
+            text_color _manager_name_color
+            text_hover_color "#6b6528"
+            text_size 20
+            text_italic True
+            background None
+            hover_background None
 
     # Left panel: place behind the right context menu; reduced width and full height
     frame:
@@ -4948,20 +5207,23 @@ screen Manager(building_name):
                 $ default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
                 $ display_name = store.custom_names.get(building_name, default_name)
                 $ total_skill = building["skill"] + building["skill_bonus"]
-                $ capped_reputation = min(building["reputation"], 1000)
+                $ rep_cap = get_building_reputation_cap(building)
+                $ capped_reputation = min(building["reputation"], rep_cap)
                 $ rep_tier = get_reputation_tier(capped_reputation)
+                $ rep_is_capped = (capped_reputation >= rep_cap and rep_cap > 0)
                 # Calculate bonus stories based on typical formula (reputation / 100)
                 $ typical_bonus_stories = get_reputation_bonus_stories(capped_reputation, "reputation / 100")
                 hbox:
                     spacing 10
                     text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color "#7a4b2a"
                 $ fixed_cost = int(building["price"] * 0.01)
-                $ worker_costs = sum(worker["comfort_level"] * 20 for worker in manager_servants)
+                $ _comfort_mult = get_difficulty_comfort_mult()
+                $ worker_costs = sum(worker["comfort_level"] * _comfort_mult for worker in manager_servants)
                 $ bonus_cost = (building["skill_bonus"] // 10) * 100
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
                 text "Costs: $[total_costs] {size=18}(Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size=}" size font_size(24) color "#ffffff" xalign 0.0 yalign 0.5
                 text "Level: [building['base_level']]" size font_size(24) color "#ffffff" xalign 0.0
-                text "Reputation: [capped_reputation] - {b}[rep_tier]{/b}" size font_size(24) color "#ffffff" xalign 0.0
+                text "Reputation: [capped_reputation][rep_is_capped and ' (capped by building level)' or ''] - {b}[rep_tier]{/b}" size font_size(24) color "#ffffff" xalign 0.0
                 $ event_limit = building.get("event_limit", 0)
                 if typical_bonus_stories > 0:
                     if event_limit == 0:
@@ -5000,7 +5262,7 @@ screen Manager(building_name):
                         $ building_type_entry = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == building_type_id), None)
                         if building_type_entry is not None:
                             for profession in building_type_entry.get("professions", []):
-                                $ current_count = len([s for s in manager_servants if building["servant_jobs"].get(s["name"], "") == profession["id"]])
+                                $ current_count = len([s for s in _displayed_servants if building["servant_jobs"].get(s["name"], "") == profession["id"]])
                                 $ max_limit = get_max_daily_workers(building, profession)
                                 text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color "#7a4b2a"
                                 frame:
@@ -5042,7 +5304,7 @@ screen Manager(building_name):
                                                     ysize 50
                                                     text "Actions" size font_size(24) color "#7a4b2a"
                                                     sensitive False
-                                            for worker in [w for w in manager_servants if building["servant_jobs"].get(w["name"], "") == profession["id"]]:
+                                            for worker in [w for w in _displayed_servants if building["servant_jobs"].get(w["name"], "") == profession["id"]]:
                                                 $ worker_level = worker.get('level', 1)
                                                 hbox:
                                                     spacing 5
@@ -5237,7 +5499,7 @@ screen Manager(building_name):
                 textbutton "Storage":
                     action [
                         SetVariable("left_worker", None),
-                        SetVariable("right_worker", store.workers[0] if store.workers else False),
+                        SetVariable("right_worker", (workers_filtered_by_gender(store.workers)[0] if workers_filtered_by_gender(store.workers) else False)),
                         Show("manager_inventory")
                     ]
                     xsize 300
@@ -5408,6 +5670,215 @@ screen rename_building(building_name):
                         Show("error_popup", message="Name cannot be empty")
                     )
 
+## Manager Character Sheet (hoja de personaje del manager) — full-screen like worker_details
+screen manager_character_sheet():
+    modal True
+    zorder 99
+    default show_manager_benefits = False
+    $ _mgmt_keys_full = ["business_acumen", "whore_mastery", "combat_instruction", "servant_training", "gang_leader"]
+    $ _mgmt_keys = [k for k in _mgmt_keys_full if k != "whore_mastery" or getattr(persistent, "nsfw_enabled", False)]
+    $ _spent = sum(management_skills.get(k, 0) for k in _mgmt_keys)
+    $ _pending_d = getattr(store, "manager_pending_skills", None)
+    $ store.manager_pending_skills = _pending_d if isinstance(_pending_d, dict) else {}
+    $ _total_pending = sum(store.manager_pending_skills.get(k, 0) for k in _mgmt_keys)
+    $ _manager_remaining = manager_level - _spent - _total_pending
+    $ _skills_data_raw = [
+        ("business_acumen", "Business Acumen", "A keen eye for ledgers and opportunity. You turn every coin and every handshake into advantage.", "Each point adds +0.1 to the money multiplier in any context."),
+        ("whore_mastery", "Whore Mastery", "You know how to draw out the best in those who serve in the arts of pleasure. Your guidance sharpens their talents.", "Each point adds +5 to all sexual skills of all your workers."),
+        ("combat_instruction", "Combat Instruction", "You drill your people in the arts of war. Blades, fists, and readiness become second nature under your command.", "Each point adds +5 to Combat and +10 to max HP for all workers."),
+        ("servant_training", "Servant Training", "You instill discipline, grace, and devotion. Your household runs with quiet efficiency and loyalty.", "Each point adds +5 to Service and reduces max Rebelliousness by 10."),
+        ("gang_leader", "Gang Leader", "You run a tight crew. Your people move faster, last longer, and follow your lead without question.", "Each point adds +5 to Agility and +10 to max Energy for all workers."),
+    ]
+    $ _skills_data = [s for s in _skills_data_raw if s[0] != "whore_mastery" or getattr(persistent, "nsfw_enabled", False)]
+    add Solid("#000000dd")
+    fixed:
+        xfill True
+        yfill True
+        frame:
+            xalign 0.5
+            yalign 0.5
+            xsize 1.0
+            ysize 1.0
+            background Transform("gui/gallery.png", xysize=(1920, 1080))
+            padding (20, 20)
+            imagebutton:
+                idle Transform("gui/button/return_idle.png", zoom=0.5)
+                hover Transform("gui/button/return_hover.png", zoom=0.5)
+                action If(_total_pending > 0, Confirm("Your changes have not been saved. Do you want to continue?", [SetVariable("manager_pending_skills", {}), Hide("manager_character_sheet")], NullAction()), Hide("manager_character_sheet"))
+                xalign 1.0
+                yalign 0.0
+                xoffset -125
+                yoffset 125
+            hbox:
+                spacing 40
+                xfill True
+                yfill True
+                xoffset 150
+                yoffset 150
+                # Left: portrait, then name, then level and explanation (fixed width so Benefits panel doesn't push)
+                vbox:
+                    spacing 8
+                    xalign 0.0
+                    yalign 0.0
+                    xmaximum 260
+                    frame:
+                        background Solid("#1a1a1acc")
+                        xsize 260
+                        ysize 260
+                        padding (2, 2)
+                        xalign 0.0
+                        yalign 0.0
+                        if get_manager_portrait():
+                            add get_manager_portrait():
+                                xsize 256
+                                ysize 256
+                                fit "contain"
+                                xalign 0.5
+                                yalign 0.5
+                        else:
+                            vbox:
+                                xalign 0.5
+                                yalign 0.5
+                                spacing 4
+                                xmaximum 240
+                                text "No portrait" size font_size(20) color "#ffffff" bold True xalign 0.5
+                                text "Character portrait (256×256). Place lord.png or lady.png in game/images/manager_portraits/ for a custom look." size font_size(14) color "#ffffff" xalign 0.5 text_align 0.5
+                    label "[player_title] [player_name]" xalign 0.0 style "header_style" text_size font_size(38)
+                    hbox:
+                        spacing 12
+                        xalign 0.0
+                        text "Level [manager_level]" size font_size(26) color "#6b6528" bold True yalign 0.5
+                        textbutton "Benefits":
+                            text_size font_size(20)
+                            text_color "#5a4a2a"
+                            text_hover_color "#6b6528"
+                            action ToggleScreenVariable("show_manager_benefits")
+                            yalign 0.5
+                            background None
+                            hover_background None
+                            padding (8, 4)
+                    if show_manager_benefits:
+                        frame:
+                            background Solid("#00000033")
+                            padding (16, 14)
+                            xsize 256
+                            xalign 0.0
+                            vbox:
+                                spacing 8
+                                xmaximum 224
+                                $ _manager_rep_cap = min(1000, manager_level * 200)
+                                text "Your building's reputation can go to [_manager_rep_cap] without upgrading the building's level." size font_size(18) color "#5a4a2a" xalign 0.0
+                                $ _benefit_lines = []
+                                $ _v = management_skills.get("business_acumen", 0)
+                                if _v > 0:
+                                    $ _benefit_lines.append("+%.1f to money multiplier in any context." % (_v * 0.1))
+                                if getattr(persistent, "nsfw_enabled", False):
+                                    $ _v = management_skills.get("whore_mastery", 0)
+                                    if _v > 0:
+                                        $ _benefit_lines.append("+%d to all sexual skills of all workers." % (_v * 5))
+                                $ _v = management_skills.get("combat_instruction", 0)
+                                if _v > 0:
+                                    $ _benefit_lines.append("+%d Combat, +%d max HP for all workers." % (_v * 5, _v * 10))
+                                $ _v = management_skills.get("servant_training", 0)
+                                if _v > 0:
+                                    $ _benefit_lines.append("+%d Service, -%d max Rebelliousness for all workers." % (_v * 5, _v * 10))
+                                $ _v = management_skills.get("gang_leader", 0)
+                                if _v > 0:
+                                    $ _benefit_lines.append("+%d Agility, +%d max Energy for all workers." % (_v * 5, _v * 10))
+                                if _benefit_lines:
+                                    text "\n".join(_benefit_lines) size font_size(18) color "#5a4a2a" xalign 0.0
+                # Right: skills only
+                vbox:
+                    spacing 20
+                    xfill True
+                    yalign 0.0
+                    hbox:
+                        spacing 12
+                        text "Management Skills" size font_size(30) color "#7a4b2a" bold True xalign 0.0
+                        if manager_level - _spent > 0:
+                            text "(Please assign remaining skill points: [manager_level - _spent][_total_pending > 0 and ' (' + str(_total_pending) + ' pending)' or ''])" size font_size(24) color "#6b6528" italic True yalign 0.5
+                    null height 6
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        draggable True
+                        ysize 640
+                        xsize 1280
+                        vbox:
+                            spacing 22
+                            for skill_id, skill_name, flavor, mechanics in _skills_data:
+                                $ val = management_skills.get(skill_id, 0)
+                                $ preview = store.manager_pending_skills.get(skill_id, 0)
+                                $ show_val = val + preview
+                                frame:
+                                    background Solid("#00000033")
+                                    padding (16, 14)
+                                    xsize 1280
+                                    hbox:
+                                        spacing 16
+                                        vbox:
+                                            spacing 6
+                                            xmaximum 1150
+                                            xfill True
+                                            hbox:
+                                                spacing 8
+                                                text "[skill_name]" size font_size(26) color "#7a4b2a"
+                                                text " [show_val]" size font_size(26) color "#6b6528"
+                                            text "[flavor]" size font_size(22) color "#5a4a2a" xalign 0.0 italic True
+                                            text "[mechanics]" size font_size(20) color "#4a3a1a" xalign 0.0
+                                        if _manager_remaining > 0:
+                                            textbutton "+":
+                                                text_size font_size(64)
+                                                text_color "#3c2a1a"
+                                                text_hover_color "#6b6528"
+                                                text_selected_color "#6b6528"
+                                                action Function(add_pending_management_skill, skill_id)
+                                                xalign 1.0
+                                                yalign 0.5
+                                                background None
+                                                hover_background None
+                                                selected_background None
+                                                selected (store.manager_pending_skills.get(skill_id, 0) > 0)
+                                                padding (16, 12)
+                                                xsize 72
+                                                ysize 72
+            if _total_pending > 0:
+                textbutton "Confirm":
+                    text_size font_size(28)
+                    text_color "#3c2a1a"
+                    text_hover_color "#6b6528"
+                    action Function(confirm_all_management_skill_points)
+                    xalign 1.0
+                    yalign 1.0
+                    xoffset -180
+                    yoffset -115
+                    background None
+                    hover_background None
+                    padding (8, 4)
+
+screen manager_levelup_benefit():
+    modal True
+    zorder 200
+    frame:
+        xalign 0.5
+        yalign 0.35
+        background Solid("#00000099")
+        padding (28, 24)
+        xsize 520
+        vbox:
+            spacing 10
+            xalign 0.5
+            text "Manager Level up!" size font_size(28) color "#006600" bold True xalign 0.5
+            text "You have 1 additional skill point to assign." size font_size(18) color "#006600" xalign 0.5
+            null height 8
+            textbutton "Continue":
+                xalign 0.5
+                text_size font_size(24)
+                text_color "#3c2a1a"
+                text_hover_color "#6b6528"
+                action Return()
+                padding (20, 10)
+
 screen buy_buildings():
     modal True
     zorder 99
@@ -5522,6 +5993,459 @@ screen recruitment_menu():
                             Show("error_popup", message="You can only recruit once per day"))
                         sensitive can_recruit_today
             
+
+screen in_development():
+    ## Panel "In development" para ubicaciones del mapa aún no implementadas (Murderhouse, Academy, Arena).
+    modal True
+    zorder 100
+    add Solid("#00000099")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Frame("gui/frame.png", 20, 20)
+        xpadding 40
+        ypadding 30
+        xminimum 400
+        yminimum 180
+        vbox:
+            spacing 20
+            label "In development" xalign 0.5 style "header_style"
+            text "This location is not available yet. Come back in a future update!" size font_size(22) xalign 0.5 color "#7a4b2a" text_align 0.5
+            textbutton "Close":
+                xalign 0.5
+                text_size font_size(24)
+                text_color "#7a4b2a"
+                text_hover_color "#6b6528"
+                action Hide("in_development")
+
+# Academy director: kept for later "Visit the Academy Director" content. Tuition flow uses label academy_tuition_dialogue (say + menu).
+default academy_director_intro_done = False
+
+screen academy_first_dialogue():
+    ## Reserved for future "Visit director" dialogue. Tuition uses Ren'Py say + menu in academy_tuition_dialogue.
+    modal True
+    zorder 101
+    # Full-screen background (same as recruitment events)
+    $ academy_bg = "images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else getattr(store, "event_bg", "images/event_bg.png")
+    add academy_bg
+    add Solid("#000000dd")
+    imagebutton:
+        idle Transform("gui/button/return_idle.png", zoom=0.5)
+        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        xalign 1.0
+        yalign 0.0
+        xoffset -15
+        yoffset 5
+        action [SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("map_screen")]
+    # One box: speaker, text, and choices (like recruitment)
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Solid("#1a1a1acc")
+        padding (30, 30)
+        xsize 800
+        vbox:
+            xfill True
+            spacing 20
+            text "Academy Director" size font_size(24) color "#c9a227" bold True xalign 0.0
+            null height 5
+            text "Welcome, traveller. I am the Academy Director. Our institution offers structured courses in Academics, Amatory Arts, and Hospitality. Your workers may attend and gain experience under our teachers." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
+            text "\"To enrol your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here.\"" size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
+            null height 15
+            text "What will you do?" size font_size(22) color "#ffdd88" xalign 0.0 italic True
+            null height 10
+            vbox:
+                spacing 12
+                textbutton "Pay the tuition ($15,000)":
+                    xsize 700
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action If(store.money >= 15000,
+                        [Function(store.add_academy_building), SetVariable("money", store.money - 15000), SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("academy_menu")],
+                        Show("error_popup", message="You need $15,000 to pay the tuition.")
+                    )
+                    sensitive (store.money >= 15000)
+                if store.academy_haggle_available:
+                    textbutton "Try to haggle (50% chance: $7,500; if it fails, locked until tomorrow)":
+                        xsize 700
+                        text_size font_size(19)
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action If(store.money >= 7500,
+                            [Function(academy_try_haggle_and_continue)],
+                            Show("error_popup", message="You need at least $7,500 to try haggling.")
+                        )
+                        sensitive (store.money >= 7500)
+                textbutton "Leave":
+                    xsize 700
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action [SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("map_screen")]
+
+screen academy_menu():
+    ## Academy main menu (after enrolled): Send workers / Visit director / Attend class.
+    modal True
+    zorder 101
+    add Solid("#000000dd")
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+            action [Hide("academy_menu"), Show("map_screen")]
+        vbox:
+            spacing 20
+            null height 15
+            label "Academy" xalign 0.5 style "header_style"
+            hbox:
+                spacing 0
+                null width 28
+                vbox:
+                    spacing 20
+                    text "Scholars and tutors await within—whether you wish to assign workers to a course, speak with the director, or lose yourself in the library." size font_size(22) xalign 0.0 color "#7a4b2a" text_align 0.0 xmaximum 520
+                    null height 15
+                    vbox:
+                        spacing 12
+                        textbutton "Train workers":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_menu"), Show("academy_training_menu")]
+                        textbutton "Visit director":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_menu"), Show("in_development")]
+                        textbutton "Visit the library":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_menu"), Show("in_development")]
+
+screen academy_training_menu():
+    ## Choose course: Academics / Amatory Arts / Hospitality Arts. Options also in Manage Workers.
+    modal True
+    zorder 102
+    add Solid("#000000dd")
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+            action [Hide("academy_training_menu"), Hide("academy_menu"), Show("map_screen")]
+        vbox:
+            spacing 16
+            vbox:
+                xoffset 15
+                spacing 16
+                null height 10
+                label "Train workers" xalign 0.5 style "header_style"
+                text "Choose a course. You will be taken to Manage Workers to assign workers to the Academy and select their course. These options will also be available from Manage Workers—assign a worker to the Academy there and choose their course." size font_size(23) xalign 0.5 color "#6a5a3a" text_align 0.5 xmaximum 580
+                null height 8
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                ysize 440
+                xsize 635
+                hbox:
+                    spacing 0
+                    null width 28
+                    vbox:
+                        spacing 14
+                        xsize 535
+                        textbutton "Academics":
+                            xsize 515
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Academics as their lesson in Manage Workers.")]
+                        text "Scholars and tutors here focus on wit and logic. Each day, the curriculum emphasises Clever and one other discipline chosen at random—so the mind stays sharp and versatile." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
+                        null height 4
+                        textbutton "Amatory Arts":
+                            xsize 515
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Amatory Arts as their lesson in Manage Workers.")]
+                        text "The arts of intimacy are taught in discrete modules. Each lesson centres on one discipline—from core intimacy to dance and seduction—and touches one other at the tutors' choice, so progress stays focused but varied." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
+                        null height 4
+                        textbutton "Hospitality Arts":
+                            xsize 515
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Hospitality Arts as their lesson in Manage Workers.")]
+                        text "Students learn to put guests at ease and tend to their needs. Training is split between Charm—presence and words—and Service—attentiveness and care—so they become reliable in both manner and deed." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
+
+# Arena: choose a worker for the trial by combat (any worker, show Combat skill).
+screen choose_worker_for_arena_trial():
+    modal True
+    zorder 100
+    python:
+        eligible_workers = workers_filtered_by_gender(list(store.workers))
+    add Solid("#000000dd")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))
+        padding (40, 40)
+        xsize 800
+        ysize 720
+        vbox:
+            spacing 15
+            null height 15
+            label "Choose a combatant for the arena trial" xalign 0.5 style "header_style"
+            text "The trial may be to the death. Choose a worker to send into the sands." size font_size(20) color "#7a4b2a" xalign 0.5 text_align 0.5 xmaximum 700
+            null height 10
+            if not eligible_workers:
+                text "You have no workers to send." color "#a63c3c" xalign 0.5 text_align 0.5 size 20
+                textbutton "Back":
+                    xalign 0.5
+                    xsize 200
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action [SetVariable("_arena_chosen_worker", None), Return(False)]
+            else:
+                vbox:
+                    xoffset 50
+                    spacing 10
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        draggable True
+                        ysize 480
+                        xsize 630
+                        vbox:
+                            spacing 10
+                            for worker in eligible_workers:
+                                $ worker_combat = calculate_skill_with_traits(worker, "Combat")
+                                textbutton "[worker['name']] (Combat: [worker_combat])":
+                                    xsize 620
+                                    text_size font_size(25)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action [Hide("choose_worker_for_arena_trial"), Function(renpy.call_in_new_context, "arena_run_trial_and_result", worker["name"])]
+        # Close button: top-right inside the frame (drawn on top)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action [SetVariable("_arena_chosen_worker", None), Return(False)]
+            xalign 1.0
+            yalign 0.0
+            xoffset -45
+            yoffset 5
+
+# Arena: result dialogue (two lines + Continue). Called from arena_run_trial_and_result so dialogue always shows.
+screen arena_trial_result(line1, line2):
+    modal True
+    zorder 102
+    $ _arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png"
+    add _arena_bg
+    add Solid("#00000099")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))
+        padding (50, 50)
+        xsize 750
+        ysize 400
+        vbox:
+            spacing 25
+            text line1 size font_size(22) color "#7a4b2a" text_align 0.5 xalign 0.5 xmaximum 650
+            text line2 size font_size(22) color "#7a4b2a" text_align 0.5 xalign 0.5 xmaximum 650
+            null height 20
+            textbutton "Continue":
+                xalign 0.5
+                xsize 220
+                text_size font_size(24)
+                text_color "#7a4b2a"
+                text_hover_color "#6b6528"
+                action Return()
+
+# Arena: first dialogue screen (optional overlay; main flow uses label arena_first_dialogue).
+# Matches the label flow: Lanista permit, pay, then combatant choice via Call.
+default arena_intro_done = False
+
+screen arena_first_dialogue():
+    modal True
+    zorder 101
+    $ arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else getattr(store, "event_bg", "images/event_bg.png")
+    add arena_bg
+    add Solid("#000000dd")
+    imagebutton:
+        idle Transform("gui/button/return_idle.png", zoom=0.5)
+        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        xalign 1.0
+        yalign 0.0
+        xoffset -15
+        yoffset 5
+        action [SetVariable("arena_intro_done", False), Hide("arena_first_dialogue"), Show("map_screen")]
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Solid("#1a1a1acc")
+        padding (30, 30)
+        xsize 800
+        vbox:
+            xfill True
+            spacing 20
+            text "Arena Promoter" size font_size(24) color "#c9a227" bold True xalign 0.0
+            null height 5
+            text "Welcome to the coliseum. To operate gladiators here you need a Lanista permit." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
+            text "The permit costs [LANISTA_PERMIT_COST] coins. Pay once and we can discuss proof of worth—a trial by combat." size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
+            null height 15
+            text "What will you do?" size font_size(22) color "#ffdd88" xalign 0.0 italic True
+            null height 10
+            vbox:
+                spacing 12
+                if store.money >= LANISTA_PERMIT_COST:
+                    textbutton "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins).":
+                        xsize 700
+                        text_size font_size(20)
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action [SetVariable("money", store.money - LANISTA_PERMIT_COST), SetVariable("arena_lanista_paid", True), Hide("arena_first_dialogue"), Call("arena_combatant_menu")]
+                else:
+                    textbutton "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins).":
+                        xsize 700
+                        text_size font_size(20)
+                        text_color "#7a4b2a"
+                        text_hover_color "#6b6528"
+                        action Show("error_popup", message="You do not have enough coins.")
+                textbutton "Leave":
+                    xsize 700
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action [SetVariable("arena_intro_done", False), Hide("arena_first_dialogue"), Show("map_screen")]
+
+screen arena_menu():
+    modal True
+    zorder 101
+    add Solid("#000000dd")
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+            action [Hide("arena_menu"), Show("map_screen")]
+        vbox:
+            spacing 20
+            null height 15
+            label "Arena" xalign 0.5 style "header_style"
+            hbox:
+                spacing 0
+                null width 28
+                vbox:
+                    spacing 20
+                    text "Combat and spectacle await—assign workers to train as gladiators or to perform before the crowd. (To be developed.)" size font_size(22) xalign 0.0 color "#7a4b2a" text_align 0.0 xmaximum 520
+                    null height 15
+                    vbox:
+                        spacing 12
+                        textbutton "Train workers":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("arena_menu"), Show("arena_training_menu")]
+                        textbutton "Visit promoter":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("arena_menu"), Show("in_development")]
+                        textbutton "Watch the fights":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("arena_menu"), Show("in_development")]
+
+screen arena_training_menu():
+    modal True
+    zorder 102
+    add Solid("#000000dd")
+    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background None
+        xsize 720
+        ysize 720
+        padding (40, 40)
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            xalign 1.0
+            yalign 0.0
+            xoffset -15
+            yoffset 5
+            action [Hide("arena_training_menu"), Hide("arena_menu"), Show("map_screen")]
+        vbox:
+            spacing 16
+            vbox:
+                xoffset 15
+                spacing 16
+                null height 10
+                label "Train workers" xalign 0.5 style "header_style"
+                text "Choose a role. You will be taken to Manage Workers to assign workers to the Arena and select their role. (To be developed.)" size font_size(23) xalign 0.5 color "#6a5a3a" text_align 0.5 xmaximum 580
+                null height 8
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                ysize 440
+                xsize 635
+                hbox:
+                    spacing 0
+                    null width 28
+                    vbox:
+                        spacing 14
+                        xsize 535
+                        textbutton "Gladiator":
+                            xsize 515
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("arena_training_menu"), Hide("arena_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Arena and choose Gladiator as their role in Manage Workers.")]
+                        text "Fight or perform in the arena. Train Combat and face the crowd. (To be developed.)" size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
 
 screen buy_map_building(map_button_id):
     # Pantalla para comprar un edificio del mapa y convertirlo en un negocio.
@@ -5690,35 +6614,36 @@ screen buy_servants_table():
                     sensitive can_refresh
             null height 10
             
-            # Gender filter (same idea as item category filter in inventory) - selected filter in hover green
-            python:
-                _gf = getattr(store, "buy_servants_filter_gender", None)
-                _color_all = "#6b6528" if _gf is None else "#7a4b2a"
-                _color_male = "#6b6528" if _gf == "male" else "#7a4b2a"
-                _color_female = "#6b6528" if _gf == "female" else "#7a4b2a"
-            hbox:
-                xalign 0.5
-                spacing 15
-                text "Filter: " size font_size(22) color "#7a4b2a" yalign 0.5
-                textbutton "All":
-                    style "game_menu_button"
-                    text_size font_size(20)
-                    text_color _color_all
-                    text_hover_color "#6b6528"
-                    action [SetVariable("buy_servants_filter_gender", None), Function(renpy.restart_interaction)]
-                textbutton "Male":
-                    style "game_menu_button"
-                    text_size font_size(20)
-                    text_color _color_male
-                    text_hover_color "#6b6528"
-                    action [SetVariable("buy_servants_filter_gender", "male"), Function(renpy.restart_interaction)]
-                textbutton "Female":
-                    style "game_menu_button"
-                    text_size font_size(20)
-                    text_color _color_female
-                    text_hover_color "#6b6528"
-                    action [SetVariable("buy_servants_filter_gender", "female"), Function(renpy.restart_interaction)]
-            null height 5
+            # Gender filter only when global Worker Gender is "Both"; hidden for "Only Male" / "Only Female"
+            if getattr(persistent, "worker_gender_filter", "both") == "both":
+                python:
+                    _gf = getattr(store, "buy_servants_filter_gender", None)
+                    _color_all = "#6b6528" if _gf is None else "#7a4b2a"
+                    _color_male = "#6b6528" if _gf == "male" else "#7a4b2a"
+                    _color_female = "#6b6528" if _gf == "female" else "#7a4b2a"
+                hbox:
+                    xalign 0.5
+                    spacing 15
+                    text "Filter: " size font_size(22) color "#7a4b2a" yalign 0.5
+                    textbutton "All":
+                        style "game_menu_button"
+                        text_size font_size(20)
+                        text_color _color_all
+                        text_hover_color "#6b6528"
+                        action [SetVariable("buy_servants_filter_gender", None), Function(renpy.restart_interaction)]
+                    textbutton "Male":
+                        style "game_menu_button"
+                        text_size font_size(20)
+                        text_color _color_male
+                        text_hover_color "#6b6528"
+                        action [SetVariable("buy_servants_filter_gender", "male"), Function(renpy.restart_interaction)]
+                    textbutton "Female":
+                        style "game_menu_button"
+                        text_size font_size(20)
+                        text_color _color_female
+                        text_hover_color "#6b6528"
+                        action [SetVariable("buy_servants_filter_gender", "female"), Function(renpy.restart_interaction)]
+                null height 5
             
             # Header row (outside the viewport)
             fixed:
@@ -5756,10 +6681,14 @@ screen buy_servants_table():
                         sensitive False
                 
             
-            # Main content area without scroll (filter by gender like item filter)
+            # Main content area: when global Worker Gender is Only Male/Female, list is already filtered; else use local filter
             python:
-                _gender_filter = getattr(store, "buy_servants_filter_gender", None)
-                filtered_displayed_workers = [w for w in displayed_workers if (_gender_filter is None or w.get("gender") == _gender_filter)]
+                _global_gender = getattr(persistent, "worker_gender_filter", "both")
+                if _global_gender != "both":
+                    filtered_displayed_workers = list(displayed_workers)
+                else:
+                    _gender_filter = getattr(store, "buy_servants_filter_gender", None)
+                    filtered_displayed_workers = [w for w in displayed_workers if (_gender_filter is None or w.get("gender") == _gender_filter)]
             if not filtered_displayed_workers and displayed_workers:
                 text "No workers match the selected filter." size font_size(22) color "#7a4b2a" xalign 0.5
             else:
@@ -6433,7 +7362,7 @@ screen adjust_comfort(worker):
         
         $ current_comfort = worker["comfort_level"]
         $ current_comfort_desired = worker.get("comfort_desired", 1)
-        $ current_daily_cost = current_comfort * 20
+        $ current_daily_cost = current_comfort * get_difficulty_comfort_mult()
         $ current_relationship = worker.get("relationship", 10 + current_comfort)
         
         vbox:
@@ -6494,8 +7423,9 @@ screen adjust_comfort(worker):
                                 text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                                 sensitive current_comfort > 1
                     
-                    $ next_daily_cost = (current_comfort + 1) * 20 if current_comfort < 20 else current_daily_cost
-                    $ prev_daily_cost = max(1, current_comfort - 1) * 20 if current_comfort > 1 else current_daily_cost
+                    $ _comfort_mult = get_difficulty_comfort_mult()
+                    $ next_daily_cost = (current_comfort + 1) * _comfort_mult if current_comfort < 20 else current_daily_cost
+                    $ prev_daily_cost = max(1, current_comfort - 1) * _comfort_mult if current_comfort > 1 else current_daily_cost
                     
                     if current_comfort < 20:
                         text "Next Level Cost: $[next_daily_cost]/day" size font_size(24) color "#444444" xalign 0.0
@@ -6672,7 +7602,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
     $ worker = ensure_worker_defaults(worker)
     $ sell_text = get_sell_text(worker)
     $ comfort_level = worker.get("comfort_level", 1)
-    $ daily_cost = comfort_level * 20
+    $ daily_cost = comfort_level * get_difficulty_comfort_mult()
     default current_image = get_worker_image(worker)
     default panel_mode = current_panel_mode
 
@@ -6734,8 +7664,10 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                         else:
                             text "No Image Available" color "#ffffff" xalign 0.5 yalign 0.5
                     
-                    # Navigation Buttons (below image)
+                    # Navigation Buttons (below image) - use gender-filtered roster for prev/next
                     if in_roster:
+                        $ _roster_list = workers_filtered_by_gender(store.workers)
+                        $ _roster_idx = next((i for i, w in enumerate(_roster_list) if w.get("name") == worker.get("name")), 0)
                         hbox:
                             xalign 0.5
                             xoffset 90
@@ -6746,10 +7678,10 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 text_size font_size(37)
                                 text_color "#2a150d"
                                 text_hover_color "#6b6528"
-                                action If(len(workers) > 0, [
-                                    SetVariable("current_worker_index", (current_worker_index - 1) % len(workers)),
-                                    SetScreenVariable("current_image", get_worker_image(workers[(current_worker_index - 1) % len(workers)])),
-                                    Show("worker_details", worker=workers[(current_worker_index - 1) % len(workers)], in_roster=True)
+                                action If(len(_roster_list) > 0, [
+                                    SetVariable("current_worker_index", (_roster_idx - 1) % len(_roster_list)),
+                                    SetScreenVariable("current_image", get_worker_image(_roster_list[(_roster_idx - 1) % len(_roster_list)])),
+                                    Show("worker_details", worker=_roster_list[(_roster_idx - 1) % len(_roster_list)], in_roster=True)
                                 ])
                                 hovered ShowTransient("tooltip", message="Navigate to previous worker in your roster.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
@@ -6758,10 +7690,10 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 text_size font_size(37)
                                 text_color "#2a150d"
                                 text_hover_color "#6b6528"
-                                action If(len(workers) > 0, [
-                                    SetVariable("current_worker_index", (current_worker_index + 1) % len(workers)),
-                                    SetScreenVariable("current_image", get_worker_image(workers[(current_worker_index + 1) % len(workers)])),
-                                    Show("worker_details", worker=workers[(current_worker_index + 1) % len(workers)], in_roster=True)
+                                action If(len(_roster_list) > 0, [
+                                    SetVariable("current_worker_index", (_roster_idx + 1) % len(_roster_list)),
+                                    SetScreenVariable("current_image", get_worker_image(_roster_list[(_roster_idx + 1) % len(_roster_list)])),
+                                    Show("worker_details", worker=_roster_list[(_roster_idx + 1) % len(_roster_list)], in_roster=True)
                                 ])
                                 hovered ShowTransient("tooltip", message="Navigate to next worker in your roster.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
@@ -7163,6 +8095,9 @@ screen workers():
     add workers_bg
     add Solid("#00000099")
     
+    # Roster list filtered by Worker Gender preference (Both / Only Male / Only Female)
+    $ _displayed_roster = workers_filtered_by_gender(store.workers)
+    
     frame:
         xalign 0.5  # Center the frame horizontally
         yalign 0.5  # Center the frame vertically
@@ -7206,7 +8141,7 @@ screen workers():
                         if not hasattr(store, 'worker_building_filter') or store.worker_building_filter is None:
                             store.worker_building_filter = "All Workers"
                         unique_buildings = ["All Workers"]
-                        for worker in workers:
+                        for worker in _displayed_roster:
                             building_name = worker.get('assigned_building', 'Unassigned')
                             # Obtener el nombre de display del edificio
                             building = available_buildings.get(building_name, {})
@@ -7261,7 +8196,7 @@ screen workers():
                                     selected_building_internal = bname
                                     break
                         
-                        for worker in workers:
+                        for worker in _displayed_roster:
                             building_name = worker.get('assigned_building', 'Unassigned')
                             
                             # Si hay building seleccionado, solo mostrar jobs de ese building
@@ -7363,7 +8298,7 @@ screen workers():
                             store.worker_job_filter = "All Jobs"
                         
                         filtered_workers = []
-                        for worker in workers:
+                        for worker in _displayed_roster:
                             # Filtro por edificio
                             building_match = True
                             if worker_building_filter != "All Workers":
@@ -7847,6 +8782,33 @@ screen map_screen():
         )
         unhovered Hide("tooltip")
     
+    # N6 Murderhouse - "In development" (NewMap: N6murderhousea.png, N6murderhouseb.png hover)
+    imagebutton:
+        idle "gui/map/N6murderhousea.png"
+        hover "gui/map/N6murderhouseb.png"
+        focus_mask True
+        action Show("in_development")
+        hovered ShowTransient("tooltip", message="In development")
+        unhovered Hide("tooltip")
+    
+    # N5 Academy - Tuition uses Ren'Py say + menu (same format as recruitment). When enrolled, show academy menu.
+    imagebutton:
+        idle "gui/map/N5academya.png"
+        hover "gui/map/N5academyb.png"
+        focus_mask True
+        action If(store.academy_enrolled, Show("academy_menu"), [Hide("map_screen"), Call("academy_tuition_dialogue")])
+        hovered ShowTransient("tooltip", message="Academy" if store.academy_enrolled else "Academy (enrol to unlock)")
+        unhovered Hide("tooltip")
+    
+    # Arena - first visit: dialogue; after unlock: arena menu (like Academy).
+    imagebutton:
+        idle "gui/map/arenaa.png"
+        hover "gui/map/arenab.png"
+        focus_mask True
+        action If(store.arena_unlocked, Show("arena_menu"), [Hide("map_screen"), Call("arena_first_dialogue")])
+        hovered ShowTransient("tooltip", message="Arena" if store.arena_unlocked else "Arena (enter to unlock)")
+        unhovered Hide("tooltip")
+    
     # Castle - renders on top of N5 Tavern
     imagebutton:
         idle "gui/map/Castlea.png"
@@ -7912,8 +8874,19 @@ screen map_screen():
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
-        # Player title and name
-        text "[player_title] [player_name]" color "#3c1f14" size 20 italic True
+        # Player title and name (click to open character sheet) — blink when pending skill points
+        if manager_has_unspent_skill_points():
+            timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
+        python:
+            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+        textbutton "[player_title] [player_name]":
+            action Show("manager_character_sheet")
+            text_color _manager_name_color
+            text_hover_color "#6b6528"
+            text_size 20
+            text_italic True
+            background None
+            hover_background None
     
     # Context menu - placed at the end to render on top of all map buttons
     frame:
@@ -8120,7 +9093,8 @@ screen daily_report():
                                 continue
                         
                         fixed_cost = int(building.get("price", 0) * 0.01)
-                        worker_costs = sum(worker.get("comfort_level", 1) * 20 for worker in building.get("assigned_servants", []))
+                        _cm = get_difficulty_comfort_mult()
+                        worker_costs = sum(worker.get("comfort_level", 1) * _cm for worker in building.get("assigned_servants", []))
                         bonus_cost = (building.get("skill_bonus", 0) // 10) * 100
                         daily_total_costs += fixed_cost + worker_costs + bonus_cost
                     
@@ -8816,8 +9790,19 @@ screen tavern():
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
-        # Player title and name
-        text "[player_title] [player_name]" color "#3c1f14" size 20 italic True
+        # Player title and name (click to open character sheet) — blink when pending skill points
+        if manager_has_unspent_skill_points():
+            timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
+        python:
+            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+        textbutton "[player_title] [player_name]":
+            action Show("manager_character_sheet")
+            text_color _manager_name_color
+            text_hover_color "#6b6528"
+            text_size 20
+            text_italic True
+            background None
+            hover_background None
 
 style tavern_frame:
     background "#00000080"  # Semi-transparent black

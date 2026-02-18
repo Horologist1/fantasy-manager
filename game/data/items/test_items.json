@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "id": "test_manager_level",
+      "name": "Test Manager Level",
+      "display_name": "Test Manager Level",
+      "type": "consumable",
+      "description": "Test item: consumed on purchase. Raises Manager level by 1 and grants 1 skill point to assign.",
+      "price": 1,
+      "weight": 0,
+      "consume_on_purchase": true,
+      "purchase_effect": "manager_level_up"
+    }
+  ]
+}

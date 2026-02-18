@@ -808,9 +808,14 @@ label show_ending_assassination:
     "My revenge is complete. But my ambition? That is only beginning."
     
     "The sun rises on a new day, and I am its master."
+    benefit_msg "Manager level up."
     
     $ renpy.log("DEBUG: show_ending_assassination - EPIC ENDING COMPLETE")
     $ tutorial_active = False
+    
+    # Manager level up (increment, so other sources can have raised level already)
+    $ store.manager_level = getattr(store, 'manager_level', 1) + 1
+    call screen manager_levelup_benefit
     
     # Unlock the Governor's Castle
     python:
@@ -936,9 +941,14 @@ label show_ending_blackmail:
     "My revenge is complete. But my ambition? That is only beginning."
     
     "The sun rises on a new day, and I am its master."
+    benefit_msg "Manager level up."
     
     $ renpy.log("DEBUG: show_ending_blackmail - EPIC ENDING COMPLETE")
     $ tutorial_active = False
+    
+    # Manager level up (increment, so other sources can have raised level already)
+    $ store.manager_level = getattr(store, 'manager_level', 1) + 1
+    call screen manager_levelup_benefit
     
     # Unlock the Governor's Castle
     python:

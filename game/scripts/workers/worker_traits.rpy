@@ -192,7 +192,7 @@ init python:
         apply_trait_secondary_modifiers_once(worker)
 
     def get_attribute_cap(worker, attribute):
-        """Get the cap for an attribute based on worker's traits."""
+        """Get the cap for an attribute based on worker's traits and management skills."""
         cap = None
         for trait_name in worker.get("traits", []):
             trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
@@ -200,6 +200,13 @@ init python:
                 trait_cap = trait_def["attribute_caps"][attribute]
                 if cap is None or trait_cap < cap:  # Use the most restrictive cap
                     cap = trait_cap
+        # Default cap for rebelliousness if no trait defines it
+        if attribute == "rebelliousness" and cap is None:
+            cap = 100
+        # Management skill: Servant Training reduces max Rebelliousness by 10 per point
+        if attribute == "rebelliousness":
+            mgmt = getattr(store, "management_skills", None) or {}
+            cap = max(0, (cap or 100) - 10 * mgmt.get("servant_training", 0))
         return cap
 
     def get_attribute_minimum(worker, attribute):

@@ -435,7 +435,13 @@ init -2 python:
                 "unlocked_shops": _cp.deepcopy(getattr(store, "unlocked_shops", {})),
                 "worker_interactions_today": _cp.deepcopy(getattr(store, "worker_interactions_today", {})),
                 "game_initialized": True,
-                "is_new_game": False
+                "is_new_game": False,
+                "academy_enrolled": _safe_getattr(store, "academy_enrolled", False),
+                "academy_haggle_available": _safe_getattr(store, "academy_haggle_available", True),
+                "management_skills": _cp.deepcopy(getattr(store, "management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0})),
+                "manager_portrait": getattr(store, "manager_portrait", ""),
+                "manager_start_skill_chosen": _safe_getattr(store, "manager_start_skill_chosen", False),
+                "manager_level": _safe_getattr(store, "manager_level", 1)
             }
             if DEBUG_SNAPSHOT:
                 renpy.log(f"SNAPSHOT: DEBUG - _build_snapshot returning type: {type(snapshot_result)}, is dict: {isinstance(snapshot_result, dict)}, keys: {len(snapshot_result.keys()) if isinstance(snapshot_result, dict) else 'N/A'}")
@@ -768,6 +774,13 @@ init -2 python:
             store.workers_hired = snap.get("workers_hired", 0)
             store.building_1_type_set = snap.get("building_1_type_set", False)
             store.workers_assigned_count = snap.get("workers_assigned_count", 0)
+            # Academy (special building, not in owned_buildings)
+            store.academy_enrolled = snap.get("academy_enrolled", False)
+            store.academy_haggle_available = snap.get("academy_haggle_available", True)
+            if store.academy_enrolled and "Academy" not in getattr(store, "available_buildings", {}):
+                if hasattr(store, "add_academy_building"):
+                    store.add_academy_building()
+                    renpy.log("SNAPSHOT: Restored Academy (academy_enrolled=True, Academy was missing from available_buildings)")
             # Tutorial progress variables - safe restoration
             if "potion_purchased" in snap:
                 store.potion_purchased = snap.get("potion_purchased", False)
@@ -798,6 +811,34 @@ init -2 python:
                     failed_fields.append(field_name)
                     renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")
             
+            # Manager character sheet
+            for field_name, default_val in [
+                ("management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0}),
+                ("manager_portrait", ""),
+                ("manager_start_skill_chosen", False),
+                ("manager_level", 1)
+            ]:
+                try:
+                    if field_name in snap:
+                        val = snap.get(field_name)
+                        if field_name == "management_skills":
+                            converted = _to_dict(val)
+                            if converted is not None:
+                                setattr(store, field_name, _cp.deepcopy(converted))
+                                applied_any = True
+                                applied_fields.append(field_name)
+                        elif val is not None or default_val is None:
+                            setattr(store, field_name, val if val is not None else default_val)
+                            applied_any = True
+                            applied_fields.append(field_name)
+                        elif not hasattr(store, field_name):
+                            setattr(store, field_name, default_val)
+                    else:
+                        missing_fields.append(field_name)
+                except Exception as e:
+                    failed_fields.append(field_name)
+                    renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")
+
             # Apply optional fields if present
             for field_name, default_val in [
                 ("daily_spawns", 0),
@@ -1193,14 +1234,34 @@ init -2 python:
             return False
     
     def _get_snapshot_file_path(slot_name):
-        """Get the file path for a snapshot JSON file."""
-        saves_dir = os.path.join(config.basedir, "game", "saves")
+        """Get the file path for a snapshot JSON file. Uses config.savedir so saves work on all platforms (e.g. macOS .app bundle where basedir may be read-only)."""
+        saves_dir = getattr(config, "savedir", None) or os.path.join(config.basedir, "game", "saves")
         return os.path.join(saves_dir, f"snapshot_{slot_name}.json")
     
     def _get_backup_file_path(slot_name):
         """Get the file path for a backup snapshot JSON file."""
-        saves_dir = os.path.join(config.basedir, "game", "saves")
+        saves_dir = getattr(config, "savedir", None) or os.path.join(config.basedir, "game", "saves")
         return os.path.join(saves_dir, f"snapshot_{slot_name}.json.bak")
+    
+    def _get_snapshot_file_path_for_reading(slot_name):
+        """Path to use when loading: prefers config.savedir, falls back to legacy game/saves if file exists there (backwards compatibility)."""
+        current_path = _get_snapshot_file_path(slot_name)
+        if os.path.exists(current_path):
+            return current_path
+        legacy_path = os.path.join(config.basedir, "game", "saves", f"snapshot_{slot_name}.json")
+        if os.path.exists(legacy_path):
+            return legacy_path
+        return current_path
+    
+    def _get_backup_file_path_for_reading(slot_name):
+        """Path to use when loading backup: prefers config.savedir, falls back to legacy game/saves if file exists there."""
+        current_path = _get_backup_file_path(slot_name)
+        if os.path.exists(current_path):
+            return current_path
+        legacy_path = os.path.join(config.basedir, "game", "saves", f"snapshot_{slot_name}.json.bak")
+        if os.path.exists(legacy_path):
+            return legacy_path
+        return current_path
     
     def _create_backup(filepath, slot_name):
         """Create a backup of the existing snapshot file before overwriting."""
@@ -1234,6 +1295,10 @@ init -2 python:
             # Create temporary file in the same directory as the target file
             # This ensures atomic rename works (same filesystem)
             saves_dir = os.path.dirname(filepath)
+            try:
+                os.makedirs(saves_dir, exist_ok=True)
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: WARNING - Could not ensure saves dir {saves_dir}: {e}")
             temp_fd, temp_filepath = tempfile.mkstemp(
                 suffix='.json.tmp',
                 dir=saves_dir,
@@ -1555,8 +1620,9 @@ init -2 python:
             store._snapshot_validation_error = None
             
             if slot_name:
-                filepath = _get_snapshot_file_path(slot_name)
-                backup_path = _get_backup_file_path(slot_name)
+                # Use "for_reading" so we find snapshots in legacy game/saves (backwards compatibility)
+                filepath = _get_snapshot_file_path_for_reading(slot_name)
+                backup_path = _get_backup_file_path_for_reading(slot_name)
                 store._snapshot_load_alert = None
                 
                 # Strategy: Try multiple recovery methods in order

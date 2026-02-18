@@ -118,8 +118,8 @@ init python:
         
         prepared_worker["comfort_level"] = comfort_level
         
-        # Calculate daily cost based on comfort level
-        base_cost = comfort_level * 20
+        # Calculate daily cost based on comfort level and current difficulty
+        base_cost = comfort_level * get_difficulty_comfort_mult()
         prepared_worker["daily_cost"] = base_cost
         
         return prepared_worker
@@ -328,10 +328,11 @@ init python:
                 negotiated_comfort = int(desired_comfort)
             worker["comfort_level"] = negotiated_comfort
 
-            # Compute cost with a safety floor tied to comfort (use game economy: 20 x comfort)
-            original_daily_cost = worker.get("daily_cost", negotiated_comfort * 20)
+            # Compute cost with a safety floor tied to comfort (use game economy: difficulty mult x comfort)
+            _cm = get_difficulty_comfort_mult()
+            original_daily_cost = worker.get("daily_cost", negotiated_comfort * _cm)
             final_cost_raw = int(original_daily_cost * cost_modifier)
-            min_cost = max(20, negotiated_comfort * 20)
+            min_cost = max(_cm, negotiated_comfort * _cm)
             final_cost = max(min_cost, final_cost_raw)
             worker["daily_cost"] = final_cost
             

@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 5702: The if statement is not a valid child of the textbutton statement.
-    text_color "#6b6528" if _gf is None else "#7a4b2a"
-                           ^
+File "game/scripts/core/screens.rpy", line 3161: keyword argument 'text_color' appears more than once in a textbutton statement.
+    text_color "#7a4b2a"
+              ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Sat Feb  7 15:26:40 2026
+Wed Feb 18 23:10:14 2026

@@ -60,6 +60,17 @@ init python:
             libido_bonus = int(libido_bonus / 2)
             bonus += libido_bonus
 
+        # Management skill bonuses (manager character sheet)
+        mgmt = getattr(store, "management_skills", None) or {}
+        if skill_name in get_sexual_skill_names():
+            bonus += 5 * mgmt.get("whore_mastery", 0)
+        if skill_name == "Combat":
+            bonus += 5 * mgmt.get("combat_instruction", 0)
+        if skill_name == "Service":
+            bonus += 5 * mgmt.get("servant_training", 0)
+        if skill_name == "Agility":
+            bonus += 5 * mgmt.get("gang_leader", 0)
+
         # Only clamp base skill to 100, but allow bonuses to exceed the cap
         base = min(100, base)  # Ensure base skill doesn't exceed 100
         return base + bonus  # Total can exceed 100 with bonuses
@@ -106,6 +117,10 @@ init python:
                     health_bonus = item_data["effect"].get("health", 0)
                     if health_bonus > 0:  # Only positive bonuses (max_health increases)
                         bonus += health_bonus
+        
+        # Management skill: Combat Instruction (+10 max HP per point)
+        mgmt = getattr(store, "management_skills", None) or {}
+        bonus += 10 * mgmt.get("combat_instruction", 0)
         
         max_health = base_health + bonus
         if health_cap is not None:
@@ -155,6 +170,10 @@ init python:
                     if energy_bonus > 0:  # Only positive bonuses (max_energy increases)
                         bonus_energy += energy_bonus
         
+        # Management skill: Gang Leader (+10 max Energy per point)
+        mgmt = getattr(store, "management_skills", None) or {}
+        bonus_energy += 10 * mgmt.get("gang_leader", 0)
+        
         max_energy = base_energy + bonus_energy
         if energy_cap is not None:
             max_energy = min(max_energy, energy_cap)
@@ -195,7 +214,10 @@ init python:
                     if trait_name in client_seeked_traits:
                         multiplier *= 1.2
         multiplier = min(multiplier, 2.0)
-        return base_earnings * multiplier
+        # Management skill: Business Acumen (+0.1 money multiplier per point)
+        mgmt = getattr(store, "management_skills", None) or {}
+        money_mult = 1.0 + 0.1 * mgmt.get("business_acumen", 0)
+        return base_earnings * multiplier * money_mult
 
     # Extended functions for secondary attributes
     def get_secondary_attribute(worker, attribute):
