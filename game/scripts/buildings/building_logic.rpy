@@ -29,6 +29,42 @@ init python:
             return available_buildings.get(building_name, None)
         return None
 
+    def get_worker_profession_and_building_display(worker):
+        """Returns a string like 'Prostitute - Brothel: Building 1' or 'Unassigned'."""
+        if not worker or not hasattr(worker, 'get'):
+            return "Unassigned"
+        building_name = worker.get("assigned_building", "Unassigned")
+        if not building_name or building_name == "Unassigned":
+            return "Unassigned"
+        building = available_buildings.get(building_name)
+        if not building:
+            return "Unassigned"
+        btype_id = building.get("type")
+        btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+        if not btype:
+            parts = building_name.split('_')
+            default_name = "Building " + parts[1] if len(parts) > 1 else building_name
+            custom_names = getattr(store, 'custom_names', {}) or {}
+            display_name = custom_names.get(building_name, default_name)
+            return display_name
+        parts = building_name.split('_')
+        default_name = "Building " + parts[1] if len(parts) > 1 else building_name
+        custom_names = getattr(store, 'custom_names', {}) or {}
+        display_name = custom_names.get(building_name, default_name)
+        type_name = btype.get("name", btype_id)
+        building_display = type_name + ": " + display_name
+        jobs = building.get("servant_jobs", {})
+        job_id = jobs.get(worker.get("name", ""), "")
+        if not job_id:
+            return building_display
+        job_lower = str(job_id).lower()
+        if "rest" in job_lower:
+            prof_display = "Rest"
+        else:
+            prof = next((p for p in btype.get("professions", []) if p.get("id") == job_id), None)
+            prof_display = prof.get("name", job_id) if prof else job_id
+        return prof_display + " - " + building_display
+
     def change_building_type(building_name):
         building = available_buildings.get(building_name)
         if building:
@@ -132,6 +168,22 @@ init python:
         # Update and clamp to level cap (no growth above cap until level up)
         building["reputation"] = max(0, min(building["reputation"] + reputation_change, cap))
 
+    def _get_first_profession_id_for_building(building):
+        """Primera profesión del edificio que no sea Rest (para fallback en partidas antiguas sin previous_profession)."""
+        if not building:
+            return None
+        btype_id = building.get("type")
+        if not btype_id:
+            return None
+        btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+        if not btype:
+            return None
+        for prof in btype.get("professions", []):
+            pid = prof.get("id", "")
+            if pid and "rest" not in str(pid).lower():
+                return pid
+        return None
+
     def process_manager_auto_rest(restore_only=False):
         """Sistema robusto: Usa store.workers como única fuente de verdad."""
         # 1. Agrupar trabajadores por edificio usando store.workers
@@ -153,23 +205,14 @@ init python:
                 building["servant_jobs"] = {}
             jobs = building["servant_jobs"]
             
-            # 2. ¿Hay un manager trabajando aquí? (activo o en rest)
-            has_manager = False
-            for w in workers_here:
-                job_id = str(jobs.get(w["name"], "")).lower()
-                previous_prof = str(w.get("previous_profession", "")).lower()
-                # Detecta "manager" o "manager (39)" en el job actual
-                # o en el trabajo previo cuando está en "rest"
-                if "manager" in job_id or "manager" in previous_prof:
-                    has_manager = True
-                    break
-            
-            if not has_manager:
-                continue
+            # 2. Procesar todos los edificios: poner a descansar a los de poca energía y restaurar a los que ya descansaron.
+            # (Antes se exigía un manager en el edificio; se quitó para que siempre se pongan a descansar / vuelvan al trabajo.)
 
-            # 3. El manager procesa a todos los trabajadores de este edificio
+            # 3. Procesar a todos los trabajadores de este edificio
             for w in workers_here:
-                name = w["name"]
+                name = w.get("name")
+                if not name:
+                    continue
                 current_job_raw = jobs.get(name, "")
                 current_job_norm = str(current_job_raw).lower()
                 
@@ -177,9 +220,18 @@ init python:
                 if not current_job_raw or current_job_norm == "unassigned":
                     continue
 
-                energy = w.get("energy", 0)
-                max_e = calculate_max_energy(w)
-                
+                # Forzar numérico: partidas antiguas o saves pueden tener energy como string y romper la comparación
+                try:
+                    energy = int(float(w.get("energy", 0) or 0))
+                except (TypeError, ValueError):
+                    energy = 0
+                try:
+                    max_e = int(calculate_max_energy(w))
+                except (TypeError, ValueError):
+                    continue
+                if max_e <= 0:
+                    continue
+
                 # Umbrales
                 rest_threshold = max_e * 0.35
                 restore_threshold = max_e * 0.95
@@ -190,12 +242,19 @@ init python:
                     jobs[name] = "rest"
                     renpy.log(f"AUTOREST: {name} puesto a descansar (Energía {energy}/{max_e})")
                 
-                # Caso B: Restaurar trabajo
-                elif "rest" in current_job_norm and w.get("previous_profession"):
-                    if energy >= restore_threshold:
-                        jobs[name] = w["previous_profession"]
+                # Caso B: Restaurar trabajo (con fallback para partidas antiguas sin previous_profession)
+                elif "rest" in current_job_norm and energy >= restore_threshold:
+                    prev = w.get("previous_profession")
+                    if prev:
+                        jobs[name] = prev
                         w["previous_profession"] = None
                         renpy.log(f"AUTOREST: {name} vuelve a {jobs[name]} (Energía {energy}/{max_e})")
+                    else:
+                        # Partida antigua o worker puesto a Rest sin guardar previous_profession: usar primera profesión del edificio
+                        first_prof = _get_first_profession_id_for_building(building)
+                        if first_prof:
+                            jobs[name] = first_prof
+                            renpy.log(f"AUTOREST: {name} sin previous_profession -> restaurado a {first_prof} (Energía {energy}/{max_e})")
 
     def clear_worker_autorest_state(worker):
         if worker:
@@ -221,6 +280,18 @@ init python:
         building = available_buildings[building_name]
         if "servant_jobs" not in building:
             building["servant_jobs"] = {}
+        
+        job_id_norm = str(job_id).lower() if job_id else ""
+        is_rest = "rest" in job_id_norm
+        current_job = building["servant_jobs"].get(worker_name, "")
+        current_norm = str(current_job).lower() if current_job else ""
+        
+        # When player assigns Rest: save current job so process_manager_auto_rest(restore_only=True) can restore it later
+        if is_rest and current_job and "rest" not in current_norm:
+            worker["previous_profession"] = current_job
+        # When player assigns a non-Rest job: clear auto-rest state so we don't override their choice
+        if not is_rest:
+            clear_worker_autorest_state(worker)
         
         building["servant_jobs"][worker_name] = job_id
         renpy.restart_interaction()

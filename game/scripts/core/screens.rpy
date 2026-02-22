@@ -177,6 +177,15 @@ style table_text:
     yalign 0.5
     bold False
 
+# Buy/Sell/Left/Right action buttons in inventory/shop: underlined, no bold, green hover
+style inv_trade_action_button:
+    background None
+style inv_trade_action_button_text:
+    color "#ffffff"
+    hover_color "#6b8e23"
+    bold False
+    size 24
+
 # Custom styles for comfort adjustment and other UI elements
 style header_style:
     color "#ffddaa"
@@ -1502,7 +1511,7 @@ screen more_options():
                             [SetField(persistent, "worker_gender_filter", "male"), MainMenu()],
                             SetField(persistent, "worker_gender_filter", "male")))
 
-        ## Difficulty: Story / Easy / Normal / Hard
+        ## Difficulty: Story / Easy / Normal / Hard / Nightmare
         vbox:
             xpos 475
             ypos 720
@@ -1514,15 +1523,18 @@ screen more_options():
             $ _ce = "#6b6528" if _diff == "easy" else "#3c1f14"
             $ _cn = "#6b6528" if _diff == "normal" else "#3c1f14"
             $ _ch = "#6b6528" if _diff == "hard" else "#3c1f14"
+            $ _cnm = "#6b6528" if _diff == "nightmare" else "#3c1f14"
             $ _diff_descriptions = {
-                "story": "Comfort ×5. Low economic pressure.",
-                "easy": "Capped failure losses (-20/-30/-40). Same costs as Normal.",
-                "normal": "Default balance.",
-                "hard": "Comfort ×30, building upkeep ×2. Higher costs."
+                "story": "Most relaxed mode. Low costs and very forgiving event success baseline.",
+                "easy": "Forgiving mode. Same success baseline as Story, with capped failure money losses.",
+                "normal": "Standard challenge. Lower event success baseline and no failure-loss cap.",
+                "hard": "High challenge. Lower success baseline, -10 to skill rolls, x2 failure consequences, slightly reduced loot, and higher costs.",
+                "nightmare": "Extreme challenge. Lower success baseline, -20 to skill rolls, x3 failure consequences, heavily reduced loot, and highest costs."
             }
             hbox:
-                spacing 18
+                spacing 6
                 textbutton "Story":
+                    text_size font_size(28)
                     text_color _cs
                     text_hover_color "#6b6528"
                     background None
@@ -1531,6 +1543,7 @@ screen more_options():
                     hovered SetVariable("_about_hovered_difficulty", "story")
                     unhovered SetVariable("_about_hovered_difficulty", None)
                 textbutton "Easy":
+                    text_size font_size(28)
                     text_color _ce
                     text_hover_color "#6b6528"
                     background None
@@ -1539,6 +1552,7 @@ screen more_options():
                     hovered SetVariable("_about_hovered_difficulty", "easy")
                     unhovered SetVariable("_about_hovered_difficulty", None)
                 textbutton "Normal":
+                    text_size font_size(28)
                     text_color _cn
                     text_hover_color "#6b6528"
                     background None
@@ -1547,6 +1561,7 @@ screen more_options():
                     hovered SetVariable("_about_hovered_difficulty", "normal")
                     unhovered SetVariable("_about_hovered_difficulty", None)
                 textbutton "Hard":
+                    text_size font_size(28)
                     text_color _ch
                     text_hover_color "#6b6528"
                     background None
@@ -1554,10 +1569,21 @@ screen more_options():
                     action SetField(persistent, "difficulty", "hard")
                     hovered SetVariable("_about_hovered_difficulty", "hard")
                     unhovered SetVariable("_about_hovered_difficulty", None)
+                textbutton "Nightmare":
+                    text_size font_size(28)
+                    text_color _cnm
+                    text_hover_color "#6b6528"
+                    background None
+                    hover_background None
+                    action SetField(persistent, "difficulty", "nightmare")
+                    hovered SetVariable("_about_hovered_difficulty", "nightmare")
+                    unhovered SetVariable("_about_hovered_difficulty", None)
             text _diff_descriptions.get(_display_diff, _diff_descriptions["normal"]):
                 size 20
                 color "#5D2E1A"
                 xalign 0.0
+                xmaximum 400
+                text_align 0.0
 
     textbutton _("Back"):
         xalign 1.0
@@ -3246,6 +3272,8 @@ screen job_selection(worker):
                                                 Function(sync_assigned_servants_for_building, building_name),
                                                 # Clear autorest state when manually changing profession
                                                 Function(clear_worker_autorest_state, worker),
+                                                # Auto-equip best items for new profession if worker has auto_equip on
+                                                Function(run_worker_auto_equip, worker),
                                                 # Always recalculate and check objectives when assigning workers during tutorial
                                                 Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
                                                 Hide("job_selection")
@@ -3865,9 +3893,13 @@ screen manager_inventory(shop_mode=None):
                                     action If(selected_manager_index != idx,
                                             [SetScreenVariable("selected_manager_item", item),
                                             SetScreenVariable("selected_manager_index", idx),
+                                            SetScreenVariable("selected_worker_item", None),
+                                            SetScreenVariable("selected_worker_index", None),
                                             SetScreenVariable("selected_description", item_info.get("description", ""))],
                                             [SetScreenVariable("selected_manager_item", None),
                                             SetScreenVariable("selected_manager_index", None),
+                                            SetScreenVariable("selected_worker_item", None),
+                                            SetScreenVariable("selected_worker_index", None),
                                             SetScreenVariable("selected_description", "")])
                                     hbox:
                                         spacing 0
@@ -3884,13 +3916,12 @@ screen manager_inventory(shop_mode=None):
                                             background None
                                             text str(item[1]) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
                                         button:
+                                            style "inv_trade_action_button"
                                             xsize 140
                                             background None
-                                            text ("{u}{b}Sell{/b}{/u}" if shop_mode and selected_manager_index == idx else "{u}{b}Right{/b}{/u}" if selected_manager_index == idx else "Sell" if shop_mode else "Right") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                            action If(selected_manager_index == idx and not is_transferring,
-                                                        Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)
-                                                    )
-                                            sensitive (selected_manager_index == idx and (right_worker is not False or shop_mode) and not is_transferring)
+                                            text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                            action [SetScreenVariable("selected_manager_item", item), SetScreenVariable("selected_manager_index", idx), SetScreenVariable("selected_worker_item", None), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)]
+                                            sensitive ((right_worker is not False or shop_mode) and not is_transferring)
 
                             for i, idx_item in enumerate(unequipped_items):
                                 $ idx, item = idx_item
@@ -3908,12 +3939,16 @@ screen manager_inventory(shop_mode=None):
                                                 [
                                                     SetScreenVariable("selected_manager_item", item),
                                                     SetScreenVariable("selected_manager_index", idx),
+                                                    SetScreenVariable("selected_worker_item", None),
+                                                    SetScreenVariable("selected_worker_index", None),
                                                     SetScreenVariable("selected_description",
                                                     item_info.get("description", ""))
                                                 ],
                                                 [
                                                     SetScreenVariable("selected_manager_item", None),
                                                     SetScreenVariable("selected_manager_index", None),
+                                                    SetScreenVariable("selected_worker_item", None),
+                                                    SetScreenVariable("selected_worker_index", None),
                                                     SetScreenVariable("selected_description", "")
                                                 ]
                                             )
@@ -3932,13 +3967,12 @@ screen manager_inventory(shop_mode=None):
                                             background None
                                             text str(item[1]) size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
                                         button:
+                                            style "inv_trade_action_button"
                                             xsize 140
                                             background None
-                                            text ("{u}{b}Sell{/b}{/u}" if shop_mode and selected_manager_index == idx else "{u}{b}Right{/b}{/u}" if selected_manager_index == idx else "Sell" if shop_mode else "Right") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                            action If(selected_manager_index == idx and not is_transferring,
-                                                        Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)
-                                                    )
-                                            sensitive (selected_manager_index == idx and (right_worker is not False or shop_mode) and not is_transferring)
+                                            text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                            action [SetScreenVariable("selected_manager_item", item), SetScreenVariable("selected_manager_index", idx), SetScreenVariable("selected_worker_item", None), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)]
+                                            sensitive ((right_worker is not False or shop_mode) and not is_transferring)
 
             frame:
                 xsize 380
@@ -4114,10 +4148,16 @@ screen manager_inventory(shop_mode=None):
                                                         selected_worker_item != item,
                                                         [
                                                             SetScreenVariable("selected_worker_item", item),
+                                                            SetScreenVariable("selected_worker_index", None),
+                                                            SetScreenVariable("selected_manager_item", None),
+                                                            SetScreenVariable("selected_manager_index", None),
                                                             SetScreenVariable("selected_description", item_info.get("description", ""))
                                                         ],
                                                         [
                                                             SetScreenVariable("selected_worker_item", None),
+                                                            SetScreenVariable("selected_worker_index", None),
+                                                            SetScreenVariable("selected_manager_item", None),
+                                                            SetScreenVariable("selected_manager_index", None),
                                                             SetScreenVariable("selected_description", "")
                                                         ]
                                                     )
@@ -4135,14 +4175,12 @@ screen manager_inventory(shop_mode=None):
                                                     xsize 90
                                                     background None
                                                 button:
+                                                    style "inv_trade_action_button"
                                                     xsize 140
                                                     background None
-                                                    text ("{u}{b}Buy{/b}{/u}" if selected_worker_item == item else "Buy") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                                    action If(
-                                                                selected_worker_item == item and not is_transferring,
-                                                                Function(buy_item_from_shop, item[0])
-                                                            )
-                                                    sensitive (selected_worker_item == item and not is_transferring and store.money >= item_info.get("price", 0))
+                                                    text "{u}Buy{/u}" size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                                    action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(buy_item_from_shop, item[0])]
+                                                    sensitive (not is_transferring and store.money >= item_info.get("price", 0))
                                 else:
                                     $ right_inventory = [] if right_worker is False else (manager_inventory if right_worker is None else right_worker.get("inventory", []))
                                     # Sort and filter items - alphabetically or by arrival order based on toggle
@@ -4193,11 +4231,15 @@ screen manager_inventory(shop_mode=None):
                                                         [
                                                             SetScreenVariable("selected_worker_item", item),
                                                             SetScreenVariable("selected_worker_index", idx),
+                                                            SetScreenVariable("selected_manager_item", None),
+                                                            SetScreenVariable("selected_manager_index", None),
                                                             SetScreenVariable("selected_description", item_info.get("description", ""))
                                                         ],
                                                         [
                                                             SetScreenVariable("selected_worker_item", None),
                                                             SetScreenVariable("selected_worker_index", None),
+                                                            SetScreenVariable("selected_manager_item", None),
+                                                            SetScreenVariable("selected_manager_index", None),
                                                             SetScreenVariable("selected_description", "")
                                                         ]
                                                     )
@@ -4218,11 +4260,12 @@ screen manager_inventory(shop_mode=None):
                                                     action the_action
                                                     sensitive is_sens
                                                 button:
+                                                    style "inv_trade_action_button"
                                                     xsize 140
                                                     background None
-                                                    text ("{u}{b}Left{/b}{/u}" if selected_worker_index == idx else "Left") size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
-                                                    action If(selected_worker_index == idx and (left_worker is not False) and not is_transferring, Function(transfer_to_left))
-                                                    sensitive (selected_worker_index == idx and (left_worker is not False) and not is_transferring)
+                                                    text "{u}Left{/u}" size font_size(24) xalign 0.0 yalign 0.5 yoffset 3
+                                                    action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", idx), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(transfer_to_left)]
+                                                    sensitive ((left_worker is not False) and not is_transferring)
 
                                     for i, idx_item in enumerate(unequipped_items):
                                         $ idx, item = idx_item
@@ -4242,11 +4285,15 @@ screen manager_inventory(shop_mode=None):
                                                         [
                                                             SetScreenVariable("selected_worker_item", item),
                                                             SetScreenVariable("selected_worker_index", idx),
+                                                            SetScreenVariable("selected_manager_item", None),
+                                                            SetScreenVariable("selected_manager_index", None),
                                                             SetScreenVariable("selected_description", item_info.get("description", ""))
                                                         ],
                                                         [
                                                             SetScreenVariable("selected_worker_item", None),
                                                             SetScreenVariable("selected_worker_index", None),
+                                                            SetScreenVariable("selected_manager_item", None),
+                                                            SetScreenVariable("selected_manager_index", None),
                                                             SetScreenVariable("selected_description", "")
                                                         ]
                                                     )
@@ -4267,11 +4314,12 @@ screen manager_inventory(shop_mode=None):
                                                     action the_action
                                                     sensitive is_sens
                                                 button:
+                                                    style "inv_trade_action_button"
                                                     xsize 150
                                                     background None
-                                                    text ("{u}{b}Left{/b}{/u}" if selected_worker_index == idx else "Left") size font_size(22) xalign 0.0 yalign 0.5 yoffset 3
-                                                    action If(selected_worker_index == idx and (left_worker is not False) and not is_transferring, Function(transfer_to_left))
-                                                    sensitive (selected_worker_index == idx and (left_worker is not False) and not is_transferring)
+                                                    text "{u}Left{/u}" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3
+                                                    action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", idx), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(transfer_to_left)]
+                                                    sensitive ((left_worker is not False) and not is_transferring)
 
     # Context menu drawn last so it appears on top
     fixed:
@@ -4496,6 +4544,9 @@ screen manager_inventory(shop_mode=None):
                                             ysize 10
                                             left_bar "#6b6528"
                                             right_bar "#444444"
+                                    null height 6
+                                    # Profession and building (dynamic)
+                                    text "[get_worker_profession_and_building_display(summary_worker)]" size font_size(19) color "#3d2914" xalign 0.0
                             else:
                                 frame:
                                     background "#00000022"
@@ -6026,7 +6077,7 @@ screen academy_first_dialogue():
     modal True
     zorder 101
     # Full-screen background (same as recruitment events)
-    $ academy_bg = "images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else getattr(store, "event_bg", "images/event_bg.png")
+    $ academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else getattr(store, "event_bg", "images/event_bg.png"))
     add academy_bg
     add Solid("#000000dd")
     imagebutton:
@@ -6124,6 +6175,13 @@ screen academy_menu():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("academy_menu"), Show("academy_training_menu")]
+                        if getattr(store, "academy_enrolled", False):
+                            textbutton "Rent the Laboratory":
+                                xsize 500
+                                text_size font_size(24)
+                                text_color "#7a4b2a"
+                                text_hover_color "#6b6528"
+                                action [Hide("academy_menu"), Hide("map_screen"), Call("academy_laboratory_dialogue")]
                         textbutton "Visit director":
                             xsize 500
                             text_size font_size(24)
@@ -6262,11 +6320,131 @@ screen choose_worker_for_arena_trial():
             xoffset -45
             yoffset 5
 
+# Arena: choose a worker for the special match (5000 entry, 2 rounds + combat roll).
+screen choose_worker_for_arena_special_match():
+    modal True
+    zorder 100
+    python:
+        eligible_workers = workers_filtered_by_gender(list(store.workers))
+    add Solid("#000000dd")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))
+        padding (40, 40)
+        xsize 800
+        ysize 720
+        vbox:
+            spacing 15
+            null height 15
+            label "Choose a fighter for the special match" xalign 0.5 style "header_style" xoffset 5
+            text "Entry paid. Choose who enters the sands. Two rounds of choices, then skill decides. Defeat may mean death—or mercy and scars." size font_size(20) color "#7a4b2a" xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
+            null height 10
+            if not eligible_workers:
+                text "You have no workers to send." color "#a63c3c" xalign 0.5 text_align 0.5 size 20
+                textbutton "Back":
+                    xalign 0.5
+                    xsize 200
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action [SetVariable("_arena_special_chosen_worker", None), Hide("choose_worker_for_arena_special_match"), Show("arena_menu")]
+            else:
+                vbox:
+                    xoffset 50
+                    spacing 10
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        draggable True
+                        ysize 380
+                        xsize 630
+                        vbox:
+                            xoffset 5
+                            spacing 10
+                            for worker in eligible_workers:
+                                $ worker_combat = calculate_skill_with_traits(worker, "Combat")
+                                $ is_champion = "Arena Champion" in worker.get("traits", [])
+                                $ btn_text = worker["name"] + " (Combat: " + str(worker_combat) + ")" + (" — Champion of the sands" if is_champion else "")
+                                textbutton "[btn_text]":
+                                    xsize 620
+                                    text_size font_size(25)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action [Hide("choose_worker_for_arena_special_match"), SetVariable("_arena_special_chosen_worker", worker), Function(renpy.call_in_new_context, "arena_special_match_run", worker["name"])]
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action [SetVariable("_arena_special_chosen_worker", None), Hide("choose_worker_for_arena_special_match"), Show("arena_menu")]
+            xalign 1.0
+            yalign 0.0
+            xoffset -45
+            yoffset 5
+
+screen choose_worker_for_alchemy_craft():
+    modal True
+    zorder 100
+    python:
+        eligible_workers = workers_filtered_by_gender(list(store.workers))
+    add Solid("#000000dd")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))
+        padding (40, 40)
+        xsize 800
+        ysize 720
+        vbox:
+            spacing 15
+            null height 15
+            label "Choose a worker for the craft" xalign 0.5 style "header_style" xoffset 5
+            text "Investment paid. Choose who directs the brew. Two rounds of choices, then Craft decides the outcome." size font_size(20) color "#7a4b2a" xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
+            null height 10
+            if not eligible_workers:
+                text "You have no workers to send." color "#a63c3c" xalign 0.5 text_align 0.5 size 20
+                textbutton "Back":
+                    xalign 0.5
+                    xsize 200
+                    text_size font_size(20)
+                    text_color "#7a4b2a"
+                    text_hover_color "#6b6528"
+                    action [SetVariable("_alchemy_chosen_worker", None), Hide("choose_worker_for_alchemy_craft"), Return()]
+            else:
+                vbox:
+                    xoffset 50
+                    spacing 10
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        draggable True
+                        ysize 380
+                        xsize 630
+                        vbox:
+                            xoffset 5
+                            spacing 10
+                            for worker in eligible_workers:
+                                $ worker_craft = calculate_skill_with_traits(worker, "Craft")
+                                $ btn_text = worker["name"] + " (Craft: " + str(worker_craft) + ")"
+                                textbutton "[btn_text]":
+                                    xsize 620
+                                    text_size font_size(25)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action [SetVariable("_alchemy_chosen_worker", worker), Hide("choose_worker_for_alchemy_craft"), Function(renpy.call_in_new_context, "academy_alchemy_craft_run")]
+        imagebutton:
+            idle Transform("gui/button/return_idle.png", zoom=0.5)
+            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            action [SetVariable("_alchemy_chosen_worker", None), Hide("choose_worker_for_alchemy_craft"), Return()]
+            xalign 1.0
+            yalign 0.0
+            xoffset -45
+            yoffset 5
+
 # Arena: result dialogue (two lines + Continue). Called from arena_run_trial_and_result so dialogue always shows.
 screen arena_trial_result(line1, line2):
     modal True
     zorder 102
-    $ _arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png"
+    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
     add _arena_bg
     add Solid("#00000099")
     frame:
@@ -6296,7 +6474,7 @@ default arena_intro_done = False
 screen arena_first_dialogue():
     modal True
     zorder 101
-    $ arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else getattr(store, "event_bg", "images/event_bg.png")
+    $ arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else getattr(store, "event_bg", "images/event_bg.png"))
     add arena_bg
     add Solid("#000000dd")
     imagebutton:
@@ -6375,16 +6553,22 @@ screen arena_menu():
                 null width 28
                 vbox:
                     spacing 20
-                    text "Combat and spectacle await—assign workers to train as gladiators or to perform before the crowd. (To be developed.)" size font_size(22) xalign 0.0 color "#7a4b2a" text_align 0.0 xmaximum 520
+                    text "Combat and spectacle await. Send gladiators to fight in exhibitions, proving bouts, or championship matches—or put on a Pin up Barbarians show." size font_size(22) xalign 0.0 color "#7a4b2a" text_align 0.0 xmaximum 520
                     null height 15
                     vbox:
                         spacing 12
-                        textbutton "Train workers":
+                        textbutton "Send gladiators to fight":
                             xsize 500
                             text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("arena_menu"), Show("arena_training_menu")]
+                        textbutton "Buy special match ([SPECIAL_MATCH_COST] coins)":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("arena_menu"), Hide("map_screen"), Call("arena_special_match_dialogue")]
                         textbutton "Visit promoter":
                             xsize 500
                             text_size font_size(24)
@@ -6424,8 +6608,8 @@ screen arena_training_menu():
                 xoffset 15
                 spacing 16
                 null height 10
-                label "Train workers" xalign 0.5 style "header_style"
-                text "Choose a role. You will be taken to Manage Workers to assign workers to the Arena and select their role. (To be developed.)" size font_size(23) xalign 0.5 color "#6a5a3a" text_align 0.5 xmaximum 580
+                label "Send gladiators to fight" xalign 0.5 style "header_style"
+                text "Assign workers to the Arena, then choose their role in Manage Workers: Exhibition fighter, Proving fighter, Championship fighter, or Pin up Barbarians. You can also assign workers to the Arena directly from Manage Workers—assign a worker to the Arena and choose their role there." size font_size(23) xalign 0.5 color "#6a5a3a" text_align 0.5 xmaximum 580
                 null height 8
             viewport:
                 scrollbars "vertical"
@@ -6439,13 +6623,12 @@ screen arena_training_menu():
                     vbox:
                         spacing 14
                         xsize 535
-                        textbutton "Gladiator":
+                        textbutton "Assign workers to Arena":
                             xsize 515
                             text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
-                            action [Hide("arena_training_menu"), Hide("arena_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Arena and choose Gladiator as their role in Manage Workers.")]
-                        text "Fight or perform in the arena. Train Combat and face the crowd. (To be developed.)" size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
+                            action [Hide("arena_training_menu"), Hide("arena_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to the Arena, then choose their role (Exhibition, Proving, Championship, or Pin up) in Manage Workers.")]
 
 screen buy_map_building(map_button_id):
     # Pantalla para comprar un edificio del mapa y convertirlo en un negocio.
@@ -6831,9 +7014,12 @@ screen more_details_screen(worker):
                 
                 text "Description:" size font_size(20) color "#7a4b2a" xalign 0.0
                 text "[worker.get('description', 'No description available')]" size font_size(18) color "#7a4b2a" xalign 0.0 text_align 0.0
-                
+
+                null height 8
+                text "Assignment: [get_worker_profession_and_building_display(worker)]" size font_size(22) color "#3d2914" xalign 0.0
+
                 null height 10
-                
+
                 text "Folder: [worker.get('folder', 'default')]" size font_size(18) color "#7a4b2a" xalign 0.0
                 
                 null height 10
@@ -7808,17 +7994,38 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         right_bar "#444444"
                                     text "Health [worker['health']]/[calculate_max_health(worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
                     
-                    # Toggle Panel Mode Button - BELOW Worker Info
-                    textbutton "Switch to [panel_mode == 'skills' and 'Stats' or 'Skills']":
-                        text_size font_size(22)
-                        text_hover_color "#6b6528"
-                        xalign 0.0
-                        action [
-                            SetScreenVariable("panel_mode", panel_mode == "skills" and "stats" or "skills"),
-                            Function(set_global_panel_mode, panel_mode == "skills" and "stats" or "skills")
-                        ]
-                        hovered ShowTransient("tooltip", message="Toggle between Skills view (abilities and progress) and Stats view (emotional states and traits)", screen_name="WorkerDetails")
-                        unhovered Hide("tooltip")
+                    # Toggle Panel Mode + Auto-supply / Auto-equip - BELOW Worker Info
+                    hbox:
+                        spacing 12
+                        yalign 0.0
+                        textbutton "Switch to [panel_mode == 'skills' and 'Stats' or 'Skills']":
+                            text_size font_size(22)
+                            text_hover_color "#6b6528"
+                            xalign 0.0
+                            action [
+                                SetScreenVariable("panel_mode", panel_mode == "skills" and "stats" or "skills"),
+                                Function(set_global_panel_mode, panel_mode == "skills" and "stats" or "skills")
+                            ]
+                            hovered ShowTransient("tooltip", message="Toggle between Skills view (abilities and progress) and Stats view (emotional states and traits)", screen_name="WorkerDetails")
+                            unhovered Hide("tooltip")
+                        textbutton "Stock Potions: [worker.get('auto_supply_potions', False) and 'On' or 'Off']":
+                            text_size font_size(20)
+                            text_hover_color "#6b6528"
+                            action Function(toggle_worker_auto_supply_potions, worker)
+                            hovered ShowTransient("tooltip", message="At start of each day, take potions from manager inventory and add to this worker. Click to toggle.", screen_name="WorkerDetails")
+                            unhovered Hide("tooltip")
+                        textbutton "x[worker.get('auto_supply_potion_count', 3)]":
+                            text_size font_size(20)
+                            text_hover_color "#6b6528"
+                            action Function(cycle_worker_auto_supply_count, worker)
+                            hovered ShowTransient("tooltip", message="How many potions to take per day (1-5). Click to cycle.", screen_name="WorkerDetails")
+                            unhovered Hide("tooltip")
+                        textbutton "Auto Equip: [worker.get('auto_equip', False) and 'On' or 'Off']":
+                            text_size font_size(20)
+                            text_hover_color "#6b6528"
+                            action Function(toggle_worker_auto_equip, worker)
+                            hovered ShowTransient("tooltip", message="Equip best items for this worker's profession from manager inventory. Updates when job changes. Rest does not unequip.", screen_name="WorkerDetails")
+                            unhovered Hide("tooltip")
 
                     # Skills Panel
                     if panel_mode == "skills":

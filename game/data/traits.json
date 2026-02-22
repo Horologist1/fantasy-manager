@@ -221,6 +221,16 @@
     "nsfw": false
   },
   {
+    "name": "Troll Blood",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "health_regeneration": 10
+    },
+    "description": "A drop of troll essence grants powerful daily recovery. [+10 Health Regen per day]",
+    "nsfw": false
+  },
+  {
     "name": "Energetic",
     "conflicts": [
       "Lazy"
@@ -294,6 +304,20 @@
       }
     },
     "description": "Permanent scarring that slightly reduces charm effectiveness. [-2 Striptease]",
+    "nsfw": false
+  },
+  {
+    "name": "Arena Champion",
+    "conflicts": [],
+    "removes_traits": [],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 5
+      },
+      "health": 5,
+      "energy_regeneration": 1
+    },
+    "description": "Crowned by the sands after five special match victories. +5 Combat, +5 max Health, +1 Energy Regen. If defeated in a special match, this trait is lost instead of the fighter's life.",
     "nsfw": false
   },
   {

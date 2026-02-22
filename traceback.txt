@@ -1,36 +1,90 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/scripts/events/recruitment_flow.rpy", line 268, in script call
-    label recruitment_choice_loop:
-  File "game/scripts/main_flow.rpy", line 1049, in script call
+  File "game/scripts/main_flow.rpy", line 1049, in script
     call screen tavern
-  File "game/scripts/script.rpy", line 5583, in script
-    if _outcome == "critical_success":
-  File "game/scripts/script.rpy", line 5583, in <module>
-    if _outcome == "critical_success":
-NameError: name '_outcome' is not defined
+  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "game/scripts/core/screens.rpy", line 6409, in execute
+    screen arena_menu():
+  File "game/scripts/core/screens.rpy", line 6409, in execute
+    screen arena_menu():
+  File "game/scripts/core/screens.rpy", line 6414, in execute
+    frame:
+  File "game/scripts/core/screens.rpy", line 6429, in execute
+    vbox:
+  File "game/scripts/core/screens.rpy", line 6433, in execute
+    hbox:
+  File "game/scripts/core/screens.rpy", line 6436, in execute
+    vbox:
+  File "game/scripts/core/screens.rpy", line 6440, in execute
+    vbox:
+  File "game/scripts/core/screens.rpy", line 6451, in execute
+    textbutton _sm_btn_text:
+  File "game/scripts/core/screens.rpy", line 6451, in keywords
+    textbutton _sm_btn_text:
+  File "game/scripts/core/screens.rpy", line 6457, in <module>
+    action If(money >= SPECIAL_MATCH_COST, [Hide("arena_menu"), Run("arena_special_match_dialogue")], Show("error_popup", message="You need 5000 coins for a special match."))
+NameError: name 'Run' is not defined
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/events/recruitment_flow.rpy", line 268, in script call
-    label recruitment_choice_loop:
-  File "game/scripts/main_flow.rpy", line 1049, in script call
+  File "game/scripts/main_flow.rpy", line 1049, in script
     call screen tavern
-  File "game/scripts/script.rpy", line 5583, in script
-    if _outcome == "critical_success":
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1856, in execute
-    if renpy.python.py_eval(condition):
-  File "D:\renpy-8.3.4-sdk\renpy\python.py", line 1218, in py_eval
-    return py_eval_bytecode(code, globals, locals)
-  File "D:\renpy-8.3.4-sdk\renpy\python.py", line 1211, in py_eval_bytecode
-    return eval(bytecode, globals, locals)
-  File "game/scripts/script.rpy", line 5583, in <module>
-    if _outcome == "critical_success":
-NameError: name '_outcome' is not defined
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
+    self.call("execute")
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1966, in call
+    return renpy.statements.call(method, parsed, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\statements.py", line 374, in call
+    return method(parsed, *args, **kwargs)
+  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\exports\statementexports.py", line 345, in call_screen
+    rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
+  File "D:\renpy-8.3.4-sdk\renpy\ui.py", line 301, in interact
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2218, in interact
+    repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
+  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2748, in interact_core
+    root_widget.visit_all(lambda d : d.per_interact())
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-8.3.4-sdk\renpy\display\displayable.py", line 434, in visit_all
+    d.visit_all(callback, seen)
+  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 480, in visit_all
+    callback(self)
+  File "D:\renpy-8.3.4-sdk\renpy\display\core.py", line 2748, in <lambda>
+    root_widget.visit_all(lambda d : d.per_interact())
+  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 491, in per_interact
+    self.update()
+  File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 700, in update
+    self.screen.function(**self.scope)
+  File "game/scripts/core/screens.rpy", line 6409, in execute
+    screen arena_menu():
+  File "game/scripts/core/screens.rpy", line 6409, in execute
+    screen arena_menu():
+  File "game/scripts/core/screens.rpy", line 6414, in execute
+    frame:
+  File "game/scripts/core/screens.rpy", line 6429, in execute
+    vbox:
+  File "game/scripts/core/screens.rpy", line 6433, in execute
+    hbox:
+  File "game/scripts/core/screens.rpy", line 6436, in execute
+    vbox:
+  File "game/scripts/core/screens.rpy", line 6440, in execute
+    vbox:
+  File "game/scripts/core/screens.rpy", line 6451, in execute
+    textbutton _sm_btn_text:
+  File "game/scripts/core/screens.rpy", line 6451, in keywords
+    textbutton _sm_btn_text:
+  File "game/scripts/core/screens.rpy", line 6457, in <module>
+    action If(money >= SPECIAL_MATCH_COST, [Hide("arena_menu"), Run("arena_special_match_dialogue")], Show("error_popup", message="You need 5000 coins for a special match."))
+NameError: name 'Run' is not defined
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
 Fantasy Manager 0.9.4.9b
-Wed Feb 18 04:43:27 2026
+Thu Feb 19 04:02:51 2026

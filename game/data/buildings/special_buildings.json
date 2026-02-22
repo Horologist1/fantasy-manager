@@ -74,15 +74,78 @@
       "id": "arena",
       "name": "Arena",
       "skill_name": "Arena",
-      "skill_description": "The Arena hosts combat and spectacle. Workers can train or perform here. (To be developed.)",
+      "skill_description": "The Arena hosts combat and spectacle: Exhibition bouts (controlled, wooden weapons), Proving bouts (veteran opponents), Championship fights (champions and beasts), and Pin up Barbarians (risqué spectacle). Assign workers to a role to earn money and reputation.",
       "nsfw": false,
-      "show_in_manage_buildings": true,
+      "show_in_manage_buildings": false,
       "allowed_map_locations": ["arena"],
       "professions": [
         {
-          "id": "arena_gladiator",
-          "name": "Gladiator",
-          "description": "Fight or perform in the arena. (To be developed.)",
+          "id": "arena_exhibition",
+          "name": "Exhibition fighter",
+          "description": "Controlled bouts with blunted or wooden weapons before a crowd. Low risk, small purse. Proves form and showmanship.",
+          "nsfw": false,
+          "difficulty": "easy",
+          "skills": ["Combat"],
+          "training_skills_distribution": {"Combat": 5},
+          "max_daily_workers": 8,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {
+              "id": "arena_exhibition_drill",
+              "weight": 1,
+              "report": "Arena: Exhibition bout",
+              "difficulty_modifier": 10,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Energetic", "Confident", "Tough"],
+              "trait_success": "The crowd loved {worker_name}'s {trait} during the exhibition.",
+              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} steps into the exhibition ring for a choreographed bout with blunted blades. The opponent—a seasoned arena drill-master—leads the pace, but {worker_name} fumbles the forms and the crowd murmurs. They leave the sand with pride bruised and purse light.",
+                "mediocre": "{worker_name} faces the drill-master in a display bout. The exchange is correct but uninspired; the crowd claps politely. A modest purse and a lesson in presence.",
+                "success": "{worker_name} delivers a crisp exhibition against the drill-master. Blunted steel rings, the crowd cheers the clean parries and showy strikes. The Lanista nods; the purse is theirs.",
+                "critical_success": "{worker_name} turns the exhibition into theatre. Against the drill-master they combine flawless form and flair—the crowd roars. The Lanista raises a hand in approval and the purse is generous."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": 0, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": -3, "libido": 0},
+                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
+                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            },
+            {
+              "id": "arena_exhibition_crowd",
+              "weight": 1,
+              "report": "Arena: Exhibition vs recruit",
+              "difficulty_modifier": 10,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Energetic", "Confident"],
+              "trait_success": "{worker_name}'s {trait} shone in the exhibition.",
+              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} is paired with another recruit for a friendly exhibition. Wooden swords, no blood—but they hesitate and the other fighter dominates the exchange. The crowd sees a novice; the purse is scant.",
+                "mediocre": "{worker_name} and a fellow recruit trade blows in a controlled exhibition. Neither shines; the bout ends in a draw. A small purse and a reminder that the sand demands more.",
+                "success": "{worker_name} meets a recruit in the exhibition ring and takes control. Clean strikes and solid defence please the crowd; the Lanista's purse rewards the showing.",
+                "critical_success": "{worker_name} dominates the exhibition against a recruit—fluid, confident, no wasted motion. The crowd chants; the Lanista notes the name. A fine purse and growing reputation."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": 0, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": -3, "libido": 0},
+                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
+                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            }
+          ]
+        },
+        {
+          "id": "arena_proving",
+          "name": "Proving fighter",
+          "description": "Real steel and veteran opponents. Higher stakes, real risk of injury. Proves worth before the Lanista and the crowd.",
           "nsfw": false,
           "difficulty": "medium",
           "skills": ["Combat"],
@@ -91,15 +154,205 @@
           "daily_story_count": {"base": 1},
           "daily_stories": [
             {
-              "id": "arena_gladiator_training",
+              "id": "arena_proving_veteran",
               "weight": 1,
-              "used_skill": "Combat",
-              "report": "Arena: Training",
-              "description": "{worker_name} spent the day training in the arena.",
+              "report": "Arena: Proving vs veteran",
+              "difficulty_modifier": 0,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Tough", "Confident", "Experienced"],
+              "trait_success": "{worker_name}'s {trait} carried the day against the veteran.",
+              "earnings": {"success": "300 + skill * 3", "critical_success": "300 + skill * 6", "mediocre": "150 + skill", "failure": "-(150 + roll)"},
               "story_image": "",
               "failure_image": "",
-              "loot": {"rolls": 0},
-              "consequences": {"success": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}
+              "descriptions": {
+                "failure": "{worker_name} is matched with a grizzled veteran of the sands—real steel, no choreography. The veteran reads every move and lands heavy blows. {worker_name} leaves the ring bloodied and humbled; the purse is forfeit and the crowd silent.",
+                "mediocre": "{worker_name} survives a hard bout against the veteran. They take hits and give some back; the Lanista calls it a draw. Bruised but standing, they take a modest purse.",
+                "success": "{worker_name} proves themselves against the veteran. Steel clashes, the crowd holds its breath—and when the dust settles, {worker_name} has earned the veteran's nod. A solid purse and respect.",
+                "critical_success": "{worker_name} bests the veteran in a bout that has the crowd on its feet. Parry, strike, composure—the Lanista rises to acknowledge a fighter worthy of the sands. The purse is substantial."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
+                "mediocre": {"energy": -2, "health": -2, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
+                "success": {"energy": -1, "health": -2, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            },
+            {
+              "id": "arena_proving_gladiator",
+              "weight": 1,
+              "report": "Arena: Proving vs gladiator",
+              "difficulty_modifier": 0,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Tough", "Confident"],
+              "trait_success": "{worker_name}'s {trait} saw them through the proving bout.",
+              "earnings": {"success": "300 + skill * 3", "critical_success": "300 + skill * 6", "mediocre": "150 + skill", "failure": "-(150 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} is sent into a proving bout against an established gladiator—someone who has already earned the crowd's favour. The gladiator shows no mercy; {worker_name} is beaten down and leaves the sand with cuts and a hollow purse.",
+                "mediocre": "{worker_name} holds their own against the gladiator but never gains the upper hand. A long, punishing exchange ends with the Lanista stopping the bout. They leave bruised and with a small share of the purse.",
+                "success": "{worker_name} stands toe-to-toe with the gladiator and earns a clear result. The crowd roars; the Lanista marks them as proven. A good purse and a step toward the champion's circle.",
+                "critical_success": "{worker_name} defeats the gladiator in a proving bout that becomes the talk of the day. Steel and grit carry the hour—the Lanista grants a hefty purse and the crowd chants their name."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
+                "mediocre": {"energy": -2, "health": -2, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
+                "success": {"energy": -1, "health": -2, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            }
+          ]
+        },
+        {
+          "id": "arena_championship",
+          "name": "Championship fighter",
+          "description": "Face champions and beasts of the arena. Highest stakes and real danger—minotaurs, mythical creatures, or the Lanista's own champions.",
+          "nsfw": false,
+          "difficulty": "hard",
+          "skills": ["Combat"],
+          "training_skills_distribution": {"Combat": 5},
+          "max_daily_workers": 3,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {
+              "id": "arena_championship_minotaur",
+              "weight": 1,
+              "report": "Arena: Championship vs minotaur",
+              "difficulty_modifier": -10,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Tough", "Brave", "Experienced"],
+              "trait_success": "{worker_name}'s {trait} was the key against the minotaur.",
+              "earnings": {"success": "400 + skill * 4", "critical_success": "400 + skill * 8", "mediocre": "200 + skill * 2", "failure": "-(200 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} enters the pit to face the arena's captive minotaur—half bull, half nightmare. The beast charges; {worker_name} is gored and thrown. Healers drag them from the sand; the crowd is silent and the purse is lost.",
+                "mediocre": "{worker_name} survives the minotaur. They dodge, strike, and bleed—the bout is stopped before the beast lands a killing blow. They leave with scars and a fraction of the purse.",
+                "success": "{worker_name} faces the minotaur and wins. Axe and horn meet steel and nerve; when the beast falls, the crowd erupts. The Lanista grants the champion's purse and a place in legend.",
+                "critical_success": "{worker_name} slays the minotaur in a display of cold precision. No wasted movement—the crowd rises as one. The Lanista presents a champion's blade and a purse that echoes their name."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": -8, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -3, "libido": -1},
+                "mediocre": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 3, "libido": 0},
+                "success": {"energy": -1, "health": -3, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 8, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 5, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 15, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            },
+            {
+              "id": "arena_championship_beast",
+              "weight": 1,
+              "report": "Arena: Championship vs mythical beast",
+              "difficulty_modifier": -10,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Brave", "Tough", "Experienced"],
+              "trait_success": "{worker_name}'s {trait} prevailed against the beast.",
+              "earnings": {"success": "400 + skill * 4", "critical_success": "400 + skill * 8", "mediocre": "200 + skill * 2", "failure": "-(200 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} is sent against a creature from the deep—scales, fangs, and fury. The beast overwhelms them; they are pulled from the sand broken and unconscious. The crowd gasps; the purse is forfeit.",
+                "mediocre": "{worker_name} battles the mythical beast to a standstill. Blood is shed on both sides; the Lanista calls the bout before anyone falls. They leave scarred but alive, with a share of the champion's purse.",
+                "success": "{worker_name} defeats the beast. The arena shakes with roars—man and monster—until the creature falls. The crowd chants; the Lanista pays the full champion's purse and honours their name.",
+                "critical_success": "{worker_name} turns the beast into a trophy. Flawless footwork, lethal strikes—the creature never had a chance. The Lanista crowns the moment; the purse and the legend are theirs."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": -8, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -3, "libido": -1},
+                "mediocre": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 3, "libido": 0},
+                "success": {"energy": -1, "health": -3, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 8, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 5, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 15, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            },
+            {
+              "id": "arena_championship_champion",
+              "weight": 1,
+              "report": "Arena: Championship vs arena champion",
+              "difficulty_modifier": -10,
+              "skill_options": ["Combat"],
+              "relevant_traits": ["Experienced", "Confident", "Tough"],
+              "trait_success": "The crowd saw {worker_name}'s {trait} defeat the champion.",
+              "earnings": {"success": "400 + skill * 4", "critical_success": "400 + skill * 8", "mediocre": "200 + skill * 2", "failure": "-(200 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} challenges the Lanista's reigning champion—a fighter who has never fallen. The champion dismantles them with brutal efficiency. {worker_name} is carried out; the crowd pities the fool who dared.",
+                "mediocre": "{worker_name} goes the distance with the champion. They land blows and take many more; the bout is stopped to save them. They leave with broken ribs and a sliver of the purse—and the crowd's respect.",
+                "success": "{worker_name} defeats the champion. The sands have never seen such an upset—steel on steel until the titan falls. The Lanista declares a new champion; the purse and the glory are immense.",
+                "critical_success": "{worker_name} destroys the champion. A masterclass in combat—the crowd is in rapture. The Lanista rises and hands them the champion's blade; the arena has a new legend."
+              },
+              "consequences": {
+                "failure": {"energy": -2, "health": -8, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -3, "libido": -1},
+                "mediocre": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 3, "libido": 0},
+                "success": {"energy": -1, "health": -3, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 8, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 5, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 15, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            }
+          ]
+        },
+        {
+          "id": "arena_pinup_barbarian",
+          "name": "Pin up Barbarians",
+          "description": "Risqué spectacle: fierce poses, minimal armour, and crowd appeal. Less risk than combat, more skin than glory. Earns coin and reputation from admirers.",
+          "nsfw": true,
+          "difficulty": "easy",
+          "skills": ["Charm", "Striptease"],
+          "training_skills_distribution": {"Charm": 3, "Striptease": 3},
+          "max_daily_workers": 6,
+          "daily_story_count": {"base": 1},
+          "daily_stories": [
+            {
+              "id": "arena_pinup_warrior",
+              "weight": 1,
+              "report": "Arena: Pin up warrior show",
+              "difficulty_modifier": 5,
+              "skill_options": ["Charm", "Striptease"],
+              "relevant_traits": ["Charming", "Beautiful", "Confident"],
+              "trait_success": "The crowd adored {worker_name}'s {trait} in the pin up show.",
+              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} takes the arena's side stage for the Pin up Barbarians show—minimal armour, fierce poses for the crowd. They freeze under the lights; the audience jeers and the purse is thin.",
+                "mediocre": "{worker_name} performs the warrior pin up routine without disaster but without fire. The crowd claps politely; coins are few. A modest take and a lesson in presence.",
+                "success": "{worker_name} owns the Pin up Barbarians stage—striking poses, bared shoulders and confidence. The crowd cheers and coins rain; the Lanista's cut leaves a solid purse.",
+                "critical_success": "{worker_name} becomes the star of the Pin up show. Every pose lands; the crowd chants their name and showers the stage with coin. The Lanista grins—today's spectacle belonged to them."
+              },
+              "consequences": {
+                "failure": {"energy": -1, "health": 0, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
+                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 2, "libido": 0},
+                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+              },
+              "loot": {"rolls": 0}
+            },
+            {
+              "id": "arena_pinup_gladiator",
+              "weight": 1,
+              "report": "Arena: Pin up gladiator spectacle",
+              "difficulty_modifier": 5,
+              "skill_options": ["Charm", "Striptease"],
+              "relevant_traits": ["Sensual", "Playful", "Charming"],
+              "trait_success": "{worker_name}'s {trait} made the pin up spectacle unforgettable.",
+              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} joins the Pin up Barbarians in mock gladiator gear—more skin than steel. Stage fright wins; the routine falls flat and the crowd boos. The purse is barely enough to cover shame.",
+                "mediocre": "{worker_name} gets through the gladiator pin up number without offending anyone. Tepid applause; a few coins. Enough to say they tried.",
+                "success": "{worker_name} struts the sand in stylised gladiator wear—helmet, loincloth, and attitude. The crowd loves it; coins and flowers fly. A fine purse and growing fame.",
+                "critical_success": "{worker_name} turns the pin up gladiator act into the day's highlight. Charisma and cheek leave the crowd breathless; the Lanista pays a bonus and the arena buzzes with their name."
+              },
+              "consequences": {
+                "failure": {"energy": -1, "health": 0, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
+                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 2, "libido": 0},
+                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
+                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+              },
+              "loot": {"rolls": 0}
             }
           ]
         }

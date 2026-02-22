@@ -769,8 +769,8 @@
               ],
               "trait_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
               "earnings": {
-                "success": "400 + skill * 4",
-                "critical_success": "400 + skill * 8",
+                "success": "400 + skill * 3",
+                "critical_success": "400 + skill * 6",
                 "mediocre": "200 + skill * 2",
                 "failure": "-(200 + roll)"
               },
@@ -1624,8 +1624,8 @@
               ],
               "trait_success": "The adventurer's {trait} proves invaluable in the battle.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
+                "success": "300 + skill * 2",
+                "critical_success": "300 + skill * 4",
                 "mediocre": "150 + skill",
                 "failure": "-(150 + roll)"
               },
@@ -1672,8 +1672,8 @@
               "loot": {
                 "rolls": 0,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.05 },
-                  { "item_id": "collar_endless_desire", "chance": 0.05, "nsfw": true }
+                  { "item_id": "amulet_wanderer", "chance": 0.015 },
+                  { "item_id": "collar_endless_desire", "chance": 0.015, "nsfw": true }
                 ]
               }
             },
@@ -1692,8 +1692,8 @@
               ],
               "trait_success": "{worker_name}'s display of {trait} proves decisive.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
+                "success": "300 + skill * 2",
+                "critical_success": "300 + skill * 4",
                 "mediocre": "150 + skill",
                 "failure": "-(150 + roll)"
               },
@@ -1740,8 +1740,8 @@
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.05 },
-                  { "item_id": "collar_endless_desire", "chance": 0.05, "nsfw": true }
+                  { "item_id": "amulet_wanderer", "chance": 0.020 },
+                  { "item_id": "collar_endless_desire", "chance": 0.020, "nsfw": true }
                 ]
               }
             },
@@ -1760,8 +1760,8 @@
               ],
               "trait_success": "{worker_name}'s decisive {trait} turns the tide of battle.",
               "earnings": {
-                "success": "400 + skill * 4",
-                "critical_success": "400 + skill * 8",
+                "success": "400 + skill * 3",
+                "critical_success": "400 + skill * 6",
                 "mediocre": "200 + skill * 2",
                 "failure": "-(200 + roll)"
               },
@@ -1806,8 +1806,8 @@
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.05 },
-                  { "item_id": "collar_endless_desire", "chance": 0.05, "nsfw": true }
+                  { "item_id": "amulet_wanderer", "chance": 0.025 },
+                  { "item_id": "collar_endless_desire", "chance": 0.025, "nsfw": true }
                 ]
               }
             }
@@ -1894,8 +1894,8 @@
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.03 },
-                  { "item_id": "collar_endless_desire", "chance": 0.03, "nsfw": true }
+                  { "item_id": "amulet_wanderer", "chance": 0.020 },
+                  { "item_id": "collar_endless_desire", "chance": 0.020, "nsfw": true }
                 ]
               }
             },
@@ -1964,8 +1964,8 @@
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.03 },
-                  { "item_id": "collar_endless_desire", "chance": 0.03, "nsfw": true }
+                  { "item_id": "amulet_wanderer", "chance": 0.025 },
+                  { "item_id": "collar_endless_desire", "chance": 0.025, "nsfw": true }
                 ]
               }
             },
@@ -1986,8 +1986,8 @@
               ],
               "trait_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
+                "success": "300 + skill * 2",
+                "critical_success": "300 + skill * 4",
                 "mediocre": "150 + skill",
                 "failure": "-(150 + roll)"
               },
@@ -2034,8 +2034,8 @@
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.05 },
-                  { "item_id": "collar_endless_desire", "chance": 0.05, "nsfw": true }
+                  { "item_id": "amulet_wanderer", "chance": 0.035 },
+                  { "item_id": "collar_endless_desire", "chance": 0.035, "nsfw": true }
                 ]
               }
             }
@@ -2072,9 +2072,9 @@
               ],
               "trait_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
               "earnings": {
-                "success": "400 + skill * 20",
-                "critical_success": "400 + skill * 30",
-                "mediocre": "200 + skill * 10",
+                "success": "400 + skill * 4",
+                "critical_success": "400 + skill * 8",
+                "mediocre": "200 + skill * 2",
                 "failure": "-30"
               },
               "descriptions": {
@@ -2120,9 +2120,9 @@
               "loot": {
                 "rolls": 4,
                 "bonus_items": [
-                  { "item_id": "obsidian_blade", "chance": 0.15 },
-                  { "item_id": "amulet_wanderer", "chance": 0.05 },
-                  { "item_id": "collar_endless_desire", "chance": 0.05, "nsfw": true },
+                  { "item_id": "obsidian_blade", "chance": 0.12 },
+                  { "item_id": "amulet_wanderer", "chance": 0.03 },
+                  { "item_id": "collar_endless_desire", "chance": 0.03, "nsfw": true },
                   { "item_id": "blade_fallen_king", "chance": 0.01 },
                   { "item_id": "crown_dominion", "chance": 0.01 },
                   { "item_id": "cloak_shadows", "chance": 0.01 },
@@ -2165,8 +2165,8 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes the capture particularly effective.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
+                "success": "300 + skill * 2",
+                "critical_success": "300 + skill * 4",
                 "mediocre": "150 + skill",
                 "failure": "-(150 + roll)"
               },
@@ -2238,8 +2238,8 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
+                "success": "300 + skill * 2",
+                "critical_success": "300 + skill * 4",
                 "mediocre": "150 + skill",
                 "failure": "-(150 + roll)"
               },
@@ -2848,7 +2848,7 @@
                   "libido": 0
                 }
               },
-              "story_image": "",
+              "story_image": "dealer_story1",
               "failure_image": "",
               "loot": {
                 "rolls": 0

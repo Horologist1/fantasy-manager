@@ -119,6 +119,7 @@ init python:
                 worker["energy"] = 0
 
         worker.setdefault("success_count", 0)
+        worker.setdefault("special_match_victories", 0)
 
         # Unique workers should not get random traits - they should only have traits defined in JSON
         if worker.get("unique", False):
@@ -156,6 +157,11 @@ init python:
         worker.setdefault("romance", 0)
         worker.setdefault("relationship", 10 + worker.get("comfort_level", 1))
         worker.setdefault("libido", 10)  # New Libido stat, max 20
+
+        # Auto-supply potions and auto-equip (worker details toggles)
+        worker.setdefault("auto_supply_potions", False)
+        worker.setdefault("auto_supply_potion_count", 3)
+        worker.setdefault("auto_equip", False)
 
         if "trait_modifiers" not in worker:
             worker["trait_modifiers"] = {}

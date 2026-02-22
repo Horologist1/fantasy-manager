@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 3161: keyword argument 'text_color' appears more than once in a textbutton statement.
-    text_color "#7a4b2a"
-              ^
+File "game/scripts/core/screens.rpy", line 1586: keyword argument 'xmaximum' is incompatible with 'xsize'.
+    xmaximum 560
+            ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Wed Feb 18 23:10:14 2026
+Sun Feb 22 03:02:49 2026

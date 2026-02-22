@@ -11,6 +11,8 @@ init python:
         diff = getattr(persistent, "difficulty", "normal")
         if diff == "story":
             return 5
+        if diff == "nightmare":
+            return 40
         if diff == "hard":
             return 30
         # easy and normal: same cost per design
@@ -284,6 +286,13 @@ init python:
                             continue
 
                         skill_options = chosen_story.get("skill_options", [])
+                        diff = getattr(persistent, "difficulty", "normal")
+                        if diff == "nightmare":
+                            difficulty_skill_penalty = 20
+                        elif diff == "hard":
+                            difficulty_skill_penalty = 10
+                        else:
+                            difficulty_skill_penalty = 0
                         if skill_options:
                             selected_skill = random.choice(skill_options)
                             total_skill = sum(calculate_skill_with_traits(worker, s) for s in skill_options)  # Use skill names directly
@@ -292,6 +301,7 @@ init python:
                         else:
                             selected_skill = None
                             effective_skill = 0
+                        effective_skill = max(0, effective_skill - difficulty_skill_penalty)
 
                         # Apply difficulty modifier from story
                         difficulty_modifier = chosen_story.get("difficulty_modifier", 0)
@@ -366,12 +376,21 @@ init python:
                                 earnings = max(earnings, -20)
                         
                         # Log individual earnings for debugging
-                        renpy.log(f"EARNINGS DEBUG: {worker['name']} earned ${earnings} (outcome: {outcome}, skill: {effective_skill}, roll: {roll})")
+                        renpy.log(f"EARNINGS DEBUG: {worker['name']} earned ${earnings} (outcome: {outcome}, skill: {effective_skill}, roll: {roll}, difficulty_penalty: -{difficulty_skill_penalty})")
 
                         # Apply consequences
                         if "consequences" in chosen_story:
                             cons = chosen_story["consequences"].get(outcome_key, {})
                             if cons:
+                                # Hard/Nightmare: failures are harsher.
+                                diff = getattr(persistent, "difficulty", "normal")
+                                consequence_mult = 3 if diff == "nightmare" else (2 if diff == "hard" else 1)
+                                if outcome == "Failure" and consequence_mult > 1:
+                                    cons = {
+                                        k: (v * consequence_mult if isinstance(v, (int, float)) else v)
+                                        for k, v in cons.items()
+                                    }
+                                    renpy.log(f"{diff.upper()} difficulty: x{consequence_mult} failure consequences for {worker.get('name', 'Unknown')}")
                                 # Apply energy and health changes
                                 if "energy" in cons:
                                     old_energy = worker["energy"]
@@ -411,7 +430,7 @@ init python:
                             # Use skill name directly
                             skill_for_desc = selected_skill
                             # Calculate the actual skill value for display
-                            skill_value = calculate_skill_with_traits(worker, selected_skill)
+                            skill_value = max(0, calculate_skill_with_traits(worker, selected_skill) - difficulty_skill_penalty)
                         else:
                             skill_for_desc = "No Skill"
                             skill_value = 0
@@ -495,9 +514,10 @@ init python:
                                 
                                 # Bonus items handling - specific items with chance
                                 bonus_items = loot_data.get("bonus_items", [])
+                                loot_mult = get_difficulty_loot_multiplier()
                                 for bonus in bonus_items:
                                     item_id = bonus.get("item_id")
-                                    chance = bonus.get("chance", 1.0)
+                                    chance = min(1.0, max(0.0, bonus.get("chance", 1.0) * loot_mult))
                                     # Skip NSFW items if NSFW is disabled
                                     if bonus.get("nsfw", False) and not persistent.nsfw_enabled:
                                         continue
@@ -512,7 +532,7 @@ init python:
                                 
                                 # Monster worker loot handling
                                 if "monster_worker" in loot_data:
-                                    chance = loot_data["monster_worker"].get("chance", 1.0)
+                                    chance = min(1.0, max(0.0, loot_data["monster_worker"].get("chance", 1.0) * loot_mult))
                                     filters = loot_data["monster_worker"].get("filters", {"monster": True})
                                     if random.random() <= chance:
                                         looted_worker = loot_monster_worker(filters)
@@ -894,10 +914,16 @@ init python:
                 building["costs"] = 0
                 renpy.log(f"Reset costs for {building_name} to 0")
 
-                # Difficulty: Story (comfort x5), Easy/Normal (x20, base 100), Hard (x30, base 200)
+                # Difficulty: Story (comfort x5, base 100), Easy/Normal (x20, base 100),
+                # Hard (x30, base 200), Nightmare (x40, base 300)
                 comfort_mult = get_difficulty_comfort_mult()
                 diff = getattr(persistent, "difficulty", "normal")
-                base_per_level = 100 if diff != "hard" else 200
+                if diff == "nightmare":
+                    base_per_level = 300
+                elif diff == "hard":
+                    base_per_level = 200
+                else:
+                    base_per_level = 100
 
                 # Add base maintenance cost (per building level; Hard doubles it)
                 base_cost = base_per_level * building["base_level"]
@@ -917,6 +943,22 @@ init python:
                     worker_costs = comfort_costs + upkeep_costs
                     building["costs"] += worker_costs
                     renpy.log(f"Added base cost {base_cost} + comfort {comfort_costs} + upkeep {upkeep_costs} to {building_name}, total: {building['costs']}")
+
+        # Poner a descansar / restaurar trabajo ANTES de regenerar: si se regenera primero, los de 0 energía ya no cumplen energy < rest_threshold
+        try:
+            process_manager_auto_rest()
+            renpy.log("Manager auto-rest processing completed (before regen)")
+        except Exception as e:
+            renpy.log(f"Error in manager auto-rest: {e}")
+
+        # Re-run auto-equip at day start so newly obtained gear (including accessories)
+        # is considered without requiring manual toggle/profession changes.
+        for worker in store.workers:
+            if worker.get("auto_equip", False):
+                try:
+                    run_worker_auto_equip(worker)
+                except Exception as e:
+                    renpy.log(f"AUTO_EQUIP_DAYSTART error for {worker.get('name', 'Unknown')}: {e}")
 
         # Regenerate energy/health and update stats BEFORE events
         for worker in store.workers:
@@ -985,13 +1027,7 @@ init python:
 
         # Ensure assigned_servants reference live worker objects before processing events
         _relink_assigned_servants_to_store_workers()
-        
-        # Process manager auto-rest functionality
-        try:
-            process_manager_auto_rest()
-            renpy.log("Manager auto-rest processing completed")
-        except Exception as e:
-            renpy.log(f"Error in manager auto-rest: {e}")
+
         # Process daily events (THIS POPULATES THE GLOBAL daily_report)
         process_daily_events_result = process_daily_events()
         # Check if process_daily_events triggered an early game over (e.g., if it were to return "game_over")

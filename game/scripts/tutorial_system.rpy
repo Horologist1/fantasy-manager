@@ -982,7 +982,7 @@ screen journal_panel():
                         text "Tutorial:":
                             size font_size(24)
                             color "#7a4b2a"
-                        textbutton "Map > Buy Servants":
+                        textbutton "Explore > Recruit workers or Buy Servants":
                             xsize 520
                             text_size font_size(22)
                             text_color "#7a4b2a"

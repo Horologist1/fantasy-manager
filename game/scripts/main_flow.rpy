@@ -327,6 +327,24 @@ label day_transition:
             relink = getattr(store, "_relink_assigned_servants_to_store_workers", None)
             if callable(relink):
                 relink()
+            # Auto-supply potions (workers take 1-5 from manager) then auto-equip, then auto-consume
+            for w in getattr(store, "workers", []) or []:
+                try:
+                    if w.get("auto_supply_potions", False) or w.get("auto_equip", False):
+                        renpy.log("AUTO_HOOK worker=" + str(w.get("name", "?")) +
+                                  " supply=" + str(w.get("auto_supply_potions", False)) +
+                                  " count=" + str(w.get("auto_supply_potion_count", 3)) +
+                                  " equip=" + str(w.get("auto_equip", False)))
+                except Exception:
+                    pass
+                try:
+                    store.run_worker_auto_supply_potions(w)
+                except Exception as e1:
+                    renpy.log("run_worker_auto_supply_potions error: " + str(e1))
+                try:
+                    store.run_worker_auto_equip(w)
+                except Exception as e2:
+                    renpy.log("run_worker_auto_equip error: " + str(e2))
             thr = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
             ac = getattr(store, "auto_consume_start_of_day", None)
             if callable(ac):
@@ -1070,6 +1088,16 @@ label next_day:
             renpy.call_screen("daily_report")
             # "Start of day" as player experiences it: right after closing daily report.
             try:
+                # Auto-supply and auto-equip first.
+                for w in store.workers:
+                    try:
+                        store.run_worker_auto_supply_potions(w)
+                    except Exception as e1:
+                        renpy.log("run_worker_auto_supply_potions error (next_day/governor_retaliation): " + str(e1))
+                    try:
+                        store.run_worker_auto_equip(w)
+                    except Exception as e2:
+                        renpy.log("run_worker_auto_equip error (next_day/governor_retaliation): " + str(e2))
                 _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
                 for w in store.workers:
                     if hasattr(store, "auto_consume_start_of_day"):
@@ -1085,6 +1113,16 @@ label next_day:
             renpy.call_screen("daily_report")
             # "Start of day" as player experiences it: right after closing daily report.
             try:
+                # Auto-supply and auto-equip first.
+                for w in store.workers:
+                    try:
+                        store.run_worker_auto_supply_potions(w)
+                    except Exception as e1:
+                        renpy.log("run_worker_auto_supply_potions error (next_day/governor_tension): " + str(e1))
+                    try:
+                        store.run_worker_auto_equip(w)
+                    except Exception as e2:
+                        renpy.log("run_worker_auto_equip error (next_day/governor_tension): " + str(e2))
                 _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
                 for w in store.workers:
                     if hasattr(store, "auto_consume_start_of_day"):
@@ -1101,6 +1139,16 @@ label next_day:
             renpy.call_screen("daily_report")
             # "Start of day" as player experiences it: right after closing daily report.
             try:
+                # Auto-supply and auto-equip first.
+                for w in store.workers:
+                    try:
+                        store.run_worker_auto_supply_potions(w)
+                    except Exception as e1:
+                        renpy.log("run_worker_auto_supply_potions error (next_day/no_event): " + str(e1))
+                    try:
+                        store.run_worker_auto_equip(w)
+                    except Exception as e2:
+                        renpy.log("run_worker_auto_equip error (next_day/no_event): " + str(e2))
                 _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
                 for w in store.workers:
                     if hasattr(store, "auto_consume_start_of_day"):
@@ -1126,6 +1174,16 @@ label handle_event_then_daily_report:
         renpy.call_screen("daily_report")
         # "Start of day" as player experiences it: right after closing daily report.
         try:
+            # Auto-supply and auto-equip first.
+            for w in store.workers:
+                try:
+                    store.run_worker_auto_supply_potions(w)
+                except Exception as e1:
+                    renpy.log("run_worker_auto_supply_potions error (handle_event_then_daily_report): " + str(e1))
+                try:
+                    store.run_worker_auto_equip(w)
+                except Exception as e2:
+                    renpy.log("run_worker_auto_equip error (handle_event_then_daily_report): " + str(e2))
             _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
             for w in store.workers:
                 if hasattr(store, "auto_consume_start_of_day"):

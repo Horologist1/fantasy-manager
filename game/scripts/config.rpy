@@ -6,6 +6,7 @@
 define player = Character("Manager")
 define academy_director = Character("Academy Director")
 define arena_promoter = Character("Arena Promoter")
+define lab_director = Character("Lab Director")
 define narrator = Character(None)  # Narration / no speaker name (e.g. arena trial result)
 # Benefit/stat gain messages (same green #006600 as interaction success in event_daily_exec)
 define benefit_msg = Character(None, what_color="#006600", what_size=22)
@@ -130,6 +131,7 @@ init python:
 
     # Install filtered logger
     renpy.log = _filtered_renpy_log
+
 
     # Disable Ren'Py autosaves (only manual slot saves are supported)
     config.has_autosave = False

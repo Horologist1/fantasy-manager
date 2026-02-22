@@ -35,9 +35,54 @@ init python:
     #############################
     # Base success bonus added to all skill-based event checks
     # This increases the baseline success chance for all events
-    EVENT_SUCCESS_BASE_BONUS_WORKER = 30  # Percentage points added to worker skill level for success checks
-    EVENT_SUCCESS_BASE_BONUS_BUILDING = 50  # Percentage points added to building skill for success checks
-    EVENT_SUCCESS_MIN_CHANCE = 0.6  # Minimum success chance (60%) for events with defined success_chance
+    EVENT_SUCCESS_BASE_BONUS_WORKER = 30  # Easy baseline (+30)
+    EVENT_SUCCESS_BASE_BONUS_BUILDING = 50  # Easy baseline (+50)
+    EVENT_SUCCESS_MIN_CHANCE = 0.6  # Easy baseline minimum success chance (60%)
+
+    def get_event_success_bonus_worker():
+        """Difficulty-scaled worker baseline bonus for event checks."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "nightmare":
+            return 5
+        if diff == "hard":
+            return 15
+        if diff == "normal":
+            return 22
+        # Keep easy/story unchanged as requested.
+        return EVENT_SUCCESS_BASE_BONUS_WORKER
+
+    def get_event_success_bonus_building():
+        """Difficulty-scaled building baseline bonus for event checks."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "nightmare":
+            return 20
+        if diff == "hard":
+            return 30
+        if diff == "normal":
+            return 40
+        # Keep easy/story unchanged as requested.
+        return EVENT_SUCCESS_BASE_BONUS_BUILDING
+
+    def get_event_success_min_chance():
+        """Difficulty-scaled minimum success chance for probability-based events."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "nightmare":
+            return 0.35
+        if diff == "hard":
+            return 0.45
+        if diff == "normal":
+            return 0.55
+        # Keep easy/story unchanged as requested.
+        return EVENT_SUCCESS_MIN_CHANCE
+
+    def get_difficulty_loot_multiplier():
+        """Difficulty-scaled loot chance multiplier."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "nightmare":
+            return 0.50
+        if diff == "hard":
+            return 0.75
+        return 1.00
 
     #############################
     # Helper Functions & Loading
@@ -230,11 +275,11 @@ init python:
 
     def get_fallback_folder(worker=None):
         """Get the appropriate fallback folder based on worker gender.
-        Returns 'aspen' for males, 'blossom' for females/unknown."""
+        Returns 'guy' for males, 'blossom' for females/unknown."""
         if worker and isinstance(worker, dict):
             gender = worker.get("gender", "").lower()
             if gender == "male":
-                return "aspen"
+                return "guy"
         return "blossom"  # Default for females or unknown
     
     def get_worker_folder(worker):
@@ -881,19 +926,27 @@ init python:
                     # No need to modify base skills here
                     pass
                 elif effect_type == "health":
-                    # Calculate the current health percentage
-                    current_health_percentage = worker["health"] / calculate_max_health(worker)
-                    # Update the maximum health
-                    worker["max_health"] = calculate_max_health(worker) + effect_value
-                    # Adjust current health proportionally
-                    worker["health"] = int(worker["max_health"] * current_health_percentage)
+                    # Max health is derived from equipped items/traits. When this function runs,
+                    # inventory state may already be updated, so never add health bonus manually.
+                    old_max_health = int(worker.get("max_health", calculate_max_health(worker)))
+                    if old_max_health <= 0:
+                        old_max_health = 1
+                    current_health = int(worker.get("health", 0))
+                    health_ratio = float(current_health) / float(old_max_health)
+                    new_max_health = max(1, int(calculate_max_health(worker)))
+                    worker["max_health"] = new_max_health
+                    worker["health"] = max(0, min(new_max_health, int(round(new_max_health * health_ratio))))
                 elif effect_type == "energy":
-                    # Calculate the current energy percentage
-                    current_energy_percentage = worker["energy"] / calculate_max_energy(worker)
-                    # Update the maximum energy
-                    worker["max_energy"] = calculate_max_energy(worker) + effect_value
-                    # Adjust current energy proportionally
-                    worker["energy"] = int(worker["max_energy"] * current_energy_percentage)
+                    # Same rule as health: never add energy bonus manually here.
+                    old_max_energy = int(worker.get("max_energy", calculate_max_energy(worker)))
+                    current_energy = int(worker.get("energy", 0))
+                    if old_max_energy > 0:
+                        energy_ratio = float(current_energy) / float(old_max_energy)
+                    else:
+                        energy_ratio = 0.0
+                    new_max_energy = max(0, int(calculate_max_energy(worker)))
+                    worker["max_energy"] = new_max_energy
+                    worker["energy"] = max(0, min(new_max_energy, int(round(new_max_energy * energy_ratio))))
                 elif effect_type == "add_trait":
                     # Support array of traits, single trait string, or dict with name/duration
                     renpy.log(f"add_trait effect_value type: {type(effect_value)}, is list: {isinstance(effect_value, list)}, value: {str(effect_value)[:100]}")
@@ -962,19 +1015,27 @@ init python:
                     # No need to revert skills here
                     pass
                 elif effect_type == "health":
-                    # Calculate the current health percentage
-                    current_health_percentage = worker["health"] / calculate_max_health(worker)
-                    # Revert the maximum health
-                    worker["max_health"] = calculate_max_health(worker) - effect_value
-                    # Adjust current health proportionally
-                    worker["health"] = int(worker["max_health"] * current_health_percentage)
+                    # Max health is derived from equipped items/traits. When this function runs,
+                    # inventory state may already be updated, so never subtract health bonus manually.
+                    old_max_health = int(worker.get("max_health", calculate_max_health(worker)))
+                    if old_max_health <= 0:
+                        old_max_health = 1
+                    current_health = int(worker.get("health", 0))
+                    health_ratio = float(current_health) / float(old_max_health)
+                    new_max_health = max(1, int(calculate_max_health(worker)))
+                    worker["max_health"] = new_max_health
+                    worker["health"] = max(0, min(new_max_health, int(round(new_max_health * health_ratio))))
                 elif effect_type == "energy":
-                    # Calculate the current energy percentage
-                    current_energy_percentage = worker["energy"] / calculate_max_energy(worker)
-                    # Revert the maximum energy
-                    worker["max_energy"] = calculate_max_energy(worker) - effect_value
-                    # Adjust current energy proportionally
-                    worker["energy"] = int(worker["max_energy"] * current_energy_percentage)
+                    # Same rule as health: never subtract energy bonus manually here.
+                    old_max_energy = int(worker.get("max_energy", calculate_max_energy(worker)))
+                    current_energy = int(worker.get("energy", 0))
+                    if old_max_energy > 0:
+                        energy_ratio = float(current_energy) / float(old_max_energy)
+                    else:
+                        energy_ratio = 0.0
+                    new_max_energy = max(0, int(calculate_max_energy(worker)))
+                    worker["max_energy"] = new_max_energy
+                    worker["energy"] = max(0, min(new_max_energy, int(round(new_max_energy * energy_ratio))))
                 elif effect_type == "add_trait":
                     # When unequipping, remove the traits that were added when equipping
                     renpy.log(f"remove_item_effects: Removing traits added by item '{item_id}': {effect_value}")
@@ -1374,6 +1435,78 @@ init python:
                 except Exception as e:
                     renpy.log(f"DEBUG: Tutorial - check_objective_completion error: {e}")
 
+    def auto_consume_start_of_day(worker, threshold=0.30):
+        """
+        At start of day, auto-consume health_potion and energy_potion from the worker's inventory
+        when health or energy is below threshold (fraction of max). Uses only health_potion and energy_potion.
+        Applies effect and removes item without notifying (to avoid spam).
+        """
+        if not worker or not hasattr(worker, "get"):
+            return
+        inv = worker.get("inventory") or []
+        if not isinstance(inv, list):
+            return
+        max_health = calculate_max_health(worker)
+        max_energy = calculate_max_energy(worker)
+        health_thresh = max(0, threshold * max_health)
+        energy_thresh = max(0, threshold * max_energy)
+        while True:
+            need_health = worker.get("health", 0) < health_thresh
+            need_energy = worker.get("energy", 0) < energy_thresh
+            if not need_health and not need_energy:
+                break
+            found = None
+            for i, entry in enumerate(inv):
+                if not isinstance(entry, (list, tuple)) or len(entry) < 1:
+                    continue
+                item_id = (entry[0] if isinstance(entry[0], str) else str(entry[0])).strip()
+                if item_id not in ("health_potion", "energy_potion"):
+                    continue
+                qty = 1
+                if len(entry) >= 2 and entry[1] is not None:
+                    try:
+                        qty = int(entry[1])
+                    except Exception:
+                        pass
+                if qty <= 0:
+                    continue
+                if item_id == "health_potion" and need_health:
+                    found = (i, item_id, "health")
+                    break
+                if item_id == "energy_potion" and need_energy:
+                    found = (i, item_id, "energy")
+                    break
+            if found is None:
+                break
+            idx, item_id, eff_type = found
+            item_data = next((it for it in items_json.get("items", []) if it.get("id") == item_id), None)
+            if not item_data or item_data.get("type") != "consumable":
+                break
+            effect = item_data.get("effect") or {}
+            if eff_type == "health" and "health" in effect:
+                worker["health"] = min(max_health, worker.get("health", 0) + int(effect.get("health", 0)))
+            if eff_type == "energy" and "energy" in effect:
+                worker["energy"] = min(max_energy, worker.get("energy", 0) + int(effect.get("energy", 0)))
+            remove_item_from_inventory(inv, item_id, 1)
+            renpy.log(f"Auto-consume: {worker.get('name', '?')} used 1x {item_id} ({eff_type} below {threshold*100:.0f}%)")
+
+    def _get_first_profession_id_for_building(building):
+        """Return the first profession id for this building type (e.g. 'prostitute' for brothel), or None."""
+        if not building:
+            return None
+        btype_id = building.get("type")
+        if not btype_id:
+            return None
+        for bt in building_types_json.get("building_types", []):
+            if bt.get("id") == btype_id:
+                profs = bt.get("professions") or []
+                if profs and len(profs) > 0:
+                    return profs[0].get("id")
+                return None
+        return None
+
+    # process_manager_auto_rest: definido en building_logic.rpy (poner a descansar + restaurar).
+    # No duplicar aquí para no sobrescribir esa versión.
 
     def evaluate_condition(condition_str):
         """
@@ -2125,7 +2258,8 @@ init python:
         
         # Ensure defaults are applied (including monster-specific ones)
         ensure_worker_defaults(worker)
-        
+        worker["assigned_building"] = "Unassigned"  # Captured workers are never pre-assigned
+
         # Return the worker without adding to roster here - let the caller handle it
         return worker
 
@@ -2356,6 +2490,7 @@ init python:
     def recruit_worker(worker):
         worker["is_servant"] = False
         worker["source"] = "recruited"
+        worker["assigned_building"] = "Unassigned"  # New recruits are never pre-assigned
         workers.append(worker)
         if worker in available_workers:
             available_workers.remove(worker)
@@ -2516,7 +2651,8 @@ init python:
             "joy": random.randint(20, 80),
             "comfort_desired": 5,  # Procedural workers always require comfort level 5
             "description": f"A skilled worker from the {template.get('folder', 'unknown')} region.",
-            "traits": list(base_traits)  # Keep template traits (e.g., race) for image consistency
+            "traits": list(base_traits),  # Keep template traits (e.g., race) for image consistency
+            "assigned_building": "Unassigned"  # Never inherit template's building assignment
         })
         
         # Assign additional random traits if needed (to reach 3 total max)
@@ -2611,7 +2747,8 @@ init python:
             "unique": False,
             "encounter_only": False,
             "monster": False,
-            "nsfw": persistent.nsfw_enabled  # Set NSFW based on game mode
+            "nsfw": persistent.nsfw_enabled,  # Set NSFW based on game mode
+            "assigned_building": "Unassigned"
         }
         
         # Assign additional random traits if needed (to reach 3 total max)
@@ -2646,6 +2783,7 @@ init python:
             worker["energy"] = worker.get("level", 1) * 5
             worker["comfort_level"] = worker.get("comfort_level", 1)
             worker["source"] = "bought"
+            worker["assigned_building"] = "Building 1"  # Bought workers go to Building 1, avoid template carryover
             workers.append(worker)
             available_buildings["Building 1"]["servant_jobs"][worker["name"]] = "Unassigned"
             if worker in available_workers:
@@ -2767,6 +2905,32 @@ init python:
                 building["servant_jobs"][worker_name] = "unassigned"
         except Exception as e:
             renpy.log("add_worker_to_building: ensure servant_jobs error: " + str(e))
+
+    def set_worker_job(worker, building_name, job_id):
+        """Set worker's job in the building. When setting to Rest, store current job as previous_job for auto-restore."""
+        if not worker or not building_name or building_name not in available_buildings:
+            return
+        building = available_buildings[building_name]
+        if "servant_jobs" not in building:
+            building["servant_jobs"] = {}
+        worker_name = worker.get("name") if hasattr(worker, "get") else None
+        if not worker_name:
+            return
+        canonical = next((w for w in store.workers if isinstance(w, dict) and w.get("name") == worker_name), worker)
+        current_job = (building.get("servant_jobs") or {}).get(worker_name)
+        job_id_str = str(job_id).strip().lower() if job_id else ""
+        if job_id_str == "rest" and current_job and str(current_job).strip().lower() not in ("rest", "", "unassigned"):
+            canonical["previous_job"] = current_job
+            renpy.log(f"set_worker_job: {worker_name} -> Rest (stored previous_job={current_job})")
+        building["servant_jobs"][worker_name] = job_id if job_id is not None else "unassigned"
+
+    def clear_worker_autorest_state(worker):
+        """Clear previous_job when player manually changes job (so auto-restore doesn't override)."""
+        if not worker or not hasattr(worker, "get"):
+            return
+        canonical = next((w for w in store.workers if isinstance(w, dict) and w.get("name") == worker.get("name")), worker)
+        if "previous_job" in canonical:
+            del canonical["previous_job"]
 
     def sync_assigned_servants_for_building(building_name):
         """Rebuild assigned_servants for a single building from servant_jobs and store.workers."""
@@ -3206,6 +3370,11 @@ init python:
         store.academy_enrolled = True
         renpy.log("Academy added to available_buildings (not in owned_buildings)")
 
+    def add_alchemy_pass():
+        """Unlock the Academy laboratory. Call when player pays the alchemist pass."""
+        store.alchemy_unlocked = True
+        renpy.log("Alchemy pass purchased; laboratory unlocked.")
+
     def try_academy_haggle():
         """50% chance to succeed. On failure, haggle option is removed until next day. Returns (success, discounted_price)."""
         import random
@@ -3216,27 +3385,32 @@ init python:
 
     def add_arena_building():
         """Add the Arena to available_buildings when the player unlocks it (first visit)."""
-        if "Arena" in available_buildings:
-            return
-        available_buildings["Arena"] = {
-            "price": 0,
-            "base_level": 1,
-            "assigned_servants": [],
-            "servant_jobs": {},
-            "type": "arena",
-            "reputation": 0,
-            "max_workers": {},
-            "costs": 0,
-            "owned": True,
-            "skill": 10,
-            "skill_bonus": 0,
-            "event_limit": 0
-        }
+        # Some save/data states already contain "Arena" in available_buildings.
+        # In that case we must still mark it as unlocked/owned after winning the trial.
+        if "Arena" not in available_buildings:
+            available_buildings["Arena"] = {
+                "price": 0,
+                "base_level": 1,
+                "assigned_servants": [],
+                "servant_jobs": {},
+                "type": "arena",
+                "reputation": 0,
+                "max_workers": {},
+                "costs": 0,
+                "owned": True,
+                "skill": 10,
+                "skill_bonus": 0,
+                "event_limit": 0
+            }
+        else:
+            available_buildings["Arena"]["owned"] = True
         if not hasattr(store, "custom_names") or store.custom_names is None:
             store.custom_names = {}
         store.custom_names.setdefault("Arena", "Arena")
         store.arena_unlocked = True
-        renpy.log("Arena added to available_buildings")
+        if "Arena" not in store.owned_buildings:
+            store.owned_buildings.append("Arena")
+        renpy.log("Arena added to available_buildings and owned_buildings")
 
     def run_arena_trial(worker):
         """
@@ -3245,7 +3419,8 @@ init python:
         """
         import random
         skill_level = calculate_skill_with_traits(worker, "Combat")
-        effective = min(100, skill_level + EVENT_SUCCESS_BASE_BONUS_WORKER)
+        worker_bonus = get_event_success_bonus_worker()
+        effective = min(100, skill_level + worker_bonus)
         roll = random.randint(1, 100)
         # Bands: critical_success <= 15% of effective, success <= effective, mediocre <= effective+25, else failure/crit_fail
         crit_threshold = max(1, int(effective * 0.15))
@@ -3256,6 +3431,177 @@ init python:
         if roll <= effective + 25:
             return "mediocre"
         return "critical_failure" if roll > effective + 50 else "failure"
+
+    # Special match: many opponent styles and beasts; 2 rounds (attack/defend/feint). Hints suggest what they're doing.
+    # Beats: attack beats feint, defend beats attack, feint beats defend.
+    SPECIAL_MATCH_STYLES = [
+        # Murmillo variants
+        {"id": "murmillo", "name": "Murmillo", "round1": "attack", "round2": "defend", "hint1": "They shift weight behind the great shield.", "hint2": "The shield drops a fraction; a strike is coming."},
+        {"id": "murmillo2", "name": "Murmillo", "round1": "defend", "round2": "attack", "hint1": "Shield high, they close step by step.", "hint2": "The rim dips—they're about to strike."},
+        {"id": "murmillo3", "name": "Murmillo", "round1": "defend", "round2": "feint", "hint1": "They plant behind the shield.", "hint2": "A false step, blade still hidden."},
+        # Retiarius variants
+        {"id": "retiarius", "name": "Retiarius", "round1": "feint", "round2": "attack", "hint1": "They circle, trident between you.", "hint2": "The net hand twitches; they mean to throw."},
+        {"id": "retiarius2", "name": "Retiarius", "round1": "attack", "round2": "feint", "hint1": "The trident drives in low.", "hint2": "They skip back, net trailing—a feint."},
+        {"id": "retiarius3", "name": "Retiarius", "round1": "feint", "round2": "defend", "hint1": "A flick of the net, no throw.", "hint2": "Trident raised, they hold the line."},
+        # Secutor variants
+        {"id": "secutor", "name": "Secutor", "round1": "attack", "round2": "attack", "hint1": "They close the gap with purpose.", "hint2": "Breath comes hard; they're committed to the rush."},
+        {"id": "secutor2", "name": "Secutor", "round1": "attack", "round2": "defend", "hint1": "They come in fast.", "hint2": "Helm dips; they brace behind the blade."},
+        {"id": "secutor3", "name": "Secutor", "round1": "defend", "round2": "attack", "hint1": "Short guard, waiting.", "hint2": "A sudden step—the rush is on."},
+        # Thraex variants
+        {"id": "thraex", "name": "Thraex", "round1": "feint", "round2": "feint", "hint1": "They feint with the curved blade.", "hint2": "They sidestep, blade held back."},
+        {"id": "thraex2", "name": "Thraex", "round1": "feint", "round2": "attack", "hint1": "A flick of the sica, no commitment.", "hint2": "The hook comes round for real."},
+        {"id": "thraex3", "name": "Thraex", "round1": "attack", "round2": "feint", "hint1": "They lunge with the sica.", "hint2": "Recovery step, then a fake cut."},
+        # Hoplomachus variants
+        {"id": "hoplomachus", "name": "Hoplomachus", "round1": "defend", "round2": "attack", "hint1": "Spear tip held toward you.", "hint2": "They shorten the grip—a thrust is coming."},
+        {"id": "hoplomachus2", "name": "Hoplomachus", "round1": "attack", "round2": "defend", "hint1": "The spear drives in.", "hint2": "They pull back, point steady."},
+        {"id": "hoplomachus3", "name": "Hoplomachus", "round1": "defend", "round2": "feint", "hint1": "Shield and spear, holding ground.", "hint2": "A short jab, then they circle."},
+        # Provocator / other human styles
+        {"id": "provocator", "name": "Provocator", "round1": "defend", "round2": "attack", "hint1": "Small shield up, watching.", "hint2": "They drop the shoulder and thrust."},
+        {"id": "dimachaerus", "name": "Dimachaerus", "round1": "feint", "round2": "attack", "hint1": "Twin blades weave; one sweep is a feint.", "hint2": "Both blades commit to the cut."},
+        {"id": "essedarius", "name": "Essedarius", "round1": "attack", "round2": "feint", "hint1": "They come in from the flank.", "hint2": "A pass-by, blade held—then nothing."},
+        # Mythical beasts
+        {"id": "crocotta", "name": "Crocotta", "round1": "feint", "round2": "attack", "hint1": "The hyena-beast feints with a snap.", "hint2": "It closes; the bite is real."},
+        {"id": "crocotta2", "name": "Crocotta", "round1": "attack", "round2": "defend", "hint1": "It lunges for the leg.", "hint2": "It backs into a crouch."},
+        {"id": "minotaur", "name": "Minotaur", "round1": "attack", "round2": "attack", "hint1": "The bull-man lowers his horns.", "hint2": "He charges again."},
+        {"id": "minotaur2", "name": "Minotaur", "round1": "defend", "round2": "feint", "hint1": "He turns, flank guarded.", "hint2": "A feint with the axe."},
+        {"id": "griffin", "name": "Griffin", "round1": "feint", "round2": "defend", "hint1": "Wings spread—a feint, no strike.", "hint2": "It folds back, talons ready."},
+        {"id": "griffin2", "name": "Griffin", "round1": "attack", "round2": "feint", "hint1": "It stoops; the strike is true.", "hint2": "A second pass, but it pulls up."},
+        {"id": "sphinx", "name": "Sphinx", "round1": "defend", "round2": "attack", "hint1": "It watches, coiled.", "hint2": "Claws extend in a rush."},
+        {"id": "sphinx2", "name": "Sphinx", "round1": "feint", "round2": "feint", "hint1": "A paw raised, then lowered.", "hint2": "Again it feints, then waits."},
+        {"id": "basilisk", "name": "Basilisk", "round1": "defend", "round2": "feint", "hint1": "It coils, head drawn back.", "hint2": "A strike that stops short."},
+        {"id": "basilisk2", "name": "Basilisk", "round1": "attack", "round2": "defend", "hint1": "The strike comes from above.", "hint2": "It retreats into the coil."},
+    ]
+    def _special_match_action_beats(our_action, opponent_action):
+        if our_action == "attack" and opponent_action == "feint": return True
+        if our_action == "defend" and opponent_action == "attack": return True
+        if our_action == "feint" and opponent_action == "defend": return True
+        return False
+    def _special_match_action_loses(our_action, opponent_action):
+        if our_action == "attack" and opponent_action == "defend": return True
+        if our_action == "defend" and opponent_action == "feint": return True
+        if our_action == "feint" and opponent_action == "attack": return True
+        return False
+    # Option A: player shouts what the OPPONENT is doing; gladiator reacts with the counter.
+    def _special_match_counter(opponent_action):
+        """The action that beats opponent_action (what gladiator does when we call it right)."""
+        if opponent_action == "attack": return "defend"
+        if opponent_action == "defend": return "feint"
+        if opponent_action == "feint": return "attack"
+        return "defend"
+    def _special_match_call_correct(call_action, actual_opponent_action):
+        """True if we correctly called what the opponent is doing."""
+        return call_action == actual_opponent_action
+    def _special_match_call_neutral(call_action, actual_opponent_action):
+        """True if our wrong call leads to a tie (gladiator's counter ties opponent)."""
+        return _special_match_counter(call_action) == actual_opponent_action
+    def run_arena_special_match_combat_roll(worker, total_difficulty_modifier):
+        """Roll for special match outcome. Returns True if success, False if failure."""
+        import random
+        skill_level = calculate_skill_with_traits(worker, "Combat")
+        worker_bonus = get_event_success_bonus_worker()
+        effective = min(100, max(1, skill_level - total_difficulty_modifier + worker_bonus))
+        roll = random.randint(1, 100)
+        return roll <= effective
+
+    # Alchemy laboratory: 2 rounds (heat_up / maintain / heat_down). Hints describe state only—no literal "raise/lower/steady" so options stay non-obvious.
+    ALCHEMY_ROUND_STYLES = [
+        {"id": "s1", "round1": "heat_up", "round2": "maintain", "hint1": "The distillate barely moves; the vapour is thin.", "hint2": "The mixture steadies. The drip is even."},
+        {"id": "s2", "round1": "maintain", "round2": "heat_down", "hint1": "The brew holds at a gentle simmer.", "hint2": "The colour darkens. A note of scorch at the rim."},
+        {"id": "s3", "round1": "heat_down", "round2": "heat_up", "hint1": "The alembic glows. Smoke curls at the neck.", "hint2": "The vapour has faded. The liquid sits still."},
+        {"id": "s4", "round1": "heat_up", "round2": "heat_down", "hint1": "The vapour is wispy. The drip has slowed.", "hint2": "The essence has passed into the receiver."},
+        {"id": "s5", "round1": "maintain", "round2": "maintain", "hint1": "The balance is delicate. The colour holds.", "hint2": "One more moment. The drip has not changed."},
+        {"id": "s6", "round1": "heat_down", "round2": "maintain", "hint1": "The retort glows. The air above shimmers.", "hint2": "The drip from the condenser is steady."},
+        {"id": "s7", "round1": "maintain", "round2": "heat_up", "hint1": "The blend is stable. The colour is true.", "hint2": "The vapour weakens. The spirit still sits in the herbs."},
+        {"id": "s8", "round1": "heat_up", "round2": "heat_up", "hint1": "The mixture is lukewarm. The vapour barely rises.", "hint2": "Still faint. The condenser is almost dry."},
+        {"id": "s9", "round1": "heat_down", "round2": "heat_down", "hint1": "A bitter note rises. The glass is too hot to touch.", "hint2": "The brew still fumes. The rim is dark."},
+        {"id": "s10", "round1": "maintain", "round2": "heat_down", "hint1": "The colour is right. The simmer is even.", "hint2": "The last of the essence has left the still."},
+        {"id": "s11", "round1": "heat_up", "round2": "maintain", "hint1": "The vapour barely rises. The fire is lazy.", "hint2": "The drip is even. Nothing has shifted."},
+        {"id": "s12", "round1": "heat_down", "round2": "heat_up", "hint1": "Smoke curls at the neck. The air tastes sharp.", "hint2": "The mixture has cooled. The vapour is gone."},
+        {"id": "s13", "round1": "maintain", "round2": "heat_up", "hint1": "The simmer is perfect. The colour holds.", "hint2": "The vapour thins. The drip has all but stopped."},
+        {"id": "s14", "round1": "heat_up", "round2": "heat_down", "hint1": "The liquid barely moves. The condenser is cold.", "hint2": "The run is done. The receiver is full."},
+        {"id": "s15", "round1": "heat_down", "round2": "maintain", "hint1": "The glass is scorching. The mixture threatens to boil over.", "hint2": "The temperature holds. The drip is steady."},
+        {"id": "s16", "round1": "maintain", "round2": "maintain", "hint1": "The balance is good. The colour has not shifted.", "hint2": "A few heartbeats. The drip has not changed."},
+        {"id": "s17", "round1": "heat_up", "round2": "heat_up", "hint1": "The essence still sits in the herbs. The vapour is thin.", "hint2": "The vapour is weak. The fire is too gentle."},
+        {"id": "s18", "round1": "heat_down", "round2": "heat_down", "hint1": "The mixture froths at the rim. The air is acrid.", "hint2": "It still fumes. The colour has darkened."},
+        {"id": "s19", "round1": "maintain", "round2": "heat_down", "hint1": "The brew behaves. The drip is regular.", "hint2": "The last drop has fallen. The receiver is full."},
+        {"id": "s20", "round1": "heat_up", "round2": "maintain", "hint1": "The condenser is dry. The vapour has stalled.", "hint2": "The drip is steady. The colour holds."},
+        {"id": "s21", "round1": "heat_down", "round2": "heat_up", "hint1": "A burnt smell. The rim is blackening.", "hint2": "Too cold. The vapour has gone. The liquid sits still."},
+        {"id": "s22", "round1": "maintain", "round2": "heat_up", "hint1": "The blend holds. The simmer is even.", "hint2": "The vapour fades. The drip has slowed."},
+        {"id": "s23", "round1": "heat_up", "round2": "heat_down", "hint1": "The vapour is thin and slow. The fire is low.", "hint2": "The run is complete. The receiver holds the essence."},
+        {"id": "s24", "round1": "heat_down", "round2": "maintain", "hint1": "The liquid boils. The air above wavers.", "hint2": "The temperature holds. The drip is even."},
+        {"id": "s25", "round1": "maintain", "round2": "heat_up", "hint1": "All is in order. The colour and drip are steady.", "hint2": "The spirit is not yet drawn. The vapour is faint."},
+    ]
+    def run_alchemy_craft_roll(worker, craft_modifier):
+        """Roll for alchemy outcome. Uses Craft skill. Returns: critical_success, success, mediocre, failure."""
+        import random
+        skill_level = calculate_skill_with_traits(worker, "Craft")
+        worker_bonus = get_event_success_bonus_worker()
+        effective = min(100, max(1, skill_level - craft_modifier + worker_bonus))
+        roll = random.randint(1, 100)
+        crit_threshold = max(1, int(effective * 0.15))
+        if roll <= crit_threshold:
+            return "critical_success"
+        if roll <= effective:
+            return "success"
+        if roll <= effective + 25:
+            return "mediocre"
+        return "failure"
+    def apply_alchemy_result(tier, outcome, inventory):
+        """Apply alchemy result: give potions to manager_inventory by tier and outcome. Modifies inventory in place.
+        Quality/premium critical = Troll Blood (+1 Health, +1 Health Regen). Success = trait potions (SFW-only in SFW games)."""
+        import random
+        if outcome == "failure":
+            return []
+        given = []
+        if tier == "basic":
+            # Basic cost 350. Failure = lose all (no refund).
+            if outcome == "critical_success":
+                for _ in range(30):
+                    add_item_to_inventory(inventory, "health_potion")
+                    given.append("health_potion")
+                for _ in range(30):
+                    add_item_to_inventory(inventory, "energy_potion")
+                    given.append("energy_potion")
+            elif outcome == "success":
+                for _ in range(15):
+                    add_item_to_inventory(inventory, "health_potion")
+                    given.append("health_potion")
+                for _ in range(15):
+                    add_item_to_inventory(inventory, "energy_potion")
+                    given.append("energy_potion")
+            else:  # mediocre
+                for _ in range(2):
+                    add_item_to_inventory(inventory, "health_potion")
+                    given.append("health_potion")
+                for _ in range(2):
+                    add_item_to_inventory(inventory, "energy_potion")
+                    given.append("energy_potion")
+        elif tier in ("quality", "premium"):
+            if outcome == "critical_success":
+                add_item_to_inventory(inventory, "potion_troll_blood")
+                given.append("potion_troll_blood")
+            elif outcome == "success":
+                success_potions = [
+                    "potion_strong", "potion_tough", "potion_transformed", "potion_magical",
+                    "potion_robust", "potion_energetic", "potion_agile",
+                    "potion_great_figure", "potion_long_legs", "potion_exotic", "potion_beautiful"
+                ]
+                if getattr(store.persistent, "nsfw_enabled", False):
+                    success_potions.extend([
+                        "potion_large_breasts", "potion_small_breasts",
+                        "potion_firm_ass", "potion_soft_ass", "potion_large_hips", "potion_deluxe_derriere",
+                        "potion_large_penis", "potion_tight", "potion_sensitive",
+                        "potion_high_libido", "potion_nympho", "potion_satyr", "potion_cum_addict"
+                    ])
+                choice = random.choice(success_potions)
+                add_item_to_inventory(inventory, choice)
+                given.append(choice)
+            else:  # mediocre
+                standard = ["health_potion", "energy_potion", "stamina_elixir"]
+                choice = random.choice(standard)
+                add_item_to_inventory(inventory, choice)
+                given.append(choice)
+        return given
 
     def academy_try_haggle_and_continue():
         """Try to haggle Academy tuition; on success pay 7500 and show academy menu, on failure notify and return to map."""
@@ -3610,7 +3956,8 @@ init python:
                 
                 base_total_skill = selected_building["skill"] + selected_building["skill_bonus"]
                 # Apply base success bonus to increase baseline success chance
-                total_skill = min(100, base_total_skill + EVENT_SUCCESS_BASE_BONUS_BUILDING)
+                building_bonus = get_event_success_bonus_building()
+                total_skill = min(100, base_total_skill + building_bonus)
 
                 roll = random.randint(1, 100)
                 
@@ -3620,7 +3967,7 @@ init python:
                 renpy.log(f"Base Skill: {selected_building['skill']}")
                 renpy.log(f"Skill Bonus: {selected_building['skill_bonus']}")
                 renpy.log(f"Base Total Skill: {base_total_skill}")
-                renpy.log(f"With +{EVENT_SUCCESS_BASE_BONUS_BUILDING}% bonus: {total_skill}")
+                renpy.log(f"With +{building_bonus}% bonus: {total_skill}")
                 renpy.log(f"Roll (1-100): {roll}")
                 renpy.log(f"Result: {'Success' if roll <= total_skill else 'Failure'}")
                 renpy.log(f"--------------------------")
@@ -3891,9 +4238,10 @@ init python:
                             # If worker meets threshold, use a minimum success chance of 90%
                             # Also apply base success bonus
                             min_success_chance = 90
-                            skill_with_bonus = min(100, skill_level + EVENT_SUCCESS_BASE_BONUS_WORKER)
+                            worker_bonus = get_event_success_bonus_worker()
+                            skill_with_bonus = min(100, skill_level + worker_bonus)
                             effective_success_chance = max(skill_with_bonus, min_success_chance)
-                            renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{EVENT_SUCCESS_BASE_BONUS_WORKER} bonus = {skill_with_bonus}) meets threshold {threshold} - using {effective_success_chance}% success chance")
+                            renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{worker_bonus} bonus = {skill_with_bonus}) meets threshold {threshold} - using {effective_success_chance}% success chance")
                             roll = random.randint(1, 100)
                             if roll <= effective_success_chance:
                                 base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
@@ -3906,9 +4254,10 @@ init python:
                     else:
                         # No threshold or doesn't meet it - use normal skill-based roll
                         # Apply base success bonus to increase baseline success chance
-                        effective_skill = min(100, skill_level + EVENT_SUCCESS_BASE_BONUS_WORKER)
+                        worker_bonus = get_event_success_bonus_worker()
+                        effective_skill = min(100, skill_level + worker_bonus)
                         roll = random.randint(1, 100)
-                        renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{EVENT_SUCCESS_BASE_BONUS_WORKER}% bonus = {effective_skill}) - roll {roll} vs {effective_skill}%")
+                        renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{worker_bonus}% bonus = {effective_skill}) - roll {roll} vs {effective_skill}%")
                         if roll <= effective_skill:
                             base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
                             applied_values = apply_effects(effect.get("success", {}), worker=selected_worker)
@@ -3944,7 +4293,8 @@ init python:
             if success_chance is not None:
                 # Probability-based outcome (like fortune telling)
                 # Ensure minimum success chance of 60%
-                effective_success_chance = max(EVENT_SUCCESS_MIN_CHANCE, success_chance)
+                min_success_chance = get_event_success_min_chance()
+                effective_success_chance = max(min_success_chance, success_chance)
                 roll = random.random()
                 if roll <= effective_success_chance:
                     outcome_status = "success"
@@ -3961,7 +4311,7 @@ init python:
                     message = message.replace("[acting_worker]", worker_name)
                 
                 if effective_success_chance > success_chance:
-                    renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} (boosted to minimum {EVENT_SUCCESS_MIN_CHANCE*100}% = {effective_success_chance:.2f}) = {outcome_status}")
+                    renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} (boosted to minimum {min_success_chance*100}% = {effective_success_chance:.2f}) = {outcome_status}")
                 else:
                     renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} = {outcome_status}")
             else:
@@ -4139,9 +4489,10 @@ init python:
             all_workers = load_workers(include_unique=True, include_encounter_only=True)
             target_worker = next((w for w in all_workers if w["name"] == worker_name), None)
             if target_worker and target_worker["name"] not in {w["name"] for w in store.workers}:
-                # Your existing worker addition logic
-                ensure_worker_defaults(target_worker)
-                store.workers.append(target_worker.copy())
+                to_append = target_worker.copy()
+                ensure_worker_defaults(to_append)
+                to_append["assigned_building"] = "Unassigned"  # Do not inherit template assignment
+                store.workers.append(to_append)
                 renpy.notify(f"{target_worker['name']} has joined you!")
 
     
@@ -4449,6 +4800,7 @@ init python:
                     if available_workers_list:
                         target_worker = random.choice(available_workers_list).copy()
                         ensure_worker_defaults(target_worker)
+                        target_worker["assigned_building"] = "Unassigned"
                         target_worker["is_servant"] = False
                         store.workers.append(target_worker)
                         renpy.notify(f"{target_worker['name']} has joined you!")
@@ -4456,6 +4808,7 @@ init python:
                     else:
                         new_worker = spawn_new_worker()
                         ensure_worker_defaults(new_worker)
+                        new_worker["assigned_building"] = "Unassigned"
                         new_worker["is_servant"] = False
                         store.workers.append(new_worker)
                         renpy.notify(f"{new_worker['name']} has joined you!")
@@ -4473,6 +4826,7 @@ init python:
                         if target_worker and target_worker["name"] not in {w["name"] for w in store.workers}:
                             target_worker = target_worker.copy()
                             ensure_worker_defaults(target_worker)
+                            target_worker["assigned_building"] = "Unassigned"
                             target_worker["is_servant"] = False
                             store.workers.append(target_worker)
                             renpy.notify(f"{target_worker['name']} has joined you!")
@@ -4648,6 +5002,12 @@ init python:
         if not items_list:
             renpy.log("roll_loot: No items found in items_json. Please check your items JSON file.")
             return []
+        try:
+            requested_rolls = max(0, int(num_rolls))
+        except Exception:
+            requested_rolls = 0
+        if requested_rolls <= 0:
+            return []
         
         # Filter out test items and debug items (items with "test" or "debug" in their id)
         filtered_items = []
@@ -4675,11 +5035,21 @@ init python:
             renpy.log("roll_loot: Total weight of items is non-positive. Check items JSON configuration.")
             return []
         
+        # Difficulty can reduce the number of effective loot rolls.
+        loot_mult = get_difficulty_loot_multiplier()
+        effective_rolls = 0
+        for _ in range(requested_rolls):
+            if random.random() <= loot_mult:
+                effective_rolls += 1
+        if effective_rolls <= 0:
+            renpy.log(f"roll_loot: No loot this time (requested_rolls={requested_rolls}, loot_mult={loot_mult}).")
+            return []
+
         # Use random.choices to select items based on their weights.
-        chosen_items = random.choices(filtered_items, weights=weights, k=num_rolls)
+        chosen_items = random.choices(filtered_items, weights=weights, k=effective_rolls)
         loot_ids = [item["id"] for item in chosen_items]
         
-        renpy.log(f"roll_loot: Loot rolled using random.choices: {loot_ids} (weights: {weights})")
+        renpy.log(f"roll_loot: Loot rolled using random.choices: {loot_ids} (requested_rolls={requested_rolls}, effective_rolls={effective_rolls}, loot_mult={loot_mult})")
         return loot_ids
 
     def is_item_available_in_shop(item, shop_mode):
@@ -4734,6 +5104,352 @@ init python:
                 best_worker = worker
                 highest_skill = skill_level
         return best_worker
+
+    def get_worker_profession(worker):
+        """Return the profession dict (with id, skills) for the worker's current job, or None if unassigned or rest."""
+        building_name = worker.get("assigned_building", "Unassigned")
+        if building_name == "Unassigned":
+            return None
+        building = available_buildings.get(building_name, {})
+        if not building:
+            return None
+        job_id = (building.get("servant_jobs") or {}).get(worker.get("name", ""), "")
+        if not job_id or str(job_id).strip().lower() == "rest":
+            return None
+        for bt in building_types_json.get("building_types", []):
+            for prof in bt.get("professions", []):
+                if prof.get("id") == job_id:
+                    return prof
+        return None
+
+    def get_item_profession_score(item_data, profession_skills):
+        """Sum of skill_modifiers for the profession's skills. Higher = better for that profession."""
+        if not item_data or not profession_skills:
+            return 0
+        mods = item_data.get("effect", {}).get("skill_modifiers", {})
+        if not mods:
+            return 0
+        return sum(int(mods.get(s, 0)) for s in profession_skills)
+
+    def _normalize_inventory_entry(entry):
+        """Normalize an inventory entry to (item_id, qty, equipped) or return None."""
+        if entry is None:
+            return None
+        # Already list/tuple-like entry.
+        if isinstance(entry, (list, tuple)):
+            if len(entry) < 1:
+                return None
+            item_id = entry[0]
+            if not item_id:
+                return None
+            qty = 1
+            if len(entry) >= 2:
+                try:
+                    qty = int(entry[1]) if entry[1] is not None else 1
+                except Exception:
+                    qty = 1
+            equipped = bool(entry[2]) if len(entry) >= 3 else False
+            return (item_id, max(0, qty), equipped)
+        # Dict entry.
+        if isinstance(entry, dict):
+            item_id = entry.get("item_id") or entry.get("id")
+            if not item_id:
+                return None
+            try:
+                qty = int(entry.get("quantity", 1))
+            except Exception:
+                qty = 1
+            equipped = bool(entry.get("equipped", False))
+            return (item_id, max(0, qty), equipped)
+        # String entry: support plain item_id and stringified list/tuple/dict.
+        if isinstance(entry, str):
+            s = entry.strip()
+            if not s:
+                return None
+            if s[:1] in ("[", "(", "{"):
+                try:
+                    import ast
+                    parsed = ast.literal_eval(s)
+                    return _normalize_inventory_entry(parsed)
+                except Exception:
+                    return None
+            return (s, 1, False)
+        # Generic list-like entry (e.g. RevertableList row).
+        if hasattr(entry, "__len__") and hasattr(entry, "__getitem__"):
+            try:
+                return _normalize_inventory_entry(list(entry))
+            except Exception:
+                return None
+        return None
+
+    def _normalize_inventory_container(inventory):
+        """Normalize inventory in-place, returning a plain Python list of tuples."""
+        try:
+            source = list(inventory) if inventory is not None else []
+        except Exception:
+            source = []
+        normalized = []
+        for e in source:
+            ne = _normalize_inventory_entry(e)
+            if ne is not None:
+                normalized.append(ne)
+        return normalized
+
+    def _get_normalized_manager_inventory():
+        """Return normalized manager inventory and keep store.manager_inventory synchronized."""
+        inv = getattr(store, "manager_inventory", None)
+        norm = _normalize_inventory_container(inv)
+        store.manager_inventory = norm
+        return store.manager_inventory
+
+    def _resolve_worker_for_automation(worker):
+        """Resolve the canonical worker dict in store.workers, handling copied screen dicts."""
+        if not worker:
+            return worker
+        # Fast path: exact same object is already in store.workers.
+        for w in getattr(store, "workers", []) or []:
+            if w is worker:
+                return w
+        name = worker.get("name")
+        assigned_building = worker.get("assigned_building")
+        # Prefer strict match by name + assigned_building to avoid same-name collisions.
+        if name is not None:
+            strict = [w for w in (getattr(store, "workers", []) or [])
+                      if w.get("name") == name and w.get("assigned_building") == assigned_building]
+            if strict:
+                return strict[0]
+            loose = [w for w in (getattr(store, "workers", []) or []) if w.get("name") == name]
+            if loose:
+                return loose[0]
+        return worker
+
+    def _count_worker_allowed_potions(worker_inv, allowed_ids):
+        """Count how many health_potion + energy_potion (or other allowed ids) the worker has. Accepts id or item name."""
+        total = 0
+        for entry in (worker_inv or []):
+            if not isinstance(entry, (list, tuple)) or len(entry) < 1:
+                continue
+            raw = entry[0] if isinstance(entry[0], str) else str(entry[0])
+            raw = raw.strip() if raw else ""
+            canonical = raw if raw in allowed_ids else None
+            if canonical is None and raw:
+                for it in items_json.get("items", []):
+                    if it.get("id") in allowed_ids and (it.get("name") == raw or it.get("display_name") == raw):
+                        canonical = it.get("id")
+                        break
+            if canonical is None:
+                continue
+            qty = 1
+            if len(entry) >= 2 and entry[1] is not None:
+                try:
+                    qty = int(entry[1])
+                except Exception:
+                    pass
+            total += max(0, qty)
+        return total
+
+    def run_worker_auto_supply_potions(worker):
+        """Take up to auto_supply_potion_count consumables from manager_inventory and add to worker. Called at start of day."""
+        if not worker or not worker.get("auto_supply_potions", False):
+            return
+        worker = _resolve_worker_for_automation(worker)
+        if "inventory" not in worker or not isinstance(worker["inventory"], list):
+            worker["inventory"] = []
+        n = max(1, min(5, int(worker.get("auto_supply_potion_count", 3))))
+        # Only Health Potion and Energy Potion (no other consumables).
+        ALLOWED_AUTO_SUPPLY_IDS = ("health_potion", "energy_potion")
+
+        def _resolve_potion_id(stored_key):
+            """Resolve inventory key to canonical id (health_potion/energy_potion) or None. Handles id or display name."""
+            if not stored_key:
+                return None
+            sk = (stored_key if isinstance(stored_key, str) else str(stored_key)).strip()
+            if sk in ALLOWED_AUTO_SUPPLY_IDS:
+                return sk
+            for it in items_json.get("items", []):
+                if it.get("id") in ALLOWED_AUTO_SUPPLY_IDS and (it.get("name") == sk or it.get("display_name") == sk):
+                    return it.get("id")
+            return None
+
+        worker_inv = worker["inventory"]
+        # Limit is per type: up to n health potions AND up to n energy potions (e.g. 3 of each).
+        health_count = _count_worker_allowed_potions(worker_inv, ("health_potion",))
+        energy_count = _count_worker_allowed_potions(worker_inv, ("energy_potion",))
+        if health_count >= n and energy_count >= n:
+            renpy.log(f"Auto-supply potions: {worker.get('name', '?')} already has {health_count} health, {energy_count} energy (limit {n} each), skip")
+            return
+
+        inv = _get_normalized_manager_inventory()
+        if not inv:
+            return
+
+        while True:
+            inv = _get_normalized_manager_inventory()
+            if not inv:
+                break
+            health_count = _count_worker_allowed_potions(worker_inv, ("health_potion",))
+            energy_count = _count_worker_allowed_potions(worker_inv, ("energy_potion",))
+            need_health = health_count < n
+            need_energy = energy_count < n
+            if not need_health and not need_energy:
+                break
+
+            # Prefer the type they have fewer of when both need more; else take the one that's below limit.
+            prefer_energy = (need_energy and (not need_health or energy_count < health_count))
+
+            found_stored_id = None
+            found_canonical_id = None
+            allowed_in_manager = []
+            for entry in inv:
+                if not isinstance(entry, (list, tuple)) or len(entry) < 2:
+                    continue
+                stored_key = entry[0]
+                if isinstance(stored_key, str):
+                    stored_key = stored_key.strip()
+                qty = int(entry[1]) if entry[1] is not None else 0
+                if qty <= 0:
+                    continue
+                canonical = _resolve_potion_id(stored_key)
+                if canonical is None:
+                    continue
+                allowed_in_manager.append((stored_key, canonical, qty))
+
+            if prefer_energy and need_energy:
+                for stored_key, canonical, _ in allowed_in_manager:
+                    if canonical == "energy_potion":
+                        found_stored_id = stored_key
+                        found_canonical_id = canonical
+                        break
+            if (found_stored_id is None) and need_health:
+                for stored_key, canonical, _ in allowed_in_manager:
+                    if canonical == "health_potion":
+                        found_stored_id = stored_key
+                        found_canonical_id = canonical
+                        break
+            if (found_stored_id is None) and need_energy:
+                for stored_key, canonical, _ in allowed_in_manager:
+                    if canonical == "energy_potion":
+                        found_stored_id = stored_key
+                        found_canonical_id = canonical
+                        break
+
+            if found_stored_id is None:
+                renpy.log(f"Auto-supply potions: no Health/Energy potion in manager inventory for {worker.get('name', '?')}")
+                break
+            remove_item_from_inventory(inv, found_stored_id, 1)
+            add_item_to_inventory(worker_inv, found_canonical_id, 1)
+            renpy.log(f"Auto-supply potions: gave 1x {found_canonical_id} to {worker.get('name', '?')} (health {health_count + (1 if found_canonical_id == 'health_potion' else 0)}/{n}, energy {energy_count + (1 if found_canonical_id == 'energy_potion' else 0)}/{n})")
+
+    def run_worker_auto_equip(worker):
+        """Equip best items for worker's profession from manager_inventory. No-op if rest/unassigned (does not unequip)."""
+        if not worker or not worker.get("auto_equip", False):
+            return
+        worker = _resolve_worker_for_automation(worker)
+        profession = get_worker_profession(worker)
+        if not profession:
+            return
+        skills = profession.get("skills", [])
+        if not skills:
+            return
+        inv = _get_normalized_manager_inventory()
+        if not inv:
+            return
+        if "inventory" not in worker or not isinstance(worker["inventory"], list):
+            worker["inventory"] = []
+        worker_inv = worker["inventory"]
+        # Include accessory slot in auto-equip (previously omitted),
+        # so amulets/rings/collars don't accumulate unused.
+        equippable_types = ["weapon", "armor", "clothing", "accessory"]
+        for item_type in equippable_types:
+            inv = _get_normalized_manager_inventory()
+            if not inv:
+                break
+            candidates = []
+            for entry in inv:
+                if not isinstance(entry, (list, tuple)) or len(entry) < 2:
+                    continue
+                item_id = entry[0]
+                qty = int(entry[1]) if entry[1] is not None else 0
+                if qty <= 0:
+                    continue
+                item_data = next((it for it in items_json.get("items", []) if it.get("id") == item_id), None)
+                if not item_data or item_data.get("type") != item_type:
+                    continue
+                score = get_item_profession_score(item_data, skills)
+                if score > 0:
+                    candidates.append((item_id, score, item_data))
+            if not candidates:
+                renpy.log(f"Auto-equip: no candidates for {worker.get('name', '?')} in slot {item_type}")
+                continue
+            candidates.sort(key=lambda x: -x[1])
+            best_id, best_score, _ = candidates[0]
+            current_equipped_id = None
+            for e in worker_inv:
+                if isinstance(e, (list, tuple)) and len(e) >= 3 and e[2]:
+                    ed = next((it for it in items_json.get("items", []) if it.get("id") == e[0]), None)
+                    if ed and ed.get("type") == item_type:
+                        current_equipped_id = e[0]
+                        break
+            current_score = 0
+            if current_equipped_id:
+                current_data = next((it for it in items_json.get("items", []) if it.get("id") == current_equipped_id), None)
+                current_score = get_item_profession_score(current_data, skills) if current_data else 0
+            if best_score <= current_score:
+                continue
+            remove_item_from_inventory(inv, best_id, 1)
+            add_item_to_inventory(worker_inv, best_id, 1)
+            toggle_equip_item(worker_inv, best_id, worker)
+            renpy.log(f"Auto-equip: {worker.get('name', '?')} equipped {best_id} for {item_type} (score {best_score})")
+
+    def toggle_worker_auto_supply_potions(worker):
+        """Toggle auto_supply_potions for the worker (used from Worker details screen)."""
+        canonical = _resolve_worker_for_automation(worker)
+        new_value = not canonical.get("auto_supply_potions", False)
+        canonical["auto_supply_potions"] = new_value
+        # Keep current screen dict in sync when UI is rendering a copy.
+        try:
+            worker["auto_supply_potions"] = new_value
+        except Exception:
+            pass
+        renpy.log(f"AUTO_SUPPLY_TOGGLE: {canonical.get('name', '?')} -> {new_value}")
+        # Optional immediate pass so player sees the effect right away.
+        if new_value:
+            try:
+                run_worker_auto_supply_potions(canonical)
+            except Exception as e:
+                renpy.log("toggle_worker_auto_supply_potions immediate run error: " + str(e))
+        renpy.restart_interaction()
+
+    def cycle_worker_auto_supply_count(worker):
+        """Cycle auto_supply_potion_count 1->2->3->4->5->1 (used from Worker details screen)."""
+        canonical = _resolve_worker_for_automation(worker)
+        c = canonical.get("auto_supply_potion_count", 3)
+        new_count = (int(c) % 5) + 1
+        canonical["auto_supply_potion_count"] = new_count
+        try:
+            worker["auto_supply_potion_count"] = new_count
+        except Exception:
+            pass
+        renpy.log(f"AUTO_SUPPLY_COUNT: {canonical.get('name', '?')} -> {new_count}")
+        renpy.restart_interaction()
+
+    def toggle_worker_auto_equip(worker):
+        """Toggle auto_equip for the worker (used from Worker details screen)."""
+        canonical = _resolve_worker_for_automation(worker)
+        new_value = not canonical.get("auto_equip", False)
+        canonical["auto_equip"] = new_value
+        try:
+            worker["auto_equip"] = new_value
+        except Exception:
+            pass
+        renpy.log(f"AUTO_EQUIP_TOGGLE: {canonical.get('name', '?')} -> {new_value}")
+        # Optional immediate pass so player sees equipment update instantly.
+        if new_value:
+            try:
+                run_worker_auto_equip(canonical)
+            except Exception as e:
+                renpy.log("toggle_worker_auto_equip immediate run error: " + str(e))
+        renpy.restart_interaction()
 
     
 
@@ -5257,7 +5973,21 @@ default academy_haggle_available = True  # Reset each day; False after a failed 
 default arena_unlocked = False  # True after arena trial succeeds/mediocre/critical
 default arena_lanista_paid = False  # True after player pays Lanista permit
 define LANISTA_PERMIT_COST = 10000  # Cost to obtain Lanista permit for the coliseum
+define SPECIAL_MATCH_COST = 5000  # Cost to enter a special match (2 rounds + combat roll)
+default alchemy_unlocked = False  # True after player pays alchemist pass at Academy laboratory
+define ALCHEMY_PASS_COST = 6000  # One-time cost to unlock the Academy laboratory
+define ALCHEMY_COST_BASIC = 350  # Batch of basic potions (health/energy)
+define ALCHEMY_COST_QUALITY = 800  # Quality tier: trait or greater potions
+define ALCHEMY_COST_PREMIUM = 1400  # Premium tier: extraordinary potions on critical
+default _alchemy_chosen_worker = None  # Worker chosen for alchemy craft (set by screen)
+default _alchemy_investment_tier = None  # "basic", "quality", or "premium" (set before choose_worker)
+default last_laboratory_use_total_days = None  # Total days when laboratory was last used; 3-day cooldown between sessions
+define ALCHEMY_LABORATORY_COOLDOWN_DAYS = 3
+default arena_special_match_intro_done = False  # True after first-time explanation of special matches
+default last_special_match_total_days = None  # Total days when last special match was played; once per week (7 days). Saved.
+default last_special_match_worker_name = None  # Name of gladiator who last fought (for cooldown message). Saved.
 default _arena_chosen_worker = None  # Worker chosen in choose_worker_for_arena_trial (set by screen, read by arena_do_trial)
+default _arena_special_chosen_worker = None  # Worker chosen for special match (set by screen)
 
 init python:
     class SafeNameDict(dict):
@@ -5315,6 +6045,12 @@ init python:
             store._just_loaded = True
             store.is_new_game = False
             store.game_initialized = True
+            # Safety sync: if Arena is already owned in save data, keep it unlocked.
+            arena_data = getattr(store, "available_buildings", {}).get("Arena", None)
+            arena_in_owned = "Arena" in getattr(store, "owned_buildings", [])
+            arena_owned_flag = isinstance(arena_data, dict) and bool(arena_data.get("owned", False))
+            if arena_in_owned or arena_owned_flag:
+                store.arena_unlocked = True
         except Exception as e:
             renpy.log(f"_mark_loaded error: {str(e)}")
 
@@ -5498,7 +6234,7 @@ label explore:
 
 # Academy tuition: Ren'Py say (dialogue box + name) + menu (same style as recruitment). After pay → map + academy_menu overlay.
 label academy_tuition_dialogue:
-    $ _academy_bg = "images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png"
+    $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     scene expression _academy_bg
     academy_director "Welcome, traveller. I am the Academy Director. Our institution offers structured courses in Academics, Amatory Arts, and Hospitality. Your workers may attend and gain experience under our teachers."
     academy_director "To enrol your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here."
@@ -5537,17 +6273,164 @@ label academy_tuition_menu:
             $ renpy.show_screen("map_screen")
             jump tavern_screen
 
+# Academy laboratory: alchemist pass (one-time), then craft sessions with investment tiers and 2 rounds of choices.
+label academy_laboratory_dialogue:
+    $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
+    scene expression _lab_bg
+    if not alchemy_unlocked:
+        lab_director "The Academy's laboratory is open to those who pay the alchemist's pass. Here we work in batches—simple draughts in quantity—or risk coin and skill for rarer brews."
+        lab_director "One payment of [ALCHEMY_PASS_COST] coins unlocks the laboratory for good. After that, you choose how much to invest each session. What will you do?"
+        jump academy_laboratory_pass_menu
+    $ _total = calculate_total_days()
+    $ _last = last_laboratory_use_total_days
+    if _last is not None and (_total - _last) < ALCHEMY_LABORATORY_COOLDOWN_DAYS:
+        jump academy_laboratory_cooldown
+    jump academy_laboratory_craft_menu
+
+label academy_laboratory_pass_menu:
+    menu:
+        lab_director "What will you do?"
+        "Pay the alchemist pass ([ALCHEMY_PASS_COST] coins)." if money >= ALCHEMY_PASS_COST:
+            $ money -= ALCHEMY_PASS_COST
+            $ add_alchemy_pass()
+            lab_director "Done. The laboratory is yours to use. Invest coin at the start of each session; your worker's Craft and your choices in the rounds decide the outcome."
+            $ renpy.show_screen("map_screen")
+            $ renpy.show_screen("academy_menu")
+            $ renpy.notify("Laboratory unlocked!")
+            jump tavern_screen
+        "Pay the alchemist pass ([ALCHEMY_PASS_COST] coins)." if money < ALCHEMY_PASS_COST:
+            lab_director "Your purse is too light. The price is [ALCHEMY_PASS_COST] coins. Return when you can meet it."
+            jump academy_laboratory_pass_menu
+        "Leave.":
+            $ renpy.show_screen("map_screen")
+            jump tavern_screen
+
+label academy_laboratory_craft_menu:
+    lab_director "How much do you invest? Basic coin yields basic draughts in number. Deeper pockets open the way to quality—or something extraordinary."
+    menu:
+        lab_director "What will you do?"
+        "Batch basic ([ALCHEMY_COST_BASIC] coins)." if money >= ALCHEMY_COST_BASIC:
+            $ _alchemy_investment_tier = "basic"
+            $ money -= ALCHEMY_COST_BASIC
+            jump academy_alchemy_choose_worker
+        "Batch basic ([ALCHEMY_COST_BASIC] coins)." if money < ALCHEMY_COST_BASIC:
+            lab_director "You need at least [ALCHEMY_COST_BASIC] coins for a basic batch."
+            jump academy_laboratory_craft_menu
+        "Quality ([ALCHEMY_COST_QUALITY] coins)." if money >= ALCHEMY_COST_QUALITY:
+            $ _alchemy_investment_tier = "quality"
+            $ money -= ALCHEMY_COST_QUALITY
+            jump academy_alchemy_choose_worker
+        "Quality ([ALCHEMY_COST_QUALITY] coins)." if money < ALCHEMY_COST_QUALITY:
+            lab_director "You need at least [ALCHEMY_COST_QUALITY] coins for a quality run."
+            jump academy_laboratory_craft_menu
+        "Premium ([ALCHEMY_COST_PREMIUM] coins)." if money >= ALCHEMY_COST_PREMIUM:
+            $ _alchemy_investment_tier = "premium"
+            $ money -= ALCHEMY_COST_PREMIUM
+            jump academy_alchemy_choose_worker
+        "Premium ([ALCHEMY_COST_PREMIUM] coins)." if money < ALCHEMY_COST_PREMIUM:
+            lab_director "You need at least [ALCHEMY_COST_PREMIUM] coins for a premium run."
+            jump academy_laboratory_craft_menu
+        "Leave.":
+            $ renpy.show_screen("map_screen")
+            $ renpy.show_screen("academy_menu")
+            jump tavern_screen
+
+label academy_laboratory_cooldown:
+    $ _total = calculate_total_days()
+    $ _days_left = ALCHEMY_LABORATORY_COOLDOWN_DAYS - (_total - last_laboratory_use_total_days)
+    lab_director "The laboratory has been in use recently. The alchemist needs a few days to restock and prepare the workspace. Return in [_days_left] day(s)."
+    menu:
+        "Leave.":
+            $ renpy.show_screen("map_screen")
+            $ renpy.show_screen("academy_menu")
+            jump tavern_screen
+
+label academy_alchemy_choose_worker:
+    $ renpy.call_screen("choose_worker_for_alchemy_craft")
+    $ _worker = _alchemy_chosen_worker
+    $ _alchemy_chosen_worker = None
+    if _worker is None or not isinstance(_worker, dict) or not _worker.get("name"):
+        $ money += ALCHEMY_COST_BASIC if _alchemy_investment_tier == "basic" else (ALCHEMY_COST_QUALITY if _alchemy_investment_tier == "quality" else ALCHEMY_COST_PREMIUM)
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("academy_menu")
+        jump tavern_screen
+    jump academy_alchemy_craft_run
+
+label academy_alchemy_craft_run:
+    $ _worker = _alchemy_chosen_worker
+    $ _tier = _alchemy_investment_tier
+    $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
+    scene expression _lab_bg
+    if not getattr(persistent, "alchemy_craft_intro_done", False):
+        $ persistent.alchemy_craft_intro_done = True
+        lab_director "Your craftsperson will call out what they see—vapour, colour, the drip. Help them choose what to do with the fire."
+        lab_director "Right choices sharpen the result; wrong ones can spoil the batch."
+    $ _style = renpy.random.choice(ALCHEMY_ROUND_STYLES)
+    $ craft_modifier = 0
+    $ renpy.say(narrator, "Round one. " + _style["hint1"])
+    menu:
+        "Raise the heat.":
+            $ _action = "heat_up"
+        "Keep the temperature steady.":
+            $ _action = "maintain"
+        "Lower the heat.":
+            $ _action = "heat_down"
+    if _action == _style["round1"]:
+        $ craft_modifier -= 15
+        $ renpy.say(narrator, "Right call. The mixture stabilises.")
+    else:
+        $ craft_modifier += 15
+        $ renpy.say(narrator, "Wrong call. The brew darkens; a note of burn.")
+    $ renpy.say(narrator, "Round two. " + _style["hint2"])
+    menu:
+        "Raise the heat.":
+            $ _action = "heat_up"
+        "Keep the temperature steady.":
+            $ _action = "maintain"
+        "Lower the heat.":
+            $ _action = "heat_down"
+    if _action == _style["round2"]:
+        $ craft_modifier -= 15
+        $ renpy.say(narrator, "Right call. The mixture holds.")
+    else:
+        $ craft_modifier += 15
+        $ renpy.say(narrator, "Wrong call. The vapour turns acrid.")
+    $ _outcome = run_alchemy_craft_roll(_worker, craft_modifier)
+    $ _given = apply_alchemy_result(_tier, _outcome, manager_inventory)
+    $ last_laboratory_use_total_days = calculate_total_days()
+    if _outcome == "failure":
+        $ renpy.say(narrator, "The mixture turns. The batch is lost.")
+        $ renpy.notify("The craft failed; the investment is lost.")
+    else:
+        python:
+            _seen = {}
+            for _id in _given:
+                _seen[_id] = _seen.get(_id, 0) + 1
+            _parts = []
+            for _id, _count in _seen.items():
+                _def = next((i for i in items_json.get("items", []) if i.get("id") == _id), None)
+                _name = _def.get("name", _id) if _def else _id
+                _parts.append((str(_count) + " " + _name) if _count > 1 else _name)
+            _craft_result_text = _worker["name"] + "'s steady hand yields " + ", ".join(_parts) + "."
+            _craft_notify_text = "Craft successful! Obtained: " + ", ".join(_parts)
+        $ renpy.say(narrator, _craft_result_text)
+        $ renpy.notify(_craft_notify_text)
+    $ renpy.show_screen("map_screen")
+    $ renpy.show_screen("academy_menu")
+    jump tavern_screen
+
 # Arena: Lanista permit then trial by combat. First dialogue asks for permit payment; then requests a combatant (potentially lethal).
 label arena_first_dialogue:
-    $ _arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png"
+    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
     scene expression _arena_bg
     if not arena_lanista_paid:
-        arena_promoter "Welcome to the coliseum. I am the master of the sands. To operate gladiators here you need a Lanista permit."
-        arena_promoter "The permit costs [LANISTA_PERMIT_COST] coins. Pay once and we can discuss proof of worth—a trial by combat."
+        arena_promoter "The coliseum welcomes you—but the sands do not. I am master here: the Lanista. These grounds have tasted blood and glory for generations, and they do not open to just anyone."
+        arena_promoter "If you would train gladiators under my banner, you must first buy in. [LANISTA_PERMIT_COST] coins—one payment, no haggling. After that, we speak of worth. Proof is in the sand: a trial by combat. What say you?"
         jump arena_permit_menu
     # Already paid permit, need trial
-    arena_promoter "You have the permit. Now I need proof. Send me one of your people for a trial by combat before the crowd."
-    arena_promoter "The fight may be to the death. If your fighter survives—or falls with honour—the Arena will be open to you. Do you accept?"
+    arena_promoter "The permit is yours. Paper and coin open the gate—but the crowd and the sands demand more. They demand proof."
+    arena_promoter "Send me one of your own for a trial by combat before the masses. The bout may be to the death; the sands show no mercy."
+    arena_promoter "If your fighter survives—or falls with honour, blade in hand—the Arena is yours to use. Do you accept?"
     jump arena_combatant_menu
 
 label arena_permit_menu:
@@ -5556,10 +6439,10 @@ label arena_permit_menu:
         "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins)." if money >= LANISTA_PERMIT_COST:
             $ money -= LANISTA_PERMIT_COST
             $ arena_lanista_paid = True
-            arena_promoter "Done. Now bring me a combatant worthy of the sands. The trial may be lethal—choose wisely."
+            arena_promoter "Done. The coin is received; the ledger is satisfied. Now the sands ask for blood—or at least courage. Bring me a combatant worthy of the arena. The trial can be lethal. Choose with care."
             jump arena_combatant_menu
         "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins)." if money < LANISTA_PERMIT_COST:
-            arena_promoter "You do not have enough coins."
+            arena_promoter "Your purse is too light. The price is fixed: [LANISTA_PERMIT_COST] coins. Return when you can meet it."
             jump arena_permit_menu
         "Leave.":
             $ renpy.show_screen("map_screen")
@@ -5589,12 +6472,13 @@ label arena_run_trial_and_result(worker_name=None):
         $ renpy.show_screen("map_screen")
         jump tavern_screen
     $ _outcome = run_arena_trial(_worker)
-    $ _arena_bg = "images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png"
+    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
     scene expression _arena_bg
     if _outcome == "critical_success":
         $ add_arena_building()
         $ add_item_to_inventory(manager_inventory, "arena_champion_blade")
-        $ renpy.say(narrator, _worker["name"] + " stepped into the sands with cold focus. Blow after blow, they turned the trial into a masterclass—the crowd roared with each parry and strike. When the dust settled, they stood unmarked, and the Lanista himself rose from his seat.")
+        $ renpy.say(narrator, _worker["name"] + " stepped into the sands with cold focus. Blow after blow, they turned the trial into a masterclass, and the crowd roared with each parry and strike.")
+        $ renpy.say(narrator, "When the dust settled, they stood unmarked, and even the arena promoter rose from his seat.")
         $ renpy.say(narrator, "The Arena is yours. As a token of the sands, he grants you a champion's blade from his own armoury.")
         $ renpy.notify("Arena unlocked! You received Arena Champion's Blade.")
         $ renpy.show_screen("map_screen")
@@ -5611,7 +6495,7 @@ label arena_run_trial_and_result(worker_name=None):
     elif _outcome == "mediocre":
         $ add_arena_building()
         $ add_trait_with_duration(_worker, "Scarred", 0)
-        $ renpy.say(narrator, _worker["name"] + " was thrown to the sand more than once, but each time they staggered back to their feet. The fight was ugly, but they endured until the Lanista called it.")
+        $ renpy.say(narrator, _worker["name"] + " was thrown to the sand more than once, but each time they staggered back to their feet. The fight was ugly, but they endured until the arena promoter called it.")
         $ renpy.say(narrator, "The sands have left their mark. They will carry the scars, but the Arena is yours. Honour was earned the hard way.")
         $ renpy.notify("Arena unlocked. " + _worker["name"] + " was injured and gained Scarred.")
         $ renpy.show_screen("map_screen")
@@ -5623,3 +6507,132 @@ label arena_run_trial_and_result(worker_name=None):
         $ renpy.say(narrator, "The Arena remains closed. When you are ready, send another combatant—or pay the permit again and try once more.")
         $ renpy.show_screen("map_screen")
         jump tavern_screen
+
+# -------- Special match: 5000 entry, first-time intro, choose worker, 2 rounds with hints, combat roll, outcomes --------
+label arena_special_match_dialogue:
+    $ renpy.hide_screen("arena_menu")
+    $ renpy.hide_screen("map_screen")
+    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
+    scene expression _arena_bg
+    if not arena_special_match_intro_done:
+        arena_promoter "A special match is a staged duel. Your gladiator faces a style—Murmillo, Retiarius, Secutor, Thraex, Hoplomachus—or a beast of myth."
+        arena_promoter "Watch the opponent and shout to your gladiator what they are doing: attacking, defending, or feinting. Get it right and they react; wrong and they pay for it."
+        arena_promoter "Two rounds, then skill decides. Lose and they may die or be scarred. Win and the purse grows; five wins crown them Arena Champion."
+        $ arena_special_match_intro_done = True
+    $ _total_days = calculate_total_days()
+    if last_special_match_total_days is not None and (_total_days - last_special_match_total_days) < 7:
+        $ _days_left = 7 - (_total_days - last_special_match_total_days)
+        $ _cooldown_who = "Your gladiator " + last_special_match_worker_name + " fought here recently." if last_special_match_worker_name else "You fought here recently."
+        arena_promoter "One special match per week. [_cooldown_who] Return in [_days_left] days."
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("arena_menu")
+        jump tavern_screen
+    if money < SPECIAL_MATCH_COST:
+        arena_promoter "Your purse is too light. [SPECIAL_MATCH_COST] coins to enter."
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("arena_menu")
+        jump tavern_screen
+    $ money -= SPECIAL_MATCH_COST
+    $ renpy.call_screen("choose_worker_for_arena_special_match")
+    $ renpy.show_screen("map_screen")
+    $ renpy.show_screen("arena_menu")
+    jump tavern_screen
+
+label arena_special_match_run(worker_name):
+    $ _worker = next((w for w in store.workers if w.get("name") == worker_name), None)
+    if _worker is None or not _worker.get("name"):
+        $ renpy.show_screen("map_screen")
+        $ renpy.show_screen("arena_menu")
+        jump tavern_screen
+    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
+    scene expression _arena_bg
+    if "Arena Champion" in _worker.get("traits", []):
+        arena_promoter "I know this one. A champion of the sands. Good."
+    $ _style = renpy.random.choice(SPECIAL_MATCH_STYLES)
+    $ special_match_diff = 0
+    $ special_match_health_lost = 0
+    $ renpy.say(narrator, "Your fighter faces a " + _style["name"] + ".")
+    # Round 1: player shouts what the opponent is doing; good = correct call, neutral = tie, bad = wrong call
+    $ renpy.say(narrator, "Round one. " + _style["hint1"])
+    menu:
+        "They're attacking!":
+            $ _action = "attack"
+        "They're defending!":
+            $ _action = "defend"
+        "They're feinting!":
+            $ _action = "feint"
+    $ _opp = _style["round1"]
+    if _special_match_call_correct(_action, _opp):
+        $ special_match_diff -= 20
+        $ renpy.say(narrator, "Right call. Your gladiator gains the edge.")
+    elif _special_match_call_neutral(_action, _opp):
+        $ renpy.say(narrator, "Neutral. The exchange settles nothing.")
+    else:
+        $ special_match_diff += 20
+        $ special_match_health_lost += 10
+        $ renpy.say(narrator, "Wrong call. Your fighter takes a heavy blow.")
+    # Round 2
+    $ renpy.say(narrator, "Round two. " + _style["hint2"])
+    menu:
+        "They're attacking!":
+            $ _action = "attack"
+        "They're defending!":
+            $ _action = "defend"
+        "They're feinting!":
+            $ _action = "feint"
+    $ _opp = _style["round2"]
+    if _special_match_call_correct(_action, _opp):
+        $ special_match_diff -= 20
+        $ renpy.say(narrator, "Right call. Your gladiator gains the edge.")
+    elif _special_match_call_neutral(_action, _opp):
+        $ renpy.say(narrator, "Neutral. The exchange settles nothing.")
+    else:
+        $ special_match_diff += 20
+        $ special_match_health_lost += 10
+        $ renpy.say(narrator, "Wrong call. Your fighter takes a heavy blow.")
+    # Apply health loss
+    $ _worker["health"] = max(0, _worker.get("health", 0) - special_match_health_lost)
+    # Combat roll
+    $ _won = run_arena_special_match_combat_roll(_worker, special_match_diff)
+    if _won:
+        $ victories = min(5, _worker.get("special_match_victories", 0) + 1)  # Cap at 5; same money bonus if they fight again with 5
+        $ _worker["special_match_victories"] = victories
+        $ _prize = 5000 + 5000 * victories
+        $ money += _prize
+        if special_match_diff >= 40:
+            $ renpy.say(narrator, _worker["name"] + " had two wrong calls against them. By sheer skill they turned the tide.")
+        elif special_match_diff <= -40:
+            $ renpy.say(narrator, _worker["name"] + " read the sand twice. Cold execution. The " + _style["name"] + " falls.")
+        else:
+            $ renpy.say(narrator, _worker["name"] + " had one right call and one mistake. The " + _style["name"] + " yields.")
+        $ renpy.say(narrator, "Victory. Purse: " + str(_prize) + " coins. Wins: " + str(victories) + "/5.")
+        if victories >= 5:
+            $ add_trait_with_duration(_worker, "Arena Champion", 0)
+            $ renpy.say(narrator, "Five victories. The arena promoter crowns " + _worker["name"] + " Arena Champion.")
+            $ renpy.notify("Arena Champion! " + _worker["name"] + " earned the Arena Champion trait.")
+        else:
+            $ renpy.notify("Special match won! +" + str(_prize) + " coins. Victories: " + str(victories) + "/5.")
+    else:
+        if "Arena Champion" in _worker.get("traits", []):
+            $ remove_trait(_worker, "Arena Champion")
+            $ renpy.say(narrator, _worker["name"] + " falls before the " + _style["name"] + ". The crown is lost; the sands spare their life.")
+            $ renpy.notify("Arena Champion lost. " + _worker["name"] + " survived but lost the trait.")
+        else:
+            $ _death = renpy.random.random() < 0.5
+            if _death:
+                $ renpy.say(narrator, _worker["name"] + " fought hard but the " + _style["name"] + " was merciless. They did not rise again.")
+                $ renpy.say(narrator, "The sands have claimed another.")
+                $ store.workers[:] = [w for w in store.workers if w.get("name") != _worker["name"]]
+                $ rebuild_assigned_servants()
+                $ renpy.notify(_worker["name"] + " has died in the special match.")
+            else:
+                $ add_trait_with_duration(_worker, "Scarred", 0)
+                $ _worker["health"] = 1
+                $ renpy.say(narrator, _worker["name"] + " is beaten to the sand. The arena promoter raises his hand. Mercy.")
+                $ renpy.say(narrator, "They are dragged out scarred, with a single point of life.")
+                $ renpy.notify(_worker["name"] + " was spared with Scarred and 1 HP.")
+    $ last_special_match_total_days = calculate_total_days()
+    $ last_special_match_worker_name = _worker["name"]
+    $ renpy.show_screen("map_screen")
+    $ renpy.show_screen("arena_menu")
+    jump tavern_screen

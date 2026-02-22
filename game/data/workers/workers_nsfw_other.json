@@ -570,5 +570,49 @@
         "description": "A cheerful and charming worker with a sunny disposition and captivating allure.",
         "gender": "female",
         "comfort_desired": 1
+    },
+    {
+        "name": "Guy",
+        "folder": "guy",
+        "cost": 1300,
+        "nsfw": true,
+        "unique": false,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 28,
+            "Anal": 22,
+            "BDSM": 18,
+            "Hand": 32,
+            "Oral": 35,
+            "Homo": 25,
+            "Special": 30,
+            "Group": 20,
+            "Extreme": 15,
+            "Striptease": 38,
+            "Combat": 42,
+            "Clever": 35,
+            "Charm": 25,
+            "Service": 40,
+            "Agility": 30,
+            "Craft": 28,
+            "Specialty 4": 24,
+            "Specialty 5": 26,
+            "Specialty 6": 22,
+            "Specialty 7": 28,
+            "Specialty 8": 25,
+            "Specialty 9": 30,
+            "Specialty 10": 27,
+            "Specialty 11": 23,
+            "Specialty 12": 29
+        },
+        "names_list": "western_male",
+        "traits": [
+            "Human"
+        ],
+        "description": "A confident male worker designed as a reliable fallback profile for masculine images.",
+        "gender": "male",
+        "comfort_desired": 1
     }
 ]
