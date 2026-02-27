@@ -49,15 +49,29 @@ except ImportError:
 # WHOREMASTER MAPPINGS
 # =============================================================================
 
+# Skill value conversion: Whoremaster scale → Fantasy Manager (0-100)
+# WM packs use 0-100 for skills; if your pack uses 0-70, set WM_SKILL_SCALE_MAX = 70
+WM_SKILL_SCALE_MAX = 100
+FM_SKILL_MAX = 100
+
+def convert_wm_skill_value_to_fm(wm_raw: int, wm_scale_max: int = None) -> int:
+    """Convert a Whoremaster skill value to Fantasy Manager scale (0-100)."""
+    if wm_scale_max is None:
+        wm_scale_max = WM_SKILL_SCALE_MAX
+    if wm_scale_max <= 0:
+        return min(FM_SKILL_MAX, max(0, int(wm_raw)))
+    fm_val = int(round(wm_raw * FM_SKILL_MAX / wm_scale_max))
+    return min(FM_SKILL_MAX, max(0, fm_val))
+
+# Map Whoremaster skill names to Fantasy Manager canonical skill names (game expects capitalized)
 WM_SKILL_MAPPING = {
-    "NormalSex": "sex", "OralSex": "oral", "Lesbian": "homo", "Handjob": "hand",
-    "TittySex": "special", "Footjob": "special", "Beastiality": "extreme",
-    "Strip": "striptease", "Magic": "craft", "Medicine": "clever",
-    "Performance": "charm", "Crafting": "craft", "Farming": "service",
-    "Cooking": "service", "Herbalism": "craft", "Brewing": "clever", "AnimalHandling": "craft",
-    "Card": "clever", "Sport": "agility",  # Card -> clever, Sport -> agility
-    # Skills que ya existen en FM pero faltaban en el mapeo
-    "Anal": "anal", "BDSM": "bdsm", "Group": "group", "Service": "service", "Combat": "combat",
+    "NormalSex": "Sex", "OralSex": "Oral", "Lesbian": "Homo", "Handjob": "Hand",
+    "TittySex": "Special", "Footjob": "Special", "Beastiality": "Extreme",
+    "Strip": "Striptease", "Magic": "Craft", "Medicine": "Clever",
+    "Performance": "Charm", "Crafting": "Craft", "Farming": "Service",
+    "Cooking": "Service", "Herbalism": "Craft", "Brewing": "Clever", "AnimalHandling": "Craft",
+    "Card": "Clever", "Sport": "Agility",
+    "Anal": "Anal", "BDSM": "BDSM", "Group": "Group", "Service": "Service", "Combat": "Combat",
 }
 
 WM_TRAIT_MAPPING = {
@@ -514,10 +528,20 @@ def parse_wm_girl_xml(xml_path: Path) -> Optional[Dict]:
                     data['ask_price'] = int(ask_price)
                 except (ValueError, TypeError):
                     pass
-            for attr in ['NormalSex', 'Anal', 'BDSM', 'OralSex', 'Group', 'Lesbian', 
-                        'Combat', 'Magic', 'Service', 'Strip']:
+            # All WM skill attributes we can map to FM (canonical names handled in convert_wm_to_fm_worker)
+            wm_skill_attrs = [
+                'NormalSex', 'Anal', 'BDSM', 'OralSex', 'Group', 'Lesbian',
+                'Combat', 'Magic', 'Service', 'Strip', 'Handjob', 'TittySex',
+                'Footjob', 'Beastiality', 'Medicine', 'Performance', 'Crafting',
+                'Farming', 'Cooking', 'Herbalism', 'Brewing', 'AnimalHandling', 'Card', 'Sport'
+            ]
+            for attr in wm_skill_attrs:
                 val = girl.get(attr)
-                if val: data['skills'][attr] = int(val)
+                if val:
+                    try:
+                        data['skills'][attr] = int(val)
+                    except (ValueError, TypeError):
+                        pass
             for trait in girl.findall('Trait'):
                 data['traits'].append(trait.get('Name'))
         return data
@@ -563,8 +587,10 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
         worker_name = wm_data.get('name', 'Unknown')
         names_list = None  # Unique workers don't need names_list
     
+    # Cost in same range as game unique/encounter workers (1200-1500)
+    base_cost = 1300 if not is_random else random.randint(1200, 1400)
     fm_worker = {
-        "name": worker_name, "folder": folder_name, "cost": 1000,
+        "name": worker_name, "folder": folder_name, "cost": base_cost,
         "nsfw": True, 
         "unique": not is_random,           # .girlsx = unique, .rgirlsx = not unique
         "encounter_only": not is_random,   # .girlsx = encounter_only, .rgirlsx = can be bought
@@ -579,19 +605,27 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
     if names_list:
         fm_worker["names_list"] = names_list
     
-    for skill_name in all_skills:
-        fm_worker["skills"][skill_name] = 20
+    # Baseline similar to game unique workers: main skills 20-30, Specialty 4-12 varied 18-32
+    specialty_skills = [s for s in all_skills if s.startswith("Specialty ")]
+    main_skills = [s for s in all_skills if s not in specialty_skills]
+    for skill_name in main_skills:
+        fm_worker["skills"][skill_name] = random.randint(20, 30)
+    for skill_name in specialty_skills:
+        fm_worker["skills"][skill_name] = random.randint(18, 32)
     
+    # Overwrite only skills that ARE specified in Whoremaster, using conversion WM scale → FM 0-100
     for wm_skill, value in wm_data.get('skills', {}).items():
-        fm_skill = WM_SKILL_MAPPING.get(wm_skill, wm_skill.lower())
-        fm_skill = fm_skill.lower()  # Ensure all skills are lowercase
-        # Case-insensitive check against all_skills
-        all_skills_lower = [s.lower() for s in all_skills]
-        if fm_skill in all_skills_lower:
+        fm_skill_canonical = WM_SKILL_MAPPING.get(wm_skill)
+        if fm_skill_canonical is None:
+            fm_skill_canonical = wm_skill if wm_skill in all_skills else (wm_skill[:1].upper() + wm_skill[1:] if wm_skill else None)
+        if fm_skill_canonical and fm_skill_canonical in all_skills:
             if isinstance(value, dict):
-                fm_worker["skills"][fm_skill] = min(100, (value.get('min', 0) + value.get('max', 100)) // 2)
+                # .rgirlsx: use midpoint of Min/Max, then convert to FM scale
+                wm_mid = (value.get('min', 0) + value.get('max', 100)) // 2
+                fm_worker["skills"][fm_skill_canonical] = convert_wm_skill_value_to_fm(wm_mid)
             else:
-                fm_worker["skills"][fm_skill] = min(100, value)
+                # .girlsx: raw value, convert WM scale → FM 0-100
+                fm_worker["skills"][fm_skill_canonical] = convert_wm_skill_value_to_fm(int(value))
     
     # Traits que requieren otros traits automáticamente
     TRAIT_REQUIREMENTS = {

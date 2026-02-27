@@ -198,6 +198,37 @@ init python:
                 bonus += trait_def["modifiers"].get("energy_regeneration", 0)
         return bonus
 
+    def get_effective_comfort_desired(worker):
+        """
+        Return desired comfort after applying active trait caps/minimums.
+        Uses stored comfort_desired as base so existing save values remain valid.
+        """
+        base_value = int(worker.get("comfort_desired", 1))
+        cap = None
+        minimum = None
+
+        for trait_name in worker.get("traits", []):
+            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            if not trait_def:
+                continue
+
+            attr_caps = trait_def.get("attribute_caps", {})
+            if "comfort_desired" in attr_caps:
+                trait_cap = int(attr_caps.get("comfort_desired", 1))
+                cap = trait_cap if cap is None else min(cap, trait_cap)
+
+            attr_mins = trait_def.get("attribute_minimums", {})
+            if "comfort_desired" in attr_mins:
+                trait_min = int(attr_mins.get("comfort_desired", 1))
+                minimum = trait_min if minimum is None else max(minimum, trait_min)
+
+        effective = base_value
+        if cap is not None:
+            effective = min(effective, cap)
+        if minimum is not None:
+            effective = max(effective, minimum)
+        return max(1, int(effective))
+
     def calculate_earnings(worker, base_earnings, client_seeked_traits=[]):
         """
         Return earnings after applying trait multipliers.
@@ -240,7 +271,7 @@ init python:
             "romance": worker.get("romance", 0),
             "relationship": worker.get("relationship", 10),
             "comfort_level": worker.get("comfort_level", 1),
-            "comfort_desired": worker.get("comfort_desired", 1),
+            "comfort_desired": get_effective_comfort_desired(worker),
             "libido": worker.get("libido", 10)
         }
 

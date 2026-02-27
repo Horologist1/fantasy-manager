@@ -273,7 +273,7 @@
                 "option": "Assign your best charmer. (Potential: Money)",
                 "condition": "Charm",
                 "message_success": "Like a dancer following music only they can hear, [acting_worker] moves with effortless grace into the client's presence. Words flow like honey between them, each gesture perfectly timed, each smile calibrated to kindle desire. The room falls silent around their performance, and when the evening reaches its crescendo, a heavy purse changes hands with whispered promises of return. Your establishment's reputation for discretion and quality spreads through the city's most exclusive circles ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-                "message_failure": "No spark. ({actual_money}) (-5 Joy)",
+                "message_failure": "[acting_worker] makes all the right gestures, but the connection simply isn't there—the client's gaze stays polite and distant, and the evening ends without the intimacy they were seeking. A modest fee changes hands for the time spent, but the opportunity for something far more profitable slips quietly away ({actual_money}). (-5 Joy)",
                 "effect": {
                     "success": {
                         "money": 1000,
@@ -518,7 +518,7 @@
         "weight": 3,
         "limited": false,
         "cooldown_days": 7,
-        "worker_selection": "none",
+        "worker_selection": "choose",
         "building_type": [
             "restaurant",
             "tavern",
@@ -564,6 +564,7 @@
     },
     {
         "id": "djinn_bond_rumor",
+        "event_type": "story",
         "description": "The whisper arrives like poison on the wind, carried by voices that speak only in shadows and trust only in gold. They speak of the governor's true power—not the armies or the gold or the political connections that all can see, but something far more ancient and terrible. A djinn, they say, bound by chains of starlight and sealed with blood, grants protection that no mortal weapon can pierce. Only one thing, they claim, can break such a bond: a Binding Gem of purest crystal, rare beyond measure and precious beyond price.",
         "weight": 10,
         "limited": true,
@@ -600,6 +601,7 @@
     },
     {
         "id": "binding_gem_lead_2",
+        "event_type": "story",
         "description": "The contact emerges from shadow like a figure from a half-remembered dream, their face hidden beneath a hood that seems to drink light rather than merely block it. In their hands, something glimmers with inner fire—a crystal that pulses with the rhythm of a captured heartbeat. They speak in whispers of challenges and tests, of proving worthiness through deed rather than coin. The Binding Gem hangs between you like a star fallen to earth, waiting for the right hand to claim it.",
         "weight": 10,
         "limited": true,

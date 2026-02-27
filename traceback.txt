@@ -1,45 +1,47 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/scripts/main_flow.rpy", line 1049, in script
+  File "game/scripts/events/recruitment_flow.rpy", line 268, in script call
+    label recruitment_choice_loop:
+  File "game/scripts/main_flow.rpy", line 1069, in script call
     call screen tavern
-  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
-    store._return = renpy.call_screen(name, *args, **kwargs)
-  File "game/scripts/core/screens.rpy", line 6409, in execute
-    screen arena_menu():
-  File "game/scripts/core/screens.rpy", line 6409, in execute
-    screen arena_menu():
-  File "game/scripts/core/screens.rpy", line 6414, in execute
-    frame:
-  File "game/scripts/core/screens.rpy", line 6429, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 6433, in execute
-    hbox:
-  File "game/scripts/core/screens.rpy", line 6436, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 6440, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 6451, in execute
-    textbutton _sm_btn_text:
-  File "game/scripts/core/screens.rpy", line 6451, in keywords
-    textbutton _sm_btn_text:
-  File "game/scripts/core/screens.rpy", line 6457, in <module>
-    action If(money >= SPECIAL_MATCH_COST, [Hide("arena_menu"), Run("arena_special_match_dialogue")], Show("error_popup", message="You need 5000 coins for a special match."))
-NameError: name 'Run' is not defined
+  File "game/scripts/main_flow.rpy", line 1069, in script call
+    call screen tavern
+  File "game/scripts/script.rpy", line 6764, in script
+    $ _gift_result = renpy.call_screen("yvara_gift_picker")
+  File "game/scripts/script.rpy", line 6764, in <module>
+    $ _gift_result = renpy.call_screen("yvara_gift_picker")
+  File "game/scripts/core/screens.rpy", line 6462, in execute
+    screen yvara_gift_picker():
+  File "game/scripts/core/screens.rpy", line 6462, in execute
+    screen yvara_gift_picker():
+  File "game/scripts/core/screens.rpy", line 6466, in execute
+    $ _gift_items = yvara_get_giftable_items()
+  File "game/scripts/core/screens.rpy", line 6466, in <module>
+    $ _gift_items = yvara_get_giftable_items()
+  File "game/scripts/script.rpy", line 6070, in yvara_get_giftable_items
+    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
+  File "game/scripts/script.rpy", line 6070, in <lambda>
+    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
+AttributeError: 'StoreModule' object has no attribute 'items_data'
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/main_flow.rpy", line 1049, in script
+  File "game/scripts/events/recruitment_flow.rpy", line 268, in script call
+    label recruitment_choice_loop:
+  File "game/scripts/main_flow.rpy", line 1069, in script call
     call screen tavern
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
-    self.call("execute")
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1966, in call
-    return renpy.statements.call(method, parsed, *args, **kwargs)
-  File "D:\renpy-8.3.4-sdk\renpy\statements.py", line 374, in call
-    return method(parsed, *args, **kwargs)
-  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
-    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "game/scripts/main_flow.rpy", line 1069, in script call
+    call screen tavern
+  File "game/scripts/script.rpy", line 6764, in script
+    $ _gift_result = renpy.call_screen("yvara_gift_picker")
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 834, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "D:\renpy-8.3.4-sdk\renpy\python.py", line 1187, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+  File "game/scripts/script.rpy", line 6764, in <module>
+    $ _gift_result = renpy.call_screen("yvara_gift_picker")
   File "D:\renpy-8.3.4-sdk\renpy\exports\statementexports.py", line 345, in call_screen
     rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
   File "D:\renpy-8.3.4-sdk\renpy\ui.py", line 301, in interact
@@ -62,29 +64,21 @@ Full traceback:
     self.update()
   File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 700, in update
     self.screen.function(**self.scope)
-  File "game/scripts/core/screens.rpy", line 6409, in execute
-    screen arena_menu():
-  File "game/scripts/core/screens.rpy", line 6409, in execute
-    screen arena_menu():
-  File "game/scripts/core/screens.rpy", line 6414, in execute
-    frame:
-  File "game/scripts/core/screens.rpy", line 6429, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 6433, in execute
-    hbox:
-  File "game/scripts/core/screens.rpy", line 6436, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 6440, in execute
-    vbox:
-  File "game/scripts/core/screens.rpy", line 6451, in execute
-    textbutton _sm_btn_text:
-  File "game/scripts/core/screens.rpy", line 6451, in keywords
-    textbutton _sm_btn_text:
-  File "game/scripts/core/screens.rpy", line 6457, in <module>
-    action If(money >= SPECIAL_MATCH_COST, [Hide("arena_menu"), Run("arena_special_match_dialogue")], Show("error_popup", message="You need 5000 coins for a special match."))
-NameError: name 'Run' is not defined
+  File "game/scripts/core/screens.rpy", line 6462, in execute
+    screen yvara_gift_picker():
+  File "game/scripts/core/screens.rpy", line 6462, in execute
+    screen yvara_gift_picker():
+  File "game/scripts/core/screens.rpy", line 6466, in execute
+    $ _gift_items = yvara_get_giftable_items()
+  File "game/scripts/core/screens.rpy", line 6466, in <module>
+    $ _gift_items = yvara_get_giftable_items()
+  File "game/scripts/script.rpy", line 6070, in yvara_get_giftable_items
+    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
+  File "game/scripts/script.rpy", line 6070, in <lambda>
+    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
+AttributeError: 'StoreModule' object has no attribute 'items_data'
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
-Fantasy Manager 0.9.4.9b
-Thu Feb 19 04:02:51 2026
+Fantasy Manager 0.9.5.1
+Fri Feb 27 04:16:10 2026

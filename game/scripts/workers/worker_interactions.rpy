@@ -186,14 +186,92 @@ init python:
         
         return filtered
 
+    def get_unlock_required_uses():
+        """How many uses are required to unlock the next interaction level."""
+        return 1
+
+    def _read_counter_flag(worker, flag_name):
+        """Read numeric value from a worker counter flag."""
+        value = 0
+        flag_value = worker.get("flags", {}).get(flag_name)
+        if flag_value is not None:
+            if hasattr(flag_value, 'get') and "value" in flag_value:
+                value = flag_value.get("value", 0)
+            elif isinstance(flag_value, (int, float)):
+                value = int(flag_value)
+        return value
+
+    def get_category_progress_subtitle(worker, category_name):
+        """
+        Build subtitle text for branch progression hints shown in category screens.
+        """
+        tracked_categories = {"Discipline", "Romance", "Friendship"}
+        if category_name not in tracked_categories:
+            return ""
+
+        interactions = load_interactions()
+        player_gender = "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+        filtered = filter_interactions_by_gender(interactions, player_gender)
+        filtered = filter_interactions_by_worker_gender(filtered, worker)
+        filtered = filter_interactions_by_worker_name(filtered, worker)
+
+        category_interactions = [i for i in filtered if category_name in i.get("categories", [])]
+        if not category_interactions:
+            return ""
+
+        required_uses = get_unlock_required_uses()
+        levels = sorted({i.get("interaction_level", 1) for i in category_interactions if i.get("interaction_level", 1) is not None})
+        levels = [lvl for lvl in levels if lvl >= 2]
+        if not levels:
+            return ""
+
+        primary_stat_by_category = {
+            "Discipline": "rebelliousness",
+            "Romance": "romance",
+            "Friendship": "relationship",
+        }
+        stat_name = primary_stat_by_category.get(category_name)
+        stat_label = stat_name.capitalize() if stat_name else "Stat"
+
+        for level in levels:
+            prev_level = level - 1
+            prev_flag = f"{category_name.lower()}_uses_level_{prev_level}"
+            prev_uses = _read_counter_flag(worker, prev_flag)
+            uses_ok = prev_uses >= required_uses
+
+            level_interactions = [i for i in category_interactions if i.get("interaction_level", 1) == level]
+            level_interactions.sort(key=lambda i: i.get("name", ""))
+            target_interaction = level_interactions[0] if level_interactions else None
+
+            threshold = 0
+            current_value = worker.get(stat_name, 0) if stat_name else 0
+            if target_interaction and stat_name:
+                threshold = int(target_interaction.get("stat_requirements", {}).get(stat_name, 0) or 0)
+
+            if stat_name == "rebelliousness":
+                stat_ok = current_value < threshold if threshold > 0 else True
+            else:
+                stat_ok = current_value >= threshold
+
+            if not (uses_ok and stat_ok):
+                prev_level_interactions = [i for i in category_interactions if i.get("interaction_level", 1) == prev_level]
+                prev_level_interactions.sort(key=lambda i: i.get("name", ""))
+                previous_name = prev_level_interactions[0].get("name", f"Level {prev_level} interaction") if prev_level_interactions else f"Level {prev_level} interaction"
+
+                if threshold > 0:
+                    return f"Use {previous_name} once, achieve {current_value}/{threshold} {stat_label}."
+                return f"Use {previous_name} once."
+
+        return "All progression requirements completed for this branch."
+
     def filter_interactions_by_unlock_level(interactions, worker):
         """
         Filter interactions based on unlock level system.
         Each category has 4 levels:
         - Level 1: Always available
-        - Level 2: Unlocked after 3 uses of level 1
-        - Level 3: Unlocked after 3 uses of level 2
-        - Level 4: Unlocked after 3 uses of level 3 (farmeable, optimal cost/benefit)
+        - Level 2: Unlocked after 1 use of level 1
+        - Level 3: Unlocked after 1 use of level 2
+        - Level 4: Unlocked after 1 use of level 3
         """
         filtered = []
         if not worker.get("flags"):
@@ -251,21 +329,13 @@ init python:
                 filtered.append(interaction)
                 continue
             
-            # For levels 2, 3, and 4, check if previous level has been used enough
-            required_uses = 3
+            # For levels 2+, check if previous level has been used enough
+            required_uses = get_unlock_required_uses()
             previous_level = interaction_level - 1
             
             # Check uses of previous level
             previous_level_flag = f"{category_flag_base}_level_{previous_level}"
-            previous_uses = 0
-            flag_value = worker.get("flags", {}).get(previous_level_flag)
-            
-            if flag_value is not None:
-                # Use hasattr instead of isinstance to handle RevertableDict
-                if hasattr(flag_value, 'get') and "value" in flag_value:
-                    previous_uses = flag_value.get("value", 0)
-                elif isinstance(flag_value, (int, float)):
-                    previous_uses = flag_value
+            previous_uses = _read_counter_flag(worker, previous_level_flag)
             
             # Unlock if previous level has been used enough times
             if previous_uses >= required_uses:
@@ -439,6 +509,46 @@ init python:
                 store.worker_interactions_today[worker_name][day_key] = 0
         
         store.worker_interactions_today[worker_name][day_key] += 1
+
+    def get_interaction_uses_label(worker, interaction, required_uses=None):
+        """
+        Return a UI label fragment showing unlock-progress uses for an interaction.
+        Example: " (Uses: 1/3)".
+
+        Notes:
+        - Uses existing per-category/per-level flags (e.g. romance_uses_level_2).
+        - Intentionally hides the counter for Violet's special interaction.
+        """
+        if not worker or not interaction:
+            return ""
+
+        # Keep Violet's special visually outside the level progression UI.
+        if interaction.get("id", "") == "violet_special":
+            return ""
+
+        categories = interaction.get("categories", [])
+        interaction_level = interaction.get("interaction_level", 1)
+
+        if required_uses is None:
+            required_uses = get_unlock_required_uses()
+
+        # Show progress only for the leveled progression (L1-L4).
+        if not categories or interaction_level is None or interaction_level >= 5:
+            return ""
+
+        main_category = categories[0] if categories else "Other"
+        level_flag = f"{main_category.lower()}_uses_level_{interaction_level}"
+
+        current_uses = 0
+        flag_value = worker.get("flags", {}).get(level_flag)
+        if flag_value is not None:
+            # Use hasattr instead of isinstance to handle RevertableDict.
+            if hasattr(flag_value, 'get') and "value" in flag_value:
+                current_uses = flag_value.get("value", 0)
+            elif isinstance(flag_value, (int, float)):
+                current_uses = int(flag_value)
+
+        return f" (Uses: {current_uses}/{required_uses})"
 
     def apply_interaction_effects(worker, interaction, apply_costs=True, skip_daily_limit=False):
         """Apply the effects of an interaction to a worker.

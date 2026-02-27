@@ -15,13 +15,30 @@ init python:
             "Specialty 6": 5, "Specialty 7": 5, "Specialty 8": 5, "Specialty 9": 5, "Specialty 10": 5,
             "Specialty 11": 5, "Specialty 12": 5
         }
+        # Map lowercase/alternate keys from imports (e.g. Whoremaster) to canonical skill names
+        _skill_name_aliases = {
+            "sex": "Sex", "anal": "Anal", "bdsm": "BDSM", "hand": "Hand", "oral": "Oral",
+            "homo": "Homo", "special": "Special", "group": "Group", "extreme": "Extreme",
+            "striptease": "Striptease", "combat": "Combat", "clever": "Clever", "charm": "Charm",
+            "service": "Service", "agility": "Agility", "craft": "Craft"
+        }
 
-        # Ensure skills exist and are valid - only use skill names
+        # Ensure skills exist and are valid - only use canonical skill names
         if "skills" not in worker:
             worker["skills"] = base_skills.copy()
         else:
-            # Only keep valid skill names and cap them at SKILL_MAX (100)
-            worker["skills"] = {k: max(0, min(100, int(v))) for k, v in worker["skills"].items() if k in base_skills}
+            # Normalize: merge lowercase/alias keys into canonical names (e.g. "sex" -> "Sex"), take max value
+            raw = worker["skills"]
+            normalized = {}
+            for k, v in raw.items():
+                try:
+                    val = max(0, min(100, int(v)))
+                except (TypeError, ValueError):
+                    val = 5
+                canonical = _skill_name_aliases.get(k, k) if k not in base_skills else k
+                if canonical in base_skills:
+                    normalized[canonical] = max(normalized.get(canonical, 0), val)
+            worker["skills"] = normalized
             for skill_name in base_skills:
                 worker["skills"].setdefault(skill_name, 5)
 

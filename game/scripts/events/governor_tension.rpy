@@ -23,7 +23,7 @@ label governor_retaliation:
     scene expression _gov_bg
     with fade
     
-    centered "A shadow falls upon your establishment..."
+    "A shadow falls upon your establishment..."
     
     pause 1.0
     
@@ -90,33 +90,39 @@ label governor_retaliation:
     scene expression _gov_bg
     with fade
     
+    "Back in your chambers, you find a blade embedded in the door."
+    
+    "A folded note is skewered beneath it."
+    
+    "The seal pressed into the wax is the Governor's crest. He did not bother to hide it."
+    
     show screen governor_message_overlay
-    centered "A message has been delivered."
     
-    pause 0.8
+    "{i}\"You have been seen.\"{/i}"
     
-    "A note is found pinned to your door, sealed with the Governor's crest."
+    "{i}\"Consider this the last courtesy I shall extend.\"{/i}"
     
-    "The message is simple:"
+    "{i}\"Every step you take, I will answer. Every ally you gather, I will peel away.\"{/i}"
     
-    centered "{i}\"I know what you're planning. Consider this your first and only warning.\n\nEvery move you make, I will counter. Every ally you gather, I will turn.\n\nYou may run this little establishment, but I run this city.\n\n- G.\"{/i}"
+    "{i}\"This city is mine. Every soul within it — including yours — exists at my pleasure.\"{/i}"
     
-    pause 1.0
+    "{i}— G.{/i}"
     
     hide screen governor_message_overlay
-    "You crumple the note in your fist."
-    
-    "So be it. If the Governor wants a war, he shall have one."
-    
-    "But I will be the one left standing."
     
     pause 0.5
     
-    show screen governor_message_overlay
-    centered "The Governor is now aware of your plans.\nRandom incidents may occur as you progress.\nStay vigilant."
+    "Your hands do not shake. That surprises you."
     
-    pause 1.5
-    hide screen governor_message_overlay
+    "He sent this to make you afraid. To make you fold quietly, the way the others before you did."
+    
+    "You hold the note to the candle flame and watch it curl to nothing."
+    
+    "Let him send his agents. Let him poison your water and buy the ears of your people."
+    
+    "Every move he makes against you is a move he is not spending on protecting himself."
+    
+    "From this point forward, the Governor will act. Stay ready."
     
     # Clean up
     $ store._retaliation_victims = None

@@ -403,9 +403,11 @@ label start:
             renpy.log("START: game_initialized=True without new_game flag")
         
         # Method 4: Check if we have save data (money != default, or workers exist)
-        if getattr(store, "money", 6000) != 6000 or len(getattr(store, "workers", [])) > 0:
-            is_load_operation = True
-            renpy.log(f"START: Non-default state detected (money={getattr(store, 'money', 6000)}, workers={len(getattr(store, 'workers', []))})")
+        # IMPORTANT: explicit New Game must override stale in-memory state.
+        if not getattr(store, "_force_new_game_reset", False):
+            if getattr(store, "money", 6000) != 6000 or len(getattr(store, "workers", [])) > 0:
+                is_load_operation = True
+                renpy.log(f"START: Non-default state detected (money={getattr(store, 'money', 6000)}, workers={len(getattr(store, 'workers', []))})")
         
         # If this is a load, skip ALL reset logic and go straight to tavern
         if is_load_operation:
@@ -451,6 +453,10 @@ label start:
             persistent._slot_to_apply = None
             persistent.loaded_via_save = False
             persistent._context_restored = False
+            # Reset screen intro popups for every New Game.
+            persistent.intro_popups_enabled = True
+            persistent.intro_popups_seen = {}
+            store._intro_popup_current = None
             # Note: We don't clear _slot_snapshots or _last_snapshot as they're needed for saves
             # But we ensure load flags are cleared
             
@@ -826,8 +832,6 @@ label show_ending_assassination:
     "My revenge is complete. But my ambition? That is only beginning."
     
     "The sun rises on a new day, and I am its master."
-    benefit_msg "Manager level up."
-    
     $ renpy.log("DEBUG: show_ending_assassination - EPIC ENDING COMPLETE")
     $ tutorial_active = False
     
@@ -959,8 +963,6 @@ label show_ending_blackmail:
     "My revenge is complete. But my ambition? That is only beginning."
     
     "The sun rises on a new day, and I am its master."
-    benefit_msg "Manager level up."
-    
     $ renpy.log("DEBUG: show_ending_blackmail - EPIC ENDING COMPLETE")
     $ tutorial_active = False
     

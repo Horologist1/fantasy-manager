@@ -105,7 +105,7 @@ init python:
         prepared_worker = worker.copy()
         
         # Use the worker's desired_comfort or fall back to comfort_range
-        comfort_desired = prepared_worker.get("comfort_desired", 1)
+        comfort_desired = get_effective_comfort_desired(prepared_worker)
         comfort_range = event.get("comfort_range", {"min": comfort_desired, "max": comfort_desired})
         
         # Set comfort level based on desired comfort or range
@@ -320,7 +320,7 @@ init python:
             # Apply cost modifier if present
             cost_modifier = effect_dict.get("cost_modifier", 1.0)
 
-            desired_comfort = worker.get("comfort_desired", worker.get("comfort_level", 1))
+            desired_comfort = get_effective_comfort_desired(worker)
             # If price was negotiated down, comfort should be exactly one point below desired (min 1)
             if cost_modifier < 1.0:
                 negotiated_comfort = max(1, int(desired_comfort) - 1)

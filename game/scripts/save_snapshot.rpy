@@ -438,6 +438,19 @@ init -2 python:
                 "is_new_game": False,
                 "academy_enrolled": _safe_getattr(store, "academy_enrolled", False),
                 "academy_haggle_available": _safe_getattr(store, "academy_haggle_available", True),
+                # Yvara route progression (Stage 1+)
+                "yvara_known_name": _safe_getattr(store, "yvara_known_name", False),
+                "yvara_devotion": _safe_getattr(store, "yvara_devotion", 0),
+                "yvara_dominion": _safe_getattr(store, "yvara_dominion", 0),
+                "yvara_affection": _safe_getattr(store, "yvara_affection", 0),
+                "yvara_stage": _safe_getattr(store, "yvara_stage", 1),
+                "yvara_visit_count": _safe_getattr(store, "yvara_visit_count", 0),
+                "yvara_last_question_total_days": _safe_getattr(store, "yvara_last_question_total_days", None),
+                "yvara_last_gift_total_days": _safe_getattr(store, "yvara_last_gift_total_days", None),
+                "yvara_last_talk_total_days": _safe_getattr(store, "yvara_last_talk_total_days", None),
+                "yvara_s1_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s1_talks_done", [])) or []),
+                "yvara_s1_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s1_remarks_done", [])) or []),
+                "yvara_gifts_given": _safe_getattr(store, "yvara_gifts_given", 0),
                 "management_skills": _cp.deepcopy(getattr(store, "management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0})),
                 "manager_portrait": getattr(store, "manager_portrait", ""),
                 "manager_start_skill_chosen": _safe_getattr(store, "manager_start_skill_chosen", False),
@@ -853,7 +866,18 @@ init -2 python:
                 ("governor_retaliation_done", False),
                 ("days_since_last_tension_event", 0),
                 ("last_take_a_walk_day", None),
-                ("take_a_walk_in_progress", False)
+                ("take_a_walk_in_progress", False),
+                # Yvara route progression
+                ("yvara_known_name", False),
+                ("yvara_devotion", 0),
+                ("yvara_dominion", 0),
+                ("yvara_affection", 0),
+                ("yvara_stage", 1),
+                ("yvara_visit_count", 0),
+                ("yvara_last_question_total_days", None),
+                ("yvara_last_gift_total_days", None),
+                ("yvara_last_talk_total_days", None),
+                ("yvara_gifts_given", 0)
             ]:
                 try:
                     if field_name in snap:
@@ -866,6 +890,23 @@ init -2 python:
                             setattr(store, field_name, default_val)
                     else:
                         missing_fields.append(field_name)
+                except Exception as e:
+                    failed_fields.append(field_name)
+                    renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")
+
+            # Apply Yvara list fields separately (must stay lists)
+            for field_name, default_val in [
+                ("yvara_s1_talks_done", []),
+                ("yvara_s1_remarks_done", [])
+            ]:
+                try:
+                    if field_name in snap:
+                        val = _to_list(snap.get(field_name))
+                        setattr(store, field_name, _cp.deepcopy(val) if val is not None else list(default_val))
+                        applied_any = True
+                        applied_fields.append(field_name)
+                    elif not hasattr(store, field_name):
+                        setattr(store, field_name, list(default_val))
                 except Exception as e:
                     failed_fields.append(field_name)
                     renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")

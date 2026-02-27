@@ -18,6 +18,15 @@ init python:
         # easy and normal: same cost per design
         return 20
 
+    def get_difficulty_building_skill_mult():
+        """Return skill-bonus cost multiplier for building upkeep based on difficulty."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "nightmare":
+            return 2.0
+        if diff == "hard":
+            return 1.5
+        return 1.0
+
     def process_daily_events():
         global daily_report, manager_inventory
         renpy.log("process_daily_events() starting...")
@@ -84,7 +93,8 @@ init python:
                 continue
 
             # Update building costs to include skill bonus
-            bonus_cost = (building["skill_bonus"] // 10) * 100
+            _skill_mult = get_difficulty_building_skill_mult()
+            bonus_cost = int(((building["skill_bonus"] // 10) * 100) * _skill_mult)
             renpy.log(f"Building {building_name} previous costs: {building.get('costs', 0)}, adding skill bonus: {bonus_cost}")
             building["costs"] = building.get("costs", 0) + bonus_cost
             renpy.log(f"Building {building_name} new costs after skill bonus: {building['costs']}")
@@ -288,9 +298,9 @@ init python:
                         skill_options = chosen_story.get("skill_options", [])
                         diff = getattr(persistent, "difficulty", "normal")
                         if diff == "nightmare":
-                            difficulty_skill_penalty = 20
-                        elif diff == "hard":
                             difficulty_skill_penalty = 10
+                        elif diff == "hard":
+                            difficulty_skill_penalty = 0
                         else:
                             difficulty_skill_penalty = 0
                         if skill_options:
@@ -1018,7 +1028,7 @@ init python:
             if worker.get("relationship", 0) < minimum_relationship:
                 set_attribute_with_caps(worker, "relationship", minimum_relationship)
 
-            comfort_desired = worker.get("comfort_desired", 1)
+            comfort_desired = get_effective_comfort_desired(worker)
             comfort_bonus = max(0, comfort - comfort_desired)
             if comfort_bonus > 0:
                 old_joy = worker["joy"]
@@ -1176,16 +1186,30 @@ init python:
         guaranteed_events = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 30) >= 100]
         
         # Check for priority events (NOT affected by managers):
-        # - Events with custom probability (event_probability defined)
-        # - Events with limited: false (explicitly) - these are quest/story events that should not be blocked by managers
-        # These are quest events, story events, etc. that should not be blocked by managers
-        priority_events = [e for e in possible_events 
-                         if (e.get("event_probability") is not None or (e.get("limited") is not None and e.get("limited") == False))
-                         and not e.get("guaranteed", False) 
-                         and e.get("event_probability", 30) < 100]
+        # - Events with explicit custom probability (event_probability defined)
+        # - Events explicitly marked as priority (priority: true)
+        # - Story/quest events explicitly tagged via event_type
+        # NOTE: We no longer infer priority from limited == false.
+        def _is_priority_event(e):
+            event_type = str(e.get("event_type", "")).lower()
+            return (
+                e.get("event_probability") is not None
+                or bool(e.get("priority", False))
+                or event_type in ("story", "quest")
+            )
+
+        priority_events = [
+            e for e in possible_events
+            if _is_priority_event(e)
+            and not e.get("guaranteed", False)
+            and e.get("event_probability", 30) < 100
+        ]
         
-        # Events without custom probability and limited: true (or not set) - affected by managers
-        normal_events = [e for e in possible_events if e.get("event_probability") is None and (e.get("limited") is None or e.get("limited") == True)]
+        # Normal events are affected by managers.
+        normal_events = [
+            e for e in possible_events
+            if not _is_priority_event(e) and not e.get("guaranteed", False)
+        ]
         
         if guaranteed_events:
             renpy.log(f"Found {len(guaranteed_events)} guaranteed events, skipping probability check")
@@ -1193,14 +1217,14 @@ init python:
             possible_events = guaranteed_events  # Only consider guaranteed events
         elif priority_events or (normal_events and has_active_professions):
             # Two separate checks:
-            # 1. Priority events (custom probability OR limited) - NOT affected by managers
+            # 1. Priority events (custom probability OR explicit priority/story tags) - NOT affected by managers
             # 2. Normal events - affected by managers
             
             should_trigger_event = False
             events_to_consider = []
             
             # Check priority events (NOT affected by managers)
-            # Priority events include: events with custom probability OR limited events (quest/story)
+            # Priority events include: custom probability OR explicit priority/story tags
             if priority_events:
                 # Use event_probability if defined, otherwise use 50% for limited events
                 max_priority_prob = max([e.get("event_probability", 50) for e in priority_events])

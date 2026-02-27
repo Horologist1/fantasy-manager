@@ -1242,47 +1242,35 @@ screen journal_panel():
                         $ can_assassinate = has_team_assassination()
                         $ can_blackmail = has_team_blackmail()
                         
-                        # Assassination path button
-                        frame:
-                            xsize 560
-                            background Solid("#7a4b2a")
-                            padding (15, 15)
-                            margin (5, 5)
-                            textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Magic)":
-                                xsize 530
-                                text_size font_size(24)
-                                text_color "#7a4b2a"
-                                text_hover_color "#f4c594"
-                                action [
-                                    Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
-                                    If(can_assassinate,
-                                        [Function(lambda: store.event_flags.update({'branch_assassination': True})),
-                                         Function(check_objective_completion)],
-                                        None)
-                                ]
-                                sensitive can_assassinate
-                        
-                        null height 2
-                        
-                        # Blackmail path button
-                        frame:
-                            xsize 560
-                            background Solid("#7a4b2a")
-                            padding (15, 15)
-                            margin (5, 5)
-                            textbutton "Heist and Blackmail\n(requires 1 with 70+ Clever/Charm and 2 with 70+ Charm)":
-                                xsize 530
-                                text_size font_size(24)
-                                text_color "#7a4b2a"
-                                text_hover_color "#f4c594"
-                                action [
-                                    Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
-                                    If(can_blackmail,
-                                        [Function(lambda: store.event_flags.update({'branch_blackmail': True})),
-                                         Function(check_objective_completion)],
-                                        None)
-                                ]
-                                sensitive can_blackmail
+                        # Assassination path button (same style as objective 16)
+                        textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Magic)":
+                            xsize 520
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [
+                                Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
+                                If(can_assassinate,
+                                    [Function(lambda: store.event_flags.update({'branch_assassination': True})),
+                                     Function(check_objective_completion)],
+                                    None)
+                            ]
+                            sensitive can_assassinate
+
+                        # Blackmail path button (same style as objective 16)
+                        textbutton "Heist and Blackmail\n(requires 1 with 70+ Clever/Charm and 2 with 70+ Charm)":
+                            xsize 520
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [
+                                Function(lambda: setattr(store, 'event_flags', getattr(store, 'event_flags', {}))),
+                                If(can_blackmail,
+                                    [Function(lambda: store.event_flags.update({'branch_blackmail': True})),
+                                     Function(check_objective_completion)],
+                                    None)
+                            ]
+                            sensitive can_blackmail
                         
                         null height 10
                         text "Tip: Check out shops for items to boost skills!" size font_size(18) color "#7a4b2a" italic True

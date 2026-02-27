@@ -110,6 +110,13 @@ This document analyzes the compatibility between **Whoremaster 7.2.2** and **Fan
 | Beauty | Charm | 20% |
 | Libido | Sex | 20% |
 
+### Skill value conversion (WM → FM)
+
+- **Skills specified in Whoremaster** (XML): the converter applies a scale conversion so WM values become FM 0–100.
+  - Default: WM scale 0–100 → FM 0–100 (1:1).
+  - If your pack uses a different scale (e.g. 0–70), set `WM_SKILL_SCALE_MAX = 70` in the editor/devkit so that WM 70 → FM 100.
+- **Skills not present in WM**: they get a baseline in the same range as FM unique workers (main skills 20–30, Specialty 4–12 varied 18–32), so imported characters stay comparable to game workers.
+
 ---
 
 ## 🏷️ Trait Mapping

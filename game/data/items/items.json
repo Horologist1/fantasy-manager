@@ -173,20 +173,6 @@
       "weight": 9
     },
     {
-      "id": "scroll_wisdom",
-      "name": "Scroll of Wisdom",
-      "display_name": "Scroll of Wisdom",
-      "type": "consumable",
-      "effect": {
-        "skill_modifiers": {
-          "Clever": 3
-        }
-      },
-      "description": "A mystical scroll that grants temporary cleverness. (+3 Clever)",
-      "price": 120,
-      "weight": 7
-    },
-    {
       "id": "iron_shield",
       "name": "Iron Shield",
       "display_name": "Iron Shield",
@@ -463,21 +449,6 @@
       "weight": 3
     },
     {
-      "id": "invitation_letter",
-      "name": "Invitation Letter",
-      "display_name": "Invitation Letter",
-      "type": "consumable",
-      "effect": {
-        "skill_modifiers": {
-          "Clever": 4
-        },
-        "add_trait": "Expecting Visit"
-      },
-      "description": "A beautifully crafted invitation promising a visit from a distinguished guest. Grants the Expecting Visit trait. (+4 Clever)",
-      "price": 200,
-      "weight": 1
-    },
-    {
       "id": "shadow_cloak",
       "name": "Shadow Cloak",
       "display_name": "Shadow Cloak",
@@ -631,6 +602,39 @@
       "description": "Test item to unlock Shop 3 (Elite Emporium). For testing purposes only.",
       "price": 1,
       "weight": 1
+    },
+    {
+      "id": "fine_wine",
+      "name": "Fine Wine",
+      "display_name": "Fine Wine",
+      "type": "gift",
+      "effect": {},
+      "description": "A bottle of aged wine from the southern vineyards. A welcome gesture in cultured company.",
+      "price": 350,
+      "weight": 3,
+      "shop_available": true
+    },
+    {
+      "id": "rare_book",
+      "name": "Rare Academic Text",
+      "display_name": "Rare Academic Text",
+      "type": "gift",
+      "effect": {},
+      "description": "A well-preserved scholarly volume on philosophy and the discipline of learning. Rare outside major libraries.",
+      "price": 800,
+      "weight": 2,
+      "shop_available": true
+    },
+    {
+      "id": "herbal_tea",
+      "name": "Premium Herbal Tea",
+      "display_name": "Premium Herbal Tea",
+      "type": "gift",
+      "effect": {},
+      "description": "A blend of rare mountain herbs, brewed by apothecaries for clarity of mind.",
+      "price": 150,
+      "weight": 1,
+      "shop_available": true
     },
     {
       "id": "test_money_50k",

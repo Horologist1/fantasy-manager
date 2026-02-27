@@ -5,6 +5,7 @@
 
 define player = Character("Manager")
 define academy_director = Character("Academy Director")
+define yvara = Character("Yvara")
 define arena_promoter = Character("Arena Promoter")
 define lab_director = Character("Lab Director")
 define narrator = Character(None)  # Narration / no speaker name (e.g. arena trial result)
@@ -274,10 +275,12 @@ init python:
                     "recruitment_result_screen", "recruitment_event_screen", "advanced_recruitment_event_screen"
                 ]
                 if screen_name in event_screens:
-                    # Import the function from main_flow.rpy
-                    from main_flow import immediate_event_fadeout
-                    immediate_event_fadeout()
-                    renpy.log(f"ESC: Stopped event music and restored BGM with silence breaks for '{screen_name}'")
+                    # Ren'Py .rpy files are not Python-importable modules; call through store.
+                    if hasattr(store, "immediate_event_fadeout"):
+                        store.immediate_event_fadeout()
+                        renpy.log(f"ESC: Stopped event music and restored BGM with silence breaks for '{screen_name}'")
+                    else:
+                        renpy.log("ESC WARNING: immediate_event_fadeout not found in store")
                 
                 close_action = screen_close_actions.get(screen_name)
                 if close_action:

@@ -188,7 +188,7 @@ label recruitment_event_flow(event, worker):
     
     # Calculate cost (uses current difficulty multiplier)
     python:
-        comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
+        comfort_level = get_effective_comfort_desired(worker)
         daily_cost = comfort_level * get_difficulty_comfort_mult()
         worker["daily_cost"] = daily_cost
         
@@ -316,7 +316,7 @@ label recruitment_event_simple(event, worker):
     show expression Solid("#00000080")  # Semi-transparent black overlay
     
     python:
-        comfort_level = worker.get("comfort_desired", worker.get("comfort_level", 5))
+        comfort_level = get_effective_comfort_desired(worker)
         daily_cost = comfort_level * get_difficulty_comfort_mult()
         worker["daily_cost"] = daily_cost
         worker["comfort_level"] = comfort_level
