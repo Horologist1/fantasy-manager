@@ -87,7 +87,9 @@
       "display_name": "Antidote",
       "type": "consumable",
       "effect": {
-        "remove_trait": ["Poisoned"],
+        "remove_trait": [
+          "Poisoned"
+        ],
         "health": 5
       },
       "description": "A powerful remedy that neutralizes poisons and restores some health. (+5 Health, removes Poisoned)",
@@ -117,7 +119,7 @@
         "joy": 1
       },
       "description": "A small gift that lifts the mood. (+1 Joy)",
-      "price": 120,
+      "price": 250,
       "weight": 4
     },
     {
@@ -127,10 +129,10 @@
       "type": "consumable",
       "auto_consume_on_receive": true,
       "effect": {
-        "joy": 1
+        "joy": 2
       },
-      "description": "Sugar-spun sweets with a faint arcane shimmer. (+1 Joy)",
-      "price": 750,
+      "description": "Sugar-spun sweets with a faint arcane shimmer. (+2 Joy)",
+      "price": 350,
       "weight": 1
     },
     {
@@ -140,10 +142,11 @@
       "type": "consumable",
       "auto_consume_on_receive": true,
       "effect": {
+        "joy": 1,
         "romance": 1
       },
-      "description": "Enchanted blooms that whisper sweet feelings. (+1 Romance)",
-      "price": 750,
+      "description": "Enchanted blooms that whisper sweet feelings. (+1 Joy, +1 Romance)",
+      "price": 350,
       "weight": 1
     },
     {
@@ -274,7 +277,20 @@
       "type": "currency",
       "description": "A coin made of pure gold.",
       "price": 10,
-      "weight": 15
+      "weight": 15,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "silver_coin",
@@ -283,7 +299,20 @@
       "type": "currency",
       "description": "A coin made of sterling silver.",
       "price": 5,
-      "weight": 10
+      "weight": 10,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "bronze_coin",
@@ -292,43 +321,108 @@
       "type": "currency",
       "description": "A coin made of bronze.",
       "price": 2,
-      "weight": 8
+      "weight": 8,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "diamond",
       "name": "Diamond",
       "display_name": "Diamond",
-      "type": "currency",
+      "type": "misc",
       "description": "A precious gemstone with high monetary value.",
       "price": 500,
-      "weight": 1
+      "weight": 1,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "ruby",
       "name": "Ruby",
       "display_name": "Ruby",
-      "type": "currency",
+      "type": "misc",
       "description": "A deep red gemstone.",
       "price": 400,
-      "weight": 1
+      "weight": 1,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "emerald",
       "name": "Emerald",
       "display_name": "Emerald",
-      "type": "currency",
+      "type": "misc",
       "description": "A bright green gemstone prized for its beauty.",
       "price": 350,
-      "weight": 1
+      "weight": 1,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "sapphire",
       "name": "Sapphire",
       "display_name": "Sapphire",
-      "type": "currency",
+      "type": "misc",
       "description": "A blue gemstone known for its clarity.",
       "price": 300,
-      "weight": 1
+      "weight": 1,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 0,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      }
     },
     {
       "id": "obsidian_blade",
@@ -483,7 +577,7 @@
         "libido_max": 5,
         "libido_regeneration": 2
       },
-      "description": "An amulet that stirs deep passions, increasing libido capacity and recovery.",
+      "description": "An amulet that stirs deep passions. (+5 Libido Max, +2 Libido Regeneration)",
       "price": 468,
       "weight": 2
     },
@@ -496,7 +590,7 @@
         "libido": 10,
         "libido_regeneration": 3
       },
-      "description": "A potent elixir that boosts libido and hastens its regeneration for a time.",
+      "description": "A potent elixir that boosts libido and hastens its regeneration for a time. (+10 Libido, +3 Libido regeneration)",
       "price": 1000,
       "weight": 0.02
     },
@@ -608,9 +702,22 @@
       "name": "Fine Wine",
       "display_name": "Fine Wine",
       "type": "gift",
-      "effect": {},
-      "description": "A bottle of aged wine from the southern vineyards. A welcome gesture in cultured company.",
-      "price": 350,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 1,
+        "romance": 1,
+        "relationship": 2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A bottle of aged wine from the southern vineyards. A welcome gesture in cultured company. Yvara: +2 Devotion, +3 Affection. Worker gift effect: +2 Relationship, +1 Joy, +1 Romance.",
+      "price": 550,
       "weight": 3,
       "shop_available": true
     },
@@ -619,9 +726,22 @@
       "name": "Rare Academic Text",
       "display_name": "Rare Academic Text",
       "type": "gift",
-      "effect": {},
-      "description": "A well-preserved scholarly volume on philosophy and the discipline of learning. Rare outside major libraries.",
-      "price": 800,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 1,
+        "romance": 1,
+        "relationship": 2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A well-preserved scholarly volume on philosophy and the discipline of learning. Rare outside major libraries. Yvara: +3 Devotion, +5 Affection. Worker gift effect: +2 Relationship, +1 Joy, +1 Romance.",
+      "price": 550,
       "weight": 2,
       "shop_available": true
     },
@@ -630,9 +750,23 @@
       "name": "Premium Herbal Tea",
       "display_name": "Premium Herbal Tea",
       "type": "gift",
-      "effect": {},
-      "description": "A blend of rare mountain herbs, brewed by apothecaries for clarity of mind.",
-      "price": 150,
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 1,
+        "romance": 0,
+        "relationship": 1,
+        "rebelliousness": -1,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A blend of rare mountain herbs, brewed by apothecaries for clarity of mind. Yvara: +2 Devotion, +2 Affection. Worker gift effect: +1 Relationship, +1 Joy, -1 Rebelliousness.",
+      "price": 450,
       "weight": 1,
       "shop_available": true
     },
@@ -915,10 +1049,11 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Clever": 4
+          "Charm": 2,
+          "Service": 2
         }
       },
-      "description": "A practical apron that helps bartenders mix drinks with precision and flair. (+4 Clever)",
+      "description": "A practical apron that helps bartenders mix drinks with precision and charm. (+2 Charm, +2 Service)",
       "durability": 95,
       "price": 250,
       "weight": 3
@@ -930,10 +1065,11 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Clever": 7
+          "Charm": 4,
+          "Service": 3
         }
       },
-      "description": "An elegant apron worn by master mixologists, symbolizing expertise in the craft. (+7 Clever)",
+      "description": "An elegant apron worn by master mixologists, symbolizing expertise in service and charm. (+4 Charm, +3 Service)",
       "durability": 140,
       "price": 1040,
       "weight": 4
@@ -945,10 +1081,11 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Clever": 3
+          "Charm": 1,
+          "Service": 2
         }
       },
-      "description": "Essential bar tools including shakers, strainers, and jiggers for perfect cocktails. (+3 Clever)",
+      "description": "Essential bar tools including shakers, strainers, and jiggers for perfect cocktails. (+1 Charm, +2 Service)",
       "price": 212,
       "weight": 4
     },
@@ -959,10 +1096,11 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Clever": 6
+          "Charm": 3,
+          "Service": 3
         }
       },
-      "description": "A premium set of bar tools used by master mixologists to create legendary drinks. (+6 Clever)",
+      "description": "A premium set of bar tools used by master mixologists to create legendary drinks. (+3 Charm, +3 Service)",
       "price": 900,
       "weight": 5
     },
@@ -1625,12 +1763,13 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 13
+          "Clever": 13,
+          "Combat": 5
         }
       },
-      "description": "A legendary staff wielded by archmages, channeling immense magical power. (+13 Clever)",
+      "description": "A legendary staff wielded by archmages, channeling immense magical power. (+13 Clever, +5 Combat)",
       "durability": 220,
-      "price": 4900,
+      "price": 5500,
       "weight": 5
     },
     {
@@ -1666,9 +1805,25 @@
       "weight": 10
     },
     {
-      "id": "plate_armor",
-      "name": "Plate Armor",
-      "display_name": "Plate Armor",
+      "id": "iron_plate_armor",
+      "name": "Iron Plate Armor",
+      "display_name": "Iron Plate Armor",
+      "type": "armor",
+      "effect": {
+        "health": 22,
+        "skill_modifiers": {
+          "Combat": 5
+        }
+      },
+      "description": "Heavy plate armor forged from iron, offering solid protection for warriors. (+22 Health, +5 Combat)",
+      "durability": 160,
+      "price": 1200,
+      "weight": 16
+    },
+    {
+      "id": "steel_plate_armor",
+      "name": "Steel Plate Armor",
+      "display_name": "Steel Plate Armor",
       "type": "armor",
       "effect": {
         "health": 25,
@@ -1676,7 +1831,7 @@
           "Combat": 6
         }
       },
-      "description": "Heavy plate armor offering excellent protection for experienced warriors. (+25 Health, +6 Combat)",
+      "description": "Heavy plate armor made of well-forged steel, offering excellent protection for experienced warriors. (+25 Health, +6 Combat)",
       "durability": 180,
       "price": 1575,
       "weight": 15
@@ -1886,7 +2041,11 @@
         "skill_modifiers": {
           "Combat": 18
         },
-        "add_trait": ["Strong", "Brawler", "Tough"]
+        "add_trait": [
+          "Strong",
+          "Brawler",
+          "Tough"
+        ]
       },
       "description": "The legendary sword of a king who fell in battle but never surrendered. Grants Strong, Brawler, and Tough traits. (+18 Combat, +50 Health)",
       "durability": 500,
@@ -1905,7 +2064,11 @@
           "Clever": 10,
           "Service": 10
         },
-        "add_trait": ["Charismatic", "Smooth Talker", "Elegant"]
+        "add_trait": [
+          "Charismatic",
+          "Smooth Talker",
+          "Elegant"
+        ]
       },
       "description": "A crown worn by ancient rulers who commanded absolute loyalty. Grants Charismatic, Smooth Talker, and Elegant traits. (+15 Charm, +10 Clever, +10 Service)",
       "price": 3650,
@@ -1923,7 +2086,11 @@
           "Agility": 12,
           "Combat": 10
         },
-        "add_trait": ["Agile", "Clever", "Graceful"]
+        "add_trait": [
+          "Agile",
+          "Clever",
+          "Graceful"
+        ]
       },
       "description": "A cloak woven from pure darkness, allowing its wearer to move unseen. Grants Agile, Clever, and Graceful traits. (+12 Agility, +10 Combat, +30 Health)",
       "durability": 300,
@@ -1941,7 +2108,11 @@
           "Clever": 20,
           "Craft": 10
         },
-        "add_trait": ["Magical", "Powerful Magic", "Mystical"]
+        "add_trait": [
+          "Magical",
+          "Powerful Magic",
+          "Mystical"
+        ]
       },
       "description": "The ultimate staff of magical mastery, wielded by the greatest archmages in history. Grants Magical, Powerful Magic, and Mystical traits. (+20 Clever, +10 Craft)",
       "durability": 400,
@@ -1961,7 +2132,11 @@
           "Group": 12,
           "Extreme": 10
         },
-        "add_trait": ["Obedient", "Meek", "Dependant"]
+        "add_trait": [
+          "Obedient",
+          "Meek",
+          "Dependant"
+        ]
       },
       "description": "Enchanted chains that bind the wearer's will, making them utterly submissive. Grants Obedient, Meek, and Dependant traits. (+20 BDSM, +15 Sex, +12 Group, +10 Extreme)",
       "price": 3650,
@@ -1981,7 +2156,10 @@
           "Clever": 12,
           "Combat": 10
         },
-        "add_trait": ["Construct", "Tough"]
+        "add_trait": [
+          "Construct",
+          "Tough"
+        ]
       },
       "description": "An ancient mechanical crown forged by master artificers. Transforms the wearer into an artificial construct with triple health. Grants Construct and Tough traits. (+15 Craft, +12 Clever, +10 Combat, +60 Health)",
       "price": 3650,
@@ -2008,7 +2186,9 @@
       "name": "Elixir of Strength",
       "display_name": "Elixir of Strength",
       "type": "consumable",
-      "effect": { "add_trait": "Strong" },
+      "effect": {
+        "add_trait": "Strong"
+      },
       "description": "Grants the Strong trait permanently (+5 Health, +3 Combat). Craft-only.",
       "price": 400,
       "weight": 8
@@ -2018,7 +2198,9 @@
       "name": "Elixir of Toughness",
       "display_name": "Elixir of Toughness",
       "type": "consumable",
-      "effect": { "add_trait": "Tough" },
+      "effect": {
+        "add_trait": "Tough"
+      },
       "description": "Grants the Tough trait permanently (+8 Health, +1 Combat). Craft-only.",
       "price": 400,
       "weight": 8
@@ -2028,7 +2210,9 @@
       "name": "Potion of the Bust",
       "display_name": "Potion of the Bust",
       "type": "consumable",
-      "effect": { "add_trait": "Large Breasts" },
+      "effect": {
+        "add_trait": "Large Breasts"
+      },
       "description": "Grants the Large Breasts trait permanently. Craft-only. Female only.",
       "price": 500,
       "weight": 5,
@@ -2039,7 +2223,9 @@
       "name": "Elixir of Transformation",
       "display_name": "Elixir of Transformation",
       "type": "consumable",
-      "effect": { "add_trait": "Transformed" },
+      "effect": {
+        "add_trait": "Transformed"
+      },
       "description": "Grants the Transformed trait permanently (+40% $, +3 Extreme, +2 Charm). Craft-only.",
       "price": 700,
       "weight": 6
@@ -2049,7 +2235,9 @@
       "name": "Elixir of Magic",
       "display_name": "Elixir of Magic",
       "type": "consumable",
-      "effect": { "add_trait": "Magical" },
+      "effect": {
+        "add_trait": "Magical"
+      },
       "description": "Grants the Magical trait permanently (+10% $, +2 Craft, +1 Clever). Craft-only.",
       "price": 450,
       "weight": 5
@@ -2059,7 +2247,9 @@
       "name": "Troll Blood",
       "display_name": "Troll Blood",
       "type": "consumable",
-      "effect": { "add_trait": "Troll Blood" },
+      "effect": {
+        "add_trait": "Troll Blood"
+      },
       "description": "A drop of troll essence. Grants the Troll Blood trait permanently (+10 Health Regen per day). Craft-only.",
       "price": 900,
       "weight": 10
@@ -2069,7 +2259,9 @@
       "name": "Elixir of Robustness",
       "display_name": "Elixir of Robustness",
       "type": "consumable",
-      "effect": { "add_trait": "Robust" },
+      "effect": {
+        "add_trait": "Robust"
+      },
       "description": "Grants the Robust trait permanently (+10 Health, +2 Health Regen). Craft-only.",
       "price": 500,
       "weight": 8
@@ -2079,7 +2271,9 @@
       "name": "Elixir of Vitality",
       "display_name": "Elixir of Vitality",
       "type": "consumable",
-      "effect": { "add_trait": "Energetic" },
+      "effect": {
+        "add_trait": "Energetic"
+      },
       "description": "Grants the Energetic trait permanently (+10 Energy). Craft-only.",
       "price": 450,
       "weight": 6
@@ -2089,7 +2283,9 @@
       "name": "Elixir of Agility",
       "display_name": "Elixir of Agility",
       "type": "consumable",
-      "effect": { "add_trait": "Agile" },
+      "effect": {
+        "add_trait": "Agile"
+      },
       "description": "Grants the Agile trait permanently (+1 Agility, +1 Striptease). Craft-only.",
       "price": 400,
       "weight": 5
@@ -2099,7 +2295,9 @@
       "name": "Potion of the Great Figure",
       "display_name": "Potion of the Great Figure",
       "type": "consumable",
-      "effect": { "add_trait": "Great Figure" },
+      "effect": {
+        "add_trait": "Great Figure"
+      },
       "description": "Grants the Great Figure trait permanently (+20% $, +2 Charm, +1 Striptease). Craft-only.",
       "price": 550,
       "weight": 5
@@ -2109,7 +2307,9 @@
       "name": "Potion of Long Legs",
       "display_name": "Potion of Long Legs",
       "type": "consumable",
-      "effect": { "add_trait": "Long Legs" },
+      "effect": {
+        "add_trait": "Long Legs"
+      },
       "description": "Grants the Long Legs trait permanently (+10% $, +2 Agility, +2 Striptease). Craft-only.",
       "price": 500,
       "weight": 5
@@ -2119,7 +2319,9 @@
       "name": "Potion of Exotic Allure",
       "display_name": "Potion of Exotic Allure",
       "type": "consumable",
-      "effect": { "add_trait": "Exotic" },
+      "effect": {
+        "add_trait": "Exotic"
+      },
       "description": "Grants the Exotic trait permanently (+25% $). Craft-only.",
       "price": 500,
       "weight": 5
@@ -2129,7 +2331,9 @@
       "name": "Potion of Beauty",
       "display_name": "Potion of Beauty",
       "type": "consumable",
-      "effect": { "add_trait": "Beautiful" },
+      "effect": {
+        "add_trait": "Beautiful"
+      },
       "description": "Grants the Beautiful trait permanently (+20% $). Craft-only.",
       "price": 550,
       "weight": 5
@@ -2139,7 +2343,9 @@
       "name": "Potion of the Petite Bust",
       "display_name": "Potion of the Petite Bust",
       "type": "consumable",
-      "effect": { "add_trait": "Small Breasts" },
+      "effect": {
+        "add_trait": "Small Breasts"
+      },
       "description": "Grants the Small Breasts trait permanently (+5% $, +1 Agility, +1 Charm). Craft-only. Female only.",
       "price": 450,
       "weight": 5,
@@ -2150,7 +2356,9 @@
       "name": "Potion of the Firm Posterior",
       "display_name": "Potion of the Firm Posterior",
       "type": "consumable",
-      "effect": { "add_trait": "Firm Ass" },
+      "effect": {
+        "add_trait": "Firm Ass"
+      },
       "description": "Grants the Firm Ass trait permanently (+15% $, +2 Anal, +1 Striptease, +1 Agility). Craft-only.",
       "price": 500,
       "weight": 5,
@@ -2161,7 +2369,9 @@
       "name": "Potion of the Soft Posterior",
       "display_name": "Potion of the Soft Posterior",
       "type": "consumable",
-      "effect": { "add_trait": "Soft Ass" },
+      "effect": {
+        "add_trait": "Soft Ass"
+      },
       "description": "Grants the Soft Ass trait permanently (+10% $, +1 Anal, +1 Charm). Craft-only.",
       "price": 450,
       "weight": 5,
@@ -2172,7 +2382,9 @@
       "name": "Potion of Wide Hips",
       "display_name": "Potion of Wide Hips",
       "type": "consumable",
-      "effect": { "add_trait": "Large Hips" },
+      "effect": {
+        "add_trait": "Large Hips"
+      },
       "description": "Grants the Large Hips trait permanently (+15% $, +2 Sex). Craft-only. Female only.",
       "price": 500,
       "weight": 5,
@@ -2183,7 +2395,9 @@
       "name": "Potion of the Deluxe Derriere",
       "display_name": "Potion of the Deluxe Derriere",
       "type": "consumable",
-      "effect": { "add_trait": "Deluxe Derriere" },
+      "effect": {
+        "add_trait": "Deluxe Derriere"
+      },
       "description": "Grants the Deluxe Derriere trait permanently (+20% $, +3 Anal, +1 Striptease). Craft-only.",
       "price": 600,
       "weight": 6,
@@ -2194,7 +2408,9 @@
       "name": "Potion of the Large Member",
       "display_name": "Potion of the Large Member",
       "type": "consumable",
-      "effect": { "add_trait": "Large Penis" },
+      "effect": {
+        "add_trait": "Large Penis"
+      },
       "description": "Grants the Large Penis trait permanently (+30% $, +3 Sex, +2 Anal, +2 Homo). Craft-only. Male only.",
       "price": 700,
       "weight": 6,
@@ -2205,7 +2421,9 @@
       "name": "Potion of Tightness",
       "display_name": "Potion of Tightness",
       "type": "consumable",
-      "effect": { "add_trait": "Tight" },
+      "effect": {
+        "add_trait": "Tight"
+      },
       "description": "Grants the Tight trait permanently (+20% $, +2 Sex, +2 Anal). Craft-only.",
       "price": 550,
       "weight": 5,
@@ -2216,7 +2434,9 @@
       "name": "Potion of Sensitivity",
       "display_name": "Potion of Sensitivity",
       "type": "consumable",
-      "effect": { "add_trait": "Sensitive" },
+      "effect": {
+        "add_trait": "Sensitive"
+      },
       "description": "Grants the Sensitive trait permanently (+10% $, +1 Sex, +1 Oral, +1 BDSM). Craft-only.",
       "price": 500,
       "weight": 5,
@@ -2227,7 +2447,9 @@
       "name": "Potion of High Libido",
       "display_name": "Potion of High Libido",
       "type": "consumable",
-      "effect": { "add_trait": "High Libido" },
+      "effect": {
+        "add_trait": "High Libido"
+      },
       "description": "Grants the High Libido trait permanently (+5 libido regen/day, +5 libido max). Craft-only.",
       "price": 500,
       "weight": 5,
@@ -2238,7 +2460,9 @@
       "name": "Potion of Nymphomania",
       "display_name": "Potion of Nymphomania",
       "type": "consumable",
-      "effect": { "add_trait": "Nympho" },
+      "effect": {
+        "add_trait": "Nympho"
+      },
       "description": "Grants the Nympho trait permanently (libido min 10, +3 Sex, +2 Oral). Craft-only. Female only.",
       "price": 650,
       "weight": 6,
@@ -2249,7 +2473,9 @@
       "name": "Potion of Satyr",
       "display_name": "Potion of Satyr",
       "type": "consumable",
-      "effect": { "add_trait": "Satyr" },
+      "effect": {
+        "add_trait": "Satyr"
+      },
       "description": "Grants the Satyr trait permanently (libido min 10, +3 Sex, +2 Group). Craft-only. Male only.",
       "price": 650,
       "weight": 6,
@@ -2260,11 +2486,110 @@
       "name": "Potion of Cum Addiction",
       "display_name": "Potion of Cum Addiction",
       "type": "consumable",
-      "effect": { "add_trait": "Cum Addict" },
+      "effect": {
+        "add_trait": "Cum Addict"
+      },
       "description": "Grants the Cum Addict trait permanently (+3 Oral, +3 libido regen/day). Craft-only.",
       "price": 550,
       "weight": 5,
       "nsfw": true
+    },
+    {
+      "id": "handwritten_poem",
+      "name": "Handwritten Poem",
+      "display_name": "Handwritten Poem",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 2,
+        "romance": 2,
+        "relationship": 2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A poem written by hand on fine paper. A deeply personal gesture. Yvara: +4 Devotion, +4 Affection. Worker gift effect: +2 Relationship, +2 Joy, +2 Romance.",
+      "price": 750,
+      "shop_available": true
+    },
+    {
+      "id": "botanical_pressing",
+      "name": "Botanical Pressing",
+      "display_name": "Botanical Pressing",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 2,
+        "romance": 1,
+        "relationship": 2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A collection of pressed and labelled plant specimens. Thoughtful and scholarly. Yvara: +3 Devotion, +3 Affection. Worker gift effect: +2 Relationship, +2 Joy, +1 Romance.",
+      "price": 650,
+      "weight": 1,
+      "shop_available": true
+    },
+    {
+      "id": "spiked_tea",
+      "name": "Spiked Tea Blend",
+      "display_name": "Spiked Tea Blend",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": -1,
+        "romance": 0,
+        "relationship": -1,
+        "rebelliousness": -2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A fine herbal tea with an unusual addition. The recipient may not notice. Yvara: +3 Dominion, +1 Affection. Worker gift effect: -1 Relationship, -1 Joy, -2 Rebelliousness.",
+      "price": 350,
+      "weight": 1,
+      "shop_available": true,
+      "nsfw": true
+    },
+    {
+      "id": "silk_ribbon",
+      "name": "Silk Ribbon",
+      "display_name": "Silk Ribbon",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 1,
+        "romance": 2,
+        "relationship": 1,
+        "rebelliousness": -1,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A length of fine silk ribbon. The implication depends entirely on the giver. Yvara: +2 Dominion, +2 Affection. Worker gift effect: +1 Relationship, +1 Joy, +2 Romance, -1 Rebelliousness.",
+      "price": 650,
+      "shop_available": true
     }
   ],
   "excluded_from_shops": [

@@ -1,79 +1,85 @@
-{
-  "test_day_5_event": {
-    "id": "test_day_5_event",
-    "description": "A mysterious merchant arrives at your establishment on this fifth day of your venture. 'I've been watching your progress,' he says with a knowing smile. 'You show promise. Let me offer you a choice of rewards to help your business grow.'",
+[
+  {
+    "id": "stranger_old_district",
+    "description": "A hooded figure slips in through the back entrance, dust from the road clinging to his worn cloak. He moves with the practiced quiet of someone who has spent years delivering messages no one was meant to see. 'I used to run errands for the old houses—before the Governor consolidated everything.' His voice is low. 'Your workers eat at your table. That's rare now. I'm just passing through, but...' He sets a small sealed packet on the counter. 'Consider it a nod from the past. Choose what serves you.'",
     "weight": 100,
-    "limited": false,
     "max_occurrences": 1,
     "event_probability": 100,
     "guaranteed": true,
     "worker_selection": "none",
-    "building_type": [],
     "background_image": "event_bg",
     "conditions": {
-      "start_when": "exact_date:5,1"
+      "start_when": "exact_date:7,1"
     },
     "choices": [
       {
-        "option": "Ask for gold to expand your business.",
-        "message": "The merchant smiles and hands you a pouch of gold coins. 'Invest wisely,' he says. 'Money well spent returns threefold.' (+300 gold)",
+        "option": "Accept the pouch of coin. (Potential: Gold)",
+        "message": "He slides a leather purse across the wood. 'Old currency. Still spends. The Governor's men don't track every coin that changes hands—yet.' He melts into the crowd before you can thank him. (+300 gold)",
         "effect": {
           "money": 300,
           "event_flags": {
-            "test_event_gold_chosen": true
+            "stranger_old_district_gold": true
           }
         }
       },
       {
-        "option": "Ask for reputation to attract better clients.",
-        "message": "The merchant nods approvingly. 'Word of mouth is the best advertisement,' he says, spreading good word about your establishment throughout the district. (+15 reputation)",
+        "option": "Ask him to spread word among his contacts. (Potential: Reputation)",
+        "message": "'I know people. The kind who remember when this district had more... options.' He nods once. 'I'll mention your establishment. Quietly.' Within days, a trickle of better clientele begins. (+15 reputation)",
         "effect": {
           "reputation": 15,
           "event_flags": {
-            "test_event_reputation_chosen": true
+            "stranger_old_district_reputation": true
           }
         }
       },
       {
-        "option": "Ask for information about the district.",
-        "message": "The merchant leans in conspiratorially. 'Knowledge is power,' he whispers, sharing valuable secrets about local politics and business opportunities. (Moderate gold and reputation bonus)",
+        "option": "Press him for useful information. (Potential: Gold, Reputation)",
+        "message": "'The merchant quarter? His eyes are everywhere there.' He leans closer. 'But the docks—overworked, underpaid guards. Goods move. People move. The Governor cares about coin, not cargo.' The insight proves useful. (+150 gold, +8 reputation)",
         "effect": {
           "money": 150,
           "reputation": 8,
           "event_flags": {
-            "test_event_information_chosen": true
+            "stranger_old_district_information": true
           }
         }
       },
       {
-        "option": "Politely decline his offer.",
-        "message": "The merchant is impressed by your independence. 'Self-reliance is admirable,' he says. 'Here's a small token of respect.' (Small reputation bonus)",
+        "option": "Refuse. Your path is yours alone. (Potential: Reputation)",
+        "message": "He studies you a moment, then tucks the packet away. 'Understood. Pride has its place.' He leaves a worn silver coin on the sill. 'For the door. Old superstition.' Somehow, word of your independence still gets around. (+5 reputation)",
         "effect": {
           "reputation": 5,
           "event_flags": {
-            "test_event_declined": true
+            "stranger_old_district_declined": true
           }
         }
       }
-    ]
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
-  "rich_traveler_day10": {
+  {
     "id": "rich_traveler_day10",
+    "_disabled": "Evento desactivado temporalmente. Para reactivarlo: cambiar start_when a exact_date:10,1",
     "description": "A wealthy traveler, cloaked in fine velvet and dust from the road, takes a seat at your table. 'I reward promising establishments,' he says. 'Choose your boon, and may fortune favor your choice.'",
     "weight": 100,
-    "limited": false,
     "max_occurrences": 1,
     "event_probability": 100,
     "guaranteed": true,
     "worker_selection": "none",
-    "building_type": [],
     "background_image": "event_bg",
     "conditions": {
-      "start_when": "exact_date:10,1"
+      "start_when": "False"
     },
     "choices": [
       {
-        "option": "Accept the traveler's heirloom sword (Iron Sword).",
+        "option": "Accept the traveler's heirloom sword. (Potential: Iron Sword)",
         "message": "You accept the heirloom blade with gratitude. Its balance is exquisite, its edge keen. (Iron Sword added to inventory)",
         "effect": {
           "custom": "give_item",
@@ -84,7 +90,7 @@
         }
       },
       {
-        "option": "Take the sealed gift box. Whatever it holds is yours.",
+        "option": "Take the sealed gift box. Whatever it holds is yours. (Potential: Random loot)",
         "message": "You choose the mystery. The traveler grins, 'May luck be on your side.' (Random loot added)",
         "effect": {
           "custom": "grant_loot",
@@ -95,7 +101,7 @@
         }
       },
       {
-        "option": "Invite Violet to join your roster (if she isn't already).",
+        "option": "Invite Violet to join your roster. (Potential: Violet — only if not already recruited)",
         "message": "You extend a formal invitation to Violet. 'I've been watching your progress,' she says. 'Very well, I'll lend you my talents.'",
         "effect": {
           "custom": "recruit_worker",
@@ -106,7 +112,7 @@
         }
       },
       {
-        "option": "Recruit a capable worker from passing caravans.",
+        "option": "Recruit a capable worker from passing caravans. (Potential: Random worker)",
         "message": "You hold quick trials at dusk. A capable recruit impresses you and joins your ranks immediately.",
         "effect": {
           "custom": "recruit_worker",
@@ -117,7 +123,7 @@
         }
       },
       {
-        "option": "Decline politely. Your path is set without outside gifts.",
+        "option": "Decline politely. Your path is set without outside gifts. (Potential: Reputation)",
         "message": "You refuse with a courteous bow. The traveler appreciates your conviction and leaves with a satisfied smile. (+5 Reputation)",
         "effect": {
           "reputation": 5,
@@ -126,34 +132,67 @@
           }
         }
       }
-    ]
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
-  "new_event_2": {
+  {
     "id": "3magickings",
-    "description": "Three mysterious figures land in your establishment, they say they have some gifts left from their journey, and offer you a boon.",
+    "description": "A strange light fills your establishment as three cloaked figures materialize from thin air. Their robes shimmer with stitched constellations, and their faces remain hidden in shadow. The air grows still. 'We are travelers between realms,' the central figure intones. 'On this day, we grant one boon to those who prove themselves worthy—or those who simply ask.' The other two nod in unison. 'Choose wisely. Fortune favors the bold, but humility has its own rewards.'",
     "weight": 100,
-    "nsfw": false,
-    "limited": false,
     "max_occurrences": 1,
-    "cooldown_days": 0,
     "worker_selection": "none",
     "worker_gender_requirement": "any",
-    "building_type": [],
     "background_image": "event_bg",
-    "success_image": "",
-    "failure_image": "",
-    "start_when": "",
-    "stop_when": "",
-    "required_flags": {},
+    "event_music": "audio/event.ogg",
     "choices": [
       {
-        "option": "Ask for gold to expand your business.",
-        "condition": "",
-        "message_success": "",
-        "message_failure": "",
-        "message": "The kings offer you a bag with gold, smiling and after a bit, they leave to continue their journey.",
+        "option": "Accept their gift of gold with humble gratitude. (Potential: Gold)",
+        "message": "You bow respectfully and thank them. The central figure gestures, and a leather pouch appears in your hands—weighty with coin. 'A fair exchange. May it serve your purpose.' The three figures fade into mist, leaving behind the faint scent of incense. (+800 gold)",
         "effect": {
-          "money": 1000
+          "money": 800
+        }
+      },
+      {
+        "option": "Attempt to impress them with wit and charm for a greater reward. (Risk: lesser reward; Potential: Gold)",
+        "message_success": "You speak with confidence, weaving a tale of your establishment's promise and your own ambitions. The figures listen in silence. At last, the left one laughs—a sound like wind through ancient stones. 'Bold. We admire boldness.' A second, heavier pouch materializes. 'Twice the gift, for twice the spirit.' (+1500 gold)",
+        "message_failure": "You reach for eloquence, but the words tumble out awkwardly. The central figure raises a hand. 'Enough. Sincerity matters more than performance.' A smaller pouch appears. 'Here. A token, not a reward.' (+300 gold)",
+        "effect": {
+          "success_chance": 0.65,
+          "success": {
+            "money": 1500
+          },
+          "failure": {
+            "money": 300
+          }
+        }
+      },
+      {
+        "option": "Ask for their blessing rather than gold. (Potential: Reputation; outcome varies by chance)",
+        "message_success": "You decline the coin. 'What I need is not gold, but fortune—for my establishment and those who depend on it.' The three exchange glances. 'Rare,' murmurs the rightmost figure. They extend their hands in unison. A warm glow envelops you. Word of the encounter spreads: your reputation soars. (+15 Reputation)",
+        "message_failure": "You ask for a blessing instead of gold. The figures are silent for a long moment. 'We offer what we offer,' says the central one. 'Your refusal is noted.' A faint warmth settles over you nonetheless. Something has shifted. (+5 Reputation)",
+        "effect": {
+          "success_chance": 0.5,
+          "success": {
+            "reputation": 15
+          },
+          "failure": {
+            "reputation": 5
+          }
+        }
+      },
+      {
+        "option": "Refuse. Your path is yours alone. (Potential: Reputation)",
+        "message": "You meet their gaze steadily. 'I thank you, but I'll make my own fortune.' The central figure inclines their head. 'Pride has its place.' They vanish without another word. Yet somehow, tales of your independence reach the right ears. (+3 Reputation)",
+        "effect": {
+          "reputation": 3
         }
       }
     ],
@@ -161,6 +200,14 @@
     "guaranteed": true,
     "conditions": {
       "start_when": "exact_date:6,1"
-    }
+    },
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   }
-}
+]

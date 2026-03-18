@@ -38,10 +38,10 @@
         "names_list": "western_male",
         "traits": [
             "Human",
-            "Strong",
-            "Tough",
-            "Brawler",
-            "Robust"
+            "Aggressive",
+            "Energetic",
+            "Assassin",
+            "Confident"
         ],
         "description": "A skilled and experienced worker with a calm demeanor, perfect for general tasks.",
         "gender": "male",
@@ -86,10 +86,10 @@
         "names_list": "western_male",
         "traits": [
             "Human",
-            "Wise",
-            "Teacher",
-            "Adventurer",
-            "Quick Learner"
+            "Sexy Air",
+            "Clever",
+            "Elegant",
+            "Graceful"
         ],
         "description": "A skilled worker with a calm, alluring presence, suited for intimate roles.",
         "gender": "male",
@@ -134,10 +134,10 @@
         "names_list": "western_female",
         "traits": [
             "Human",
-            "Beautiful",
-            "Clever",
             "Elegant",
-            "Mystical"
+            "Sexy Air",
+            "Graceful",
+            "Clever"
         ],
         "description": "A mysterious figure known for her elegance and charm, ideal for refined tasks.",
         "gender": "female",
@@ -184,9 +184,9 @@
         "traits": [
             "Human",
             "Large Breasts",
+            "Deluxe Derriere",
             "Charming",
-            "Charismatic",
-            "Radiant"
+            "Sensitive"
         ],
         "description": "An enigmatic performer whose dramatic flair excels in intimate settings.",
         "gender": "female",
@@ -231,10 +231,10 @@
         "names_list": "eastern_female",
         "traits": [
             "Elf",
-            "Mystical",
+            "Elegant",
+            "Sexy Air",
             "Graceful",
-            "Flexible",
-            "Agile"
+            "Clever"
         ],
         "description": "A passionate performer whose fiery spirit excels in intimate encounters.",
         "gender": "female",
@@ -279,56 +279,61 @@
         "names_list": "western_female",
         "traits": [
             "Human",
-            "Magnetic",
-            "Quick Learner",
-            "Graceful",
-            "Exotic"
+            "Charismatic",
+            "Optimist",
+            "Exotic",
+            "Confident"
         ],
         "description": "A graceful performer with excellent social skills and natural charm.",
         "gender": "female",
         "comfort_desired": 5
     },
     {
-        "name": "Lotus",
-        "folder": "lotus",
-        "cost": 2000,
+        "name": "Holly",
+        "folder": "holly",
+        "cost": 1200,
         "nsfw": true,
         "unique": true,
-        "encounter_only": true,
-        "monster": true,
+        "encounter_only": false,
+        "monster": false,
         "procedural": false,
         "skills": {
-            "Sex": 35,
-            "Anal": 30,
-            "BDSM": 38,
-            "Hand": 25,
-            "Oral": 25,
-            "Homo": 16,
-            "Special": 27,
-            "Group": 19,
-            "Extreme": 33,
-            "Striptease": 21,
-            "Combat": 25,
-            "Clever": 23,
-            "Charm": 35,
-            "Service": 22,
-            "Agility": 29,
-            "Craft": 38,
-            "Specialty 4": 15,
-            "Specialty 5": 14,
-            "Specialty 6": 15,
-            "Specialty 7": 32,
-            "Specialty 8": 39,
+            "Sex": 50,
+            "Anal": 41,
+            "BDSM": 39,
+            "Hand": 38,
+            "Oral": 40,
+            "Homo": 37,
+            "Special": 36,
+            "Group": 40,
+            "Extreme": 38,
+            "Striptease": 43,
+            "Combat": 31,
+            "Clever": 40,
+            "Charm": 44,
+            "Service": 55,
+            "Agility": 43,
+            "Craft": 40,
+            "Specialty 4": 39,
+            "Specialty 5": 38,
+            "Specialty 6": 37,
+            "Specialty 7": 41,
+            "Specialty 8": 40,
             "Specialty 9": 39,
-            "Specialty 10": 39,
-            "Specialty 11": 17,
-            "Specialty 12": 24
+            "Specialty 10": 38,
+            "Specialty 11": 37,
+            "Specialty 12": 41
         },
-        "names_list": "fantasy_female",
+        "names_list": "western_female",
         "traits": [
-            "Demon"
+            "Human",
+            "Mature Body",
+            "Large Breasts",
+            "Large Hips",
+            "Deluxe Derriere",
+            "Meek"
         ],
-        "description": "A seductive demoness bound to serve, excelling in alluring tasks.",
+        "description": "A gentle performer of mature bearing whose demure nature and natural appeal excel in intimate settings.",
         "gender": "female",
         "comfort_desired": 5
     }

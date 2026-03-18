@@ -1,0 +1,865 @@
+[
+  {
+    "id": "adventurers_guild_arcane_breach",
+    "description": "An unstable rift tears open near your Adventurers Guild hall, spilling wild mana and panic into the street. Apprentices and mercenaries crowd behind barricades while the air cracks with violet sparks. The breach will either be sealed with controlled spellcraft or explode into a district-wide disaster.",
+    "weight": 4,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "background_image": "guild_magic_breach",
+    "success_image": "guild_magic_success",
+    "failure_image": "guild_magic_failure",
+    "choices": [
+      {
+        "option": "Channel a stabilizing spell through a gifted worker. (Requires Mystical; Potential: Money, Reputation; Risk: Money, Reputation)",
+        "condition": "Special",
+        "threshold": 35,
+        "required_traits": [
+          "Mystical"
+        ],
+        "trait_visibility": "blocked",
+        "blocked_message": "Requires a worker with the Mystical trait.",
+        "message_success": "[acting_worker] traces a precise sigil in the air and forces the rift's energy into a controlled spiral. The pressure drops, the sparks fade, and the gathered adventurers erupt in cheers as the breach seals cleanly. Your guild earns respect for handling arcane crises responsibly. ({actual_money}, {actual_reputation} reputation)",
+        "message_failure": "[acting_worker] starts the incantation, but the rift lashes out before the final seal forms. The blast scorches equipment and sends everyone scrambling for cover. You contain the damage, but repairs and compensation are costly. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "success": {
+            "money": 1400,
+            "reputation": 18
+          },
+          "failure": {
+            "money": -800,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Evacuate the block and hire outside mages. (Cost: Money; Gain: Reputation)",
+        "message": "You choose caution over heroics. You clear the nearby streets and pay a senior circle of mages to seal the rift. The crisis ends without major injuries, but the guild is seen as dependent on outside help. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": -450,
+          "reputation": 4
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_cedar_lore_event",
+    "description": "Cedar asks for a private audience after closing time. Old obligations from their past have resurfaced, and someone expects a debt to be paid in your district.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Cedar",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Cedar"
+    },
+    "excluded_flags": {
+      "unique_cedar_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Back Cedar and settle the debt your way. (Potential: Reputation)",
+        "message": "You stand with Cedar and take control of negotiations before things escalate. The matter closes under your terms, and your house's authority becomes harder to question. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_cedar_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay quietly to avoid attention. (Cost: Money)",
+        "message": "You pay to bury the issue and keep Cedar out of immediate danger. It works, but the cost is felt in your accounts. ({actual_money})",
+        "effect": {
+          "money": -350,
+          "event_flags": {
+            "unique_cedar_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_laurel_lore_event",
+    "description": "Laurel receives a sealed message tied to an old patron from before joining your household. The request sounds harmless, but the timing is suspicious.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Laurel",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Laurel"
+    },
+    "excluded_flags": {
+      "unique_laurel_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Laurel answer with your support. (Potential: Reputation)",
+        "message": "You trust Laurel to speak while you secure the room and watch reactions. The response is firm, diplomatic, and it boosts confidence in your leadership. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_laurel_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Close the door and refuse all contact. (Loss: Reputation)",
+        "message": "You deny the request and cut off contact channels immediately. The risk fades for now, but relations with a potential ally sour. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": -2,
+          "event_flags": {
+            "unique_laurel_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_sage_lore_event",
+    "description": "Sage identifies coded marks on shipments entering your area. The pattern matches smuggling routes tied to their old life.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Sage",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Sage"
+    },
+    "excluded_flags": {
+      "unique_sage_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Use Sage's intel and intercept the route. (Potential: Money, Reputation)",
+        "message": "Sage maps the route from memory and you hit the transfer point before dawn. You seize contraband and gain influence among local officials. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": 330,
+          "reputation": 6,
+          "event_flags": {
+            "unique_sage_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Avoid involvement and report anonymously. (Potential: Reputation)",
+        "message": "You send an anonymous tip and keep your operation distant from the case. The streets quiet down, but you gain little from it. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 2,
+          "event_flags": {
+            "unique_sage_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_lotus_lore_event",
+    "description": "Lotus is recognized by a traveling troupe that once tried to recruit them. The troupe offers a public showcase that could draw crowds and scrutiny.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Lotus",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Lotus"
+    },
+    "excluded_flags": {
+      "unique_lotus_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Stage the showcase under your banner. (Potential: Money, Reputation)",
+        "message": "You turn the performance into a controlled event that highlights Lotus and your establishment equally. The turnout is huge and your name spreads fast. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": 420,
+          "reputation": 6,
+          "event_flags": {
+            "unique_lotus_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline and keep Lotus off the stage. (Potential: Reputation)",
+        "message": "You decline politely and keep the day routine. Lotus appreciates the caution, though you miss a chance at publicity. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 1,
+          "event_flags": {
+            "unique_lotus_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_primrose_lore_event",
+    "description": "Primrose confesses that a former employer is spreading lies to damage your house and force a return.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Primrose",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Primrose"
+    },
+    "excluded_flags": {
+      "unique_primrose_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Counter publicly with testimony and records. (Potential: Reputation)",
+        "message": "You bring records, witnesses, and Primrose's own account into the open. The smear campaign collapses and your credibility rises. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_primrose_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Ignore the rumors and move on. (Loss: Reputation)",
+        "message": "You refuse to amplify gossip and stay focused on business. The noise fades slowly, but some doubt remains. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": -2,
+          "event_flags": {
+            "unique_primrose_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_jasmine_lore_event",
+    "description": "Jasmine is asked to mediate a dispute between two contacts from their past. If mishandled, both sides could become enemies.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Jasmine",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Jasmine"
+    },
+    "excluded_flags": {
+      "unique_jasmine_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Host mediation on neutral ground. (Potential: Reputation)",
+        "message": "You prepare strict terms and Jasmine leads a clean negotiation. Both sides leave with a fragile peace and a better opinion of your house. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_jasmine_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Refuse involvement in outside politics. (Loss: Reputation)",
+        "message": "You keep your distance and deny the meeting. The conflict moves elsewhere, but one faction blames your refusal. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": -2,
+          "event_flags": {
+            "unique_jasmine_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_daisy_lore_event",
+    "description": "Daisy spots a forged contract using your seal style. The fraud targets newcomers and could be traced back to you.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Daisy",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Daisy"
+    },
+    "excluded_flags": {
+      "unique_daisy_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Run a sting and expose the forger. (Potential: Money, Reputation)",
+        "message": "With Daisy's help, you bait the forger into a controlled exchange and expose the operation publicly. Victims praise your intervention. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": 270,
+          "reputation": 6,
+          "event_flags": {
+            "unique_daisy_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Privately buy the forged copies and burn them. (Cost: Money)",
+        "message": "You quietly purchase and destroy the forged documents before the issue spreads. The risk is contained but expensive. ({actual_money})",
+        "effect": {
+          "money": -300,
+          "event_flags": {
+            "unique_daisy_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_poppy_lore_event",
+    "description": "Poppy's old handler appears with a threat disguised as a business proposal. The terms are predatory and time-sensitive.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Poppy",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Poppy"
+    },
+    "excluded_flags": {
+      "unique_poppy_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Confront them directly with witnesses present. (Potential: Reputation)",
+        "message": "You force the discussion into the open, where intimidation loses power. The handler backs off under pressure and your position strengthens. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_poppy_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay for temporary distance. (Cost: Money)",
+        "message": "You buy time with a hard payment and secure Poppy's immediate safety. The danger is postponed, not solved. ({actual_money})",
+        "effect": {
+          "money": -400,
+          "event_flags": {
+            "unique_poppy_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_aspen_lore_event",
+    "description": "Aspen receives news that an old rival is hunting anyone tied to their former crew. Your staff could be collateral.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Aspen",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Aspen"
+    },
+    "excluded_flags": {
+      "unique_aspen_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Preempt the rival with a controlled ambush. (Potential: Reputation)",
+        "message": "You use Aspen's route knowledge to set a trap at a safe distance from your properties. The rival withdraws after a sharp warning. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_aspen_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Relocate Aspen for a few days. (Cost: Money)",
+        "message": "You move Aspen to a safe house and reduce visibility until the hunt cools. It protects your people, but operations lose tempo. ({actual_money})",
+        "effect": {
+          "money": -250,
+          "event_flags": {
+            "unique_aspen_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_florian_lore_event",
+    "description": "Florian is invited to complete unfinished work from before recruitment, work that now sits in a politically sensitive location.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Florian",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Florian"
+    },
+    "excluded_flags": {
+      "unique_florian_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Authorize the job with your own oversight. (Potential: Money, Reputation)",
+        "message": "You supervise the completion personally, ensuring no one can twist the outcome. The result earns favor among influential clients. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": 300,
+          "reputation": 6,
+          "event_flags": {
+            "unique_florian_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline and keep Florian in-house. (Loss: Reputation)",
+        "message": "You decline the invitation and keep Florian away from political crossfire. It's safer, but some doors close. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": -2,
+          "event_flags": {
+            "unique_florian_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_violet_lore_event",
+    "description": "Violet recognizes coded perfume notes used by an information broker network and traces them to your neighborhood.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Violet",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Violet"
+    },
+    "excluded_flags": {
+      "unique_violet_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Use Violet as your liaison and buy the ledger. (Potential: Money, Reputation)",
+        "message": "Violet negotiates access to the broker ledger under strict anonymity. The information pays off quickly in leverage and opportunities. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": 360,
+          "reputation": 5,
+          "event_flags": {
+            "unique_violet_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Destroy the network's local cache. (Potential: Reputation)",
+        "message": "You decide the safest intelligence is no intelligence and burn the cache. The immediate threat is gone, but so are potential gains. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 1,
+          "event_flags": {
+            "unique_violet_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_lily_lore_event",
+    "description": "A gaunt man in dusty scholar's robes appears at your door, clutching a worn parchment. His eyes linger on Lily with the cold satisfaction of a creditor. 'She signed,' he says, spreading the document on your table. 'Years of training—dancing, poise, comportment—all financed by this contract. The terms are clear: if she leaves my employ without fulfilling the full period of service, the debt becomes due. In full.' He names a sum that would crush most households. Lily stands rigid, her face pale. 'I thought I had paid... I worked for him for seasons...' The tutor smirks. 'The contract says five years. You served two. Three remain—or you settle the outstanding balance now.' He taps the parchment. 'The law backs me. So does the magistrate.'",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Lily",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Lily"
+    },
+    "excluded_flags": {
+      "unique_lily_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Challenge the contract's legality in public. (Potential: Reputation)",
+        "message": "You demand an open hearing before the district magistrate. In the crowded hall, you read the contract clause by clause—the usurious interest, the ambiguous definition of 'service,' the clause that extends the term if the signatory falls ill. The magistrate's brow furrows. The tutor's confidence wavers. By the end, the contract is ruled unconscionable and void. Lily is freed from the claim. The story spreads: you stood for your people and won. (+6 reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_lily_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Settle privately to end the dispute now. (Potential: -380 gold)",
+        "message": "You negotiate behind closed doors. The tutor drives a hard bargain, but you pay the settlement in full. The document is destroyed; the matter is closed. Lily breathes easier, but your coffers are lighter. Some battles are won by walking away. (-380 gold)",
+        "effect": {
+          "money": -380,
+          "event_flags": {
+            "unique_lily_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_rose_lore_event",
+    "description": "Rose discovers someone has been copying their performance style to impersonate your staff in nearby venues.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Rose",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Rose"
+    },
+    "excluded_flags": {
+      "unique_rose_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Expose the impersonator with a public challenge. (Potential: Reputation)",
+        "message": "Rose outperforms the copy in front of a packed crowd, leaving no doubt about who is real. The impersonator vanishes and your brand strengthens. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 6,
+          "event_flags": {
+            "unique_rose_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Handle it quietly through back channels. (Potential: Reputation)",
+        "message": "You pressure the venue owners privately until the copy disappears. The issue ends with minimal noise, but no public gain. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": 2,
+          "event_flags": {
+            "unique_rose_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "unique_iris_lore_event",
+    "description": "Iris receives an encoded invitation from a circle tied to their recruitment past. Attendance could unlock favors or expose vulnerabilities.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Iris",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Iris"
+    },
+    "excluded_flags": {
+      "unique_iris_lore_done": true
+    },
+    "choices": [
+      {
+        "option": "Attend with layered security and hear the offer. (Potential: Money, Reputation)",
+        "message": "You attend under controlled conditions and leave with a favor owed by influential intermediaries. The risk pays off cleanly. ({actual_money}, {actual_reputation} reputation)",
+        "effect": {
+          "money": 300,
+          "reputation": 6,
+          "event_flags": {
+            "unique_iris_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline and sever contact permanently. (Loss: Reputation)",
+        "message": "You reject the invitation and burn the cipher route. The threat surface drops, but so does your access to useful channels. ({actual_reputation} reputation)",
+        "effect": {
+          "reputation": -2,
+          "event_flags": {
+            "unique_iris_lore_done": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  }
+]

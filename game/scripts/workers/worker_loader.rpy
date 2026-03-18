@@ -1,5 +1,48 @@
 # worker_loader.rpy - Improved version that loads from multiple locations
 init python:
+    def _ensure_worker_min_traits(worker):
+        """Add random traits until worker has 3-5 total. Respects gender_restriction, requires_traits, conflicts, only_assigned, nsfw.
+        Applies to ALL workers including unique - recruitment unique workers should also have 3-5 traits like Buy servants."""
+        traits = worker.get("traits", [])
+        worker["traits"] = [t for t in (traits if isinstance(traits, list) else []) if isinstance(t, str) and t]
+        target = random.randint(3, 5)
+        if len(worker["traits"]) >= target:
+            return
+        cache = getattr(store, "_trait_def_cache", None)
+        if not isinstance(cache, dict) or not cache:
+            return
+        nsfw_ok = getattr(persistent, "nsfw_enabled", False)
+        can_assign = getattr(store, "can_assign_trait_to_worker", lambda t, w: True)
+        conflicts_check = getattr(store, "trait_conflicts_with_worker", lambda t, w, c=None: False)
+        meets_reqs = getattr(store, "worker_meets_trait_requirements", lambda t, w: True)
+        # Option: only_traits_without_requirements = True → only traits with no gender_restriction
+        only_no_reqs = getattr(persistent, "only_traits_without_requirements", False)
+        possible = [
+            t for t in cache.values()
+            if t.get("name") and t["name"] not in worker["traits"]
+            and not t.get("only_assigned", False)
+            and (nsfw_ok or not t.get("nsfw", False))
+            and (not only_no_reqs or not t.get("gender_restriction"))
+            and can_assign(t, worker)
+            and meets_reqs(t, worker["traits"])
+            and not conflicts_check(t, worker["traits"], cache)
+        ]
+        if not possible:
+            return
+        random.shuffle(possible)
+        needed = max(0, target - len(worker["traits"]))
+        for t in possible:
+            if needed <= 0:
+                break
+            name = t.get("name")
+            if name and meets_reqs(t, worker["traits"]) and not conflicts_check(t, worker["traits"], cache):
+                worker["traits"].append(name)
+                needed -= 1
+        if hasattr(store, "recalculate_trait_modifiers"):
+            store.recalculate_trait_modifiers(worker)
+
+    store._ensure_worker_min_traits = _ensure_worker_min_traits
+
     def load_workers(include_unique=False, include_encounter_only=False, for_events=False):
         """
         Load all workers from multiple locations with optional filters.
@@ -14,6 +57,14 @@ init python:
         
         Ensures defaults are applied to every worker and avoids duplicates.
         """
+        # Preload trait cache so ensure_worker_defaults and _ensure_worker_min_traits
+        # have the catalog available (avoids "Trait catalog unavailable" during load)
+        if hasattr(store, "refresh_traits_cache"):
+            try:
+                store.refresh_traits_cache(force=True)
+            except Exception:
+                pass
+
         all_workers = []
         loaded_names = set()  # Track loaded worker names to avoid duplicates
         base_skills = {
@@ -26,17 +77,14 @@ init python:
         
         # 1. Try to load from data/workers.json (legacy location)
         try:
-            # Check if file exists
             if renpy.loadable("data/workers.json"):
                 with renpy.file("data/workers.json") as f:
                     workers_data = json.loads(f.read().decode("utf-8"))
-                    
                     for worker in workers_data:
                         worker_name = worker.get("name", "Unknown")
                         
                         # Skip if already loaded (avoid duplicates)
                         if worker_name in loaded_names:
-                            renpy.log(f"Skipping duplicate worker: {worker_name} from data/workers.json")
                             continue
                         
                         # Apply NSFW/SFW mode filter
@@ -59,6 +107,7 @@ init python:
                         
                         # Ensure defaults are applied
                         ensure_worker_defaults(worker)
+                        _ensure_worker_min_traits(worker)
                         all_workers.append(worker)
                         loaded_names.add(worker_name)
                         
@@ -76,45 +125,27 @@ init python:
         # 2. Load from data/workers/*.json (current standard location)
         workers_folder_path = "data/workers"
         try:
-            # Get all files first to debug
-            all_listed_files = renpy.list_files()
-            renpy.log(f"WORKER LOADER: Total files listed by renpy.list_files(): {len(all_listed_files)}")
-            
-            worker_files = [f for f in all_listed_files 
-                           if f.startswith(workers_folder_path) 
-                           and f.endswith(".json")]
-            
-            renpy.log(f"WORKER LOADER: Found {len(worker_files)} worker files matching pattern")
-            if len(worker_files) > 0:
-                renpy.log(f"WORKER LOADER: Files: {worker_files}")
-            else:
-                # Debug: show files that start with "data" to see what's available
-                data_files = [f for f in all_listed_files if f.startswith("data/")]
-                renpy.log(f"WORKER LOADER: No worker files found. Files in data/: {len(data_files)}")
-                if len(data_files) > 0:
-                    renpy.log(f"WORKER LOADER: Sample data files: {data_files[:10]}")
+            worker_files = [
+                f for f in renpy.list_files()
+                if f.startswith(workers_folder_path) and f.endswith(".json")
+            ]
             
             for worker_file in worker_files:
                 try:
-                    # Check if file exists before trying to open it
                     if not renpy.loadable(worker_file):
                         continue
-                        
                     with renpy.file(worker_file) as f:
                         workers_data = json.loads(f.read().decode("utf-8"))
-                        
                         file_workers_loaded = 0
                         for worker in workers_data:
                             worker_name = worker.get("name", "Unknown")
                             
                             # Skip if already loaded (avoid duplicates)
                             if worker_name in loaded_names:
-                                renpy.log(f"Skipping duplicate worker: {worker_name} from {worker_file}")
                                 continue
                             
                             # Apply NSFW/SFW mode filter
                             if not persistent.nsfw_enabled and worker.get("nsfw", False):
-                                renpy.log(f"Filtered out {worker_name} from {worker_file}: NSFW disabled but worker is NSFW")
                                 continue
                             
                             # Apply worker gender filter (Both / Only Male / Only Female)
@@ -127,24 +158,19 @@ init python:
                             
                             # Apply existing filters
                             if worker.get("unique", False) and not include_unique:
-                                renpy.log(f"Filtered out {worker_name} from {worker_file}: unique=True but include_unique=False")
                                 continue
                             if worker.get("encounter_only", False) and not include_encounter_only and not for_events:
-                                renpy.log(f"Filtered out {worker_name} from {worker_file}: encounter_only=True but include_encounter_only=False and for_events=False")
                                 continue
                             
                             # Ensure defaults are applied
                             ensure_worker_defaults(worker)
+                            _ensure_worker_min_traits(worker)
                             all_workers.append(worker)
                             loaded_names.add(worker_name)
                             file_workers_loaded += 1
                             
                         if file_workers_loaded > 0:
-                            loaded_names_from_file = [w.get('name', 'Unknown') for w in workers_data if w.get('name') in loaded_names]
-                            renpy.log(f"Loaded {file_workers_loaded} workers from {worker_file}: {loaded_names_from_file}")
-                        else:
-                            all_names_in_file = [w.get('name', 'Unknown') for w in workers_data]
-                            renpy.log(f"No workers loaded from {worker_file}. Workers in file: {all_names_in_file}")
+                            renpy.log(f"Loaded {file_workers_loaded} workers from {worker_file}")
                         
                 except Exception as e:
                     error_msg = str(e)
@@ -168,14 +194,8 @@ init python:
                 import traceback
                 renpy.log(f"Traceback: {traceback.format_exc()}")
         
-        # Log summary
-        renpy.log(f"LOAD WORKERS SUMMARY: Total workers loaded: {len(all_workers)}")
-        if len(all_workers) > 0:
-            renpy.log(f"LOAD WORKERS SUMMARY: Worker names (first 20): {[w['name'] for w in all_workers[:20]]}")
-        else:
-            renpy.log(f"LOAD WORKERS SUMMARY: WARNING - No workers loaded! include_unique={include_unique}, include_encounter_only={include_encounter_only}, for_events={for_events}")
-            renpy.log(f"LOAD WORKERS SUMMARY: NSFW enabled: {persistent.nsfw_enabled}")
-        
+        if not all_workers:
+            renpy.log(f"LOAD WORKERS: No workers loaded (include_unique={include_unique}, include_encounter_only={include_encounter_only})")
         return all_workers
 
     def get_worker_files_info():

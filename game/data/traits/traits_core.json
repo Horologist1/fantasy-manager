@@ -1,0 +1,1562 @@
+[
+  {
+    "name": "Beautiful",
+    "modifiers": {
+      "earnings_multiplier": 1.2
+    },
+    "description": "Clients love beauty. Increases earnings when clients are seeking attractive servants. [+20% $]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Charming",
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "Charm enhances performance and attracts high-paying clients. [+15% $, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Nice Tan",
+    "modifiers": {
+      "earnings_multiplier": 1.1
+    },
+    "description": "A nice tan makes a servant more appealing, increasing client tips. [+10% $]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Hardworking",
+    "conflicts": [
+      "Lazy"
+    ],
+    "removes_traits": [
+      "Lazy"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Sex": 1,
+        "Anal": 1,
+        "BDSM": 1
+      },
+      "health_regeneration": 1
+    },
+    "description": "A hardworking servant increases overall efficiency and regenerates health faster. [+1 Health Regen, +1 Sex, +1 Anal, +1 BDSM]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Lazy",
+    "conflicts": [
+      "Hardworking",
+      "Energetic"
+    ],
+    "removes_traits": [
+      "Hardworking",
+      "Energetic"
+    ],
+    "modifiers": {
+      "energy": -1,
+      "skill_modifiers": {
+        "Special": -1
+      }
+    },
+    "description": "A lazy servant loses energy faster and underperforms in client services. [-1 Energy, -1 Special]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Clever",
+    "conflicts": [
+      "Dumb"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 3
+      },
+      "earnings_multiplier": 1.05
+    },
+    "description": "A clever servant can make smart decisions, slightly boosting earnings. [+5% $, +3 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Agile",
+    "conflicts": [
+      "Clumsy"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 1,
+        "Striptease": 1
+      }
+    },
+    "description": "Agility improves performance in physical tasks and dance routines. [+1 Agility, +1 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Mystical",
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 4
+      },
+      "earnings_multiplier": 1.2
+    },
+    "description": "A mystical servant possesses an otherworldly allure that clients find irresistible. [+20% $, +4 Craft]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Wise",
+    "conflicts": [
+      "Dumb"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 2
+      },
+      "health_regeneration": 2
+    },
+    "description": "Wisdom increases decision-making skills and helps recover health quickly. [+2 Health Regen, +2 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Graceful",
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2,
+        "Clever": 1
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "Gracefulness enhances performance on stage and attracts premium clients. [+10% $, +2 Charm, +1 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Determined",
+    "modifiers": {
+      "health_regeneration": 3,
+      "skill_modifiers": {
+        "Sex": 1
+      }
+    },
+    "description": "Determination helps servants push through tough tasks, slightly boosting stamina. [+3 Health Regen, +1 Sex]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Charismatic",
+    "conflicts": [
+      "Shy"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "Charisma attracts clients and increases tips during high-demand events. [+15% $, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Radiant",
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "health_regeneration": 1,
+      "joy": 10
+    },
+    "description": "A radiant appearance not only boosts client satisfaction but also improves health regeneration. [+20% $, +1 Health Regen, +10 Joy]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Smooth Talker",
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 3
+      },
+      "earnings_multiplier": 1.25
+    },
+    "description": "Being a smooth talker means better negotiation with clients and increased earnings. [+25% $, +3 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Elegant",
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Striptease": 1,
+        "Charm": 1
+      }
+    },
+    "description": "Elegance not only enhances the servant's presence but also entices premium clientele. [+15% $, +1 Striptease, +1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Robust",
+    "modifiers": {
+      "health": 10,
+      "health_regeneration": 2
+    },
+    "description": "A robust servant has extra health and recovers more quickly from injuries. [+10 Health, +2 Health Regen]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Troll Blood",
+    "modifiers": {
+      "health_regeneration": 10
+    },
+    "description": "A drop of troll essence grants powerful daily recovery. [+10 Health Regen per day]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Energetic",
+    "conflicts": [
+      "Lazy"
+    ],
+    "removes_traits": [
+      "Lazy"
+    ],
+    "modifiers": {
+      "energy": 10
+    },
+    "description": "An energetic servant has an extra boost in energy, allowing for more client engagements per day. [+10 Energy]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Magnetic",
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "romance": 10
+    },
+    "description": "Magnetic traits draw clients in and substantially increase the earnings per client. [+30% $, +10 Romance]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Playful",
+    "modifiers": {
+      "skill_modifiers": {
+        "Special": 1
+      }
+    },
+    "description": "A playful servant often lifts the mood, attracting clients who value light-hearted service. [+1 Special]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Elegant Eyes",
+    "modifiers": {
+      "earnings_multiplier": 1.1
+    },
+    "description": "Unique traits like elegant eyes are highly sought after by discerning clients. [+10% $]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Scarred",
+    "conflicts": [
+      "Cool Scars"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Striptease": -2
+      }
+    },
+    "description": "Permanent scarring that slightly reduces charm effectiveness. [-2 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Arena Champion",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 5
+      },
+      "health": 5,
+      "energy_regeneration": 1
+    },
+    "description": "Crowned by the sands after five special match victories. +5 Combat, +5 max Health, +1 Energy Regen. If defeated in a special match, this trait is lost instead of the fighter's life.",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Shy",
+    "conflicts": [
+      "Open Minded",
+      "Charismatic",
+      "Confident"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -2,
+        "Group": -2
+      }
+    },
+    "description": "They struggle with social situations and group activities. [-2 Charm, -2 Group]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Conservative",
+    "conflicts": [
+      "Open Minded"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Extreme": -2,
+        "BDSM": -1
+      }
+    },
+    "description": "They prefer traditional approaches and avoid extreme activities. Cannot have Open Minded. [-2 Extreme, -1 BDSM, Max Rebelliousness 80]",
+    "attribute_caps": {
+      "rebelliousness": 80
+    },
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Nervous",
+    "conflicts": [
+      "Confident"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -1,
+        "Combat": -1
+      }
+    },
+    "description": "They are easily startled and perform poorly under pressure. [-1 Charm, -1 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Confident",
+    "conflicts": [
+      "Nervous",
+      "Shy"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 2,
+        "Striptease": 1
+      }
+    },
+    "description": "They exude self-assurance and perform excellently in social situations. [+2 Charm, +1 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Optimist",
+    "conflicts": [
+      "Pessimist"
+    ],
+    "modifiers": {
+      "joy": 20,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They maintain a positive outlook that brightens everyone's day. [+20 Joy, +1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Pessimist",
+    "conflicts": [
+      "Optimist"
+    ],
+    "modifiers": {
+      "joy": -20,
+      "skill_modifiers": {
+        "Charm": -1
+      }
+    },
+    "description": "They expect the worst and their negativity affects their performance. [-20 Joy, -1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Quick Learner",
+    "conflicts": [
+      "Slow Learner",
+      "Dumb"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 2
+      }
+    },
+    "description": "They pick up new skills and techniques faster than others. [+2 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Slow Learner",
+    "conflicts": [
+      "Quick Learner"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": -2
+      }
+    },
+    "description": "They need more time to master new skills and concepts. [-2 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Rebellious",
+    "conflicts": [
+      "Dependant",
+      "Obedient",
+      "Meek"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 1
+      }
+    },
+    "daily_effects": {
+      "rebelliousness": {
+        "min": 0,
+        "max": 2
+      }
+    },
+    "description": "They resist authority and prefer to do things their own way. [+1 Combat, daily +0~2 Rebelliousness]",
+    "attribute_caps": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Dependant",
+    "conflicts": [
+      "Rebellious"
+    ],
+    "modifiers": {
+      "relationship": 15
+    },
+    "description": "They rely heavily on others and form strong emotional bonds. Cannot have Rebellious. [+15 Relationship, Max Rebelliousness 50]",
+    "attribute_caps": {
+      "rebelliousness": 50
+    },
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Obedient",
+    "conflicts": [
+      "Rebellious",
+      "Aggressive"
+    ],
+    "modifiers": {
+      "relationship": 10,
+      "skill_modifiers": {
+        "Service": 2
+      }
+    },
+    "daily_effects": {
+      "rebelliousness": -1
+    },
+    "description": "They follow orders without question and aim to please. Cannot have Rebellious or Aggressive. [Daily -1 Rebelliousness, +2 Service, +10 Relationship]",
+    "attribute_caps": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Tomboy",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 2,
+        "Agility": 1
+      }
+    },
+    "description": "They prefer physical activities and have a tough, independent attitude. [+2 Combat, +1 Agility]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Strong",
+    "conflicts": [
+      "Delicate"
+    ],
+    "modifiers": {
+      "health": 5,
+      "skill_modifiers": {
+        "Combat": 3
+      }
+    },
+    "description": "They possess exceptional physical strength and endurance. [+5 Health, +3 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Delicate",
+    "conflicts": [
+      "Strong"
+    ],
+    "modifiers": {
+      "health": -10,
+      "skill_modifiers": {
+        "Charm": 2,
+        "Striptease": 1
+      }
+    },
+    "description": "They have a fragile constitution but refined grace. [-10 Health, +2 Charm, +1 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Tough",
+    "modifiers": {
+      "health": 8,
+      "skill_modifiers": {
+        "Combat": 1
+      }
+    },
+    "description": "They can endure hardship and recover from injuries quickly. [+8 Health, +1 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Clumsy",
+    "conflicts": [
+      "Agile"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": -2,
+        "Striptease": -1
+      }
+    },
+    "description": "They are prone to accidents and lack coordination. [-2 Agility, -1 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Exotic",
+    "modifiers": {
+      "earnings_multiplier": 1.25
+    },
+    "description": "They have an unusual and captivating appearance that draws attention. [+25% $]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Tattooed",
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "BDSM": 1,
+        "Extreme": 1
+      }
+    },
+    "description": "They have artistic tattoos that add to their rebellious appeal. [+10% $, +1 BDSM, +1 Extreme]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Cool Scars",
+    "conflicts": [
+      "Scarred"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.05,
+      "skill_modifiers": {
+        "Combat": 1
+      }
+    },
+    "description": "They have attractive battle scars that tell stories of adventure. [+5% $, +1 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Beauty Mark",
+    "modifiers": {
+      "earnings_multiplier": 1.1,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They have a distinctive mark that enhances their natural beauty. [+10% $, +1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Cute",
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "They have an adorable appearance that melts hearts. [+15% $, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Smoker",
+    "modifiers": {
+      "health": -5,
+      "skill_modifiers": {
+        "Charm": 1
+      }
+    },
+    "description": "They smoke regularly, which affects their health but adds to their mystique. [-5 Health, +1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Brawler",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 4
+      }
+    },
+    "description": "They are experienced street fighters with excellent combat skills. [+4 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Maid",
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": 3,
+        "Charm": 1
+      }
+    },
+    "description": "They are trained in domestic service and hospitality. [+3 Service, +1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Singer",
+    "conflicts": [
+      "Tone Deaf"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 4,
+        "Striptease": 2
+      }
+    },
+    "description": "They have a beautiful voice that captivates audiences. [+4 Charm, +2 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Tone Deaf",
+    "conflicts": [
+      "Singer"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -2,
+        "Striptease": -1
+      }
+    },
+    "description": "They cannot carry a tune and struggle with musical performances. [-2 Charm, -1 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Teacher",
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 3,
+        "Charm": 2,
+        "Craft": 1
+      },
+      "relationship": 10
+    },
+    "description": "They are skilled educators who build strong relationships through knowledge. [+3 Clever, +2 Charm, +1 Craft, +10 Relationship]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Adventurer",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 2,
+        "Agility": 2
+      }
+    },
+    "description": "They have explored dangerous places and gained valuable experience. [+2 Combat, +2 Agility]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Waitress",
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": 4,
+        "Charm": 1,
+        "Agility": 1
+      }
+    },
+    "description": "They are experienced in customer service and hospitality work. [+4 Service, +1 Charm, +1 Agility]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Flexible",
+    "conflicts": [
+      "Stiff"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.15,
+      "skill_modifiers": {
+        "Agility": 2,
+        "Striptease": 2,
+        "Sex": 1
+      }
+    },
+    "description": "They have exceptional flexibility that opens up new possibilities. [+15% $, +2 Agility, +2 Striptease, +1 Sex]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Stiff",
+    "conflicts": [
+      "Flexible"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 0.95,
+      "skill_modifiers": {
+        "Agility": -2,
+        "Striptease": -1,
+        "Combat": 1
+      }
+    },
+    "description": "They lack flexibility but make up for it with other strengths. [-5% $, -2 Agility, -1 Striptease, +1 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Demanding",
+    "modifiers": {
+      "comfort_desired": 5
+    },
+    "description": "This worker has high standards and expects better accommodations. Increases desired comfort level by 5.",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Magical",
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 3
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance. [+15% $, +3 Craft]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Great Figure",
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Charm": 2,
+        "Striptease": 1
+      }
+    },
+    "description": "They have an exceptional figure that captivates clients and enhances their appeal. [+20% $, +2 Charm, +1 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Long Legs",
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 2,
+        "Striptease": 2
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "Long legs enhance their grace and agility, making them excellent performers. [+10% $, +2 Agility, +2 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Mature Body",
+    "modifiers": {
+      "earnings_multiplier": 1.25,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "A mature body exudes confidence and experience, attracting discerning clients. [+25% $, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Tall",
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 1,
+        "Combat": 2
+      },
+      "earnings_multiplier": 1.1
+    },
+    "description": "Their height gives them a commanding presence and combat advantage. [+10% $, +1 Charm, +2 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Fleet of Foot",
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 3
+      }
+    },
+    "description": "They are exceptionally quick and agile on their feet. [+3 Agility]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Meek",
+    "conflicts": [
+      "Rebellious",
+      "Aggressive"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Service": 1
+      }
+    },
+    "daily_effects": {
+      "rebelliousness": {
+        "min": -2,
+        "max": 0
+      }
+    },
+    "description": "They are submissive and obedient, reducing rebelliousness and improving service. [Daily 0~-2 Rebelliousness, +1 Service]",
+    "attribute_caps": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Nerd",
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 3,
+        "Charm": -1
+      }
+    },
+    "description": "They are highly intelligent but struggle with social interactions. [+3 Clever, -1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Idol",
+    "modifiers": {
+      "earnings_multiplier": 1.4,
+      "skill_modifiers": {
+        "Charm": 4,
+        "Striptease": 3
+      }
+    },
+    "description": "They are a pop idol with exceptional charm and performance skills. [+40% $, +4 Charm, +3 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Princess",
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Charm": 3
+      },
+      "comfort_desired": 2
+    },
+    "description": "They have a regal attitude that attracts premium clients but demands better accommodations. [+30% $, +3 Charm, +2 Comfort Desired]. Female only.",
+    "gender_restriction": "female",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Tsundere",
+    "modifiers": {
+      "earnings_multiplier": 1.25,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "daily_effects": {
+      "rebelliousness": {
+        "min": -1,
+        "max": 2
+      }
+    },
+    "description": "They act cold but are actually warm inside, creating an appealing contrast. [+25% $, +2 Charm, daily -1~+2 Rebelliousness]",
+    "gender_restriction": "female",
+    "attribute_caps": {},
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Aggressive",
+    "conflicts": [
+      "Meek",
+      "Obedient"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 3,
+        "BDSM": 2
+      }
+    },
+    "daily_effects": {
+      "rebelliousness": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "description": "They are aggressive and dominant, excelling in combat and BDSM activities. [+3 Combat, +2 BDSM, daily +0~1 Rebelliousness]",
+    "attribute_caps": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Audacity",
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Charm": 2
+      }
+    },
+    "description": "They have bold confidence that attracts clients and increases earnings. [+20% $, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Manly",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 3,
+        "Charm": -2
+      }
+    },
+    "description": "They have a masculine appearance that enhances combat but reduces charm. [+3 Combat, -2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Social Drinker",
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": 1
+      },
+      "health": -3
+    },
+    "description": "They enjoy social drinking, which enhances charm but slightly affects health. [-3 Health, +1 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Strong Magic",
+    "requires_traits": [
+      "Magical"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 5,
+        "Combat": 3
+      },
+      "earnings_multiplier": 1.2
+    },
+    "description": "Requires Magical. They possess strong magical abilities, significantly enhancing craft and combat skills. [+20% $, +5 Craft, +3 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Powerful Magic",
+    "conflicts": [
+      "Strong Magic"
+    ],
+    "requires_traits": [
+      "Magical"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 6,
+        "Combat": 4
+      },
+      "earnings_multiplier": 1.3
+    },
+    "description": "Requires Magical. Cannot have Strong Magic. They wield powerful magic, making them exceptional in craft and combat. [+30% $, +6 Craft, +4 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Psychic",
+    "requires_traits": [
+      "Magical"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Craft": 4,
+        "Clever": 3,
+        "Combat": 2
+      },
+      "earnings_multiplier": 1.15
+    },
+    "description": "Requires Magical. Psychic abilities that enhance magical, mental, and combat capabilities. [+15% $, +4 Craft, +3 Clever, +2 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Sharp-Eyed",
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": 2,
+        "Combat": 2
+      }
+    },
+    "description": "They have keen eyesight that enhances their cleverness and combat accuracy. [+2 Clever, +2 Combat]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Actress",
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Charm": 4,
+        "Striptease": 3
+      }
+    },
+    "description": "They are a skilled actress with exceptional charm and performance abilities. [+30% $, +4 Charm, +3 Striptease]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Assassin",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 5,
+        "Agility": 4
+      }
+    },
+    "description": "They are a trained assassin with exceptional combat and agility skills. [+5 Combat, +4 Agility]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Merciless",
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 3,
+        "BDSM": 3
+      }
+    },
+    "description": "They show no mercy, excelling in combat and BDSM activities. [+3 Combat, +3 BDSM]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Dumb",
+    "conflicts": [
+      "Clever",
+      "Quick Learner",
+      "Wise"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Clever": -3
+      }
+    },
+    "description": "They struggle with intellectual tasks and learning new skills. [-3 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Crazy",
+    "modifiers": {
+      "skill_modifiers": {
+        "Charm": -1,
+        "Service": -1
+      }
+    },
+    "daily_effects": {
+      "rebelliousness": {
+        "min": -3,
+        "max": 3
+      }
+    },
+    "description": "They have unstable mental health, affecting their performance and behavior. [Daily -3~+3 Rebelliousness, -1 Charm, -1 Service]",
+    "attribute_caps": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  }
+]

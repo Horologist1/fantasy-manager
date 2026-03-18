@@ -2,14 +2,14 @@
 """
 Image Harmonizer for Fantasy Manager
 =====================================
-Converts PNG/WebP images to JPG with:
+Converts images to JPG with:
 - Resolution: 1920x1080 (or smaller, maintaining aspect ratio)
 - Quality: 70%
-- Skips existing JPGs (already optimized)
+- By default skips existing JPGs (use --include-jpg to recompress heavy ones)
 
 Usage:
-    python image_harmonizer.py [folder_path]
-    
+    python image_harmonizer.py [folder_path] [--include-jpg] [--jpg-max-kb=NNN]
+
 If no folder is specified, processes game/images/workers/
 """
 
@@ -27,10 +27,11 @@ except ImportError:
 TARGET_WIDTH = 1920
 TARGET_HEIGHT = 1080
 QUALITY = 70
-SKIP_EXTENSIONS = {'.jpg', '.jpeg'}  # Don't convert these
+SKIP_EXTENSIONS = {'.jpg', '.jpeg'}  # Skipped unless --include-jpg is used
 CONVERT_EXTENSIONS = {'.png', '.webp', '.bmp', '.tiff'}
 BACKUP_FOLDER = "_originals_backup"
 DRY_RUN = False  # Set to True to preview without making changes
+DEFAULT_JPG_MAX_KB = 350  # Recompress JPG only if larger than this
 
 def get_target_size(original_width, original_height):
     """Calculate target size maintaining aspect ratio, max 1920x1080"""
@@ -48,18 +49,26 @@ def get_target_size(original_width, original_height):
     
     return new_width, new_height
 
-def should_convert(filepath):
+def should_convert(filepath, include_jpg=False, jpg_max_kb=DEFAULT_JPG_MAX_KB):
     """Check if file should be converted"""
     ext = filepath.suffix.lower()
-    
-    # Skip JPGs
+
+    # Skip JPGs unless explicitly requested
     if ext in SKIP_EXTENSIONS:
+        if include_jpg:
+            try:
+                size_kb = filepath.stat().st_size / 1024.0
+            except Exception:
+                size_kb = 0
+            if size_kb > float(jpg_max_kb):
+                return True, f"Will recompress JPG ({size_kb:.0f}KB > {jpg_max_kb}KB)"
+            return False, f"JPG under threshold ({size_kb:.0f}KB <= {jpg_max_kb}KB)"
         return False, "Already JPG"
-    
+
     # Convert these formats
     if ext in CONVERT_EXTENSIONS:
         return True, f"Will convert {ext} to JPG"
-    
+
     return False, f"Unknown format {ext}"
 
 def convert_image(input_path, output_path, backup_path=None):
@@ -92,7 +101,7 @@ def convert_image(input_path, output_path, backup_path=None):
     except Exception as e:
         return False, None, str(e)
 
-def process_folder(folder_path, create_backup=True):
+def process_folder(folder_path, create_backup=True, include_jpg=False, jpg_max_kb=DEFAULT_JPG_MAX_KB):
     """Process all images in folder and subfolders"""
     folder = Path(folder_path)
     if not folder.exists():
@@ -119,7 +128,7 @@ def process_folder(folder_path, create_backup=True):
     
     # Process each file
     for filepath in image_files:
-        should, reason = should_convert(filepath)
+        should, reason = should_convert(filepath, include_jpg=include_jpg, jpg_max_kb=jpg_max_kb)
         
         if not should:
             if filepath.suffix.lower() in SKIP_EXTENSIONS:
@@ -168,7 +177,10 @@ def process_folder(folder_path, create_backup=True):
     print(f"\n{'='*60}")
     print(f"SUMMARY")
     print(f"{'='*60}")
-    print(f"JPGs skipped (already optimized): {skipped_jpg}")
+    if include_jpg:
+        print("JPGs skipped: 0 (include-jpg enabled)")
+    else:
+        print(f"JPGs skipped (already optimized): {skipped_jpg}")
     print(f"Images converted: {converted}")
     print(f"Errors: {errors}")
     print(f"Total space saved: {saved_bytes/1024/1024:.1f} MB")
@@ -181,16 +193,34 @@ def main():
     script_dir = Path(__file__).parent.parent
     default_folder = script_dir / "game" / "images" / "workers"
     
+    include_jpg = "--include-jpg" in sys.argv
+    jpg_max_kb = DEFAULT_JPG_MAX_KB
+    args = []
+    for a in sys.argv[1:]:
+        if a == "--include-jpg":
+            continue
+        if a.startswith("--jpg-max-kb="):
+            try:
+                jpg_max_kb = int(a.split("=", 1)[1])
+            except Exception:
+                print(f"WARNING: Invalid --jpg-max-kb value '{a}', using default {DEFAULT_JPG_MAX_KB}")
+                jpg_max_kb = DEFAULT_JPG_MAX_KB
+            continue
+        args.append(a)
+
     # Get folder from args or use default
-    if len(sys.argv) > 1:
-        folder = Path(sys.argv[1])
+    if args:
+        folder = Path(args[0])
     else:
         folder = default_folder
-    
+
     # Confirm before running
-    print(f"\nThis will convert PNG/WebP images in:")
+    print(f"\nThis will harmonize images in:")
     print(f"  {folder}")
-    print(f"\nExisting JPGs will NOT be modified.")
+    if include_jpg:
+        print(f"\nJPG files larger than {jpg_max_kb}KB WILL be recompressed/normalized.")
+    else:
+        print("\nExisting JPGs will NOT be modified.")
     print(f"Original files will be backed up to '{BACKUP_FOLDER}' subfolders.")
     
     response = input("\nContinue? (y/n): ").strip().lower()
@@ -198,7 +228,7 @@ def main():
         print("Cancelled.")
         return
     
-    process_folder(folder)
+    process_folder(folder, include_jpg=include_jpg, jpg_max_kb=jpg_max_kb)
 
 if __name__ == "__main__":
     main()

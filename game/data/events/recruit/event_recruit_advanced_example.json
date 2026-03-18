@@ -7,7 +7,6 @@
     "unlimited": true,
     "random_worker": true,
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -33,7 +32,11 @@
         "effect": {}
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_tavern_brawler",
@@ -44,8 +47,7 @@
     "max_occurrences": 1,
     "random_worker": true,
     "always_available": true,
-    "building_type": [],
-    "background_image": "tavern_bg",
+    "background_image": "event_bg",
     "success_image": "tavern_success",
     "failure_image": "tavern_failure",
     "worker_filter": {
@@ -60,26 +62,6 @@
     },
     "choices": [
       {
-        "option": "Test their fighting skills in a friendly spar. (Requires Combat) - Success: Better relationship | Failure: 20% higher cost + rebelliousness (Potential: Relationship)",
-        "condition": "Combat",
-        "message_success": "You engage [event_worker] in a practice bout. Their technique is impressive, and they hold back just enough to avoid seriously hurting you. 'Not bad for a boss,' they grin, wiping sweat from their brow. 'I think we'll work well together.' They agree to work for [actual_cost]. Their relationship starts higher due to mutual respect. You sense a stronger bond forming between you and [event_worker] (+10 Relationship).",
-        "message_failure": "The spar doesn't go as planned. [event_worker] easily overwhelms you, and their arrogance shows through. 'Maybe you need the protection more than I need the job,' they scoff. Still, they accept the position, but demand 20% higher pay at [actual_cost]. Their rebelliousness increases by +10. The higher daily cost reflects their demands (+20% cost).",
-        "effect": {
-          "success": {
-            "recruit_worker": true,
-            "relationship_bonus": 10
-          },
-          "failure": {
-            "recruit_worker": true,
-            "cost_modifier": 1.2,
-            "add_attribute": {
-              "rebelliousness": 10,
-              "target": "recruited_worker"
-            }
-          }
-        }
-      },
-      {
         "option": "Offer them a trial period with reduced pay. (Potential: Discount, Trial Worker)",
         "message": "You outline a short trial at [actual_cost] (50% discount). [event_worker] nods - during the 30-day trial period they'll keep to daily cost of [actual_cost] while proving their worth. The reduced daily cost reflects your negotiation skills (50% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
@@ -93,11 +75,11 @@
         }
       },
       {
-        "option": "Try to negotiate a lower wage. (Requires Charm) - Success: 25% discount | Failure: Full price + rebelliousness (Potential: Discount)",
-        "condition": "Charm",
+        "option": "Try to negotiate a lower wage. (50% chance: 25% discount)",
         "message_success": "Your persuasive words and reasonable arguments convince [event_worker] that steady work and good treatment are worth more than high pay. 'You make a good point about job security,' they admit. They agree to work for [actual_cost] (25% discount). The reduced daily cost reflects your negotiation skills (25% discount).",
         "message_failure": "Your negotiation attempt comes across as cheap and insulting. [event_worker]'s expression hardens. 'I know my worth. If you want me, you'll pay full price.' They still accept the position at [actual_cost] (full price), but their rebelliousness increases by +8.",
         "effect": {
+          "success_chance": 0.5,
           "success": {
             "recruit_worker": true,
             "cost_modifier": 0.75
@@ -108,7 +90,11 @@
               "rebelliousness": 8,
               "target": "recruited_worker"
             }
-          }
+          },
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -117,7 +103,10 @@
         "effect": {}
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_mysterious_scholar",
@@ -129,32 +118,31 @@
     "random_worker": false,
     "worker_name": "Violet",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Ask them to demonstrate their crafting abilities. (Requires Craft) - Success: Magical Resonance trait | Failure: Rebelliousness (Potential: Magical Resonance)",
-        "condition": "Craft",
-        "message_success": "You request a demonstration of their powers. [event_worker] nods and begins weaving intricate patterns in the air. Sparks of ethereal light dance between their fingers, and you feel a subtle enchantment settle over the room. 'Impressive,' you say. They agree to work for [actual_cost]. They gain the 'Magical Resonance' trait, which will last for 60 days.",
-        "message_failure": "When you ask for a magical demonstration, your own attempt to sense their power backfires. A minor magical feedback leaves you dizzy and embarrassed. [event_worker] looks concerned but professional. 'Perhaps we should discuss this when you're feeling better,' they say. They still accept the position at [actual_cost], but their rebelliousness increases by +5.",
+        "option": "Hire them for [COST] per day.",
+        "message": "You offer [COST] per day. [event_worker] nods gracefully. 'A fair arrangement. I accept your offer.' They extend a hand with quiet dignity. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation).",
         "effect": {
-          "success": {
-            "recruit_worker": true,
-            "add_trait": {
-              "name": "Magical Resonance",
-              "duration": 60,
-              "target": "recruited_worker"
-            }
-          },
-          "failure": {
-            "recruit_worker": true,
-            "add_attribute": {
-              "rebelliousness": 5,
-              "target": "recruited_worker"
-            }
-          }
+          "recruit_worker": true,
+          "reputation": 8,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Offer above their asking price to show genuine appreciation. (Potential: Reputation, Relationship)",
+        "message": "You offer more than they asked for, wanting them to feel truly valued. [event_worker]'s expression softens with genuine surprise. 'You would do that? I appreciate your generosity.' They accept with [actual_cost] per day and their spirits lift noticeably. Word of your generous treatment spreads, enhancing your reputation (+10 Reputation). You sense a stronger bond forming between you and Violet (+20 Relationship).",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 10,
+          "relationship_bonus": 20,
+          "cost_modifier": 1.15,
+          "success_chance": 0,
+          "joy": 0
         }
       },
       {
@@ -172,31 +160,14 @@
         }
       },
       {
-        "option": "Question their true intentions. (Requires Clever) - Success: Receive Scroll of Wisdom | Failure: High rebelliousness",
-        "condition": "Clever",
-        "message_success": "Your probing questions reveal that [event_worker] is researching ancient protective wards - knowledge that could benefit your establishment's security. 'Your perceptiveness is admirable,' they say with respect. 'Yes, I believe we can help each other.' They agree to work for [actual_cost]. As a token of appreciation, they give you a Scroll of Wisdom containing their research notes.",
-        "message_failure": "Your suspicious questioning comes across as paranoid and insulting. [event_worker] draws their hood up, clearly offended. 'I see my reputation has been unfairly tarnished by rumors. Still, I need the work.' They accept the position at [actual_cost], but their rebelliousness increases by +12.",
-        "effect": {
-          "success": {
-            "recruit_worker": true,
-            "custom": "give_item",
-            "item_id": "scroll_wisdom"
-          },
-          "failure": {
-            "recruit_worker": true,
-            "add_attribute": {
-              "rebelliousness": 12,
-              "target": "recruited_worker"
-            }
-          }
-        }
-      },
-      {
         "option": "Respectfully decline their offer.",
         "message": "You politely explain that your establishment doesn't currently need someone with their particular skills. [event_worker] bows gracefully. 'I understand. Should your needs change, I shall be in the area for some time.' They depart with dignity intact.",
         "effect": {}
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   }
 ]

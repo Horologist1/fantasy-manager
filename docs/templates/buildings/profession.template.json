@@ -1,0 +1,101 @@
+{
+  "id": null,
+  "name": null,
+  "description": null,
+  "nsfw": false,
+  "difficulty": null,
+  "skills": [],
+  "max_daily_workers": 0,
+  "daily_story_count": {
+    "base": 0,
+    "bonus_formula": "0"
+  },
+  "daily_stories": [
+    {
+      "id": null,
+      "weight": 0,
+      "report": null,
+      "description": null,
+      "difficulty_modifier": 0,
+      "worker_gender_requirement": null,
+      "skill_options": [],
+      "relevant_traits": [],
+      "trait_success": null,
+      "required_traits": [],
+      "excluded_traits": [],
+      "stat_requirements": {},
+      "descriptions": {
+        "failure": null,
+        "mediocre": null,
+        "success": null,
+        "critical_success": null
+      },
+      "earnings": {
+        "failure": "0",
+        "mediocre": "0",
+        "success": "0",
+        "critical_success": "0"
+      },
+      "consequences": {
+        "failure": {
+          "energy": 0,
+          "health": 0,
+          "joy": 0,
+          "rebelliousness": 0,
+          "romance": 0,
+          "relationship": 0,
+          "reputation": 0,
+          "libido": 0,
+          "obedience": 0
+        },
+        "mediocre": {
+          "energy": 0,
+          "health": 0,
+          "joy": 0,
+          "rebelliousness": 0,
+          "romance": 0,
+          "relationship": 0,
+          "reputation": 0,
+          "libido": 0,
+          "obedience": 0
+        },
+        "success": {
+          "energy": 0,
+          "health": 0,
+          "joy": 0,
+          "rebelliousness": 0,
+          "romance": 0,
+          "relationship": 0,
+          "reputation": 0,
+          "libido": 0,
+          "obedience": 0
+        },
+        "critical_success": {
+          "energy": 0,
+          "health": 0,
+          "joy": 0,
+          "rebelliousness": 0,
+          "romance": 0,
+          "relationship": 0,
+          "reputation": 0,
+          "libido": 0,
+          "obedience": 0
+        }
+      },
+      "story_image": null,
+      "failure_image": null,
+      "loot": {
+        "rolls": 0,
+        "bonus_items": [],
+        "monster_worker": {
+          "chance": 0,
+          "filters": {}
+        },
+        "captured_worker": {
+          "chance": 0,
+          "filters": {}
+        }
+      }
+    }
+  ]
+}

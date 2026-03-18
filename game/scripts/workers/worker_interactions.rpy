@@ -76,6 +76,10 @@ init python:
                 worker_value = worker.get(stat, 0)
                 # Discipline + rebelliousness: requirement is "less than" (worker must be below threshold)
                 if is_discipline and stat == "rebelliousness":
+                    # Zero/negative threshold is effectively "no threshold" for discipline,
+                    # and should not block the whole branch.
+                    if required_value is None or required_value <= 0:
+                        continue
                     if worker_value >= required_value:
                         meets_requirements = False
                         break
@@ -282,7 +286,7 @@ init python:
             category = interaction.get("categories", [])
             
             # If no category or level specified, include it (for backwards compatibility)
-            if not category or interaction_level is None:
+            if not category or interaction_level is None or interaction_level <= 0:
                 filtered.append(interaction)
                 continue
             
@@ -349,17 +353,13 @@ init python:
         for interaction in interactions:
             # Check required traits
             required_traits = interaction.get("required_traits", [])
+            excluded_traits = interaction.get("excluded_traits", [])
             worker_traits = worker.get("traits", [])
             
-            # If no traits are required, include the interaction
-            if not required_traits:
-                filtered.append(interaction)
-                continue
-                
-            # Check if worker has all required traits
             has_required_traits = all(trait in worker_traits for trait in required_traits)
-            
-            if has_required_traits:
+            has_excluded_traits = any(trait in worker_traits for trait in excluded_traits)
+
+            if has_required_traits and not has_excluded_traits:
                 filtered.append(interaction)
         
         return filtered
@@ -550,6 +550,36 @@ init python:
 
         return f" (Uses: {current_uses}/{required_uses})"
 
+    def apply_interaction_libido_effect(worker, effects, stat_changes):
+        """Apply explicit libido delta from interaction JSON effect.libido."""
+        if not hasattr(effects, "get"):
+            return
+        if "libido" not in effects:
+            return
+
+        try:
+            libido_delta = int(effects.get("libido", 0))
+        except Exception:
+            return
+        if libido_delta == 0:
+            return
+
+        old_libido = int(worker.get("libido", 0) or 0)
+        try:
+            max_libido = int(get_max_libido(worker))
+        except Exception:
+            max_libido = 20
+        new_libido = max(0, min(max_libido, old_libido + libido_delta))
+        if new_libido == old_libido:
+            return
+
+        worker["libido"] = new_libido
+        stat_changes["libido"] = stat_changes.get("libido", 0) + (new_libido - old_libido)
+        renpy.log(
+            f"INTERACTION LIBIDO: {worker.get('name', 'Unknown')} "
+            f"{old_libido} -> {new_libido} ({new_libido - old_libido:+d})"
+        )
+
     def apply_interaction_effects(worker, interaction, apply_costs=True, skip_daily_limit=False):
         """Apply the effects of an interaction to a worker.
         
@@ -579,14 +609,36 @@ init python:
         # Apply stat changes
         effects = interaction.get("effect", {})
         for stat, change in effects.items():
-            if stat != "flags":  # Handle flags separately
-                current_value = worker.get(stat, 0)
-                new_value = max(0, min(100, current_value + change))
-                worker[stat] = new_value
-                # Only track non-zero changes
-                if change != 0:
-                    stat_changes[stat] = change
-        
+            if stat not in ("flags", "libido", "add_trait", "remove_trait"):  # Handle separately
+                if change == 0:
+                    continue
+                if stat in ("rebelliousness", "joy", "romance", "relationship") and hasattr(store, "apply_attribute_change"):
+                    store.apply_attribute_change(worker, stat, change)
+                else:
+                    current_value = worker.get(stat, 0)
+                    new_value = max(0, min(100, current_value + change))
+                    worker[stat] = new_value
+                stat_changes[stat] = change
+
+        # Apply add_trait from interaction effect
+        add_trait_data = effects.get("add_trait")
+        if add_trait_data and worker and hasattr(store, "add_trait_with_duration"):
+            trait_name = add_trait_data if isinstance(add_trait_data, str) else add_trait_data.get("name")
+            duration = 0 if isinstance(add_trait_data, str) else int(add_trait_data.get("duration", 0))
+            if trait_name:
+                store.add_trait_with_duration(worker, trait_name, duration)
+                stat_changes["add_trait"] = trait_name
+                renpy.log(f"Interaction: Added trait '{trait_name}' to {worker.get('name', 'Unknown')}")
+
+        # Apply remove_trait from interaction effect
+        remove_trait_data = effects.get("remove_trait")
+        if remove_trait_data and worker and hasattr(store, "remove_trait_safe"):
+            trait_name = remove_trait_data if isinstance(remove_trait_data, str) else remove_trait_data.get("name")
+            if trait_name:
+                store.remove_trait_safe(worker, trait_name)
+                stat_changes["remove_trait"] = trait_name
+                renpy.log(f"Interaction: Removed trait '{trait_name}' from {worker.get('name', 'Unknown')}")
+
         # Apply flag changes
         flag_effects = effects.get("flags", {})
         if not worker.get("flags"):
@@ -672,7 +724,13 @@ init python:
         if apply_costs:
             worker["energy"] = max(0, worker["energy"] - interaction.get("cost_energy", 0))
             worker["health"] = max(0, worker["health"] - interaction.get("cost_health", 0))
-            store.money = max(0, store.money - interaction.get("cost_money", 0))
+            # Only subtract cost; do not clamp money to 0 (player can be in debt from other mechanics)
+            store.money -= interaction.get("cost_money", 0)
+
+        # Explicit libido stat deltas are defined in interaction JSON (effect.libido).
+        # In SFW mode we ignore libido changes entirely.
+        if getattr(persistent, "nsfw_enabled", False):
+            apply_interaction_libido_effect(worker, effects, stat_changes)
 
         # Tutorial: Friendly Lunch completion is now handled when closing the interaction_result screen
         
@@ -775,16 +833,17 @@ init python:
             return False
         
         store.take_a_walk_in_progress = True
+        store.take_a_walk_fail_message = None
         
         # Check if already used today
         if store.last_take_a_walk_day == store.current_day:
-            renpy.notify("You've already taken a walk today. Come back tomorrow.")
+            store.take_a_walk_fail_message = "You've already taken a walk today. Come back tomorrow."
             store.take_a_walk_in_progress = False
             return False
         
         # Check if there are any workers available
         if not store.workers or len(store.workers) == 0:
-            renpy.notify("You don't have any workers to encounter. Hire some workers first.")
+            store.take_a_walk_fail_message = "You need workers to take a walk. Hire some first."
             store.take_a_walk_in_progress = False
             return False
         
@@ -797,7 +856,7 @@ init python:
         available_interactions = get_available_interactions_for_worker(selected_worker)
         
         if not available_interactions:
-            renpy.notify(f"{worker_name} doesn't have any interactions available at the moment.")
+            store.take_a_walk_fail_message = f"{worker_name} doesn't have any interactions available at the moment."
             store.take_a_walk_in_progress = False
             return False
         

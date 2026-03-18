@@ -31,6 +31,11 @@ init python:
     import json
 
     #############################
+    # Constants
+    #############################
+    SKILL_MAX = 100  # Cap for base worker skills (used by modify_base_skill, use_item, etc.)
+
+    #############################
     # Event Success Configuration
     #############################
     # Base success bonus added to all skill-based event checks
@@ -357,8 +362,33 @@ init python:
             similar_folders = [f for f in all_files if folder_name_lower in f.lower()]
             renpy.log(f"Similar paths with '{folder_name_lower}': {similar_folders[:5] if similar_folders else 'NONE'}")
         
+        def _worker_allows_profile_variant(local_worker, filepath):
+            basename = os.path.basename(filepath).lower()
+            if "profile" not in basename:
+                return True
+            prefix_part = basename.split("profile", 1)[0].rstrip("_")
+            if not prefix_part:
+                return True
+            token_to_trait = {
+                "pregnant": "Pregnant",
+                "futa": "Futa",
+                "transformed": "Transformed",
+                "magical": "Magical",
+            }
+            required = []
+            for token in prefix_part.split("_"):
+                if token in token_to_trait:
+                    required.append(token_to_trait[token])
+            if not required:
+                return True
+            traits = set((local_worker or {}).get("traits", []) or [])
+            return set(required).issubset(traits)
+
+        trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
+
         # Try worker's profile image using robust flexible matching
         profile_matches = get_pattern_matches_flexible(base_folder, "profile")
+        profile_matches = [f for f in profile_matches if _worker_allows_profile_variant(worker, f)]
         renpy.log(f"Profile matches found: {len(profile_matches) if profile_matches else 0}")
         if profile_matches:
             renpy.log(f"Profile matches: {profile_matches}")
@@ -368,6 +398,7 @@ init python:
         
         # Try any image in worker folder as fallback (excluding failure images)
         all_worker_images = get_pattern_matches_flexible(base_folder, "", exclude_failure=True)
+        all_worker_images = [f for f in all_worker_images if not should_exclude_trait_file(f, trait_file_prefixes, [])]
         if all_worker_images:
             selected = renpy.random.choice(all_worker_images)
             renpy.log(f"Found fallback worker image: {selected}")
@@ -503,6 +534,8 @@ init python:
                     skill_pattern = f"{prefix}_{skill_pattern_name}"
                     skill_matches = get_pattern_matches_flexible(base_folder, skill_pattern, exclude_failure=True)
                     if skill_matches:
+                        skill_matches = [f for f in skill_matches if not should_exclude_interaction_file(f)]
+                    if skill_matches:
                         # Use random selection WITHOUT cache
                         selected = get_random_choice(skill_matches)
                         if selected:
@@ -547,7 +580,7 @@ init python:
                                 if should_exclude:
                                     break
                         
-                        if not should_exclude:
+                        if not should_exclude and not should_exclude_interaction_file(f):
                             filtered_matches.append(f)
                     
                     if filtered_matches:
@@ -564,6 +597,8 @@ init python:
                     # Try general skill image with trait in default folder using robust matching
                     skill_pattern = f"{prefix}_{skill_pattern_name}"
                     skill_matches = get_pattern_matches_flexible(default_folder, skill_pattern, exclude_failure=True)
+                    if skill_matches:
+                        skill_matches = [f for f in skill_matches if not should_exclude_interaction_file(f)]
                     if skill_matches:
                         # Use random selection WITHOUT cache
                         selected = get_random_choice(skill_matches)
@@ -609,7 +644,7 @@ init python:
                                 if should_exclude:
                                     break
                         
-                        if not should_exclude:
+                        if not should_exclude and not should_exclude_interaction_file(f):
                             filtered_matches.append(f)
                     
                     if filtered_matches:
@@ -847,23 +882,17 @@ init python:
         return False
 
     def _get_trait_def_cache():
-        """Cache traits.json lookups for item effects."""
+        """Cache trait lookups for item effects."""
         if not hasattr(store, "_trait_def_cache") or not store._trait_def_cache:
             try:
-                traits_json_path = os.path.join(renpy.config.gamedir, "data", "traits.json")
-                with open(traits_json_path, "r", encoding="utf-8") as f:
-                    traits_data = json.load(f)
-                traits_get = getattr(traits_data, "get", None)
-                if callable(traits_get):
-                    trait_list = traits_get("traits", [])
-                elif isinstance(traits_data, (list, tuple)):
-                    trait_list = list(traits_data)
+                if hasattr(store, "get_all_traits"):
+                    trait_list = store.get_all_traits()
                 else:
-                    renpy.log(f"TRAITS: traits.json unexpected type: {type(traits_data)}")
                     trait_list = []
+                    renpy.log("TRAITS: get_all_traits() unavailable; trait cache left empty")
                 store._trait_def_cache = {t.get("name"): t for t in trait_list if t.get("name")}
             except Exception as e:
-                renpy.log(f"TRAITS: Failed to load traits.json for item effects: {e}")
+                renpy.log(f"TRAITS: Failed to build trait cache for item effects: {e}")
                 store._trait_def_cache = {}
         return store._trait_def_cache
 
@@ -1325,11 +1354,15 @@ init python:
             renpy.log(f"ERROR: Item {item_id} not found in items_json")
             return
 
-        # Only consumables are usable
-        if item.get("type") != "consumable":
+        # Consumables and gifts can be used (gifts are mainly for worker delivery flows).
+        if item.get("type") not in ("consumable", "gift"):
             return
 
-        renpy.notify("Used " + item.get("name", "Unknown"))
+        item_name = item.get("name", "Unknown")
+        if item.get("type") == "gift" and worker:
+            renpy.notify(f"Gave {item_name} to {worker.get('name', 'worker')}")
+        else:
+            renpy.notify("Used " + item_name)
 
         # Ren'Py may load JSON dicts as revertable dict-like objects, so be robust here.
         effect_raw = item.get("effect", None)
@@ -1780,109 +1813,7 @@ init python:
             renpy.log(f"PROCEDURAL: Error getting inherited traits from JSON workers: {e}, defaulting to Human")
             return ["Human"]
     
-    def assign_random_traits_with_limits(worker, target_min=3, target_max=5):
-        """
-        Assign random traits to a worker, excluding only_assigned traits.
-        If worker already has traits, adds additional ones to reach target_min-target_max total.
-        
-        Args:
-            worker: Worker dictionary
-            target_min: Minimum total traits (default 3)
-            target_max: Maximum total traits (default 5)
-        """
-        # Load traits from JSON
-        traits_json_path = os.path.join(renpy.config.gamedir, "data", "traits.json")
-        if not os.path.exists(traits_json_path):
-            renpy.log(f"Traits JSON not found at {traits_json_path}")
-            return worker
-        
-        with open(traits_json_path, 'r', encoding='utf-8') as f:
-            traits_data = json.load(f)
-
-        traits_get = getattr(traits_data, "get", None)
-        if callable(traits_get):
-            traits_list = traits_get("traits", [])
-        elif isinstance(traits_data, (list, tuple)):
-            traits_list = list(traits_data)
-        else:
-            renpy.log(f"Traits JSON unexpected type: {type(traits_data)}")
-            traits_list = []
-        
-        # Get existing traits (to avoid duplicates and check conflicts)
-        existing_traits = worker.get("traits", [])
-        if not isinstance(existing_traits, list):
-            existing_traits = []
-        
-        # Filter traits that are not marked as only_assigned, are not NSFW (if applicable), and not already present
-        possible_traits = [
-            t for t in traits_list
-            if not t.get("only_assigned", False) 
-            and (persistent.nsfw_enabled or not t.get("nsfw", False))
-            and t["name"] not in existing_traits
-        ]
-        random.shuffle(possible_traits)  # Shuffle to ensure randomness
-
-        selected_traits = list(existing_traits)  # Start with existing traits
-        attempts = 0
-        max_attempts = 200  # Prevent infinite loops
-
-        # Calculate how many more traits we need
-        traits_needed = max(0, target_min - len(existing_traits))
-        
-        # Ensure at least target_min traits total (existing + new)
-        while len(selected_traits) < target_min and attempts < max_attempts and possible_traits:
-            trait = possible_traits.pop()
-            trait_name = trait["name"]
-
-            # Check if the trait conflicts with any already selected traits
-            conflicts = False
-            for existing_trait_name in selected_traits:
-                existing_trait = next((t for t in traits_list if t["name"] == existing_trait_name), None)
-                if existing_trait and trait_name in existing_trait.get("conflicts", []):
-                    conflicts = True
-                    break
-                if trait_name in trait.get("conflicts", []):
-                    conflicts = True
-                    break
-            
-            if not conflicts:
-                add_trait_with_duration(worker, trait_name, 0)
-                selected_traits.append(trait_name)
-                renpy.log(f"Assigned trait '{trait_name}' to {worker.get('name', 'Unknown')} (total: {len(selected_traits)})")
-
-            attempts += 1
-
-        # If we couldn't assign enough traits due to conflicts, log a warning
-        if len(selected_traits) < target_min:
-            renpy.log(f"Warning: Only {len(selected_traits)} traits assigned to {worker.get('name', 'Unknown')} (target: {target_min}) due to conflicts or lack of available traits.")
-
-        # Try to add more traits up to target_max, if possible
-        while len(selected_traits) < target_max and possible_traits:
-            trait = possible_traits.pop()
-            trait_name = trait["name"]
-
-            # Check if the trait conflicts with any already selected traits
-            conflicts = False
-            for existing_trait_name in selected_traits:
-                existing_trait = next((t for t in traits_list if t["name"] == existing_trait_name), None)
-                if existing_trait and trait_name in existing_trait.get("conflicts", []):
-                    conflicts = True
-                    break
-                if trait_name in trait.get("conflicts", []):
-                    conflicts = True
-                    break
-
-            if not conflicts:
-                add_trait_with_duration(worker, trait_name, 0)
-                selected_traits.append(trait_name)
-                renpy.log(f"Assigned additional trait '{trait_name}' to {worker.get('name', 'Unknown')} (total: {len(selected_traits)})")
-
-        return worker
-
-    # Expose the extended trait assignment helper to avoid name collisions
-    store.assign_random_traits_with_limits = assign_random_traits_with_limits
-
-   
+    
 
     
     
@@ -2058,9 +1989,11 @@ init python:
         
         renpy.log(f"Final selection: {len(json_selected)} JSON + {len(procedural_selected)} procedural = {len(available_workers)} total")
         
-        # Apply defaults
+        # Apply defaults and ensure min traits (worker_loader's inline logic, same context as file load)
         for worker in available_workers:
             ensure_worker_defaults(worker)
+            if hasattr(store, "_ensure_worker_min_traits"):
+                store._ensure_worker_min_traits(worker)
             worker["market_worker"] = True
             worker["comfort_desired"] = 1  # Buy servants workers always require comfort level 1
         
@@ -2075,6 +2008,8 @@ init python:
 
     def _ensure_buy_workers_loaded():
         """Helper function to ensure workers are loaded when buy_servants_table screen is shown."""
+        if renpy.predicting():
+            return  # Skip during prediction - renpy.file() fails, would cache workers without traits
         try:
             load_buy_workers()
             update_displayed_workers()
@@ -2176,7 +2111,13 @@ init python:
         if not available_recruit:
             renpy.log("No JSON-defined workers available, generating procedural workers")
             available_recruit = [spawn_new_worker() for _ in range(6)]
-        
+
+        # Apply defaults and ensure min 3-5 traits (same as load_buy_workers)
+        for worker in available_recruit:
+            ensure_worker_defaults(worker)
+            if hasattr(store, "_ensure_worker_min_traits"):
+                store._ensure_worker_min_traits(worker)
+
         return available_recruit
 
     def is_worker_available(worker_name=None, random_worker=False, for_events=False):
@@ -2283,8 +2224,14 @@ init python:
             "female": ["Harpy", "Siren", "Banshee", "Succubus", "Dryad", "Lamia", "Hag"]
         }
         
-        # Randomly select gender
-        gender = random.choice(["male", "female"])
+        # Randomly select gender, respecting worker_gender_filter (Only Male / Only Female)
+        filter_mode = getattr(persistent, "worker_gender_filter", "both")
+        if filter_mode == "female":
+            gender = "female"
+        elif filter_mode == "male":
+            gender = "male"
+        else:
+            gender = random.choice(["male", "female"])
         name_pool = monster_names[gender]
         
         # Get all existing names to ensure uniqueness
@@ -2501,6 +2448,25 @@ init python:
         worker["is_servant"] = False
         worker["source"] = "recruited"
         worker["assigned_building"] = "Unassigned"  # New recruits are never pre-assigned
+        # Defensive cleanup: if a stale servant_jobs entry exists for this name in any building
+        # (e.g. from old saves / name collisions), remove it so the recruit stays unassigned.
+        try:
+            wname = worker.get("name")
+            if wname:
+                for _bname, _b in available_buildings.items():
+                    if not isinstance(_b, dict):
+                        continue
+                    jobs = _b.get("servant_jobs")
+                    if isinstance(jobs, dict) and wname in jobs:
+                        del jobs[wname]
+                    assigned = _b.get("assigned_servants")
+                    if isinstance(assigned, list):
+                        _b["assigned_servants"] = [
+                            aw for aw in assigned
+                            if not (isinstance(aw, dict) and aw.get("name") == wname)
+                        ]
+        except Exception as e:
+            renpy.log(f"recruit_worker stale assignment cleanup error: {e}")
         workers.append(worker)
         if worker in available_workers:
             available_workers.remove(worker)
@@ -2665,11 +2631,9 @@ init python:
             "assigned_building": "Unassigned"  # Never inherit template's building assignment
         })
         
-        # Assign additional random traits if needed (to reach 3 total max)
-        store.assign_random_traits_with_limits(new_worker, target_min=3, target_max=3)
-        
-        # Ensure all defaults are properly set
         ensure_worker_defaults(new_worker)
+        if hasattr(store, "_ensure_worker_min_traits"):
+            store._ensure_worker_min_traits(new_worker)
         
         return new_worker
 
@@ -2761,11 +2725,9 @@ init python:
             "assigned_building": "Unassigned"
         }
         
-        # Assign additional random traits if needed (to reach 3 total max)
-        store.assign_random_traits_with_limits(new_worker, target_min=3, target_max=3)
-        
-        # Ensure all defaults are properly set
         ensure_worker_defaults(new_worker)
+        if hasattr(store, "_ensure_worker_min_traits"):
+            store._ensure_worker_min_traits(new_worker)
         
         return new_worker
 
@@ -2793,9 +2755,8 @@ init python:
             worker["energy"] = worker.get("level", 1) * 5
             worker["comfort_level"] = worker.get("comfort_level", 1)
             worker["source"] = "bought"
-            worker["assigned_building"] = "Building 1"  # Bought workers go to Building 1, avoid template carryover
+            worker["assigned_building"] = "Unassigned"  # Bought workers start unassigned (same as recruits)
             workers.append(worker)
-            available_buildings["Building 1"]["servant_jobs"][worker["name"]] = "Unassigned"
             if worker in available_workers:
                 available_workers.remove(worker)
             if worker in displayed_workers:
@@ -2942,12 +2903,51 @@ init python:
         if "previous_job" in canonical:
             del canonical["previous_job"]
 
+    def _normalize_building_key_for_match(key):
+        """Normalize building key for matching (Building 1 <-> Building_1)."""
+        if not key:
+            return ""
+        s = str(key).strip()
+        if "_" in s:
+            parts = s.split("_")
+            if len(parts) >= 2 and parts[0].lower() == "building":
+                return f"Building {parts[1]}"
+        return s
+
+    def _alternate_building_key(key):
+        """Return the alternate format (Building 1 <-> Building_1) for lookup."""
+        if not key:
+            return None
+        s = str(key).strip()
+        if "_" in s:
+            parts = s.split("_")
+            if len(parts) >= 2 and parts[0].lower() == "building":
+                return f"Building {parts[1]}"
+        elif s.lower().startswith("building ") and " " in s:
+            num = s.split(" ", 1)[1].strip()
+            if num:
+                return f"Building_{num}"
+        return None
+
+    def _resolve_building_key(building_name):
+        """Return the key that exists in available_buildings (trying alternate if needed)."""
+        if not building_name:
+            return None
+        if building_name in available_buildings:
+            return building_name
+        alt = _alternate_building_key(building_name)
+        if alt and alt in available_buildings:
+            return alt
+        return None
+
     def sync_assigned_servants_for_building(building_name):
-        """Rebuild assigned_servants for a single building from servant_jobs and store.workers."""
+        """Rebuild assigned_servants for a single building from servant_jobs and store.workers.
+        Resolves Building 1 / Building_1 and syncs the correct building."""
         try:
-            if not building_name or building_name not in available_buildings:
+            resolved = _resolve_building_key(building_name)
+            if not resolved:
                 return
-            building = available_buildings.get(building_name)
+            building = available_buildings.get(resolved)
             if not isinstance(building, dict):
                 return
             name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
@@ -2962,19 +2962,24 @@ init python:
                 if worker_obj:
                     rebuilt.append(worker_obj)
                     seen.add(wname)
-                    if worker_obj.get("assigned_building", "Unassigned") != building_name:
-                        worker_obj["assigned_building"] = building_name
+                    if worker_obj.get("assigned_building", "Unassigned") != resolved:
+                        worker_obj["assigned_building"] = resolved
             
-            # Source 2: Workers with assigned_building matching this building
+            # Source 2: Workers with assigned_building matching this building (with key normalization)
+            _norm_bname = _normalize_building_key_for_match(resolved)
             for worker in store.workers:
                 if not isinstance(worker, dict):
                     continue
                 wname = worker.get("name")
                 if not wname or wname in seen:
                     continue
-                if worker.get("assigned_building") == building_name:
+                ab = worker.get("assigned_building")
+                ab_match = (ab == resolved) or (_norm_bname and _normalize_building_key_for_match(ab) == _norm_bname)
+                if ab_match:
                     rebuilt.append(worker)
                     seen.add(wname)
+                    if ab != resolved:
+                        worker["assigned_building"] = resolved  # Normalize to canonical key
                     # Ensure they have an entry in servant_jobs
                     if "servant_jobs" not in building:
                         building["servant_jobs"] = {}
@@ -2985,22 +2990,56 @@ init python:
         except Exception as e:
             renpy.log("sync_assigned_servants_for_building error: " + str(e))
 
+    def get_manager_display_servants(building_name, building_data=None):
+        """Return workers to display in Manager screen. Uses assigned_servants + resolve to store.workers, then get_building_servants as fallback. Resolves Building 1 / Building_1."""
+        try:
+            resolved = _resolve_building_key(building_name)
+            bd = building_data if (building_data and isinstance(building_data, dict)) else (available_buildings.get(resolved or building_name, {}))
+            name_to_w = {w.get("name"): w for w in (store.workers or []) if isinstance(w, dict) and w.get("name")}
+            raw = bd.get("assigned_servants") or []
+            result = []
+            seen = set()
+            for sw in raw:
+                if not isinstance(sw, dict) or not sw.get("name"):
+                    continue
+                wname = sw.get("name")
+                if wname in seen:
+                    continue
+                canon = name_to_w.get(wname, sw)
+                result.append(canon)
+                seen.add(wname)
+            if result:
+                return result
+            return get_building_servants(building_name) or []
+        except Exception as e:
+            renpy.log("get_manager_display_servants error: " + str(e))
+            return get_building_servants(building_name) or []
+
     def get_building_servants(building_name):
         """Return a deduped list of canonical workers for a building.
         Uses both servant_jobs AND worker assigned_building as sources for robustness.
-        This ensures workers show even if servant_jobs is incomplete (e.g., old saves)."""
+        Resolves Building 1 <-> Building_1 and merges servant_jobs from alternate key."""
         try:
-            if not building_name or building_name not in available_buildings:
+            resolved = _resolve_building_key(building_name)
+            if not resolved:
                 return []
-            building = available_buildings.get(building_name, {})
+            building = available_buildings.get(resolved, {})
             if not isinstance(building, dict):
                 return []
             name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
             servants = []
             seen = set()
-            
+            # Merge servant_jobs from alternate key (Building 1 <-> Building_1) when both exist
+            jobs = dict(building.get("servant_jobs", {}) or {})
+            alt_key = _alternate_building_key(building_name) if building_name != resolved else _alternate_building_key(resolved)
+            if alt_key and alt_key in available_buildings and alt_key != resolved:
+                alt_b = available_buildings.get(alt_key, {})
+                if isinstance(alt_b, dict):
+                    for wname, jid in (alt_b.get("servant_jobs") or {}).items():
+                        if wname and wname not in jobs and jid and (not isinstance(jid, str) or jid.strip()):
+                            jobs[wname] = jid
+                            building.setdefault("servant_jobs", {})[wname] = jid
             # Source 1: servant_jobs dictionary (primary source)
-            jobs = building.get("servant_jobs", {}) or {}
             for wname, job_id in jobs.items():
                 if not wname or wname in seen:
                     continue
@@ -3013,18 +3052,19 @@ init python:
                     servants.append(worker_obj)
                     seen.add(wname)
             
-            # Source 2: workers with assigned_building matching this building (fallback)
-            # This ensures workers show even if servant_jobs is incomplete
+            # Source 2: workers with assigned_building matching this building (fallback, with key normalization)
+            _norm_bname = _normalize_building_key_for_match(building_name)
             for worker in store.workers:
                 if not isinstance(worker, dict):
                     continue
                 wname = worker.get("name")
                 if not wname or wname in seen:
                     continue
-                if worker.get("assigned_building") == building_name:
+                ab = worker.get("assigned_building")
+                ab_match = (ab == building_name) or (_norm_bname and _normalize_building_key_for_match(ab) == _norm_bname)
+                if ab_match:
                     servants.append(worker)
                     seen.add(wname)
-                    # Also ensure they have an entry in servant_jobs for consistency
                     if wname not in jobs:
                         building.setdefault("servant_jobs", {})[wname] = "unassigned"
             
@@ -3033,14 +3073,50 @@ init python:
             renpy.log("get_building_servants error: " + str(e))
             return []
 
+    def _consolidate_duplicate_building_keys():
+        """Merge Building 1 / Building_1 duplicates. Keep canonical key from owned_buildings, merge the other."""
+        try:
+            owned = getattr(store, "owned_buildings", []) or []
+            to_merge = []
+            for bname in list(available_buildings.keys()):
+                alt = _alternate_building_key(bname)
+                if not alt or alt == bname or alt not in available_buildings:
+                    continue
+                canonical = bname if bname in owned else (alt if alt in owned else bname)
+                other = alt if canonical == bname else bname
+                if canonical not in available_buildings or other not in available_buildings:
+                    continue
+                to_merge.append((canonical, other))
+            for canonical, other in to_merge:
+                cb, ob = available_buildings[canonical], available_buildings[other]
+                if not isinstance(cb, dict) or not isinstance(ob, dict):
+                    continue
+                for wname, jid in (ob.get("servant_jobs") or {}).items():
+                    if wname and (wname not in cb.get("servant_jobs", {})):
+                        cb.setdefault("servant_jobs", {})[wname] = jid
+                for w in ob.get("assigned_servants") or []:
+                    if isinstance(w, dict) and w.get("name"):
+                        cb_list = cb.get("assigned_servants") or []
+                        if not any(x.get("name") == w.get("name") for x in cb_list if isinstance(x, dict)):
+                            cb.setdefault("assigned_servants", []).append(w)
+                for worker in store.workers:
+                    if isinstance(worker, dict) and worker.get("assigned_building") == other:
+                        worker["assigned_building"] = canonical
+                if other in owned:
+                    owned.remove(other)
+                del available_buildings[other]
+                renpy.log(f"_consolidate_duplicate_building_keys: merged {other} into {canonical}")
+        except Exception as e:
+            renpy.log(f"_consolidate_duplicate_building_keys error: {e}")
+
     def validate_and_sync_buildings(include_worker_refs=True):
         """Ensure all buildings in owned_buildings exist in available_buildings.
         Also checks workers for building references and creates missing buildings.
-        This fixes corrupted saves where buildings are missing from available_buildings."""
+        Consolidates Building 1 / Building_1 duplicates into one canonical key."""
         import re
         try:
             renpy.log("validate_and_sync_buildings: STARTING")
-            
+            _consolidate_duplicate_building_keys()
             # Collect all building names that should exist
             buildings_to_check = set()
             
@@ -3070,75 +3146,68 @@ init python:
             renpy.log(f"validate_and_sync_buildings: buildings_to_check = {buildings_to_check}")
             renpy.log(f"validate_and_sync_buildings: available_buildings keys = {list(available_buildings.keys())}")
             
-            # 3. Create missing buildings
+            # 3. Create missing buildings (skip if alternate key exists - normalize workers instead)
             created_count = 0
-            for building_name in buildings_to_check:
-                if building_name not in available_buildings:
-                    renpy.log(f"validate_and_sync_buildings: WARNING - {building_name} referenced but not in available_buildings, recreating...")
-                    # Recreate the building with default values
-                    # Try to determine if it's a special building (like Castle) or a regular building
-                    if "Castle" in building_name or building_name.startswith("Governor"):
-                        # Special building (Castle)
-                        available_buildings[building_name] = {
-                            "price": 0,
-                            "reputation": 0,
-                            "base_level": 5,
-                            "type": "governor_castle",
-                            "assigned_servants": [],
-                            "servant_jobs": {},
-                            "max_workers": 10,
-                            "costs": 0,
-                            "owned": True,
-                            "skill": 50,
-                            "skill_bonus": 0
-                        }
-                    else:
-                        # Regular building - use default values
-                        # Try to extract building number to estimate price
-                        match = re.search(r'Building (\d+)', building_name)
-                        if match:
-                            building_num = int(match.group(1))
-                            # Default price increases with building number
-                            default_price = 10000 + (building_num - 1) * 5000
-                        else:
-                            default_price = 10000
-                        
-                        available_buildings[building_name] = {
-                            "price": default_price,
-                            "reputation": 0,
-                            "base_level": 1,
-                            "assigned_servants": [],
-                            "servant_jobs": {},
-                            "type": None,
-                            "max_workers": {},
-                            "costs": 0,
-                            "owned": True,
-                            "skill": 10,
-                            "skill_bonus": 0,
-                            "event_limit": 0
-                        }
-                    
-                    # Ensure custom_names entry exists
-                    if not hasattr(store, 'custom_names'):
-                        store.custom_names = {}
-                    if building_name not in store.custom_names:
-                        store.custom_names[building_name] = building_name
-                    
-                    # If building is referenced by workers but not in owned_buildings, add it
-                    if hasattr(store, 'owned_buildings'):
-                        if building_name not in store.owned_buildings:
-                            store.owned_buildings.append(building_name)
-                            renpy.log(f"validate_and_sync_buildings: Added {building_name} to owned_buildings")
-                        else:
-                            renpy.log(f"validate_and_sync_buildings: {building_name} already in owned_buildings")
-                    else:
-                        store.owned_buildings = [building_name]
-                        renpy.log(f"validate_and_sync_buildings: Created owned_buildings list with {building_name}")
-                    
-                    renpy.log(f"validate_and_sync_buildings: Recreated {building_name} in available_buildings")
-                    created_count += 1
+            for building_name in list(buildings_to_check):
+                if building_name in available_buildings:
+                    continue
+                alt = _alternate_building_key(building_name)
+                if alt and alt in available_buildings:
+                    for worker in store.workers:
+                        if isinstance(worker, dict) and worker.get("assigned_building") == building_name:
+                            worker["assigned_building"] = alt
+                    renpy.log(f"validate_and_sync_buildings: Normalized {building_name} -> {alt} (alternate exists)")
+                    continue
+                renpy.log(f"validate_and_sync_buildings: WARNING - {building_name} referenced but not in available_buildings, recreating...")
+                # Recreate the building with default values
+                if "Castle" in building_name or building_name.startswith("Governor"):
+                    available_buildings[building_name] = {
+                        "price": 0,
+                        "reputation": 0,
+                        "base_level": 5,
+                        "type": "governor_castle",
+                        "assigned_servants": [],
+                        "servant_jobs": {},
+                        "max_workers": 10,
+                        "costs": 0,
+                        "owned": True,
+                        "skill": 50,
+                        "skill_bonus": 0
+                    }
                 else:
-                    renpy.log(f"validate_and_sync_buildings: {building_name} already exists in available_buildings")
+                    match = re.search(r'Building (\d+)', building_name)
+                    if match:
+                        building_num = int(match.group(1))
+                        default_price = 10000 + (building_num - 1) * 5000
+                    else:
+                        default_price = 10000
+                    available_buildings[building_name] = {
+                        "price": default_price,
+                        "reputation": 0,
+                        "base_level": 1,
+                        "assigned_servants": [],
+                        "servant_jobs": {},
+                        "type": None,
+                        "max_workers": {},
+                        "costs": 0,
+                        "owned": True,
+                        "skill": 10,
+                        "skill_bonus": 0,
+                        "event_limit": 0
+                    }
+                if not hasattr(store, 'custom_names'):
+                    store.custom_names = {}
+                if building_name not in store.custom_names:
+                    store.custom_names[building_name] = building_name
+                if hasattr(store, 'owned_buildings'):
+                    if building_name not in store.owned_buildings:
+                        store.owned_buildings.append(building_name)
+                        renpy.log(f"validate_and_sync_buildings: Added {building_name} to owned_buildings")
+                else:
+                    store.owned_buildings = [building_name]
+                    renpy.log(f"validate_and_sync_buildings: Created owned_buildings list with {building_name}")
+                renpy.log(f"validate_and_sync_buildings: Recreated {building_name} in available_buildings")
+                created_count += 1
             
             renpy.log(f"validate_and_sync_buildings: COMPLETED - created {created_count} buildings")
             renpy.log(f"validate_and_sync_buildings: Final owned_buildings = {store.owned_buildings if hasattr(store, 'owned_buildings') else 'N/A'}")
@@ -3172,22 +3241,29 @@ init python:
                 assigned_building = worker.get("assigned_building", "Unassigned")
                 if assigned_building == "Unassigned":
                     continue
-                if assigned_building not in available_buildings:
+                resolved_ab = _resolve_building_key(assigned_building)
+                if not resolved_ab:
                     worker["assigned_building"] = "Unassigned"
                     continue
+                if assigned_building != resolved_ab:
+                    worker["assigned_building"] = resolved_ab
                 # Deduplicate by name per building
-                if assigned_building not in seen_per_building:
-                    seen_per_building[assigned_building] = set()
-                if wname in seen_per_building[assigned_building]:
+                if resolved_ab not in seen_per_building:
+                    seen_per_building[resolved_ab] = set()
+                if wname in seen_per_building[resolved_ab]:
                     continue  # Skip duplicate
-                seen_per_building[assigned_building].add(wname)
-                building = available_buildings[assigned_building]
+                seen_per_building[resolved_ab].add(wname)
+                building = available_buildings[resolved_ab]
                 if isinstance(building, dict):
                     building["assigned_servants"].append(worker)
             
             renpy.log("sync_building_assignments_from_workers: done")
         except Exception as e:
             renpy.log(f"sync_building_assignments_from_workers error: {e}")
+
+    def rebuild_assigned_servants():
+        """Rebuild assigned_servants from workers. Alias for sync_building_assignments_from_workers."""
+        sync_building_assignments_from_workers()
     
     def ensure_custom_name_for_building(building_name):
         """Ensure custom_names has a default entry for building_name."""
@@ -4008,10 +4084,22 @@ init python:
 
                 # Determine outcome and worker
                 if roll <= total_skill:
-                    # Success case: building skill event, no worker involved
-                    applied_values = apply_effects(effect.get("success", {}), worker=None, building=selected_building)
-                    # For building skill events, use fixed placeholders
-                    event_worker_name = "Unknown"
+                    # Success case: building skill event
+                    success_effects = effect.get("success", {})
+                    success_worker = None
+                    if "add_trait" in success_effects:
+                        # Resolve worker for trait application (same logic as failure)
+                        if assigned_servants:
+                            success_worker = random.choice(assigned_servants)
+                        else:
+                            for w in store.workers:
+                                if w.get("assigned_building") == selected_building_name:
+                                    success_worker = w
+                                    break
+                            if success_worker is None and store.workers:
+                                success_worker = random.choice(store.workers)
+                    applied_values = apply_effects(success_effects, worker=success_worker, building=selected_building)
+                    event_worker_name = success_worker["name"] if success_worker else "Unknown"
                     acting_worker_name = "Building Team"
                     outcome_status = "success"
                 else:
@@ -4079,6 +4167,7 @@ init python:
                 
                 # --->>> NEW: Apply dynamic formatting here <<<---
                 outcome_message = format_dynamic_message(outcome_message, applied_values)
+                outcome_message = outcome_message + build_changes_summary(applied_values)
                 
                 # Split long messages into multiple narrator bubbles to avoid overflow
                 try:
@@ -4130,7 +4219,7 @@ init python:
                 # If no worker selection is intended for this event, skip skill check.
                 if worker_selection_mode == "none":
                     # Apply base effects directly
-                    applied_values = apply_effects(effect)
+                    applied_values = apply_effects(effect, worker=acting_worker)
                     # Use the primary message if available, otherwise a generic one
                     outcome_message = choice.get("message", choice.get("message_success", "The action is taken."))
                     # Replace worker placeholders (safe fallbacks for non-worker events)
@@ -4142,6 +4231,7 @@ init python:
                     outcome_message = outcome_message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
                     # Apply dynamic message formatting
                     outcome_message = format_dynamic_message(outcome_message, applied_values)
+                    outcome_message = outcome_message + build_changes_summary(applied_values)
                     # Ensure description exists before replacement
                     if hasattr(store, 'current_event_description') and store.current_event_description:
                         store.current_event_description = store.current_event_description.replace("[event_worker]", event_worker_name).replace("[acting_worker]", acting_worker_name)
@@ -4177,12 +4267,13 @@ init python:
                         # For choices without conditions in a "choose" worker event, skip worker validation
                         renpy.log(f"Worker selection mode is 'choose', but this specific choice has no condition, so no worker needed")
                         # Handle the choice without a worker
-                        applied_values = apply_effects(effect)
+                        applied_values = apply_effects(effect, worker=acting_worker)
                         # Get the message and apply replacements
                         message = choice.get("message", "The event concludes.")
                         message = message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
                         # Apply dynamic message formatting
                         message = format_dynamic_message(message, applied_values)
+                        message = message + build_changes_summary(applied_values)
                         # Record event occurrence
                         event_id = event.get("id")
                         if event_id: # Check if event_id exists
@@ -4213,13 +4304,30 @@ init python:
                     store.current_worker = selected_worker 
                 # ----------------------------------
 
-                # Check required_trait if specified
+                # Trait requirements at choice level.
                 required_trait = choice.get("required_trait")
-                if required_trait and selected_worker:
-                    worker_traits = selected_worker.get("traits", [])
-                    if required_trait not in worker_traits:
-                        renpy.log(f"Worker {selected_worker['name']} missing required trait '{required_trait}'")
-                        return {"message": f"This task requires someone with the '{required_trait}' trait. {selected_worker['name']} does not have this trait.", "outcome": "failure"}
+                required_traits = choice.get("required_traits", []) or []
+                excluded_traits = choice.get("excluded_traits", []) or []
+                if required_trait:
+                    required_traits.append(required_trait)
+                if selected_worker and (required_traits or excluded_traits):
+                    worker_traits = set(selected_worker.get("traits", []) or [])
+                    missing_required = [t for t in required_traits if t not in worker_traits]
+                    has_excluded = [t for t in excluded_traits if t in worker_traits]
+                    if missing_required:
+                        missing_str = ", ".join(missing_required)
+                        renpy.log(f"Worker {selected_worker['name']} missing required traits: {missing_str}")
+                        return {
+                            "message": f"This task requires trait(s): {missing_str}. {selected_worker['name']} does not meet the requirement.",
+                            "outcome": "failure",
+                        }
+                    if has_excluded:
+                        excluded_str = ", ".join(has_excluded)
+                        renpy.log(f"Worker {selected_worker['name']} has excluded traits: {excluded_str}")
+                        return {
+                            "message": f"This task cannot be done by workers with trait(s): {excluded_str}.",
+                            "outcome": "failure",
+                        }
 
                 # Use skill name directly - no conversion needed
                 skill_name = choice["condition"]
@@ -4286,6 +4394,7 @@ init python:
                     
                     # Apply dynamic message formatting
                     outcome_message = format_dynamic_message(outcome_message, applied_values)
+                    outcome_message = outcome_message + build_changes_summary(applied_values)
 
                 event_id = event.get("id")
                 if event_id:
@@ -4309,11 +4418,11 @@ init python:
                 if roll <= effective_success_chance:
                     outcome_status = "success"
                     message = choice.get("message_success", "Fortune smiles upon you.")
-                    applied_values = apply_effects(effect.get("success", {}))
+                    applied_values = apply_effects(effect.get("success", {}), worker=acting_worker)
                 else:
                     outcome_status = "failure"
                     message = choice.get("message_failure", "Fortune turns her back.")
-                    applied_values = apply_effects(effect.get("failure", {}))
+                    applied_values = apply_effects(effect.get("failure", {}), worker=acting_worker)
                 
                 # Replace worker name if present
                 if acting_worker and hasattr(acting_worker, 'get'):
@@ -4326,7 +4435,7 @@ init python:
                     renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} = {outcome_status}")
             else:
                 # Simple choice without probability
-                applied_values = apply_effects(effect)
+                applied_values = apply_effects(effect, worker=acting_worker)
                 message = choice.get("message", "The event concludes.")
                 outcome_status = "success"
             
@@ -4334,6 +4443,7 @@ init python:
             
             # Apply dynamic message formatting
             message = format_dynamic_message(message, applied_values)
+            message = message + build_changes_summary(applied_values)
             
             # Record event occurrence
             event_id = event.get("id")
@@ -4404,7 +4514,8 @@ init python:
                         handle_trait_expiration(worker, trait_def)
                         if trait_def.get("duration", 0) > 0:
                             if trait_name in worker.get("traits", []):
-                                worker["traits"].remove(trait_name)
+                                # Use centralized removal to keep trait modifiers in sync
+                                remove_trait(worker, trait_name)
                             if trait_name in worker.get("trait_durations", {}):
                                 del worker["trait_durations"][trait_name]
 
@@ -4470,7 +4581,8 @@ init python:
         if trait_def.get("duration", 0) > 0:
             trait_name = trait_def["name"]
             if trait_name in worker.get("traits", []):
-                worker["traits"].remove(trait_name)
+                # Use centralized removal to keep trait modifiers in sync
+                remove_trait(worker, trait_name)
             if trait_name in worker.get("trait_durations", {}):
                 del worker["trait_durations"][trait_name]
 
@@ -4588,99 +4700,132 @@ init python:
         if worker:
             # Adjust energy
             if "servant_energy" in effect_dict:
-                worker["energy"] = max(0, worker["energy"] + effect_dict["servant_energy"])
+                energy_change = effect_dict["servant_energy"]
+                worker["energy"] = max(0, worker["energy"] + energy_change)
+                applied_values["actual_energy"] = energy_change
                 # Only show notification if energy actually changed
-                if effect_dict["servant_energy"] != 0:
-                    renpy.notify(f"{worker['name']}'s energy changed by {effect_dict['servant_energy']}")
+                if energy_change != 0:
+                    renpy.notify(f"{worker['name']}'s energy changed by {energy_change}")
 
-            # Adjust health
-            if "servant_health" in effect_dict:
-                worker["health"] = max(0, worker["health"] + effect_dict["servant_health"])
-                # Only show notification if health actually changed
-                if effect_dict["servant_health"] != 0:
-                    renpy.notify(f"{worker['name']}'s health changed by {effect_dict['servant_health']}")
-
-            # Add traits with duration
-            if "add_trait" in effect_dict:
-                trait_data = effect_dict["add_trait"]
-
-                def apply_trait_entry(trait_entry):
-                    # Robust type checking for Ren'Py JSON-loaded data
-                    is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
-                    is_string = isinstance(trait_entry, str) and not is_dict
-                    
-                    if is_dict:
-                        try:
-                            trait_name = trait_entry.get("name") if hasattr(trait_entry, 'get') else None
-                            duration = trait_entry.get("duration", 0) if hasattr(trait_entry, 'get') else 0
-                            target = trait_entry.get("target", None) if hasattr(trait_entry, 'get') else None
-                            if not trait_name:
-                                renpy.log(f"ERROR: add_trait dict missing 'name' key: {trait_entry}")
-                                return
-                        except (AttributeError, TypeError) as e:
-                            renpy.log(f"ERROR: add_trait dict access failed: {e}, type: {type(trait_entry)}, value: {trait_entry}")
-                            return
-                    elif is_string:
-                        trait_name = trait_entry
-                        duration = 0
-                        target = None
-                    else:
-                        renpy.log(f"ERROR: add_trait entry has invalid type: {type(trait_entry)}, value: {trait_entry}")
-                        return
-
-                    # Handle different target types
-                    target_worker = worker
-
-                    if target == "random_worker":
-                        # Choose a random worker from all available
-                        if store.workers:
-                            target_worker = random.choice(store.workers)
-                            renpy.log(f"Selected random worker {target_worker['name']} for trait application")
-
-                    elif target == "random_worker_female":
-                        # Choose a random female worker
-                        female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
-                        if female_workers:
-                            target_worker = random.choice(female_workers)
-                            renpy.log(f"Selected random female worker {target_worker['name']} for trait application")
-                        else:
-                            renpy.log("No female workers available for trait application - skipping")
-                            target_worker = None
-
-                    elif target == "random_worker_male":
-                        # Choose a random male worker
-                        male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
-                        if male_workers:
-                            target_worker = random.choice(male_workers)
-                            renpy.log(f"Selected random male worker {target_worker['name']} for trait application")
-                        else:
-                            renpy.log("No male workers available for trait application - skipping")
-                            target_worker = None
-
-                    if trait_name and target_worker:
-                        add_trait_with_duration(target_worker, trait_name, duration)
-                    elif trait_name:
-                        renpy.log(f"Could not add trait '{trait_name}' - no suitable worker found")
-                    else:
-                        renpy.log("Error: 'add_trait' effect is missing 'name' key.")
-
-                # Robust type checking for Ren'Py JSON-loaded data
-                is_list = isinstance(trait_data, list) or (hasattr(trait_data, '__iter__') and not isinstance(trait_data, str) and not isinstance(trait_data, dict))
-                is_dict = isinstance(trait_data, dict) or (hasattr(trait_data, 'get') and callable(getattr(trait_data, 'get', None)) and not isinstance(trait_data, str))
-                is_string = isinstance(trait_data, str) and not is_dict
-                
+            # Adjust health (support both "health" and "servant_health" for consistency with recruitment/daily stories)
+            health_change = effect_dict.get("servant_health") if "servant_health" in effect_dict else effect_dict.get("health")
+            if health_change is not None:
                 try:
-                    if is_list:
-                        for trait_entry in trait_data:
-                            apply_trait_entry(trait_entry)
-                    elif is_dict or is_string:
-                        apply_trait_entry(trait_data)
+                    health_change = int(health_change)
+                    worker["health"] = max(0, worker["health"] + health_change)
+                    applied_values["actual_health"] = health_change
+                    # Only show notification if health actually changed
+                    if health_change != 0:
+                        renpy.notify(f"{worker['name']}'s health changed by {health_change}")
+                except (TypeError, ValueError) as e:
+                    renpy.log(f"apply_effects health error: {e}")
+
+            # Apply skill modifiers (e.g. Charm +3 from event choice)
+            if "skill_modifiers" in effect_dict:
+                skill_data = effect_dict["skill_modifiers"]
+                if isinstance(skill_data, dict) or (hasattr(skill_data, "items") and callable(getattr(skill_data, "items", None))):
+                    for skill_name, delta in skill_data.items():
+                        try:
+                            delta_int = int(delta)
+                            modify_base_skill(worker, skill_name, delta_int)
+                            if delta_int != 0:
+                                renpy.notify(f"{worker.get('name', 'Worker')}'s {skill_name} changed by {delta_int:+d}")
+                        except Exception as e:
+                            renpy.log(f"apply_effects skill_modifiers error for {skill_name}: {e}")
+
+        # Add traits with duration (outside if worker: so traits with target random_worker* work when worker=None)
+        if "add_trait" in effect_dict:
+            trait_data = effect_dict["add_trait"]
+
+            def apply_trait_entry(trait_entry):
+                # Robust type checking for Ren'Py JSON-loaded data
+                is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
+                is_string = isinstance(trait_entry, str) and not is_dict
+                
+                if is_dict:
+                    try:
+                        trait_name = trait_entry.get("name") if hasattr(trait_entry, 'get') else None
+                        duration = trait_entry.get("duration", 0) if hasattr(trait_entry, 'get') else 0
+                        target = trait_entry.get("target", None) if hasattr(trait_entry, 'get') else None
+                        if not trait_name:
+                            renpy.log(f"ERROR: add_trait dict missing 'name' key: {trait_entry}")
+                            return
+                    except (AttributeError, TypeError) as e:
+                        renpy.log(f"ERROR: add_trait dict access failed: {e}, type: {type(trait_entry)}, value: {trait_entry}")
+                        return
+                elif is_string:
+                    trait_name = trait_entry
+                    duration = 0
+                    target = None
+                else:
+                    renpy.log(f"ERROR: add_trait entry has invalid type: {type(trait_entry)}, value: {trait_entry}")
+                    return
+
+                # Handle different target types (worker param = event worker; target overrides)
+                target_worker = worker
+
+                if isinstance(target, str) and target not in ("acting_worker", "event_worker", "random_worker", "random_worker_female", "random_worker_male"):
+                    # Target by worker name (e.g. "Aspen")
+                    for w in store.workers:
+                        if w.get("name") == target:
+                            target_worker = w
+                            renpy.log(f"Resolved trait target by name: {target}")
+                            break
+                elif target == "random_worker":
+                    # Choose a random worker from all available
+                    if store.workers:
+                        target_worker = random.choice(store.workers)
+                        renpy.log(f"Selected random worker {target_worker['name']} for trait application")
+
+                elif target == "random_worker_female":
+                    # Choose a random female worker
+                    female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
+                    if female_workers:
+                        target_worker = random.choice(female_workers)
+                        renpy.log(f"Selected random female worker {target_worker['name']} for trait application")
                     else:
-                        renpy.log(f"ERROR: add_trait has invalid type: {type(trait_data)}, value: {trait_data}")
-                except Exception as e:
-                    renpy.log(f"ERROR processing add_trait: {e}, type: {type(trait_data)}, value: {trait_data}")
-                    import traceback
-                    renpy.log(traceback.format_exc())
+                        renpy.log("No female workers available for trait application - skipping")
+                        target_worker = None
+
+                elif target == "random_worker_male":
+                    # Choose a random male worker
+                    male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
+                    if male_workers:
+                        target_worker = random.choice(male_workers)
+                        renpy.log(f"Selected random male worker {target_worker['name']} for trait application")
+                    else:
+                        renpy.log("No male workers available for trait application - skipping")
+                        target_worker = None
+
+                if trait_name and target_worker:
+                    target_worker = _resolve_worker_for_automation(target_worker)
+                    if target_worker:
+                        add_trait_with_duration(target_worker, trait_name, duration)
+                        renpy.log(f"Applied trait '{trait_name}' to {target_worker.get('name', '?')}")
+                elif trait_name:
+                    renpy.log(f"Could not add trait '{trait_name}' - no suitable worker found")
+                else:
+                    renpy.log("Error: 'add_trait' effect is missing 'name' key.")
+
+            # Robust type checking for Ren'Py JSON-loaded data.
+            # Check dict-like/string FIRST: Ren'Py dict-like objects are iterable (keys), so they'd wrongly be treated as lists.
+            has_get = hasattr(trait_data, 'get') and callable(getattr(trait_data, 'get', None))
+            is_dict_like = isinstance(trait_data, dict) or (has_get and not isinstance(trait_data, str))
+            is_string = isinstance(trait_data, str)
+            is_list = isinstance(trait_data, list)
+            
+            try:
+                if is_dict_like or is_string:
+                    apply_trait_entry(trait_data)
+                elif is_list:
+                    for trait_entry in trait_data:
+                        apply_trait_entry(trait_entry)
+                else:
+                    renpy.log(f"ERROR: add_trait has invalid type: {type(trait_data)}, value: {trait_data}")
+            except Exception as e:
+                renpy.log(f"ERROR processing add_trait: {e}, type: {type(trait_data)}, value: {trait_data}")
+                import traceback
+                renpy.log(traceback.format_exc())
 
         # Handle event flags - add, remove, or modify flags used for event chains and conditions
         if "event_flags" in effect_dict:
@@ -4851,17 +4996,19 @@ init python:
             trait_data = effect_dict["add_trait"]
             
             def apply_trait_entry(trait_entry, target_worker_override=None):
-                """Helper function to apply a single trait entry."""
+                """Helper function to apply a single trait entry. Resolves target when worker is None (e.g. building_skill events)."""
                 # Robust type checking for Ren'Py JSON-loaded data
                 # Check if it's a dict-like object (has 'get' method)
                 is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
                 # Check if it's a string (but not a dict that happens to have get)
                 is_string = isinstance(trait_entry, str) and not is_dict
                 
+                target = None
                 if is_dict:
                     try:
                         trait_name = trait_entry.get("name") if hasattr(trait_entry, 'get') else None
                         duration = trait_entry.get("duration", 0) if hasattr(trait_entry, 'get') else 0
+                        target = trait_entry.get("target", None) if hasattr(trait_entry, 'get') else None
                         if not trait_name:
                             renpy.log(f"ERROR: add_trait dict missing 'name' key: {trait_entry}")
                             return
@@ -4877,15 +5024,48 @@ init python:
                     return
                 
                 target_worker = target_worker_override if target_worker_override is not None else worker
+                # When worker is None (e.g. building_skill events), resolve target to select a worker
+                if target_worker is None and target and store.workers:
+                    if target == "random_worker":
+                        target_worker = random.choice(store.workers)
+                        renpy.log(f"Selected random worker {target_worker['name']} for trait application (no worker context)")
+                    elif target == "random_worker_female":
+                        female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
+                        if female_workers:
+                            target_worker = random.choice(female_workers)
+                            renpy.log(f"Selected random female worker {target_worker['name']} for trait application (no worker context)")
+                        else:
+                            renpy.log("No female workers available for trait application - skipping")
+                    elif target == "random_worker_male":
+                        male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
+                        if male_workers:
+                            target_worker = random.choice(male_workers)
+                            renpy.log(f"Selected random male worker {target_worker['name']} for trait application (no worker context)")
+                        else:
+                            renpy.log("No male workers available for trait application - skipping")
+                    elif isinstance(target, str) and target not in ("acting_worker", "event_worker"):
+                        # Target by worker name (e.g. "Aspen")
+                        for w in store.workers:
+                            if w.get("name") == target:
+                                target_worker = w
+                                renpy.log(f"Resolved trait target by name: {target}")
+                                break
                 
                 if trait_name and target_worker:
-                    trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
-                    if trait_def:
-                        if duration == 0:
-                            duration = trait_def.get("duration", 0)
-                        add_trait_with_duration(target_worker, trait_name, duration)
-                    else:
-                        renpy.log(f"Trait '{trait_name}' not found in traits_list")
+                    # Resolve to canonical worker in store.workers so trait changes persist (fixes copy-from-screen)
+                    target_worker = _resolve_worker_for_automation(target_worker)
+                    if target_worker:
+                        cache = getattr(store, "_trait_def_cache", {}) or {}
+                        trait_def = cache.get(trait_name) if isinstance(cache, dict) else None
+                        if not trait_def and hasattr(store, "get_trait_definition"):
+                            trait_def = store.get_trait_definition(trait_name)
+                        if trait_def:
+                            if duration == 0:
+                                duration = trait_def.get("duration", 0)
+                            add_trait_with_duration(target_worker, trait_name, duration)
+                            renpy.log(f"Applied trait '{trait_name}' to {target_worker.get('name', '?')}")
+                        else:
+                            renpy.log(f"Trait '{trait_name}' not found in traits_list")
                 elif trait_name:
                     renpy.log(f"Cannot add trait '{trait_name}' - worker is None")
             
@@ -4921,31 +5101,32 @@ init python:
     def format_dynamic_message(message, applied_values):
         """
         Replace dynamic placeholders in event messages with actual values.
+        Change values (money, reputation, health, energy) are NOT injected into the narrative
+        since they appear in the "Changes" summary; their placeholders are removed instead.
         
         Available placeholders:
-        {actual_money} - Money amount after multipliers (e.g., "+750" or "-200")
-        {base_money} - Original money amount before multipliers
-        {actual_reputation} - Reputation change after multipliers
-        {base_reputation} - Original reputation change before multipliers
-        {money_multiplier} - Building multiplier for money (e.g., "1.5")
-        {reputation_multiplier} - Building multiplier for reputation
+        {actual_money}, {actual_reputation}, {actual_health}, {actual_energy} - removed (shown in Changes)
+        {base_money}, {base_reputation} - for internal use / special cases
+        {money_multiplier}, {reputation_multiplier} - Building multiplier display
         """
-        # Always process placeholders, even if applied_values is empty
-        # This prevents Ren'Py from treating them as unknown text tags
-            
-        # Format money with + or - sign
-        if "actual_money" in applied_values:
-            money = applied_values["actual_money"]
-            if money > 0:
-                message = message.replace("{actual_money}", f"+${money}")
-            elif money < 0:
-                message = message.replace("{actual_money}", f"-${abs(money)}")
-            else:
-                message = message.replace("{actual_money}", "$0")
-        else:
-            # Replace with placeholder text if no money effect was applied
-            message = message.replace("{actual_money}", "$0")
-                
+        # Change placeholders: remove from narrative (they appear in Changes summary)
+        import re
+        for ph in ["{actual_money}", "{actual_reputation}", "{actual_health}", "{actual_energy}"]:
+            message = message.replace(ph, "")
+        # Clean up orphaned parentheses and commas left after removal
+        message = re.sub(r"\s*\(\s*\)\s*", " ", message)
+        message = re.sub(r"\s*\(\s*,\s*\)\s*", " ", message)
+        message = re.sub(r"\s*\(\s*,\s*reputation\s*\)\s*", " ", message, flags=re.IGNORECASE)
+        message = re.sub(r"\s*\(\s*reputation\s*\)\s*", " ", message, flags=re.IGNORECASE)
+        message = re.sub(r",\s*,", ",", message)
+        message = re.sub(r"\s*,\s*\.", ".", message)
+        message = re.sub(r"\(\s*,", "(", message)
+        message = re.sub(r",\s*\)", ")", message)
+        message = re.sub(r"\(\s*\)", "", message)
+        message = re.sub(r"\s+\.", ".", message)  # " ." -> "."
+        message = re.sub(r"  +", " ", message).strip()
+
+        # Format base_money, base_reputation (less common in narrative)
         if "base_money" in applied_values:
             base_money = applied_values["base_money"]
             if base_money > 0:
@@ -4955,21 +5136,7 @@ init python:
             else:
                 message = message.replace("{base_money}", "$0")
         else:
-            # Replace with placeholder text if no base money info available
             message = message.replace("{base_money}", "$0")
-        
-        # Format reputation with + or - sign
-        if "actual_reputation" in applied_values:
-            rep = applied_values["actual_reputation"]
-            if rep > 0:
-                message = message.replace("{actual_reputation}", f"+{rep}")
-            elif rep < 0:
-                message = message.replace("{actual_reputation}", f"{rep}")
-            else:
-                message = message.replace("{actual_reputation}", "0")
-        else:
-            # Replace with placeholder text if no reputation effect was applied
-            message = message.replace("{actual_reputation}", "0")
                 
         if "base_reputation" in applied_values:
             base_rep = applied_values["base_reputation"]
@@ -4980,7 +5147,6 @@ init python:
             else:
                 message = message.replace("{base_reputation}", "0")
         else:
-            # Replace with placeholder text if no base reputation info available
             message = message.replace("{base_reputation}", "0")
         
         # Format multipliers
@@ -4999,6 +5165,34 @@ init python:
             message = message.replace("{reputation_multiplier}", "1.0x")
         
         return message
+
+    def build_changes_summary(applied_values):
+        """
+        Build a highlighted summary of changes from applied_values for event outcome display.
+        Returns a string to append to the outcome message, or empty if nothing to show.
+        """
+        if not applied_values:
+            return ""
+        parts = []
+        if "actual_money" in applied_values:
+            m = applied_values["actual_money"]
+            if m != 0:
+                parts.append(f"+${m}" if m > 0 else f"-${abs(m)}")
+        if "actual_reputation" in applied_values:
+            r = applied_values["actual_reputation"]
+            if r != 0:
+                parts.append(f"+{r} Reputation" if r > 0 else f"{r} Reputation")
+        if "actual_health" in applied_values:
+            h = applied_values["actual_health"]
+            if h != 0:
+                parts.append(f"+{h} Health" if h > 0 else f"{h} Health")
+        if "actual_energy" in applied_values:
+            e = applied_values["actual_energy"]
+            if e != 0:
+                parts.append(f"+{e} Energy" if e > 0 else f"{e} Energy")
+        if not parts:
+            return ""
+        return "\n\nChanges: " + ", ".join(parts)
 
     def combat_check():
         for worker in store.workers:
@@ -5992,6 +6186,30 @@ default yvara_last_talk_total_days = None
 default yvara_s1_talks_done = []        # IDs of completed Stage 1 conversations
 default yvara_s1_remarks_done = []      # IDs of completed Stage 1 remarks
 default yvara_gifts_given = 0           # Total gifts accepted by Yvara (non-negative reactions)
+default yvara_s2_talks_done = []        # IDs of completed Stage 2 conversations
+default yvara_s2_remarks_done = []      # IDs of completed Stage 2 remarks
+default yvara_s2_gifts_given = 0        # Gifts given during Stage 2 specifically
+default yvara_s3_talks_done = []        # IDs of completed Stage 3 conversations
+default yvara_s3_remarks_done = []      # IDs of completed Stage 3 remarks
+default yvara_observed_sessions = 0         # Number of Observed Lesson sessions completed
+default yvara_observed_last_day = None      # Last day Observed Lesson was used
+default yvara_lesson_absorbed = False       # Flag: 6th session absorbed flag
+default yvara_leverage_financial = False    # Flag: player discovered/used Academy ledger leverage
+default yvara_s3_gate_ready = False         # Flag: Stage 3 gate scene unlocked, waiting for after-hours visit
+default yvara_s3_gate_ready_total_days = None  # Day the after-hours invitation was unlocked
+default yvara_s3_gate_fired = False         # Flag: Stage 3 gate scene already triggered
+default yvara_s4_talks_done = []            # IDs of completed Stage 4 conversations
+default yvara_s4_remarks_done = []          # IDs of completed Stage 4 remarks
+default yvara_s4_finance_unlocked = False   # Stage 4 favor/donation menu unlocked after the Academy pressure becomes visible
+default yvara_s4_finance_last_day = None    # Last day a Stage 4 finance interaction was used
+default yvara_s4_donation_total = 0         # Total number of Stage 4 donation interactions
+default yvara_s4_donation_highest_tier = 0  # Highest donation tier reached in Stage 4
+default yvara_s4_favors_total = 0           # Total number of Stage 4 paid favors
+default yvara_s4_favor_highest_tier = 0     # Highest paid-favor tier reached in Stage 4
+default yvara_s4_gate_fired = False         # Flag: Stage 4 gate scene (The Storm) already triggered
+default yvara_morning_after_done = False    # Flag: Morning After scene already fired
+default yvara_evening_academy_last_day = None  # Last day Evening at Academy was visited
+default yvara_continuation_notice_shown = False  # One-time notice that more story content is planned
 default arena_unlocked = False  # True after arena trial succeeds/mediocre/critical
 default arena_lanista_paid = False  # True after player pays Lanista permit
 define LANISTA_PERMIT_COST = 10000  # Cost to obtain Lanista permit for the coliseum
@@ -6013,17 +6231,21 @@ default _arena_special_chosen_worker = None  # Worker chosen for special match (
 
 init python:
     def yvara_recalculate_stage():
-        """Update Yvara stage from affection thresholds."""
+        """Update Yvara stage from affection thresholds.
+        Stage 4 requires the S3 gate to have fired.
+        Stage 5+ requires both S3 and S4 gates to have fired."""
         aff = int(getattr(store, "yvara_affection", 0) or 0)
-        if aff >= 91:
+        gate_s3 = bool(getattr(store, "yvara_s3_gate_fired", False))
+        gate_s4 = bool(getattr(store, "yvara_s4_gate_fired", False))
+        if gate_s3 and gate_s4 and aff >= 91:
             store.yvara_stage = 8
-        elif aff >= 83:
+        elif gate_s3 and gate_s4 and aff >= 83:
             store.yvara_stage = 7
-        elif aff >= 73:
+        elif gate_s3 and gate_s4 and aff >= 73:
             store.yvara_stage = 6
-        elif aff >= 64:
+        elif gate_s3 and gate_s4 and aff >= 64:
             store.yvara_stage = 5
-        elif aff >= 51:
+        elif gate_s3 and aff >= 51:
             store.yvara_stage = 4
         elif aff >= 31:
             store.yvara_stage = 3
@@ -6032,38 +6254,132 @@ init python:
         else:
             store.yvara_stage = 1
 
+    def yvara_is_dominion_route():
+        """Return True when Yvara's route should resolve to dominion.
+
+        Neutral is intentionally removed: ties are broken by route-specific
+        content where possible, and fall back to devotion otherwise.
+        """
+        devotion = int(getattr(store, "yvara_devotion", 0) or 0)
+        dominion = int(getattr(store, "yvara_dominion", 0) or 0)
+        if dominion != devotion:
+            return dominion > devotion
+
+        favors = int(getattr(store, "yvara_s4_favors_total", 0) or 0)
+        donations = int(getattr(store, "yvara_s4_donation_total", 0) or 0)
+        if favors != donations:
+            return favors > donations
+
+        observed = int(getattr(store, "yvara_observed_sessions", 0) or 0)
+        good_word = int(getattr(store, "yvara_good_word_count", 0) or 0)
+        if observed != good_word:
+            return observed > good_word
+
+        return False
+
+    def yvara_is_devotion_route():
+        return not yvara_is_dominion_route()
+
     # Gift table: item_id -> (devotion_gain, dominion_gain, affection_gain, reaction_label)
     YVARA_GIFTS = {
-        "rare_book":     (3, 0, 5, "yvara_gift_rare_book"),
-        "fine_wine":     (2, 0, 3, "yvara_gift_fine_wine"),
-        "herbal_tea":    (2, 0, 2, "yvara_gift_herbal_tea"),
-        "flower_bouquet":(3, 0, 4, "yvara_gift_flowers"),
-        "chocolates":    (1, 0, 2, "yvara_gift_chocolates"),
-        "bonbons_box":   (1, 0, 2, "yvara_gift_chocolates"),
-        "diamond":       (0, 1, 1, "yvara_gift_gem"),
-        "ruby":          (0, 1, 1, "yvara_gift_gem"),
-        "emerald":       (0, 1, 1, "yvara_gift_gem"),
-        "sapphire":      (0, 1, 1, "yvara_gift_gem"),
-        "elixir_passion":(0, 2, -2, "yvara_gift_elixir"),
+        # Shared gifts
+        "rare_book":          (3, 0, 5, "yvara_gift_rare_book"),
+        "fine_wine":          (2, 0, 3, "yvara_gift_fine_wine"),
+        "herbal_tea":         (2, 0, 2, "yvara_gift_herbal_tea"),
+        "flower_bouquet":     (3, 0, 4, "yvara_gift_flowers"),
+        "chocolates":         (1, 0, 2, "yvara_gift_chocolates"),
+        "bonbons_box":        (1, 0, 2, "yvara_gift_chocolates"),
+        "elixir_passion":     (0, 2, -2, "yvara_gift_elixir"),
+        # Devotion route — romantic, personal
+        "handwritten_poem":   (4, 0, 4, "yvara_gift_poem"),
+        "botanical_pressing": (3, 0, 3, "yvara_gift_botanical"),
+        # Dominion route — control, compliance
+        "spiked_tea":         (0, 3, 1, "yvara_gift_spiked_tea"),
+        "silk_ribbon":        (0, 2, 2, "yvara_gift_silk_ribbon"),
     }
 
     def yvara_get_giftable_items():
-        """Return list of (item_id, display_name, qty) from manager_inventory that Yvara accepts."""
-        inv = getattr(store, "manager_inventory", [])
+        """Return list of (item_id, display_name, qty) from manager inventory that Yvara accepts."""
+        inv_store = getattr(store, "manager_inventory", [])
+        inv_global = manager_inventory if "manager_inventory" in globals() else []
         item_defs = items_json.get("items", []) if "items_json" in globals() and isinstance(items_json, dict) else []
+        allowed = set(getattr(store, "YVARA_GIFTS", YVARA_GIFTS).keys())
+        blocked_ids = {"diamond", "ruby", "emerald", "sapphire"}
+        allowed -= blocked_ids
+
         result = []
+        qty_by_id = {}
         seen = set()
+        inv = list(inv_store or [])
+        if inv_global is not inv_store:
+            inv += list(inv_global or [])
         for entry in inv:
             if not isinstance(entry, (list, tuple)) or len(entry) < 2:
                 continue
-            iid = entry[0]
-            qty = entry[1] if len(entry) > 1 else 1
-            if iid in store.YVARA_GIFTS and iid not in seen and qty > 0:
-                seen.add(iid)
-                item_data = next((i for i in item_defs if i.get("id") == iid), None)
-                name = item_data["display_name"] if item_data else iid
-                result.append((iid, name, qty))
+            iid = str(entry[0])
+            try:
+                qty = int(entry[1])
+            except Exception:
+                qty = 1
+            if iid in allowed and qty > 0:
+                qty_by_id[iid] = qty_by_id.get(iid, 0) + qty
+        for iid, qty in qty_by_id.items():
+            if iid in seen:
+                continue
+            seen.add(iid)
+            item_data = next((i for i in item_defs if i.get("id") == iid), None)
+            name = item_data["display_name"] if item_data else iid
+            result.append((iid, name, qty))
         return result
+
+    def yvara_remove_gift_item(item_id, quantity=1):
+        """Remove gift item from manager inventory (store/global safe)."""
+        try:
+            _qty = max(1, int(quantity))
+        except Exception:
+            _qty = 1
+        def _count_item(inv, target_id):
+            total = 0
+            try:
+                for entry in list(inv or []):
+                    if not isinstance(entry, (list, tuple)) or len(entry) < 2:
+                        continue
+                    if str(entry[0]) != str(target_id):
+                        continue
+                    try:
+                        total += max(0, int(entry[1]))
+                    except Exception:
+                        total += 1
+            except Exception:
+                return 0
+            return total
+
+        _store_inv = getattr(store, "manager_inventory", None)
+        _global_inv = manager_inventory if "manager_inventory" in globals() else None
+
+        if _store_inv is not None:
+            try:
+                _before = _count_item(_store_inv, item_id)
+                if _before > 0:
+                    remove_item_from_inventory(_store_inv, item_id, min(_qty, _before))
+                    _after = _count_item(getattr(store, "manager_inventory", _store_inv), item_id)
+                    if _after < _before:
+                        return True
+            except Exception:
+                pass
+
+        if _global_inv is not None and _global_inv is not _store_inv:
+            try:
+                _before = _count_item(_global_inv, item_id)
+                if _before > 0:
+                    remove_item_from_inventory(_global_inv, item_id, min(_qty, _before))
+                    _after = _count_item(_global_inv, item_id)
+                    if _after < _before:
+                        return True
+            except Exception:
+                pass
+
+        return False
 
     class SafeNameDict(dict):
         """Legacy compatibility class (do not store in persistent)."""
@@ -6381,6 +6697,7 @@ label academy_tuition_menu:
             jump tavern_screen
 
 label yvara_visit:
+    $ maybe_show_intro_popup("yvara_visit")
     $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     $ _yvara_bust = "images/yvara/yvara_formal_neutral.png" if renpy.loadable("images/yvara/yvara_formal_neutral.png") else None
     $ yvara_visit_count += 1
@@ -6403,27 +6720,60 @@ label yvara_visit:
         $ yvara_known_name = True
     elif yvara_visit_count <= 2:
         yvara "Back again. Is there something you needed, or are you here out of habit now?"
-    elif yvara_devotion > yvara_dominion:
+    elif yvara_stage >= 3 and yvara_is_devotion_route():
         yvara "Come in."
-    elif yvara_dominion > yvara_devotion:
-        yvara "You again. What can I do for you?"
+        narrator "She does not look up, but the word comes immediately — no pause, no question."
+    elif yvara_stage >= 3:
+        yvara "You are here."
+        narrator "A statement, not a greeting. But her posture shifts fractionally when she says it."
+    elif yvara_stage >= 2 and yvara_is_devotion_route():
+        yvara "You are becoming a reliable fixture around here."
+        narrator "She says it without complaint. That might be the point."
+    elif yvara_stage >= 2:
+        yvara "I was wondering when you would show up."
+        narrator "She does not say it warmly. But she does not say it coldly either."
+    elif yvara_is_devotion_route():
+        yvara "Come in."
     else:
-        yvara "I am a bit busy right now. What do you need?"
+        yvara "You again. What can I do for you?"
 
     jump yvara_visit_menu
 
 label yvara_visit_menu:
     $ _total_days = calculate_total_days()
+    if not yvara_s4_gate_fired and len(yvara_s4_talks_done) >= 3 and yvara_affection >= 64:
+        $ yvara_s4_gate_fired = True
+        jump yvara_s4_gate_scene
+    if yvara_s4_gate_fired and not yvara_morning_after_done:
+        $ yvara_morning_after_done = True
+        jump yvara_s4_morning_after
     $ _talk_free_today = yvara_last_talk_total_days != _total_days
     $ _s1_talk_pending = yvara_stage == 1 and len(yvara_s1_talks_done) < 3
+    $ _s2_talk_pending = yvara_stage == 2 and len(yvara_s2_talks_done) < 3
+    $ _s3_talk_pending = not yvara_s3_gate_fired and yvara_stage >= 3 and len(yvara_s3_talks_done) < 3
+    $ _s4_talk_pending = not yvara_s4_gate_fired and yvara_stage >= 4 and len(yvara_s4_talks_done) < 3
     $ _remark_free_today = yvara_last_question_total_days != _total_days
     $ _s1_remark_pending = yvara_stage == 1 and len(yvara_s1_remarks_done) < 3
+    $ _s2_remark_pending = yvara_stage == 2 and len(yvara_s2_remarks_done) < 2
+    $ _s3_remark_pending = not yvara_s3_gate_fired and yvara_stage >= 3 and len(yvara_s3_remarks_done) < 2
+    $ _s4_remark_pending = not yvara_s4_gate_fired and yvara_stage >= 4 and len(yvara_s4_remarks_done) < 2
+    $ _visit_after_hours_available = yvara_s3_gate_ready and not yvara_s3_gate_fired and yvara_s3_gate_ready_total_days is not None and _total_days > yvara_s3_gate_ready_total_days
+    $ _s4_finance_available = yvara_stage >= 4 and not yvara_s4_gate_fired and yvara_s4_finance_unlocked
+    $ _s4_finance_free_today = yvara_s4_finance_last_day != _total_days
+    $ _s4_finance_favor_route = yvara_is_dominion_route()
+    $ _evening_available = yvara_s4_gate_fired and (_total_days - (yvara_evening_academy_last_day or 0)) >= 3
     menu:
         yvara "..."
 
         "Talk." if _talk_free_today and _s1_talk_pending:
             jump yvara_s1_talk_router
-        "Talk." if _talk_free_today and not _s1_talk_pending:
+        "Talk." if _talk_free_today and _s2_talk_pending:
+            jump yvara_s2_talk_router
+        "Talk." if _talk_free_today and _s3_talk_pending:
+            jump yvara_s3_talk_router
+        "Talk." if _talk_free_today and _s4_talk_pending:
+            jump yvara_s4_talk_router
+        "Talk." if _talk_free_today and not _s1_talk_pending and not _s2_talk_pending and not _s3_talk_pending and not _s4_talk_pending:
             jump yvara_talk_generic
         "Talk." if not _talk_free_today:
             yvara "I need to get back to work. If you need anything else, I might find some time tomorrow."
@@ -6431,11 +6781,42 @@ label yvara_visit_menu:
 
         "Make a remark." if _remark_free_today and _s1_remark_pending:
             jump yvara_s1_remark_router
-        "Make a remark." if _remark_free_today and not _s1_remark_pending:
-            yvara "You have said everything worth saying for now."
+        "Make a remark." if _remark_free_today and _s2_remark_pending:
+            jump yvara_s2_remark_router
+        "Make a remark." if _remark_free_today and _s3_remark_pending:
+            jump yvara_s3_remark_router
+        "Make a remark." if _remark_free_today and _s4_remark_pending:
+            jump yvara_s4_remark_router
+        "Make a remark." if _remark_free_today and not _s1_remark_pending and not _s2_remark_pending and not _s3_remark_pending and not _s4_remark_pending:
+            if yvara_stage >= 5 and not yvara_continuation_notice_shown:
+                $ yvara_continuation_notice_shown = True
+                yvara "We have more to say to each other. When the time is right."
+                narrator "(More on this story in future updates)"
+            else:
+                yvara "You have said everything worth saying for now."
             jump yvara_visit_menu
         "Make a remark." if not _remark_free_today:
             yvara "You have already made your point today."
+            jump yvara_visit_menu
+
+        "Buy favors." if _s4_finance_available and _s4_finance_free_today and _s4_finance_favor_route:
+            jump yvara_s4_buy_favors
+        "Buy favors." if _s4_finance_available and not _s4_finance_free_today and _s4_finance_favor_route:
+            narrator "You have already tested that particular boundary today."
+            jump yvara_visit_menu
+        "Donate money." if _s4_finance_available and _s4_finance_free_today and not _s4_finance_favor_route:
+            jump yvara_s4_donate_money
+        "Donate money." if _s4_finance_available and not _s4_finance_free_today and not _s4_finance_favor_route:
+            narrator "Another gesture today would feel too pointed. You leave it alone for now."
+            jump yvara_visit_menu
+
+        "Visit after hours." if _visit_after_hours_available:
+            jump yvara_visit_after_hours
+
+        "Evening at the Academy." if _evening_available:
+            jump yvara_evening_academy
+        "Evening at the Academy." if yvara_s4_gate_fired and not _evening_available:
+            narrator "It has not been long enough since the last time. A few more days."
             jump yvara_visit_menu
 
         "Bring a gift." if yvara_last_gift_total_days != _total_days:
@@ -6444,6 +6825,9 @@ label yvara_visit_menu:
             narrator "Bringing another gift the same day would be excessive. You think better of it."
             jump yvara_visit_menu
 
+        "Take her measure.":
+            jump yvara_assess_feelings
+
         "Leave.":
             if _yvara_bust:
                 hide expression _yvara_bust
@@ -6451,6 +6835,43 @@ label yvara_visit_menu:
             $ renpy.show_screen("map_screen")
             $ renpy.show_screen("academy_menu")
             jump tavern_screen
+
+label yvara_assess_feelings:
+    if yvara_is_devotion_route():
+        narrator "You watch her while she works. The distance is still there, but there are moments where it softens before she catches herself."
+        narrator "If this keeps going, the bond between you will likely grow through trust before anything else."
+    else:
+        narrator "She still meets you directly, but there is a subtle shift in how she responds when you press your point."
+        narrator "The dynamic is becoming clearer: she resists, then yields in small ways she does not openly acknowledge."
+
+    if yvara_stage == 1:
+        $ _s1_talks = len(yvara_s1_talks_done)
+        narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection]/16 | Stage [yvara_stage] | Talks [_s1_talks]/3"
+        if _s1_talks >= 3 and yvara_affection < 16:
+            narrator "You have exhausted the available conversations for this stage. A thoughtful gift could help tip the balance."
+    elif yvara_stage == 2:
+        $ _s2_talks = len(yvara_s2_talks_done)
+        narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection]/31 | Stage [yvara_stage] | Talks [_s2_talks]/3"
+        if _s2_talks >= 3 and yvara_affection < 31:
+            narrator "No new core talks remain at this stage. If you need momentum, try a gift."
+    elif yvara_stage == 3:
+        $ _s3_talks = len(yvara_s3_talks_done)
+        narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection]/51 | Stage [yvara_stage] | Talks [_s3_talks]/3"
+        if _s3_talks >= 3 and yvara_affection < 51:
+            narrator "You are at a holding point. A gift could provide the final push."
+    elif yvara_stage == 4:
+        $ _s4_talks = len(yvara_s4_talks_done)
+        narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection]/64 | Stage [yvara_stage] | Talks [_s4_talks]/3"
+        if yvara_s4_finance_unlocked and not yvara_s4_gate_fired:
+            if yvara_is_dominion_route():
+                narrator "The Academy's need has become a lever. She has yielded [yvara_s4_favors_total] time(s), and each concession leaves a little more of the dynamic exposed."
+            else:
+                narrator "She has accepted your help [yvara_s4_donation_total] time(s). Each gesture lands a little more personally than she intends."
+        if _s4_talks >= 3 and yvara_affection < 64:
+            narrator "The stage gate is close, but not there yet. Consider bringing a gift."
+    else:
+        narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection] | Stage [yvara_stage]"
+    jump yvara_visit_menu
 
 # ── Stage 1 talk router ──────────────────────────────────────────────────────
 label yvara_s1_talk_router:
@@ -6502,7 +6923,7 @@ label yvara_s1_talk_1:
     $ yvara_s1_talks_done = list(yvara_s1_talks_done) + ["s1_t1"]
     $ yvara_last_talk_total_days = _total_days
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance
     jump yvara_visit_menu
 
 # ── Stage 1 Talk 2: The Students ─────────────────────────────────────────────
@@ -6547,7 +6968,7 @@ label yvara_s1_talk_2:
     $ yvara_s1_talks_done = list(yvara_s1_talks_done) + ["s1_t2"]
     $ yvara_last_talk_total_days = _total_days
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_1
     jump yvara_visit_menu
 
 # ── Stage 1 Talk 3: The Methods ──────────────────────────────────────────────
@@ -6596,7 +7017,7 @@ label yvara_s1_talk_3:
     $ yvara_s1_talks_done = list(yvara_s1_talks_done) + ["s1_t3"]
     $ yvara_last_talk_total_days = _total_days
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_2
     jump yvara_visit_menu
 
 # ── Generic talk (after all S1 conversations done or S2+) ────────────────────
@@ -6605,35 +7026,1792 @@ label yvara_talk_generic:
     if yvara_stage == 1:
         # All three formal conversations done — now just companionable time
         narrator "You stay a while. She works. You talk about small things—a difficult student, the cost of ink, whether the autumn light comes through the east window at the right angle for reading."
-        if yvara_devotion > yvara_dominion:
-            narrator "She answers more than she needs to. She does not seem to notice, or perhaps she does not mind."
-            narrator "When you eventually stand to leave, there is a pause before she looks back down at her papers."
-            yvara "Same time tomorrow, probably."
-            narrator "It is not quite a question."
-        elif yvara_dominion > yvara_devotion:
+        if yvara_is_dominion_route():
             narrator "She keeps her answers short, but she keeps answering. There is something in the way she watches you from the corner of her eye—measuring."
             yvara "You ask a lot of questions for someone who claims to just be passing through."
             narrator "She says it without real hostility. It is almost like a game she has started playing without admitting it."
         else:
-            narrator "The conversation drifts. Neither of you pushes at anything. There is a careful neutrality to it that feels deliberate on both sides."
-            yvara "You are not what I expected, when you first came in."
-            narrator "She does not say what she expected. You do not ask."
-    elif yvara_devotion > yvara_dominion:
-        narrator "You talk for longer than you meant to. She mentions a book she has been re-reading—something she first encountered as a student—and you find yourself actually listening."
-        narrator "By the time the conversation slows, the light in the room has shifted."
-        yvara "This was... not unpleasant."
-        narrator "She sounds faintly surprised at herself."
-    elif yvara_dominion > yvara_devotion:
+            narrator "She answers more than she needs to. She does not seem to notice, or perhaps she does not mind."
+            narrator "When you eventually stand to leave, there is a pause before she looks back down at her papers."
+            yvara "Same time tomorrow, probably."
+            narrator "It is not quite a question."
+    elif yvara_stage == 2:
+        if yvara_is_dominion_route():
+            narrator "She pushes back on something you say—a small thing, a matter of opinion—and holds the position longer than the argument warrants."
+            narrator "It is not hostility. It might be the opposite."
+            yvara "You do not back down easily."
+            narrator "There is a pause. She seems to decide something."
+            yvara "Good."
+        else:
+            narrator "The conversation finds its own level without either of you steering it. She talks about a student who has been struggling, and you notice she is thinking out loud rather than reporting."
+            narrator "At some point she refills her tea and offers you the second cup without comment. She does not usually do that."
+            yvara "You are easier to talk to than most people who come through here."
+            narrator "She says it like a fact she has only recently confirmed."
+    elif yvara_stage == 4:
+        if yvara_is_dominion_route():
+            narrator "She is composed and exact and aware of you in the room the way someone is aware of a thing they are trying not to think about."
+            narrator "The conversation stays on the surface. Both of you know that. Neither of you breaks through it."
+            yvara "You are patient."
+            narrator "A pause."
+            yvara "I have not decided whether that is comfortable or not."
+        else:
+            narrator "You talk the way people do after something has changed but neither of them is ready to name it. She is careful with her words. You are, too."
+            narrator "At some point the conversation does what conversations do when both people are paying close attention — it says something true without either of them quite deciding to."
+            yvara "I am not sure what the protocol is for this."
+            narrator "She says it plainly. Not asking for help with the protocol."
+            yvara "I suspect there is not one."
+    elif yvara_stage >= 3:
+        if yvara_is_dominion_route():
+            narrator "She is more precise than usual today—answers clipped, movements deliberate—and you realize she is very aware of where you are in the room."
+            narrator "At some point she stops what she is doing to look at you directly."
+            yvara "You have a particular quality of attention."
+            narrator "A pause."
+            yvara "I have not decided whether I find it inconvenient."
+        else:
+            narrator "You talk with an ease that neither of you remarks on—about the students, about the season, about nothing in particular. The Incident is between you somewhere, unspoken but present."
+            narrator "At one point she glances up from the page she was not really reading."
+            yvara "Someone spoke of you today. Quite fondly, as it happens."
+            narrator "She does not say who."
+            yvara "I find I am glad you were here that day."
+            narrator "She does not say which day. She does not need to."
+        if yvara_stage >= 5 and not yvara_continuation_notice_shown:
+            $ yvara_continuation_notice_shown = True
+            yvara "We have more to say to each other. When the time is right."
+            narrator "(More on this story in future updates)"
+    elif yvara_is_dominion_route():
         narrator "The conversation has an edge to it today. She disagrees with something you say—firmly, without apology—and for a moment you are not sure which direction this is going."
         narrator "Then she refills her tea and keeps talking."
         yvara "You are either very confident or very stubborn. I have not decided which."
         narrator "There is something in the way she watches you that suggests she finds both possibilities interesting."
     else:
-        narrator "You spend some time in her company without either of you quite explaining why. She talks; you listen. You speak; she considers."
-        narrator "Nothing is decided. Nothing is pressed."
-        yvara "I always assumed people like you had somewhere else to be."
-        narrator "You are not sure if that is an observation or a question. She turns back to her work before you can ask."
+        narrator "You talk for longer than you meant to. She mentions a book she has been re-reading—something she first encountered as a student—and you find yourself actually listening."
+        narrator "By the time the conversation slows, the light in the room has shifted."
+        yvara "This was... not unpleasant."
+        narrator "She sounds faintly surprised at herself."
     $ yvara_last_talk_total_days = _total_days
+    jump yvara_visit_menu
+
+# ── Stage 2 talk router ───────────────────────────────────────────────────────
+label yvara_s2_talk_router:
+    if "s2_t1" not in yvara_s2_talks_done:
+        jump yvara_s2_talk_1
+    elif "s2_t2" not in yvara_s2_talks_done:
+        jump yvara_s2_talk_2
+    elif "s2_t3" not in yvara_s2_talks_done:
+        jump yvara_s2_talk_3
+    else:
+        jump yvara_talk_generic
+
+# ── Stage 2 Talk 1: The Question She Asks ────────────────────────────────────
+label yvara_s2_talk_1:
+    $ _total_days = calculate_total_days()
+    narrator "She does not look up when you come in, which is normal. What is not normal is that she speaks first."
+    yvara "I have been thinking."
+    narrator "A pause. She sets her pen down—a thing she almost never does."
+    yvara "What is it you actually want? Not from this institution. From all of it."
+    narrator "The question sits in the room. She is watching you now."
+    menu:
+        "To build something that lasts.":
+            $ yvara_devotion += 2
+            $ yvara_affection += 2
+            yvara "That is a longer ambition than most people in your position carry."
+            narrator "She considers it for a moment, as though weighing it against something."
+            yvara "Most people want what they can touch by the end of the season."
+            menu:
+                "I am patient.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 2
+                    yvara "..."
+                    yvara "Yes. I am beginning to believe that."
+                    narrator "She picks up her pen again, but she does not immediately write anything."
+                "The short view is for people who do not expect to be around long.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 1
+                    yvara "Blunt."
+                    yvara "But not wrong."
+                    narrator "The corner of her mouth moves, barely."
+        "Power. I would rather not pretend otherwise.":
+            $ yvara_dominion += 2
+            $ yvara_affection += 1
+            narrator "She does not flinch. If anything, something in her posture settles."
+            yvara "At least you say it plainly."
+            yvara "Most people who want power spend a great deal of energy describing something else."
+            menu:
+                "Dishonesty is inefficient.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 2
+                    yvara "Mm."
+                    narrator "She seems to find that answer more interesting than she expected."
+                    yvara "What do you do with it, when you have it?"
+                    narrator "She does not wait for the answer. She returns to her work. But the question stays in the room."
+                "I prefer to know what I am dealing with.":
+                    $ yvara_affection += 2
+                    yvara "Then we have something in common."
+                    narrator "Brief. Final. Not unfriendly."
+        "I am not entirely certain yet.":
+            $ yvara_affection += 3
+            narrator "She blinks. It is the closest thing to surprise you have seen from her."
+            yvara "That is honest."
+            yvara "Most people have an answer prepared. A real one and then the one they say."
+            menu:
+                "I find rehearsed answers suspicious.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 2
+                    yvara "..."
+                    narrator "She looks at you for a moment longer than necessary."
+                    yvara "So do I."
+                "I thought you might appreciate the unvarnished version.":
+                    $ yvara_affection += 2
+                    yvara "I do."
+                    narrator "Simply said. She seems to mean it."
+    $ yvara_s2_talks_done = list(yvara_s2_talks_done) + ["s2_t1"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_3
+    jump yvara_visit_menu
+
+# ── Stage 2 Talk 2: The Correction ───────────────────────────────────────────
+label yvara_s2_talk_2:
+    $ _total_days = calculate_total_days()
+    narrator "She does not greet you. She waits until you have settled, and then she says:"
+    yvara "You said something the last time you were here."
+    narrator "She does not look up from the page she is annotating."
+    yvara "About how you make decisions under pressure. You said you go quiet."
+    narrator "A beat."
+    yvara "You do not. I have watched you. You go very still, and then you act."
+    narrator "She says it as a correction, the same way she would correct a student's misread passage. But she has been paying attention—closely—and there is no pretending otherwise."
+    menu:
+        "I did not think you were listening that carefully.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 3
+            yvara "I always listen carefully."
+            narrator "A pause. Then, quieter:"
+            yvara "With some people more than others."
+            narrator "She does not explain which category you are in. She does not need to."
+            menu:
+                "I will have to be more precise, then.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 1
+                    yvara "Please do. Vague people are tiresome."
+                    narrator "But there is something in her tone that is not quite a reprimand."
+                "Why the difference?":
+                    $ yvara_affection += 2
+                    narrator "She considers the question."
+                    yvara "Some people are worth understanding."
+                    narrator "She returns to her page. The sentence sits there, complete."
+        "Was I wrong?":
+            $ yvara_dominion += 1
+            $ yvara_affection += 2
+            yvara "Yes."
+            yvara "Self-knowledge is harder than most people admit. You described what you feel, not what you do."
+            menu:
+                "And you can tell the difference.":
+                    $ yvara_affection += 2
+                    yvara "Usually."
+                    narrator "She says it without vanity, as a plain fact."
+                "That is a useful distinction.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 1
+                    yvara "Most of the useful distinctions are."
+                    narrator "Dry. But she offers it without impatience."
+        "You are right.":
+            $ yvara_devotion += 2
+            $ yvara_affection += 2
+            narrator "She stops annotating."
+            yvara "You are not going to argue it."
+            narrator "It is not quite a question."
+            menu:
+                "There is no argument. You observed correctly.":
+                    $ yvara_affection += 2
+                    yvara "..."
+                    narrator "She looks at you for a moment with something that is not quite satisfaction—but is close to it."
+                    yvara "You are easier to talk to when you are not performing."
+                "I have no reason to.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 1
+                    yvara "Good."
+                    narrator "Short. Genuine."
+    $ yvara_s2_talks_done = list(yvara_s2_talks_done) + ["s2_t2"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_4
+    jump yvara_visit_menu
+
+# ── Stage 2 Talk 3: The Evening ───────────────────────────────────────────────
+label yvara_s2_talk_3:
+    $ _total_days = calculate_total_days()
+    narrator "The light through the east window has gone from gold to grey. You have been here longer than usual."
+    narrator "She notices. She does not comment. She keeps working."
+    narrator "Then she does."
+    yvara "It is getting late."
+    narrator "She says it without looking up. Not a suggestion. Not quite an observation."
+    menu:
+        "I suppose I should go.":
+            $ yvara_devotion += 2
+            $ yvara_affection += 3
+            narrator "She does look up at that."
+            yvara "You were not going to."
+            narrator "She says it plainly, without accusation. It lands like a fact she finds curious."
+            menu:
+                "No. Not yet.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 2
+                    narrator "She holds your gaze for a moment, then looks back at her papers."
+                    yvara "Then stay."
+                    narrator "She does not say it gently. But she does say it."
+                "I lose track of time here.":
+                    $ yvara_affection += 2
+                    yvara "I know."
+                    narrator "Said quietly. Almost to herself."
+        "I enjoy watching you work.":
+            $ yvara_dominion += 2
+            $ yvara_affection += 2
+            narrator "She goes still for a moment."
+            yvara "Do you."
+            narrator "Not a question. She is deciding something."
+            menu:
+                "You concentrate differently than most people.":
+                    $ yvara_affection += 2
+                    narrator "A pause."
+                    yvara "No one has said that to me before."
+                    narrator "She does not say whether she minds."
+                "It tells me things.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 1
+                    yvara "What kind of things."
+                    narrator "Still not a question. But she is waiting for the answer."
+                    narrator "You do not give it. The silence is more interesting."
+        "I do not know why I am still here.":
+            $ yvara_affection += 4
+            narrator "She sets her pen down."
+            narrator "The silence between you stretches—not uncomfortably. She is thinking."
+            yvara "Neither do I."
+            narrator "It is the most uncertain she has sounded. It does not seem to trouble her."
+            menu:
+                "Maybe that is enough of a reason.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 1
+                    narrator "She considers that for a long moment."
+                    yvara "Perhaps."
+                    narrator "There is something in her expression that is very close to warmth."
+                "Some things do not need explaining.":
+                    $ yvara_affection += 1
+                    yvara "..."
+                    yvara "No. I suppose they do not."
+                    narrator "She picks up her pen again. But she does not start writing."
+    $ yvara_s2_talks_done = list(yvara_s2_talks_done) + ["s2_t3"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_5
+    jump yvara_visit_menu
+
+# ── Stage 2 remark router ─────────────────────────────────────────────────────
+label yvara_s2_remark_router:
+    $ _total_days = calculate_total_days()
+    if "s2_r1" not in yvara_s2_remarks_done:
+        jump yvara_s2_remark_1
+    elif "s2_r2" not in yvara_s2_remarks_done:
+        jump yvara_s2_remark_2
+    else:
+        yvara "You have said everything worth saying for now."
+        jump yvara_visit_menu
+
+# ── Stage 2 Remark 1: What No One Notices ────────────────────────────────────
+label yvara_s2_remark_1:
+    narrator "You have been watching her long enough to notice things. You say one of them."
+    menu:
+        "You mark your books in the margins, but only on the right-hand page.":
+            narrator "She looks up from what she is doing."
+            yvara "..."
+            narrator "A pause that is a little longer than usual."
+            yvara "I learned to read in a house with no natural light on the left side of the room. The habit stayed."
+            narrator "She says it as though it is a minor fact. But no one has ever asked before."
+            menu:
+                "Habits like that tell you where a person came from.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 3
+                    narrator "She is quiet for a moment."
+                    yvara "Yes."
+                    narrator "Just that. But she does not look away."
+                "I find it difficult to read margins on the left anyway.":
+                    $ yvara_affection += 2
+                    $ yvara_devotion += 1
+                    yvara "Most people do not notice it at all."
+                    narrator "There is something in the way she says it that is almost wondering."
+        "When you are thinking, you hold your pen without writing. You press the nib against your thumbnail.":
+            narrator "She stops. Looks at her hand. The pen is exactly where you described."
+            yvara "I was not aware I did that."
+            narrator "She sets it down carefully."
+            menu:
+                "You do it when something is difficult.":
+                    $ yvara_affection += 3
+                    $ yvara_devotion += 1
+                    yvara "And you noticed."
+                    narrator "It is not an accusation. It is something closer to being seen, and not quite knowing what to do with it."
+                "It happens whenever you are in the middle of a problem.":
+                    $ yvara_affection += 2
+                    $ yvara_dominion += 1
+                    yvara "You have been paying very close attention."
+                    narrator "She says it carefully—not threatened, not flattered. Working out what it means."
+                    yvara "I am not sure how I feel about that."
+                    narrator "She does not say she minds."
+    $ yvara_s2_remarks_done = list(yvara_s2_remarks_done) + ["s2_r1"]
+    $ yvara_last_question_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_6
+    jump yvara_visit_menu
+
+# ── Stage 2 Remark 2: An Admission ───────────────────────────────────────────
+label yvara_s2_remark_2:
+    narrator "You say something you do not usually say."
+    menu:
+        "Tell her this is the part of the day you look forward to most.":
+            narrator "She goes still."
+            yvara "..."
+            narrator "For a moment she seems to be deciding whether to deflect it."
+            yvara "That is either very kind or very foolish."
+            menu:
+                "Does it matter which?":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 3
+                    narrator "She considers that for a moment."
+                    yvara "No."
+                    narrator "Quiet. Genuine. The single syllable lands with more weight than a longer answer would have."
+                "I have learned to prefer honest to sensible.":
+                    $ yvara_affection += 3
+                    yvara "Then we have something in common."
+                    narrator "She says it so softly that for a moment you are not certain you heard it correctly."
+        "Tell her you find it easier to think clearly here than anywhere else.":
+            yvara "Here."
+            narrator "She repeats the word as though she is placing it somewhere."
+            yvara "Not the library? Not your own establishment?"
+            menu:
+                "Here specifically. I cannot explain it.":
+                    $ yvara_affection += 3
+                    $ yvara_devotion += 1
+                    narrator "She is quiet for a long moment."
+                    yvara "I will not ask you to."
+                    narrator "And for once she does not press further. She lets it sit between you, gently."
+                "Something about this room is clarifying.":
+                    $ yvara_affection += 2
+                    $ yvara_dominion += 1
+                    yvara "The room has not changed."
+                    narrator "She looks at you when she says it."
+                    yvara "But perhaps something else has."
+    $ yvara_s2_remarks_done = list(yvara_s2_remarks_done) + ["s2_r2"]
+    $ yvara_last_question_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_7
+    jump yvara_visit_menu
+
+# ── Stage 3 talk router ───────────────────────────────────────────────────────
+label yvara_s3_talk_router:
+    if "s3_t1" not in yvara_s3_talks_done:
+        jump yvara_s3_talk_1
+    elif "s3_t2" not in yvara_s3_talks_done:
+        jump yvara_s3_talk_2
+    elif "s3_t3" not in yvara_s3_talks_done:
+        jump yvara_s3_talk_3
+    else:
+        jump yvara_talk_generic
+
+# ── Stage 3 Talk 1: The Garden ───────────────────────────────────────────────
+label yvara_s3_talk_1:
+    $ _total_days = calculate_total_days()
+    narrator "She is outside during a break, sitting on the low bench beside the east wall with a book open in her lap."
+    narrator "She does not invite you to sit. She does not ask you to leave."
+    narrator "After a moment she closes the book on her finger and looks at you."
+    yvara "You have been building toward something. I have watched the way you move through this city."
+    narrator "She says it plainly, as though she has been sitting with the observation for some time."
+    yvara "What is it you actually want? Not from this place. From all of it."
+    menu:
+        "Build something worth keeping.":
+            $ yvara_devotion += 3
+            $ yvara_affection += 3
+            narrator "She considers that."
+            yvara "Most people in your position have not thought that far."
+            narrator "A beat. She opens her book again, but does not read."
+            yvara "I find that I hope you mean it."
+            menu:
+                "I do.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 2
+                    narrator "She nods once. Not approval, exactly — something quieter than that."
+                "Time will tell.":
+                    $ yvara_affection += 1
+                    yvara "Yes. It usually does."
+                    narrator "She says it without irony."
+        "I have not gotten that far.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 2
+            yvara "Honest, at least."
+            narrator "She tilts her head slightly."
+            yvara "Most people have a ready answer. I am never sure whether to trust those."
+            menu:
+                "Ready answers are usually rehearsed ones.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 2
+                    yvara "Yes."
+                    narrator "A longer pause. Something shifts in her expression — almost like recognition."
+                    yvara "The Academy was built the same way. No plan for after. Just the conviction that it had to exist."
+                "I will think of something.":
+                    $ yvara_affection += 1
+                    yvara "I expect you will."
+                    narrator "Said simply. Not flattery."
+        "Whatever serves my purpose.":
+            $ yvara_dominion += 2
+            $ yvara_affection += 2
+            yvara "Yes."
+            narrator "She looks at you steadily."
+            yvara "I suppose that is the honest answer for most."
+            narrator "A pause. Then, quietly:"
+            yvara "The Academy was everything I had left. That is what I built it from."
+            menu:
+                "That makes it worth more than most things.":
+                    $ yvara_affection += 2
+                    narrator "She looks at you for a moment, and something in her posture shifts — not quite softening, but less guarded."
+                    yvara "I think so too."
+                "And now?":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 1
+                    yvara "Now it stands on its own."
+                    narrator "She says it like something she had to earn the right to believe."
+    $ yvara_s3_talks_done = list(yvara_s3_talks_done) + ["s3_t1"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_8
+    jump yvara_visit_menu
+
+# ── Stage 3 Talk 2: The Favor ────────────────────────────────────────────────
+label yvara_s3_talk_2:
+    $ _total_days = calculate_total_days()
+    narrator "She has left the ledger open on the side of the desk rather than putting it away before you arrived. The numbers are visible."
+    narrator "They are not catastrophic. But they are uncomfortable. And she knows you have seen them."
+    yvara "The Academy is in a period of... consolidation."
+    narrator "She says it with the precise composure of someone who has decided not to be ashamed of something difficult."
+    menu:
+        "I can help with that. If you want.":
+            $ yvara_devotion += 4
+            $ yvara_affection += 3
+            narrator "She goes still."
+            narrator "It was not what she expected. She had prepared for something else — negotiation, perhaps, or the quiet implication of leverage."
+            yvara "..."
+            yvara "That is not a response I had anticipated."
+            menu:
+                "I know.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 2
+                    narrator "She looks at you for a long moment. Then she closes the ledger."
+                    yvara "Give me a few days to think about what that would look like."
+                    narrator "She does not say thank you. But she does not need to."
+                "The Academy matters. That is reason enough.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 2
+                    yvara "You are not what I expected when you first came through that door."
+                    narrator "She says it quietly, as though she is still working out whether that is a problem."
+        "That is concerning. For my investment.":
+            $ yvara_dominion += 3
+            $ yvara_affection += 2
+            $ yvara_leverage_financial = True
+            narrator "She straightens. You have framed it correctly - not as a threat, exactly, but as an observation with weight behind it."
+            yvara "Your investment is secure. The situation is temporary."
+            yvara "But I understand your concern."
+            menu:
+                "Then let me look at the full picture.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 1
+                    narrator "A beat. She reaches across the desk and slides the ledger toward you."
+                    yvara "This evening, then. After the last class."
+                    narrator "The tour is professional. But it is private. And she offered it."
+                "I am not here to pressure you.":
+                    $ yvara_affection += 2
+                    yvara "No. I did not think so."
+                    narrator "She says it carefully. She is deciding something about you."
+        "Show me everything.":
+            $ yvara_dominion += 5
+            $ yvara_affection += 2
+            $ yvara_leverage_financial = True
+            narrator "A pause. She holds your gaze."
+            narrator "Then she stands, moves to the shelf behind her, and takes down a second ledger — one that was not visible from the doorway."
+            yvara "This evening. After the last class closes."
+            narrator "Her voice is level. She has made a calculation and executed it."
+            yvara "You will want to see the full picture."
+            menu:
+                "I will be here.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 2
+                    narrator "She nods once. Puts both ledgers on the desk."
+                    yvara "Then we will discuss terms."
+                "Terms are simple. I want to understand, not to take.":
+                    $ yvara_affection += 3
+                    narrator "She looks at you for a moment with something difficult to name."
+                    yvara "...I will keep that in mind."
+    $ yvara_s3_talks_done = list(yvara_s3_talks_done) + ["s3_t2"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_9
+    jump yvara_visit_menu
+
+# ── Stage 3 Talk 3: The Incident ─────────────────────────────────────────────
+label yvara_s3_talk_3:
+    $ _total_days = calculate_total_days()
+    narrator "You are present when it happens — a student stumbles during a practical demonstration, catches a shelf edge badly, goes down hard."
+    narrator "Two things happen simultaneously: Yvara moves from the far side of the room without breaking stride, and you move from the door."
+    narrator "The student is on his feet within moments. Neither of you spoke more than was necessary. The room settles."
+    narrator "After, when the students have filed out, she looks at you across the now-quiet room."
+    yvara "You did not hesitate."
+    menu:
+        "Neither did you.":
+            $ yvara_affection += 4
+            narrator "A beat. She seems to find that answer both accurate and somehow disarming."
+            yvara "No. I rarely do, in my own building."
+            narrator "A pause."
+            yvara "But you are not in your own building."
+            menu:
+                "I act the same in either case.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 2
+                    narrator "She studies you for a moment."
+                    yvara "I know."
+                    narrator "She says it quietly, as though she has known it for longer than today."
+                "Habit.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 2
+                    yvara "Yes. I thought it might be."
+                    narrator "She seems to respect the honesty more than a larger answer would have earned."
+        "You would have handled it.":
+            $ yvara_devotion += 2
+            $ yvara_affection += 3
+            yvara "Yes. But more slowly."
+            narrator "She says it without false modesty — an assessment."
+            yvara "It matters, sometimes, not to be the only person in the room who acts."
+            menu:
+                "I have been in enough rooms like this.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 1
+                    yvara "I thought as much."
+                    narrator "She tilts her head slightly, as though confirming something she had suspected."
+                "Someone had to.":
+                    $ yvara_affection += 2
+                    yvara "..."
+                    narrator "She looks at you for a moment longer than necessary."
+                    yvara "Yes. Someone did."
+        "I do not leave things unresolved.":
+            $ yvara_dominion += 2
+            $ yvara_affection += 3
+            yvara "No. I have noticed that."
+            narrator "She crosses the room, begins straightening the shelves the student disturbed. She does not look at you while she speaks."
+            yvara "There are people who act because they cannot stop themselves, and people who act because they have decided to."
+            yvara "You are the second kind."
+            menu:
+                "Is there a difference?":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 1
+                    yvara "A great one."
+                    narrator "She says it as though she has thought about this before."
+                "Does it matter?":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 1
+                    yvara "To the student? No."
+                    narrator "She sets a book back in its place."
+                    yvara "To me? Yes."
+    $ yvara_s3_talks_done = list(yvara_s3_talks_done) + ["s3_t3"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_10
+    jump yvara_visit_menu
+
+# ── Stage 3 remark router ─────────────────────────────────────────────────────
+label yvara_s3_remark_router:
+    $ _total_days = calculate_total_days()
+    if "s3_r1" not in yvara_s3_remarks_done:
+        jump yvara_s3_remark_1
+    elif "s3_r2" not in yvara_s3_remarks_done:
+        jump yvara_s3_remark_2
+    else:
+        yvara "You have said everything worth saying for now."
+        jump yvara_visit_menu
+
+# ── Stage 3 Remark 1: Different ──────────────────────────────────────────────
+label yvara_s3_remark_1:
+    menu:
+        "You seem less guarded than when I first came here.":
+            narrator "She stops what she is doing."
+            yvara "..."
+            narrator "For a moment she seems to be preparing a denial. Then she doesn't."
+            yvara "I suppose I am."
+            menu:
+                "It suits you.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 3
+                    narrator "She looks at you for a moment with something she does not name."
+                    yvara "That is either a compliment or an observation."
+                    yvara "I find I do not particularly mind which."
+                "What changed?":
+                    $ yvara_affection += 3
+                    narrator "A long pause."
+                    yvara "The circumstances."
+                    narrator "She says it without elaborating. But she holds your gaze a moment longer than she needs to."
+        "You smile more than you used to.":
+            yvara "I was not aware I did."
+            narrator "A pause. She seems to take a brief internal inventory."
+            yvara "...I suppose I do."
+            menu:
+                "It is not a complaint.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 2
+                    narrator "She looks at you almost warily, then decides something."
+                    yvara "No. I did not think it was."
+                "What changed?":
+                    $ yvara_affection += 3
+                    $ yvara_devotion += 1
+                    narrator "She considers the question with the same attention she gives difficult texts."
+                    yvara "I am not entirely sure."
+                    narrator "She says it like that is itself interesting to her."
+    $ yvara_s3_remarks_done = list(yvara_s3_remarks_done) + ["s3_r1"]
+    $ yvara_last_question_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_11
+    jump yvara_visit_menu
+
+# ── Stage 3 Remark 2: How Long ───────────────────────────────────────────────
+label yvara_s3_remark_2:
+    narrator "She says it in the middle of something else entirely, without looking up."
+    menu:
+        "Remark that you hope she has let more people in since.":
+            yvara "It has been... some time since I allowed anyone close enough to matter."
+            narrator "A pause. She continues reading, or pretends to."
+            menu:
+                "That takes something to say.":
+                    $ yvara_devotion += 3
+                    $ yvara_affection += 3
+                    narrator "She is quiet for a moment."
+                    yvara "It takes less than I expected."
+                    narrator "She does not look up. But something in the set of her shoulders is different."
+                "I am glad you said it.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 3
+                    narrator "She goes still."
+                    yvara "..."
+                    yvara "So am I."
+                    narrator "Said very quietly. She moves on immediately. But she meant it."
+        "Say nothing. Let it sit.":
+            yvara "It has been... some time since I allowed anyone close enough to matter."
+            narrator "The silence between you holds the sentence."
+            narrator "She does not fill it. Neither do you. After a moment she turns a page — slowly, like someone who is not really reading."
+            menu:
+                "Meet her eyes when she finally looks up.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 3
+                    narrator "She looks up eventually. When she does, whatever she was expecting to find in your expression, she seems to find something different."
+                    yvara "You are unexpectedly patient."
+                    narrator "It is not quite a compliment. It is not quite an observation. It is both."
+                "Look away first.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 2
+                    narrator "You look away. She notices."
+                    yvara "..."
+                    narrator "A moment later, she sets down her book entirely."
+    $ yvara_s3_remarks_done = list(yvara_s3_remarks_done) + ["s3_r2"]
+    $ yvara_last_question_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_12
+    jump yvara_visit_menu
+
+# ── Stage 3 Gate Scene: After the Tour ───────────────────────────────────────
+label yvara_s3_gate_scene:
+    $ yvara_s3_gate_ready = False
+    $ yvara_affection = max(yvara_affection, 51)
+    $ yvara_recalculate_stage()
+    $ _cg_before = "images/yvara/cg_after_tour_before.png" if renpy.loadable("images/yvara/cg_after_tour_before.png") else None
+    if not _cg_before and renpy.loadable("images/yvara/library.png"):
+        $ _cg_before = "images/yvara/library.png"
+    $ _title = (getattr(store, "player_title", "") or "").strip().lower()
+    $ _cg_hands = "images/yvara/cg_after_tour_hands_lady.png" if _title == "lady" else "images/yvara/cg_after_tour_hands_lord.png"
+    if not renpy.loadable(_cg_hands):
+        if _title == "lady" and renpy.loadable("images/yvara/handslady.png"):
+            $ _cg_hands = "images/yvara/handslady.png"
+        elif _title != "lady" and renpy.loadable("images/yvara/handslord.png"):
+            $ _cg_hands = "images/yvara/handslord.png"
+        else:
+            $ _cg_hands = None
+    $ _cg_after = "images/yvara/cg_after_tour_after.png" if renpy.loadable("images/yvara/cg_after_tour_after.png") else None
+    if not _cg_after and renpy.loadable("images/yvara/cg_after_tour.png"):
+        $ _cg_after = "images/yvara/cg_after_tour.png"
+    if _cg_before:
+        scene expression _cg_before
+        window hide
+        pause
+        window show
+    narrator "The visit begins on a pretext that neither of you bothers to make convincing."
+    narrator "The building is empty. The last class ended an hour ago. She has left the lamp burning."
+    if yvara_is_dominion_route():
+        jump yvara_s3_gate_dominion
+    else:
+        jump yvara_s3_gate_devotion
+
+label yvara_s3_gate_devotion:
+    narrator "She is in the library — the back room, where the personal collection lives and no student ever goes."
+    narrator "She is less armored than usual. Not because she is unguarded, but because she has stopped performing the guard."
+    narrator "At some point the conversation runs out of neutral territory."
+    narrator "The distance between you has closed — not suddenly, but incrementally, over the last half-hour — and neither of you has remarked on it."
+    if _cg_hands:
+        window hide
+        scene expression _cg_hands
+        pause
+        window show
+    narrator "For a moment, words seem less important than the space between your hands."
+    yvara "I should..."
+    narrator "She does not finish the sentence."
+    narrator "Your hands are close. Not touching. The space between them has the particular quality of something about to change."
+    if _cg_after:
+        window hide
+        scene expression _cg_after
+        pause
+        window show
+    narrator "She does not move away."
+    narrator "Neither do you."
+    narrator "The moment stretches long enough that it becomes its own kind of answer."
+    yvara "..."
+    narrator "When you finally step apart, neither of you attempts to reduce the moment into language."
+    narrator "When you finally leave, the walk back feels different. Something was crossed tonight that neither of you will name for a while."
+    window hide
+    pause
+    window show
+    jump yvara_s3_gate_end
+
+label yvara_s3_gate_dominion:
+    narrator "She shows you the records. She is precise, professional — but she is very aware of where you are in the room."
+    narrator "At one point she reaches past you for a ledger on the shelf behind you. She does not step back afterward."
+    if _cg_hands:
+        window hide
+        scene expression _cg_hands
+        pause
+        window show
+    narrator "For a moment, words seem less important than the space between your hands."
+    narrator "You reach out — deliberately, watching her — and adjust the clasp on her collar. It had come loose."
+    narrator "She lets you."
+    if _cg_after:
+        window hide
+        scene expression _cg_after
+        pause
+        window show
+    yvara "You are testing something."
+    narrator "She says it without stepping back. There is tension in her, but no retreat."
+    menu:
+        "I am.":
+            $ yvara_dominion += 2
+            $ yvara_affection += 1
+            yvara "..."
+            yvara "And if I asked you to stop?"
+            menu:
+                "Then I would stop.":
+                    $ yvara_affection += 2
+                    narrator "A long silence. She holds your gaze."
+                    narrator "She measures the answer, then gives a near-imperceptible nod."
+                    narrator "She does not ask you to stop."
+                "You are not going to.":
+                    $ yvara_dominion += 1
+                    narrator "The silence that follows is the longest of the evening."
+                    narrator "Her jaw sets for a moment, then eases."
+                    narrator "She does not ask you to stop."
+        "Only what you will allow.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 2
+            yvara "..."
+            narrator "She seems to recalibrate something."
+            yvara "That is a more careful answer than I expected."
+            narrator "She does not move away."
+    narrator "By the time the distance between you reasserts itself, it no longer feels like the same distance."
+    narrator "When you leave, the dynamic is not softer — only clearer. Something has settled into place between you."
+    window hide
+    pause
+    window show
+    jump yvara_s3_gate_end
+
+label yvara_s3_gate_end:
+    $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
+    $ _yvara_bust = "images/yvara/yvara_formal_neutral.png" if renpy.loadable("images/yvara/yvara_formal_neutral.png") else None
+    scene expression _academy_bg at yvara_bg_blur
+    show black as yvara_bg_dim:
+        alpha 0.35
+    if _yvara_bust:
+        show expression _yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    jump yvara_visit_menu
+
+label yvara_visit_after_hours:
+    $ yvara_s3_gate_fired = True
+    $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
+    scene expression _academy_bg
+    narrator "You return later than usual, when the halls have emptied and the day's noise has finally thinned into silence."
+    narrator "Most of the Academy is dark. One room is not."
+    narrator "She knew you would understand what after hours meant."
+    jump yvara_s3_gate_scene
+
+# ── Off-Camera Mechanic A: The Good Word ─────────────────────────────────────
+label yvara_good_word:
+    $ _total_days = calculate_total_days()
+    narrator "You arrange for a worker to spend the day at the Academy — extra tutoring, on your recommendation."
+    narrator "While there, they talk about what it is like to work for you. It is what workers do."
+    narrator "Yvara, who has spent years hearing people complain about their employers, finds herself listening differently."
+    $ yvara_good_word_count += 1
+    $ yvara_good_word_last_day = _total_days
+    $ yvara_devotion += 3
+    $ yvara_affection += 1
+    if yvara_good_word_count == 1:
+        narrator "The next time you visit, she mentions it in passing."
+        yvara "Your worker spoke of you. Favourably."
+        narrator "She moves on immediately."
+    elif yvara_good_word_count == 3:
+        narrator "On your next visit, she is writing something when you arrive. She pauses."
+        yvara "They all say the same things."
+        narrator "A beat."
+        yvara "I find that... notable."
+    elif yvara_good_word_count >= 5 and not yvara_good_word_peak:
+        $ yvara_good_word_peak = True
+        $ yvara_devotion += 5
+        narrator "One of your workers mentions, without being asked, that Yvara sought them out — asked questions about you."
+        narrator "She did not tell you this. She may not intend to."
+        narrator "But you know."
+    else:
+        narrator "She does not mention it at the next visit. But something is slightly different when she looks at you."
+    jump yvara_visit_menu
+
+# ── Off-Camera Mechanic B: The Observed Lesson ───────────────────────────────
+label yvara_observed_lesson:
+    $ _total_days = calculate_total_days()
+    if money < 200:
+        yvara "The consultation fee is two hundred coins. Come back when you can meet it."
+        jump yvara_visit_menu
+    $ money -= 200
+    narrator "You have mentioned a worker who requires firmer handling. As an educator, you ask her to come and observe — purely as a professional consultation. She agrees."
+    narrator "She arrives at your establishment at the arranged hour. She takes a seat at the back and opens her notebook."
+    narrator "She watches what you do. She takes notes. She says nothing during the session."
+    $ yvara_observed_sessions += 1
+    $ yvara_observed_last_day = _total_days
+    $ yvara_dominion += 4
+    if yvara_observed_sessions == 1:
+        narrator "Afterward, she sends written notes to the Academy. The language is clinical, precise."
+        narrator "It is also, word for word, the language you used during the session."
+    elif yvara_observed_sessions == 3:
+        narrator "On your next visit to the Academy, she corrects a student in the corridor with the same phrasing you used."
+        narrator "She stops herself mid-sentence. Says nothing."
+    elif yvara_observed_sessions == 5:
+        narrator "During a normal exchange at the Academy, she starts to say something — and stops."
+        yvara "Yes, my—"
+        narrator "She completes the sentence differently. Her expression closes immediately."
+    elif yvara_observed_sessions >= 6 and not yvara_lesson_absorbed:
+        $ yvara_lesson_absorbed = True
+        $ yvara_dominion += 6
+        yvara "I believe the consultations are no longer necessary."
+        narrator "When you ask why:"
+        yvara "I believe I have absorbed sufficient... methodology."
+        narrator "The pause before the last word is long."
+    jump yvara_visit_menu
+
+# ── Stage 4 talk router ───────────────────────────────────────────────────────
+label yvara_s4_talk_router:
+    if "s4_t1" not in yvara_s4_talks_done:
+        jump yvara_s4_talk_1
+    elif "s4_t2" not in yvara_s4_talks_done:
+        jump yvara_s4_talk_2
+    elif "s4_t3" not in yvara_s4_talks_done:
+        jump yvara_s4_talk_3
+    else:
+        jump yvara_talk_generic
+
+# ── Stage 4 Talk 1: The Frame ────────────────────────────────────────────────
+label yvara_s4_talk_1:
+    $ _total_days = calculate_total_days()
+    narrator "She is working when you arrive — or performing the act of working. The distinction has become readable."
+    narrator "An open ledger sits at the corner of her desk, weighted down by two unpaid invoices."
+    yvara "The Academy is proving more expensive to preserve than most people imagine."
+    narrator "She sets down her pen before you have said anything."
+    yvara "I have been thinking about how to classify what has been happening."
+    narrator "She says it with the composure of someone who has been rehearsing the opening."
+    yvara "It does not fit cleanly into any existing category."
+    menu:
+        "Does it need to?":
+            $ yvara_devotion += 3
+            $ yvara_affection += 6
+            narrator "A pause. She seems to have prepared for several answers. This one was not among them."
+            yvara "..."
+            yvara "No. I suppose it does not."
+            narrator "She picks up her pen again. Does not write anything."
+            menu:
+                "Then let it be what it is.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 4
+                    narrator "She looks at you for a long moment. Something in her posture shifts — not a decision, but the beginning of one."
+                    yvara "You make that sound straightforward."
+                    yvara "You are aware that it is not."
+                "I will wait until you find the right word.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 3
+                    yvara "That could take some time."
+                    narrator "She says it like a warning. But she does not look displeased."
+        "I would be interested in what category you settled on.":
+            $ yvara_dominion += 2
+            $ yvara_affection += 5
+            narrator "She looks at you steadily."
+            yvara "I have not settled on one. That is rather the problem."
+            menu:
+                "The problem, or the answer?":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 4
+                    narrator "A beat. She seems caught between amusement and something more cautious."
+                    yvara "You are not helpful."
+                    narrator "She says it without actual complaint."
+                "What are the candidates?":
+                    $ yvara_affection += 3
+                    yvara "I have not made that list public."
+                    narrator "She turns back to her papers. There is color at the edge of her composure that was not there before."
+        "You do not have to classify it.":
+            $ yvara_affection += 4
+            narrator "She looks at you."
+            yvara "I find that I need to understand things before I can proceed with them."
+            yvara "It is a significant personal limitation."
+            menu:
+                "It is a significant personal strength.":
+                    $ yvara_devotion += 3
+                    $ yvara_affection += 4
+                    narrator "Something in her expression does something it does not usually do."
+                    yvara "..."
+                    yvara "Thank you."
+                    narrator "Brief. Direct. Genuine."
+                "And yet here you are. Proceeding.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 3
+                    yvara "..."
+                    yvara "Yes. Apparently."
+                    narrator "She does not sound displeased about it."
+    if not yvara_s4_finance_unlocked:
+        narrator "When you leave, the ledger is still open on the desk. For the first time, she has let you see the strain plainly."
+        $ yvara_s4_finance_unlocked = True
+    $ yvara_s4_talks_done = list(yvara_s4_talks_done) + ["s4_t1"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_13
+    jump yvara_visit_menu
+
+# ── Stage 4 Talk 2: The Limit ────────────────────────────────────────────────
+label yvara_s4_talk_2:
+    $ _total_days = calculate_total_days()
+    narrator "She is standing at the window when you arrive — facing it, not looking out of it."
+    narrator "The ledger from yesterday is closed now, but not put away. It rests on the sill beside her like an argument deferred."
+    narrator "She turns when she hears you. Something is already decided in her expression."
+    yvara "I have been considering how to manage this appropriately."
+    narrator "A pause."
+    yvara "I think it would be sensible to establish some clarity about what this is and is not."
+    menu:
+        "I am listening.":
+            $ yvara_devotion += 2
+            $ yvara_affection += 5
+            narrator "She seems briefly wrong-footed by the absence of pushback."
+            yvara "I am... not certain I have the full argument assembled yet."
+            narrator "She says it with the precision of someone accustomed to knowing exactly what they think."
+            yvara "This is unusual for me."
+            menu:
+                "Take your time.":
+                    $ yvara_devotion += 3
+                    $ yvara_affection += 5
+                    narrator "A long pause. She looks at you with an expression she does not immediately put away."
+                    yvara "You are consistently not what I expect."
+                    yvara "I find that I am not sure what to do with that."
+                "I think you have the argument. You are reconsidering whether to make it.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 4
+                    narrator "The pause is longer."
+                    yvara "..."
+                    yvara "That is accurate."
+                    narrator "She turns back toward the window. Then does not."
+        "What clarity were you looking for?":
+            $ yvara_dominion += 2
+            $ yvara_affection += 4
+            yvara "I was going to say that this should remain..."
+            narrator "She does not finish the sentence."
+            yvara "It is a reasonable position."
+            menu:
+                "Tell me the position.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 3
+                    narrator "She meets your eyes."
+                    yvara "I was going to say that it should remain uncomplicated."
+                    yvara "I am no longer certain that is what I want."
+                    narrator "She says it like a confession extracted against her better judgment."
+                "Then say something unreasonable instead.":
+                    $ yvara_affection += 5
+                    $ yvara_devotion += 1
+                    narrator "A beat. Then something close to a laugh — not quite, but in that direction."
+                    yvara "You are very difficult."
+                    narrator "She says it without the slightest indication she minds."
+        "Then perhaps we should not manage it.":
+            $ yvara_dominion += 3
+            $ yvara_affection += 4
+            narrator "She looks at you. The rehearsed opening she had prepared becomes visibly less available to her."
+            yvara "That is a dangerous position."
+            menu:
+                "I know. I hold it anyway.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 4
+                    narrator "A long silence. She holds your gaze with the specific composure of someone not retreating."
+                    yvara "..."
+                    yvara "I see."
+                    narrator "She turns back to her desk. Picks up a book. Sets it down again."
+                "Then tell me the danger.":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 3
+                    yvara "I think you already know."
+                    narrator "She says it quietly. She does not look away."
+    $ yvara_s4_talks_done = list(yvara_s4_talks_done) + ["s4_t2"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_14
+    jump yvara_visit_menu
+
+# ── Stage 4 Talk 3: Before the Rain ─────────────────────────────────────────
+label yvara_s4_talk_3:
+    $ _total_days = calculate_total_days()
+    narrator "The sky outside the office windows has the particular quality of a sky that has made up its mind."
+    narrator "She is at her desk. The lamp is already lit, though it is not yet evening."
+    narrator "You came without a particular reason. She does not ask for one."
+    yvara "It is going to rain."
+    narrator "It is an observation about the weather. It is also not."
+    menu:
+        "It has been building for a while.":
+            $ yvara_devotion += 3
+            $ yvara_affection += 6
+            narrator "She looks up from her papers."
+            yvara "Yes."
+            narrator "A pause. The thunder is still distant."
+            yvara "I have noticed."
+            narrator "She says it like an admission she had not meant to make aloud."
+            menu:
+                "So have I.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 5
+                    narrator "The silence that follows is not uncomfortable. It is the opposite."
+                    narrator "Outside, the first rain comes."
+                    yvara "..."
+                    yvara "I suppose we will have to wait it out."
+                    narrator "She says it without looking toward the door."
+                "Some things are better once the storm breaks.":
+                    $ yvara_affection += 4
+                    narrator "She looks at you for a long moment."
+                    yvara "That depends on what the storm was holding back."
+                    narrator "The rain begins."
+        "Better for it to break than to wait.":
+            $ yvara_dominion += 3
+            $ yvara_affection += 5
+            narrator "She sets her pen down. Looks at you."
+            yvara "You are speaking about the weather."
+            menu:
+                "Among other things.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 4
+                    narrator "A silence. The lamp flickers once."
+                    yvara "..."
+                    narrator "She does not contradict that."
+                "Exclusively about the weather.":
+                    $ yvara_affection += 2
+                    narrator "She looks at you for a moment, and then a corner of her expression shifts."
+                    yvara "Of course."
+                    narrator "She does not believe you. She does not seem to mind."
+        "Should I go? Before it starts.":
+            $ yvara_affection += 3
+            narrator "She glances at the window. Then at you."
+            yvara "..."
+            yvara "If you like."
+            narrator "A pause."
+            yvara "Though the roads will be difficult once it begins."
+            menu:
+                "Then I will stay until it passes.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 5
+                    narrator "She nods. Returns to her work. But she does not say anything further about the roads."
+                "It is not far.":
+                    $ yvara_affection += 2
+                    yvara "No."
+                    narrator "She agrees too quickly. A small thing. She does not pursue it."
+    narrator "The rain arrives in full."
+    narrator "The roads outside close off, one by one, in the way roads do when the weather has its own opinion about where people should be."
+    narrator "Neither of you mentions it."
+    $ yvara_s4_talks_done = list(yvara_s4_talks_done) + ["s4_t3"]
+    $ yvara_last_talk_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_15
+    jump yvara_visit_menu
+
+# ── Stage 4 remark router ─────────────────────────────────────────────────────
+label yvara_s4_remark_router:
+    $ _total_days = calculate_total_days()
+    if "s4_r1" not in yvara_s4_remarks_done:
+        jump yvara_s4_remark_1
+    elif "s4_r2" not in yvara_s4_remarks_done:
+        jump yvara_s4_remark_2
+    else:
+        yvara "You have already said everything worth saying for now."
+        jump yvara_visit_menu
+
+# ── Stage 4 Remark 1: The Tell ────────────────────────────────────────────────
+label yvara_s4_remark_1:
+    $ _total_days = calculate_total_days()
+    narrator "You notice something she does — a small thing. The way she keeps her pen in her hand when she has stopped writing. The way her expression holds an extra half-second before it reassembles."
+    menu:
+        "You do that when you are thinking about something you do not want to say.":
+            $ yvara_devotion += 3
+            $ yvara_affection += 5
+            narrator "She looks at you."
+            yvara "..."
+            yvara "I am aware that I do that."
+            narrator "A pause."
+            yvara "I was not aware that you had noticed."
+            menu:
+                "I pay attention.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 4
+                    narrator "She looks at you for a long moment. Then she sets the pen down."
+                    yvara "Yes. I can see that."
+                    narrator "She says it quietly. As though it is something she is still deciding how to feel about."
+                "Is it useful, knowing I have noticed?":
+                    $ yvara_affection += 3
+                    yvara "I am not sure yet."
+                    narrator "She is not being evasive. She genuinely does not know."
+        "You have been quiet since I arrived.":
+            $ yvara_affection += 4
+            narrator "She glances at you."
+            yvara "I am often quiet."
+            menu:
+                "Not like this.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 4
+                    narrator "A pause."
+                    yvara "..."
+                    yvara "No. Perhaps not like this."
+                    narrator "She does not explain what the difference is. She does not have to."
+                "It is a different kind of quiet.":
+                    $ yvara_dominion += 1
+                    $ yvara_affection += 3
+                    yvara "You are very observant."
+                    narrator "She says it without quite deciding how she feels about that."
+    $ yvara_s4_remarks_done = list(yvara_s4_remarks_done) + ["s4_r1"]
+    $ yvara_last_question_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_16
+    jump yvara_visit_menu
+
+# ── Stage 4 Remark 2: The Implication ────────────────────────────────────────
+label yvara_s4_remark_2:
+    $ _total_days = calculate_total_days()
+    narrator "The conversation has been ordinary. Then it isn't."
+    menu:
+        "The Academy will do well. Because you are here.":
+            $ yvara_devotion += 3
+            $ yvara_affection += 5
+            narrator "She looks up."
+            yvara "I... thank you."
+            narrator "Brief. Then she glances away, and then back."
+            yvara "That was not what I expected you to say."
+            menu:
+                "What were you expecting?":
+                    $ yvara_devotion += 1
+                    $ yvara_affection += 3
+                    yvara "Something about the curriculum. Or the enrollment figures."
+                    narrator "A pause."
+                    yvara "Not that."
+                    narrator "She says 'not that' the way someone says something that has not been said to them enough."
+                "It is simply true.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 4
+                    narrator "She holds your gaze."
+                    yvara "..."
+                    yvara "Yes. I suppose it is."
+                    narrator "She says it like someone discovering they can accept something they could not, before."
+        "There is something about this room when you are in it.":
+            $ yvara_dominion += 1
+            $ yvara_affection += 5
+            narrator "She goes still."
+            yvara "That is an unusual observation."
+            menu:
+                "An accurate one.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 4
+                    narrator "She holds your gaze with the specific steadiness of someone not backing down and not sure they want to."
+                    yvara "You say things like that very calmly."
+                    yvara "I find it difficult to respond to."
+                "I have been trying to find the right words for a while.":
+                    $ yvara_devotion += 2
+                    $ yvara_affection += 4
+                    narrator "Something in her expression does something quiet."
+                    yvara "..."
+                    yvara "I am glad you found them."
+                    narrator "She says it softly. It surprises her that she does."
+    $ yvara_s4_remarks_done = list(yvara_s4_remarks_done) + ["s4_r2"]
+    $ yvara_last_question_total_days = _total_days
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_17
+    jump yvara_visit_menu
+
+# ── Stage 4 Finance: Donate money ─────────────────────────────────────────────
+label yvara_s4_donate_money:
+    $ _tier_two_unlocked = yvara_s4_donation_highest_tier >= 1 or yvara_s4_donation_total >= 1
+    $ _tier_three_unlocked = yvara_s4_donation_highest_tier >= 2 or yvara_s4_donation_total >= 2
+    $ _tier_four_unlocked = yvara_s4_donation_highest_tier >= 3 or yvara_s4_donation_total >= 3
+    menu:
+        "Offer a modest donation (900 coins). She places her hand over your heart." if money >= 900:
+            jump yvara_s4_donate_tier_1
+        "Offer a modest donation (900 coins). She places her hand over your heart." if money < 900:
+            narrator "You do not have enough coin for even a modest gesture."
+            jump yvara_s4_donate_money
+        "Offer meaningful support (2,100 coins). She kisses you." if _tier_two_unlocked and money >= 2100:
+            jump yvara_s4_donate_tier_2
+        "Offer meaningful support (2,100 coins). She kisses you." if _tier_two_unlocked and money < 2100:
+            narrator "You cannot commit that much coin right now."
+            jump yvara_s4_donate_money
+        "Cover a serious expense (4,200 coins). She gives you a massage." if _tier_three_unlocked and money >= 4200:
+            jump yvara_s4_donate_tier_3
+        "Cover a serious expense (4,200 coins). She gives you a massage." if _tier_three_unlocked and money < 4200:
+            narrator "That level of support is beyond what you can spare at the moment."
+            jump yvara_s4_donate_money
+        "Take the burden off her shoulders (5,400 coins). A massage with a happy ending." if _tier_four_unlocked and money >= 5400:
+            jump yvara_s4_donate_tier_4
+        "Take the burden off her shoulders (5,400 coins). A massage with a happy ending." if _tier_four_unlocked and money < 5400:
+            narrator "You cannot spare enough coin to offer that kind of relief."
+            jump yvara_s4_donate_money
+        "Leave it be for now.":
+            jump yvara_visit_menu
+
+label yvara_s4_donate_tier_1:
+    $ _total_days = calculate_total_days()
+    $ money -= 900
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_donation_total += 1
+    $ yvara_s4_donation_highest_tier = max(yvara_s4_donation_highest_tier, 1)
+    $ yvara_devotion += 2
+    $ yvara_affection += 2
+    $ _emote = "images/yvara/yvara_formal_moved.png" if renpy.loadable("images/yvara/yvara_formal_moved.png") else "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "You place a small purse beside the ledger and nudge it toward her."
+    narrator "She looks at it, then at you."
+    yvara "I did not ask you for this."
+    narrator "You tell her it should cover the immediate nuisance: paper, lamp oil, one less compromise than she had planned to make this week."
+    narrator "She says nothing. Then she steps closer, rests her hand on your chest — over your heart — and leaves it there a moment, as if feeling your pulse."
+    yvara "Thank you."
+    narrator "She says it quietly. When she withdraws her hand, the formal mask has slipped fractionally."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_18
+    jump yvara_visit_menu
+
+label yvara_s4_donate_tier_2:
+    $ _total_days = calculate_total_days()
+    $ money -= 2100
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_donation_total += 1
+    $ yvara_s4_donation_highest_tier = max(yvara_s4_donation_highest_tier, 2)
+    $ yvara_devotion += 3
+    $ yvara_affection += 3
+    $ _emote = "images/yvara/yvara_formal_flustered_light.png" if renpy.loadable("images/yvara/yvara_formal_flustered_light.png") else "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "You set down enough coin to solve more than one immediate problem."
+    narrator "She knows that at a glance. So do you."
+    yvara "That is not a casual amount."
+    narrator "You tell her the Academy matters, and that you would rather see the strain taken off her face than left there out of principle."
+    yvara "You should not say things like that while handing me money."
+    narrator "Her composure holds. Barely."
+    narrator "When she reaches for the purse, her fingers brush yours and remain there for a second longer than either of you strictly needs. Then she steps in and kisses you."
+    yvara "Thank you."
+    narrator "This time she does not sound formal at all."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_19
+    jump yvara_visit_menu
+
+label yvara_s4_donate_tier_3:
+    $ _total_days = calculate_total_days()
+    $ money -= 4200
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_donation_total += 1
+    $ yvara_s4_donation_highest_tier = 3
+    $ yvara_devotion += 4
+    $ yvara_affection += 4
+    $ _emote = "images/yvara/yvara_formal_warm.png" if renpy.loadable("images/yvara/yvara_formal_warm.png") else "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "You name the expense plainly and offer enough to erase it."
+    narrator "For once she does not answer immediately."
+    yvara "That is... not a donation. That is rescue."
+    narrator "You tell her she can call it whatever lets her accept it."
+    narrator "She looks at you for a long moment, caught between pride and relief."
+    yvara "Sit down. I have spent years studying anatomy for the Amatory curriculum — pressure points, musculature. I am better at this than you might expect."
+    narrator "She settles her hands on your shoulders and begins to work the tension out with the same precision she applies to everything else."
+    yvara "You carry too much tension here."
+    narrator "The contact is deliberate, close. When she finishes, her hands linger on your shoulders a moment before she withdraws."
+    yvara "Thank you."
+    narrator "This time she says it like a confession rather than etiquette."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_20
+    jump yvara_visit_menu
+
+label yvara_s4_donate_tier_4:
+    $ _total_days = calculate_total_days()
+    $ money -= 5400
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_donation_total += 1
+    $ yvara_s4_donation_highest_tier = 4
+    $ yvara_devotion += 5
+    $ yvara_affection += 5
+    $ _emote = "images/yvara/yvara_formal_yielding.png" if renpy.loadable("images/yvara/yvara_formal_yielding.png") else "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "You place enough coin on the desk to remove the problem entirely, not just soften it."
+    narrator "She does not touch it. She looks at you instead."
+    yvara "Do you understand what you are doing?"
+    narrator "You tell her that you do, and that you would rather see her breathe easier than watch her grind herself down out of principle."
+    narrator "That lands harder than the money."
+    narrator "She removes her glasses and sets them on the desk."
+    yvara "Lie down."
+    narrator "The massage begins at your shoulders and neck. It travels down your back. Her hands pause at the small of your back a moment before they continue."
+    narrator "The rhythm changes. It is no longer only gratitude."
+    narrator "When her hand finds what it is looking for, there is no question. Only a decision already made."
+    narrator "Afterward, she washes her hands at the basin in the corner with the same composure she brings to her paperwork."
+    yvara "That was not part of any arrangement."
+    narrator "There is color in her cheeks and no real distance left in her eyes."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_21
+    jump yvara_visit_menu
+
+# ── Stage 4 Finance: Buy favors ───────────────────────────────────────────────
+label yvara_s4_buy_favors:
+    $ _tier_two_unlocked = yvara_s4_favor_highest_tier >= 1 or yvara_s4_favors_total >= 1
+    $ _tier_three_unlocked = yvara_s4_favor_highest_tier >= 2 or yvara_s4_favors_total >= 2
+    $ _tier_four_unlocked = yvara_s4_favor_highest_tier >= 3 or yvara_s4_favors_total >= 3
+    menu:
+        "Turn for me (900 coins). She stands and turns slowly for you." if money >= 900:
+            jump yvara_s4_favor_turn
+        "Turn for me (900 coins). She stands and turns slowly for you." if money < 900:
+            narrator "You do not have enough coin to make even that bargain."
+            jump yvara_s4_buy_favors
+        "Strip down to lingerie (2,400 coins). She undresses until she is down to her underthings." if _tier_two_unlocked and money >= 2400:
+            jump yvara_s4_favor_lingerie
+        "Strip down to lingerie (2,400 coins). She undresses until she is down to her underthings." if _tier_two_unlocked and money < 2400:
+            narrator "You cannot afford that particular indulgence right now."
+            jump yvara_s4_buy_favors
+        "Go topless for me (2,700 coins). She removes her top under your gaze." if _tier_three_unlocked and money >= 2700:
+            jump yvara_s4_favor_topless
+        "Go topless for me (2,700 coins). She removes her top under your gaze." if _tier_three_unlocked and money < 2700:
+            narrator "You cannot afford to call in that kind of favor right now."
+            jump yvara_s4_buy_favors
+        "Striptease for me (4,500 coins). A dance with sexy moves, ending in full undress." if _tier_four_unlocked and money >= 4500:
+            jump yvara_s4_favor_striptease
+        "Striptease for me (4,500 coins). A dance with sexy moves, ending in full undress." if _tier_four_unlocked and money < 4500:
+            narrator "You do not have enough coin to demand that much tonight."
+            jump yvara_s4_buy_favors
+        "Leave it there.":
+            jump yvara_visit_menu
+
+label yvara_s4_favor_turn:
+    $ _total_days = calculate_total_days()
+    $ money -= 900
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_favors_total += 1
+    $ yvara_s4_favor_highest_tier = max(yvara_s4_favor_highest_tier, 1)
+    $ yvara_dominion += 2
+    $ yvara_affection += 1
+    $ yvara_leverage_financial = True
+    narrator "You slide the agreed coin across the desk and tell her to stand."
+    narrator "She looks at the money, then at you."
+    yvara "You are very calm when you say things like that."
+    narrator "You tell her to turn for you."
+    narrator "The silence stretches. Then she rises."
+    $ _bust = "images/yvara/yvara_formal_back.png"
+    if renpy.loadable(_bust):
+        show expression _bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "She turns once, slowly, with the rigid grace of someone refusing to rush simply because you asked."
+    yvara "There. Was that sufficient?"
+    narrator "The question is dry. The heat beneath it is not."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_22
+    jump yvara_visit_menu
+
+label yvara_s4_favor_lingerie:
+    $ _total_days = calculate_total_days()
+    $ money -= 2400
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_favors_total += 1
+    $ yvara_s4_favor_highest_tier = 2
+    $ yvara_dominion += 3
+    $ yvara_affection += 2
+    $ yvara_leverage_financial = True
+    narrator "You set down enough coin that refusing would require a kind of pride she is already tired of paying for."
+    narrator "Then you tell her to strip down to her lingerie."
+    yvara "That is... specific."
+    narrator "You do not take the money back."
+    narrator "After a silence long enough to matter, she steps away from the desk."
+    narrator "She unfastens her formal layers with deliberate precision — the same care she applies to everything else."
+    $ _bust = "images/yvara/yvara_formal_lingerie.png"
+    if renpy.loadable(_bust):
+        show expression _bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "When she is done, she stands before you in her underthings, neither rushing nor apologising."
+    yvara "If you smirk, this ends."
+    narrator "You do not. She notices."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_23
+    jump yvara_visit_menu
+
+label yvara_s4_favor_topless:
+    $ _total_days = calculate_total_days()
+    $ money -= 2700
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_favors_total += 1
+    $ yvara_s4_favor_highest_tier = 3
+    $ yvara_dominion += 4
+    $ yvara_affection += 1
+    $ yvara_leverage_financial = True
+    narrator "You name the favor and let the amount speak for itself."
+    yvara "My top."
+    narrator "You hold her gaze."
+    narrator "The pause that follows is sharp enough to cut on."
+    narrator "Then, with the deliberate precision she applies to everything that matters, she removes it."
+    $ _bust = "images/yvara/yvara_formal_topless.png"
+    if renpy.loadable(_bust):
+        show expression _bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "She stands before you, bare from the waist up, with the same controlled composure she brings to her desk."
+    yvara "You should be very clear with yourself about what sort of person asks for this."
+    narrator "She says it while remaining exactly where you told her to remain."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_24
+    jump yvara_visit_menu
+
+label yvara_s4_favor_striptease:
+    $ _total_days = calculate_total_days()
+    $ money -= 4500
+    $ yvara_s4_finance_last_day = _total_days
+    $ yvara_s4_favors_total += 1
+    $ yvara_s4_favor_highest_tier = 4
+    $ yvara_dominion += 5
+    $ yvara_affection += 2
+    $ yvara_leverage_financial = True
+    narrator "You place enough coin on the desk that the air in the room changes before you even speak."
+    narrator "Then you tell her to give you a striptease."
+    yvara "You enjoy choosing the moment where a request becomes an insult."
+    narrator "You do not deny it."
+    narrator "She stands very still, furious for a second. Then she moves."
+    narrator "It starts as a slow turn — a measured dance. Her hands trace the line of her collar, her waist. Each piece comes away with the same exacting care she brings to everything else."
+    narrator "The moves are deliberate, almost austere. That only makes them harder to look away from."
+    $ _bust = "images/yvara/yvara_formal_striptease.png"
+    if renpy.loadable(_bust):
+        show expression _bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    narrator "By the time the last layer is gone, the silence feels louder than any order you gave."
+    yvara "Look quickly."
+    narrator "She says it as if that could somehow restore the balance between you."
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_25
+    jump yvara_visit_menu
+
+# ── Stage 4 Gate Scene: The Storm ─────────────────────────────────────────────
+label yvara_s4_gate_scene:
+    $ yvara_affection = max(yvara_affection, 64)
+    $ _title = (getattr(store, "player_title", "") or "").strip().lower()
+    $ _cg_01 = "images/yvara/cg_storm_01_common.png" if renpy.loadable("images/yvara/cg_storm_01_common.png") else ("images/yvara/cg_storm.png" if renpy.loadable("images/yvara/cg_storm.png") else None)
+    if _cg_01:
+        scene expression _cg_01
+        window hide
+        pause
+        window show
+    narrator "The storm does not ask permission."
+    narrator "One hour it was weather. The next it is something else — the kind that makes roads impassable and the distance between here and anywhere else academic."
+    narrator "The Academy is empty. The last class ended before it started in earnest. The staff have gone."
+    narrator "It is only the two of you and the sound of rain on the roof, which is a very particular kind of company."
+    if yvara_is_dominion_route():
+        jump yvara_s4_gate_dominion
+    else:
+        jump yvara_s4_gate_devotion
+
+label yvara_s4_gate_devotion:
+    $ _cg_02 = "images/yvara/cg_storm_02_lady.png" if _title == "lady" else "images/yvara/cg_storm_02_lord.png"
+    $ _cg_02 = _cg_02 if renpy.loadable(_cg_02) else None
+    $ _cg_02b = "images/yvara/cg_storm_02b_common.png" if renpy.loadable("images/yvara/cg_storm_02b_common.png") else None
+    $ _cg_03 = "images/yvara/cg_storm_03_devotion_lady.png" if _title == "lady" else "images/yvara/cg_storm_03_devotion_lord.png"
+    $ _cg_03 = _cg_03 if renpy.loadable(_cg_03) else None
+    narrator "She has been reading — or pretending to. The book has not turned a page in twenty minutes."
+    if yvara_s4_donation_total > 0:
+        narrator "You have spent days making it easier for her to keep the Academy standing. She has spent those same days pretending that gratitude was the whole of what she felt."
+    narrator "At some point the conversation runs out of neutral territory."
+    narrator "Not dramatically. Not with any single thing that causes it. The careful distance has simply been there for a long time, and tonight, it runs out."
+    yvara "I should not—"
+    narrator "She does not finish the sentence."
+    narrator "She does not move away."
+    if _cg_02:
+        window hide
+        scene expression _cg_02
+        pause
+        window show
+    narrator "When she kisses you it is not tentative. She has been thinking about it, clearly, and she has decided. The decision is in it."
+    yvara "I should not have done that."
+    menu:
+        "You should do it again.":
+            $ yvara_devotion += 3
+            $ yvara_affection += 6
+            narrator "She considers this. For a long moment."
+            narrator "The lamp flickers. Outside, the rain is doing something serious."
+            narrator "She does it again."
+        "You should do whatever you want.":
+            $ yvara_devotion += 2
+            $ yvara_affection += 5
+            narrator "Something in her expression changes — not surprise, but the resolution of a tension."
+            yvara "..."
+            yvara "That is the most dangerous thing anyone has said to me in some time."
+            narrator "She does not back away."
+    narrator "The storm grows louder. The Academy is closed around you. By the time either of you says anything coherent again, there is no practical sense in pretending you will spend the night apart."
+    narrator "You end up in the same bed before the storm has spent half its force."
+    if _cg_02b:
+        window hide
+        scene expression _cg_02b
+        pause
+        window show
+    if _cg_03:
+        window hide
+        scene expression _cg_03
+        pause
+        window show
+    narrator "Afterward, she is quiet in the specific way of someone who has done something they had thought about carefully and found it was exactly what they thought it would be."
+    yvara "I am not sure what this is."
+    narrator "She says it to the ceiling, or the rain, or some neutral middle distance."
+    menu:
+        "Neither am I.":
+            $ yvara_affection += 3
+            yvara "Good."
+            narrator "She turns her head."
+            yvara "I would distrust certainty at this stage."
+        "It is what it is.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 2
+            yvara "..."
+            yvara "Yes. I suppose it is."
+            narrator "She says it like she is trying on something new."
+    jump yvara_s4_gate_end
+
+label yvara_s4_gate_dominion:
+    $ _cg_02 = "images/yvara/cg_storm_02_lady.png" if _title == "lady" else "images/yvara/cg_storm_02_lord.png"
+    $ _cg_02 = _cg_02 if renpy.loadable(_cg_02) else None
+    $ _cg_02b = "images/yvara/cg_storm_02b_common.png" if renpy.loadable("images/yvara/cg_storm_02b_common.png") else None
+    $ _cg_03 = "images/yvara/cg_storm_03_dominion_lady.png" if _title == "lady" else "images/yvara/cg_storm_03_dominion_lord.png"
+    $ _cg_03 = _cg_03 if renpy.loadable(_cg_03) else None
+    narrator "She has been professional all evening — which is to say that she has been performing the idea of professional, and the performance is visible to both of them."
+    if yvara_s4_favors_total > 0:
+        narrator "Small bargains have been accumulating between you for days. Each one left something unsettled in the room. Tonight there is nowhere for that unfinished tension to go except forward."
+    narrator "At some point she stops."
+    narrator "Not suddenly. Not with any announcement. She simply stops maintaining the distance, and what was behind it is the same thing that has been accumulating for weeks."
+    narrator "You move. Not quickly. With the specific clarity of someone who has been patient long enough."
+    yvara "This was not part of any arrangement."
+    menu:
+        "No. It is a new one.":
+            $ yvara_dominion += 3
+            $ yvara_affection += 5
+            narrator "She holds your gaze."
+            narrator "There is genuine resistance in her — not fear, not reluctance. Pride. The specific kind that knows what it is doing."
+            narrator "And then, carefully, it yields."
+            yvara "..."
+            narrator "She does not ask you to stop. She does something more deliberate than that: she continues."
+        "It is not an arrangement at all.":
+            $ yvara_affection += 4
+            $ yvara_dominion += 1
+            narrator "A silence."
+            yvara "Then what is it?"
+            menu:
+                "Something without a name yet.":
+                    $ yvara_affection += 3
+                    narrator "She considers this."
+                    narrator "She decides she can work with that."
+                "Ask me again when the storm has passed.":
+                    $ yvara_dominion += 2
+                    $ yvara_affection += 3
+                    narrator "A beat."
+                    yvara "..."
+                    yvara "Yes. All right."
+                    narrator "She says it like someone who has just decided to stop arguing about the map and simply walk."
+    if _cg_02:
+        window hide
+        scene expression _cg_02
+        pause
+        window show
+    narrator "The rain makes departure impossible and denial feel even more ridiculous than it already did."
+    narrator "What begins standing and charged ends with the two of you in the same bed, the storm spending itself against the windows while she says nothing that sounds like regret."
+    if _cg_02b:
+        window hide
+        scene expression _cg_02b
+        pause
+        window show
+    if _cg_03:
+        window hide
+        scene expression _cg_03
+        pause
+        window show
+    narrator "Afterward she is quieter than usual. Not broken — settled. The specific settledness of someone who has made a decision in full awareness of what it means."
+    yvara "You will not make a point of this."
+    narrator "It is not quite a question."
+    menu:
+        "No.":
+            $ yvara_dominion += 1
+            $ yvara_affection += 3
+            yvara "Good."
+            narrator "She says it simply. She is already herself again — just a different arrangement of it."
+        "It does not need to be a point. It is simply true.":
+            $ yvara_affection += 4
+            narrator "She looks at you."
+            yvara "..."
+            yvara "Yes. I suppose it is."
+    jump yvara_s4_gate_end
+
+label yvara_s4_gate_end:
+    $ yvara_recalculate_stage()
+    $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
+    $ _yvara_bust = "images/yvara/yvara_formal_neutral.png" if renpy.loadable("images/yvara/yvara_formal_neutral.png") else None
+    scene expression _academy_bg at yvara_bg_blur
+    show black as yvara_bg_dim:
+        alpha 0.35
+    if _yvara_bust:
+        show expression _yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    jump yvara_visit_menu
+
+# ── Stage 4: The Morning After ────────────────────────────────────────────────
+label yvara_s4_morning_after:
+    narrator "She is already at her desk when you wake."
+    narrator "Professional posture. Papers arranged. Tea made — there are two cups."
+    narrator "She does not look up immediately. When she does, her expression is the composed one, fully assembled."
+    yvara "I trust you slept adequately."
+    narrator "A pause that lasts slightly too long to be nothing."
+    menu:
+        "I did.":
+            $ yvara_affection += 3
+            narrator "She hands you the second cup."
+            narrator "Her fingers brush yours. Neither of you comments."
+            yvara "Good."
+            narrator "She returns to her papers. The distance between you is exactly the same as it has always been. It means something entirely different now."
+        "Better than I expected.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 3
+            narrator "Something at the corner of her expression moves."
+            yvara "The couch in the study is more comfortable than it appears."
+            narrator "She hands you the tea. Her fingers brush yours. She does not comment on it."
+        "You made tea.":
+            $ yvara_affection += 4
+            narrator "She looks at the cup she is holding out to you."
+            yvara "I make tea every morning."
+            narrator "A pause."
+            yvara "There happened to be enough for two."
+            narrator "She holds your gaze for one moment longer than necessary. Then returns to her work."
+    $ yvara_affection += 0
+    jump yvara_visit_menu
+
+# ── Stage 4: Evening at the Academy (repeatable) ─────────────────────────────
+label yvara_evening_academy:
+    $ _total_days = calculate_total_days()
+    $ yvara_evening_academy_last_day = _total_days
+    if yvara_is_devotion_route():
+        narrator "You come in the evening, when the last students have left and the building has the particular quiet of a place that has finished its work for the day."
+        narrator "She is in the back — the library, or the study — and she hears you and does not call out to ask who it is."
+        narrator "She already knows."
+        yvara "You came."
+        narrator "She says it as though she had been waiting without admitting she was waiting."
+        menu:
+            "I said I would.":
+                $ yvara_devotion += 2
+                $ yvara_affection += 3
+                narrator "She nods once. Something settles in her expression."
+                narrator "The evening passes the way evenings do now — talking, and then less talking, and then something that does not need words."
+                yvara "You should not stay too late."
+                narrator "She says it much later than she should have."
+            "I could not stay away.":
+                $ yvara_devotion += 1
+                $ yvara_affection += 2
+                narrator "A beat. She looks at you with an expression that has stopped trying to be neutral."
+                yvara "..."
+                yvara "No. I find I am not surprised by that."
+                narrator "The evening is unhurried. That is the best thing about it."
+    else:
+        narrator "You come without announcement. You do not need to announce yourself anymore — that is something that has changed, quietly, without either of you marking it."
+        narrator "She looks up when you come in and does not reach for her professional register."
+        yvara "I was beginning to wonder."
+        narrator "She says it without preamble."
+        menu:
+            "About what?":
+                $ yvara_dominion += 1
+                $ yvara_affection += 2
+                yvara "Whether you would come this evening."
+                narrator "She says it with the flat directness she uses when she has decided not to pretend about something."
+                menu:
+                    "Here I am.":
+                        $ yvara_affection += 2
+                        narrator "She looks at you."
+                        yvara "Yes."
+                        narrator "She says it like something she is glad about and is not quite ready to say she is glad about."
+                    "And now that I have?":
+                        $ yvara_dominion += 2
+                        $ yvara_affection += 2
+                        narrator "The corner of her expression shifts."
+                        yvara "Now that you have."
+                        narrator "She does not complete the sentence. She does not need to."
+            "I was delayed.":
+                $ yvara_affection += 2
+                yvara "It does not matter."
+                narrator "She says it quickly. Too quickly."
+                yvara "You are here now."
+                narrator "She turns back toward the back room. She does not ask if you are following. She knows you are."
+    $ yvara_affection += 2
+    $ yvara_recalculate_stage()
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_26
     jump yvara_visit_menu
 
 # ── Stage 1 remark router ─────────────────────────────────────────────────────
@@ -6684,7 +8862,7 @@ label yvara_s1_remark_1:
     $ yvara_s1_remarks_done = list(yvara_s1_remarks_done) + ["s1_r1"]
     $ yvara_last_question_total_days = _total_days
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_27
     jump yvara_visit_menu
 
 # ── Stage 1 Remark 2 ──────────────────────────────────────────────────────────
@@ -6721,7 +8899,7 @@ label yvara_s1_remark_2:
     $ yvara_s1_remarks_done = list(yvara_s1_remarks_done) + ["s1_r2"]
     $ yvara_last_question_total_days = _total_days
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_28
     jump yvara_visit_menu
 
 # ── Stage 1 Remark 3 ──────────────────────────────────────────────────────────
@@ -6756,20 +8934,34 @@ label yvara_s1_remark_3:
     $ yvara_s1_remarks_done = list(yvara_s1_remarks_done) + ["s1_r3"]
     $ yvara_last_question_total_days = _total_days
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_29
     jump yvara_visit_menu
 
 # ── Stage gate check ──────────────────────────────────────────────────────────
 label yvara_check_stage_advance:
-    $ _talks_done = len(yvara_s1_talks_done) >= 3
-    $ _engagement = len(yvara_s1_remarks_done) + yvara_gifts_given
-    if yvara_stage == 1 and _talks_done and _engagement >= 3:
-        $ yvara_affection = max(yvara_affection, 16)
+    if yvara_stage == 1 and len(yvara_s1_talks_done) >= 3 and yvara_affection >= 16:
         $ yvara_recalculate_stage()
         narrator "Something has shifted between you. Small, barely visible—but real."
         yvara "You keep coming back."
         yvara "I am beginning to think that is intentional."
-        $ renpy.notify("Stage 2 unlocked.")
+    elif yvara_stage == 2 and len(yvara_s2_talks_done) >= 3 and yvara_affection >= 31:
+        $ yvara_recalculate_stage()
+        narrator "She sets down her pen. Not because she has finished—she rarely finishes—but deliberately. She looks at you."
+        yvara "Whatever this is."
+        narrator "She does not complete the sentence. She does not seem to need to."
+        yvara "I think we should keep doing it."
+        narrator "It is not a question. It might be the most direct thing she has said to you."
+    elif not yvara_s3_gate_fired and not yvara_s3_gate_ready and len(yvara_s3_talks_done) >= 3 and yvara_affection >= 51:
+        $ yvara_s3_gate_ready = True
+        $ yvara_s3_gate_ready_total_days = calculate_total_days()
+        narrator "You start to leave. Before you reach the door, she speaks."
+        yvara "If you come by tomorrow..."
+        narrator "She stops, as though reconsidering the sentence while already inside it."
+        yvara "Come after hours."
+        narrator "It is not phrased like an invitation. It lands like one anyway."
+    elif not yvara_s4_gate_fired and len(yvara_s4_talks_done) >= 3 and yvara_affection >= 64:
+        $ yvara_s4_gate_fired = True
+        jump yvara_s4_gate_scene
     return
 
 label yvara_gift:
@@ -6782,8 +8974,11 @@ label yvara_gift:
     $ _valid_gift_ids = [g[0] for g in yvara_get_giftable_items()]
     if _gid is None or _gid not in _valid_gift_ids:
         jump yvara_visit_menu
-    $ remove_item_from_inventory(manager_inventory, _gid, 1)
-    $ store.manager_inventory = list(store.manager_inventory)
+    $ _removed = yvara_remove_gift_item(_gid, 1)
+    if not _removed:
+        narrator "You cannot find that gift in your accessible storage right now."
+        jump yvara_visit_menu
+    $ store.manager_inventory = list(getattr(store, "manager_inventory", manager_inventory))
     $ _gdata = YVARA_GIFTS.get(_gid, (1, 0, 1, "yvara_gift_default"))
     $ yvara_devotion += _gdata[0]
     $ yvara_dominion += _gdata[1]
@@ -6791,8 +8986,10 @@ label yvara_gift:
     $ yvara_last_gift_total_days = _total_days
     if _gdata[2] >= 0:
         $ yvara_gifts_given += 1
+        if yvara_stage == 2:
+            $ yvara_s2_gifts_given += 1
     $ yvara_recalculate_stage()
-    call yvara_check_stage_advance
+    call yvara_check_stage_advance from _call_yvara_check_stage_advance_30
     jump expression _gdata[3]
 
 label yvara_gift_rare_book:
@@ -6848,6 +9045,44 @@ label yvara_gift_elixir:
     yvara "Get out."
     yvara "Come back tomorrow and we will pretend this did not happen."
     narrator "That was far too soon."
+    jump yvara_visit_menu
+
+label yvara_gift_poem:
+    narrator "She takes the paper. Reads it once. Reads it again."
+    yvara "..."
+    yvara "You wrote this."
+    narrator "It is not a question. She folds it carefully and sets it between the pages of the book on her desk—not to put it aside, but to keep it."
+    yvara "I will read it again later."
+    narrator "She says it quietly, as though she is telling herself as much as you."
+    jump yvara_visit_menu
+
+label yvara_gift_botanical:
+    narrator "She opens the pressing to a page at random and studies the specimen for a moment."
+    yvara "Verath moss. Properly dried."
+    narrator "She looks up."
+    yvara "Who chose the specimens?"
+    narrator "When you tell her, she looks back at the page."
+    yvara "You have better taste than I gave you credit for."
+    narrator "She sets it beside the lamp where the light will reach it."
+    jump yvara_visit_menu
+
+label yvara_gift_spiked_tea:
+    narrator "She accepts the tin without comment. Prepares it in the usual way."
+    narrator "A moment passes. She takes a sip."
+    yvara "This blend is... different."
+    narrator "She takes another."
+    yvara "There is something in it I cannot place."
+    narrator "She does not put it down."
+    yvara "It is not unpleasant."
+    narrator "She finishes the cup."
+    jump yvara_visit_menu
+
+label yvara_gift_silk_ribbon:
+    narrator "She holds it for a moment without speaking, turning it slowly between her fingers."
+    yvara "This is a fine quality."
+    narrator "She sets it on the corner of her desk rather than to the side."
+    yvara "I do not know what to do with it."
+    narrator "She does not give it back."
     jump yvara_visit_menu
 
 label yvara_gift_default:
@@ -7219,3 +9454,4 @@ label arena_special_match_run(worker_name):
     $ renpy.show_screen("map_screen")
     $ renpy.show_screen("arena_menu")
     jump tavern_screen
+

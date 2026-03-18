@@ -1,5 +1,45 @@
-# Define helper function in store namespace to avoid pickling errors
+# Define helper functions in store namespace to avoid pickling errors
 init python:
+    def _worker_meets_trait_requirements(worker_obj, required_traits_list, excluded_traits_list):
+        """Check if worker has all required traits and none of the excluded traits. Must be in store for pickling."""
+        if not worker_obj:
+            return False
+        worker_traits = set(worker_obj.get("traits", []) or [])
+        if required_traits_list and not set(required_traits_list).issubset(worker_traits):
+            return False
+        if excluded_traits_list and any(t in worker_traits for t in excluded_traits_list):
+            return False
+        return True
+
+    def _any_eligible_worker_meets_traits(required_traits_list, excluded_traits_list, event=None):
+        """Check if any eligible worker satisfies trait requirements. Must be in store for pickling."""
+        event = event or getattr(store, "current_event", None)
+        if not event:
+            return False
+        event_building_types = event.get("building_type", [])
+        available_buildings = getattr(store, "available_buildings", {})
+        workers = getattr(store, "workers", []) or []
+        if hasattr(store, "current_affected_building") and store.current_affected_building:
+            affected_building = store.current_affected_building
+            candidates = [w for w in workers if w.get("assigned_building") == affected_building]
+        elif event_building_types:
+            candidates = []
+            for w in workers:
+                assigned_bldg = w.get("assigned_building", "Unassigned")
+                if assigned_bldg != "Unassigned" and assigned_bldg in available_buildings:
+                    if available_buildings[assigned_bldg].get("type") in event_building_types:
+                        candidates.append(w)
+        else:
+            candidates = list(workers)
+
+        for candidate in candidates:
+            if _worker_meets_trait_requirements(candidate, required_traits_list, excluded_traits_list):
+                return True
+        return False
+
+    store._worker_meets_trait_requirements = _worker_meets_trait_requirements
+    store._any_eligible_worker_meets_traits = _any_eligible_worker_meets_traits
+
     def _split_for_narrator(msg: str, limit: int = 180):
         """
         Split a message into chunks for narrator display, respecting sentence boundaries.
@@ -82,14 +122,17 @@ init python:
         except Exception:
             return [str(msg or "")]
 
+# Ensure store has current_event so handle_random_event never raises AttributeError
+default current_event = None
+
 label handle_random_event:
     # Mark start of new conversation for history navigation
     $ start_new_conversation()
     
     # Initial checks and setup (Ren'Py)
     if store.current_event is None:
-        $ renpy.log("No event to handle, skipping to next_day")
-        jump next_day
+        $ renpy.log("No current_event in handle_random_event; returning to caller without re-running next_day.")
+        return
 
     # Get event data (Ren'Py $)
     $ event = store.current_event
@@ -150,7 +193,8 @@ label handle_random_event:
         store.building_notification = building_notification
 
     # --- Start Event Scene ---
-    $ current_bg = get_event_background(event) # Get initial background
+    # Initial event scene must always use event background media (not worker outcome media).
+    $ current_bg = get_event_background(event, worker=None)
     scene expression current_bg with dissolve
     
     # Check if event has no_dialogue flag or if there's actual dialogue content
@@ -170,7 +214,7 @@ label handle_random_event:
                 for _chunk in _split_for_narrator(store.temp_narrator_text, limit=180):
                     renpy.say(narrator, _chunk)
 
-    # Prepare choices (Python)
+    # Prepare choices (Python) - use store functions to avoid pickle errors
     python:
         prepared_choices = []
         for choice_option in event.get("choices", []):
@@ -211,6 +255,26 @@ label handle_random_event:
                     # Be safe: hide the option if evaluation failed
                     continue
 
+            # Trait gating at choice level.
+            required_traits = choice_option.get("required_traits", []) or []
+            excluded_traits = choice_option.get("excluded_traits", []) or []
+            trait_visibility = choice_option.get("trait_visibility", "hide") or "hide"  # hide|blocked
+            blocked_reason = choice_option.get("blocked_message") or "Locked: trait requirement not met."
+
+            trait_requirements_met = True
+            if required_traits or excluded_traits:
+                if final_worker is not None:
+                    trait_requirements_met = store._worker_meets_trait_requirements(final_worker, required_traits, excluded_traits)
+                elif worker_selection_mode in ("choose", "random"):
+                    # If no selected worker yet, check if at least one eligible worker can satisfy.
+                    trait_requirements_met = store._any_eligible_worker_meets_traits(required_traits, excluded_traits, event)
+                else:
+                    # Non-worker choice cannot satisfy worker trait requirements.
+                    trait_requirements_met = False
+
+            if not trait_requirements_met and trait_visibility == "hide":
+                continue
+
             new_choice = choice_option.copy()
             # Preserve threshold if it exists
             if "threshold" in choice_option:
@@ -229,6 +293,9 @@ label handle_random_event:
                 option_text = option_text.replace("[acting_worker]", "a worker")
             new_choice["option"] = option_text
             # Prepare success/failure messages with placeholders resolved; avoid empty messages
+            # When final_worker is None (e.g. worker_selection "choose" before pick), keep
+            # [acting_worker]/[event_worker] as-is so process_choice can replace them after
+            # the player selects a worker. Otherwise we'd show "a worker" instead of the name.
             ms = choice_option.get("message_success")
             mf = choice_option.get("message_failure")
             for key in ("message_success", "message_failure"):
@@ -244,12 +311,15 @@ label handle_random_event:
                         acting_worker_name = final_worker.get("name", "the worker")
                         txt = txt.replace("[event_worker]", acting_worker_name)
                         txt = txt.replace("[acting_worker]", acting_worker_name)
-                    else:
-                        txt = txt.replace("[event_worker]", "a worker")
-                        txt = txt.replace("[acting_worker]", "a worker")
+                    # else: leave [acting_worker]/[event_worker] for process_choice to fill
                 new_choice[key] = txt
             new_choice["effect"] = choice_option.get("effect", {})
             new_choice["condition"] = choice_option.get("condition", None)
+            new_choice["_blocked"] = (not trait_requirements_met and trait_visibility == "blocked")
+            new_choice["_blocked_reason"] = blocked_reason
+            # Skip choices with empty or whitespace-only option to avoid blank slots in the UI
+            if not (option_text and str(option_text).strip()):
+                continue
             prepared_choices.append(new_choice)
         store.temp_prepared_choices = prepared_choices
 
@@ -259,6 +329,12 @@ label handle_random_event:
     # Show choices screen (Ren'Py) - ONLY shows the choices now
     call screen random_event_choice(event_choices=store.temp_prepared_choices)
     $ chosen_choice_data = _return
+
+    if chosen_choice_data is None:
+        $ outcome_message = "No valid option selected."
+        narrator "[outcome_message]"
+        window hide
+        return
 
     # --- Python block to evaluate the choice and determine next steps ---
     python:
@@ -406,9 +482,10 @@ label handle_random_event:
         else:
             $ renpy.log(f"Worker chosen from screen: {chosen_worker}, Type: {type(chosen_worker)}")
             if chosen_worker is not None and hasattr(chosen_worker, 'items'):
-                $ final_worker = dict(chosen_worker.items())
+                # Screen returns worker ref from store.workers; use it directly so trait/stat changes persist
+                $ final_worker = chosen_worker
                 $ store.current_worker = final_worker
-                $ renpy.log(f"Set final_worker from chosen_worker copy: {final_worker.get('name')}")
+                $ renpy.log(f"Set final_worker: {final_worker.get('name')} (in store.workers: {final_worker in store.workers})")
                 $ event_status = "proceed_with_action"
                 
                 # Re-process the outcome message with the chosen worker's name
@@ -451,22 +528,23 @@ label handle_random_event:
         $ event_outcome_for_bg = "failure"
 
     # --- Update background based on outcome ---
-    $ new_bg = get_event_background(event, event_outcome_for_bg)
+    # Pass choice condition as skill hint so worker-folder skill media can be used
+    # when success/failure-specific event media is not present.
+    $ skill_for_event_media = chosen_choice_data.get("condition") if chosen_choice_data else None
+    $ new_bg = get_event_background(event, event_outcome_for_bg, final_worker, skill_name=skill_for_event_media)
     if new_bg != current_bg:
         scene expression new_bg with dissolve
         $ current_bg = new_bg # Update the current background variable
 
     # --- Show the final outcome message (split into chunks if long) ---
     python:
-        _chunks = _split_for_narrator(outcome_message, limit=180)
+        _chunks = _split_for_narrator(outcome_message, limit=130)
     python:
         for _chunk in _chunks:
             renpy.say(narrator, _chunk)
-    # Final transition note so the user knows there's one more continue
-    narrator "On to other matters."
-
-    # --- Clean up and finish ---
-    window hide # Hide the narrator window
+    # --- Final image-only click (no message) ---
+    window hide
+    pause
     
     # Restore main BGM after event with quick fade-out for daily report transition
     $ end_event_with_quick_fadeout()

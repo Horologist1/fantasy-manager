@@ -183,7 +183,9 @@ init python:
         else:
             # No skill check - check for success_chance probability
             success_chance = effect.get("success_chance")
-            if success_chance is not None:
+            # If success_chance present AND effect has success/failure branches → probability-based
+            # If success_chance is 0 or effect has no success/failure → guaranteed (apply main effect)
+            if success_chance is not None and ("success" in effect or "failure" in effect):
                 # Probability-based outcome
                 roll = random.random()
                 if roll <= success_chance:
@@ -195,7 +197,7 @@ init python:
                     base_message = choice_data.get("message_failure", "The opportunity slips away; nothing more comes of it.")
                     applied_values = apply_recruitment_effects(effect.get("failure", {}), worker)
             else:
-                # Guaranteed outcome
+                # Guaranteed outcome (no success/failure branches, or success_chance omitted)
                 outcome_status = "success"
                 base_message = choice_data.get("message", "Done.")
                 applied_values = apply_recruitment_effects(effect, worker)

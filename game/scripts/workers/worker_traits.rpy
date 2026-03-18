@@ -2,36 +2,204 @@ init python:
     import random
     import renpy.store as store
     import json
+    import os
 
-    def load_traits():
-        """Load traits from the traits.json file."""
+    def _extract_traits_from_data(traits_data, source_name):
+        """Normalize a JSON payload into a list of trait dicts."""
+        traits_get = getattr(traits_data, "get", None)
+        if callable(traits_get):
+            extracted = traits_get("traits", [])
+            return list(extracted) if extracted else []
+        if isinstance(traits_data, (list, tuple)):
+            return list(traits_data)
+        if hasattr(traits_data, "__iter__") and not isinstance(traits_data, (str, bytes)):
+            try:
+                return list(traits_data)
+            except Exception:
+                pass
+        renpy.log(f"TRAITS: {source_name} has unexpected type: {type(traits_data)}")
+        return []
+
+    def _load_traits_from_file(file_path):
+        """Load traits from a single JSON file. Tries renpy.file() first (as worker_loader), then disk fallback."""
+        renpy_err = None
         try:
-            with renpy.file("data/traits.json") as f:
-                traits = json.load(f)
-            # Filter traits based on NSFW setting
-            filtered_traits = [trait for trait in traits if persistent.nsfw_enabled or not trait.get("nsfw", False)]
-            return filtered_traits
+            with renpy.file(file_path) as f:
+                traits_data = json.loads(f.read().decode("utf-8"))
+            return _extract_traits_from_data(traits_data, file_path)
         except Exception as e:
-            renpy.log("Error loading traits.json: " + str(e))
+            renpy_err = e
+        try:
+            disk_path = os.path.join(renpy.config.gamedir, file_path.replace("/", os.sep))
+            with open(disk_path, "r", encoding="utf-8") as f:
+                traits_data = json.load(f)
+            return _extract_traits_from_data(traits_data, file_path)
+        except Exception as e:
+            renpy.log(f"TRAITS: Failed to load {file_path}: renpy.file={renpy_err!r}, disk={e!r}")
             return []
 
-    traits_list = load_traits()
+    def _discover_trait_files():
+        """Discover trait files using Ren'Py's file API (same approach as worker_loader).
+        Uses renpy.list_files() so traits are found regardless of project layout or gamedir."""
+        traits_prefix = "data/traits/"
+        all_files = renpy.list_files() if hasattr(renpy, 'list_files') else []
+        discovered = sorted([
+            f for f in all_files
+            if f.startswith(traits_prefix) and f.endswith(".json")
+        ])
+        if not discovered:
+            disk_dir = os.path.join(renpy.config.gamedir, "data", "traits")
+            if os.path.isdir(disk_dir):
+                for filename in sorted(os.listdir(disk_dir)):
+                    if filename.endswith(".json"):
+                        discovered.append(f"data/traits/{filename}")
+                renpy.log(f"TRAITS: Fallback disk discovery found {len(discovered)} files in {disk_dir}")
+        if discovered:
+            renpy.log(f"TRAITS: Discovered {len(discovered)} trait files: {discovered}")
+        return discovered
+
+    def _is_valid_trait_definition(trait, source_name):
+        """Validate minimum runtime shape for trait definitions."""
+        trait_get = getattr(trait, "get", None)
+        if not callable(trait_get):
+            renpy.log(f"TRAITS: Ignoring non-dict trait in {source_name}: {type(trait)}")
+            return False
+        trait_name = trait_get("name")
+        if not isinstance(trait_name, str) or not trait_name.strip():
+            renpy.log(f"TRAITS: Ignoring trait without valid 'name' in {source_name}")
+            return False
+        return True
+
+    def _build_trait_caches():
+        """Build filtered and raw trait caches from disk-backed JSON files."""
+        nsfw_enabled = getattr(persistent, "nsfw_enabled", False)
+        raw_traits = []
+        filtered_traits = []
+        raw_cache = {}
+        filtered_cache = {}
+        seen_names = set()
+
+        for trait_file in _discover_trait_files():
+            for trait in _load_traits_from_file(trait_file):
+                if not _is_valid_trait_definition(trait, trait_file):
+                    continue
+                trait_name = trait.get("name")
+                if trait_name in seen_names:
+                    renpy.log(f"TRAITS: Duplicate trait name '{trait_name}' in {trait_file}; keeping first definition")
+                    continue
+                seen_names.add(trait_name)
+                raw_traits.append(trait)
+                raw_cache[trait_name] = trait
+                if nsfw_enabled or not trait.get("nsfw", False):
+                    filtered_traits.append(trait)
+                    filtered_cache[trait_name] = trait
+
+        if not raw_traits:
+            legacy_file = "data/traits.json"
+            for trait in _load_traits_from_file(legacy_file):
+                if not _is_valid_trait_definition(trait, legacy_file):
+                    continue
+                trait_name = trait.get("name")
+                if trait_name in seen_names:
+                    renpy.log(f"TRAITS: Duplicate trait name '{trait_name}' in legacy file; keeping first definition")
+                    continue
+                seen_names.add(trait_name)
+                raw_traits.append(trait)
+                raw_cache[trait_name] = trait
+                if nsfw_enabled or not trait.get("nsfw", False):
+                    filtered_traits.append(trait)
+                    filtered_cache[trait_name] = trait
+
+        return raw_traits, filtered_traits, raw_cache, filtered_cache
+
+    def load_traits():
+        """Load traits from data/traits/*.json with legacy fallback."""
+        _, filtered_traits, _, _ = _build_trait_caches()
+        return filtered_traits
+
+    def refresh_traits_cache(force=False):
+        """Reload and cache traits list + lookup map."""
+        global traits_list
+        raw_traits, filtered_traits, raw_cache, filtered_cache = _build_trait_caches()
+        traits_list = filtered_traits
+        store._trait_name_set = set(filtered_cache.keys())
+        store._trait_def_cache = filtered_cache
+        store._trait_def_raw_cache = raw_cache
+        store._trait_list_raw = raw_traits
+        if traits_list:
+            renpy.log(f"TRAITS: Cache loaded with {len(traits_list)} traits (filtered), {len(raw_traits)} raw")
+        return traits_list
+
+    def get_all_traits():
+        """Return trait definitions from cache. Use store (not globals) so ensure_worker_defaults sees it."""
+        cached = getattr(store, "_trait_def_cache", None)
+        if isinstance(cached, dict) and cached:
+            return list(cached.values())
+        return refresh_traits_cache(force=True) or []
+
+    def get_trait_definition(trait_name):
+        """Return trait definition by name."""
+        if not trait_name:
+            return None
+        cache = getattr(store, "_trait_def_cache", {})
+        raw_cache = getattr(store, "_trait_def_raw_cache", {})
+        if not cache and not raw_cache:
+            refresh_traits_cache(force=True)
+            cache = getattr(store, "_trait_def_cache", {})
+            raw_cache = getattr(store, "_trait_def_raw_cache", {})
+
+        return cache.get(trait_name) or raw_cache.get(trait_name)
+
+    # Lazy load: don't load at init (renpy.file/open can fail during init phase).
+    # First get_all_traits/refresh call will load - happens when load_workers runs (runtime).
+    traits_list = []
+    store.load_traits = load_traits
+    store.refresh_traits_cache = refresh_traits_cache
+    store.get_all_traits = get_all_traits
+    store.get_trait_definition = get_trait_definition
 
     def get_trait_desc(trait_name):
         """Get the description of a trait by name."""
-        for t in traits_list:
-            if t["name"] == trait_name:
-                return t.get("description", "No description available")
+        trait_def = get_trait_definition(trait_name)
+        if trait_def:
+            return trait_def.get("description", "No description available")
         return "No description available"
 
     def can_assign_trait_to_worker(trait, worker):
         """Check if a trait can be assigned to a worker based on gender restrictions."""
         gender_restriction = trait.get("gender_restriction", None)
         if gender_restriction:
-            worker_gender = worker.get("gender", "")
-            if worker_gender != gender_restriction:
+            worker_gender = (worker.get("gender") or "").strip().lower()
+            if worker_gender != str(gender_restriction).strip().lower():
                 return False
         return True
+
+    def trait_conflicts_with_worker(trait, worker_traits, cache=None):
+        """Return True if trait conflicts with any of worker's existing traits."""
+        cache = cache or getattr(store, "_trait_def_cache", {})
+        for existing_name in (worker_traits or []):
+            existing_def = cache.get(existing_name) if isinstance(cache, dict) else None
+            if existing_def and trait.get("name") in existing_def.get("conflicts", []):
+                return True
+            if trait.get("name") and existing_name in trait.get("conflicts", []):
+                return True
+        return False
+
+    def worker_meets_trait_requirements(trait, worker_traits):
+        """Return True if worker has all traits required by this trait (requires_traits)."""
+        required = trait.get("requires_traits")
+        if not required:
+            return True
+        if isinstance(required, str):
+            required = [required]
+        elif not isinstance(required, (list, tuple)):
+            return True
+        worker_set = set(worker_traits or [])
+        return all(r in worker_set for r in required if isinstance(r, str))
+
+    store.can_assign_trait_to_worker = can_assign_trait_to_worker
+    store.trait_conflicts_with_worker = trait_conflicts_with_worker
+    store.worker_meets_trait_requirements = worker_meets_trait_requirements
 
     def add_trait_with_duration(worker, trait_name, duration, is_variant=False):
         """
@@ -43,10 +211,12 @@ init python:
             renpy.log(f"Cannot add trait '{trait_name}' - worker parameter is None")
             return
             
-        # Find the trait definition
+        # Find the trait definition (traits_list first, then raw cache for event-assigned/NSFW traits)
         trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
         if not trait_def:
-            renpy.log(f"Cannot add trait '{trait_name}' - trait not found in traits_list")
+            trait_def = get_trait_definition(trait_name)
+        if not trait_def:
+            renpy.log(f"Cannot add trait '{trait_name}' - trait not found in traits_list or trait cache")
             return
 
         # Check gender restrictions
@@ -57,12 +227,10 @@ init python:
         if "traits" not in worker:
             worker["traits"] = []
 
-        # Remove conflicting traits
-        for trait in traits_list:
-            if trait["name"] == trait_name:
-                for conflict in trait.get("conflicts", []):
-                    if conflict in worker["traits"]:
-                        remove_trait_safe(worker, conflict)
+        # Remove conflicting traits (use trait_def we already have)
+        for conflict in trait_def.get("conflicts", []):
+            if conflict in worker["traits"]:
+                remove_trait_safe(worker, conflict)
 
         if trait_name not in worker["traits"]:
             worker["traits"].append(trait_name)
@@ -117,17 +285,54 @@ init python:
         if removed_any:
             recalculate_trait_modifiers(worker)
 
+    def check_trait_durations():
+        """
+        Called at day transition. Decrements trait_durations for all workers.
+        When duration reaches 0, removes the trait and runs on_expire (e.g. add_trait for Badly Burnt -> Scarred).
+        """
+        workers = getattr(store, "workers", []) or []
+        for worker in workers:
+            durations = worker.get("trait_durations") or {}
+            if not durations:
+                continue
+            expired = []
+            for trait_name, days_left in list(durations.items()):
+                new_days = days_left - 1
+                if new_days <= 0:
+                    expired.append(trait_name)
+                else:
+                    durations[trait_name] = new_days
+            for trait_name in expired:
+                trait_def = get_trait_definition(trait_name)
+                remove_trait(worker, trait_name)
+                if trait_def:
+                    on_expire = trait_def.get("on_expire") or {}
+                    add_trait_data = on_expire.get("add_trait")
+                    if add_trait_data:
+                        has_get = hasattr(add_trait_data, "get") and callable(getattr(add_trait_data, "get", None))
+                        if has_get:
+                            new_name = add_trait_data.get("name")
+                            new_duration = int(add_trait_data.get("duration", 0))
+                            if new_name:
+                                add_trait_with_duration(worker, new_name, new_duration)
+                                renpy.log(f"Trait '{trait_name}' expired for {worker.get('name', 'Unknown')}, applied on_expire: {new_name}")
+                        elif isinstance(add_trait_data, str):
+                            add_trait_with_duration(worker, add_trait_data, 0)
+                            renpy.log(f"Trait '{trait_name}' expired for {worker.get('name', 'Unknown')}, applied on_expire: {add_trait_data}")
+
+    store.check_trait_durations = check_trait_durations
+
     def apply_trait_secondary_modifiers_once(worker):
         """
-        Apply trait modifiers to secondary attributes ONLY ONCE when traits are first assigned.
-        This function should only be called when traits are added/removed, not on every access.
+        Apply trait modifiers to secondary attributes. Uses delta on recalculate to avoid
+        double-application when traits are added/removed during play.
         """
-        # ✅ CRÍTICO: Solo aplicar si no se han aplicado antes
-        if worker.get("_secondary_attributes_initialized", False):
-            renpy.log(f"Secondary attributes already initialized for {worker.get('name', 'Unknown')}, skipping recalculation")
+        is_recalculating = worker.pop("_recalculating_traits", False)
+        if worker.get("_secondary_attributes_initialized", False) and not is_recalculating:
+            renpy.log(f"Secondary attributes already initialized for {worker.get('name', 'Unknown')}, skipping")
             return
-        
-        # Calculate base values only if attributes don't exist yet
+
+        # Initialize base values only if attributes don't exist yet
         if "joy" not in worker:
             worker["joy"] = random.randint(20, 80)
         if "rebelliousness" not in worker:
@@ -137,40 +342,46 @@ init python:
         if "comfort_level" not in worker:
             worker["comfort_level"] = 1
         if "comfort_desired" not in worker:
-            worker["comfort_desired"] = worker.get("comfort_desired", 1)  # Initialize from JSON or default to 1
+            worker["comfort_desired"] = worker.get("comfort_desired", 1)
         if "relationship" not in worker:
             worker["relationship"] = 10 + worker.get("comfort_level", 1)
         if "libido" not in worker:
             worker["libido"] = 10
-        
-        # Calculate total modifiers from all traits
-        total_modifiers = {
-            "joy": 0,
-            "rebelliousness": 0,
-            "romance": 0,
-            "comfort_level": 0,
-            "comfort_desired": 0,
-            "relationship": 0,
-            "libido": 0
+
+        # Calculate new total modifiers from current traits
+        # rebelliousness: no longer from modifiers (uses daily_effects/daily_effects_random instead)
+        new_total = {
+            "joy": 0, "rebelliousness": 0, "romance": 0, "comfort_level": 0,
+            "comfort_desired": 0, "relationship": 0, "libido": 0
         }
-        
-        # Apply trait modifiers
         for trait_name in worker.get("traits", []):
             trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
             if trait_def and "modifiers" in trait_def:
-                modifiers = trait_def["modifiers"]
-                for attr in total_modifiers:
-                    if attr in modifiers:
-                        total_modifiers[attr] += modifiers[attr]
-        
-        # Apply modifiers to current values (not base values)
-        for attr, modifier in total_modifiers.items():
-            if modifier != 0:
-                current_value = worker.get(attr, 0)
-                new_value = current_value + modifier
-                set_attribute_with_caps(worker, attr, new_value)
-        
-        # Mark as initialized to prevent future recalculations
+                for attr in new_total:
+                    if attr == "rebelliousness":
+                        continue  # rebelliousness uses daily_effects, not modifiers
+                    if attr in trait_def["modifiers"]:
+                        new_total[attr] += trait_def["modifiers"][attr]
+
+        last_applied = worker.get("_last_applied_trait_modifiers", {})
+
+        # Old save: has values but no _last - do not modify, only prime _last for future recalculates
+        if is_recalculating and not last_applied:
+            worker["_last_applied_trait_modifiers"] = dict(new_total)
+            worker["_secondary_attributes_initialized"] = True
+            renpy.log(f"Secondary attributes: primed _last for {worker.get('name', 'Unknown')} (old save, no changes)")
+            return
+
+        for attr in new_total:
+            old_val = last_applied.get(attr, 0)
+            new_val = new_total[attr]
+            delta = new_val - old_val
+            if delta == 0:
+                continue
+            current_value = worker.get(attr, 0)
+            set_attribute_with_caps(worker, attr, current_value + delta)
+
+        worker["_last_applied_trait_modifiers"] = dict(new_total)
         worker["_secondary_attributes_initialized"] = True
         renpy.log(f"Secondary attributes initialized for {worker.get('name', 'Unknown')}")
 
@@ -182,14 +393,15 @@ init python:
     def recalculate_trait_modifiers(worker):
         """
         Recalculate trait modifiers when traits are added or removed.
-        This resets the initialization flag and recalculates from current values.
+        Uses delta (new_total - last_applied) to avoid double-application.
         """
-        # Reset initialization flag to allow recalculation
         if "_secondary_attributes_initialized" in worker:
             del worker["_secondary_attributes_initialized"]
-        
-        # Reapply modifiers
-        apply_trait_secondary_modifiers_once(worker)
+        worker["_recalculating_traits"] = True
+        try:
+            apply_trait_secondary_modifiers_once(worker)
+        finally:
+            worker.pop("_recalculating_traits", None)
 
     def get_attribute_cap(worker, attribute):
         """Get the cap for an attribute based on worker's traits and management skills."""
@@ -327,19 +539,32 @@ init python:
         if current_count >= min_traits:
             return  # Already has enough traits
         
+        # Use traits_list; fallback to store._trait_def_cache if traits_list is empty
+        trait_source = traits_list if traits_list else []
+        if not trait_source:
+            cache = getattr(store, "_trait_def_cache", None)
+            if isinstance(cache, dict) and cache:
+                trait_source = list(cache.values())
+        if not trait_source:
+            renpy.log(f"TRAITS: No trait source available for {worker.get('name', 'Unknown')}; skipping backfill")
+            return
+
         target_count = random.randint(min_traits, max_traits)
         traits_to_add = target_count - current_count
         
         renpy.log(f"Adding {traits_to_add} traits to {worker.get('name', 'Unknown')} (current: {current_count}, target: {target_count})")
         
         # Get possible traits (excluding only_assigned and respecting NSFW settings)
+        # Option: only_traits_without_requirements → only traits with no gender_restriction
+        only_no_reqs = getattr(persistent, "only_traits_without_requirements", False)
         possible_traits = [
-            t for t in traits_list
-            if not t.get("only_assigned", False) 
+            t for t in trait_source
+            if not t.get("only_assigned", False)
             and (persistent.nsfw_enabled or not t.get("nsfw", False))
-            and t["name"] not in worker["traits"]  # Don't add traits they already have
+            and t["name"] not in worker["traits"]
+            and (not only_no_reqs or not t.get("gender_restriction"))
+            and worker_meets_trait_requirements(t, worker["traits"])
         ]
-        
         random.shuffle(possible_traits)
         
         added_count = 0
@@ -354,11 +579,14 @@ init python:
             # Check gender restriction
             if not can_assign_trait_to_worker(trait, worker):
                 continue
-            
+            # Check requires_traits (e.g. Psychic requires Magical)
+            if not worker_meets_trait_requirements(trait, worker["traits"]):
+                continue
+
             # Check conflicts with existing traits
             conflicts = False
             for existing_trait_name in worker["traits"]:
-                existing_trait = next((t for t in traits_list if t["name"] == existing_trait_name), None)
+                existing_trait = next((t for t in trait_source if t["name"] == existing_trait_name), None)
                 if existing_trait:
                     if trait_name in existing_trait.get("conflicts", []):
                         conflicts = True

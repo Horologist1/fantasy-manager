@@ -1,47 +1,47 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/scripts/events/recruitment_flow.rpy", line 268, in script call
-    label recruitment_choice_loop:
-  File "game/scripts/main_flow.rpy", line 1069, in script call
+  File "game/scripts/events/recruitment_flow.rpy", line 156, in script call
+    call recruitment_event_flow(selected_event, selected_worker) from _call_recruitment_event_flow
+  File "game/scripts/events/recruitment_flow.rpy", line 291, in script call
+    return
+  File "game/scripts/main_flow.rpy", line 1085, in script
     call screen tavern
-  File "game/scripts/main_flow.rpy", line 1069, in script call
-    call screen tavern
-  File "game/scripts/script.rpy", line 6764, in script
-    $ _gift_result = renpy.call_screen("yvara_gift_picker")
-  File "game/scripts/script.rpy", line 6764, in <module>
-    $ _gift_result = renpy.call_screen("yvara_gift_picker")
-  File "game/scripts/core/screens.rpy", line 6462, in execute
-    screen yvara_gift_picker():
-  File "game/scripts/core/screens.rpy", line 6462, in execute
-    screen yvara_gift_picker():
-  File "game/scripts/core/screens.rpy", line 6466, in execute
-    $ _gift_items = yvara_get_giftable_items()
-  File "game/scripts/core/screens.rpy", line 6466, in <module>
-    $ _gift_items = yvara_get_giftable_items()
-  File "game/scripts/script.rpy", line 6070, in yvara_get_giftable_items
-    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
-  File "game/scripts/script.rpy", line 6070, in <lambda>
-    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
-AttributeError: 'StoreModule' object has no attribute 'items_data'
+  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
+  File "game/scripts/core/screens.rpy", line 5628, in execute
+    screen Manager(building_name):
+  File "game/scripts/core/screens.rpy", line 5628, in execute
+    screen Manager(building_name):
+  File "game/scripts/core/screens.rpy", line 5631, in execute
+    python:
+  File "game/scripts/core/screens.rpy", line 5637, in <module>
+    manager_servants = [w for w in _roster if _ok(w)]
+  File "game/scripts/core/screens.rpy", line 5637, in <lambda>
+    manager_servants = [w for w in _roster if _ok(w)]
+  File "game/scripts/core/screens.rpy", line 5637, in <listcomp>
+    manager_servants = [w for w in _roster if _ok(w)]
+  File "game/scripts/core/screens.rpy", line 5636, in <lambda>
+    _ok = lambda w: hasattr(w, "get") and w.get("name") and _norm(w.get("assigned_building", "")) == _tgt and w.get("assigned_building") not in (None, "", "Unassigned")
+NameError: name '_norm' is not defined
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/events/recruitment_flow.rpy", line 268, in script call
-    label recruitment_choice_loop:
-  File "game/scripts/main_flow.rpy", line 1069, in script call
+  File "game/scripts/events/recruitment_flow.rpy", line 156, in script call
+    call recruitment_event_flow(selected_event, selected_worker) from _call_recruitment_event_flow
+  File "game/scripts/events/recruitment_flow.rpy", line 291, in script call
+    return
+  File "game/scripts/main_flow.rpy", line 1085, in script
     call screen tavern
-  File "game/scripts/main_flow.rpy", line 1069, in script call
-    call screen tavern
-  File "game/scripts/script.rpy", line 6764, in script
-    $ _gift_result = renpy.call_screen("yvara_gift_picker")
-  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 834, in execute
-    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
-  File "D:\renpy-8.3.4-sdk\renpy\python.py", line 1187, in py_exec_bytecode
-    exec(bytecode, globals, locals)
-  File "game/scripts/script.rpy", line 6764, in <module>
-    $ _gift_result = renpy.call_screen("yvara_gift_picker")
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
+    self.call("execute")
+  File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1966, in call
+    return renpy.statements.call(method, parsed, *args, **kwargs)
+  File "D:\renpy-8.3.4-sdk\renpy\statements.py", line 374, in call
+    return method(parsed, *args, **kwargs)
+  File "renpy/common/000statements.rpy", line 671, in execute_call_screen
+    store._return = renpy.call_screen(name, *args, **kwargs)
   File "D:\renpy-8.3.4-sdk\renpy\exports\statementexports.py", line 345, in call_screen
     rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
   File "D:\renpy-8.3.4-sdk\renpy\ui.py", line 301, in interact
@@ -64,21 +64,23 @@ Full traceback:
     self.update()
   File "D:\renpy-8.3.4-sdk\renpy\display\screen.py", line 700, in update
     self.screen.function(**self.scope)
-  File "game/scripts/core/screens.rpy", line 6462, in execute
-    screen yvara_gift_picker():
-  File "game/scripts/core/screens.rpy", line 6462, in execute
-    screen yvara_gift_picker():
-  File "game/scripts/core/screens.rpy", line 6466, in execute
-    $ _gift_items = yvara_get_giftable_items()
-  File "game/scripts/core/screens.rpy", line 6466, in <module>
-    $ _gift_items = yvara_get_giftable_items()
-  File "game/scripts/script.rpy", line 6070, in yvara_get_giftable_items
-    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
-  File "game/scripts/script.rpy", line 6070, in <lambda>
-    item_data = next((i for i in store.items_data.get("items", []) if i["id"] == iid), None)
-AttributeError: 'StoreModule' object has no attribute 'items_data'
+  File "game/scripts/core/screens.rpy", line 5628, in execute
+    screen Manager(building_name):
+  File "game/scripts/core/screens.rpy", line 5628, in execute
+    screen Manager(building_name):
+  File "game/scripts/core/screens.rpy", line 5631, in execute
+    python:
+  File "game/scripts/core/screens.rpy", line 5637, in <module>
+    manager_servants = [w for w in _roster if _ok(w)]
+  File "game/scripts/core/screens.rpy", line 5637, in <lambda>
+    manager_servants = [w for w in _roster if _ok(w)]
+  File "game/scripts/core/screens.rpy", line 5637, in <listcomp>
+    manager_servants = [w for w in _roster if _ok(w)]
+  File "game/scripts/core/screens.rpy", line 5636, in <lambda>
+    _ok = lambda w: hasattr(w, "get") and w.get("name") and _norm(w.get("assigned_building", "")) == _tgt and w.get("assigned_building") not in (None, "", "Unassigned")
+NameError: name '_norm' is not defined
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
-Fantasy Manager 0.9.5.1
-Fri Feb 27 04:16:10 2026
+Fantasy Manager 0.9.5.2i
+Wed Mar 18 17:59:46 2026

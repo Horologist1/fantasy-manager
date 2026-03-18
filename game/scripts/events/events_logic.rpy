@@ -2,6 +2,27 @@
 
 init python:
 
+    def _building_matches_event_worker_requirements(building, required_worker_traits=None, require_worker=False):
+        """Check if a building satisfies worker-presence/worker-trait event requirements."""
+        assigned = building.get("assigned_servants", []) or []
+        if require_worker and not assigned:
+            return False
+        if not required_worker_traits:
+            return True
+        req = set(required_worker_traits)
+        for worker in assigned:
+            worker_traits = set((worker or {}).get("traits", []) or [])
+            if req.issubset(worker_traits):
+                return True
+        return False
+
+    def _building_matches_event_building_traits(building, required_building_traits=None):
+        """Check if a building has all required building traits/tags."""
+        if not required_building_traits:
+            return True
+        building_traits = set((building or {}).get("traits", []) or [])
+        return set(required_building_traits).issubset(building_traits)
+
     def load_events_from_folder(folder_name="data/events", subfolder=None, exclude_prefix=None):
         all_events = []
         files = []
@@ -29,7 +50,7 @@ init python:
             try:
                 renpy.log(f"Loading events from file: {file}")
                 with renpy.file(file) as f:
-                    events_in_file = json.load(f) # Load into a temporary variable
+                    events_in_file = json.load(f)
                 renpy.log(f"Loaded {len(events_in_file)} potential events from {file}")
 
                 # Check each event before adding
@@ -149,6 +170,50 @@ init python:
             # If the event *has* building type requirements, at least one must match the active types
             if event_building_types and not any(bt in active_building_types for bt in event_building_types):
                 renpy.log(f"Filtered out {event_id} due to building type mismatch. Event requires {event_building_types} but active buildings are {active_building_types}")
+                continue
+
+            # New worker/building-trait gates for event availability.
+            require_worker = bool(event.get("requires_assigned_worker", False))
+            required_worker_traits = event.get("required_building_worker_traits", []) or []
+            required_building_traits = event.get("required_building_traits", []) or []
+
+            if require_worker or required_worker_traits or required_building_traits:
+                candidate_buildings = []
+                for b_name, b in available_buildings.items():
+                    if not b.get("owned", False):
+                        continue
+                    b_type = b.get("type")
+                    if event_building_types and b_type not in event_building_types:
+                        continue
+                    candidate_buildings.append((b_name, b))
+
+                requirements_met = False
+                for _, candidate in candidate_buildings:
+                    if not _building_matches_event_building_traits(candidate, required_building_traits):
+                        continue
+                    if not _building_matches_event_worker_requirements(
+                        candidate,
+                        required_worker_traits=required_worker_traits,
+                        require_worker=require_worker,
+                    ):
+                        continue
+                    requirements_met = True
+                    break
+
+                if not requirements_met:
+                    renpy.log(
+                        f"Filtered out {event_id} by worker/building trait requirements "
+                        f"(requires_assigned_worker={require_worker}, "
+                        f"required_building_worker_traits={required_worker_traits}, "
+                        f"required_building_traits={required_building_traits})"
+                    )
+                    continue
+
+            # Player gender filter
+            player_gender = "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+            player_req = event.get("player_gender_requirement", None)
+            if player_req is not None and player_req != player_gender:
+                renpy.log(f"Filtered out {event_id} due to player gender: requires {player_req}, player is {player_gender}")
                 continue
 
             # Check for required flags - ALL must be met

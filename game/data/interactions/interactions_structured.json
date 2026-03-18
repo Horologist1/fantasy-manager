@@ -5,7 +5,6 @@
     "description": "I do not raise my voice. I do not need to. I correct every detail—how they stand, where their eyes belong, how they speak, and when they are allowed to speak at all. I make them repeat the rules until the old habits disappear: a bowed head, a quiet \"Yes, my lord/lady,\" hands kept still, steps measured, and silence when silence is expected. Discipline in this house begins with control of the smallest things, because the smallest things are what betray disobedience.",
     "interaction_level": 1,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -2,
       "joy": -1,
@@ -14,7 +13,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -23,8 +25,6 @@
     ],
     "image": "discipline_etiquette",
     "nsfw": false,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -36,7 +36,6 @@
     "interaction_level": 1,
     "interaction_type": "discipline",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -3,
       "joy": -1,
@@ -45,7 +44,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -54,8 +56,6 @@
     ],
     "image": "discipline_inspection",
     "nsfw": true,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -66,7 +66,6 @@
     "description": "When rules are ignored, I respond with certainty—not anger. I make the correction brief, efficient, and memorable: a punishment measured to the offence, carried out without spectacle. I explain the standard once. Then I enforce it. They learn that in this house, obedience is not a suggestion and discretion is not a privilege—it is the price of being kept.",
     "interaction_level": 2,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -5,
       "joy": -2,
@@ -76,7 +75,9 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -88,7 +89,6 @@
     "stat_requirements": {
       "rebelliousness": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -100,7 +100,6 @@
     "interaction_level": 2,
     "interaction_type": "discipline",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -6,
       "joy": -1,
@@ -110,7 +109,9 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -122,7 +123,6 @@
     "stat_requirements": {
       "rebelliousness": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -133,7 +133,6 @@
     "description": "Obedience is not only doing what I say. It is knowing what must never be said. I teach them the house rules of discretion: how to stand behind me without drawing eyes, how to answer without revealing, how to keep secrets even under pressure. I drill the small signals—when to speak, when to withdraw, when to pretend not to hear. A servant who cannot be discreet is a liability. I do not keep liabilities for long.",
     "interaction_level": 3,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -4,
       "joy": -1,
@@ -142,7 +141,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -154,7 +156,6 @@
     "stat_requirements": {
       "rebelliousness": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -166,17 +167,18 @@
     "interaction_level": 3,
     "interaction_type": "discipline",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -7,
       "joy": -1,
       "relationship": -1,
+      "libido": -3,
       "flags": {
         "discipline_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "romance": 0
     },
     "gender_filter": "male",
     "worker_gender": null,
@@ -188,7 +190,6 @@
     "stat_requirements": {
       "rebelliousness": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -200,17 +201,18 @@
     "interaction_level": 3,
     "interaction_type": "discipline",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -7,
       "joy": -1,
       "relationship": -1,
+      "libido": -3,
       "flags": {
         "discipline_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "romance": 0
     },
     "gender_filter": "female",
     "worker_gender": null,
@@ -222,7 +224,6 @@
     "stat_requirements": {
       "rebelliousness": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -242,7 +243,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "joy": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -254,7 +258,6 @@
     "stat_requirements": {
       "rebelliousness": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -270,12 +273,15 @@
     "effect": {
       "rebelliousness": -10,
       "relationship": -2,
+      "libido": -3,
       "flags": {
         "discipline_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "joy": 0,
+      "romance": 0
     },
     "gender_filter": "male",
     "worker_gender": null,
@@ -287,7 +293,6 @@
     "stat_requirements": {
       "rebelliousness": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -303,12 +308,15 @@
     "effect": {
       "rebelliousness": -10,
       "relationship": -2,
+      "libido": -3,
       "flags": {
         "discipline_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "joy": 0,
+      "romance": 0
     },
     "gender_filter": "female",
     "worker_gender": null,
@@ -320,7 +328,6 @@
     "stat_requirements": {
       "rebelliousness": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_cooldown": true
     }
@@ -331,7 +338,6 @@
     "description": "By now, their obedience is not an argument—it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. And some are kept only as long as they are profitable. I watch their face as they understand what this moment means. You put the servant's collar on them—they are yours. Then I decide where they belong.",
     "interaction_level": 5,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -2,
       "flags": {
@@ -339,7 +345,11 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "joy": 0,
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -351,7 +361,6 @@
     "stat_requirements": {
       "rebelliousness": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_final_done": {
         "value": true,
@@ -365,7 +374,6 @@
     "description": "By now, their obedience is not an argument—it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. And some are kept only as long as they are profitable. I watch their face as they understand what this moment means. You put the servant's collar on them—they are yours. Then I decide where they belong.",
     "interaction_level": 5,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "rebelliousness": -2,
       "flags": {
@@ -373,7 +381,11 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "joy": 0,
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -385,7 +397,6 @@
     "stat_requirements": {
       "rebelliousness": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "discipline_final_done": {
         "value": true,
@@ -399,8 +410,13 @@
     "description": "This is not a threat. It is a transaction. I consider what they cost me, what they have become, and what the market will pay for a servant trained to obey. A specialty buyer does not care about excuses or feelings—only quality. If I proceed, the sale is final.",
     "interaction_level": 5,
     "cost_energy": 0,
-    "cost_money": 0,
-    "effect": {},
+    "effect": {
+      "rebelliousness": 0,
+      "joy": 0,
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
     "gender_filter": null,
     "worker_gender": null,
     "categories": [
@@ -410,9 +426,7 @@
     "nsfw": false,
     "stat_requirements": {
       "rebelliousness": 25
-    },
-    "required_flags": {},
-    "excluded_flags": {}
+    }
   },
   {
     "id": "romance_level1_lord_female_romantic",
@@ -421,7 +435,6 @@
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 3,
       "flags": {
@@ -430,7 +443,10 @@
           "duration": 0
         }
       },
-      "joy": 1
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -439,8 +455,6 @@
     ],
     "image": "romance_flirt",
     "nsfw": false,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -452,7 +466,6 @@
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 3,
       "flags": {
@@ -461,7 +474,10 @@
           "duration": 0
         }
       },
-      "joy": 1
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -470,8 +486,6 @@
     ],
     "image": "romance_flirt",
     "nsfw": false,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -483,7 +497,6 @@
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 3,
       "flags": {
@@ -492,7 +505,10 @@
           "duration": 0
         }
       },
-      "joy": 1
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -501,8 +517,6 @@
     ],
     "image": "romance_flirt",
     "nsfw": false,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -514,7 +528,6 @@
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 3,
       "flags": {
@@ -523,7 +536,10 @@
           "duration": 0
         }
       },
-      "joy": 1
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -532,8 +548,6 @@
     ],
     "image": "romance_flirt",
     "nsfw": false,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -554,7 +568,10 @@
           "duration": 0
         }
       },
-      "joy": 2
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -566,7 +583,6 @@
     "stat_requirements": {
       "romance": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -587,7 +603,10 @@
           "duration": 0
         }
       },
-      "joy": 2
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -599,7 +618,6 @@
     "stat_requirements": {
       "romance": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -620,7 +638,10 @@
           "duration": 0
         }
       },
-      "joy": 2
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -632,7 +653,6 @@
     "stat_requirements": {
       "romance": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -653,7 +673,10 @@
           "duration": 0
         }
       },
-      "joy": 2
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -665,7 +688,6 @@
     "stat_requirements": {
       "romance": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -681,12 +703,15 @@
     "effect": {
       "romance": 7,
       "joy": 2,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -698,7 +723,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -719,7 +743,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -731,7 +758,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -747,12 +773,15 @@
     "effect": {
       "romance": 7,
       "joy": 2,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -764,7 +793,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -785,7 +813,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -797,7 +828,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -813,12 +843,15 @@
     "effect": {
       "romance": 7,
       "joy": 2,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -830,7 +863,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -851,7 +883,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -863,7 +898,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -879,12 +913,15 @@
     "effect": {
       "romance": 7,
       "joy": 2,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -896,7 +933,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -917,7 +953,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -929,7 +968,6 @@
     "stat_requirements": {
       "romance": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -950,7 +988,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -962,7 +1003,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -983,7 +1023,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -995,7 +1038,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1016,7 +1058,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -1028,7 +1073,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1048,7 +1092,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -1060,7 +1107,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1076,12 +1122,15 @@
     "effect": {
       "romance": 8,
       "joy": 3,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -1093,7 +1142,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1109,12 +1157,15 @@
     "effect": {
       "romance": 8,
       "joy": 3,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -1126,7 +1177,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1142,12 +1192,15 @@
     "effect": {
       "romance": 8,
       "joy": 3,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -1159,7 +1212,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1175,12 +1227,15 @@
     "effect": {
       "romance": 8,
       "joy": 3,
+      "libido": -3,
       "flags": {
         "romance_cooldown": {
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -1192,7 +1247,6 @@
     "stat_requirements": {
       "romance": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_cooldown": true
     }
@@ -1212,7 +1266,10 @@
           "duration": 0
         }
       },
-      "joy": 1
+      "joy": 1,
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -1221,8 +1278,6 @@
     ],
     "image": "friendly_lunch",
     "nsfw": false,
-    "stat_requirements": {},
-    "required_flags": {},
     "excluded_flags": {
       "friendship_cooldown": true
     }
@@ -1233,7 +1288,6 @@
     "description": "I arrange some simple amusement for us—perhaps a game at the table, a leisurely walk through the city streets, or stories shared over a warm drink. Before long we are laughing far more than we intended, the sort of laughter that makes one's cheeks ache. For a little while the weight of work and duty lifts, and in that ease we grow more familiar with one another. Such shared merriment leaves behind memories, and the foundation of our friendship strengthens without either of us having to force it.",
     "interaction_level": 2,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "relationship": 5,
       "joy": 2,
@@ -1242,7 +1296,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -1254,7 +1311,6 @@
     "stat_requirements": {
       "relationship": 25
     },
-    "required_flags": {},
     "excluded_flags": {
       "friendship_cooldown": true
     }
@@ -1274,7 +1330,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -1286,7 +1345,6 @@
     "stat_requirements": {
       "relationship": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "friendship_cooldown": true
     }
@@ -1297,7 +1355,6 @@
     "description": "I create a quiet, comfortable space where we can have a genuine heart-to-heart conversation. I ask about their life, their dreams, and the challenges they face, and I listen with my full attention. As they begin to open up, sharing thoughts and concerns they might not voice elsewhere, I respond with empathy and understanding. I offer support and encouragement, not as a manager giving advice, but as a friend who truly cares. In these moments of vulnerability and trust, we build something deeper than mere acquaintance - a connection based on mutual respect and genuine care. This exchange reminds us both that we're not alone, that we have someone who sees us and accepts us for who we are.",
     "interaction_level": 3,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "relationship": 7,
       "joy": 3,
@@ -1306,7 +1363,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -1318,7 +1378,6 @@
     "stat_requirements": {
       "relationship": 50
     },
-    "required_flags": {},
     "excluded_flags": {
       "friendship_cooldown": true
     }
@@ -1329,7 +1388,6 @@
     "description": "I plan a perfect afternoon suited to what we both enjoy—perhaps wandering the market as the day is still bright, pausing at stalls that catch our eye, sharing a small treat, or simply letting the crowd carry us along while we trade stories. We speak of everything and nothing at once—past adventures, quiet hopes, and the little moments that make life feel less heavy. Now and then laughter escapes us, and before we notice it the hours have slipped away. There is no agenda, no duties to weigh us down—only the easy comfort of true friendship, and the simple pleasure of making memories together.",
     "interaction_level": 4,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "relationship": 6,
       "joy": 3,
@@ -1338,7 +1396,10 @@
           "value": true,
           "duration": 0
         }
-      }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -1350,7 +1411,6 @@
     "stat_requirements": {
       "relationship": 75
     },
-    "required_flags": {},
     "excluded_flags": {
       "friendship_cooldown": true
     }
@@ -1361,10 +1421,12 @@
     "description": "I invite them to step away from noise and duties for a moment—no agenda, no requests. I speak honestly about what their presence has meant over time: the trust we have built, the small rituals that became familiar, and the quiet relief of knowing someone truly has our back. I make it clear that this bond is chosen, not owed. In that calm space, we share a promise: whatever happens in the house, we will treat each other with loyalty, respect, and care. It feels like closing a chapter and opening a new one—one where friendship is no longer something that happens by chance, but something we protect on purpose.",
     "interaction_level": 5,
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "relationship": 8,
-      "joy": 5
+      "joy": 5,
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -1376,7 +1438,6 @@
     "stat_requirements": {
       "relationship": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "friendship_final_done": {
         "value": true,
@@ -1391,10 +1452,12 @@
     "interaction_level": 5,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 10,
-      "joy": 5
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "female",
@@ -1406,7 +1469,6 @@
     "stat_requirements": {
       "romance": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_confess_done": {
         "value": true,
@@ -1421,10 +1483,12 @@
     "interaction_level": 5,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 10,
-      "joy": 5
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "male",
     "worker_gender": "male",
@@ -1436,7 +1500,6 @@
     "stat_requirements": {
       "romance": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_confess_done": {
         "value": true,
@@ -1451,10 +1514,12 @@
     "interaction_level": 5,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 10,
-      "joy": 5
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "female",
@@ -1466,7 +1531,6 @@
     "stat_requirements": {
       "romance": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_confess_done": {
         "value": true,
@@ -1481,10 +1545,12 @@
     "interaction_level": 5,
     "interaction_type": "romantic",
     "cost_energy": 0,
-    "cost_money": 0,
     "effect": {
       "romance": 10,
-      "joy": 5
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
     },
     "gender_filter": "female",
     "worker_gender": "male",
@@ -1496,12 +1562,48 @@
     "stat_requirements": {
       "romance": 80
     },
-    "required_flags": {},
     "excluded_flags": {
       "romance_confess_done": {
         "value": true,
         "duration": -1
       }
+    }
+  },
+  {
+    "id": "trait_cum_addict_feed",
+    "name": "Feed",
+    "description": "You indulge the worker's fixation and provide exactly what they crave. The act is controlled, intimate, and openly transactional, leaving them calmer and more compliant in the short term.",
+    "interaction_level": 1,
+    "interaction_type": "trait",
+    "cost_energy": 0,
+    "effect": {
+      "libido": -3,
+      "joy": 1,
+      "relationship": 0,
+      "romance": 0,
+      "rebelliousness": 0,
+      "flags": {
+        "trait_cum_addict_feed_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Trait"
+    ],
+    "image": "trait_cum_addict_feed",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_traits": [
+      "Cum Addict"
+    ],
+    "excluded_flags": {
+      "trait_cum_addict_feed_cooldown": true
     }
   }
 ]

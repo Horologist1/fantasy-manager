@@ -2,41 +2,17 @@
 errors listed below, and try again.
 
 
-File "game/scripts/script.rpy", line 6468: Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?
-    "Long enough to know what I need from people."
-                                                  ^
-
-File "game/scripts/script.rpy", line 6484: Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?
-    "I am not."
-               ^
-
-File "game/scripts/script.rpy", line 6508: Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?
-    "She will understand it when she needs it."
-                                               ^
-
-File "game/scripts/script.rpy", line 6525: Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?
-    "Potential. Someone with something to prove."
-                                                 ^
-
-File "game/scripts/script.rpy", line 6552: Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?
-    "And did you?"
-                  ^
-
-File "game/scripts/script.rpy", line 6572: Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?
-    "To see how my workers are progressing."
-                                            ^
-
-File "game/scripts/script.rpy", line 6624: end of line expected.
-    player "The library is better stocked than I expected for a place this size.":
-                                                                                 ^
-
-File "game/scripts/script.rpy", line 6661: end of line expected.
-    player "Your students seem to respect you. Not just obey you.":
-                                                                  ^
-
-File "game/scripts/script.rpy", line 6698: end of line expected.
-    player "Ask if she ever gets tired of it.":
-                                              ^
+File "game/scripts/core/screens.rpy", line 6484: Line is indented, but the preceding text_hover_color statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
+    action If(money >= price,
+    ^
+                                    [
+                                        Function(add_new_building, building_name, price),
+                                        SetVariable("money", money - price),
+                                        Function(register_new_building, building_name),
+                                        Function(store.rebuild_assigned_servants),
+                                        SetVariable("buildings_owned", len(store.owned_buildings)),
+                                        Hide("buy_buildings"),
+                                    ])
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Fri Feb 27 03:47:23 2026
+Wed Mar 18 15:07:09 2026

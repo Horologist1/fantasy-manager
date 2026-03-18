@@ -29,6 +29,150 @@ init python:
             return available_buildings.get(building_name, None)
         return None
 
+    def _resolve_building_by_name(building_name):
+        """Find building in available_buildings by exact key or normalized match. Returns (building, actual_key) or (None, None)."""
+        ab = getattr(store, "available_buildings", {})
+        target_norm = _norm_building_key(building_name) if building_name else ""
+        if not target_norm:
+            return (None, None)
+        # Try exact key first
+        b = ab.get(building_name)
+        if b and hasattr(b, "get"):
+            return (b, building_name)
+        # Search by normalized name (handles Building 1/2/3 vs Building_1/2/3, any format)
+        for key, data in ab.items():
+            if data and hasattr(data, "get") and _norm_building_key(key) == target_norm:
+                return (data, key)
+        return (None, None)
+
+    store._resolve_building_by_name = _resolve_building_by_name
+
+    def get_building_servants(building_name):
+        """
+        Returns workers assigned to a building. Uses servant_jobs + workers (assigned_building).
+        Resolves building by normalized key so Building 1/2/3/N work regardless of key format.
+        """
+        try:
+            building, _ = _resolve_building_by_name(building_name)
+            if not building:
+                return []
+            _rw = lambda w: hasattr(w, "get") and w.get("name")
+            name_to_worker = {w.get("name"): w for w in getattr(store, "workers", []) if _rw(w)}
+            jobs = building.get("servant_jobs") or {}
+            jobs = dict(jobs) if hasattr(jobs, "keys") else {}
+            result = []
+            seen = set()
+            target_norm = _norm_building_key(building_name) if building_name else ""
+            # 1) From servant_jobs
+            for wname in list(jobs.keys()):
+                if not wname or wname in seen:
+                    continue
+                w = name_to_worker.get(wname)
+                if w:
+                    result.append(w)
+                    seen.add(wname)
+            # 2) From workers' assigned_building (match by normalized key)
+            for w in getattr(store, "workers", []):
+                if not _rw(w):
+                    continue
+                wname = w.get("name")
+                if not wname or wname in seen:
+                    continue
+                ab_val = w.get("assigned_building")
+                if not ab_val:
+                    continue
+                if ab_val == building_name or (target_norm and _norm_building_key(ab_val) == target_norm):
+                    result.append(w)
+                    seen.add(wname)
+            # 3) Fallback: assigned_servants
+            for sw in (building.get("assigned_servants") or []):
+                if not (hasattr(sw, "get") and sw.get("name")):
+                    continue
+                wname = sw.get("name")
+                if wname and wname not in seen:
+                    w = name_to_worker.get(wname)
+                    if w:
+                        result.append(w)
+                        seen.add(wname)
+            return result
+        except Exception as e:
+            renpy.log(f"get_building_servants error: {e}")
+            return []
+
+    store.get_building_servants = get_building_servants
+
+    def _norm_building_key(key):
+        """Normalize for matching: Building 1 <-> Building_1."""
+        if not key:
+            return ""
+        s = str(key).strip()
+        if "_" in s:
+            parts = s.split("_")
+            if len(parts) >= 2 and parts[0].lower() == "building":
+                return "Building " + parts[1]
+        return s
+
+    store._norm_building_key = _norm_building_key
+
+    def sync_assigned_servants_for_building(building_name):
+        """
+        Syncs building's assigned_servants from servant_jobs and workers.
+        Uses _resolve_building_by_name so Building 1/2/3 vs Building_1/2/3 always match.
+        """
+        try:
+            building, actual_key = _resolve_building_by_name(building_name)
+            if not building or not hasattr(building, "get"):
+                return
+            owned = getattr(store, "owned_buildings", []) or []
+            _norm = _norm_building_key(building_name)
+            if not any(_norm_building_key(b) == _norm for b in owned):
+                return
+            _rw = lambda w: hasattr(w, "get") and w.get("name")
+            name_to_worker = {w.get("name"): w for w in getattr(store, "workers", []) if _rw(w)}
+            rebuilt = []
+            seen = set()
+            for wname in list((building.get("servant_jobs") or {}).keys()):
+                if not wname or wname in seen:
+                    continue
+                w = name_to_worker.get(wname)
+                if w:
+                    rebuilt.append(w)
+                    seen.add(wname)
+                    if w.get("assigned_building", "Unassigned") != actual_key:
+                        w["assigned_building"] = actual_key
+            for w in getattr(store, "workers", []):
+                if not _rw(w):
+                    continue
+                wname = w.get("name")
+                if not wname or wname in seen:
+                    continue
+                ab_val = w.get("assigned_building")
+                if ab_val == actual_key or (_norm and _norm_building_key(ab_val) == _norm):
+                    rebuilt.append(w)
+                    seen.add(wname)
+                    if ab_val != actual_key:
+                        w["assigned_building"] = actual_key
+                    if wname not in (building.get("servant_jobs") or {}):
+                        building.setdefault("servant_jobs", {})[wname] = "unassigned"
+            building["assigned_servants"] = rebuilt
+        except Exception as e:
+            renpy.log(f"sync_assigned_servants_for_building error: {e}")
+
+    def validate_and_sync_buildings(include_worker_refs=True):
+        """Validates buildings and syncs assigned_servants. Never overwrites worker data."""
+        try:
+            for bname in getattr(store, "owned_buildings", []):
+                sync_assigned_servants_for_building(bname)
+        except Exception as e:
+            renpy.log(f"validate_and_sync_buildings error: {e}")
+
+    def sync_building_assignments_from_workers():
+        """Syncs all buildings' assigned_servants from store.workers. Never overwrites worker data."""
+        try:
+            validate_and_sync_buildings()
+        except Exception as e:
+            renpy.log(f"sync_building_assignments_from_workers error: {e}")
+
     def get_worker_profession_and_building_display(worker):
         """Returns a string like 'Prostitute - Brothel: Building 1' or 'Unassigned'."""
         if not worker or not hasattr(worker, 'get'):
@@ -87,12 +231,12 @@ init python:
             building["servant_jobs"].clear()
 
     def get_building_reputation_cap(building):
-        """Cap is the higher of: building level * 200, or manager level * 200 (same formula, max 1000 each)."""
+        """Cap = building level * 200 + manager level * 200 (additive, each max 1000).
+        Need level 2 + 400 rep to reach building ceiling; manager adds on top."""
         if not building:
             return 200
         building_level = building.get("base_level", 1)
         building_cap = min(1000, building_level * 200)
-        # Manager(s) in this building: worker level same formula
         jobs = building.get("servant_jobs", {})
         manager_level = 0
         for w in building.get("assigned_servants", []):
@@ -100,7 +244,25 @@ init python:
             if "manager" in job:
                 manager_level = max(manager_level, w.get("level", 1))
         manager_cap = min(1000, manager_level * 200) if manager_level else 0
-        return max(building_cap, manager_cap)
+        return building_cap + manager_cap
+
+    def get_effective_reputation_for_events(building):
+        """Effective reputation for bonus events: min(rep, level*200) + manager level*200.
+        Requires BOTH building level AND reputation; manager adds on top.
+        E.g. level 2 + 400 rep = 400 from building; manager level 2 adds 400 more."""
+        if not building:
+            return 0
+        building_level = building.get("base_level", 1)
+        reputation = building.get("reputation", 0)
+        building_contribution = min(reputation, min(1000, building_level * 200))
+        jobs = building.get("servant_jobs", {})
+        manager_level = 0
+        for w in building.get("assigned_servants", []):
+            job = str(jobs.get(w.get("name", ""), "")).lower()
+            if "manager" in job:
+                manager_level = max(manager_level, w.get("level", 1))
+        manager_contribution = min(1000, manager_level * 200) if manager_level else 0
+        return building_contribution + manager_contribution
 
     def calculate_reputation(building_name):
         building = available_buildings[building_name]

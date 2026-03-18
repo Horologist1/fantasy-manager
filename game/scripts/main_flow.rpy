@@ -378,7 +378,17 @@ label day_transition:
 
 label start:
     $ renpy.log("Game started at label start")
-    
+
+    # CRITICAL: Preload trait catalog so workers get 3-5 traits when first loaded.
+    # After "Making clean stores", store._trait_def_cache is empty; load it before any worker logic.
+    python:
+        try:
+            if hasattr(store, "refresh_traits_cache"):
+                store.refresh_traits_cache(force=True)
+                renpy.log("START: Preloaded trait catalog")
+        except Exception as e:
+            renpy.log(f"START: refresh_traits_cache error: {e}")
+
     # CRITICAL: Check if this is a load operation before doing ANYTHING else
     python:
         # Check multiple indicators that this might be a load
@@ -637,27 +647,28 @@ label show_objective_1_dialogue:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_1_dialogue - STARTING DIALOGUE")
     
-    "Mine eyes survey the three workers who have sworn themselves to my cause. 'Tis but a modest beginning, yet from such humble seeds do mighty empires grow."
-    "Verily, now must I put these loyal souls to their destined labors. Let me consult my journal to discern the path ahead."
+    "My eyes survey the three workers who have sworn themselves to my cause. A modest beginning, yet from such humble seeds mighty empires grow."
+    "These loyal souls are the first foundation of what I shall rebuild—and one day, the path to the reckoning."
+    "Now I must put them to their destined labors. Let me consult my journal to discern the way ahead."
     $ renpy.log("DEBUG: show_objective_1_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_2_dialogue:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_2_dialogue - STARTING DIALOGUE")
-    "'Tis the business I shall focus upon, for the present hour..."
-    "The governor began with naught but ambition burning in his breast - I walk the same treacherous path he once trod."
-    "My journal hath been inscribed with the next duty."
+    "This is the business I shall focus upon, for now."
+    "The governor began with naught but ambition burning in his breast—I walk the same treacherous path he once trod. But the end will be different."
+    "My journal has been inscribed with the next duty."
     $ renpy.log("DEBUG: show_objective_2_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
 label show_objective_3_dialogue:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_3_dialogue - STARTING DIALOGUE")
-    "Each worker doth bring their own gifts and talents to this enterprise."
-    "Choose the right soul for the right profession, and we shall be well upon our way to prosperity."
+    "Each worker brings their own gifts and talents to this enterprise."
+    "Choose the right soul for the right profession—these are the foundations of the power I need. We shall be well upon our way to prosperity."
     "Should I require more detail on how they have performed, I may open the Daily Report and examine the results."
-    "My journal hath been inscribed with the next duty."
+    "My journal has been inscribed with the next duty."
     $ renpy.log("DEBUG: show_objective_3_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -666,9 +677,7 @@ label show_objective_4_dialogue:
     $ renpy.log("DEBUG: show_objective_4_dialogue - STARTING DIALOGUE")
     $ store.objective_4_dialogue_shown = True
     "Five thousand coins in my coffers. Not a fortune, but enough to start thinking about expansion."
-    $ renpy.log("DEBUG: show_objective_4_dialogue - First line shown")
-    "I need to start thinking about infrastructure, improving the building to hold more workers, or the gear to be better prepared. Maybe a bit of both?"
-    $ renpy.log("DEBUG: show_objective_4_dialogue - Second line shown")
+    "Every coin is another step toward the resources the day of reckoning will demand. I need infrastructure—improving the building to hold more workers, or the gear to be better prepared. Perhaps a bit of both."
     "Journal has been updated with the next objective."
     $ renpy.log("DEBUG: show_objective_4_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
@@ -676,8 +685,8 @@ label show_objective_4_dialogue:
 label show_objective_5_dialogue:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_5_dialogue - STARTING DIALOGUE")
-    "Good! Now I understand how to manage my workers' needs and use items effectively."
-    "This knowledge will be crucial as my operation grows and I need to keep my workers happy and productive."
+    "Good. Now I understand how to manage my workers' needs and use items effectively."
+    "This knowledge will be vital when my operation grows—and when the governor takes notice of what I am building."
     "Journal has been updated with the next objective."
     $ store.current_objective = 6
     call show_objective_6_intro from _call_show_objective_6_intro
@@ -688,7 +697,7 @@ label show_objective_6_intro:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_6_intro - STARTING DIALOGUE")
     "Time to strengthen my foundation."
-    "I'll upgrade a building level and raise its Building skill bonus. The upgrade costs 1,000 coins."
+    "I will upgrade a building's level and raise its Building skill bonus—preparation for what comes when I dare to act. The upgrade costs 1,000 coins."
     $ renpy.log("DEBUG: show_objective_6_intro - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -696,7 +705,7 @@ label show_objective_6_outro:
     scene expression workers_bg
     $ renpy.log("DEBUG: show_objective_6_outro - STARTING DIALOGUE")
     "Excellent. The building can accommodate more souls now."
-    "'Tis time to expand the scale of this entire operation."
+    "The foundation is stronger. Time to expand the scale of this entire operation."
     $ renpy.log("DEBUG: show_objective_6_outro - FINISHED DIALOGUE")
     call show_objective_7_intro from _call_show_objective_7_intro
     jump tavern_screen
@@ -717,8 +726,8 @@ label show_objective_7_dialogue:
     "We have broken bread together. Over food and drink, they spoke of their hopes, their past, and what binds them to this house."
     "To share a meal is to offer trust—and to receive it in return. I have seen the face behind the servant, the person beneath the duty."
     "Such understanding is the foundation upon which loyalty is built. Those who eat at my table are no longer merely workers; they are souls I know, and who know me in turn."
-    "The governor rules through fear and gold. I shall build something different: a circle of those who have chosen to stand with me, beginning with this simple act of fellowship."
-    "My journal hath been inscribed with the next duty. The path to the grand design lies ahead."
+    "The governor rules through fear and gold. Loyalty is a weapon he does not have. I shall build something different: a circle of those who have chosen to stand with me."
+    "My journal has been inscribed with the next duty. The path to the grand design lies ahead."
     $ renpy.log("DEBUG: show_objective_7_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -774,7 +783,9 @@ label show_objective_9_dialogue:
 
 # ===== EPIC ENDINGS =====
 label show_ending_assassination:
-    scene expression event_bg
+    # Optional milestone image: throne room (ending_blade_throne.png)
+    $ _ending_bg = get_tutorial_milestone_image(tutorial_milestone_ending_blade) or event_bg
+    scene expression _ending_bg
     $ renpy.log("DEBUG: show_ending_assassination - STARTING EPIC ENDING")
     
     # Resolve governor tension - remove fear traits from workers
@@ -891,7 +902,9 @@ label show_ending_assassination:
     jump tavern_screen
 
 label show_ending_blackmail:
-    scene expression event_bg
+    # Optional milestone image: study (ending_blackmail_study.png; also tries .png.png if file was misnamed)
+    $ _ending_bg = get_tutorial_milestone_image(tutorial_milestone_ending_blackmail, ["images/tutorial/ending_blackmail_study.png.png"]) or event_bg
+    scene expression _ending_bg
     $ renpy.log("DEBUG: show_ending_blackmail - STARTING EPIC ENDING")
     
     # Resolve governor tension - remove fear traits from workers
@@ -938,7 +951,10 @@ label show_ending_blackmail:
     
     "The next morning, I send a messenger to the governor's mansion."
     
-    "The message is simple: 'I have in my possession documents that would see you hanged. Your choice is simple - surrender your holdings to me, publicly declare me your successor, and leave this city forever. Or face the consequences.'"
+    "The message is simple:"
+    "'I have in my possession documents that would see you hanged."
+    "Your choice is simple - surrender your holdings to me, publicly declare me your successor, and leave this city forever."
+    "Or face the consequences.'"
     
     "The governor's response comes that evening. He is a broken man, his power stripped away not by force of arms, but by the weight of his own sins brought to light."
     
@@ -1067,6 +1083,25 @@ label tavern_screen():
     
     # Call the tavern screen
     call screen tavern
+    # Safety net: if a menu/options return closed tavern flow and no
+    # hub screen is active, recover to tavern instead of leaving a bare scene.
+    python:
+        _hub_screens = (
+            "tavern",
+            "map_screen",
+            "workers",
+            "manager_inventory",
+            "Building_select_global",
+            "academy_menu",
+            "arena_menu",
+            "shop_selection",
+        )
+        _any_hub_visible = any(renpy.get_screen(_s) for _s in _hub_screens)
+    if not _any_hub_visible:
+        $ renpy.log("DEBUG: tavern_screen safety net triggered (no hub screen visible), recovering tavern UI.")
+        show screen tavern
+        pause 0.01
+        jump tavern_screen
     return
 
 label next_day:
@@ -1084,54 +1119,12 @@ label next_day:
             renpy.jump("game_over")
         elif result == "governor_retaliation":
             renpy.log("DEBUG: next_day - governor retaliation event detected, jumping to governor_retaliation")
-            # Call the event, then show daily report and continue
-            renpy.call("governor_retaliation")
-            # After event, show daily report then go to tavern
-            renpy.call_screen("daily_report")
-            # "Start of day" as player experiences it: right after closing daily report.
-            try:
-                # Auto-supply and auto-equip first.
-                for w in store.workers:
-                    try:
-                        store.run_worker_auto_supply_potions(w)
-                    except Exception as e1:
-                        renpy.log("run_worker_auto_supply_potions error (next_day/governor_retaliation): " + str(e1))
-                    try:
-                        store.run_worker_auto_equip(w)
-                    except Exception as e2:
-                        renpy.log("run_worker_auto_equip error (next_day/governor_retaliation): " + str(e2))
-                _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
-                for w in store.workers:
-                    if hasattr(store, "auto_consume_start_of_day"):
-                        store.auto_consume_start_of_day(w, threshold=_th)
-            except Exception as e:
-                renpy.log(f"AUTO_CONSUME post-report error: {e}")
-            renpy.jump("tavern_screen")
+            # Run governor events in script context to keep normal click-per-line dialogue pacing.
+            renpy.jump("handle_governor_retaliation_then_daily_report")
         elif result == "governor_tension_event":
             renpy.log("DEBUG: next_day - governor tension event detected, jumping to governor_tension_event")
-            # Call the event, then show daily report and continue
-            renpy.call("governor_tension_event")
-            # After event, show daily report then go to tavern
-            renpy.call_screen("daily_report")
-            # "Start of day" as player experiences it: right after closing daily report.
-            try:
-                # Auto-supply and auto-equip first.
-                for w in store.workers:
-                    try:
-                        store.run_worker_auto_supply_potions(w)
-                    except Exception as e1:
-                        renpy.log("run_worker_auto_supply_potions error (next_day/governor_tension): " + str(e1))
-                    try:
-                        store.run_worker_auto_equip(w)
-                    except Exception as e2:
-                        renpy.log("run_worker_auto_equip error (next_day/governor_tension): " + str(e2))
-                _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
-                for w in store.workers:
-                    if hasattr(store, "auto_consume_start_of_day"):
-                        store.auto_consume_start_of_day(w, threshold=_th)
-            except Exception as e:
-                renpy.log(f"AUTO_CONSUME post-report error: {e}")
-            renpy.jump("tavern_screen")
+            # Run governor events in script context to keep normal click-per-line dialogue pacing.
+            renpy.jump("handle_governor_tension_then_daily_report")
         elif result == "handle_random_event":
             renpy.log("DEBUG: next_day - event detected, handling event first then continuing with daily report")
             renpy.jump("handle_event_then_daily_report")
@@ -1196,6 +1189,52 @@ label handle_event_then_daily_report:
     # After daily report, go to tavern
     jump tavern_screen
 
+label handle_governor_retaliation_then_daily_report:
+    $ renpy.log("DEBUG: handle_governor_retaliation_then_daily_report - STARTING")
+    call governor_retaliation from _call_governor_retaliation_from_next_day
+    python:
+        renpy.call_screen("daily_report")
+        try:
+            for w in store.workers:
+                try:
+                    store.run_worker_auto_supply_potions(w)
+                except Exception as e1:
+                    renpy.log("run_worker_auto_supply_potions error (governor_retaliation flow): " + str(e1))
+                try:
+                    store.run_worker_auto_equip(w)
+                except Exception as e2:
+                    renpy.log("run_worker_auto_equip error (governor_retaliation flow): " + str(e2))
+            _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+            for w in store.workers:
+                if hasattr(store, "auto_consume_start_of_day"):
+                    store.auto_consume_start_of_day(w, threshold=_th)
+        except Exception as e:
+            renpy.log(f"AUTO_CONSUME post-report error: {e}")
+    jump tavern_screen
+
+label handle_governor_tension_then_daily_report:
+    $ renpy.log("DEBUG: handle_governor_tension_then_daily_report - STARTING")
+    call governor_tension_event from _call_governor_tension_from_next_day
+    python:
+        renpy.call_screen("daily_report")
+        try:
+            for w in store.workers:
+                try:
+                    store.run_worker_auto_supply_potions(w)
+                except Exception as e1:
+                    renpy.log("run_worker_auto_supply_potions error (governor_tension flow): " + str(e1))
+                try:
+                    store.run_worker_auto_equip(w)
+                except Exception as e2:
+                    renpy.log("run_worker_auto_equip error (governor_tension flow): " + str(e2))
+            _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
+            for w in store.workers:
+                if hasattr(store, "auto_consume_start_of_day"):
+                    store.auto_consume_start_of_day(w, threshold=_th)
+        except Exception as e:
+            renpy.log(f"AUTO_CONSUME post-report error: {e}")
+    jump tavern_screen
+
 ################################################################################
 ### AGE VERIFICATION
 ################################################################################
@@ -1252,8 +1291,11 @@ label take_a_walk:
     # Call the function to set up the walk
     $ success = start_take_a_walk()
     
-    # If not successful, return to map immediately
+    # If not successful, show message (if any) and return to map
     if not success:
+        if getattr(store, "take_a_walk_fail_message", None):
+            centered "[store.take_a_walk_fail_message]"
+            $ store.take_a_walk_fail_message = None
         show screen map_screen
         return
     

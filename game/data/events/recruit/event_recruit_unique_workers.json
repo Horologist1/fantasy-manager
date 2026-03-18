@@ -9,7 +9,6 @@
     "random_worker": false,
     "worker_name": "Aspen",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -19,7 +18,11 @@
         "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word. Word of your generous treatment spreads, enhancing your reputation (+3 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 3
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -28,7 +31,10 @@
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -41,16 +47,29 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": true
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_florian",
@@ -62,7 +81,6 @@
     "random_worker": false,
     "worker_name": "Florian",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -72,7 +90,11 @@
         "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.' Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -81,7 +103,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
-          "relationship_bonus": 15
+          "relationship_bonus": 15,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -91,16 +116,28 @@
           "recruit_worker": true,
           "cost_modifier": 0.8,
           "reputation": 5,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": true
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_violet",
@@ -112,17 +149,31 @@
     "random_worker": false,
     "worker_name": "Violet",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
-        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation).",
+        "option": "Hire them for [COST] per day.",
+        "message": "You offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 8
+          "reputation": 8,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Offer above their asking price to show genuine appreciation. (Potential: Reputation, Relationship)",
+        "message": "You offer more than they asked for, wanting them to feel truly valued. [event_worker]'s expression softens with genuine surprise. 'You... would do that? I appreciate your generosity.' They accept with [actual_cost] per day and their spirits lift noticeably. Word of your generous treatment spreads, enhancing your reputation (+10 Reputation). You sense a stronger bond forming between you and Violet (+20 Relationship).",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 10,
+          "relationship_bonus": 20,
+          "cost_modifier": 1.15,
+          "success_chance": 0,
+          "joy": 0
         }
       },
       {
@@ -131,30 +182,41 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 10,
-          "relationship_bonus": 18
+          "relationship_bonus": 18,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
-        "option": "Offer them a position with special accommodations. (Potential: Discount, Reputation, Mystical Resonance)",
-        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your understanding. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (15% discount). They gain the 'Mystical Resonance' trait, which will last for 60 days.",
+        "option": "Offer them a position with special accommodations. (Potential: Discount, Reputation)",
+        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your understanding. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (15% discount).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.85,
           "reputation": 6,
-          "add_trait": {
-            "name": "Mystical Resonance",
-            "duration": 60,
-            "target": "recruited_worker"
-          }
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline, sensing something unusual.",
         "message": "You explain that you're not currently hiring, though something tells you this person is more than they appear. [event_worker] smiles enigmatically. 'A wise choice, perhaps. But remember - some opportunities only come once.' They fade into the shadows, leaving you with an odd feeling.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": true
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_lily",
@@ -166,7 +228,6 @@
     "random_worker": false,
     "worker_name": "Lily",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -176,7 +237,11 @@
         "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 5
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -185,7 +250,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -198,16 +266,29 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring performers. [event_worker]'s smile falters slightly but remains charming. 'That's a shame. Well, if you change your mind, you know where to find me. I'll be the one making everyone else look ordinary.' They leave with a dramatic flourish.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": true
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_rose",
@@ -219,7 +300,6 @@
     "random_worker": false,
     "worker_name": "Rose",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -229,7 +309,11 @@
         "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 6
+          "reputation": 6,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -238,7 +322,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
-          "relationship_bonus": 15
+          "relationship_bonus": 15,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -252,16 +339,101 @@
             "name": "Nature's Blessing",
             "duration": 90,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": true
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "event_recruit_holly",
+    "description": "A woman with a mature, curvaceous figure enters your establishment, her gaze downcast and hesitant. She clutches a worn bag, and her movements betray a nervous shyness. Despite her reserved demeanor, there's an undeniable warmth about her - the kind that puts people at ease. She approaches you with quiet dignity.",
+    "dialogue": "\"Excuse me... I'm [event_worker]. I've heard your establishment treats its workers fairly.\"\n\nShe shifts her weight, clearly unused to putting herself forward. \"I'm... I'm good with people. Service work, I mean. I've raised a family, so I know how to care for others. I'm looking for honest work. Would you... would you consider taking me on?\"",
+    "weight": 1,
+    "unlimited": true,
+    "max_occurrences": 1,
+    "random_worker": false,
+    "worker_name": "Holly",
+    "always_available": true,
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Welcome her warmly and offer [COST] per day. (Potential: Reputation)",
+        "message": "You greet her kindly and offer [COST] per day. [event_worker]'s face softens with relief, and she offers a grateful smile. 'Thank you... I won't let you down.' She accepts with quiet dignity. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Offer better terms and reassure her. (Potential: Reputation, Relationship)",
+        "message": "You offer [COST] per day and speak to her in a gentle, reassuring tone. [event_worker]'s eyes glisten with emotion. 'You're very kind. I... I'll work hard for you.' She accepts with increased relationship, deeply appreciative of your respect. Word of your generous treatment spreads, enhancing your reputation (+7 Reputation). You sense a stronger bond forming between you and Holly (+15 Relationship).",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 7,
+          "relationship_bonus": 15,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
+        }
+      },
+      {
+        "option": "Offer a trial period so she can prove herself. (Potential: Discount, Trial Worker)",
+        "message": "You suggest a trial period at [COST] per day, explaining it's standard for new hires. [event_worker] nods eagerly. 'A trial? Yes, I understand. I'll prove my worth.' She agrees to work at a reduced daily cost ([actual_cost]) for the first month, determined to earn a permanent place. The reduced daily cost reflects your negotiation skills (25% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.75,
+          "add_trait": {
+            "name": "Trial Worker",
+            "duration": 30,
+            "target": "recruited_worker"
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "You explain that you're not currently hiring. [event_worker]'s shoulders slump slightly, but she manages a small smile. 'I understand. Thank you for your time.' She gathers her things and leaves quietly, her dignified composure intact.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_iris",
@@ -273,7 +445,6 @@
     "random_worker": false,
     "worker_name": "Iris",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -283,7 +454,11 @@
         "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -292,7 +467,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -305,16 +483,29 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'That's fine. If you change your mind, I'll be around. I have a feeling we might work together someday.' They leave with a confident smile.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": true
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_cedar",
@@ -326,7 +517,6 @@
     "random_worker": false,
     "worker_name": "Cedar",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -336,7 +526,11 @@
         "message": "You extend a handshake and offer [COST] per day. [event_worker] accepts with a firm grip and steady smile. 'Fair deal. I'll start tomorrow morning.' They nod respectfully and leave, clearly a person of their word. Word of your generous treatment spreads, enhancing your reputation (+3 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 3
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -345,7 +539,10 @@
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -358,16 +555,28 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_laurel",
@@ -379,7 +588,6 @@
     "random_worker": false,
     "worker_name": "Laurel",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -389,7 +597,11 @@
         "message": "You offer [COST] per day. [event_worker]'s smile widens, and he gives you an appraising look. 'Oh, I like someone who knows quality when they see it. Deal.' He extends a hand with a graceful, almost delicate gesture, but his grip is firm. 'I think we'll have fun working together.' Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -398,7 +610,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
-          "relationship_bonus": 15
+          "relationship_bonus": 15,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -408,16 +623,27 @@
           "recruit_worker": true,
           "cost_modifier": 0.8,
           "reputation": 5,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_sage",
@@ -429,7 +655,6 @@
     "random_worker": false,
     "worker_name": "Sage",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -439,7 +664,11 @@
         "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s lips curve into a knowing smile. 'You have good instincts. I accept your offer.' There's something almost mystical about the way they speak, as if they're seeing something you cannot. Word of your generous treatment spreads, enhancing your reputation (+8 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 8
+          "reputation": 8,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -448,30 +677,28 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 10,
-          "relationship_bonus": 18
-        }
-      },
-      {
-        "option": "Offer them a position with special accommodations. (Potential: Discount, Reputation, Mystical Resonance)",
-        "message": "You propose [COST] per day with special accommodations for their unique needs. [event_worker] considers this thoughtfully. 'You understand that I require certain... considerations. Very well. I accept.' They agree to work at a slightly reduced daily cost ([actual_cost]) in exchange for your understanding. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation). The reduced daily cost reflects your negotiation skills (15% discount). They gain the 'Mystical Resonance' trait, which will last for 60 days.",
-        "effect": {
-          "recruit_worker": true,
-          "cost_modifier": 0.85,
-          "reputation": 6,
-          "add_trait": {
-            "name": "Mystical Resonance",
-            "duration": 60,
-            "target": "recruited_worker"
-          }
+          "relationship_bonus": 18,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
         "option": "Politely decline, sensing something unusual.",
         "message": "You explain that you're not currently hiring, though something tells you this person is more than they appear. [event_worker] smiles enigmatically. 'A wise choice, perhaps. But remember - some opportunities only come once.' They fade into the shadows, leaving you with an odd feeling.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_lotus",
@@ -483,7 +710,6 @@
     "random_worker": false,
     "worker_name": "Lotus",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -493,7 +719,11 @@
         "message": "You offer [COST] per day, recognizing their obvious charisma. [event_worker] beams with delight. 'Perfect! I knew you'd see my value. I'll make your establishment shine.' They shake your hand enthusiastically, their charm almost overwhelming. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 5
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -502,7 +732,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -515,16 +748,28 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring performers. [event_worker]'s smile falters slightly but remains charming. 'That's a shame. Well, if you change your mind, you know where to find me. I'll be the one making everyone else look ordinary.' They leave with a dramatic flourish.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_primrose",
@@ -536,7 +781,6 @@
     "random_worker": false,
     "worker_name": "Primrose",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -546,7 +790,11 @@
         "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. Word of your generous treatment spreads, enhancing your reputation (+6 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 6
+          "reputation": 6,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -555,7 +803,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
-          "relationship_bonus": 15
+          "relationship_bonus": 15,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -569,16 +820,28 @@
             "name": "Nature's Blessing",
             "duration": 90,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_jasmine",
@@ -590,7 +853,6 @@
     "random_worker": false,
     "worker_name": "Jasmine",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -600,7 +862,11 @@
         "message": "You offer [COST] per day, recognizing their potential. [event_worker] smiles warmly. 'I appreciate the opportunity. I won't disappoint you.' They shake your hand with confidence, and you get the sense they're someone who keeps their word. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -609,7 +875,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -622,16 +891,28 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'That's fine. If you change your mind, I'll be around. I have a feeling we might work together someday.' They leave with a confident smile.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_daisy",
@@ -643,7 +924,6 @@
     "random_worker": false,
     "worker_name": "Daisy",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -653,7 +933,11 @@
         "message": "You welcome their enthusiasm and offer [COST] per day. [event_worker]'s face lights up even more. 'Oh, that's wonderful! I'm so excited to start! You won't regret this, I promise!' They shake your hand with genuine warmth and energy. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -662,7 +946,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
-          "relationship_bonus": 15
+          "relationship_bonus": 15,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -675,16 +962,28 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s smile falters slightly but remains bright. 'Oh, that's okay! I understand. Well, if you ever need someone cheerful and hardworking, you know where to find me!' They leave with a wave and a smile, their positive energy lingering.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_poppy",
@@ -696,7 +995,6 @@
     "random_worker": false,
     "worker_name": "Poppy",
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -706,7 +1004,11 @@
         "message": "You welcome them warmly and offer [COST] per day. [event_worker]'s eyes sparkle with delight. 'Wonderful! I'm so glad we could come to an arrangement. I think we'll work beautifully together.' Their grace and charm are immediately apparent. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 5
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -715,7 +1017,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
-          "relationship_bonus": 18
+          "relationship_bonus": 18,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -729,16 +1034,28 @@
             "name": "Nature's Blessing",
             "duration": 90,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods gracefully, their charm undiminished. 'I understand. Should your needs change, I'll be in the area. Sometimes the best opportunities come when least expected.' They depart with the same radiant grace they arrived with.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_unique_generic_1",
@@ -749,7 +1066,6 @@
     "max_occurrences": 1,
     "random_worker": true,
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -759,7 +1075,11 @@
         "message": "You recognize their unique qualities and offer [COST] per day. [event_worker] seems pleased. 'I appreciate that you see my value. I think we'll work well together.' They accept with confidence. Word of your generous treatment spreads, enhancing your reputation (+4 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 4
+          "reputation": 4,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -768,7 +1088,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
-          "relationship_bonus": 12
+          "relationship_bonus": 12,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -781,16 +1104,29 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'I see. Well, if you change your mind, I'll be around. Unique talents are always in demand, eventually.' They leave with quiet dignity.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_unique_generic_2",
@@ -801,7 +1137,6 @@
     "max_occurrences": 1,
     "random_worker": true,
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -811,7 +1146,11 @@
         "message": "You welcome them and offer [COST] per day, recognizing their distinctive qualities. [event_worker] smiles. 'I'm glad you recognize value when you see it. I accept your offer.' They shake your hand with confidence. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 5
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -820,7 +1159,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 7,
-          "relationship_bonus": 14
+          "relationship_bonus": 14,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -829,16 +1171,29 @@
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
-          "reputation": 6
+          "reputation": 6,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods. 'I understand. Should your situation change, I'll be available. Special talents are worth waiting for.' They leave with quiet confidence.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "event_recruit_unique_generic_3",
@@ -849,7 +1204,6 @@
     "max_occurrences": 1,
     "random_worker": true,
     "always_available": true,
-    "building_type": [],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
@@ -859,7 +1213,11 @@
         "message": "You recognize their exceptional qualities and offer [COST] per day. [event_worker] seems satisfied. 'Good. I'm glad you see my value. I accept your offer.' They extend their hand with confidence. Word of your generous treatment spreads, enhancing your reputation (+5 Reputation).",
         "effect": {
           "recruit_worker": true,
-          "reputation": 5
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
@@ -868,7 +1226,10 @@
         "effect": {
           "recruit_worker": true,
           "reputation": 8,
-          "relationship_bonus": 16
+          "relationship_bonus": 16,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0
         }
       },
       {
@@ -881,15 +1242,28 @@
             "name": "Trial Worker",
             "duration": 30,
             "target": "recruited_worker"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
         }
       },
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'I see. Well, should your needs change, I'll be available. Exceptional workers are always worth considering.' They depart with quiet dignity.",
-        "effect": {}
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
     ],
-    "nsfw": false
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "worker_filter": {},
+    "player_gender_requirement": null
   }
 ]

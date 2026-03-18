@@ -1,0 +1,45 @@
+{
+  "id": "example_trait_specialization_story",
+  "weight": 5,
+  "report": "Example: Trait specialization with weights",
+  "description": "positive_traits and negative_traits are dicts: trait -> weight. Weight affects roll AND message pick frequency.",
+  "difficulty_modifier": 0,
+  "worker_gender_requirement": null,
+  "nsfw_only": false,
+  "skill_options": ["Charm"],
+  "positive_traits": {
+    "Beautiful": 6,
+    "Graceful": 4,
+    "Elegant": 3
+  },
+  "negative_traits": {
+    "Shy": 3
+  },
+  "trait_msg_success": "The client loved {worker_name}'s {trait}.",
+  "trait_msg_failure": "{worker_name}'s {trait} put the client off.",
+  "trait_success": "The client loved {worker_name}'s {trait}.",
+  "required_traits": [],
+  "excluded_traits": [],
+  "stat_requirements": {},
+  "descriptions": {
+    "failure": "{worker_name} failed to impress.",
+    "mediocre": "{worker_name} did okay.",
+    "success": "{worker_name} succeeded.",
+    "critical_success": "{worker_name} exceeded expectations."
+  },
+  "earnings": {
+    "failure": "-50",
+    "mediocre": "50",
+    "success": "100 + skill",
+    "critical_success": "200 + skill * 2"
+  },
+  "consequences": {
+    "failure": { "energy": -1, "joy": -1 },
+    "mediocre": {},
+    "success": { "energy": -1, "joy": 1 },
+    "critical_success": { "joy": 2 }
+  },
+  "story_image": null,
+  "failure_image": null,
+  "loot": { "rolls": 0, "bonus_items": [] }
+}

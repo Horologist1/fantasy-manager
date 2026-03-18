@@ -165,14 +165,17 @@ init -2 python:
                         rebuilt.append(worker_obj)
                         seen.add(wname)
 
-                # Add workers who claim this building.
+                # Add workers who claim this building (use normalization for Building 1/Building_1 etc).
+                _norm = getattr(store, "_norm_building_key", lambda k: (str(k).strip() if k else ""))
+                bname_norm = _norm(bname)
                 for w in store.workers:
                     if not isinstance(w, dict):
                         continue
                     wname = w.get("name")
                     if not wname or wname in seen:
                         continue
-                    if w.get("assigned_building") == bname:
+                    ab = w.get("assigned_building")
+                    if ab == bname or (bname_norm and _norm(ab) == bname_norm):
                         rebuilt.append(w)
                         seen.add(wname)
 
@@ -448,6 +451,14 @@ init -2 python:
                 "yvara_last_question_total_days": _safe_getattr(store, "yvara_last_question_total_days", None),
                 "yvara_last_gift_total_days": _safe_getattr(store, "yvara_last_gift_total_days", None),
                 "yvara_last_talk_total_days": _safe_getattr(store, "yvara_last_talk_total_days", None),
+                "yvara_s3_gate_ready": _safe_getattr(store, "yvara_s3_gate_ready", False),
+                "yvara_s3_gate_ready_total_days": _safe_getattr(store, "yvara_s3_gate_ready_total_days", None),
+                "yvara_s4_finance_unlocked": _safe_getattr(store, "yvara_s4_finance_unlocked", False),
+                "yvara_s4_finance_last_day": _safe_getattr(store, "yvara_s4_finance_last_day", None),
+                "yvara_s4_donation_total": _safe_getattr(store, "yvara_s4_donation_total", 0),
+                "yvara_s4_donation_highest_tier": _safe_getattr(store, "yvara_s4_donation_highest_tier", 0),
+                "yvara_s4_favors_total": _safe_getattr(store, "yvara_s4_favors_total", 0),
+                "yvara_s4_favor_highest_tier": _safe_getattr(store, "yvara_s4_favor_highest_tier", 0),
                 "yvara_s1_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s1_talks_done", [])) or []),
                 "yvara_s1_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s1_remarks_done", [])) or []),
                 "yvara_gifts_given": _safe_getattr(store, "yvara_gifts_given", 0),
@@ -632,7 +643,21 @@ init -2 python:
             except Exception as e:
                 failed_fields.append("available_workers")
                 renpy.log(f"SNAPSHOT: WARNING - Could not apply available_workers: {e}")
-            
+
+            # CRITICAL: Ensure worker defaults (including min 3-5 traits) after snapshot restore.
+            # Restored workers never pass through ensure_worker_defaults otherwise.
+            try:
+                if hasattr(store, 'ensure_worker_defaults'):
+                    for worker in getattr(store, 'workers', []):
+                        store.ensure_worker_defaults(worker)
+                    for worker in getattr(store, 'available_workers', []):
+                        store.ensure_worker_defaults(worker)
+                    renpy.log("SNAPSHOT: Applied ensure_worker_defaults to all workers after restore")
+                else:
+                    renpy.log("SNAPSHOT: WARNING - ensure_worker_defaults not found")
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: ensure_worker_defaults error: {e}")
+
             # Only continue if we applied at least one critical field
             if not applied_critical:
                 renpy.log("SNAPSHOT: ERROR - No critical fields (money, day, or workers) could be applied")
@@ -877,6 +902,14 @@ init -2 python:
                 ("yvara_last_question_total_days", None),
                 ("yvara_last_gift_total_days", None),
                 ("yvara_last_talk_total_days", None),
+                ("yvara_s3_gate_ready", False),
+                ("yvara_s3_gate_ready_total_days", None),
+                ("yvara_s4_finance_unlocked", False),
+                ("yvara_s4_finance_last_day", None),
+                ("yvara_s4_donation_total", 0),
+                ("yvara_s4_donation_highest_tier", 0),
+                ("yvara_s4_favors_total", 0),
+                ("yvara_s4_favor_highest_tier", 0),
                 ("yvara_gifts_given", 0)
             ]:
                 try:

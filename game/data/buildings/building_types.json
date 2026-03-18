@@ -6,7 +6,10 @@
       "skill_name": "Hag Potions",
       "skill_description": "Mystical concoctions and elixirs that enhance intimate experiences. Hag Potions help avoid pregnancy and sickness. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": true,
-      "allowed_map_locations": ["tavern", "redhouse"],
+      "allowed_map_locations": [
+        "tavern",
+        "redhouse"
+      ],
       "professions": [
         {
           "id": "prostitute",
@@ -39,12 +42,9 @@
               "skill_options": [
                 "Sex"
               ],
-              "relevant_traits": [
-                "Beautiful",
-                "Graceful",
-                "Elegant",
-                "Sensual"
-              ],
+              "negative_traits": {
+                "Shy": 3
+              },
               "trait_success": "The client is really into {worker_name}'s {trait}.",
               "earnings": {
                 "success": "200 + skill * 2",
@@ -66,50 +66,37 @@
                   "health": -1,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Beautiful": 6,
+                "Graceful": 4,
+                "Elegant": 4,
+                "Sexy Air": 5
+              },
+              "trait_msg_success": "The client is really into {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} put the client off."
             },
             {
               "id": "prostitute_anal_client_male",
               "worker_gender_requirement": "male",
               "weight": 3,
               "report": "Client paid for Anal",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Anal"
-              ],
-              "relevant_traits": [
-                "Dominant",
-                "Experienced",
-                "Confident",
-                "Energetic"
               ],
               "trait_success": "{worker_name}'s {trait} makes him an incredible top for the anal session.",
               "earnings": {
@@ -132,50 +119,40 @@
                   "health": -1,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Aggressive": 3,
+                "Porn Star": 3,
+                "Confident": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes him an incredible top for the anal session.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_anal_client_female",
               "worker_gender_requirement": "female",
               "weight": 3,
               "report": "Client paid for Anal",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Anal"
-              ],
-              "relevant_traits": [
-                "Flexible",
-                "Experienced",
-                "Tough",
-                "Submissive"
               ],
               "trait_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the client.",
               "earnings": {
@@ -198,8 +175,6 @@
                   "health": -2,
                   "joy": -3,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -4
                 },
@@ -207,40 +182,33 @@
                   "energy": -1,
                   "health": -1,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -2
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Flexible": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Obedient": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the client.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_bdsm_client",
               "weight": 2,
               "report": "Dom Client paid for BDSM",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "BDSM"
-              ],
-              "relevant_traits": [
-                "Submissive",
-                "Tough",
-                "Experienced",
-                "Masochist"
               ],
               "trait_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
               "earnings": {
@@ -263,8 +231,6 @@
                   "health": -3,
                   "joy": -4,
                   "rebelliousness": 3,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -4
                 },
@@ -273,25 +239,25 @@
                   "health": -1,
                   "joy": -1,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 0,
                   "rebelliousness": -2,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Obedient": 3,
+                "Tough": 3,
+                "Porn Star": 3,
+                "Masochist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_oral_client",
@@ -300,12 +266,6 @@
               "difficulty_modifier": 5,
               "skill_options": [
                 "Oral"
-              ],
-              "relevant_traits": [
-                "Skilled",
-                "Sensual",
-                "Submissive",
-                "Beautiful"
               ],
               "trait_success": "The client can't get enough of {worker_name}'s {trait} during the blowjob.",
               "earnings": {
@@ -325,53 +285,42 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_hand_client_male",
               "worker_gender_requirement": "male",
               "weight": 3,
               "report": "Client paid for Fingering",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Hand"
-              ],
-              "relevant_traits": [
-                "Skilled",
-                "Gentle",
-                "Dominant",
-                "Confident"
               ],
               "trait_success": "The female client is amazed by {worker_name}'s {trait} technique.",
               "earnings": {
@@ -391,53 +340,42 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Aggressive": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_hand_client_female",
               "worker_gender_requirement": "female",
               "weight": 3,
               "report": "Client paid for Handjob",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Hand"
-              ],
-              "relevant_traits": [
-                "Skilled",
-                "Gentle",
-                "Teasing",
-                "Sensual"
               ],
               "trait_success": "The male client is amazed by {worker_name}'s {trait} touch.",
               "earnings": {
@@ -457,53 +395,42 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Playful": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The male client is amazed by {worker_name}'s {trait} touch.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_homo_client_male",
               "worker_gender_requirement": "male",
               "weight": 2,
               "report": "Same-Sex Client Service",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Homo"
-              ],
-              "relevant_traits": [
-                "Open-minded",
-                "Experienced",
-                "Passionate",
-                "Confident"
               ],
               "trait_success": "The male client is thrilled by {worker_name}'s {trait} approach to gay intimacy.",
               "earnings": {
@@ -523,53 +450,42 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -4
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The male client is thrilled by {worker_name}'s {trait} approach to gay intimacy.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_homo_client_female",
               "worker_gender_requirement": "female",
               "weight": 2,
               "report": "Same-Sex Client Service",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Homo"
-              ],
-              "relevant_traits": [
-                "Open-minded",
-                "Experienced",
-                "Passionate",
-                "Sensual"
               ],
               "trait_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
               "earnings": {
@@ -589,38 +505,34 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -4
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_group_clients",
@@ -629,12 +541,6 @@
               "difficulty_modifier": -5,
               "skill_options": [
                 "Group"
-              ],
-              "relevant_traits": [
-                "Agile",
-                "Experienced",
-                "Tough",
-                "Energetic"
               ],
               "trait_success": "The group is blown away by {worker_name}'s {trait} in handling multiple partners.",
               "earnings": {
@@ -657,8 +563,6 @@
                   "health": -2,
                   "joy": -3,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -4
                 },
@@ -667,25 +571,27 @@
                   "health": -1,
                   "joy": 1,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -2
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": -1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The group is blown away by {worker_name}'s {trait} in handling multiple partners.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_vip_client",
@@ -694,12 +600,6 @@
               "difficulty_modifier": -5,
               "skill_options": [
                 "Special"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Magnetic",
-                "Sophisticated"
               ],
               "trait_success": "The VIP client is captivated by {worker_name}'s {trait} and considers making her his regular.",
               "earnings": {
@@ -719,38 +619,32 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 20,
                   "libido": -1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The VIP client is captivated by {worker_name}'s {trait} and considers making her his regular.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "prostitute_extreme_client",
@@ -759,13 +653,6 @@
               "difficulty_modifier": -10,
               "skill_options": [
                 "Extreme"
-              ],
-              "relevant_traits": [
-                "Fearless",
-                "Open-minded",
-                "Tough",
-                "Adventurous",
-                "Wild"
               ],
               "trait_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
               "earnings": {
@@ -788,35 +675,33 @@
                   "health": -2,
                   "joy": -4,
                   "rebelliousness": 3,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -5
                 },
                 "success": {
                   "energy": -2,
                   "health": -1,
-                  "joy": 0,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 15,
                   "libido": -2
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 25,
-                  "libido": 0
+                  "reputation": 25
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Audacity": 3,
+                "Open Minded": 3,
+                "Tough": 3,
+                "Adventurer": 3,
+                "Rebellious": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -839,16 +724,8 @@
               "id": "stripper_regular_client",
               "weight": 5,
               "report": "Performed a Strip Show",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Striptease"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Graceful",
-                "Playful",
-                "Sensual",
-                "Beautiful"
               ],
               "trait_success": "The client is totally mesmerized by {worker_name}'s {trait} during her performance.",
               "earnings": {
@@ -868,52 +745,41 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Graceful": 3,
+                "Playful": 3,
+                "Sexy Air": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The client is totally mesmerized by {worker_name}'s {trait} during her performance.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "stripper_private_dance",
               "weight": 3,
               "report": "Performed a Lap Dance",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Striptease"
-              ],
-              "relevant_traits": [
-                "Sensual",
-                "Flexible",
-                "Charming",
-                "Seductive"
               ],
               "trait_success": "{worker_name}'s {trait} makes the private dance incredibly intimate and hot.",
               "earnings": {
@@ -933,52 +799,40 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Flexible": 3,
+                "Charming": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the private dance incredibly intimate and hot.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "stripper_vip_client",
               "weight": 2,
               "report": "VIP paid for a Special Show",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Striptease"
-              ],
-              "relevant_traits": [
-                "Elegant",
-                "Sophisticated",
-                "Magnetic",
-                "Charming"
               ],
               "trait_success": "The VIP client is blown away by {worker_name}'s {trait} and considers making her his regular dancer.",
               "earnings": {
@@ -998,38 +852,94 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 20,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Elegant": 3,
+                "Magnetic": 3,
+                "Charming": 3
+              },
+              "trait_msg_success": "The VIP client is blown away by {worker_name}'s {trait} and considers making her his regular dancer.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "stripper_lapdance_escalation",
+              "weight": 1,
+              "report": "Lapdance Escalated",
+              "description": "{worker_name} turned a lapdance into sex with the client when they offered triple pay.",
+              "nsfw_only": true,
+              "descriptions": {
+                "success": "{worker_name} controlled the pace and had sex with the client for a lucrative payment.",
+                "failure": "The client pushed too hard, and {worker_name} refused to have sex and cut the session early with no gain.",
+                "mediocre": "{worker_name} took the risk and had sex with the client for a modest payment.",
+                "critical_success": "{worker_name} had sex with the client in a high-end session and earned premium tips."
+              },
+              "skill_options": [
+                "Striptease",
+                "Sex"
+              ],
+              "trait_success": "{worker_name} used {trait} to keep control during sex and maximize the client's spending.",
+              "earnings": {
+                "failure": "-(180 + roll)",
+                "mediocre": "160 + (skill * 2)",
+                "success": "340 + (skill * 4)",
+                "critical_success": "420 + (skill * 7)"
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -8,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -2,
+                  "reputation": 2,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -2,
+                  "joy": 1,
+                  "reputation": 6,
+                  "libido": -2,
+                  "romance": 1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 12,
+                  "libido": -3,
+                  "romance": 1
+                }
+              },
+              "story_image": "striptease_private_dance",
+              "trait_roll_modifiers": {},
+              "positive_traits": {
+                "Charming": 3,
+                "Sexy Air": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "{worker_name} used {trait} to keep control during sex and maximize the client's spending.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1052,14 +962,8 @@
               "id": "service_story1",
               "weight": 5,
               "report": "Attended Clients",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Hardworking",
-                "Robust",
-                "Energetic"
               ],
               "trait_success": "The client appreciates {worker_name}'s {trait}.",
               "earnings": {
@@ -1079,38 +983,32 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Hardworking": 3,
+                "Robust": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The client appreciates {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1118,7 +1016,6 @@
           "id": "manager",
           "name": "Manager",
           "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Clever"
@@ -1133,15 +1030,8 @@
               "id": "manager_brothel",
               "weight": 1,
               "report": "Managed the Brothel",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The establishment benefits from {worker_name}'s {trait} management.",
               "earnings": {
@@ -1161,38 +1051,26 @@
               "consequences": {
                 "failure": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": -1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The establishment benefits from {worker_name}'s {trait} management.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1200,11 +1078,12 @@
           "id": "rest",
           "name": "Rest",
           "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 99,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "rest_brothel",
@@ -1215,19 +1094,11 @@
                 "success": {
                   "energy": 3,
                   "health": 3,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
               "story_image": "rest_brothel",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false
             }
           ]
         }
@@ -1238,14 +1109,15 @@
       "name": "Restaurant",
       "skill_name": "Ingredients",
       "skill_description": "High-quality cooking components and rare spices that elevate culinary creations. Better ingredients help your chefs overcome complex recipes and impress discerning patrons with exceptional flavors. Formula: Base Level + Skill Bonus = Success chance in Events.",
-      "nsfw": false,
-      "allowed_map_locations": ["tavern", "bluehouse"],
+      "allowed_map_locations": [
+        "tavern",
+        "bluehouse"
+      ],
       "professions": [
         {
           "id": "service",
           "name": "Service",
           "description": "Serves customers in the restaurant. Generates income through table service. Steady, low-risk work.",
-          "nsfw": false,
           "difficulty": "easy",
           "skills": [
             "Charm"
@@ -1260,14 +1132,8 @@
               "id": "service_story1_restaurant",
               "weight": 5,
               "report": "Served Regulars",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Hardworking",
-                "Robust",
-                "Energetic"
               ],
               "trait_success": "The client appreciates {worker_name}'s {trait}.",
               "earnings": {
@@ -1287,38 +1153,90 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Hardworking": 3,
+                "Robust": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The client appreciates {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "service_clumsy_paperwork_recovery",
+              "weight": 2,
+              "report": "Order Ledger Disaster",
+              "description": "{worker_name} dropped and mixed up order slips, then tried to charm the guests to salvage the service.",
+              "required_traits": [
+                "Clumsy"
+              ],
+              "descriptions": {
+                "success": "{worker_name} recovered with quick charm and clear apologies; most guests stayed and tipped anyway.",
+                "failure": "The order chaos spiraled and several tables left irritated.",
+                "mediocre": "{worker_name} fixed part of the mess, but the shift still ended in complaints.",
+                "critical_success": "{worker_name} turned the blunder into a funny moment and won over the whole room."
+              },
+              "skill_options": [
+                "Charm",
+                "Service"
+              ],
+              "difficulty_modifier": -5,
+              "trait_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
+              "earnings": {
+                "failure": "-(90 + roll)",
+                "mediocre": "90 + (skill * 2)",
+                "success": "180 + (skill * 3)",
+                "critical_success": "220 + (skill * 5)"
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -6
+                },
+                "mediocre": {
+                  "energy": -1
+                },
+                "success": {
+                  "energy": -1,
+                  "joy": 1,
+                  "relationship": 1,
+                  "reputation": 4
+                },
+                "critical_success": {
+                  "energy": -1,
+                  "joy": 2,
+                  "relationship": 2,
+                  "reputation": 8
+                }
+              },
+              "story_image": "service_story1_restaurant",
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Quick Learner": 3
+              },
+              "trait_msg_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1326,7 +1244,6 @@
           "id": "cook",
           "name": "Cook",
           "description": "Prepares meals for restaurant customers. Generates money through food service. Can cook for VIP tables for higher earnings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Service"
@@ -1341,14 +1258,8 @@
               "id": "cook_story1_restaurant",
               "weight": 5,
               "report": "Cooked for a Table",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Service"
-              ],
-              "relevant_traits": [
-                "Creative",
-                "Hardworking",
-                "Precise"
               ],
               "trait_success": "The clients are amazed by {worker_name}'s {trait} in the kitchen.",
               "earnings": {
@@ -1368,51 +1279,35 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Hardworking": 3
+              },
+              "trait_msg_success": "The clients are amazed by {worker_name}'s {trait} in the kitchen.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "cook_story2_restaurant",
               "weight": 2,
               "report": "Cooked for a VIP",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Service"
-              ],
-              "relevant_traits": [
-                "Creative",
-                "Elegant",
-                "Perfectionist"
               ],
               "trait_success": "The VIP client praises {worker_name}'s {trait} in crafting the meal.",
               "earnings": {
@@ -1432,38 +1327,29 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -10,
-                  "libido": 0
+                  "reputation": -10
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 20,
-                  "libido": 0
+                  "reputation": 20
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Elegant": 3,
+                "Determined": 3
+              },
+              "trait_msg_success": "The VIP client praises {worker_name}'s {trait} in crafting the meal.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1471,7 +1357,6 @@
           "id": "manager",
           "name": "Manager",
           "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Clever"
@@ -1486,15 +1371,8 @@
               "id": "manager_restaurant",
               "weight": 1,
               "report": "Managed the Restaurant",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The restaurant benefits from {worker_name}'s {trait} management.",
               "earnings": {
@@ -1514,38 +1392,26 @@
               "consequences": {
                 "failure": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": -1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The restaurant benefits from {worker_name}'s {trait} management.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1553,11 +1419,12 @@
           "id": "rest",
           "name": "Rest",
           "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 99,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "rest_restaurant",
@@ -1565,22 +1432,31 @@
               "description": "The worker takes a break in the restaurant, regenerating health and energy without a roll.",
               "report": "Taking a Break",
               "story_image": "rest_restaurant",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              },
               "consequences": {
                 "success": {
                   "energy": 3,
                   "health": 3,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
-              }
+              },
+              "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_restaurant",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "nsfw_only": true,
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest",
+              "trait_roll_modifiers": {}
             }
           ]
         }
@@ -1591,14 +1467,14 @@
       "name": "Adventurer's Guild",
       "skill_name": "Equipment",
       "skill_description": "Masterwork tools, weapons, and armor crafted with precision and care. Superior equipment enables your smiths to tackle demanding commissions and create legendary items that exceed customer expectations. Formula: Base Level + Skill Bonus = Success chance in Events.",
-      "nsfw": false,
-      "allowed_map_locations": ["greenhouse"],
+      "allowed_map_locations": [
+        "greenhouse"
+      ],
       "professions": [
         {
           "id": "adventurer",
           "name": "Adventurer",
           "description": "Hunts monsters and explores dungeons. High risk, high reward profession. Can find valuable loot but faces dangerous encounters.",
-          "nsfw": false,
           "difficulty": "hard",
           "skills": [
             "Combat"
@@ -1613,14 +1489,8 @@
               "id": "adventurer_story1",
               "weight": 2,
               "report": "Monster Hunting Contract",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Robust",
-                "Determined",
-                "Mystical"
               ],
               "trait_success": "The adventurer's {trait} proves invaluable in the battle.",
               "earnings": {
@@ -1643,52 +1513,50 @@
                   "health": -5,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
                   "health": -2,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
               "loot": {
-                "rolls": 0,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.015 },
-                  { "item_id": "collar_endless_desire", "chance": 0.015, "nsfw": true }
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.015,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.015,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Robust": 3,
+                "Determined": 3,
+                "Mystical": 3
+              },
+              "trait_msg_success": "The adventurer's {trait} proves invaluable in the battle.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "adventurer_story2",
               "weight": 1,
               "report": "Dungeon Delving",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Robust",
-                "Determined",
-                "Mystical"
               ],
               "trait_success": "{worker_name}'s display of {trait} proves decisive.",
               "earnings": {
@@ -1711,52 +1579,51 @@
                   "health": -5,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
                   "health": -2,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.020 },
-                  { "item_id": "collar_endless_desire", "chance": 0.020, "nsfw": true }
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.02,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.02,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Robust": 3,
+                "Determined": 3,
+                "Mystical": 3
+              },
+              "trait_msg_success": "{worker_name}'s display of {trait} proves decisive.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "adventurer_story3",
               "weight": 0.3,
               "report": "Unexpected Dangerous Encounter",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Robust",
-                "Determined",
-                "Mystical"
               ],
               "trait_success": "{worker_name}'s decisive {trait} turns the tide of battle.",
               "earnings": {
@@ -1777,8 +1644,6 @@
                   "health": -8,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -3,
                   "libido": -1
                 },
@@ -1786,30 +1651,39 @@
                   "energy": -1,
                   "health": -3,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 8,
-                  "libido": 0
+                  "reputation": 8
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 5,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 15,
-                  "libido": 0
+                  "reputation": 15
                 }
               },
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.025 },
-                  { "item_id": "collar_endless_desire", "chance": 0.025, "nsfw": true }
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.025,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.025,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "story_image": null,
+              "nsfw_only": false,
+              "positive_traits": {
+                "Robust": 3,
+                "Determined": 3,
+                "Mystical": 3
+              },
+              "trait_msg_success": "{worker_name}'s decisive {trait} turns the tide of battle.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -1817,7 +1691,6 @@
           "id": "treasure_hunter",
           "name": "Treasure Hunter",
           "description": "Explores abandoned tombs and temples in search of valuable treasures. Uses stealth and combat skills to navigate traps and avoid danger. Lower risk than adventuring but still rewarding.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Combat",
@@ -1833,16 +1706,9 @@
               "id": "treasure_hunter_story1",
               "weight": 3,
               "report": "Tomb Exploration",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat",
                 "Agility"
-              ],
-              "relevant_traits": [
-                "Nimble",
-                "Determined",
-                "Mystical",
-                "Lucky"
               ],
               "trait_success": "{worker_name}'s {trait} proves invaluable in navigating the ancient tomb.",
               "earnings": {
@@ -1862,57 +1728,54 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -3,
-                  "libido": 0
+                  "reputation": -3
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 4,
-                  "libido": 0
+                  "reputation": 4
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 8,
-                  "libido": 0
+                  "reputation": 8
                 }
               },
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.020 },
-                  { "item_id": "collar_endless_desire", "chance": 0.020, "nsfw": true }
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.02,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.02,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Determined": 3,
+                "Mystical": 3,
+                "Optimist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} proves invaluable in navigating the ancient tomb.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "treasure_hunter_story2",
               "weight": 2,
               "report": "Temple Raid",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat",
                 "Agility"
-              ],
-              "relevant_traits": [
-                "Nimble",
-                "Determined",
-                "Mystical",
-                "Lucky"
               ],
               "trait_success": "{worker_name}'s {trait} helps uncover hidden treasures in the temple.",
               "earnings": {
@@ -1932,42 +1795,46 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -3,
-                  "libido": 0
+                  "reputation": -3
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 4,
-                  "libido": 0
+                  "reputation": 4
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 8,
-                  "libido": 0
+                  "reputation": 8
                 }
               },
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.025 },
-                  { "item_id": "collar_endless_desire", "chance": 0.025, "nsfw": true }
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.025,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.025,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Determined": 3,
+                "Mystical": 3,
+                "Optimist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} helps uncover hidden treasures in the temple.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "treasure_hunter_story3",
@@ -1977,12 +1844,6 @@
               "skill_options": [
                 "Combat",
                 "Agility"
-              ],
-              "relevant_traits": [
-                "Nimble",
-                "Determined",
-                "Mystical",
-                "Lucky"
               ],
               "trait_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
               "earnings": {
@@ -2002,42 +1863,46 @@
               "consequences": {
                 "failure": {
                   "energy": -3,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 6,
-                  "libido": 0
+                  "reputation": 6
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 12,
-                  "libido": 0
+                  "reputation": 12
                 }
               },
               "loot": {
                 "rolls": 1,
                 "bonus_items": [
-                  { "item_id": "amulet_wanderer", "chance": 0.035 },
-                  { "item_id": "collar_endless_desire", "chance": 0.035, "nsfw": true }
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.035,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.035,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Determined": 3,
+                "Mystical": 3,
+                "Optimist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2045,7 +1910,6 @@
           "id": "boss_hunting",
           "name": "Boss Hunting",
           "description": "Hunts legendary mythical beasts. Extreme risk with the highest rewards. Can obtain rare loot and legendary materials. Very dangerous.",
-          "nsfw": false,
           "difficulty": "extreme",
           "skills": [
             "Combat"
@@ -2063,12 +1927,6 @@
               "difficulty_modifier": -15,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Robust",
-                "Determined",
-                "Mystical",
-                "Fearless"
               ],
               "trait_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
               "earnings": {
@@ -2091,8 +1949,6 @@
                   "health": -25,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -2
                 },
@@ -2100,9 +1956,6 @@
                   "energy": -2,
                   "health": -8,
                   "joy": 8,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 15,
                   "libido": -1
                 },
@@ -2110,26 +1963,64 @@
                   "energy": -1,
                   "health": -2,
                   "joy": 15,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 25,
-                  "libido": 0
+                  "reputation": 25
                 }
               },
               "loot": {
                 "rolls": 4,
                 "bonus_items": [
-                  { "item_id": "obsidian_blade", "chance": 0.12 },
-                  { "item_id": "amulet_wanderer", "chance": 0.03 },
-                  { "item_id": "collar_endless_desire", "chance": 0.03, "nsfw": true },
-                  { "item_id": "blade_fallen_king", "chance": 0.01 },
-                  { "item_id": "crown_dominion", "chance": 0.01 },
-                  { "item_id": "cloak_shadows", "chance": 0.01 },
-                  { "item_id": "staff_archmage", "chance": 0.01 },
-                  { "item_id": "chains_submission", "chance": 0.01, "nsfw": true }
+                  {
+                    "item_id": "obsidian_blade",
+                    "chance": 0.12,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.03,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.03,
+                    "nsfw": true
+                  },
+                  {
+                    "item_id": "blade_fallen_king",
+                    "chance": 0.01,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "crown_dominion",
+                    "chance": 0.01,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "cloak_shadows",
+                    "chance": 0.01,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "staff_archmage",
+                    "chance": 0.01,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "chains_submission",
+                    "chance": 0.01,
+                    "nsfw": true
+                  }
                 ]
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Robust": 3,
+                "Determined": 3,
+                "Mystical": 3,
+                "Audacity": 3
+              },
+              "trait_msg_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2153,15 +2044,8 @@
               "id": "monster_taming_combat",
               "weight": 1,
               "report": "Monster Capture",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Determined",
-                "Fearless",
-                "Sadistic",
-                "Robust"
               ],
               "trait_success": "{worker_name}'s {trait} makes the capture particularly effective.",
               "earnings": {
@@ -2184,34 +2068,20 @@
                   "health": -10,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
                   "libido": -2
                 },
                 "success": {
                   "energy": -2,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 }
               },
               "loot": {
-                "rolls": 0,
                 "monster_worker": {
                   "chance": 0.1,
                   "filters": {
@@ -2219,7 +2089,17 @@
                     "encounter_only": true
                   }
                 }
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Determined": 3,
+                "Audacity": 3,
+                "Sadistic": 3,
+                "Robust": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the capture particularly effective.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "monster_taming_seduction",
@@ -2228,13 +2108,6 @@
               "difficulty_modifier": -5,
               "skill_options": [
                 "Extreme"
-              ],
-              "relevant_traits": [
-                "Fearless",
-                "Seductive",
-                "Wild",
-                "Charming",
-                "Beautiful"
               ],
               "trait_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
               "earnings": {
@@ -2257,28 +2130,19 @@
                   "health": -5,
                   "joy": -3,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -3
                 },
                 "success": {
                   "energy": -2,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 20,
                   "libido": 2
                 }
@@ -2292,7 +2156,18 @@
                     "encounter_only": true
                   }
                 }
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Audacity": 3,
+                "Sexy Air": 3,
+                "Rebellious": 3,
+                "Charming": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2300,7 +2175,6 @@
           "id": "manager",
           "name": "Manager",
           "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Clever"
@@ -2315,15 +2189,8 @@
               "id": "manager_adventurers_guild",
               "weight": 1,
               "report": "Managed the Guild",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The guild benefits from {worker_name}'s {trait} management.",
               "earnings": {
@@ -2343,38 +2210,26 @@
               "consequences": {
                 "failure": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": -1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The guild benefits from {worker_name}'s {trait} management.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2382,11 +2237,12 @@
           "id": "rest",
           "name": "Rest",
           "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 99,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "rest_story1_adventurer",
@@ -2394,22 +2250,31 @@
               "description": "The worker takes a break in the guild break room, regenerating health and energy without a roll.",
               "report": "Taking a Break",
               "story_image": "rest_adventurer",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              },
               "consequences": {
                 "success": {
                   "energy": 3,
                   "health": 3,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
-              }
+              },
+              "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_adventurers_guild",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "nsfw_only": true,
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest",
+              "trait_roll_modifiers": {}
             }
           ]
         }
@@ -2420,35 +2285,33 @@
       "name": "Tavern",
       "skill_name": "Accomodations",
       "skill_description": "Luxurious furnishings, comfortable beds, and welcoming atmospheres that make guests feel at home. Enhanced accommodations help your innkeepers handle difficult guests and create memorable experiences. Formula: Base Level + Skill Bonus = Success chance in Events.",
-      "nsfw": false,
-      "allowed_map_locations": ["tavern", "bluehouse"],
+      "allowed_map_locations": [
+        "tavern",
+        "bluehouse"
+      ],
       "professions": [
         {
           "id": "bartender",
           "name": "Bartender",
           "description": "Serves drinks and tends the bar. Generates steady income through beverage service. Keeps customers happy and coming back.",
-          "nsfw": false,
           "difficulty": "easy",
           "skills": [
             "Charm",
             "Service"
           ],
           "max_daily_workers": 4,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "bartender_story1",
               "weight": 5,
               "report": "Tended the Bar",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm",
                 "Service"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Smooth Talker",
-                "Playful"
               ],
               "trait_success": "The client is delighted by {worker_name}'s {trait}.",
               "earnings": {
@@ -2466,40 +2329,32 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
               "story_image": "bartender_story1",
               "failure_image": "bartender_story1_failure",
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Smooth Talker": 3,
+                "Playful": 3
+              },
+              "trait_msg_success": "The client is delighted by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2507,7 +2362,6 @@
           "id": "entertainer",
           "name": "Entertainer",
           "description": "Entertains tavern guests through conversation, dance, music, storytelling, or other talents. Generates money by captivating audiences. Can entertain VIP guests for higher earnings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Charm"
@@ -2522,14 +2376,8 @@
               "id": "entertainer_story1_tavern",
               "weight": 5,
               "report": "Entertained Regulars",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Smooth Talker",
-                "Playful"
               ],
               "trait_success": "The crowd is delighted by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
@@ -2549,51 +2397,39 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Smooth Talker": 3,
+                "Playful": 3
+              },
+              "trait_msg_success": "The crowd is delighted by {worker_name}'s {trait} during their entertainment.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "entertainer_story2_tavern",
               "weight": 2,
               "report": "Entertained VIPs",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Magnetic"
               ],
               "trait_success": "The VIP guests are mesmerized by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
@@ -2613,38 +2449,32 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 20,
                   "libido": 1
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The VIP guests are mesmerized by {worker_name}'s {trait} during their entertainment.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2652,7 +2482,6 @@
           "id": "manager",
           "name": "Manager",
           "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Clever"
@@ -2667,15 +2496,8 @@
               "id": "manager_tavern",
               "weight": 1,
               "report": "Managed the Tavern",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The tavern benefits from {worker_name}'s {trait} management.",
               "earnings": {
@@ -2695,38 +2517,26 @@
               "consequences": {
                 "failure": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": -1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The tavern benefits from {worker_name}'s {trait} management.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2734,11 +2544,12 @@
           "id": "rest",
           "name": "Rest",
           "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 99,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "rest_tavern",
@@ -2746,22 +2557,31 @@
               "description": "The worker relaxes behind the bar, regaining energy and composure.",
               "report": "Taking a Break",
               "story_image": "rest_tavern",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              },
               "consequences": {
                 "success": {
                   "energy": 3,
                   "health": 3,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
-              }
+              },
+              "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_tavern",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "nsfw_only": true,
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest",
+              "trait_roll_modifiers": {}
             }
           ]
         }
@@ -2772,14 +2592,15 @@
       "name": "Casino",
       "skill_name": "Security",
       "skill_description": "Advanced defensive measures, trained guards, and protective enchantments that keep dangers at bay. Improved security helps your guardians overcome threatening situations and protect both workers and patrons. Formula: Base Level + Skill Bonus = Success chance in Events.",
-      "nsfw": false,
-      "allowed_map_locations": ["greenhouse", "redhouse"],
+      "allowed_map_locations": [
+        "greenhouse",
+        "redhouse"
+      ],
       "professions": [
         {
           "id": "dealer",
           "name": "Dealer",
           "description": "Works as a croupier at casino tables. Generates money through gambling operations. Manages games and ensures fair play.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Service"
@@ -2794,14 +2615,8 @@
               "id": "dealer_story1",
               "weight": 5,
               "report": "Worked as Croupier",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Service"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Smooth Talker",
-                "Clever"
               ],
               "trait_success": "The gamblers are impressed by {worker_name}'s {trait} at the table.",
               "earnings": {
@@ -2819,40 +2634,30 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
               "story_image": "dealer_story1",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Smooth Talker": 3,
+                "Clever": 3
+              },
+              "trait_msg_success": "The gamblers are impressed by {worker_name}'s {trait} at the table.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -2860,10 +2665,9 @@
           "id": "guard",
           "name": "Guard",
           "description": "Protects the casino from disruptive patrons and cheaters. Generates money through security services. Prevents losses from troublemakers.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
-            "Craft"
+            "Combat"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
@@ -2875,14 +2679,8 @@
               "id": "guard_story1_casino",
               "weight": 5,
               "report": "Caught Disruptive Patron",
-              "difficulty_modifier": 0,
               "skill_options": [
-                "Craft"
-              ],
-              "relevant_traits": [
-                "Intimidating",
-                "Robust",
-                "Alert"
+                "Combat"
               ],
               "trait_success": "The disruptive patron backs down, intimidated by {worker_name}'s {trait}.",
               "earnings": {
@@ -2905,48 +2703,36 @@
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Merciless": 3,
+                "Robust": 3,
+                "Sharp-Eyed": 3
+              },
+              "trait_msg_success": "The disruptive patron backs down, intimidated by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "guard_story2_casino",
               "weight": 2,
               "report": "Caught Cheating Gambler",
-              "difficulty_modifier": 0,
               "skill_options": [
-                "Craft"
-              ],
-              "relevant_traits": [
-                "Alert",
-                "Clever",
-                "Determined"
+                "Combat"
               ],
               "trait_success": "The cheating gambler is caught off-guard by {worker_name}'s {trait}.",
               "earnings": {
@@ -2969,35 +2755,30 @@
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sharp-Eyed": 3,
+                "Clever": 3,
+                "Determined": 3
+              },
+              "trait_msg_success": "The cheating gambler is caught off-guard by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -3005,7 +2786,6 @@
           "id": "manager",
           "name": "Manager",
           "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings.",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Clever"
@@ -3020,15 +2800,8 @@
               "id": "manager_casino",
               "weight": 1,
               "report": "Managed the Casino",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The casino benefits from {worker_name}'s {trait} management.",
               "earnings": {
@@ -3048,38 +2821,26 @@
               "consequences": {
                 "failure": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": -1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The casino benefits from {worker_name}'s {trait} management.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -3087,11 +2848,12 @@
           "id": "rest",
           "name": "Rest",
           "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 99,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "rest_casino",
@@ -3099,22 +2861,31 @@
               "description": "The dealer takes a break, stepping away from the tables to recharge.",
               "report": "Taking a Break",
               "story_image": "rest_casino",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              },
               "consequences": {
                 "success": {
                   "energy": 3,
                   "health": 3,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
-              }
+              },
+              "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_casino",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "nsfw_only": true,
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest",
+              "trait_roll_modifiers": {}
             }
           ]
         }
@@ -3126,13 +2897,14 @@
       "skill_name": "Luxury",
       "skill_description": "Exquisite furnishings, rare wines, and opulent decorations that impress the aristocracy. Enhanced luxury helps your courtiers handle demanding nobles and create unforgettable experiences. Formula: Base Level + Skill Bonus = Success chance in Events.",
       "nsfw": true,
-      "allowed_map_locations": ["castle"],
+      "allowed_map_locations": [
+        "castle"
+      ],
       "professions": [
         {
           "id": "ambassador",
           "name": "Ambassador",
           "description": "Conducts diplomatic missions and negotiates agreements. Generates reputation and money through political work. Builds alliances and resolves conflicts.",
-          "nsfw": false,
           "difficulty": "hard",
           "skills": [
             "Charm",
@@ -3148,16 +2920,9 @@
               "id": "ambassador_negotiate_trade",
               "weight": 3,
               "report": "Negotiated Trade Agreement",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm",
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Sophisticated",
-                "Smooth Talker",
-                "Clever",
-                "Magnetic"
               ],
               "trait_success": "The trade delegation is impressed by {worker_name}'s {trait} during negotiations.",
               "earnings": {
@@ -3177,38 +2942,30 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -15,
-                  "libido": 0
+                  "reputation": -15
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 20,
-                  "libido": 0
+                  "reputation": 20
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 35,
-                  "libido": 0
+                  "reputation": 35
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Elegant": 3,
+                "Smooth Talker": 3,
+                "Clever": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The trade delegation is impressed by {worker_name}'s {trait} during negotiations.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "ambassador_diplomatic_alliance",
@@ -3218,12 +2975,6 @@
               "skill_options": [
                 "Charm",
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Sophisticated",
-                "Elegant",
-                "Smooth Talker",
-                "Magnetic"
               ],
               "trait_success": "The foreign delegation is won over by {worker_name}'s {trait} during the alliance talks.",
               "earnings": {
@@ -3243,38 +2994,29 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -20,
-                  "libido": 0
+                  "reputation": -20
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 25,
-                  "libido": 0
+                  "reputation": 25
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 40,
-                  "libido": 0
+                  "reputation": 40
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Elegant": 3,
+                "Smooth Talker": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The foreign delegation is won over by {worker_name}'s {trait} during the alliance talks.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "ambassador_resolve_conflict",
@@ -3284,12 +3026,6 @@
               "skill_options": [
                 "Charm",
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Smooth Talker",
-                "Clever",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The conflicting parties are persuaded by {worker_name}'s {trait} mediation.",
               "earnings": {
@@ -3309,52 +3045,37 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -18,
-                  "libido": 0
+                  "reputation": -18
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 22,
-                  "libido": 0
+                  "reputation": 22
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 38,
-                  "libido": 0
+                  "reputation": 38
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Smooth Talker": 3,
+                "Clever": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The conflicting parties are persuaded by {worker_name}'s {trait} mediation.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "ambassador_cultural_exchange",
               "weight": 2,
               "report": "Organized Cultural Exchange",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Elegant",
-                "Sophisticated",
-                "Magnetic",
-                "Charming"
               ],
               "trait_success": "The cultural delegation is inspired by {worker_name}'s {trait} during the exchange.",
               "earnings": {
@@ -3374,38 +3095,29 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -12,
-                  "libido": 0
+                  "reputation": -12
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 18,
-                  "libido": 0
+                  "reputation": 18
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 30,
-                  "libido": 0
+                  "reputation": 30
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Elegant": 3,
+                "Magnetic": 3,
+                "Charming": 3
+              },
+              "trait_msg_success": "The cultural delegation is inspired by {worker_name}'s {trait} during the exchange.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -3428,15 +3140,8 @@
               "id": "courtesan_noble_entertainment",
               "weight": 3,
               "report": "Entertained Noble Guest",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Elegant",
-                "Sophisticated",
-                "Charming",
-                "Magnetic"
               ],
               "trait_success": "The noble is captivated by {worker_name}'s {trait}.",
               "earnings": {
@@ -3456,52 +3161,38 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 20,
-                  "libido": 0
+                  "reputation": 20
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Elegant": 3,
+                "Charming": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The noble is captivated by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "courtesan_diplomatic_soiree",
               "weight": 3,
               "report": "Attended Diplomatic Soiree",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Charm"
-              ],
-              "relevant_traits": [
-                "Sophisticated",
-                "Elegant",
-                "Smooth Talker",
-                "Magnetic"
               ],
               "trait_success": "The diplomatic guests are impressed by {worker_name}'s {trait} at the soiree.",
               "earnings": {
@@ -3521,38 +3212,31 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -15,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 15,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 25,
-                  "libido": 0
+                  "reputation": 25
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Elegant": 3,
+                "Smooth Talker": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The diplomatic guests are impressed by {worker_name}'s {trait} at the soiree.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "courtesan_seduction_nsfw",
@@ -3562,12 +3246,6 @@
               "skill_options": [
                 "Charm",
                 "Sex"
-              ],
-              "relevant_traits": [
-                "Sensual",
-                "Elegant",
-                "Passionate",
-                "Magnetic"
               ],
               "trait_success": "The aristocratic patron is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
               "earnings": {
@@ -3587,38 +3265,33 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -10,
                   "libido": -3
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 10,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 20,
-                  "libido": 0
+                  "reputation": 20
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Elegant": 3,
+                "Energetic": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The aristocratic patron is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "courtesan_vip_private_chamber",
@@ -3629,12 +3302,6 @@
                 "Charm",
                 "Sex",
                 "Oral"
-              ],
-              "relevant_traits": [
-                "Sensual",
-                "Submissive",
-                "Experienced",
-                "Beautiful"
               ],
               "trait_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
               "earnings": {
@@ -3654,38 +3321,33 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -15,
                   "libido": -3
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 15,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 3,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 25,
-                  "libido": 0
+                  "reputation": 25
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Porn Star": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -3693,7 +3355,6 @@
           "id": "servant",
           "name": "Servant",
           "description": "Serves aristocratic guests in the castle. Generates money through high-class service. Maintains the prestige of the establishment.",
-          "nsfw": false,
           "difficulty": "easy",
           "skills": [
             "Service"
@@ -3708,14 +3369,8 @@
               "id": "servant_aristocratic_service",
               "weight": 5,
               "report": "Served Aristocratic Guests",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Service"
-              ],
-              "relevant_traits": [
-                "Hardworking",
-                "Elegant",
-                "Precise"
               ],
               "trait_success": "The aristocratic guests appreciate {worker_name}'s {trait} service.",
               "earnings": {
@@ -3735,38 +3390,31 @@
               "consequences": {
                 "failure": {
                   "energy": -2,
-                  "health": 0,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Hardworking": 3,
+                "Elegant": 3,
+                "Clever": 3
+              },
+              "trait_msg_success": "The aristocratic guests appreciate {worker_name}'s {trait} service.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -3793,18 +3441,11 @@
               "id": "pleasure_servant_noble_client",
               "weight": 4,
               "report": "Pleasured Noble Client",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Sex",
                 "Anal",
                 "Oral",
                 "Hand"
-              ],
-              "relevant_traits": [
-                "Sensual",
-                "Submissive",
-                "Experienced",
-                "Beautiful"
               ],
               "trait_success": "The noble client is enthralled by {worker_name}'s {trait}.",
               "earnings": {
@@ -3827,55 +3468,50 @@
                   "health": -1,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": 0,
-                  "health": 0,
                   "joy": 2,
                   "rebelliousness": -1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Porn Star": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The noble client is enthralled by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
         {
           "id": "prisoner",
           "name": "Prisoner",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 9,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "prisoner_obedience_training",
               "weight": 1,
               "report": "Obedience Training",
               "description": "The prisoner undergoes strict training to increase their obedience and submission.",
-              "difficulty_modifier": 0,
               "story_image": "prisoner_training",
-              "failure_image": "",
               "descriptions": {
                 "success": "{worker_name} endures the rigorous obedience training, learning to submit completely to authority. The strict discipline and structured routine gradually break down resistance, increasing their obedience and acceptance of their role."
               },
@@ -3885,23 +3521,16 @@
                   "health": -1,
                   "joy": -1,
                   "rebelliousness": -2,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0,
                   "obedience": 5
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false
             }
           ]
         },
         {
           "id": "guards",
           "name": "Guards",
-          "nsfw": false,
           "difficulty": "hard",
           "skills": [
             "Combat"
@@ -3916,14 +3545,8 @@
               "id": "guards_capture_intruder",
               "weight": 3,
               "report": "Captured Intruder",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Intimidating",
-                "Robust",
-                "Alert"
               ],
               "trait_success": "{worker_name}'s {trait} proves decisive in capturing the intruder.",
               "earnings": {
@@ -3946,54 +3569,44 @@
                   "health": -2,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
                   "health": -1,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
               "loot": {
-                "rolls": 0,
                 "captured_worker": {
                   "chance": 0.05,
                   "filters": {
                     "unique": false
                   }
                 }
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Merciless": 3,
+                "Robust": 3,
+                "Sharp-Eyed": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} proves decisive in capturing the intruder.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "guards_capture_criminal",
               "weight": 3,
               "report": "Apprehended Criminal",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Intimidating",
-                "Determined",
-                "Robust"
               ],
               "trait_success": "{worker_name}'s {trait} proves decisive in apprehending the criminal.",
               "earnings": {
@@ -4016,54 +3629,44 @@
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -5,
-                  "libido": 0
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
                   "health": -1,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 5,
-                  "libido": 0
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 10,
-                  "libido": 0
+                  "reputation": 10
                 }
               },
               "loot": {
-                "rolls": 0,
                 "captured_worker": {
                   "chance": 0.05,
                   "filters": {
                     "unique": false
                   }
                 }
-              }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Merciless": 3,
+                "Determined": 3,
+                "Robust": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} proves decisive in apprehending the criminal.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             },
             {
               "id": "guards_patrol_secure",
               "weight": 2,
               "report": "Secured Castle Perimeter",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Combat"
-              ],
-              "relevant_traits": [
-                "Alert",
-                "Robust",
-                "Determined"
               ],
               "trait_success": "{worker_name}'s {trait} ensures thorough security during the patrol.",
               "earnings": {
@@ -4086,42 +3689,34 @@
                   "health": -1,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": -3,
-                  "libido": 0
+                  "reputation": -3
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 3,
-                  "libido": 0
+                  "reputation": 3
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
                   "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 8,
-                  "libido": 0
+                  "reputation": 8
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sharp-Eyed": 3,
+                "Robust": 3,
+                "Determined": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} ensures thorough security during the patrol.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
         {
           "id": "chamberlain",
           "name": "Chamberlain",
-          "nsfw": false,
           "difficulty": "medium",
           "skills": [
             "Clever"
@@ -4136,15 +3731,8 @@
               "id": "chamberlain_manage_castle",
               "weight": 1,
               "report": "Managed the Castle",
-              "difficulty_modifier": 0,
               "skill_options": [
                 "Clever"
-              ],
-              "relevant_traits": [
-                "Charming",
-                "Elegant",
-                "Sophisticated",
-                "Magnetic"
               ],
               "trait_success": "The castle benefits from {worker_name}'s {trait} management.",
               "earnings": {
@@ -4164,38 +3752,26 @@
               "consequences": {
                 "failure": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": -1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": -1
                 },
                 "success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 1,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 1
                 },
                 "critical_success": {
                   "energy": -1,
-                  "health": 0,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
               },
-              "loot": {
-                "rolls": 0
-              }
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The castle benefits from {worker_name}'s {trait} management.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
             }
           ]
         },
@@ -4203,11 +3779,12 @@
           "id": "rest",
           "name": "Rest",
           "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk.",
-          "nsfw": false,
           "difficulty": "none",
-          "skills": [],
           "max_daily_workers": 99,
-          "daily_story_count": 1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "rest_castle",
@@ -4215,22 +3792,14 @@
               "description": "The worker takes a break in the castle's quarters, regenerating health and energy.",
               "report": "Taking a Break",
               "story_image": "rest_castle",
-              "failure_image": "",
-              "loot": {
-                "rolls": 0
-              },
               "consequences": {
                 "success": {
                   "energy": 3,
                   "health": 3,
-                  "joy": 2,
-                  "rebelliousness": 0,
-                  "romance": 0,
-                  "relationship": 0,
-                  "reputation": 0,
-                  "libido": 0
+                  "joy": 2
                 }
-              }
+              },
+              "nsfw_only": false
             }
           ]
         }

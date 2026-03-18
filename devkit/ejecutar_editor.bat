@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-echo Fantasy Manager Editor v5.4 - Complete Edition
+echo Fantasy Manager Editor v6.0
 echo.
 echo Features:
 echo  - Workers, Traits, Events, Items, Buildings editors
@@ -10,7 +10,7 @@ echo  - Event editor with cooldowns, occurrences, probabilities
 echo  - Whoremaster Import
 echo  - GIF to WebM conversion
 echo.
-python fantasy_manager_editor_v4.py
+python fantasy_manager_editor_v6.py
 if errorlevel 1 (
     echo.
     echo Error: Could not run Python

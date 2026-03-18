@@ -39,6 +39,29 @@ init -1 python:
                     renpy.log("SAVE_STATE: WARNING - sync_building_assignments_from_workers not found")
             except Exception as e:
                 renpy.log(f"SAVE_STATE: sync_building_assignments_from_workers error: {e}")
+
+            # CRITICAL: Preload trait catalog BEFORE ensure_worker_defaults.
+            # After load, store is restored from save but _trait_def_cache is not saved - it's empty.
+            try:
+                if hasattr(store, "refresh_traits_cache"):
+                    store.refresh_traits_cache(force=True)
+                    renpy.log("SAVE_STATE: Preloaded trait catalog for worker defaults")
+            except Exception as e:
+                renpy.log(f"SAVE_STATE: refresh_traits_cache error: {e}")
+
+            # CRITICAL: Ensure worker defaults (including min 3-5 traits) after load.
+            # Loaded workers never pass through ensure_worker_defaults otherwise.
+            try:
+                if hasattr(store, 'ensure_worker_defaults'):
+                    for worker in getattr(store, 'workers', []):
+                        store.ensure_worker_defaults(worker)
+                    for worker in getattr(store, 'available_workers', []):
+                        store.ensure_worker_defaults(worker)
+                    renpy.log("SAVE_STATE: Applied ensure_worker_defaults to all workers after load")
+                else:
+                    renpy.log("SAVE_STATE: WARNING - ensure_worker_defaults not found")
+            except Exception as e:
+                renpy.log(f"SAVE_STATE: ensure_worker_defaults error: {e}")
             
             renpy.log("SAVE_STATE: Load complete")
                 

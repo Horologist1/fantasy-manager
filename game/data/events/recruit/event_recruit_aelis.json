@@ -1,0 +1,55 @@
+[
+    {
+        "id": "event_recruit_aelis",
+        "description": "The door opens without fanfare, and a charming girl steps inside as though she has always belonged there. The murmur of the hall doesn’t hush — yet somehow it shifts, subtly aligning around her presence. Her dress, elegant and ostentatious, moves like flowing ink as she breezes into the room with graceful steps. There is a quiet calculation in her gaze, softened by an easy, practiced smile. Ambition glimmers there — patient, composed, and waiting for the right moment.",
+        "dialogue": "Good evening. I’m [event_worker].\n\nI’ve a fondness for places like this — where music hums beneath conversation and every table holds a different story. I tend to notice the details others miss. I can keep spirits high, smooth rough edges, and ensure the right words find the right ears. I’m looking for somewhere lively… somewhere I might prove my worth. Do you think there could be a place for me here?",
+        "weight": 1,
+        "unlimited": true,
+        "max_occurrences": 1,
+        "random_worker": false,
+        "worker_name": "Aelis",
+        "always_available": true,
+        "building_type": [],
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Offer her a position for [COST] per day. (Potential: Reputation)",
+                "message": "You offer [COST] per day, acknowledging [event_worker]’s poise and perceptive nature. [event_worker] inclines her head gracefully, a thoughtful glimmer in her eyes. Your confidence in me is not misplaced. I’ll ensure it is rewarded. Her handshake is gentle but assured, her composure unwavering. Word spreads that you recognize refined talent when you see it, enhancing your reputation (+4 Reputation).",
+                "effect": {
+                    "recruit_worker": true,
+                    "reputation": 4
+                }
+            },
+            {
+                "option": "Offer refined terms with opportunities for growth. (Potential: Reputation, Relationship)",
+                "message": "You offer [COST] per day along with promises of better opportunities, creative freedom, and room to rise. [event_worker]’s smile deepens, subtle but sincere. It is rare to find someone who values ambition as much as ability. I won’t forget that. She accepts with quiet confidence, clearly motivated by the trust you place in her. Word of your thoughtful leadership spreads, enhancing your reputation (+7 Reputation). A stronger rapport forms between you and [event_worker] (+12 Relationship).",
+                "effect": {
+                    "recruit_worker": true,
+                    "reputation": 7,
+                    "relationship_bonus": 12
+                }
+            },
+            {
+                "option": "Suggest a trial period to see how she performs. (Potential: Discount, Trial Worker)",
+                "message": "You propose a trial period at [COST] per day. [event_worker] studies you briefly, measuring the offer with calm consideration. A fair arrangement, she replies smoothly. I trust my work will speak for itself. She agrees to begin at a reduced daily cost ([actual_cost]) for the first month, with improved terms upon success. The negotiated rate reflects your careful approach (25% discount). She gains the 'Trial Worker' trait for 30 days.",
+                "effect": {
+                    "recruit_worker": true,
+                    "cost_modifier": 0.75,
+                    "add_trait": {
+                        "name": "Trial Worker",
+                        "duration": 30,
+                        "target": "recruited_worker"
+                    }
+                }
+            },
+            {
+                "option": "Politely decline.",
+                "message": "You tell [event_worker] there’s no position available at present. She gives a calm, unreadable smile. I see. Then I’ll trust our paths may cross again. With a graceful nod, she slips back into the evening, composed as ever.",
+                "effect": {}
+            }
+        ],
+        "nsfw": true
+    }
+]

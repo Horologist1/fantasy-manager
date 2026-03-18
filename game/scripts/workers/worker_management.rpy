@@ -61,6 +61,8 @@ init python:
         """
         Returns "Sell" if worker["is_servant"] is True; otherwise, "Fire".
         """
+        if not worker:
+            return "Fire"
         return "Sell" if worker.get("is_servant", False) else "Fire"
 
     def add_to_dead_workers(worker_name):

@@ -13,7 +13,9 @@
           "value": true,
           "duration": 5
         }
-      }
+      },
+      "rebelliousness": 0,
+      "libido": 0
     },
     "gender_filter": null,
     "worker_gender": "female",
@@ -22,13 +24,9 @@
     ],
     "image": "violet_special",
     "nsfw": false,
-    "stat_requirements": {
-      "romance": 0
-    },
     "specific_workers": [
       "Violet"
     ],
-    "required_flags": {},
     "excluded_flags": {
       "violet_special_moment": true
     }
@@ -47,7 +45,9 @@
           "value": true,
           "duration": 4
         }
-      }
+      },
+      "rebelliousness": 0,
+      "libido": 0
     },
     "gender_filter": null,
     "worker_gender": null,
@@ -63,7 +63,6 @@
       "Beautiful",
       "Charming"
     ],
-    "required_flags": {},
     "excluded_flags": {
       "enchanted_by_beauty": true
     }

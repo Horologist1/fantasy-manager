@@ -91,7 +91,8 @@ init python:
                     bonus += modifiers.get("health_max", 0)
                     if "health_max_cap" in modifiers:
                         cap_val = modifiers.get("health_max_cap")
-                        if isinstance(cap_val, (int, float)):
+                        # Ignore neutral/invalid caps (0 or negative) introduced by schema defaults.
+                        if isinstance(cap_val, (int, float)) and cap_val > 0:
                             health_cap = cap_val if health_cap is None else min(health_cap, cap_val)
         
         # Add item bonuses from equipped items
@@ -143,7 +144,8 @@ init python:
                 bonus_energy += modifiers.get("energy_max", 0)
                 if "energy_max_cap" in modifiers:
                     cap_val = modifiers.get("energy_max_cap")
-                    if isinstance(cap_val, (int, float)):
+                    # Ignore neutral/invalid caps (0 or negative) introduced by schema defaults.
+                    if isinstance(cap_val, (int, float)) and cap_val > 0:
                         energy_cap = cap_val if energy_cap is None else min(energy_cap, cap_val)
         
         # Add item bonuses from equipped items

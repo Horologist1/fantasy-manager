@@ -38,10 +38,10 @@
         "names_list": "western_male",
         "traits": [
             "Human",
-            "Strong",
-            "Tough",
-            "Brawler",
-            "Robust"
+            "Confident",
+            "Energetic",
+            "Clever",
+            "Optimist"
         ],
         "description": "A skilled and experienced worker with a calm demeanor, perfect for general tasks.",
         "gender": "male",
@@ -88,10 +88,10 @@
         "names_list": "western_male",
         "traits": [
             "Human",
-            "Wise",
-            "Teacher",
-            "Adventurer",
-            "Quick Learner"
+            "Confident",
+            "Energetic",
+            "Clever",
+            "Charismatic"
         ],
         "description": "A skilled worker with a calm, alluring presence, suited for customer service and hospitality roles.",
         "gender": "male",
@@ -136,10 +136,10 @@
         "names_list": "western_female",
         "traits": [
             "Human",
-            "Beautiful",
-            "Clever",
             "Elegant",
-            "Mystical"
+            "Sexy Air",
+            "Graceful",
+            "Clever"
         ],
         "description": "A mysterious figure known for her elegance and charm, ideal for refined tasks.",
         "gender": "female",
@@ -147,7 +147,7 @@
         "recruit_only": false
     },
     {
-        "name": "Lotus",
+        "name": "Dahlia",
         "folder": "lily",
         "cost": 1500,
         "nsfw": false,
@@ -185,10 +185,10 @@
         "names_list": "fantasy_female",
         "traits": [
             "Human",
-            "Beautiful",
-            "Charming",
-            "Charismatic",
-            "Radiant"
+            "Elegant",
+            "Sexy Air",
+            "Graceful",
+            "Clever"
         ],
         "description": "An enigmatic performer whose dramatic flair excels in entertainment and performance settings.",
         "gender": "female",
@@ -233,10 +233,10 @@
         "names_list": "eastern_female",
         "traits": [
             "Elf",
-            "Mystical",
+            "Elegant",
+            "Sexy Air",
             "Graceful",
-            "Flexible",
-            "Agile"
+            "Clever"
         ],
         "description": "A passionate performer whose fiery spirit excels in entertainment and artistic performances.",
         "gender": "female",
@@ -281,10 +281,10 @@
         "names_list": "western_female",
         "traits": [
             "Human",
-            "Magnetic",
-            "Quick Learner",
-            "Graceful",
-            "Exotic"
+            "Charismatic",
+            "Optimist",
+            "Exotic",
+            "Confident"
         ],
         "description": "A graceful performer with excellent social skills and natural charm.",
         "gender": "female",
@@ -329,10 +329,10 @@
         "names_list": "eastern_female",
         "traits": [
             "Human",
-            "Hardworking",
+            "Charismatic",
             "Optimist",
-            "Energetic",
-            "Cute"
+            "Confident",
+            "Energetic"
         ],
         "description": "A cheerful and hardworking individual with a bright smile, suited for service roles.",
         "gender": "female",
@@ -378,9 +378,9 @@
         "traits": [
             "Elf",
             "Charismatic",
-            "Elegant",
-            "Graceful",
-            "Radiant"
+            "Optimist",
+            "Exotic",
+            "Confident"
         ],
         "description": "A vibrant and charismatic performer with exceptional charm and social grace.",
         "gender": "female",

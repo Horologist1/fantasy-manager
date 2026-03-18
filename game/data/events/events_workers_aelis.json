@@ -1,0 +1,287 @@
+[
+  {
+    "id": "aelis_first_busy_night",
+    "description": "The tavern is lively when Aelis begins her first busy night. Firelight flickers across crowded tables where merchants, farmers, and caravan guards share drinks and stories. Normally the evening's mood is guided by the fiddler, but tonight he has not arrived. Without music the atmosphere grows restless. Tankards tap against tables and impatient clapping spreads through the room. The keeper glances toward Aelis and shrugs slightly, as if offering her the opportunity to fill the silence. The open space near the hearth becomes the center of attention. Some patrons laugh and call for entertainment, while others simply watch with curiosity. For Aelis, this moment could shape how the tavern sees her from now on. A good first impression could earn admiration and coin. A poor one might make the crowd dismiss her entirely.",
+    "weight": 8,
+    "limited": true,
+    "event_probability": 80,
+    "max_occurrences": 1,
+    "cooldown_days": 0,
+    "worker_name": "Aelis",
+    "worker_selection": "random",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "has_worker:Aelis"
+    },
+    "excluded_flags": {
+      "aelis_first_busy_night_done": true
+    },
+    "choices": [
+      {
+        "option": "Walk between the tables first, charming the guests before dancing. (Requires Charm 40+; Potential: Money, Reputation)",
+        "condition": "Charm",
+        "threshold": 40,
+        "message_success": "Aelis jokes and spins playfully beside different tables, warming the room before beginning her dance. The crowd is already smiling when the performance begins. (+3 Charm, +150 gold, +3 tavern reputation)",
+        "message_failure": "Aelis tries to charm the guests but struggles to connect. The dance that follows feels rushed. (+1 Charm, +50 gold, +1 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 150,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "aelis_first_busy_night_done": true
+            }
+          },
+          "failure": {
+            "money": 50,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "aelis_first_busy_night_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Take the stage and attempt a flashy move you recently practiced, hoping to dazzle the crowd. (Requires Charm 65+; Potential: Money, Reputation; Risk: Money, Reputation)",
+        "condition": "Charm",
+        "threshold": 65,
+        "message_success": "Aelis jumps onto the stage with a flourish, her dress flowing with mystical allure. The patrons become entranced by the novelty and allure of this exquisite dance routine, admiring Aelis gracefully performing daring postures one after the other. (+4 Charm, +350 gold, +6 tavern reputation)",
+        "message_failure": "The daring flourish begins well but ends in a small stumble that breaks the crowd's excitement. (+1 Charm, -100 gold, -2 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 350,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Charm": 4
+            },
+            "event_flags": {
+              "aelis_first_busy_night_done": true
+            }
+          },
+          "failure": {
+            "money": -100,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "aelis_first_busy_night_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Focus on serving the customers, without performing on the stage. (requires Service)",
+        "condition": "Service",
+        "threshold": 35,
+        "message_success": "Aelis busily moves between tables, focusing on serving food and beverage to the customers, while waiting for the fiddler's late appearance. (+3 Service, -100 gold, +3 tavern reputation)",
+        "message_failure": "Aelis tries to keep the crowd happy by serving food and drinks, but people are becoming more and more impatient, and the tavern's reputation for providing entertainment notably decreases. (+1 Service, -200 gold, -5 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": -100,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "aelis_first_busy_night_done": true
+            }
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -5,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "aelis_first_busy_night_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "aelis_noble_visitors",
+    "description": "A small group of city nobles visits the tavern, attracted by stories of Aelis’ charm and skill. After getting a VIP table at the tavern, they request specifically for Aelis to serve and entertain them. As the night goes on, the nobles enjoy their food and drinks, and request for a special service from Aelis to make this night memorable. She now has the chance to impress influential guests with her charms, skills, and wit.",
+    "weight": 8,
+    "limited": true,
+    "event_probability": 80,
+    "max_occurrences": 1,
+    "cooldown_days": 0,
+    "worker_name": "Aelis",
+    "worker_selection": "random",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "has_flag:aelis_first_busy_night_done"
+    },
+    "excluded_flags": {
+      "aelis_noble_visitors_done": true
+    },
+    "choices": [
+      {
+        "option": "Perform a few steps of graceful dance for the nobles. (requires Charm)",
+        "condition": "Charm",
+        "threshold": 55,
+        "message_success": "Aelis spins gracefully beside the table, performing a couple steps right in front of the nobles gathered at the table. Still, this small glimse of her talent is showing her elegance in plain view, satisfying the patrons of the VIP table (+3 Charm, +500 gold, +6 tavern reputation)",
+        "message_failure": "Aelis tries to charm the guests with some dancing steps but struggles to find her bearing. The dance that follows feels rushed qnd inco,plete, disappointing the nobles at the table who cut short on their nightly outing at the tavern. (+1 Charm, -300 gold, -5 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "aelis_noble_visitors_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -5,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "aelis_noble_visitors_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Improvise a full dance routine on the table to charm the VIP nobles. (requires higher Charm, more risk/reward)",
+        "condition": "Charm",
+        "threshold": 75,
+        "message_success": "Using her flexibility, Aelis hops onto the table and starts a charming ballad dance. Her flowing hair and graceful body is surrounded by a magical glow as she dances and twirls under the admirative gaze of the nobles at the table. The patrons are completely charmed, and shower Aelis with compliments and gifts. (+5 Charm, +2000 gold, +9 tavern reputation)",
+        "message_failure": "The dance is not well practiced and the nobles can't help but catch the flaws in her performance, ruining her image and the tavern's reputation. (-1000 gold, -8 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 2000,
+            "reputation": 9,
+            "skill_modifiers": {
+              "Charm": 5
+            },
+            "event_flags": {
+              "aelis_noble_visitors_done": true
+            }
+          },
+          "failure": {
+            "money": -1000,
+            "reputation": -8,
+            "event_flags": {
+              "aelis_noble_visitors_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Offer some choice digestive alcohol to the nobles. (requires Service)",
+        "condition": "Service",
+        "threshold": 55,
+        "message_success": "Making the bottle appear out of thin air, Aelis offers the nobles some carefully chosen digestive to end the night on a good note. Pleasantly surprised by her attentiveness, the VIP patrons happily accept, and are very pleased by the taste of the drinks and the atmosphere at the end of the night. (+4 Service, +500 gold, +6 tavern reputation)",
+        "message_failure": "Aelis tries to think of something to offer them but can't find anything fitting the occasion, her unimaginative suggestions do not suit the taste of the nobles who are leaving the tavern unhappy. (-500 gold, -5 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Service": 4
+            },
+            "event_flags": {
+              "aelis_noble_visitors_done": true
+            }
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -5,
+            "event_flags": {
+              "aelis_noble_visitors_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "aelis_final_tavern_star",
+    "description": "Aelis is now a respected and well-known performer in the tavern. Word of her graceful dances and lively presence has spread through the cities, drawing in a wide range of patrons each evening. Merchants, travelers, and even minor nobles now visit the tavern not only for the food and drinks, but to see her perform and enjoy the atmosphere she creates. Tonight, however, the tavern feels especially lively. The room is fuller than usual, and many eyes quietly follow Aelis as she moves through the crowd. With confident grace, Aelis captivates the crowd, encouraging guests to stay longer, spend more, and leave with stories of the tavern’s remarkable entertainer.",
+    "weight": 8,
+    "limited": true,
+    "event_probability": 80,
+    "max_occurrences": 1,
+    "cooldown_days": 0,
+    "worker_name": "Aelis",
+    "worker_selection": "random",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "has_flag:aelis_noble_visitors_done"
+    },
+    "excluded_flags": {
+      "aelis_final_tavern_star_done": true
+    },
+    "choices": [
+      {
+        "option": "Perform an elegant dance to captivate the crowds. (requires Charm)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Aelis steps into the open space near the hearth, the warm glow of the fire catching the flowing movements of her dress. As the room quiets, she begins to move with practiced grace, each step smooth and deliberate. Her dance blends elegance with playful charm, drawing the attention of every patron in the tavern. Conversations fade as eyes follow her spinning figure, and soon the room fills with applause and cheerful laughter. By the time she finishes with a graceful bow, the crowd is thoroughly captivated, and the tavern buzzes with renewed energy and admiration. (New trait, +1500 gold, +12 tavern reputation)",
+        "message_failure": "Aelis steps into the open space and begins her dance, hoping to charm the watching patrons. Her movements start well enough, but something feels slightly off. A mistimed step and a small stumble break the rhythm she was trying to build. The crowd watches politely, yet the excitement she hoped to spark never quite takes hold. When the dance ends, a few scattered claps follow, but most guests soon return to their drinks and conversations, leaving Aelis with the sense that the performance failed to truly capture the room. (-500 gold, -10 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 1500,
+            "reputation": 12,
+            "add_trait": "Aelis, The Exquisite Dancer",
+            "event_flags": {
+              "aelis_final_tavern_star_done": true
+            }
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -10,
+            "event_flags": {
+              "aelis_final_tavern_star_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Serve customers elegantly and make polite conversation with the patrons. (requires Service)",
+        "condition": "Service",
+        "threshold": 85,
+        "message_success": "Aelis moves gracefully between the crowded tables, balancing trays with practiced ease. She serves drinks and meals with a warm smile, exchanging a few polite words with each group of patrons. Her calm confidence and attentive service quickly win people over, turning simple orders into pleasant conversations. Laughter spreads through the room as guests enjoy both the tavern’s offerings and her charming company, leaving many patrons more relaxed, generous, and eager to return. (New trait, +2000 gold, +13 tavern reputation)",
+        "message_failure": "Aelis moves between the tables, trying to serve the patrons while keeping polite conversation flowing. However, the busy room quickly becomes overwhelming. Orders get mixed up, and her attempts at conversation feel rushed and awkward. Some guests grow impatient as they wait for their drinks, while others lose interest and return to their own discussions. By the end of the evening, the service feels disorganized, and the atmosphere of the tavern never quite reaches the lively mood she had hoped to create. (-1200 gold, -9 tavern reputation)",
+        "effect": {
+          "success": {
+            "money": 2000,
+            "reputation": 13,
+            "add_trait": "Aelis, The Charming Waitress",
+            "event_flags": {
+              "aelis_final_tavern_star_done": true
+            }
+          },
+          "failure": {
+            "money": -1200,
+            "reputation": -9,
+            "event_flags": {
+              "aelis_final_tavern_star_done": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

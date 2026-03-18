@@ -23,7 +23,7 @@ if errorlevel 1 (
 
 REM Run the script
 cd /d "%~dp0"
-python image_harmonizer.py
+python image_harmonizer.py --include-jpg --jpg-max-kb=350
 
 echo.
 pause

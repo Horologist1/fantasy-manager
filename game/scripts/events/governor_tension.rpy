@@ -1,139 +1,109 @@
 # governor_tension.rpy
 # Governor's Tension System - Events and narrative
+# Simplified: governor_event background + all text in the dialogue box below.
 
 init python:
-    # Variable to store pending tension event type
     store._pending_tension_event = None
 
-# Overlay so "message on the door" text is readable over governor_event background
-screen governor_message_overlay():
-    zorder 5
-    modal False
-    add Solid("#c4b89e", alpha=0.80)
+    def say_governor_text(text, speaker=None, limit=170):
+        """
+        Show long governor-event lines in readable chunks (one click per chunk).
+        """
+        if not text:
+            return
+        try:
+            import re
+            cleaned = str(text).strip()
+            if not cleaned:
+                return
+            # First split by sentence boundaries, then merge up to limit.
+            parts = [p.strip() for p in re.split(r"(?<=[.!?])\s+", cleaned) if p and p.strip()]
+            chunks = []
+            current = ""
+            for part in parts:
+                if not current:
+                    current = part
+                    continue
+                if len(current) + 1 + len(part) <= int(limit):
+                    current += " " + part
+                else:
+                    chunks.append(current)
+                    current = part
+            if current:
+                chunks.append(current)
+            if not chunks:
+                chunks = [cleaned]
+            who = speaker if speaker is not None else narrator
+            for chunk in chunks:
+                renpy.say(who, chunk)
+        except Exception:
+            who = speaker if speaker is not None else narrator
+            renpy.say(who, str(text))
 
 # ==========================================
 # GOVERNOR'S RETALIATION - One-time event
-# Triggered when player chooses assassination/blackmail path
 # ==========================================
 
 label governor_retaliation:
     $ start_new_conversation()
-    
     $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
     scene expression _gov_bg
     with fade
     
-    "A shadow falls upon your establishment..."
+    "A shadow falls upon your establishment."
     
-    pause 1.0
-    
-    "As you prepare for the next phase of your plan, a hooded messenger arrives at your door."
-    
-    "His face is pale, his hands trembling."
-    
-    show screen message_window
+    $ say_governor_text("As you prepare for the next phase of your plan, a hooded messenger arrives at your door. His face is pale, his hands trembling.")
     
     "Messenger" "M-my lord... there's been an incident. The Governor... he knows."
     
-    "Knows what, exactly?"
-    
-    "Messenger" "Your workers... some of them fell ill this morning. Violently ill."
-    
-    "A cold chill runs down your spine."
-    
-    "Messenger" "The apothecary says it's poison. Slow-acting. The Governor's favorite method for sending... messages."
-    
-    hide screen message_window
+    $ say_governor_text("Your workers... some of them fell ill this morning. Violently ill. The apothecary says it's poison. Slow-acting. The Governor's favorite method for sending... messages.")
     
     # Apply poison to 1-2 random workers
     python:
         import random
-        
-        # Determine number of victims (1-2)
         num_victims = min(len(store.workers), random.choice([1, 2]))
-        
-        # Get workers who aren't already poisoned
         available_workers = [w for w in store.workers if "Poisoned" not in w.get("traits", [])]
-        
-        # Choose victims
-        victims = []
-        if available_workers:
-            victims = random.sample(available_workers, min(num_victims, len(available_workers)))
-        
-        # Apply poison and "Shaken by the Governor" traits
+        victims = random.sample(available_workers, min(num_victims, len(available_workers))) if available_workers else []
         victim_names = []
         for victim in victims:
             add_trait_with_duration(victim, "Poisoned", 7)
-            add_trait_with_duration(victim, "Shaken by the Governor", 0)  # Permanent until quest ends
+            add_trait_with_duration(victim, "Shaken by the Governor", 0)
             victim["health"] = max(1, victim["health"] - 15)
             victim_names.append(victim["name"])
-        
         store._retaliation_victims = victim_names
     
     if store._retaliation_victims:
         if len(store._retaliation_victims) == 1:
             $ victim_name = store._retaliation_victims[0]
-            "When you rush to check on your workers, you find [victim_name] writhing in agony."
-            
-            "[victim_name]" "M-master... the water... it tasted strange..."
-            
-            "The poison courses through their veins. They'll survive, but recovery will be slow."
+            $ say_governor_text(f"When you rush to check on your workers, you find {victim_name} writhing in agony. The poison courses through their veins. They'll survive, but recovery will be slow.")
         else:
             $ victims_str = " and ".join(store._retaliation_victims)
-            "When you rush to check on your workers, you find [victims_str] both collapsed on the floor."
-            
-            "Their bodies convulse with the effects of the poison. They'll survive, but barely."
-        
-        pause 0.5
+            $ say_governor_text(f"When you rush to check on your workers, you find {victims_str} both collapsed on the floor. Their bodies convulse with the effects of the poison. They'll survive, but barely.")
     
-    $ _gov_bg = governor_event_bg if renpy.loadable(governor_event_bg) else event_bg
-    scene expression _gov_bg
+    # Optional milestone image: note on door (governor_note_on_door.png)
+    $ _note_bg = get_tutorial_milestone_image(tutorial_milestone_note_door) or _gov_bg
+    scene expression _note_bg
     with fade
+    $ say_governor_text("Back in your chambers, you find a blade embedded in the door. A folded note is skewered beneath it. The seal pressed into the wax is the Governor's crest. He did not bother to hide it.")
     
-    "Back in your chambers, you find a blade embedded in the door."
+    "The note reads:"
     
-    "A folded note is skewered beneath it."
+    "\"You have been seen.\""
     
-    "The seal pressed into the wax is the Governor's crest. He did not bother to hide it."
+    "\"Consider this the last courtesy I shall extend.\""
     
-    show screen governor_message_overlay
+    "\"Every step you take, I will answer. Every ally you gather, I will peel away.\""
     
-    "{i}\"You have been seen.\"{/i}"
+    "\"This city is mine. Every soul within it — including yours — exists at my pleasure.\""
     
-    "{i}\"Consider this the last courtesy I shall extend.\"{/i}"
+    "\"— G.\""
     
-    "{i}\"Every step you take, I will answer. Every ally you gather, I will peel away.\"{/i}"
+    $ say_governor_text("Your hands do not shake. That surprises you. He sent this to make you afraid. You hold the note to the candle flame and watch it curl to nothing. From this point forward, the Governor will act. Stay ready.")
     
-    "{i}\"This city is mine. Every soul within it — including yours — exists at my pleasure.\"{/i}"
-    
-    "{i}— G.{/i}"
-    
-    hide screen governor_message_overlay
-    
-    pause 0.5
-    
-    "Your hands do not shake. That surprises you."
-    
-    "He sent this to make you afraid. To make you fold quietly, the way the others before you did."
-    
-    "You hold the note to the candle flame and watch it curl to nothing."
-    
-    "Let him send his agents. Let him poison your water and buy the ears of your people."
-    
-    "Every move he makes against you is a move he is not spending on protecting himself."
-    
-    "From this point forward, the Governor will act. Stay ready."
-    
-    # Clean up
     $ store._retaliation_victims = None
-    
-    # Show daily report if it exists, then return to tavern
-    python:
-        if hasattr(store, 'daily_report') and store.daily_report:
-            renpy.call_screen("daily_report")
-    
-    # Return to tavern
-    jump tavern
+    window hide
+    pause
+    return
 
 
 # ==========================================
@@ -155,8 +125,7 @@ label governor_tension_event:
     elif tension_type == "spy":
         jump governor_spy_event
     else:
-        # Fallback - shouldn't happen
-        jump tavern
+        return
 
 
 label governor_poison_event:
@@ -172,33 +141,14 @@ label governor_poison_event:
     
     if store._tension_victim:
         $ vname = store._tension_victim
-        
-        "[vname]" "M-master... I don't feel well..."
-        
-        "[vname] collapses onto a chair, clutching their stomach."
-        
-        "What happened? What did you eat?"
-        
-        "[vname]" "Just... the usual breakfast... but... the water had a strange taste..."
-        
-        "You recognize the symptoms. The Governor's agents have struck again."
-        
-        "[vname] has been poisoned!"
-        "They will suffer health and energy penalties until the poison wears off."
+        $ say_governor_text(f"{vname} collapses, clutching their stomach. The water had a strange taste. You recognize the symptoms - the Governor's agents have struck again. {vname} has been poisoned and will suffer health and energy penalties until it wears off.")
     else:
-        "But when you check on them, they seem fine. Perhaps it was just fatigue."
-        "You remain vigilant. The Governor's shadow looms over everything."
+        "When you check on them, they seem fine. Perhaps it was just fatigue. You remain vigilant."
     
     $ store._tension_victim = None
-    
-    pause 1.0
-
-    # Show daily report if it exists, then return to tavern
-    python:
-        if hasattr(store, 'daily_report') and store.daily_report:
-            renpy.call_screen("daily_report")
-
-    jump tavern
+    window hide
+    pause
+    return
 
 
 label governor_sabotage_event:
@@ -206,43 +156,20 @@ label governor_sabotage_event:
     scene expression _gov_bg
     with fade
     
-    "You hear a commotion from one of your buildings..."
-    
     python:
         building_name = apply_governor_sabotage_event()
         store._tension_building = building_name
     
     if store._tension_building:
         $ bname = store._tension_building
-        
-        "When you arrive at [bname], you find the place in disarray."
-        
-        "Equipment has been tampered with. Supplies have been spoiled. Someone has deliberately damaged your establishment."
-        
-        "A guard approaches you, looking ashamed."
-        
-        "Guard" "My lord, a stranger was seen leaving the premises last night. We have no proof, but... it has the Governor's mark written all over it."
-        
-        "Guard" "By the time we noticed the damage, they were long gone."
-        
-        "The Governor's agents. They grow bolder."
-        
-        "[bname] has been sabotaged!"
-        "Its building skill bonus is temporarily reduced (hurting daily results for a few days)."
+        $ say_governor_text(f"You hear a commotion. When you arrive at {bname}, you find the place in disarray - equipment tampered with, supplies spoiled. A guard reports a stranger seen leaving last night. It has the Governor's mark all over it. {bname} has been sabotaged; its building skill bonus is temporarily reduced.")
     else:
-        "But when you investigate, everything seems in order."
-        "Perhaps it was just a false alarm. Still, you remain on guard."
+        "You hear a commotion from one of your buildings, but when you investigate, everything seems in order. You remain on guard."
     
     $ store._tension_building = None
-    
-    pause 1.0
-
-    # Show daily report if it exists, then return to tavern
-    python:
-        if hasattr(store, 'daily_report') and store.daily_report:
-            renpy.call_screen("daily_report")
-
-    jump tavern
+    window hide
+    pause
+    return
 
 
 label governor_spy_event:
@@ -250,36 +177,17 @@ label governor_spy_event:
     scene expression _gov_bg
     with fade
     
-    "Something feels wrong when you count the day's earnings..."
-    
     python:
         stolen = apply_governor_spy_event()
         store._tension_stolen = stolen
     
     if store._tension_stolen and store._tension_stolen > 0:
         $ amount = store._tension_stolen
-        
-        "The numbers don't add up. The ledgers have been tampered with — someone has been skimming from your coffers."
-        
-        "Upon investigation, you discover that a trusted accountant, a \"new hire\" who had access to your books..."
-        
-        "...vanished sometime during the night, along with a significant sum. The Governor had placed a spy in your counting-house."
-        
-        "A spy. The Governor placed a spy among my people."
-        
-        "$[amount] has been stolen by the Governor's spy!"
-        "Be careful — the Governor has eyes everywhere."
+        $ say_governor_text(f"Something feels wrong when you count the day's earnings. The ledgers have been tampered with. A trusted accountant - a \"new hire\" with access to your books - vanished during the night, along with {amount} coins. The Governor had placed a spy in your counting-house. Be careful; he has eyes everywhere.")
     else:
-        "After careful counting, everything seems to be in order."
-        "But you can't shake the feeling of being watched."
+        "Something feels wrong when you count the earnings, but after careful counting everything is in order. You can't shake the feeling of being watched."
     
     $ store._tension_stolen = None
-    
-    pause 1.0
-
-    # Show daily report if it exists, then return to tavern
-    python:
-        if hasattr(store, 'daily_report') and store.daily_report:
-            renpy.call_screen("daily_report")
-
-    jump tavern
+    window hide
+    pause
+    return

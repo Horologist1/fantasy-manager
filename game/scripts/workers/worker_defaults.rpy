@@ -78,8 +78,15 @@ init python:
         if "daily_sexual_work" not in worker:
             worker["daily_sexual_work"] = 0
 
-        if "inventory" not in worker or not isinstance(worker["inventory"], list):
+        if "inventory" not in worker:
             worker["inventory"] = []
+        elif worker["inventory"] is None:
+            worker["inventory"] = []
+        elif not isinstance(worker["inventory"], list):
+            try:
+                worker["inventory"] = list(worker["inventory"]) if worker["inventory"] else []
+            except Exception:
+                worker["inventory"] = []
         else:
             worker["inventory"] = list(worker["inventory"])
 
@@ -138,32 +145,49 @@ init python:
         worker.setdefault("success_count", 0)
         worker.setdefault("special_match_victories", 0)
 
+        trait_catalog = []
+        if hasattr(store, "get_all_traits"):
+            trait_catalog = list(store.get_all_traits() or [])
+        if not trait_catalog and hasattr(store, "refresh_traits_cache"):
+            trait_catalog = list(store.refresh_traits_cache(force=True) or [])
+
+        known_trait_names = set(t.get("name") for t in trait_catalog if isinstance(t, dict) and t.get("name"))
+        has_trait_catalog = len(known_trait_names) > 0
+
+        raw_traits = worker.get("traits", [])
+        if isinstance(raw_traits, str):
+            normalized_traits = [raw_traits] if raw_traits else []
+        elif isinstance(raw_traits, (list, tuple)) or hasattr(raw_traits, "__iter__"):
+            try:
+                normalized_traits = [t for t in list(raw_traits) if isinstance(t, str) and t]
+            except Exception:
+                normalized_traits = []
+        else:
+            normalized_traits = []
+        worker["traits"] = normalized_traits
+
+        if has_trait_catalog:
+            missing_definitions = [t for t in worker["traits"] if t not in known_trait_names]
+            if missing_definitions:
+                renpy.log(
+                    f"TRAITS: Preserving {len(missing_definitions)} unknown trait(s) for "
+                    f"{worker.get('name', 'Unknown')}: {missing_definitions}"
+                )
+        else:
+            # During renpy.predicting(), file I/O is restricted so cache can't load - skip log spam
+            if not renpy.predicting():
+                renpy.log(
+                    f"TRAITS: Trait catalog unavailable while loading {worker.get('name', 'Unknown')}; "
+                    "preserving traits and skipping random backfill"
+                )
+
         # Unique workers should not get random traits - they should only have traits defined in JSON
         if worker.get("unique", False):
-            # For unique workers, only validate existing traits, don't assign random ones
-            if "traits" in worker and worker["traits"]:
-                valid_traits = [trait for trait in worker["traits"] if trait in [t["name"] for t in traits_list]]
-                worker["traits"] = valid_traits
-            # If no traits defined, keep empty list (don't assign random)
-            elif "traits" not in worker:
+            if "traits" not in worker:
                 worker["traits"] = []
         else:
-            # Non-unique workers: validate existing traits first
-            if "traits" in worker and worker["traits"]:
-                valid_traits = [trait for trait in worker["traits"] if trait in [t["name"] for t in traits_list]]
-                worker["traits"] = valid_traits
-            else:
+            if "traits" not in worker:
                 worker["traits"] = []
-            
-            # Ensure non-unique workers have at least 3 traits
-            # If they have fewer than 3, add random traits to reach 3-4 total
-            current_trait_count = len(worker.get("traits", []))
-            if current_trait_count < 3:
-                # Assign random traits to fill up to 3-4 total (preserving existing traits)
-                store.assign_random_traits_with_limits(worker, target_min=3, target_max=4)
-                # After assignment, log final count
-                final_count = len(worker.get("traits", []))
-                renpy.log(f"TRAITS: Worker {worker.get('name', 'Unknown')} - Started with {current_trait_count}, now has {final_count} traits")
 
         # Preserve existing comfort_level if it exists, otherwise set to comfort_desired or default to 1
         if "comfort_level" not in worker:
@@ -189,8 +213,9 @@ init python:
 
         # No migration needed for new game - system uses only skill names
 
-        # Ensure minimum traits for workers that might have too few
-        ensure_minimum_traits(worker)
+        # Ensure minimum traits only when trait catalog is available.
+        if has_trait_catalog:
+            ensure_minimum_traits(worker)
         
         # Deduplicate traits to prevent duplicates
         deduplicate_traits(worker)

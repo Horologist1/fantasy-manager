@@ -38,21 +38,17 @@ def _looks_supported_condition(expr: str) -> bool:
 
 def _load_events(path: Path) -> List[Dict]:
     data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data, list):
-        raise ValueError(f"{path} must contain a JSON array of events.")
-    return data
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        return [v for v in data.values() if isinstance(v, dict)]
+    raise ValueError(f"{path} must contain a JSON array or dict of events.")
 
 
-def validate(files: Iterable[Path]) -> Tuple[List[str], List[str]]:
+def _validate_all_events(all_events: List[Dict]) -> Tuple[List[str], List[str]]:
+    """Core validation logic on a list of events (each should have _file)."""
     errors: List[str] = []
     warnings: List[str] = []
-
-    all_events: List[Dict] = []
-    for fp in files:
-        events = _load_events(fp)
-        for ev in events:
-            ev["_file"] = str(fp)
-        all_events.extend(events)
 
     ids = [e.get("id") for e in all_events if e.get("id")]
     dup_ids = [k for k, v in Counter(ids).items() if v > 1]
@@ -130,6 +126,31 @@ def validate(files: Iterable[Path]) -> Tuple[List[str], List[str]]:
     return errors, warnings
 
 
+def validate(files: Iterable[Path]) -> Tuple[List[str], List[str]]:
+    """Load events from files and validate."""
+    all_events: List[Dict] = []
+    load_errors: List[str] = []
+    for fp in files:
+        if not fp.exists():
+            continue
+        try:
+            events = _load_events(fp)
+            for ev in events:
+                ev["_file"] = str(fp)
+            all_events.extend(events)
+        except Exception as e:
+            load_errors.append(f"[{fp}] load_error: {e}")
+    errs, warns = _validate_all_events(all_events)
+    return (load_errors + errs, warns)
+
+
+def validate_events_list(events: List[Dict], source_name: str = "memory") -> Tuple[List[str], List[str]]:
+    """Validate a list of event dicts (e.g. from editor memory)."""
+    for ev in events:
+        ev["_file"] = source_name
+    return _validate_all_events(events)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Validate event mechanics for common/building random events."
@@ -140,6 +161,10 @@ def main() -> int:
         default=[
             "game/data/events/events_common.json",
             "game/data/events/events_building.json",
+            "game/data/events/events_seasonal.json",
+            "game/data/events/events_shops.json",
+            "game/data/events/events_special.json",
+            "game/data/events/recruit/event_recruit_advanced_example.json",
         ],
         help="Event JSON files to validate.",
     )

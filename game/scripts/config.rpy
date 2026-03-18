@@ -57,6 +57,9 @@ init python:
         )
         if any(term in text for term in generic_terms):
             return True
+        # Always show RECRUITMENT logs (needed for debugging recruitment flow)
+        if "RECRUITMENT:" in text:
+            return False
         # Suppress image/folder search noise unless explicitly enabled
         if not getattr(store, "debug_image_logging", False):
             image_terms = (

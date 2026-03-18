@@ -6,6 +6,13 @@
 
 init python:
 
+    # Configurable skill penalty for high libido on non-sexual jobs.
+    # Rule:
+    # - At libido 20 -> -5 effective skill
+    # - Above 20 -> -5 plus overflow above 20
+    NON_SEXUAL_LIBIDO_BASELINE = 20
+    NON_SEXUAL_LIBIDO_BASE_SKILL_PENALTY = 5
+
     def get_difficulty_comfort_mult():
         """Return the comfort cost multiplier for the current difficulty (used in process_next_day and UI)."""
         diff = getattr(persistent, "difficulty", "normal")
@@ -26,6 +33,155 @@ init python:
         if diff == "hard":
             return 1.5
         return 1.0
+
+    def _story_stats_match_worker(story, worker):
+        """
+        Validate optional story stat requirements.
+        Supports:
+        - {"joy": 40} -> min 40
+        - {"joy": {"min": 30, "max": 80}}
+        - {"joy": {"eq": 50}}
+        """
+        requirements = story.get("stat_requirements", {}) or {}
+        if not requirements:
+            return True
+
+        for stat_name, requirement in requirements.items():
+            worker_value = worker.get(stat_name, 0)
+            try:
+                worker_value = int(worker_value)
+            except Exception:
+                worker_value = 0
+
+            if isinstance(requirement, dict):
+                min_val = requirement.get("min")
+                max_val = requirement.get("max")
+                eq_val = requirement.get("eq")
+
+                if eq_val is not None:
+                    try:
+                        if worker_value != int(eq_val):
+                            return False
+                    except Exception:
+                        return False
+
+                if min_val is not None:
+                    try:
+                        if worker_value < int(min_val):
+                            return False
+                    except Exception:
+                        return False
+
+                if max_val is not None:
+                    try:
+                        if worker_value > int(max_val):
+                            return False
+                    except Exception:
+                        return False
+            else:
+                # Simple form -> minimum required value
+                try:
+                    if worker_value < int(requirement):
+                        return False
+                except Exception:
+                    return False
+
+        return True
+
+    def is_story_eligible_for_worker(story, worker):
+        """Trait/stat based story pre-filter. All keys are optional."""
+        worker_traits = set(worker.get("traits", []) or [])
+
+        if story.get("nsfw_only", False) and not getattr(persistent, "nsfw_enabled", False):
+            return False
+
+        required_traits = story.get("required_traits", []) or []
+        for trait_name in required_traits:
+            if trait_name not in worker_traits:
+                return False
+
+        excluded_traits = story.get("excluded_traits", []) or []
+        for trait_name in excluded_traits:
+            if trait_name in worker_traits:
+                return False
+
+        if not _story_stats_match_worker(story, worker):
+            return False
+
+        return True
+
+    def _parse_trait_weights(data, default_weight=3):
+        """
+        Parse positive_traits or negative_traits. Returns list of (trait_name, weight).
+        - List: ["A", "B"] -> [("A", 3), ("B", 3)]
+        - Dict: {"A": 5, "B": 3} -> [("A", 5), ("B", 3)]
+        """
+        if not data:
+            return []
+        def _to_weight(w):
+            try:
+                return int(float(w)) if w is not None else default_weight
+            except (TypeError, ValueError):
+                return default_weight
+        if isinstance(data, dict):
+            return [(str(t), _to_weight(w)) for t, w in data.items()]
+        if isinstance(data, (list, tuple)):
+            return [(str(t), default_weight) for t in data]
+        return []
+
+    def _pick_weighted_trait(matching_traits_weights):
+        """Pick one trait by weight. matching_traits_weights = [(trait, weight), ...]. Returns trait or None."""
+        if not matching_traits_weights:
+            return None
+        if len(matching_traits_weights) == 1:
+            return matching_traits_weights[0][0]
+        traits = [t for t, _ in matching_traits_weights]
+        weights = [max(1, w) for _, w in matching_traits_weights]
+        return random.choices(traits, weights=weights, k=1)[0]
+
+    def apply_nonsexual_libido_skill_penalty(worker, profession, effective_skill):
+        """
+        Apply effective skill penalty to non-NSFW professions when libido is high/max.
+        Returns tuple: (adjusted_effective_skill, note_or_none).
+        """
+        # In SFW mode libido is fully disabled as a gameplay factor.
+        if not getattr(persistent, "nsfw_enabled", False):
+            return effective_skill, None
+
+        if effective_skill <= 0:
+            return effective_skill, None
+
+        if profession.get("nsfw", False):
+            return effective_skill, None
+
+        try:
+            max_libido = int(get_max_libido(worker))
+        except Exception:
+            max_libido = 100
+        if max_libido <= 0:
+            return effective_skill, None
+
+        current_libido = worker.get("libido", 0)
+        try:
+            current_libido = int(current_libido)
+        except Exception:
+            current_libido = 0
+
+        if current_libido < NON_SEXUAL_LIBIDO_BASELINE:
+            return effective_skill, None
+
+        overflow = max(0, current_libido - NON_SEXUAL_LIBIDO_BASELINE)
+        penalty = NON_SEXUAL_LIBIDO_BASE_SKILL_PENALTY + overflow
+        adjusted = max(0, effective_skill - penalty)
+
+        if penalty <= 0:
+            return effective_skill, None
+
+        note = (
+            f"High libido reduced non-sexual job focus "
+            f"(-{penalty} effective skill, libido {current_libido}/{max_libido})."
+        )
+        return adjusted, note
 
     def process_daily_events():
         global daily_report, manager_inventory
@@ -124,8 +280,12 @@ init python:
                     if not stories:
                         renpy.log(f"DAILY: No daily_stories for rest profession, skipping")
                         continue
-                    chosen_story = random.choice(stories)
+                    compatible_rest_stories = [s for s in stories if is_story_eligible_for_worker(s, worker)]
+                    if not compatible_rest_stories:
+                        compatible_rest_stories = stories
+                    chosen_story = random.choice(compatible_rest_stories)
                     full_description = chosen_story.get("description", "")
+                    full_description = full_description.replace("{worker_name}", worker.get("name", "Unknown"))
                     outcome = "Rest"
 
                     if "consequences" in chosen_story:
@@ -164,6 +324,10 @@ init python:
                                 old_relationship = worker["relationship"]
                                 apply_attribute_change(worker, "relationship", cons["relationship"])
                                 renpy.log(f"Event: {worker['name']} relationship {old_relationship} -> {worker['relationship']} (change: {cons['relationship']}), Worker ID: {id(worker)}")
+                            if "libido" in cons and getattr(persistent, "nsfw_enabled", False):
+                                old_libido = worker.get("libido", 0)
+                                apply_attribute_change(worker, "libido", cons["libido"])
+                                renpy.log(f"Event: {worker['name']} libido {old_libido} -> {worker.get('libido', 0)} (change: {cons['libido']}), Worker ID: {id(worker)}")
                     report_entry = {
                         "building": building_name,
                         "profession": rest_profession.get("name", "Rest"),
@@ -220,7 +384,8 @@ init python:
                     base_events = int(daily_story_count.get("base", 0))
                     bonus_formula = daily_story_count.get("bonus_formula", "0")
                     try:
-                        bonus = int(eval(bonus_formula, {"__builtins__": None}, {"reputation": building.get("reputation", 0)}))
+                        effective_rep = get_effective_reputation_for_events(building)
+                        bonus = int(eval(bonus_formula, {"__builtins__": None}, {"reputation": effective_rep}))
                     except Exception:
                         bonus = 0
                     # Balance tweaks: reduce base by 1 if >=2, and soften reputation bonus by 50%
@@ -284,8 +449,18 @@ init python:
                         compatible_stories = []
                         for story in stories:
                             story_gender_req = story.get("worker_gender_requirement", None)
-                            if story_gender_req is None or story_gender_req == worker_gender:
+                            if (story_gender_req is None or story_gender_req == worker_gender) and is_story_eligible_for_worker(story, worker):
                                 compatible_stories.append(story)
+
+                        # Safety fallback to preserve legacy behavior if custom filters remove all stories.
+                        if not compatible_stories:
+                            compatible_stories = []
+                            for story in stories:
+                                story_gender_req = story.get("worker_gender_requirement", None)
+                                if story_gender_req is None or story_gender_req == worker_gender:
+                                    compatible_stories.append(story)
+                            if compatible_stories:
+                                renpy.log(f"Story filter fallback used for {worker.get('name', 'Unknown')} in profession {profession.get('id', 'unknown')}")
                         
                         if not compatible_stories:
                             renpy.log(f"No compatible stories found for {worker['name']} (gender: {worker_gender})")
@@ -313,9 +488,26 @@ init python:
                             effective_skill = 0
                         effective_skill = max(0, effective_skill - difficulty_skill_penalty)
 
+                        # Apply libido-based skill penalty on non-sexual jobs.
+                        effective_skill, libido_penalty_note = apply_nonsexual_libido_skill_penalty(worker, profession, effective_skill)
+
                         # Apply difficulty modifier from story
                         difficulty_modifier = chosen_story.get("difficulty_modifier", 0)
                         adjusted_skill = max(0, effective_skill + difficulty_modifier)
+
+                        # Trait specialization: positive_traits and negative_traits (list or dict with weights).
+                        # List -> weight 3 each. Dict -> trait name -> weight (roll bonus and message selection).
+                        # Backwards compat: relevant_traits treated as positive_traits list.
+                        pos_data = chosen_story.get("positive_traits") or chosen_story.get("relevant_traits") or []
+                        neg_data = chosen_story.get("negative_traits") or []
+                        pos_trait_weights = _parse_trait_weights(pos_data)
+                        neg_trait_weights = _parse_trait_weights(neg_data)
+                        worker_traits = set(worker.get("traits", []) or [])
+                        matching_pos = [(t, w) for t, w in pos_trait_weights if t in worker_traits]
+                        matching_neg = [(t, w) for t, w in neg_trait_weights if t in worker_traits]
+                        trait_modifier = sum(w for _, w in matching_pos) - sum(w for _, w in matching_neg)
+                        if trait_modifier != 0:
+                            adjusted_skill = max(0, adjusted_skill + trait_modifier)
 
                         # Roll outcome with proper skill-based logic
                         roll = random.randint(1, 100)
@@ -354,23 +546,27 @@ init python:
                         if outcome == "Failure" and earnings == 0:
                             earnings = -10
 
-                        # Trait bonus: each relevant trait adds level * 25 to earnings (Success/Critical Success only)
-                        trait_bonus = 0
+                        # Trait messages: pick ONE weighted-random trait. Success/critical -> positive; Failure/mediocre -> negative.
                         trait_success_messages = []
-                        trait_roll = None
+                        trait_roll = {"total": trait_modifier} if trait_modifier != 0 else None
                         if outcome in ["Success", "Critical Success"]:
-                            # Always count successes towards leveling
                             worker["success_count"] = worker.get("success_count", 0) + 1
-                            worker_level = worker.get("level", 1)
-                            bonus_per_trait = worker_level * 25
-                            for trait in worker.get("traits", []):
-                                if trait in chosen_story.get("relevant_traits", []):
-                                    trait_bonus += bonus_per_trait
-                                    trait_success_messages.append(
-                                        chosen_story.get("trait_success", "").format(worker_name=worker["name"], trait=trait)
-                                        + f" (+${bonus_per_trait})"
-                                    )
-                        earnings += trait_bonus
+
+                        if trait_modifier != 0:
+                            picked_trait = None
+                            tpl = None
+                            if outcome in ["Success", "Critical Success"] and matching_pos:
+                                picked_trait = _pick_weighted_trait(matching_pos)
+                                tpl = chosen_story.get("trait_msg_success") or chosen_story.get("trait_success")
+                            elif outcome in ["Failure", "Mediocre"] and matching_neg:
+                                picked_trait = _pick_weighted_trait(matching_neg)
+                                tpl = chosen_story.get("trait_msg_failure") or chosen_story.get("trait_success")
+                            if tpl and picked_trait:
+                                try:
+                                    txt = tpl.format(worker_name=worker.get("name", "Unknown"), trait=picked_trait)
+                                    trait_success_messages.append(f"{txt} ({trait_modifier:+d} to roll)")
+                                except Exception:
+                                    trait_success_messages.append(f"Trait specialization: {trait_modifier:+d} to roll")
                         
                         # Apply trait earnings multipliers
                         earnings = calculate_earnings(worker, earnings)
@@ -434,6 +630,40 @@ init python:
                                     old_relationship = worker["relationship"]
                                     apply_attribute_change(worker, "relationship", cons["relationship"])
                                     renpy.log(f"Event: {worker['name']} relationship {old_relationship} -> {worker['relationship']} (change: {cons['relationship']}), Worker ID: {id(worker)}")
+                                if "libido" in cons and getattr(persistent, "nsfw_enabled", False):
+                                    old_libido = worker.get("libido", 0)
+                                    apply_attribute_change(worker, "libido", cons["libido"])
+                                    renpy.log(f"Event: {worker['name']} libido {old_libido} -> {worker.get('libido', 0)} (change: {cons['libido']}), Worker ID: {id(worker)}")
+
+                                # Apply add_trait from daily story consequences
+                                if "add_trait" in cons:
+                                    trait_data = cons["add_trait"]
+                                    if isinstance(trait_data, dict):
+                                        trait_name = trait_data.get("name")
+                                        duration = trait_data.get("duration", 0)
+                                    elif isinstance(trait_data, str):
+                                        trait_name = trait_data
+                                        duration = 0
+                                    else:
+                                        trait_name = None
+                                        duration = 0
+                                    if trait_name and worker:
+                                        add_trait_with_duration(worker, trait_name, duration)
+                                        renpy.log(f"Daily story: Added trait '{trait_name}' to {worker.get('name', 'Unknown')}")
+
+                                # Apply give_item from daily story consequences (to manager inventory)
+                                if "give_item" in cons:
+                                    item_data = cons["give_item"]
+                                    if isinstance(item_data, str) and item_data:
+                                        add_item_to_inventory(manager_inventory, item_data)
+                                        renpy.log(f"Daily story: Gave item '{item_data}' to manager")
+                                    elif isinstance(item_data, dict):
+                                        item_id = item_data.get("item_id") or item_data.get("id")
+                                        qty = int(item_data.get("quantity", 1))
+                                        if item_id:
+                                            for _ in range(max(1, qty)):
+                                                add_item_to_inventory(manager_inventory, item_id)
+                                            renpy.log(f"Daily story: Gave {qty}x '{item_id}' to manager")
 
                     # Build description
                         if selected_skill:
@@ -448,6 +678,8 @@ init python:
                         full_description = base_description
                         if trait_success_messages:
                             full_description += "\n" + "\n".join(trait_success_messages)
+                        if libido_penalty_note:
+                            full_description += "\n\n{color=#aa4444}" + libido_penalty_note + "{/color}"
                         # Determine color based on outcome (matching daily report colors)
                         if outcome in ["Critical Success", "Success", "Rest"]:
                             outcome_color = "#006600"  # Verde
@@ -488,9 +720,10 @@ init python:
                             uses_needed = max(1, current_level // 15 + 1) if current_level <= 75 else 6 + int((current_level - 75) ** 1.8 / 5)
                             renpy.log(f"SKILL USE: {worker.get('name', 'Unknown')} used {selected_skill} - uses: {old_uses} -> {worker['skill_uses'][selected_skill]}, level: {current_level}, needs: {uses_needed}")
 
-                        # Update building reputation, capped at 1000
+                        # Update building reputation, capped by building/manager level
+                        cap = get_building_reputation_cap(building)
                         new_reputation = building["reputation"] + reputation_change
-                        building["reputation"] = max(0, min(new_reputation, 1000))
+                        building["reputation"] = max(0, min(new_reputation, cap))
                         renpy.log(f"Updated {building_name} reputation to {building['reputation']} after {outcome}")
 
                         report_entry = {
@@ -577,8 +810,15 @@ init python:
                         compatible_stories = []
                         for story in daily_stories:
                             story_gender_req = story.get("worker_gender_requirement", None)
-                            if story_gender_req is None or story_gender_req == worker.get("gender", ""):
+                            if (story_gender_req is None or story_gender_req == worker.get("gender", "")) and is_story_eligible_for_worker(story, worker):
                                 compatible_stories.append(story)
+                        if not compatible_stories:
+                            for story in daily_stories:
+                                story_gender_req = story.get("worker_gender_requirement", None)
+                                if story_gender_req is None or story_gender_req == worker.get("gender", ""):
+                                    compatible_stories.append(story)
+                            if compatible_stories:
+                                renpy.log(f"Academy story filter fallback used for {worker.get('name', 'Unknown')}")
                         chosen_story = select_weighted_event(compatible_stories) if compatible_stories else None
                         primary_skill = chosen_story.get("used_skill") if chosen_story else None
                         applied_uses = {}
@@ -627,7 +867,8 @@ init python:
     # process_next_day() function
     # ==============================
     def _relink_assigned_servants_to_store_workers():
-        """Ensure buildings' assigned_servants reference the exact dict objects in store.workers"""
+        """Ensure buildings' assigned_servants reference the exact dict objects in store.workers.
+        CRITICAL: Only use store.workers refs - never keep stale copies (which would lose inventory)."""
         try:
             name_to_worker = {w.get("name"): w for w in store.workers}
             for bname in store.owned_buildings:
@@ -635,15 +876,27 @@ init python:
                 if not isinstance(b, dict):
                     continue
                 assigned = b.get("assigned_servants", []) or []
+                jobs = b.get("servant_jobs", {}) or {}
                 relinked = []
                 seen_names = set()
                 for sw in assigned:
                     wname = sw.get("name") if isinstance(sw, dict) else None
-                    if wname in seen_names:
-                        renpy.log(f"RELINK: duplicate assigned_servant '{wname}' in {bname}, skipping")
+                    if not wname or wname in seen_names:
+                        if wname and wname in seen_names:
+                            renpy.log(f"RELINK: duplicate assigned_servant '{wname}' in {bname}, skipping")
                         continue
-                    relinked.append(name_to_worker.get(wname, sw))
-                    if wname:
+                    store_ref = name_to_worker.get(wname)
+                    if store_ref:
+                        relinked.append(store_ref)
+                        seen_names.add(wname)
+                    else:
+                        renpy.log(f"RELINK: worker '{wname}' in {bname} not in store.workers, skipping (avoids stale ref)")
+                for wname in jobs.keys():
+                    if not wname or wname in seen_names:
+                        continue
+                    store_ref = name_to_worker.get(wname)
+                    if store_ref:
+                        relinked.append(store_ref)
                         seen_names.add(wname)
                 b["assigned_servants"] = relinked
         except Exception as e:
@@ -657,10 +910,32 @@ init python:
         except Exception:
             return None
 
+    def _daily_effect_delta(delta):
+        """Resolve daily effect value: int -> use as-is; dict {min,max} or [a,b] -> random in range."""
+        if delta is None:
+            return None
+        if isinstance(delta, int):
+            return delta
+        if isinstance(delta, dict):
+            lo = delta.get("min")
+            hi = delta.get("max")
+            if lo is not None and hi is not None:
+                try:
+                    return random.randint(int(lo), int(hi))
+                except Exception:
+                    return None
+        if isinstance(delta, (list, tuple)) and len(delta) >= 2:
+            try:
+                return random.randint(int(delta[0]), int(delta[1]))
+            except Exception:
+                return None
+        d = _coerce_int_or_none(delta)
+        return d
+
     def get_worker_daily_effects(worker):
         """
         Returns summed daily effects from:
-        - Traits: trait_def["daily_effects"]
+        - Traits: trait_def["daily_effects"] (supports int or {min,max}/[a,b] for random range)
         - Equipped items: item["effect"]["daily_effects"]
         """
         totals = {s: 0 for s in _DAILY_EFFECT_STATS}
@@ -678,7 +953,7 @@ init python:
             for stat, delta in daily_effects.items():
                 if stat not in totals:
                     continue
-                d = _coerce_int_or_none(delta)
+                d = _daily_effect_delta(delta)
                 if d is None:
                     continue
                 totals[stat] += d
@@ -709,7 +984,7 @@ init python:
             for stat, delta in daily_effects.items():
                 if stat not in totals:
                     continue
-                d = _coerce_int_or_none(delta)
+                d = _daily_effect_delta(delta) if stat == "rebelliousness" else _coerce_int_or_none(delta)
                 if d is None:
                     continue
                 totals[stat] += d
@@ -886,8 +1161,23 @@ init python:
         # Ensure necessary variables are global (removed filtered_building)
         global daily_report, displayed_workers, money, can_recruit_today, available_workers, daily_spawns
 
+        # Hard reset of pending random-event context at day start.
+        # Prevents stale events from previous flows from appearing together
+        # with governor events on the same day.
+        store.current_event = None
+        store.current_worker = None
+
         # Check and update trait durations
         check_trait_durations()
+        # One-time migration: rebelliousness no longer uses modifiers; prime _last_applied to avoid delta spike
+        if not getattr(persistent, "_rebelliousness_v2_migrated", False):
+            for w in getattr(store, "workers", []) or []:
+                if isinstance(w, dict):
+                    la = w.get("_last_applied_trait_modifiers") or {}
+                    la["rebelliousness"] = 0
+                    w["_last_applied_trait_modifiers"] = la
+            persistent._rebelliousness_v2_migrated = True
+            renpy.log("REBELLIOUSNESS_V2: Migration applied (primed _last_applied for all workers)")
         # Advance the date first
         advance_date()
         
@@ -977,6 +1267,7 @@ init python:
             trait_regen = calculate_health_regeneration(worker)
             health_regen = base_regen + trait_regen
             max_health = calculate_max_health(worker)
+            worker["max_health"] = max_health
             new_health = min(worker["health"] + health_regen, max_health)
             worker["health"] = new_health
             # Always log health regeneration to verify it's working
@@ -994,6 +1285,7 @@ init python:
                 trait_energy_regen = 0
             energy_regen = base_energy_regen + trait_energy_regen
             max_energy = calculate_max_energy(worker)
+            worker["max_energy"] = max_energy
             new_energy = min(worker["energy"] + energy_regen, max_energy)
             worker["energy"] = new_energy
             if old_energy != new_energy:
@@ -1114,6 +1406,8 @@ init python:
             # Check for governor's retaliation event (one-time)
             if check_governor_retaliation():
                 renpy.log("TENSION: Governor retaliation triggered!")
+                store.current_event = None
+                store.current_worker = None
                 return "governor_retaliation"
             
             # Check for random tension events (from objective 10 onwards)
@@ -1121,6 +1415,8 @@ init python:
             if tension_event:
                 renpy.log(f"TENSION: Triggering tension event: {tension_event}")
                 store._pending_tension_event = tension_event
+                store.current_event = None
+                store.current_worker = None
                 return "governor_tension_event"
         except Exception as e:
             renpy.log(f"TENSION ERROR: {e}")
@@ -1222,6 +1518,9 @@ init python:
             
             should_trigger_event = False
             events_to_consider = []
+            # Priority events with explicit custom probability are already gated once
+            # by the priority roll. Avoid rolling their probability a second time.
+            prepassed_priority_event_ids = set()
             
             # Check priority events (NOT affected by managers)
             # Priority events include: custom probability OR explicit priority/story tags
@@ -1233,6 +1532,10 @@ init python:
                 if priority_roll <= max_priority_prob:
                     should_trigger_event = True
                     events_to_consider.extend(priority_events)
+                    for e in priority_events:
+                        event_id = e.get("id")
+                        if event_id and e.get("event_probability") is not None and e.get("event_probability", 0) < 100:
+                            prepassed_priority_event_ids.add(event_id)
             
             # Check normal events (affected by managers)
             if normal_events and has_active_professions:
@@ -1324,9 +1627,11 @@ init python:
                     base_event_prob = max(1, 30 - manager_reduction)  # Minimum 1%
 
                     for event, worker in valid_events:
+                        event_id = event.get("id")
                         # If event has custom probability (fixed chance), use it as-is (NOT affected by managers)
                         # If not, use the effective base probability (reduced by managers)
                         event_probability = event.get("event_probability")
+                        prepassed_priority = event_id in prepassed_priority_event_ids
                         if event_probability is None:
                             # No custom probability, use effective base (reduced by managers)
                             event_probability = base_event_prob
@@ -1339,6 +1644,12 @@ init python:
                             # Guaranteed events always pass
                             probability_filtered_events.append((event, worker))
                             renpy.log(f"Event {event.get('id')} is guaranteed, adding to selection pool")
+                        elif prepassed_priority:
+                            probability_filtered_events.append((event, worker))
+                            renpy.log(
+                                f"Event {event.get('id')} already passed priority probability gate; "
+                                f"skipping duplicate individual probability roll."
+                            )
                         else:
                             # Roll for individual event probability
                             individual_roll = renpy.random.randint(1, 100)

@@ -49,6 +49,30 @@ default building_upgraded_tutorial = False
 default building_skill_bonus_increased_tutorial = False
 default tutorial_friendly_chat_done = False
 
+# Tutorial milestone images (place files in game/images/tutorial/; fallback used if missing)
+# 1) governor_note_on_door.png - note on door (shows in Governor Retaliation event, the day after you choose path at Obj 9)
+# 2) tutorial_consolidation.png - three magical artifacts / breaking the djinn's binding (show_objective_12_dialogue)
+# 3) ending_blade_throne.png - throne room (show_ending_assassination)
+# 4) ending_blackmail_study.png - study (show_ending_blackmail). If file is .png.png, rename to .png or we try both.
+default tutorial_milestone_note_door = "images/tutorial/governor_note_on_door.png"
+default tutorial_milestone_consolidation = "images/tutorial/tutorial_consolidation.png"
+default tutorial_milestone_ending_blade = "images/tutorial/ending_blade_throne.png"
+default tutorial_milestone_ending_blackmail = "images/tutorial/ending_blackmail_study.png"
+
+init python:
+    def get_tutorial_milestone_image(primary_path, fallback_paths=None):
+        """Return primary_path if loadable, else first loadable from fallback_paths, else None. Use for scene expression with a fallback bg."""
+        try:
+            if renpy.loadable(primary_path):
+                return primary_path
+            if fallback_paths:
+                for p in fallback_paths:
+                    if renpy.loadable(p):
+                        return p
+        except Exception:
+            pass
+        return None
+
 # Progress tracking
 default workers_hired = 0
 default building_1_type_set = False
@@ -90,19 +114,19 @@ default objective_titles = {
 }
 
 default objective_descriptions = {
-    1: "If ever I am to raise the dynasty's empire from the ashes of ruination, then verily, I shall require the hands and hearts of loyal workers. Three workers should suffice to begin this grand endeavor - some may be bought with coin from the market square's bustling commerce, whilst others might be recruited through providence's chance encounters that may span several days, yet oft prove more skilled in their craft.\n\nEre I lead others, I must know mine own strengths. Let me reflect upon my best skills and qualities—those virtues that shall define my rule—and choose where my first mastery shall lie, that my domain may benefit from it.",
+    1: "If ever I am to raise my dynasty's empire from the ashes of ruination, I shall require the hands and hearts of loyal workers. Three workers should suffice to begin this grand endeavor—laying the foundation for the day of reckoning. Some may be bought with coin from the market square's bustling commerce, whilst others might be recruited through chance encounters that may span several days, yet oft prove more skilled in their craft.\n\nEre I lead others, I must know my own strengths. Let me reflect upon my best skills and qualities—those virtues that shall define my rule—and choose where my first mastery shall lie, that my domain may benefit from it.",
     
-    2: "The hour of decision draws nigh, wherein I must decree what manner of building type this hallowed place shall become. Perchance a brothel, where secrets flow as freely as wine and influence is currency? Mayhap a restaurant, where respectable coin may be earned through honest trade? Or shall it be an adventurer's guild, where muscle and steel forge connections of power? Each path doth offer different opportunities... and different means by which to gather the strength needed for what is to come.",
+    2: "The hour of decision draws nigh, wherein I must decree what manner of building type this place shall become. Perchance a brothel, where secrets flow as freely as wine and influence is currency? Mayhap a restaurant, where respectable coin may be earned through honest trade? Or shall it be an adventurer's guild, where muscle and steel forge connections of power? Each path offers different opportunities... and different means by which to gather the strength I need to face the one who destroyed my lineage.",
     
-    3: "Each worker in my service doth possess their own gifts and talents, bestowed by fate and honed through experience. A wise lord doth employ his workers according to their greatest strengths, for 'tis through such wisdom that empires are built. I must assign three workers to their destined professions - for efficiency shall be the cornerstone upon which wealth is swiftly accumulated.",
+    3: "Each worker in my service possesses their own gifts and talents, bestowed by fate and honed through experience. A wise lord employs his workers according to their greatest strengths, for through such wisdom empires are built. I must assign three workers to their destined professions—for this network of loyal souls will one day be the foundation upon which I act against the governor. Efficiency shall be the cornerstone upon which wealth is swiftly accumulated.",
     
-    4: "Gold is the lifeblood of power, and power is the weapon I must wield. Five thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources I shall require for the reckoning that approaches.",
+    4: "Gold is the lifeblood of power, and power is the weapon I must wield. Five thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources the day of reckoning will demand. The governor may sit in his fortress now, but each coin I earn is a step toward the moment I can move against him.",
     
-    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors shall I learn to tend to my workers' needs and employ items with wisdom and effectiveness. Yet I must remember: no remedy is truly necessary, for all workers regain their strength with each passing day and shall perform their duties. But with this energetic elixir, a worker may accomplish far more than a single task, turning the tide of fortune in my favor.",
+    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors I shall learn to tend to my workers' needs and employ items with wisdom. This knowledge will be vital when my operation grows and the governor takes notice. No remedy is truly necessary—workers regain their strength each day—but with this elixir, a worker may accomplish far more than a single task, turning the tide of fortune in my favor.",
     
-    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its Building skill for the trials ahead. To elevate a building's level shall cost one thousand coins of the realm. Then, I must increase the building's Building skill bonus by ten measures, be they equipment, ingredients, or Hag Potions - whatever the establishment requires to weather the storms of fortune.",
+    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its Building skill for the trials ahead—trials that will come when the governor notices my rise. To elevate a building's level shall cost one thousand coins. Then, I must increase the building's Building skill bonus by ten measures, be they equipment, ingredients, or Hag Potions—whatever the establishment requires to weather the storms of fortune.",
     
-    7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. Sharing a meal together shall reveal their true nature, their motivations, and the depths of their loyalty. I must invite one of my workers to a Friendly Lunch—breaking bread at my table—to understand the souls who would follow me into darkness. The repast shall cost one hundred fifty coins.",
+    7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. Sharing a meal together shall reveal their true nature, their motivations, and the depths of their loyalty. The governor rules through fear and gold. I shall build something different: a circle of those who have chosen to stand with me. I must invite one of my workers to a Friendly Lunch—breaking bread at my table—to understand the souls who would follow me into darkness. The repast shall cost one hundred fifty coins.",
     
     8: "Behold, the grand design reveals itself at last! Two buildings under my dominion, ten loyal workers in my service, and ten thousand coins to fuel my ambitions. With such resources at my command, I may at last move against the governor who destroyed all that was dear to me.",
     
@@ -562,6 +586,18 @@ init python:
                     store.building_skill_bonus_increased_tutorial = True
     
     # ===== GOVERNOR'S TENSION SYSTEM =====
+    GOV_TENSION_EVENT_COOLDOWN_DAYS = 4
+    GOV_EVENT_GLOBAL_COOLDOWN_DAYS = 4
+
+    def _governor_abs_day_index():
+        """Stable absolute day index used by governor event cooldowns."""
+        try:
+            return int(calculate_total_days())
+        except Exception:
+            day = int(getattr(store, "current_day", 1))
+            month = int(getattr(store, "current_month", 1))
+            year = int(getattr(store, "current_year", 1))
+            return ((year - 1) * 12 * 28) + ((month - 1) * 28) + day
     
     def update_governor_attention():
         """Update governor's attention based on current objective progress"""
@@ -598,6 +634,24 @@ init python:
         """Check and trigger the governor's retaliation event when reaching objective 9"""
         if store.governor_retaliation_done:
             return False
+
+        # Global cooldown for any governor event.
+        # Prevents back-to-back governor events regardless of type.
+        last_any_day = store.event_flags.get("governor_event_last_day", None)
+        global_cooldown = int(getattr(store, "GOV_EVENT_GLOBAL_COOLDOWN_DAYS", GOV_EVENT_GLOBAL_COOLDOWN_DAYS))
+        global_cooldown = max(0, global_cooldown)
+        if last_any_day is not None:
+            now = _governor_abs_day_index()
+            try:
+                days_since_any = now - int(last_any_day)
+            except Exception:
+                days_since_any = global_cooldown
+            if days_since_any < global_cooldown:
+                renpy.log(
+                    f"TENSION: Retaliation blocked by global governor cooldown "
+                    f"({days_since_any}/{global_cooldown} days)."
+                )
+                return False
         
         # Only trigger when player has chosen a path (assassination or blackmail)
         # Also check if objective 9 is complete (player may have completed it before this system was added)
@@ -608,6 +662,7 @@ init python:
         if has_path or (obj_9_complete and store.current_objective >= 9):
             store.governor_retaliation_done = True
             store.governor_tension_active = True
+            store.event_flags["governor_event_last_day"] = _governor_abs_day_index()
             renpy.log(f"TENSION: Governor retaliation check - has_path={has_path}, obj_9_complete={obj_9_complete}, current_obj={store.current_objective}")
             return True
         return False
@@ -624,20 +679,97 @@ init python:
         if store.current_objective > 16 or store.event_flags.get("quest_complete", False):
             store.governor_tension_active = False
             return None
-        
+
         # Track days since last tension event (guarantee event after 10 days)
         if not hasattr(store, 'days_since_last_tension_event'):
             store.days_since_last_tension_event = 0
         
         store.days_since_last_tension_event += 1
         
+        # Global cooldown for any governor event.
+        # Ensures no two governor events happen too close together.
+        last_any_day = store.event_flags.get("governor_event_last_day", None)
+        global_cooldown = int(getattr(store, "GOV_EVENT_GLOBAL_COOLDOWN_DAYS", GOV_EVENT_GLOBAL_COOLDOWN_DAYS))
+        global_cooldown = max(0, global_cooldown)
+        if last_any_day is not None:
+            now = _governor_abs_day_index()
+            try:
+                days_since_any = now - int(last_any_day)
+            except Exception:
+                days_since_any = global_cooldown
+            if days_since_any < global_cooldown:
+                renpy.log(
+                    f"TENSION: Governor event blocked by global cooldown "
+                    f"({days_since_any}/{global_cooldown} days)."
+                )
+                return None
+
+        def _eligible_tension_types():
+            """Return event types that are not on cooldown; avoid immediate repeat when possible."""
+            all_types = ["poison", "sabotage", "spy"]
+            now = _governor_abs_day_index()
+            cooldown = int(getattr(store, "GOV_TENSION_EVENT_COOLDOWN_DAYS", GOV_TENSION_EVENT_COOLDOWN_DAYS))
+            cooldown = max(0, cooldown)
+
+            eligible = []
+            for ev_type in all_types:
+                last_key = f"governor_tension_last_day_{ev_type}"
+                last_day = store.event_flags.get(last_key, None)
+                if last_day is None:
+                    eligible.append(ev_type)
+                    continue
+                try:
+                    delta = now - int(last_day)
+                except Exception:
+                    delta = cooldown
+                if delta >= cooldown:
+                    eligible.append(ev_type)
+
+            # Avoid immediate repetition if there is at least one alternative.
+            last_type = store.event_flags.get("governor_tension_last_type")
+            if last_type in eligible and len(eligible) > 1:
+                eligible = [t for t in eligible if t != last_type]
+
+            # If all are blocked by cooldown, fall back to full pool (still avoiding immediate repeat when possible).
+            if not eligible:
+                eligible = list(all_types)
+                if last_type in eligible and len(eligible) > 1:
+                    eligible = [t for t in eligible if t != last_type]
+                renpy.log("TENSION: All tension types on cooldown; using fallback pool.")
+
+            return eligible
+
+        def _choose_tension_type():
+            """Weighted pick among eligible tension types."""
+            eligible = _eligible_tension_types()
+            if not eligible:
+                return None
+            weights_map = {
+                "poison": 1.15,
+                "sabotage": 1.0,
+                "spy": 1.0,
+            }
+            weights = [weights_map.get(t, 1.0) for t in eligible]
+            try:
+                return random.choices(eligible, weights=weights, k=1)[0]
+            except Exception:
+                return random.choice(eligible)
+
+        def _record_tension_type(ev_type):
+            """Persist last-trigger metadata for cooldown/anti-repeat behavior."""
+            if not ev_type:
+                return
+            now = _governor_abs_day_index()
+            store.event_flags["governor_tension_last_type"] = ev_type
+            store.event_flags[f"governor_tension_last_day_{ev_type}"] = now
+            store.event_flags["governor_event_last_day"] = now
+
         # Guarantee an event after 10 days without one
         if store.days_since_last_tension_event >= 10:
             renpy.log(f"TENSION: Guaranteed event after {store.days_since_last_tension_event} days without one")
             store.days_since_last_tension_event = 0
-            # Choose event type
-            event_types = ["poison", "sabotage", "spy"]
-            event_type = random.choice(event_types)
+            event_type = _choose_tension_type()
+            _record_tension_type(event_type)
             renpy.log(f"TENSION: Governor tension event triggered (guaranteed): {event_type}")
             return event_type
         
@@ -654,9 +786,8 @@ init python:
         # Event triggered - reset counter
         store.days_since_last_tension_event = 0
         
-        # Choose event type
-        event_types = ["poison", "sabotage", "spy"]
-        event_type = random.choice(event_types)
+        event_type = _choose_tension_type()
+        _record_tension_type(event_type)
         
         renpy.log(f"TENSION: Governor tension event triggered: {event_type}")
         return event_type
@@ -755,7 +886,10 @@ init python:
     store.check_governor_retaliation = check_governor_retaliation
     store.update_governor_attention = update_governor_attention
     store.process_governor_tension_event = process_governor_tension_event
-    
+    store.apply_governor_poison_event = apply_governor_poison_event
+    store.apply_governor_sabotage_event = apply_governor_sabotage_event
+    store.apply_governor_spy_event = apply_governor_spy_event
+
     def jump_to_ending():
         """Jump to the appropriate ending based on chosen path"""
         if store.event_flags.get("branch_assassination", False):
@@ -783,7 +917,7 @@ init python:
         if not tutorial_active:
             renpy.log("DEBUG: Tutorial not active, returning")
             return
-        
+
         # Recalculate workers_assigned_count based on workers WITH PROFESSIONS assigned
         def recalculate_workers_assigned_count():
             count = 0
@@ -957,6 +1091,15 @@ screen journal_panel():
                 spacing 10
 
                 if tutorial_active:
+                    if current_objective < 9:
+                        text "The governor destroyed everything I loved. Every step I take—every coin, every ally, every stronghold—brings me closer to the day I can make him pay.":
+                            xsize 520
+                            size font_size(20)
+                            color "#6b6528"
+                            text_align 0.0
+                            italic True
+                        null height 12
+
                     text "[get_current_objective_title()]":
                         xsize 520
                         size font_size(32)
@@ -1321,8 +1464,8 @@ screen journal_panel():
                         
                         if store.vengeance_path_chosen:
                             null height 15
-                            # Determine which ending to show based on the branch chosen in objective 9
-                            if store.event_flags.get("branch_assassination", False):
+                            # Use vengeance_path from objective 16 choice (Blade vs Shadow), not objective 9
+                            if getattr(store, "vengeance_path", None) == "Blade":
                                 textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
                                     xsize 520
                                     text_size font_size(24)
@@ -1334,7 +1477,7 @@ screen journal_panel():
                                         Hide("journal_panel"),
                                         Jump("show_ending_assassination")
                                     ]
-                            elif store.event_flags.get("branch_blackmail", False):
+                            elif getattr(store, "vengeance_path", None) == "Shadow":
                                 textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
                                     xsize 520
                                     text_size font_size(24)
@@ -1347,18 +1490,31 @@ screen journal_panel():
                                         Jump("show_ending_blackmail")
                                     ]
                             else:
-                                # Fallback if no branch was chosen (shouldn't happen)
-                                textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
-                                    xsize 520
-                                    text_size font_size(24)
-                                    text_color "#2a7a4b"
-                                    text_hover_color "#1a5a3b"
-                                    action [
-                                        SetVariable("objective_16_complete", True),
-                                        SetVariable("tutorial_active", False),
-                                        Hide("journal_panel"),
-                                        Jump("show_ending_assassination")
-                                    ]
+                                # Fallback for old saves without vengeance_path: use objective 9 branch
+                                if store.event_flags.get("branch_blackmail", False):
+                                    textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
+                                        xsize 520
+                                        text_size font_size(24)
+                                        text_color "#2a7a4b"
+                                        text_hover_color "#1a5a3b"
+                                        action [
+                                            SetVariable("objective_16_complete", True),
+                                            SetVariable("tutorial_active", False),
+                                            Hide("journal_panel"),
+                                            Jump("show_ending_blackmail")
+                                        ]
+                                else:
+                                    textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
+                                        xsize 520
+                                        text_size font_size(24)
+                                        text_color "#2a7a4b"
+                                        text_hover_color "#1a5a3b"
+                                        action [
+                                            SetVariable("objective_16_complete", True),
+                                            SetVariable("tutorial_active", False),
+                                            Hide("journal_panel"),
+                                            Jump("show_ending_assassination")
+                                        ]
 
                     if current_objective < 8:
                         null height 15
@@ -1372,9 +1528,10 @@ screen journal_panel():
                 else:
                     text "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished.":
                         xsize 580
+                        xalign 0.0
                         size font_size(28)
                         color "#7a4b2a"
-                        text_align 0.5
+                        text_align 0.0
         
         # Close button positioned at top-right at JOURNAL title height (outside vbox)
         imagebutton:
@@ -1502,7 +1659,9 @@ label show_objective_11_dialogue:
     jump tavern_screen
 
 label show_objective_12_dialogue:
-    scene expression workers_bg
+    # Milestone image: three relics (Binding Gem, Obsidian Blade, Enchanted Ring), enchantment, breaking the djinn's protection (tutorial_consolidation.png)
+    $ _consolidation_bg = get_tutorial_milestone_image(tutorial_milestone_consolidation, ["images/tutorial/tutorial_consolidation.png.png"]) or workers_bg
+    scene expression _consolidation_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_12_dialogue - STARTING DIALOGUE")
     "The artifacts are mine! Three relics of power, each one a key to unlocking the governor's downfall."

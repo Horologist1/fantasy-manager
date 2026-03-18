@@ -43,12 +43,19 @@ init python:
             if not hasattr(store, 'workers') or not hasattr(store, 'available_buildings'):
                 return
             
-            # Check if we need to restore assigned_building from snapshot
+            # Check if we need to restore assigned_building from snapshot.
+            # Only restore when workers have None/missing (corrupt load). Do NOT restore when
+            # workers are "Unassigned" - that is intentional for new recruits and new games.
             needs_restore = True
             for w in store.workers[:5]:
-                if hasattr(w, 'get') and w.get("assigned_building") not in (None, "", "Unassigned"):
-                    needs_restore = False
-                    break
+                if hasattr(w, 'get'):
+                    ab = w.get("assigned_building")
+                    if ab == "Unassigned":
+                        needs_restore = False
+                        break
+                    if ab and ab not in (None, ""):
+                        needs_restore = False
+                        break
             
             if needs_restore:
                 # Find and load the most recent snapshot
@@ -75,15 +82,25 @@ init python:
                                 if wname in name_to_building:
                                     w["assigned_building"] = name_to_building[wname]
             
-            # Rebuild assigned_servants from workers' assigned_building
+            # Rebuild assigned_servants from workers' assigned_building.
+            # Use normalized key matching so "Building 1" and "Building_1" both work.
+            _norm = getattr(store, '_norm_building_key', lambda k: (str(k).strip() if k else ""))
             workers_by_building = {}
             for w in store.workers:
                 if hasattr(w, 'get'):
                     ab = w.get("assigned_building", "Unassigned")
-                    if ab != "Unassigned" and ab in store.available_buildings:
-                        if ab not in workers_by_building:
-                            workers_by_building[ab] = []
-                        workers_by_building[ab].append(w)
+                    if ab == "Unassigned" or not ab:
+                        continue
+                    ab_norm = _norm(ab)
+                    matched_bname = None
+                    for bname in store.available_buildings:
+                        if _norm(bname) == ab_norm:
+                            matched_bname = bname
+                            break
+                    if matched_bname:
+                        if matched_bname not in workers_by_building:
+                            workers_by_building[matched_bname] = []
+                        workers_by_building[matched_bname].append(w)
             
             for bname, bdata in store.available_buildings.items():
                 if hasattr(bdata, '__setitem__'):
@@ -261,6 +278,19 @@ init python:
                 "{u}Job filter{/u}: narrow by profession to see which roles are creating profit or losses.",
                 "{u}Result colors{/u}: outcome color coding helps you spot failures, mediocre runs, and strong performances quickly.",
                 "{u}Decision loop{/u}: use this report to decide tomorrow's assignment, comfort, and investment changes.",
+            ],
+        },
+        "yvara_visit": {
+            "title": "Yvara Romance Quest",
+            "body": [
+                "This is a visual novel style romance route. Progress comes from repeated visits, conversations, remarks, and gifts over multiple days.",
+                "",
+                "{u}Devotion{/u}: romantic progress (warmth, trust, emotional intimacy). Higher devotion pushes scenes and tone toward romance.",
+                "{u}Dominion{/u}: domination progress (control, leverage, submission dynamics). Higher dominion pushes scenes toward manager-led power dynamics.",
+                "{u}Affection{/u}: overall closeness and route momentum. This is the main stage gate, regardless of whether romance or domination leads.",
+                "{u}Progress system{/u}: talking with her advances the route. Remarks and gifts accelerate progression.",
+                "{u}Pacing{/u}: talk, remark, and gift actions are day-gated, so progress is spread across multiple days.",
+                "{u}Quick read{/u}: use {u}Take her measure{/u} during visits to see current totals and route direction in-character.",
             ],
         },
     }
@@ -1110,6 +1140,9 @@ screen about():
                     style "about_section_text"
                     xalign 0.0
                 text "AI + Digital illustration - Annekka":
+                    style "about_section_text"
+                    xalign 0.0
+                text "Guest Workers Design - Lupse":
                     style "about_section_text"
                     xalign 0.0
                 text "Code Review - Bohnd":
@@ -2882,9 +2915,23 @@ screen random_event_choice(event_choices):
     # Use the same style as standard Ren'Py choices (Lord/Lady format)
     style_prefix "choice"
     
+    python:
+        # Filter out choices with empty option to avoid blank slots in the UI
+        display_choices = [c for c in event_choices if c.get("option") and str(c.get("option", "")).strip()]
+    
     vbox:
-        for choice in event_choices:
-            textbutton choice["option"] action Return(choice)
+        for choice in display_choices:
+            if choice.get("_blocked", False):
+                $ reason = choice.get("_blocked_reason", "Locked") or ""
+                vbox:
+                    spacing 2
+                    textbutton "[choice['option']] (Locked)":
+                        action NullAction()
+                        sensitive False
+                    if reason.strip():
+                        text "[reason]" size font_size(18) color "#cc8888"
+            else:
+                textbutton choice["option"] action Return(choice)
 
 # --- NEW SCREEN START ---
 screen choose_event_worker_screen(eligible_workers):
@@ -3176,7 +3223,7 @@ screen recruitment_choice_screen(event_choices):
         null height 20
         
         # Additional recruitment actions with normal choice style
-        textbutton "*Examine Worker*" action [SetVariable("in_recruit_examine", True), Show("worker_details", worker=store.current_recruitment_worker, in_roster=False, from_recruitment=True)]
+        textbutton "*Examine Worker*" action [SetVariable("in_recruit_examine", True), Show("worker_details", worker=store.current_recruitment_worker, in_roster=False, from_recruitment=True)] sensitive (store.current_recruitment_worker is not None)
 
 screen advanced_recruitment_event_screen(event, worker, description, dialogue, choices):
     modal True
@@ -3329,7 +3376,7 @@ screen Building_select_global():
                                     text_size font_size(26)  # Larger font like journal
                                     text_color "#7a4b2a"  # Brown text like journal
                                     text_hover_color "#6b6528"  # Unified dark green hover
-                                    action [Hide("tavern"), Hide("Building_select_global"), Show("Manager", building_name=building)]
+                                    action [Function(sync_assigned_servants_for_building, building), Hide("tavern"), Hide("Building_select_global"), Show("Manager", building_name=building)]
         
         # Close button positioned like journal (outside vbox)
         imagebutton:
@@ -3695,6 +3742,16 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 # Calculate actual transfer quantity (limited by available)
                 available_qty = smi[1]
                 transfer_qty = min(multiplier, available_qty)
+                item_info = next((i for i in items_json["items"] if i["id"] == smi[0]), None)
+                is_gift_to_worker = bool(
+                    item_info
+                    and item_info.get("type") == "gift"
+                    and left_worker is None
+                    and target_worker
+                )
+                # Gifts are delivered one by one to workers.
+                if is_gift_to_worker and transfer_qty > 1:
+                    transfer_qty = 1
                 renpy.log(f"transfer_to_right: Removing {smi[0]} (quantity: {transfer_qty}) from source")
                 
                 # Remove the exact selected entry when possible
@@ -3721,8 +3778,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 
                 # Auto-consume on receive when item has auto_consume_on_receive and target is a worker
                 try:
-                    item_info = next((i for i in items_json["items"] if i["id"] == smi[0]), None)
-                    if target_worker and item_info and item_info.get("auto_consume_on_receive", False):
+                    if target_worker and item_info and (item_info.get("auto_consume_on_receive", False) or is_gift_to_worker):
                         for _ in range(int(transfer_qty)):
                             store.use_item(smi[0], target_worker)
                 except Exception as e:
@@ -3741,9 +3797,11 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     renpy.store.manager_inventory = store.manager_inventory
                 renpy.log(f"Target after addition: {target_inventory}")
                 store.selected_description = ""
-                renpy.notify(f"Transferred {transfer_qty}x item to right")
+                if is_gift_to_worker and target_worker:
+                    renpy.notify(f"Gift delivered to {target_worker.get('name', 'worker')}")
+                else:
+                    renpy.notify(f"Transferred {transfer_qty}x item to right")
                 # Track tutorial objective 5 - potion transfer
-                item_info = next((i for i in items_json["items"] if i["id"] == smi[0]), None)
                 if item_info and hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
                     store.potion_transferred = True
                     renpy.log("DEBUG: Tutorial - Energy potion transferred to worker")
@@ -3837,6 +3895,16 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 # Calculate actual transfer quantity (limited by available)
                 available_qty = swi[1]
                 transfer_qty = min(multiplier, available_qty)
+                item_info = next((i for i in items_json["items"] if i["id"] == swi[0]), None)
+                is_gift_to_worker = bool(
+                    item_info
+                    and item_info.get("type") == "gift"
+                    and right_worker is None
+                    and target_worker
+                )
+                # Gifts are delivered one by one to workers.
+                if is_gift_to_worker and transfer_qty > 1:
+                    transfer_qty = 1
                 renpy.log(f"transfer_to_left: Removing {swi[0]} (quantity: {transfer_qty}) from source")
                 
                 # Remove the exact selected entry when possible
@@ -3863,8 +3931,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 
                 # Auto-consume on receive when item has auto_consume_on_receive and target is a worker
                 try:
-                    item_info = next((i for i in items_json["items"] if i["id"] == swi[0]), None)
-                    if target_worker and item_info and item_info.get("auto_consume_on_receive", False):
+                    if target_worker and item_info and (item_info.get("auto_consume_on_receive", False) or is_gift_to_worker):
                         for _ in range(int(transfer_qty)):
                             store.use_item(swi[0], target_worker)
                 except Exception as e:
@@ -3883,9 +3950,11 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     renpy.store.manager_inventory = store.manager_inventory
                 renpy.log(f"Target after addition: {target_inventory}")
                 store.selected_description = ""
-                renpy.notify(f"Transferred {transfer_qty}x item to left")
+                if is_gift_to_worker and target_worker:
+                    renpy.notify(f"Gift delivered to {target_worker.get('name', 'worker')}")
+                else:
+                    renpy.notify(f"Transferred {transfer_qty}x item to left")
                 # Track tutorial objective 5 - potion transfer
-                item_info = next((i for i in items_json["items"] if i["id"] == swi[0]), None)
                 if item_info and hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 5 and item_info.get("name", "").lower().find("energy") != -1:
                     store.potion_transferred = True
                     renpy.log("DEBUG: Tutorial - Energy potion transferred to worker")
@@ -4062,6 +4131,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             "clothing": "Clothing",
                             "accessory": "Accessories",
                             "consumable": "Consumables",
+                            "gifts": "Gifts",
                             "currency": "Currency",
                             "quest_item": "Quest Items",
                             "misc": "Misc"
@@ -4151,7 +4221,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     item = idx_item[1]
                                     item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
                                     if category_filter is not None:
-                                        if item_info.get("type") != category_filter:
+                                        if category_filter == "gifts":
+                                            _gift_ids = set(getattr(store, "YVARA_GIFTS", {}).keys())
+                                            _gift_ids -= {"diamond", "ruby", "emerald", "sapphire"}
+                                            if item[0] not in _gift_ids:
+                                                return False
+                                        elif item_info.get("type") != category_filter:
                                             return False
                                     if not search_text:
                                         return True
@@ -4371,10 +4446,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         padding (10, 10)
                         $ current_item = selected_worker_item if selected_worker_item is not None else selected_manager_item
                         $ current_item_id = current_item[0] if current_item else None
-                        $ img_path_png = f"images/items/{current_item_id}.png" if current_item_id is not None else None
-                        $ img_path_jpg = f"images/items/{current_item_id}.jpg" if current_item_id is not None else None
-                        $ img_path_jpeg = f"images/items/{current_item_id}.jpeg" if current_item_id is not None else None
-                        $ displayable = img_path_png if (current_item_id is not None and renpy.loadable(img_path_png)) else (img_path_jpg if (current_item_id is not None and renpy.loadable(img_path_jpg)) else (img_path_jpeg if (current_item_id is not None and renpy.loadable(img_path_jpeg)) else None))
+                        $ _item_def = next((i for i in items_json.get("items", []) if i.get("id") == current_item_id), None) if current_item_id else None
+                        $ _img_basename = _item_def.get("image", current_item_id) if _item_def and _item_def.get("image") else current_item_id
+                        $ img_path_png = f"images/items/{_img_basename}.png" if _img_basename is not None else None
+                        $ img_path_jpg = f"images/items/{_img_basename}.jpg" if _img_basename is not None else None
+                        $ img_path_jpeg = f"images/items/{_img_basename}.jpeg" if _img_basename is not None else None
+                        $ displayable = img_path_png if (_img_basename is not None and renpy.loadable(img_path_png)) else (img_path_jpg if (_img_basename is not None and renpy.loadable(img_path_jpg)) else (img_path_jpeg if (_img_basename is not None and renpy.loadable(img_path_jpeg)) else None))
                         if displayable:
                             add Transform(displayable, xysize=(340, 205)) xalign 0.5 yalign 0.0
                         else:
@@ -4414,6 +4491,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             "clothing": "Clothing",
                             "accessory": "Accessories",
                             "consumable": "Consumables",
+                            "gifts": "Gifts",
                             "currency": "Currency",
                             "quest_item": "Quest Items",
                             "misc": "Misc"
@@ -4503,7 +4581,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     # Filter items by category if one is selected
                                     $ filtered_items = items_json["items"]
                                     if right_panel_filter_category:
-                                        $ filtered_items = [item for item in filtered_items if item.get("type") == right_panel_filter_category]
+                                        if right_panel_filter_category == "gifts":
+                                            $ _gift_ids_shop = set(getattr(store, "YVARA_GIFTS", {}).keys())
+                                            $ _gift_ids_shop -= {"diamond", "ruby", "emerald", "sapphire"}
+                                            $ filtered_items = [item for item in filtered_items if item.get("id") in _gift_ids_shop]
+                                        else:
+                                            $ filtered_items = [item for item in filtered_items if item.get("type") == right_panel_filter_category]
                                     # Exclude items from excluded_from_shops list
                                     $ filtered_items = [item for item in filtered_items if item.get("id") not in excluded_items]
                                     # Filter out test items if show_test_items is False
@@ -4579,7 +4662,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             item = idx_item[1]
                                             item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
                                             if category_filter is not None:
-                                                if item_info.get("type") != category_filter:
+                                                if category_filter == "gifts":
+                                                    _gift_ids = set(getattr(store, "YVARA_GIFTS", {}).keys())
+                                                    _gift_ids -= {"diamond", "ruby", "emerald", "sapphire"}
+                                                    if item[0] not in _gift_ids:
+                                                        return False
+                                                elif item_info.get("type") != category_filter:
                                                     return False
                                             if not search_text:
                                                 return True
@@ -5131,11 +5219,12 @@ screen inventory_filter_popup(target_var="left_panel_filter_category", current_c
                     "clothing": "Clothing",
                     "accessory": "Accessories",
                     "consumable": "Consumables",
+                    "gifts": "Gifts",
                     "currency": "Currency",
                     "quest_item": "Quest Items",
                     "misc": "Misc"
                 }
-                option_ids = [None, "weapon", "armor", "clothing", "accessory", "consumable", "currency", "quest_item", "misc"]
+                option_ids = [None, "weapon", "armor", "clothing", "accessory", "consumable", "gifts", "currency", "quest_item", "misc"]
             
             viewport:
                 scrollbars "vertical"
@@ -5537,11 +5626,17 @@ screen adjust_skill_bonus(building_name):
             yoffset 5
 
 screen Manager(building_name):
-    on "show" action Function(maybe_show_intro_popup, "manager_buildings")
+    on "show" action [Function(sync_assigned_servants_for_building, building_name), Function(maybe_show_intro_popup, "manager_buildings")]
     zorder 5
-    $ manager_servants = available_buildings.get(building_name, {}).get("assigned_servants", [])
-    # List filtered by Worker Gender (Only Male / Only Female) so Manager matches Manage Workers
-    $ _displayed_servants = workers_filtered_by_gender(manager_servants)
+    python:
+        _bn = str(building_name or "").strip()
+        _norm_fn = getattr(store, "_norm_building_key", lambda k: str(k or "").strip())
+        _tgt = _norm_fn(_bn)
+        _roster = store.workers or []
+        manager_servants = [w for w in _roster if hasattr(w, "get") and w.get("name") and _norm_fn(w.get("assigned_building", "")) == _tgt and w.get("assigned_building") not in (None, "", "Unassigned")]
+        _displayed_servants = manager_servants
+        _resolved_data = store._resolve_building_by_name(_bn)[0] if hasattr(store, "_resolve_building_by_name") else None
+        _resolved_data = _resolved_data or store.available_buildings.get(_bn) or {}
 
     # Building background adjusted to 1515px width to account for side panel
     # Exception: default.png shows at full size (1920x1080)
@@ -5600,16 +5695,17 @@ screen Manager(building_name):
             xfill True
             vbox:
                 spacing 5
-                $ building = available_buildings[building_name]
+                $ building = _resolved_data if (_resolved_data and hasattr(_resolved_data, 'get')) else {}
+                $ _building_jobs_use = dict(building.get("servant_jobs") or {}) if building else {}
                 $ btype_id = building.get("type")
                 $ type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
                 $ skill_name = "Skill" if btype_id is None else next((bt["skill_name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), "Skill")
                 $ parts = building_name.split('_')
                 $ default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
                 $ display_name = store.custom_names.get(building_name, default_name)
-                $ total_skill = building["skill"] + building["skill_bonus"]
-                $ rep_cap = get_building_reputation_cap(building)
-                $ capped_reputation = min(building["reputation"], rep_cap)
+                $ total_skill = building.get("skill", 10) + building.get("skill_bonus", 0)
+                $ rep_cap = get_building_reputation_cap(building) if building else 200
+                $ capped_reputation = min(building.get("reputation", 0), rep_cap)
                 $ rep_tier = get_reputation_tier(capped_reputation)
                 $ rep_is_capped = (capped_reputation >= rep_cap and rep_cap > 0)
                 # Calculate bonus stories based on typical formula (reputation / 100)
@@ -5617,13 +5713,13 @@ screen Manager(building_name):
                 hbox:
                     spacing 10
                     text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color "#7a4b2a"
-                $ fixed_cost = int(building["price"] * 0.01)
+                $ fixed_cost = int(building.get("price", 1000) * 0.01)
                 $ _comfort_mult = get_difficulty_comfort_mult()
                 $ worker_costs = sum(worker["comfort_level"] * _comfort_mult for worker in manager_servants)
-                $ bonus_cost = int(((building["skill_bonus"] // 10) * 100) * get_difficulty_building_skill_mult())
+                $ bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
                 text "Costs: $[total_costs] {size=18}(Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size=}" size font_size(24) color "#ffffff" xalign 0.0 yalign 0.5
-                text "Level: [building['base_level']]" size font_size(24) color "#ffffff" xalign 0.0
+                text "Level: [building.get('base_level', 1)]" size font_size(24) color "#ffffff" xalign 0.0
                 text "Reputation: [capped_reputation][rep_is_capped and ' (capped by building level)' or ''] - {b}[rep_tier]{/b}" size font_size(24) color "#ffffff" xalign 0.0
                 $ event_limit = building.get("event_limit", 0)
                 if typical_bonus_stories > 0:
@@ -5637,7 +5733,7 @@ screen Manager(building_name):
                         text "  → +[typical_bonus_stories] stories per profession per day (limited to 3)" size font_size(20) color "#d4a574" xalign 0.0
                 elif event_limit > 0:
                     text "  → Limited to [event_limit] event[event_limit != 1 and 's' or ''] per worker per day" size font_size(20) color "#d4a574" xalign 0.0
-                text "[skill_name]: [total_skill] {size=18}(Base: [building['skill']], Bonus: [building['skill_bonus']]){/size=}" size font_size(24) color "#ffffff" xalign 0.0
+                text "[skill_name]: [total_skill] {size=18}(Base: [building.get('skill', 10)], Bonus: [building.get('skill_bonus', 0)]){/size=}" size font_size(24) color "#ffffff" xalign 0.0
                 hbox:
                     spacing 10
                     text "Daily Stories Limit:" size font_size(22) color "#ffffff" yalign 0.5
@@ -5663,7 +5759,7 @@ screen Manager(building_name):
                         $ building_type_entry = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == building_type_id), None)
                         if building_type_entry is not None:
                             for profession in building_type_entry.get("professions", []):
-                                $ current_count = len([s for s in _displayed_servants if building["servant_jobs"].get(s["name"], "") == profession["id"]])
+                                $ current_count = len([s for s in _displayed_servants if _building_jobs_use.get(s["name"], "") == profession["id"]])
                                 $ max_limit = get_max_daily_workers(building, profession)
                                 text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color "#7a4b2a"
                                 frame:
@@ -5705,7 +5801,7 @@ screen Manager(building_name):
                                                     ysize 50
                                                     text "Actions" size font_size(24) color "#7a4b2a"
                                                     sensitive False
-                                            for worker in [w for w in _displayed_servants if building["servant_jobs"].get(w["name"], "") == profession["id"]]:
+                                            for worker in [w for w in _displayed_servants if _building_jobs_use.get(w["name"], "") == profession["id"]]:
                                                 $ worker_level = worker.get('level', 1)
                                                 hbox:
                                                     spacing 5
@@ -5764,6 +5860,88 @@ screen Manager(building_name):
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
                                                         action Show("job_selection", worker=worker)
+                            # Unassigned: workers in building but with no profession or "unassigned"
+                            $ _unassigned = [w for w in _displayed_servants if str(_building_jobs_use.get(w["name"], "unassigned") or "").strip().lower() in ("", "unassigned")]
+                            if _unassigned:
+                                text "Unassigned ([len(_unassigned)])" size font_size(26) xalign 0.0 color "#7a4b2a"
+                                frame:
+                                    background Solid("#1a1a1a99")
+                                    padding (10, 10)
+                                    xfill True
+                                    viewport:
+                                        scrollbars "vertical"
+                                        mousewheel True
+                                        draggable True
+                                        ysize 300
+                                        xfill True
+                                        vbox:
+                                            spacing 5
+                                            hbox:
+                                                spacing 5
+                                                xsize 1440
+                                                button:
+                                                    background "tablebutton2.png"
+                                                    xsize 275
+                                                    ysize 50
+                                                    text "Name (Level)" size font_size(24) color "#7a4b2a"
+                                                    sensitive False
+                                                button:
+                                                    background "tablebutton2.png"
+                                                    xsize 275
+                                                    ysize 50
+                                                    text "Assign a role to participate" size font_size(24) color "#7a4b2a"
+                                                    sensitive False
+                                                button:
+                                                    background "tablebutton2.png"
+                                                    xsize 275
+                                                    ysize 50
+                                                    text "Energy - Health" size font_size(24) color "#7a4b2a"
+                                                    sensitive False
+                                                button:
+                                                    background "tablebutton2.png"
+                                                    xsize 275
+                                                    ysize 50
+                                                    text "Actions" size font_size(24) color "#7a4b2a"
+                                                    sensitive False
+                                            for worker in _unassigned:
+                                                $ worker_level = worker.get('level', 1)
+                                                hbox:
+                                                    spacing 5
+                                                    xsize 1440
+                                                    textbutton "[worker['name']] ([worker_level])":
+                                                        xsize 275
+                                                        text_size font_size(21)
+                                                        text_color "#ffffff"
+                                                        text_hover_color "#6b6528"
+                                                        action Show("worker_details", worker=worker, in_roster=True)
+                                                    textbutton "—":
+                                                        xsize 275
+                                                        text_size font_size(21)
+                                                        text_color "#888888"
+                                                        sensitive False
+                                                    hbox:
+                                                        spacing 2
+                                                        xsize 275
+                                                        textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
+                                                            xsize 136
+                                                            text_size font_size(20)
+                                                            text_color "#ffffff"
+                                                            text_hover_color "#2c4aa6"
+                                                            action use_or_buy_potion_action(worker, "energy_potion")
+                                                            sensitive worker["energy"] < calculate_max_energy(worker)
+                                                        textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
+                                                            xsize 137
+                                                            text_size font_size(20)
+                                                            text_color "#ffffff"
+                                                            text_hover_color "#a63c3c"
+                                                            action use_or_buy_potion_action(worker, "health_potion")
+                                                            sensitive worker["health"] < calculate_max_health(worker)
+                                                    textbutton "Assign role":
+                                                        xsize 275
+                                                        text_size font_size(21)
+                                                        text_color "#ffffff"
+                                                        text_hover_color "#6b6528"
+                                                        action Show("job_selection", worker=worker)
     
     # Right panel: building management buttons and global context menu
     frame:
@@ -5813,8 +5991,7 @@ screen Manager(building_name):
                     hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Change the display name of this building", screen_name="Manager"), NullAction())
                     unhovered Hide("tooltip")
                 
-                # Only show upgrade buttons if building has a type
-                $ building = available_buildings[building_name]
+                # Only show upgrade buttons if building has a type (building from left panel)
                 if building.get("type") is not None:
                     python:
                         current_level = building["base_level"]
@@ -6306,6 +6483,7 @@ screen buy_buildings():
                                     Function(add_new_building, building_name, price),
                                     SetVariable("money", money - price),
                                     Function(register_new_building, building_name),
+                                    Function(store.rebuild_assigned_servants),
                                     SetVariable("buildings_owned", len(store.owned_buildings)),
                                     Hide("buy_buildings"),
                                 ])
@@ -6425,7 +6603,7 @@ screen academy_first_dialogue():
             text "Yvara" size font_size(24) color "#c9a227" bold True xalign 0.0
             null height 5
             text "Welcome, traveller. I am Yvara. Our institution offers structured courses in Academics, Amatory Arts, and Hospitality. Your workers may attend and gain experience under our teachers." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
-            text "\"To enrol your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here.\"" size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
+            text "\"To enroll your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here.\"" size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
             null height 15
             text "What will you do?" size font_size(22) color "#ffdd88" xalign 0.0 italic True
             null height 10
@@ -7412,7 +7590,7 @@ init python:
         for a in close_actions:
             renpy.run(a)
 
-screen interaction_result(worker, interaction, message_index=0, show_image_only=False, return_to_map=False):
+screen interaction_result(worker, interaction, message_index=0, show_image_only=False, return_to_map=False, frozen_media=None):
     modal True
     zorder 99
     python:
@@ -7492,14 +7670,53 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                 display_message = display_message + " {color=#2a7a4b}(" + stat_change_text + "){/color}"
             # Acción al hacer click: avanzar al siguiente mensaje o mostrar solo imagen si es el último
             if is_last_message:
-                click_action = Show("interaction_result", worker=worker, interaction=interaction, message_index=current_message_index, show_image_only=True, return_to_map=return_to_map)
+                click_action = Show(
+                    "interaction_result",
+                    worker=worker,
+                    interaction=interaction,
+                    message_index=current_message_index,
+                    show_image_only=True,
+                    return_to_map=return_to_map,
+                    frozen_media=frozen_media
+                )
             else:
-                click_action = Show("interaction_result", worker=worker, interaction=interaction, message_index=current_message_index + 1, show_image_only=False, return_to_map=return_to_map)
+                click_action = Show(
+                    "interaction_result",
+                    worker=worker,
+                    interaction=interaction,
+                    message_index=current_message_index + 1,
+                    show_image_only=False,
+                    return_to_map=return_to_map,
+                    frozen_media=frozen_media
+                )
     
     add Solid("#000000dd")
     
     # Show the image as a cutscene (full screen)
-    $ media_file = get_interaction_image(worker, interaction)
+    $ media_file = frozen_media if frozen_media else get_interaction_image(worker, interaction)
+    python:
+        # Keep image stable across click-driven re-renders of this same result sequence.
+        if show_dialogue:
+            if is_last_message:
+                click_action = Show(
+                    "interaction_result",
+                    worker=worker,
+                    interaction=interaction,
+                    message_index=current_message_index,
+                    show_image_only=True,
+                    return_to_map=return_to_map,
+                    frozen_media=media_file
+                )
+            else:
+                click_action = Show(
+                    "interaction_result",
+                    worker=worker,
+                    interaction=interaction,
+                    message_index=current_message_index + 1,
+                    show_image_only=False,
+                    return_to_map=return_to_map,
+                    frozen_media=media_file
+                )
     if media_file and media_file.lower().endswith(('.webm', '.mp4')):
         add Movie(
             play=media_file,
@@ -7774,7 +7991,7 @@ screen take_a_walk_result(stage=0):
         xoffset -15
         yoffset 5
 
-screen recruitment_outcome(message, event, outcome, message_index=0, show_image_only=False):
+screen recruitment_outcome(message, event, outcome, message_index=0, show_image_only=False, frozen_bg=None):
     modal True
     zorder 99
     python:
@@ -7794,14 +8011,47 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
             is_last_message = current_message_index >= total_messages - 1
             # Acción al hacer click: avanzar al siguiente mensaje o mostrar solo imagen si es el último
             if is_last_message:
-                click_action = Show("recruitment_outcome", message=message, event=event, outcome=outcome, message_index=current_message_index, show_image_only=True)
+                click_action = Show(
+                    "recruitment_outcome",
+                    message=message,
+                    event=event,
+                    outcome=outcome,
+                    message_index=current_message_index,
+                    show_image_only=True,
+                    frozen_bg=frozen_bg
+                )
             else:
-                click_action = Show("recruitment_outcome", message=message, event=event, outcome=outcome, message_index=current_message_index + 1, show_image_only=False)
+                click_action = Show(
+                    "recruitment_outcome",
+                    message=message,
+                    event=event,
+                    outcome=outcome,
+                    message_index=current_message_index + 1,
+                    show_image_only=False,
+                    frozen_bg=frozen_bg
+                )
     
     add Solid("#000000dd")
     
     # Get background image based on outcome with proper fallback chain
     python:
+        # Keep one stable image through all clicks in this outcome sequence.
+        bg_image = frozen_bg
+        if not bg_image:
+            # Recruitment outcomes must prioritize the recruitment candidate worker.
+            # Using store.current_worker first can leak unrelated UI context (e.g. roster worker),
+            # which causes wrong portraits/backgrounds during recruitment.
+            candidate_worker = getattr(store, "current_recruitment_worker", None)
+            if not (candidate_worker and hasattr(candidate_worker, "get")):
+                candidate_worker = getattr(store, "current_worker", None)
+
+            if candidate_worker and hasattr(candidate_worker, "get"):
+                outcome_key = "success" if outcome == "success" else ("failure" if outcome == "failure" else "default")
+                try:
+                    bg_image = get_event_image(candidate_worker, event, outcome=outcome_key, skill_name=event.get("condition"))
+                except Exception as e:
+                    renpy.log(f"recruitment_outcome worker media lookup failed: {e}")
+
         # Step 1: Determine which image name to use based on outcome
         if outcome == "success":
             bg_name = event.get("success_image") or event.get("background_image", "event_bg")
@@ -7810,25 +8060,58 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
         else:
             bg_name = event.get("background_image", "event_bg")
         
+        valid_exts = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4")
+
+        def _resolve_media_from_name(name):
+            """Resolve media name in events/root images allowing multiple extensions."""
+            # If a full path was provided, trust it directly.
+            if name and name.startswith("images/"):
+                return name if renpy.loadable(name) else None
+
+            # If extension is already present in the name, try exact paths first.
+            has_known_ext = False
+            target_base = name
+            if name:
+                lower_name = name.lower()
+                for known_ext in valid_exts:
+                    if lower_name.endswith(known_ext):
+                        has_known_ext = True
+                        target_base = name[: -len(known_ext)]
+                        break
+
+            if has_known_ext:
+                event_candidate = f"images/events/{name}"
+                if renpy.loadable(event_candidate):
+                    return event_candidate
+                root_candidate = f"images/{name}"
+                if renpy.loadable(root_candidate):
+                    return root_candidate
+
+            # Otherwise, try all supported extensions.
+            for media_ext in valid_exts:
+                event_candidate = f"images/events/{target_base}{media_ext}"
+                if renpy.loadable(event_candidate):
+                    return event_candidate
+                root_candidate = f"images/{target_base}{media_ext}"
+                if renpy.loadable(root_candidate):
+                    return root_candidate
+            return None
+
         # Step 2: Try to resolve the image with fallback chain
         # Priority: specific image -> generic_success/failure -> event_bg
-        bg_image = None
-        
+        if bg_image and not renpy.loadable(bg_image):
+            bg_image = None
+
         # First, try the specific image name
-        if bg_name and not bg_name.startswith("images/"):
+        if not bg_image and bg_name and not bg_name.startswith("images/"):
             if hasattr(store, bg_name):
                 potential_image = getattr(store, bg_name)
                 if renpy.loadable(potential_image):
                     bg_image = potential_image
             else:
-                # Try events folder first, then root images folder
-                if renpy.loadable(f"images/events/{bg_name}.png"):
-                    bg_image = f"images/events/{bg_name}.png"
-                elif renpy.loadable(f"images/{bg_name}.png"):
-                    bg_image = f"images/{bg_name}.png"
-        elif bg_name:
-            if renpy.loadable(bg_name):
-                bg_image = bg_name
+                bg_image = _resolve_media_from_name(bg_name)
+        elif not bg_image and bg_name:
+            bg_image = _resolve_media_from_name(bg_name)
         
         # Step 3: If specific image not found, try generic fallback based on outcome
         if not bg_image:
@@ -7842,10 +8125,8 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
             if generic_name:
                 if hasattr(store, generic_name) and renpy.loadable(getattr(store, generic_name)):
                     bg_image = getattr(store, generic_name)
-                elif renpy.loadable(f"images/events/{generic_name}.png"):
-                    bg_image = f"images/events/{generic_name}.png"
-                elif renpy.loadable(f"images/{generic_name}.png"):
-                    bg_image = f"images/{generic_name}.png"
+                else:
+                    bg_image = _resolve_media_from_name(generic_name)
         
         # Step 4: Final fallback to event_bg
         if not bg_image:
@@ -7856,6 +8137,29 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
             else:
                 bg_image = "images/event_bg.png"  # Last resort, may show error
                 renpy.log(f"Warning: Could not load any fallback image, using {bg_image}")
+    python:
+        # Keep image stable across click-driven re-renders of this same outcome sequence.
+        if show_dialogue:
+            if current_message_index >= total_messages - 1:
+                click_action = Show(
+                    "recruitment_outcome",
+                    message=message,
+                    event=event,
+                    outcome=outcome,
+                    message_index=current_message_index,
+                    show_image_only=True,
+                    frozen_bg=bg_image
+                )
+            else:
+                click_action = Show(
+                    "recruitment_outcome",
+                    message=message,
+                    event=event,
+                    outcome=outcome,
+                    message_index=current_message_index + 1,
+                    show_image_only=False,
+                    frozen_bg=bg_image
+                )
     
     # Show the background image (full screen)
     add bg_image:
@@ -8085,8 +8389,7 @@ screen interaction_category(worker, category_name, interactions_list):
                         for interaction in interactions_list:
                             vbox:
                                 spacing 5
-                                $ uses_label = get_interaction_uses_label(worker, interaction)
-                                textbutton "[interaction['name']][uses_label]":
+                                textbutton "[interaction['name']]":
                                     style "interaction_button"
                                     text_style "interaction_button_text"
                                     action [
@@ -8158,16 +8461,21 @@ screen interaction_category(worker, category_name, interactions_list):
                     text_style "interaction_button_text"
                     action [Hide("interaction_category"), Hide("interaction_menu")]
 
+# Persist worker details panel tab (main vs traits) when switching workers
+default worker_details_panel_view = "main"
+
 screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recruitment=False):
     on "show" action Function(maybe_show_intro_popup, "worker_details")
+    # Guard: worker must not be None (use safe default to avoid crash)
+    $ worker = worker if (worker and hasattr(worker, "get")) else {"name": "Unknown", "comfort_level": 1, "daily_cost": 0}
     # Ensure worker is updated with latest data from store.workers
-    $ worker = next((w for w in store.workers if w["name"] == worker["name"]), worker)  # Sync with store.workers
+    $ worker = next((w for w in store.workers if w["name"] == worker["name"]), worker)
     $ worker = ensure_worker_defaults(worker)
     $ sell_text = get_sell_text(worker)
     $ comfort_level = worker.get("comfort_level", 1)
     $ daily_cost = comfort_level * get_difficulty_comfort_mult()
     default current_image = get_worker_image(worker)
-    default details_view = "main"
+    default details_view = worker_details_panel_view
 
     zorder 99
     modal True
@@ -8226,7 +8534,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 fit "contain"
                         else:
                             text "No Image Available" color "#ffffff" xalign 0.5 yalign 0.5
-                    
+
                     # Navigation Buttons (below image) - use gender-filtered roster for prev/next
                     if in_roster:
                         $ _roster_list = workers_filtered_by_gender(store.workers)
@@ -8372,7 +8680,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         left_bar "#a54a4a"  # Rojo desaturado
                                         right_bar "#444444"
                                     text "Health [worker['health']]/[calculate_max_health(worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
-                    
+                
                     # Auto-supply / Auto-equip
                     hbox:
                         spacing 8
@@ -8381,7 +8689,10 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                             text_size font_size(22)
                             yoffset -2
                             text_hover_color "#6b6528"
-                            action SetScreenVariable("details_view", details_view == "main" and "traits" or "main")
+                            action [
+                                SetVariable("worker_details_panel_view", details_view == "main" and "traits" or "main"),
+                                SetScreenVariable("details_view", details_view == "main" and "traits" or "main")
+                            ]
                             hovered ShowTransient("tooltip", message="Flip panel between stats+skills and traits-only view.", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
                         textbutton "Stock Potions: [worker.get('auto_supply_potions', False) and 'On' or 'Off']":
@@ -8488,63 +8799,68 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                     _skills_left = _skills[:_half]
                                     _skills_right = _skills[_half:]
                                 text "Skills" size font_size(24) color "#2f1f13"
-                                hbox:
-                                    spacing 10
-                                    xalign 0.5
-                                    vbox:
-                                        spacing 5
-                                        xsize 280
-                                        for skill_name, level in _skills_left:
-                                            $ total_skill = calculate_skill_with_traits(worker, skill_name)
-                                            $ skill_uses = worker["skill_uses"].get(skill_name, 0)
-                                            $ uses_needed = level
-                                            $ skill_progress = skill_uses / float(uses_needed) if uses_needed > 0 else 0.0
-                                            button:
-                                                background "#00000044"
-                                                xsize 275
-                                                ysize 40
-                                                padding (5, 5)
-                                                action SetScreenVariable("current_image", get_worker_image_random(worker, skill_name) or get_worker_image(worker))
-                                                hovered ShowTransient("tooltip", message="Click to view worker performing this skill. Progress bar shows current uses and uses required for next level.", screen_name="WorkerDetails")
-                                                unhovered Hide("tooltip")
-                                                fixed:
-                                                    xsize 265
-                                                    ysize 30
-                                                    bar:
-                                                        value skill_progress
-                                                        range 1.0
+                                viewport:
+                                    scrollbars None
+                                    mousewheel True
+                                    draggable True
+                                    yfill True
+                                    hbox:
+                                        spacing 10
+                                        xalign 0.5
+                                        vbox:
+                                            spacing 5
+                                            xsize 280
+                                            for skill_name, level in _skills_left:
+                                                $ total_skill = calculate_skill_with_traits(worker, skill_name)
+                                                $ skill_uses = worker["skill_uses"].get(skill_name, 0)
+                                                $ uses_needed = level
+                                                $ skill_progress = skill_uses / float(uses_needed) if uses_needed > 0 else 0.0
+                                                button:
+                                                    background "#00000044"
+                                                    xsize 275
+                                                    ysize 40
+                                                    padding (5, 5)
+                                                    action SetScreenVariable("current_image", get_worker_image_random(worker, skill_name) or get_worker_image(worker))
+                                                    hovered ShowTransient("tooltip", message="Click to view worker performing this skill. Progress bar shows current uses and uses required for next level.", screen_name="WorkerDetails")
+                                                    unhovered Hide("tooltip")
+                                                    fixed:
                                                         xsize 265
                                                         ysize 30
-                                                        left_bar "#7a7a7a"
-                                                        right_bar "#444444"
-                                                    text "[skill_name]: [total_skill]/100" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
-                                    vbox:
-                                        spacing 5
-                                        xsize 280
-                                        for skill_name, level in _skills_right:
-                                            $ total_skill = calculate_skill_with_traits(worker, skill_name)
-                                            $ skill_uses = worker["skill_uses"].get(skill_name, 0)
-                                            $ uses_needed = level
-                                            $ skill_progress = skill_uses / float(uses_needed) if uses_needed > 0 else 0.0
-                                            button:
-                                                background "#00000044"
-                                                xsize 275
-                                                ysize 40
-                                                padding (5, 5)
-                                                action SetScreenVariable("current_image", get_worker_image_random(worker, skill_name) or get_worker_image(worker))
-                                                hovered ShowTransient("tooltip", message="Click to view worker performing this skill. Progress bar shows current uses and uses required for next level.", screen_name="WorkerDetails")
-                                                unhovered Hide("tooltip")
-                                                fixed:
-                                                    xsize 265
-                                                    ysize 30
-                                                    bar:
-                                                        value skill_progress
-                                                        range 1.0
+                                                        bar:
+                                                            value skill_progress
+                                                            range 1.0
+                                                            xsize 265
+                                                            ysize 30
+                                                            left_bar "#7a7a7a"
+                                                            right_bar "#444444"
+                                                        text "[skill_name]: [total_skill]/100" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
+                                        vbox:
+                                            spacing 5
+                                            xsize 280
+                                            for skill_name, level in _skills_right:
+                                                $ total_skill = calculate_skill_with_traits(worker, skill_name)
+                                                $ skill_uses = worker["skill_uses"].get(skill_name, 0)
+                                                $ uses_needed = level
+                                                $ skill_progress = skill_uses / float(uses_needed) if uses_needed > 0 else 0.0
+                                                button:
+                                                    background "#00000044"
+                                                    xsize 275
+                                                    ysize 40
+                                                    padding (5, 5)
+                                                    action SetScreenVariable("current_image", get_worker_image_random(worker, skill_name) or get_worker_image(worker))
+                                                    hovered ShowTransient("tooltip", message="Click to view worker performing this skill. Progress bar shows current uses and uses required for next level.", screen_name="WorkerDetails")
+                                                    unhovered Hide("tooltip")
+                                                    fixed:
                                                         xsize 265
                                                         ysize 30
-                                                        left_bar "#7a7a7a"
-                                                        right_bar "#444444"
-                                                    text "[skill_name]: [total_skill]/100" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
+                                                        bar:
+                                                            value skill_progress
+                                                            range 1.0
+                                                            xsize 265
+                                                            ysize 30
+                                                            left_bar "#7a7a7a"
+                                                            right_bar "#444444"
+                                                        text "[skill_name]: [total_skill]/100" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
                     else:
                         frame:
                             background "#00000044"
@@ -8630,7 +8946,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                     ]
                                     hovered ShowTransient("tooltip", message="Manage worker's inventory. Transfer items, equip gear, or use consumables to improve worker performance.", screen_name="WorkerDetails")
                                     unhovered Hide("tooltip")
-                    
+                
                     # More Details and Sell Buttons (separate vbox for positioning)
                     vbox:
                         spacing 1
@@ -9389,7 +9705,7 @@ screen map_screen():
         hover "gui/map/N5academyb.png"
         focus_mask True
         action If(store.academy_enrolled, Show("academy_menu"), [Hide("map_screen"), Call("yvara_prologue")])
-        hovered ShowTransient("tooltip", message="Academy" if store.academy_enrolled else "Academy (enrol to unlock)")
+        hovered ShowTransient("tooltip", message="Academy" if store.academy_enrolled else "Academy (enroll to unlock)")
         unhovered Hide("tooltip")
     
     # Arena - first visit: dialogue; after unlock: arena menu (like Academy).
@@ -10088,7 +10404,9 @@ screen report_details(report):
         event = report.get("event_data", {})
         outcome = report.get("result", "").lower().replace(" ", "_")
         skill_name = report.get("used_skill", None)
-        selected_media = get_event_image(worker, event, outcome, skill_name)
+        selected_media = report.get("story_image")
+        if not selected_media:
+            selected_media = get_event_image(worker, event, outcome, skill_name)
         event_description = report.get("description", "No description available.")
         loot_items = report.get("loot", [])
         
@@ -10154,6 +10472,9 @@ screen report_details(report):
                     padding (10, 10)
                     xalign 0.5
                     viewport:
+                        scrollbars None
+                        mousewheel True
+                        draggable True
                         vbox:
                             text "[event_description]" size font_size(24) color "#ffffff" xalign 0.0 text_align 0.0 substitute True
                             if loot_items:

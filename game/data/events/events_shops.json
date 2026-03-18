@@ -29,7 +29,7 @@
     },
     "choices": [
       {
-        "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+)",
+        "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+; Potential: Reputation)",
         "condition": "Charm",
         "threshold": 70,
         "message_success": "[acting_worker] steps forward with silver-tongued grace, their words cutting through the tension like a blade.\n\nThe debt collectors, disarmed by such persuasive charm, back down and agree to extended terms.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
@@ -44,12 +44,21 @@
             }
           },
           "failure": {
-            "reputation": 5
-          }
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted": true,
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+)",
+        "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
         "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors, recognizing true skill when they see it, back down immediately.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
@@ -64,12 +73,21 @@
             }
           },
           "failure": {
-            "reputation": 5
-          }
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted": true,
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+)",
+        "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
         "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors, outmaneuvered, back down.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
@@ -84,12 +102,21 @@
             }
           },
           "failure": {
-            "reputation": 5
-          }
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted": true,
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Pay the debt yourself to gain the merchant's favor.",
+        "option": "Pay the debt yourself to gain the merchant's favor. (Cost: Money; Gain: Reputation)",
         "message": "You step forward and produce a heavy purse, covering the merchant's debt in full. The collectors' eyes widen at the coin, and they quickly disperse. The merchant thanks you profusely, promising to open her shop—the Adventurer's Market—to you and your workers. Your reputation for generosity spreads ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -800,
@@ -98,15 +125,39 @@
           "event_flags": {
             "shop2_unlocked": true,
             "shop2_unlock_timestamp": "[calculate_total_days()]"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Stay out of it—this isn't your problem.",
+        "option": "Stay out of it—this isn't your problem. (Neutral)",
         "message": "You watch from the shadows as the debt collectors take what they came for. The merchant's shop remains closed, and you feel a missed opportunity slip away. Perhaps another chance will come.",
-        "effect": {}
+        "effect": {
+          "event_flags": {
+            "shop2_debt_attempted": true,
+            "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
-    ]
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "rescue_shop_owner_debt_wealthy",
@@ -135,7 +186,7 @@
     },
     "choices": [
       {
-        "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+)",
+        "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+; Potential: Reputation)",
         "condition": "Charm",
         "threshold": 70,
         "message_success": "[acting_worker] steps forward with silver-tongued grace, their words cutting through the tension like a blade.\n\nThe debt collectors, disarmed by such persuasive charm, back down and agree to extended terms.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
@@ -150,12 +201,21 @@
             }
           },
           "failure": {
-            "reputation": 5
-          }
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted": true,
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+)",
+        "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
         "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors, recognizing true skill when they see it, back down immediately.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
@@ -170,12 +230,21 @@
             }
           },
           "failure": {
-            "reputation": 5
-          }
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted": true,
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+)",
+        "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
         "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors, outmaneuvered, back down.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
@@ -190,12 +259,21 @@
             }
           },
           "failure": {
-            "reputation": 5
-          }
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted": true,
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Pay the debt yourself to gain the merchant's favor.",
+        "option": "Pay the debt yourself to gain the merchant's favor. (Cost: Money; Gain: Reputation)",
         "message": "You step forward and produce a heavy purse, covering the merchant's debt in full. The collectors' eyes widen at the coin, and they quickly disperse. The merchant thanks you profusely, promising to open her shop—the Adventurer's Market—to you and your workers. Your reputation for generosity spreads ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -800,
@@ -204,22 +282,262 @@
           "event_flags": {
             "shop2_unlocked": true,
             "shop2_unlock_timestamp": "[calculate_total_days()]"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Stay out of it—this isn't your problem.",
+        "option": "Stay out of it—this isn't your problem. (Neutral)",
         "message": "You watch from the shadows as the debt collectors take what they came for. The merchant's shop remains closed, and you feel a missed opportunity slip away. Perhaps another chance will come.",
-        "effect": {}
+        "effect": {
+          "event_flags": {
+            "shop2_debt_attempted": true,
+            "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
       }
-    ]
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "rescue_shop_owner_debt_retry",
+    "description": "The merchant caught in the debt dispute spots you across the square. Her eyes light up with hope as she rushes over. 'Please—they've given me one more week to find a solution. I haven't forgotten your kindness, even if things didn't work out before. Will you help me this time? The Adventurer's Market could be yours if we succeed.'",
+    "weight": 15,
+    "event_probability": 90,
+    "cooldown_days": 7,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "brothel",
+      "casino",
+      "restaurant",
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "required_flags": {
+      "shop2_debt_attempted": true
+    },
+    "excluded_flags": {
+      "shop2_unlocked": true
+    },
+    "conditions": {
+      "start_when": "after_days_from_flag:shop2_debt_attempted_timestamp,5"
+    },
+    "choices": [
+      {
+        "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+; Potential: Reputation)",
+        "condition": "Charm",
+        "threshold": 70,
+        "message_success": "[acting_worker] steps forward with silver-tongued grace, their words cutting through the tension like a blade.\n\nThe debt collectors, disarmed by such persuasive charm, back down and agree to extended terms.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries to negotiate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 15,
+            "custom": "unlock_shop2",
+            "event_flags": {
+              "shop2_unlocked": true,
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "failure": {
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
+        "condition": "Combat",
+        "threshold": 70,
+        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors, recognizing true skill when they see it, back down immediately.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries to intimidate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 15,
+            "custom": "unlock_shop2",
+            "event_flags": {
+              "shop2_unlocked": true,
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "failure": {
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
+        "condition": "Clever",
+        "threshold": 70,
+        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors, outmaneuvered, back down.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries to outmaneuver them, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 15,
+            "custom": "unlock_shop2",
+            "event_flags": {
+              "shop2_unlocked": true,
+              "shop2_unlock_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "failure": {
+            "reputation": 5,
+            "event_flags": {
+              "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay the debt yourself to gain the merchant's favor. (Cost: Money; Gain: Reputation)",
+        "message": "You step forward and produce a heavy purse, covering the merchant's debt in full. The collectors' eyes widen at the coin, and they quickly disperse. The merchant thanks you profusely, promising to open her shop—the Adventurer's Market—to you and your workers. Your reputation for generosity spreads ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -800,
+          "reputation": 10,
+          "custom": "unlock_shop2",
+          "event_flags": {
+            "shop2_unlocked": true,
+            "shop2_unlock_timestamp": "[calculate_total_days()]"
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Stay out of it—this isn't your problem. (Neutral)",
+        "message": "You watch from the shadows as the debt collectors take what they came for. The merchant's shop remains closed, and you feel a missed opportunity slip away. Perhaps another chance will come.",
+        "effect": {
+          "event_flags": {
+            "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "rescue_shop_owner_debt_fallback",
+    "description": "A weary merchant with a cart of exotic goods approaches your establishment. 'I've traveled far and heard of your reputation,' she says. 'I run the Adventurer's Market—wares for those who've proven their worth. I'd like to extend you access. No strings attached. Consider it a gesture of goodwill to a fellow business owner.'",
+    "weight": 12,
+    "event_probability": 95,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "brothel",
+      "casino",
+      "restaurant",
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "excluded_flags": {
+      "shop2_unlocked": true
+    },
+    "conditions": {
+      "start_when": "after_days:30"
+    },
+    "choices": [
+      {
+        "option": "Accept the merchant's offer. (Gain: Adventurer's Market access)",
+        "message": "You accept with gratitude. The merchant produces a writ bearing the Adventurer's Market seal. 'Present this at the entrance. You'll find quality goods at fair prices.' The Adventurer's Market is now available to you.",
+        "effect": {
+          "custom": "unlock_shop2",
+          "event_flags": {
+            "shop2_unlocked": true,
+            "shop2_unlock_timestamp": "[calculate_total_days()]"
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline politely. (Neutral)",
+        "message": "You thank her but explain you're not in need. She nods and moves on. The opportunity may present itself again.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "shop_owner_expansion",
     "description": "The merchant from the Adventurer's Market approaches you with a gleam in her eye. 'Your patronage has been a blessing,' she says, 'but I have grander visions. With an investment, I could expand my emporium into something truly magnificent—a place where only the finest goods are sold. Ten thousand coins would secure the location, permits, and the initial inventory. In return, you'll have exclusive access to the Elite Emporium, where treasures beyond the ordinary await.'",
     "weight": 10,
     "limited": true,
-        "event_probability": 20,
+    "event_probability": 80,
     "max_occurrences": 1,
     "worker_selection": "none",
     "building_type": [
@@ -244,7 +562,7 @@
     },
     "choices": [
       {
-        "option": "Invest 10,000 coins to expand the emporium.",
+        "option": "Invest 10,000 coins to expand the emporium. (Cost: Money; Gain: Reputation)",
         "message": "You count out the coins, each one a promise of future prosperity. The merchant's face lights up with gratitude and ambition. 'Within a week,' she promises, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word spreads through the city about your investment, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -10000,
@@ -252,26 +570,44 @@
           "custom": "unlock_shop3",
           "event_flags": {
             "shop3_unlocked": true
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Decline the investment for now.",
+        "option": "Decline the investment for now. (Neutral)",
         "message": "You explain that such an investment is beyond your current means. The merchant nods understandingly, though disappointment flickers in her eyes. 'Perhaps another time,' she says, 'when fortune favors us both.' The opportunity remains, but the Elite Emporium will have to wait.",
         "effect": {
           "event_flags": {
             "shop_expansion_declined": true,
             "shop_expansion_decline_timestamp": "[calculate_total_days()]"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       }
-    ]
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   },
   {
     "id": "shop_owner_expansion_retry",
     "description": "The merchant returns, hope still burning in her eyes. 'I haven't given up on the Elite Emporium,' she says. 'The opportunity remains—ten thousand coins to open the most exclusive market in the city. Will you reconsider your investment?'",
     "weight": 10,
-    "limited": false,
     "event_probability": 80,
     "cooldown_days": 10,
     "worker_selection": "none",
@@ -297,7 +633,7 @@
     },
     "choices": [
       {
-        "option": "Invest 10,000 coins to expand the emporium.",
+        "option": "Invest 10,000 coins to expand the emporium. (Cost: Money; Gain: Reputation)",
         "message": "You count out the coins, each one a promise of future prosperity. The merchant's face lights up with gratitude and ambition. 'Within a week,' she promises, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word spreads through the city about your investment, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -10000,
@@ -306,18 +642,105 @@
           "event_flags": {
             "shop3_unlocked": true,
             "shop_expansion_declined": null
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       },
       {
-        "option": "Still not ready to invest.",
+        "option": "Still not ready to invest. (Neutral)",
         "message": "You explain that you still need more time to gather the funds. The merchant accepts this with a nod, though her shoulders slump slightly. 'I'll be waiting,' she says, 'when you're ready to make this dream a reality.'",
         "effect": {
           "event_flags": {
             "shop_expansion_decline_timestamp": "[calculate_total_days()]"
-          }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
         }
       }
-    ]
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "shop_owner_expansion_guaranteed",
+    "description": "The merchant from the Adventurer's Market seeks you out with a determined expression. 'I've waited long enough,' she says. 'You've been a loyal patron of my market, and the Elite Emporium is ready. I'm offering you exclusive access—ten thousand coins secures it. Will you join the elite?'",
+    "weight": 100,
+    "guaranteed": true,
+    "event_probability": 100,
+    "cooldown_days": 7,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "brothel",
+      "casino",
+      "restaurant",
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "required_flags": {
+      "shop2_unlocked": true
+    },
+    "excluded_flags": {
+      "shop3_unlocked": true
+    },
+    "conditions": {
+      "start_when": "after_days:90",
+      "stop_when": "has_flag:shop3_unlocked OR store.unlocked_shops.get(\"shop3\", False)"
+    },
+    "choices": [
+      {
+        "option": "Invest 10,000 coins to unlock the Elite Emporium. (Cost: Money; Gain: Reputation)",
+        "message": "You count out the coins, each one a promise of future prosperity. The merchant's face lights up with gratitude and ambition. 'Within a week,' she promises, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word spreads through the city about your investment, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -10000,
+          "reputation": 25,
+          "custom": "unlock_shop3",
+          "event_flags": {
+            "shop3_unlocked": true
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline the investment. (Neutral)",
+        "message": "You explain that such an investment is beyond your current means. The merchant accepts with a sigh. 'Very well. The offer stands should you change your mind—though I cannot promise it will always be available.'",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
   }
 ]

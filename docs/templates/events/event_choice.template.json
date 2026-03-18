@@ -1,0 +1,56 @@
+{
+  "option": null,
+  "condition": null,
+  "threshold": 0,
+  "required_trait": null,
+  "required_traits": [],
+  "excluded_traits": [],
+  "trait_visibility": "hide",
+  "blocked_message": null,
+  "message": null,
+  "message_success": null,
+  "message_failure": null,
+  "conditions": {
+    "start_when": null,
+    "stop_when": null
+  },
+  "required_flags": {},
+  "excluded_flags": {},
+  "effect": {
+    "money": 0,
+    "reputation": 0,
+    "custom": null,
+    "event_flags": {},
+    "item_id": null,
+    "loot_rolls": 0,
+    "worker_name": null,
+    "random_worker": false,
+    "add_trait": {
+      "name": null,
+      "duration": 0,
+      "target": null
+    },
+    "success": {
+      "money": 0,
+      "reputation": 0,
+      "custom": null,
+      "event_flags": {},
+      "add_trait": {
+        "name": null,
+        "duration": 0,
+        "target": null
+      }
+    },
+    "failure": {
+      "money": 0,
+      "reputation": 0,
+      "custom": null,
+      "event_flags": {},
+      "add_trait": {
+        "name": null,
+        "duration": 0,
+        "target": null
+      }
+    }
+  }
+}

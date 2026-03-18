@@ -36,7 +36,7 @@ init python:
 
 
     def update_reputation_from_events(building_name, event_result):
-        """Adjust building reputation based on event outcome."""
+        """Adjust building reputation based on event outcome. Capped by building/manager level."""
         building = available_buildings[building_name]
         # Get base reputation
         calculate_reputation(building_name)  # Updates building["reputation"]
@@ -47,6 +47,7 @@ init python:
             "mediocre": 0,
             "failure": -5
         }.get(event_result.lower(), 0)
-        # Update stored reputation
-        building["reputation"] = max(0, building["reputation"] + reputation_change)
+        cap = get_building_reputation_cap(building)
+        # Update and clamp to level cap (no growth above cap until level up)
+        building["reputation"] = max(0, min(building["reputation"] + reputation_change, cap))
         renpy.log(f"Updated {building_name} reputation to {building['reputation']} after {event_result}")

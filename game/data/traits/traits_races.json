@@ -1,0 +1,287 @@
+[
+  {
+    "name": "Transformed",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Goblin"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.4,
+      "skill_modifiers": {
+        "Extreme": 3,
+        "Charm": 2
+      }
+    },
+    "description": "They have undergone magical transformation, granting otherworldly appeal and enhanced abilities. [+40% $, +3 Extreme, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Human",
+    "conflicts": [
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.0,
+      "skill_modifiers": {
+        "Clever": 1,
+        "Service": 2,
+        "Charm": 2
+      }
+    },
+    "description": "The most common race, adaptable and versatile in all situations. [+1 Clever, +2 Service, +2 Charm]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Elf",
+    "conflicts": [
+      "Human",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.2,
+      "skill_modifiers": {
+        "Craft": 4,
+        "Agility": 2
+      }
+    },
+    "description": "Graceful and magical beings with natural affinity for mystical arts and agility. [+20% $, +4 Craft, +2 Agility]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Dwarf",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "health": 10,
+      "skill_modifiers": {
+        "Combat": 3,
+        "Clever": 2
+      }
+    },
+    "description": "Sturdy and resilient folk known for their combat prowess and practical wisdom. [+10 Health, +3 Combat, +2 Clever]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Orc",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Combat": 4,
+        "BDSM": 2
+      },
+      "rebelliousness": 10
+    },
+    "description": "Fierce warriors with natural combat instincts and dominant personalities. [+10 Rebel, +4 Combat, +2 BDSM]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Ogre",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Demon",
+      "Angel",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "health": 15,
+      "skill_modifiers": {
+        "Combat": 3,
+        "Sex": 2
+      },
+      "rebelliousness": 8
+    },
+    "description": "Large and powerful beings with impressive physical capabilities. [+15 Health, +8 Rebel, +3 Combat, +2 Sex]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Demon",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Angel",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.3,
+      "skill_modifiers": {
+        "Extreme": 4,
+        "BDSM": 3,
+        "Craft": 2
+      },
+      "rebelliousness": 12
+    },
+    "description": "Infernal beings with dark charisma and expertise in forbidden pleasures. [+30% $, +12 Rebel, +4 Extreme, +3 BDSM, +2 Craft]",
+    "nsfw": true,
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Angel",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Vampire",
+      "Goblin",
+      "Furry"
+    ],
+    "modifiers": {
+      "earnings_multiplier": 1.25,
+      "skill_modifiers": {
+        "Charm": 4,
+        "Craft": 3
+      },
+      "joy": 20,
+      "rebelliousness": -15
+    },
+    "description": "Divine beings radiating purity and grace, naturally obedient and joyful. [+25% $, -15 Rebel, +20 Joy, +4 Charm, +3 Craft]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Goblin",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Furry"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 4,
+        "Clever": 3,
+        "Extreme": 2
+      },
+      "rebelliousness": 5,
+      "joy": 15
+    },
+    "description": "Small, mischievous creatures with quick reflexes and cunning minds, perfect for agile tasks. [+5 Rebel, +15 Joy, +4 Agility, +3 Clever, +2 Extreme]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Half-Breed",
+    "modifiers": {
+      "earnings_multiplier": 1.3
+    },
+    "description": "They are of mixed heritage, making them exotic and highly sought after. [+30% $]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  }
+]

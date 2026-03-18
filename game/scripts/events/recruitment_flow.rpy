@@ -10,6 +10,8 @@ label start_recruitment_system:
         try:
             recruitment_events = load_events_from_folder("data/events", subfolder="recruit")
             renpy.log(f"RECRUITMENT: Loaded {len(recruitment_events)} recruitment events")
+            if not recruitment_events:
+                renpy.log(f"RECRUITMENT DEBUG: 0 events - check if data/events/recruit/*.json exist and paths (Windows uses backslash)")
             
             recruit_candidates = load_recruit_workers()
             renpy.log(f"RECRUITMENT: Loaded {len(recruit_candidates)} recruit candidates: {[w.get('name', 'Unknown') for w in recruit_candidates]}")
@@ -104,38 +106,40 @@ label start_recruitment_system:
                     renpy.log("No generic recruitment events available")
                     store._recruitment_abort = True
                     store._recruitment_abort_message = "No recruitment events available"
-                
-                # Select random generic event based on weight
-                total_weight = sum(event.get("weight", 1) for event in generic_events)
-                r = random.random() * total_weight
-                current_weight = 0
-                selected_event = generic_events[0]  # fallback
-                
-                for event in generic_events:
-                    current_weight += event.get("weight", 1)
-                    if r <= current_weight:
-                        selected_event = event
-                        break
-                
-                # Filter worker by gender requirement if specified
-                worker_gender_requirement = selected_event.get("worker_gender_requirement", None)
-                if worker_gender_requirement:
-                    filtered_candidates = [w for w in recruit_candidates if w.get("gender", "") == worker_gender_requirement]
-                    if filtered_candidates:
-                        selected_worker = random.choice(filtered_candidates)
-                    else:
-                        renpy.log(f"No workers available matching gender requirement: {worker_gender_requirement}")
-                        store._recruitment_abort = True
-                        store._recruitment_abort_message = "No suitable workers available for this event"
+                else:
+                    # Select random generic event based on weight
+                    total_weight = sum(event.get("weight", 1) for event in generic_events)
+                    r = random.random() * total_weight
+                    current_weight = 0
+                    selected_event = generic_events[0]  # fallback
+                    
+                    for event in generic_events:
+                        current_weight += event.get("weight", 1)
+                        if r <= current_weight:
+                            selected_event = event
+                            break
+                    
+                    # Filter worker by gender requirement if specified
+                    worker_gender_requirement = selected_event.get("worker_gender_requirement", None)
+                    if worker_gender_requirement:
+                        filtered_candidates = [w for w in recruit_candidates if w.get("gender", "") == worker_gender_requirement]
+                        if filtered_candidates:
+                            selected_worker = random.choice(filtered_candidates)
+                        else:
+                            renpy.log(f"No workers available matching gender requirement: {worker_gender_requirement}")
+                            store._recruitment_abort = True
+                            store._recruitment_abort_message = "No suitable workers available for this event"
             
-            # Store globally
-            store.current_recruitment_event = selected_event
-            store.current_recruitment_worker = selected_worker
+            # Store globally (only when recruitment succeeded)
+            if not store._recruitment_abort:
+                store.current_recruitment_event = selected_event
+                store.current_recruitment_worker = selected_worker
             
         except Exception as e:
             renpy.log(f"Error in start_recruitment_system: {e}")
-            store._recruitment_abort = True
-            store._recruitment_abort_message = "Recruitment system error"
+            if not store._recruitment_abort:
+                store._recruitment_abort = True
+                store._recruitment_abort_message = "Recruitment system error"
     
     # If recruitment setup failed, notify and return safely to tavern.
     if getattr(store, "_recruitment_abort", False):
