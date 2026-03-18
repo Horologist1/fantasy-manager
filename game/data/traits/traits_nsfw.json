@@ -732,10 +732,16 @@
     "modifiers": {
       "energy": -5,
       "skill_modifiers": {
-        "Sex": -2
+        "Combat": -10,
+        "Agility": -10,
+        "Striptease": -3,
+        "Sex": -3,
+        "Extreme": -5,
+        "Group": -5,
+        "Special": 5
       }
     },
-    "description": "The worker is pregnant, reducing energy and physical performance for an extended period. [-5 Energy, -2 Sex]",
+    "description": "The worker is pregnant, reducing energy and physical performance for an extended period. [-5 Energy, -10 Combat, -10 Agility, -3 Striptease, -3 Sex, -5 Extreme, -5 Group, +5 Special]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},

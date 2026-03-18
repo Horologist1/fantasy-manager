@@ -1,13 +1,13 @@
-2026-03-18 17:23:30 UTC
+2026-03-18 21:15:06 UTC
 Windows-10-10.0.26100
 Ren'Py 8.3.7.25031702
 
 Early init took 0.08s
 Loading error handling took 0.10s
-Loading script took 2.39s
+Loading script took 2.32s
 Loading save slot metadata took 0.02s
 Loading persistent took 0.00s
-Running init code took 0.09s
+Running init code took 0.08s
 Loading analysis data took 0.00s
 Analyze and compile ATL took 0.00s
 Reloading save slot metadata took 0.01s
@@ -20,19 +20,20 @@ Initial gc took 0.03s
 DPI scale factor: 1.000000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object took 0.22s
+Creating interface object took 0.19s
 Cleaning stores took 0.00s
 Init translation took 0.00s
 Build styles took 0.00s
 Load screen analysis took 0.00s
 Analyze screens took 0.13s
 Save screen analysis took 0.04s
-Prepare screens took 0.32s
+Prepare screens took 0.30s
 Save pyanalysis. took 0.05s
 Save bytecode. took 0.05s
-ea', 'test_money_50k', 'chef_apron',
-'master_chef_apron', 'service_uniform', 'elegant_service_dress',
-'kitchen_knife_set', 'master_chef_knife', 'cooking_utensils', 'sensual_dress',
+, 'rare_book',
+'herbal_tea', 'test_money_50k', 'chef_apron', 'master_chef_apron',
+'service_uniform', 'elegant_service_dress', 'kitchen_knife_set',
+'master_chef_knife', 'cooking_utensils', 'sensual_dress',
 'elegant_courtesan_dress', 'seductive_lingerie', 'luxury_lingerie_set',
 'charming_earrings', 'diamond_earrings', 'sensual_necklace', 'pearl_choker',
 'stripper_heels', 'master_performer_heels', 'bartender_apron',
@@ -67,16 +68,16 @@ ea', 'test_money_50k', 'chef_apron',
 'potion_high_libido', 'potion_nympho', 'potion_satyr', 'potion_cum_addict',
 'handwritten_poem', 'botanical_pressing', 'spiked_tea', 'silk_ribbon',
 'test_manager_level']
-Items excluded from shops: ['gold_coin', 'staff_archmage', 'potion_soft_ass',
-'potion_high_libido', 'crown_machine', 'potion_agile', 'potion_great_figure',
-'silver_coin', 'potion_transformed', 'potion_deluxe_derriere',
-'potion_energetic', 'potion_large_hips', 'blade_fallen_king',
-'amulet_wanderer', 'chains_submission', 'potion_robust', 'crown_dominion',
-'binding_gem', 'potion_satyr', 'bronze_coin', 'potion_strong',
-'potion_magical', 'potion_firm_ass', 'potion_large_breasts', 'cloak_shadows',
-'potion_tough', 'potion_cum_addict', 'potion_large_penis', 'potion_beautiful',
-'collar_endless_desire', 'potion_small_breasts', 'potion_sensitive',
-'potion_nympho', 'potion_troll_blood', 'potion_tight', 'potion_long_legs',
-'potion_exotic']
+Items excluded from shops: ['amulet_wanderer', 'chains_submission',
+'potion_great_figure', 'binding_gem', 'silver_coin', 'potion_soft_ass',
+'crown_machine', 'potion_large_breasts', 'potion_magical',
+'potion_transformed', 'potion_firm_ass', 'potion_high_libido',
+'crown_dominion', 'potion_satyr', 'potion_strong', 'potion_small_breasts',
+'potion_troll_blood', 'potion_agile', 'staff_archmage', 'potion_tight',
+'potion_sensitive', 'potion_large_hips', 'potion_long_legs',
+'potion_energetic', 'blade_fallen_king', 'collar_endless_desire',
+'potion_cum_addict', 'cloak_shadows', 'potion_beautiful', 'potion_nympho',
+'potion_exotic', 'potion_deluxe_derriere', 'bronze_coin', 'gold_coin',
+'potion_large_penis', 'potion_tough', 'potion_robust']
 Setting right_worker and current_worker...
 No workers loaded, setting right_worker and current_worker to None

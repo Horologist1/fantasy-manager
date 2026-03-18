@@ -115,6 +115,7 @@ init python:
         Parse positive_traits or negative_traits. Returns list of (trait_name, weight).
         - List: ["A", "B"] -> [("A", 3), ("B", 3)]
         - Dict: {"A": 5, "B": 3} -> [("A", 5), ("B", 3)]
+        Uses hasattr/get for dict-like (RevertableDict) per LA_BIBLIA - isinstance(dict) fails.
         """
         if not data:
             return []
@@ -123,9 +124,9 @@ init python:
                 return int(float(w)) if w is not None else default_weight
             except (TypeError, ValueError):
                 return default_weight
-        if isinstance(data, dict):
+        if hasattr(data, "items"):
             return [(str(t), _to_weight(w)) for t, w in data.items()]
-        if isinstance(data, (list, tuple)):
+        if hasattr(data, "__iter__") and not hasattr(data, "items"):
             return [(str(t), default_weight) for t in data]
         return []
 
@@ -502,7 +503,8 @@ init python:
                         neg_data = chosen_story.get("negative_traits") or []
                         pos_trait_weights = _parse_trait_weights(pos_data)
                         neg_trait_weights = _parse_trait_weights(neg_data)
-                        worker_traits = set(worker.get("traits", []) or [])
+                        worker_traits_raw = worker.get("traits", []) or []
+                        worker_traits = set(str(t).strip() for t in (worker_traits_raw if hasattr(worker_traits_raw, "__iter__") else []) if t)
                         matching_pos = [(t, w) for t, w in pos_trait_weights if t in worker_traits]
                         matching_neg = [(t, w) for t, w in neg_trait_weights if t in worker_traits]
                         trait_modifier = sum(w for _, w in matching_pos) - sum(w for _, w in matching_neg)
@@ -677,7 +679,7 @@ init python:
                         base_description = chosen_story.get("descriptions", {}).get(outcome_key, "No description available").format(worker_name=worker["name"], skill=skill_for_desc)
                         full_description = base_description
                         if trait_success_messages:
-                            full_description += "\n" + "\n".join(trait_success_messages)
+                            full_description += "\n\n{color=#aaddaa}" + "\n".join(trait_success_messages) + "{/color}"
                         if libido_penalty_note:
                             full_description += "\n\n{color=#aa4444}" + libido_penalty_note + "{/color}"
                         # Determine color based on outcome (matching daily report colors)

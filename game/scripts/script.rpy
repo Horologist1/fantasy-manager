@@ -390,6 +390,20 @@ init python:
         profile_matches = get_pattern_matches_flexible(base_folder, "profile")
         profile_matches = [f for f in profile_matches if _worker_allows_profile_variant(worker, f)]
         renpy.log(f"Profile matches found: {len(profile_matches) if profile_matches else 0}")
+
+        # PRIORITY: When worker has Pregnant/Transformed/Magical/Futa, use ONLY trait-prefixed
+        # profile images (e.g. pregnant_profile). Do not mix with plain profile.
+        trait_prefixes = get_trait_prefixes(worker)
+        if trait_prefixes and profile_matches:
+            trait_profile_matches = [
+                f for f in profile_matches
+                if any(os.path.basename(f).lower().startswith(pp + "_") for pp in trait_prefixes)
+            ]
+            if trait_profile_matches:
+                selected = renpy.random.choice(trait_profile_matches)
+                renpy.log(f"Selected trait-priority profile image: {selected}")
+                return selected
+
         if profile_matches:
             renpy.log(f"Profile matches: {profile_matches}")
             selected = renpy.random.choice(profile_matches)

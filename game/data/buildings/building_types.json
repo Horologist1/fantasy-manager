@@ -766,8 +766,8 @@
               "positive_traits": {
                 "Charming": 3,
                 "Graceful": 3,
-                "Playful": 3,
-                "Sexy Air": 3,
+                "Sexy Air": 4,
+                "Exotic": 3,
                 "Beautiful": 3
               },
               "trait_msg_success": "The client is totally mesmerized by {worker_name}'s {trait} during her performance.",
@@ -819,9 +819,10 @@
               },
               "nsfw_only": false,
               "positive_traits": {
-                "Sexy Air": 3,
-                "Flexible": 3,
-                "Charming": 3
+                "Charming": 3,
+                "Sexy Air": 4,
+                "Exotic": 3,
+                "Flexible": 3
               },
               "trait_msg_success": "{worker_name}'s {trait} makes the private dance incredibly intimate and hot.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
@@ -871,9 +872,11 @@
               },
               "nsfw_only": false,
               "positive_traits": {
+                "Charming": 3,
                 "Elegant": 3,
                 "Magnetic": 3,
-                "Charming": 3
+                "Sexy Air": 4,
+                "Exotic": 3
               },
               "trait_msg_success": "The VIP client is blown away by {worker_name}'s {trait} and considers making her his regular dancer.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
@@ -934,7 +937,8 @@
               "trait_roll_modifiers": {},
               "positive_traits": {
                 "Charming": 3,
-                "Sexy Air": 3,
+                "Sexy Air": 4,
+                "Exotic": 3,
                 "Beautiful": 3
               },
               "trait_msg_success": "{worker_name} used {trait} to keep control during sex and maximize the client's spending.",
@@ -1644,8 +1648,7 @@
                   "health": -8,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "reputation": -3,
-                  "libido": -1
+                  "reputation": -3
                 },
                 "success": {
                   "energy": -1,
@@ -1949,15 +1952,13 @@
                   "health": -25,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "reputation": -10,
-                  "libido": -2
+                  "reputation": -10
                 },
                 "success": {
                   "energy": -2,
                   "health": -8,
                   "joy": 8,
-                  "reputation": 15,
-                  "libido": -1
+                  "reputation": 15
                 },
                 "critical_success": {
                   "energy": -1,
@@ -2399,8 +2400,7 @@
                   "energy": -2,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "reputation": -5,
-                  "libido": -1
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
@@ -2451,8 +2451,7 @@
                   "energy": -2,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "reputation": -10,
-                  "libido": -1
+                  "reputation": -10
                 },
                 "success": {
                   "energy": -1,
@@ -2755,14 +2754,12 @@
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
-                  "reputation": -5,
-                  "libido": -2
+                  "reputation": -5
                 },
                 "success": {
                   "energy": -1,
                   "joy": 1,
-                  "reputation": 5,
-                  "libido": -1
+                  "reputation": 5
                 },
                 "critical_success": {
                   "energy": -1,
@@ -3163,14 +3160,12 @@
                   "energy": -2,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "reputation": -10,
-                  "libido": -2
+                  "reputation": -10
                 },
                 "success": {
                   "energy": -1,
                   "joy": 1,
-                  "reputation": 10,
-                  "libido": -1
+                  "reputation": 10
                 },
                 "critical_success": {
                   "joy": 3,
@@ -3214,14 +3209,12 @@
                   "energy": -2,
                   "joy": -2,
                   "rebelliousness": 1,
-                  "reputation": -15,
-                  "libido": -2
+                  "reputation": -15
                 },
                 "success": {
                   "energy": -1,
                   "joy": 1,
-                  "reputation": 15,
-                  "libido": -1
+                  "reputation": 15
                 },
                 "critical_success": {
                   "joy": 3,

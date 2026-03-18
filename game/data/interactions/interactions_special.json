@@ -5,9 +5,9 @@
     "description": "Violet performs a unique dance routine that showcases her exceptional talents, creating an unforgettable moment.",
     "cost_energy": 0,
     "effect": {
-      "romance": 30,
-      "relationship": 15,
-      "joy": 20,
+      "romance": 3,
+      "relationship": 5,
+      "joy": 2,
       "flags": {
         "violet_special_moment": {
           "value": true,
@@ -37,9 +37,9 @@
     "description": "You spend time with this exceptionally charming and beautiful worker, creating a unique and captivating atmosphere.",
     "cost_energy": 0,
     "effect": {
-      "romance": 35,
-      "joy": 20,
-      "relationship": 15,
+      "romance": 3,
+      "joy": 2,
+      "relationship": 5,
       "flags": {
         "enchanted_by_beauty": {
           "value": true,

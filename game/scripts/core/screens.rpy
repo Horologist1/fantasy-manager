@@ -10285,10 +10285,10 @@ screen daily_report():
                                         # Combined Result & Earnings column (clickable)
                                         button:
                                             background "tablebutton.png"
-                                            xsize 360 # Narrower result column to keep content inside viewport
+                                            xsize 360
                                             ysize 46
                                             action Show("report_details", report=report)
-                                            text "{color=[color_code]}[result_text] ([earnings_text]){/color}" size font_size(18) # Use pre-calculated text/color
+                                            text "{color=[color_code]}[result_text] ([earnings_text]){/color}" size font_size(18)
 
 
 # Pantalla del menú desplegable para seleccionar edificio
@@ -10407,8 +10407,8 @@ screen report_details(report):
         selected_media = report.get("story_image")
         if not selected_media:
             selected_media = get_event_image(worker, event, outcome, skill_name)
-        event_description = report.get("description", "No description available.")
-        loot_items = report.get("loot", [])
+        event_description = report.get("description", "No description available.") if hasattr(report, "get") else "No description available."
+        loot_items = (report.get("loot", []) or []) if hasattr(report, "get") else []
         
         # Find current report index and calculate navigation
         current_report_index = 0

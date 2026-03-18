@@ -525,8 +525,21 @@
         "remove_trait": "Lazy"
       },
       "description": "Grants a burst of energy. Grants the Energetic trait and removes the Lazy trait. (+10 Energy)",
-      "price": 140,
+      "price": 1500,
       "weight": 3
+    },
+    {
+      "id": "childless_hag_potion",
+      "name": "Childless Hag Potion",
+      "display_name": "Childless Hag Potion",
+      "type": "consumable",
+      "effect": {
+        "remove_trait": "Pregnant"
+      },
+      "description": "A bitter draught distilled from moonwort and widow's tears—a recipe passed down by secluded crones who wished to undo nature's course. Drinking it empties the womb and lifts the burden of pregnancy. Removes the Pregnant trait.",
+      "price": 1200,
+      "weight": 2,
+      "nsfw": true
     },
     {
       "id": "enchanted_ring",

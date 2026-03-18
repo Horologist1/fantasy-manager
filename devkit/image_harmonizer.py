@@ -3,7 +3,7 @@
 Image Harmonizer for Fantasy Manager
 =====================================
 Converts images to JPG with:
-- Resolution: 1920x1080 (or smaller, maintaining aspect ratio)
+- Resolution: normalized to 1920x1080 (scales up smaller, scales down larger; maintains aspect ratio)
 - Quality: 70%
 - By default skips existing JPGs (use --include-jpg to recompress heavy ones)
 
@@ -34,15 +34,12 @@ DRY_RUN = False  # Set to True to preview without making changes
 DEFAULT_JPG_MAX_KB = 350  # Recompress JPG only if larger than this
 
 def get_target_size(original_width, original_height):
-    """Calculate target size maintaining aspect ratio, max 1920x1080"""
-    # If already smaller than target, keep original size
-    if original_width <= TARGET_WIDTH and original_height <= TARGET_HEIGHT:
-        return original_width, original_height
-    
-    # Calculate scaling factor
+    """Calculate target size maintaining aspect ratio, normalizing to 1920x1080.
+    Scales down images larger than target; scales up images smaller than target."""
+    # Calculate scaling factor (works for both scale-up and scale-down)
     width_ratio = TARGET_WIDTH / original_width
     height_ratio = TARGET_HEIGHT / original_height
-    ratio = min(width_ratio, height_ratio)
+    ratio = min(width_ratio, height_ratio)  # Ensures result fits within 1920x1080
     
     new_width = int(original_width * ratio)
     new_height = int(original_height * ratio)

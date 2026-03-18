@@ -1004,14 +1004,35 @@ init python:
         # Try worker's profile image (flexible extension matching)
         profile_matches = get_pattern_matches_flexible(base_folder, "profile")
         profile_matches = [f for f in profile_matches if _worker_allows_profile_variant(worker, f)]
+        # When worker has Pregnant/Transformed/Magical/Futa, prioritize trait-prefixed profiles only
+        if trait_prefixes and profile_matches:
+            trait_profile_matches = [
+                f for f in profile_matches
+                if any(os.path.basename(f).lower().startswith(pp + "_") for pp in trait_prefixes)
+            ]
+            if trait_profile_matches:
+                cache_key = f"{worker.get('name', 'unknown')}_trait_profile_fallback"
+                selected = get_cached_choice(trait_profile_matches, cache_key)
+                renpy.log(f"Found worker trait-priority profile image: {selected}")
+                return selected
         if profile_matches:
-            selected = renpy.random.choice(profile_matches)
+            cache_key = f"{worker.get('name', 'unknown')}_profile_fallback"
+            selected = get_cached_choice(profile_matches, cache_key)
             renpy.log(f"Found worker profile image: {selected}")
             return selected
         
         # Try default profile image (flexible extension matching)
         default_profile_matches = get_pattern_matches_flexible(default_folder, "profile")
         default_profile_matches = [f for f in default_profile_matches if _worker_allows_profile_variant(worker, f)]
+        if trait_prefixes and default_profile_matches:
+            trait_default_matches = [
+                f for f in default_profile_matches
+                if any(os.path.basename(f).lower().startswith(pp + "_") for pp in trait_prefixes)
+            ]
+            if trait_default_matches:
+                selected = renpy.random.choice(trait_default_matches)
+                renpy.log(f"Found default trait-priority profile image: {selected}")
+                return selected
         if default_profile_matches:
             selected = renpy.random.choice(default_profile_matches)
             renpy.log(f"Found default profile image: {selected}")
