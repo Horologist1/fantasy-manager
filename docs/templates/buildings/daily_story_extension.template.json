@@ -1,0 +1,55 @@
+{
+  "daily_story_extensions": [
+    {
+      "building_id": "tavern",
+      "profession_id": "entertainer",
+      "merge_mode": "append",
+      "daily_stories": [
+        {
+          "id": "your_story_id",
+          "weight": 4,
+          "report": "Short report text",
+          "description": "Story description.",
+          "difficulty_modifier": 0,
+          "worker_gender_requirement": null,
+          "player_gender_requirement": null,
+          "nsfw_only": false,
+          "skill_options": ["Charm"],
+          "event_image_skill_exclude": [],
+          "positive_traits": {},
+          "negative_traits": {},
+          "trait_msg_success": null,
+          "trait_msg_failure": null,
+          "trait_success": null,
+          "required_traits": [],
+          "excluded_traits": [],
+          "stat_requirements": {},
+          "descriptions": {
+            "failure": "{worker_name} fails.",
+            "mediocre": "{worker_name} gets through it.",
+            "success": "{worker_name} performs well.",
+            "critical_success": "{worker_name} excels."
+          },
+          "earnings": {
+            "failure": "0",
+            "mediocre": "50",
+            "success": "100",
+            "critical_success": "150"
+          },
+          "consequences": {
+            "failure": {},
+            "mediocre": {},
+            "success": {},
+            "critical_success": {}
+          },
+          "story_image": "your_image_id",
+          "failure_image": "your_image_id_failure",
+          "loot": {
+            "rolls": 0,
+            "bonus_items": []
+          }
+        }
+      ]
+    }
+  ]
+}

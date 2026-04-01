@@ -7,7 +7,9 @@
       "skill_description": "The Academy offers structured courses: Academics (Clever + random skill), Amatory Arts (sex skills), and Hospitality Arts (Charm & Service). Assign workers to a course to gain experience daily.",
       "nsfw": false,
       "show_in_manage_buildings": false,
-      "allowed_map_locations": ["N5academy"],
+      "allowed_map_locations": [
+        "N5academy"
+      ],
       "professions": [
         {
           "id": "academy_academics",
@@ -15,10 +17,18 @@
           "description": "A teacher will sharpen the student's mind and broaden their knowledge in a random discipline. (Adds experience to Clever and one random skill)",
           "nsfw": false,
           "difficulty": "medium",
-          "skills": ["Clever"],
-          "training_skills_distribution": {"Clever": 5, "random_one": 5},
+          "skills": [
+            "Clever"
+          ],
+          "training_skills_distribution": {
+            "Clever": 5,
+            "random_one": 5
+          },
           "max_daily_workers": 99,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
             {
               "id": "academy_academics",
@@ -28,8 +38,22 @@
               "description": "{worker_name} spent the day in the Academy's lecture halls and scriptorium, working through logic puzzles and dialectics. By evening they could feel their wits sharpening—and the tutors had them practise one other discipline at random, to keep the mind supple.",
               "story_image": "",
               "failure_image": "",
-              "loot": {"rolls": 0},
-              "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
             }
           ]
         },
@@ -39,18 +63,205 @@
           "description": "A teacher will show the student the ways of amatory arts, teaching sexual techniques and ways to satisfy partners in bed. (Adds experience split across sex skills)",
           "nsfw": true,
           "difficulty": "medium",
-          "skills": ["Sex", "Anal", "BDSM", "Special", "Extreme", "Homo", "Striptease"],
-          "training_skills_distribution": {"Sex": 5, "Anal": 5, "BDSM": 5, "Special": 5, "Extreme": 5, "Homo": 5, "Striptease": 5},
+          "skills": [
+            "Sex",
+            "Anal",
+            "BDSM",
+            "Special",
+            "Extreme",
+            "Homo",
+            "Striptease"
+          ],
+          "training_skills_distribution": {
+            "Sex": 5,
+            "Anal": 5,
+            "BDSM": 5,
+            "Special": 5,
+            "Extreme": 5,
+            "Homo": 5,
+            "Striptease": 5
+          },
           "max_daily_workers": 99,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
-            {"id": "academy_amatory_sex", "weight": 1, "used_skill": "Sex", "report": "Amatory Arts: Core Intimacy", "description": "{worker_name} joined the discreet amatory class today. The instructor led them through core intimate techniques—breath, touch, and presence—and paired them with exercises in another art, so each lesson stays focused yet varied.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_amatory_anal", "weight": 1, "used_skill": "Anal", "report": "Amatory Arts: Anal Techniques", "description": "{worker_name} attended the amatory module on anal techniques: safety, pacing, and communication. The tutor then wove in practice from another discipline, leaving them a little flushed but clearer on how to blend skills.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_amatory_bdsm", "weight": 1, "used_skill": "BDSM", "report": "Amatory Arts: BDSM & Control", "description": "{worker_name} spent the day in the BDSM and control module—negotiation, boundaries, and the theatre of power exchange. The instructor combined it with drills from another amatory art, so the lesson felt coherent but never repetitive.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_amatory_special", "weight": 1, "used_skill": "Special", "report": "Amatory Arts: Special Techniques", "description": "{worker_name} worked on special techniques in the amatory wing: the kind that require patience and finesse. Today's focus was paired with another discipline at the tutor's choice, and they left with new ideas to try when the moment is right.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_amatory_extreme", "weight": 1, "used_skill": "Extreme", "report": "Amatory Arts: Extreme Practices", "description": "{worker_name} attended the module on more intense practices—always within the Academy's strict rules of consent and aftercare. The tutor rounded the session with practice in another art, so they left stirred but grounded.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_amatory_homo", "weight": 1, "used_skill": "Homo", "report": "Amatory Arts: Same-Sex Arts", "description": "{worker_name} joined the same-sex arts class today. The instructor emphasised desire, respect, and technique regardless of who shares the bed, and combined it with drills from another amatory discipline so the lesson stayed varied.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_amatory_striptease", "weight": 1, "used_skill": "Striptease", "report": "Amatory Arts: Seduction & Dance", "description": "{worker_name} spent the day on seduction and striptease—presence, gaze, and the art of undressing for an audience. The tutor wove in practice from another amatory art, so they left with a sharper sense of how to hold a room.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}}
+            {
+              "id": "academy_amatory_sex",
+              "weight": 1,
+              "used_skill": "Sex",
+              "report": "Amatory Arts: Core Intimacy",
+              "description": "{worker_name} joined the discreet amatory class today. The instructor led them through core intimate techniques—breath, touch, and presence—and paired them with exercises in another art, so each lesson stays focused yet varied.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_amatory_anal",
+              "weight": 1,
+              "used_skill": "Anal",
+              "report": "Amatory Arts: Anal Techniques",
+              "description": "{worker_name} attended the amatory module on anal techniques: safety, pacing, and communication. The tutor then wove in practice from another discipline, leaving them a little flushed but clearer on how to blend skills.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_amatory_bdsm",
+              "weight": 1,
+              "used_skill": "BDSM",
+              "report": "Amatory Arts: BDSM & Control",
+              "description": "{worker_name} spent the day in the BDSM and control module—negotiation, boundaries, and the theatre of power exchange. The instructor combined it with drills from another amatory art, so the lesson felt coherent but never repetitive.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_amatory_special",
+              "weight": 1,
+              "used_skill": "Special",
+              "report": "Amatory Arts: Special Techniques",
+              "description": "{worker_name} worked on special techniques in the amatory wing: the kind that require patience and finesse. Today's focus was paired with another discipline at the tutor's choice, and they left with new ideas to try when the moment is right.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_amatory_extreme",
+              "weight": 1,
+              "used_skill": "Extreme",
+              "report": "Amatory Arts: Extreme Practices",
+              "description": "{worker_name} attended the module on more intense practices—always within the Academy's strict rules of consent and aftercare. The tutor rounded the session with practice in another art, so they left stirred but grounded.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_amatory_homo",
+              "weight": 1,
+              "used_skill": "Homo",
+              "report": "Amatory Arts: Same-Sex Arts",
+              "description": "{worker_name} joined the same-sex arts class today. The instructor emphasised desire, respect, and technique regardless of who shares the bed, and combined it with drills from another amatory discipline so the lesson stayed varied.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_amatory_striptease",
+              "weight": 1,
+              "used_skill": "Striptease",
+              "report": "Amatory Arts: Seduction & Dance",
+              "description": "{worker_name} spent the day on seduction and striptease—presence, gaze, and the art of undressing for an audience. The tutor wove in practice from another amatory art, so they left with a sharper sense of how to hold a room.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            }
           ]
         },
         {
@@ -59,13 +270,121 @@
           "description": "A teacher will show the student how to greet clients and offer them what they need. (Adds experience split across Charm & Service)",
           "nsfw": false,
           "difficulty": "medium",
-          "skills": ["Charm", "Service"],
-          "training_skills_distribution": {"Charm": 5, "Service": 5},
+          "skills": [
+            "Charm",
+            "Service"
+          ],
+          "training_skills_distribution": {
+            "Charm": 5,
+            "Service": 5
+          },
           "max_daily_workers": 99,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
           "daily_stories": [
-            {"id": "academy_hospitality_charm", "weight": 1, "used_skill": "Charm", "report": "Hospitality: Charm & Etiquette", "description": "{worker_name} was in the hospitality wing today, practising charm and etiquette—how to greet guests, read a room, and put strangers at ease. They paired it with service drills so both presence and attentiveness improved by evening.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}},
-            {"id": "academy_hospitality_service", "weight": 1, "used_skill": "Service", "report": "Hospitality: Service & Care", "description": "{worker_name} trained in service and attentive care: anticipating needs, carrying trays and messages, and staying one step ahead of the house. The instructors mixed in charm and poise so they left feeling both useful and presentable.", "story_image": "", "failure_image": "", "loot": {"rolls": 0}, "consequences": {"success": {"energy": 0, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0}}}
+            {
+              "id": "academy_hospitality_charm",
+              "weight": 1,
+              "used_skill": "Charm",
+              "report": "Hospitality: Charm & Etiquette",
+              "description": "{worker_name} was in the hospitality wing today, practising charm and etiquette—how to greet guests, read a room, and put strangers at ease. They paired it with service drills so both presence and attentiveness improved by evening.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            },
+            {
+              "id": "academy_hospitality_service",
+              "weight": 1,
+              "used_skill": "Service",
+              "report": "Hospitality: Service & Care",
+              "description": "{worker_name} trained in service and attentive care: anticipating needs, carrying trays and messages, and staying one step ahead of the house. The instructors mixed in charm and poise so they left feeling both useful and presentable.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "rest",
+          "name": "Rest",
+          "description": "Student takes a day away from lectures and drills to sleep, eat, and recover. No classes today while strength returns.",
+          "nsfw": false,
+          "difficulty": "none",
+          "skills": [],
+          "training_skills_distribution": {},
+          "max_daily_workers": 99,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
+          "daily_stories": [
+            {
+              "id": "rest_academy",
+              "weight": 1,
+              "description": "{worker_name} skips the formal routine for a recovery day—extra sleep, plain meals, and quiet corners of the campus. Tutors may mark an absence, but muscles and minds knit back together.",
+              "report": "Taking a Break",
+              "story_image": "rest_adventurer",
+              "consequences": {
+                "success": {
+                  "energy": 3,
+                  "health": 3,
+                  "joy": 2
+                }
+              },
+              "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_academy",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} finds a private moment away from scheduled drills and shared dorms—tension drains, breath evens, and tomorrow's ink looks a little less like a cage.",
+              "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest_libido",
+              "trait_roll_modifiers": {}
+            }
           ]
         }
       ]
@@ -77,7 +396,9 @@
       "skill_description": "The Arena hosts combat and spectacle: Exhibition bouts (controlled, wooden weapons), Proving bouts (veteran opponents), Championship fights (champions and beasts), and Pin up Barbarians (risqué spectacle). Assign workers to a role to earn money and reputation.",
       "nsfw": false,
       "show_in_manage_buildings": false,
-      "allowed_map_locations": ["arena"],
+      "allowed_map_locations": [
+        "arena"
+      ],
       "professions": [
         {
           "id": "arena_exhibition",
@@ -85,20 +406,37 @@
           "description": "Controlled bouts with blunted or wooden weapons before a crowd. Low risk, small purse. Proves form and showmanship.",
           "nsfw": false,
           "difficulty": "easy",
-          "skills": ["Combat"],
-          "training_skills_distribution": {"Combat": 5},
+          "skills": [
+            "Combat"
+          ],
+          "training_skills_distribution": {
+            "Combat": 5
+          },
           "max_daily_workers": 8,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1
+          },
           "daily_stories": [
             {
               "id": "arena_exhibition_drill",
               "weight": 1,
               "report": "Arena: Exhibition bout",
               "difficulty_modifier": 10,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Energetic", "Confident", "Tough"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Energetic",
+                "Confident",
+                "Tough"
+              ],
               "trait_success": "The crowd loved {worker_name}'s {trait} during the exhibition.",
-              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -108,22 +446,71 @@
                 "critical_success": "{worker_name} turns the exhibition into theatre. Against the drill-master they combine flawless form and flair—the crowd roars. The Lanista raises a hand in approval and the purse is generous."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": 0, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": -3, "libido": 0},
-                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
-                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+                "failure": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             },
             {
               "id": "arena_exhibition_crowd",
               "weight": 1,
               "report": "Arena: Exhibition vs recruit",
               "difficulty_modifier": 10,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Energetic", "Confident"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Energetic",
+                "Confident"
+              ],
               "trait_success": "{worker_name}'s {trait} shone in the exhibition.",
-              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -133,12 +520,51 @@
                 "critical_success": "{worker_name} dominates the exhibition against a recruit—fluid, confident, no wasted motion. The crowd chants; the Lanista notes the name. A fine purse and growing reputation."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": 0, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": -3, "libido": 0},
-                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
-                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+                "failure": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             }
           ]
         },
@@ -148,20 +574,37 @@
           "description": "Real steel and veteran opponents. Higher stakes, real risk of injury. Proves worth before the Lanista and the crowd.",
           "nsfw": false,
           "difficulty": "medium",
-          "skills": ["Combat"],
-          "training_skills_distribution": {"Combat": 5},
+          "skills": [
+            "Combat"
+          ],
+          "training_skills_distribution": {
+            "Combat": 5
+          },
           "max_daily_workers": 5,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1
+          },
           "daily_stories": [
             {
               "id": "arena_proving_veteran",
               "weight": 1,
               "report": "Arena: Proving vs veteran",
               "difficulty_modifier": 0,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Tough", "Confident", "Experienced"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Tough",
+                "Confident",
+                "Experienced"
+              ],
               "trait_success": "{worker_name}'s {trait} carried the day against the veteran.",
-              "earnings": {"success": "300 + skill * 3", "critical_success": "300 + skill * 6", "mediocre": "150 + skill", "failure": "-(150 + roll)"},
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -171,22 +614,71 @@
                 "critical_success": "{worker_name} bests the veteran in a bout that has the crowd on its feet. Parry, strike, composure—the Lanista rises to acknowledge a fighter worthy of the sands. The purse is substantial."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
-                "mediocre": {"energy": -2, "health": -2, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
-                "success": {"energy": -1, "health": -2, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+                "failure": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             },
             {
               "id": "arena_proving_gladiator",
               "weight": 1,
               "report": "Arena: Proving vs gladiator",
               "difficulty_modifier": 0,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Tough", "Confident"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Tough",
+                "Confident"
+              ],
               "trait_success": "{worker_name}'s {trait} saw them through the proving bout.",
-              "earnings": {"success": "300 + skill * 3", "critical_success": "300 + skill * 6", "mediocre": "150 + skill", "failure": "-(150 + roll)"},
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -196,12 +688,51 @@
                 "critical_success": "{worker_name} defeats the gladiator in a proving bout that becomes the talk of the day. Steel and grit carry the hour—the Lanista grants a hefty purse and the crowd chants their name."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
-                "mediocre": {"energy": -2, "health": -2, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 0, "libido": 0},
-                "success": {"energy": -1, "health": -2, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+                "failure": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             }
           ]
         },
@@ -211,20 +742,37 @@
           "description": "Face champions and beasts of the arena. Highest stakes and real danger—minotaurs, mythical creatures, or the Lanista's own champions.",
           "nsfw": false,
           "difficulty": "hard",
-          "skills": ["Combat"],
-          "training_skills_distribution": {"Combat": 5},
+          "skills": [
+            "Combat"
+          ],
+          "training_skills_distribution": {
+            "Combat": 5
+          },
           "max_daily_workers": 3,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1
+          },
           "daily_stories": [
             {
               "id": "arena_championship_minotaur",
               "weight": 1,
               "report": "Arena: Championship vs minotaur",
               "difficulty_modifier": -10,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Tough", "Brave", "Experienced"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Tough",
+                "Brave",
+                "Experienced"
+              ],
               "trait_success": "{worker_name}'s {trait} was the key against the minotaur.",
-              "earnings": {"success": "400 + skill * 4", "critical_success": "400 + skill * 8", "mediocre": "200 + skill * 2", "failure": "-(200 + roll)"},
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -234,22 +782,72 @@
                 "critical_success": "{worker_name} slays the minotaur in a display of cold precision. No wasted movement—the crowd rises as one. The Lanista presents a champion's blade and a purse that echoes their name."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": -8, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -3, "libido": -1},
-                "mediocre": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 3, "libido": 0},
-                "success": {"energy": -1, "health": -3, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 8, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 5, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 15, "libido": 0}
+                "failure": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 5,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             },
             {
               "id": "arena_championship_beast",
               "weight": 1,
               "report": "Arena: Championship vs mythical beast",
               "difficulty_modifier": -10,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Brave", "Tough", "Experienced"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Brave",
+                "Tough",
+                "Experienced"
+              ],
               "trait_success": "{worker_name}'s {trait} prevailed against the beast.",
-              "earnings": {"success": "400 + skill * 4", "critical_success": "400 + skill * 8", "mediocre": "200 + skill * 2", "failure": "-(200 + roll)"},
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -259,22 +857,72 @@
                 "critical_success": "{worker_name} turns the beast into a trophy. Flawless footwork, lethal strikes—the creature never had a chance. The Lanista crowns the moment; the purse and the legend are theirs."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": -8, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -3, "libido": -1},
-                "mediocre": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 3, "libido": 0},
-                "success": {"energy": -1, "health": -3, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 8, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 5, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 15, "libido": 0}
+                "failure": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 5,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             },
             {
               "id": "arena_championship_champion",
               "weight": 1,
               "report": "Arena: Championship vs arena champion",
               "difficulty_modifier": -10,
-              "skill_options": ["Combat"],
-              "relevant_traits": ["Experienced", "Confident", "Tough"],
+              "skill_options": [
+                "Combat"
+              ],
+              "relevant_traits": [
+                "Experienced",
+                "Confident",
+                "Tough"
+              ],
               "trait_success": "The crowd saw {worker_name}'s {trait} defeat the champion.",
-              "earnings": {"success": "400 + skill * 4", "critical_success": "400 + skill * 8", "mediocre": "200 + skill * 2", "failure": "-(200 + roll)"},
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -284,12 +932,51 @@
                 "critical_success": "{worker_name} destroys the champion. A masterclass in combat—the crowd is in rapture. The Lanista rises and hands them the champion's blade; the arena has a new legend."
               },
               "consequences": {
-                "failure": {"energy": -2, "health": -8, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -3, "libido": -1},
-                "mediocre": {"energy": -2, "health": -5, "joy": -1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 3, "libido": 0},
-                "success": {"energy": -1, "health": -3, "joy": 3, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 8, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 5, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 15, "libido": 0}
+                "failure": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 5,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             }
           ]
         },
@@ -299,20 +986,40 @@
           "description": "Risqué spectacle: fierce poses, minimal armour, and crowd appeal. Less risk than combat, more skin than glory. Earns coin and reputation from admirers.",
           "nsfw": true,
           "difficulty": "easy",
-          "skills": ["Charm", "Striptease"],
-          "training_skills_distribution": {"Charm": 3, "Striptease": 3},
+          "skills": [
+            "Charm",
+            "Striptease"
+          ],
+          "training_skills_distribution": {
+            "Charm": 3,
+            "Striptease": 3
+          },
           "max_daily_workers": 6,
-          "daily_story_count": {"base": 1},
+          "daily_story_count": {
+            "base": 1
+          },
           "daily_stories": [
             {
               "id": "arena_pinup_warrior",
               "weight": 1,
               "report": "Arena: Pin up warrior show",
               "difficulty_modifier": 5,
-              "skill_options": ["Charm", "Striptease"],
-              "relevant_traits": ["Charming", "Beautiful", "Confident"],
+              "skill_options": [
+                "Charm",
+                "Striptease"
+              ],
+              "relevant_traits": [
+                "Charming",
+                "Beautiful",
+                "Confident"
+              ],
               "trait_success": "The crowd adored {worker_name}'s {trait} in the pin up show.",
-              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -322,22 +1029,73 @@
                 "critical_success": "{worker_name} becomes the star of the Pin up show. Every pose lands; the crowd chants their name and showers the stage with coin. The Lanista grins—today's spectacle belonged to them."
               },
               "consequences": {
-                "failure": {"energy": -1, "health": 0, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
-                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 2, "libido": 0},
-                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+                "failure": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
             },
             {
               "id": "arena_pinup_gladiator",
               "weight": 1,
               "report": "Arena: Pin up gladiator spectacle",
               "difficulty_modifier": 5,
-              "skill_options": ["Charm", "Striptease"],
-              "relevant_traits": ["Sensual", "Playful", "Charming"],
+              "skill_options": [
+                "Charm",
+                "Striptease"
+              ],
+              "relevant_traits": [
+                "Sensual",
+                "Playful",
+                "Charming"
+              ],
               "trait_success": "{worker_name}'s {trait} made the pin up spectacle unforgettable.",
-              "earnings": {"success": "150 + skill * 2", "critical_success": "150 + skill * 4", "mediocre": "75 + skill", "failure": "-(75 + roll)"},
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
               "story_image": "",
               "failure_image": "",
               "descriptions": {
@@ -347,12 +1105,102 @@
                 "critical_success": "{worker_name} turns the pin up gladiator act into the day's highlight. Charisma and cheek leave the crowd breathless; the Lanista pays a bonus and the arena buzzes with their name."
               },
               "consequences": {
-                "failure": {"energy": -1, "health": 0, "joy": -1, "rebelliousness": 1, "romance": 0, "relationship": 0, "reputation": -5, "libido": 0},
-                "mediocre": {"energy": -1, "health": 0, "joy": 0, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 2, "libido": 0},
-                "success": {"energy": -1, "health": 0, "joy": 1, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 5, "libido": 0},
-                "critical_success": {"energy": -1, "health": 0, "joy": 2, "rebelliousness": 0, "romance": 0, "relationship": 0, "reputation": 10, "libido": 0}
+                "failure": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 0
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 0
+                }
               },
-              "loot": {"rolls": 0}
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
+            }
+          ]
+        },
+        {
+          "id": "rest",
+          "name": "Rest",
+          "description": "Worker takes a break to regenerate health and energy. No arena bouts today.",
+          "nsfw": false,
+          "difficulty": "none",
+          "skills": [],
+          "training_skills_distribution": {},
+          "max_daily_workers": 99,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
+          "daily_stories": [
+            {
+              "id": "rest_arena_break",
+              "weight": 1,
+              "description": "The fighter stays off the sand—bandages, water, and sleep—so they can return ready for the next match.",
+              "report": "Taking a Break",
+              "story_image": "rest_adventurer",
+              "consequences": {
+                "success": {
+                  "energy": 3,
+                  "health": 3,
+                  "joy": 2
+                }
+              },
+              "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_arena",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} slips away from the training yard crowd for private relief—muscles unclench, pulse settles, and the next bout feels one step farther from reckless.",
+              "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest_libido",
+              "trait_roll_modifiers": {}
             }
           ]
         }

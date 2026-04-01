@@ -330,12 +330,9 @@ init python:
                 negotiated_comfort = int(desired_comfort)
             worker["comfort_level"] = negotiated_comfort
 
-            # Compute cost with a safety floor tied to comfort (use game economy: difficulty mult x comfort)
+            # Canon rule: worker daily cost is comfort x 20.
             _cm = get_difficulty_comfort_mult()
-            original_daily_cost = worker.get("daily_cost", negotiated_comfort * _cm)
-            final_cost_raw = int(original_daily_cost * cost_modifier)
-            min_cost = max(_cm, negotiated_comfort * _cm)
-            final_cost = max(min_cost, final_cost_raw)
+            final_cost = int(max(1, negotiated_comfort) * _cm)
             worker["daily_cost"] = final_cost
             
             # Apply relationship bonus if present (relative to comfort)

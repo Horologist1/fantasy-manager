@@ -12,17 +12,17 @@ init python:
     # - Above 20 -> -5 plus overflow above 20
     NON_SEXUAL_LIBIDO_BASELINE = 20
     NON_SEXUAL_LIBIDO_BASE_SKILL_PENALTY = 5
+    DAILY_SIM_DEBUG = False
+    # Game over when player money is at or below this (after daily ledger or at day start).
+    BANKRUPTCY_MONEY_THRESHOLD = -5000
+    store.BANKRUPTCY_MONEY_THRESHOLD = BANKRUPTCY_MONEY_THRESHOLD
+
+    def _daily_debug_log(message):
+        if DAILY_SIM_DEBUG:
+            renpy.log(message)
 
     def get_difficulty_comfort_mult():
-        """Return the comfort cost multiplier for the current difficulty (used in process_next_day and UI)."""
-        diff = getattr(persistent, "difficulty", "normal")
-        if diff == "story":
-            return 5
-        if diff == "nightmare":
-            return 40
-        if diff == "hard":
-            return 30
-        # easy and normal: same cost per design
+        """Comfort unit cost by design: fixed 20 gold per comfort point."""
         return 20
 
     def get_difficulty_building_skill_mult():
@@ -33,6 +33,156 @@ init python:
         if diff == "hard":
             return 1.5
         return 1.0
+
+    def _is_first_building_slot(building_name):
+        """True for Building 1 aliases ('Building 1' / 'Building_1')."""
+        s = str(building_name or "").strip().replace("_", " ")
+        s = " ".join(s.split()).lower()
+        return s == "building 1"
+
+    def _fixed_maintenance_ladder_cost(base_level):
+        """
+        Fixed building upkeep by level (normal difficulty): 100, 300, 500, 700, 900 for levels 1-5;
+        continues +200 per level beyond 5 if uncapped.
+        """
+        try:
+            lv = int(base_level)
+        except Exception:
+            lv = 1
+        lv = max(1, lv)
+        return 100 + (lv - 1) * 200
+
+    def get_building_base_maintenance_cost(building_name, building):
+        """
+        Base daily maintenance before worker comfort charges and skill-bonus upkeep.
+        """
+        if building is None or not hasattr(building, "get"):
+            return 0
+
+        diff = getattr(persistent, "difficulty", "normal")
+        try:
+            base_level = int(building.get("base_level", 1))
+        except Exception:
+            base_level = 1
+        base_level = max(1, base_level)
+
+        raw = _fixed_maintenance_ladder_cost(base_level)
+        if diff == "nightmare":
+            base_cost = int(raw * 3)
+        elif diff == "hard":
+            base_cost = int(raw * 2)
+        else:
+            base_cost = int(raw)
+
+        return base_cost
+
+    def get_building_daily_cost_scaling_tooltip():
+        """Tooltip copy for UI: how building level affects fixed upkeep."""
+        return (
+            "Fixed daily upkeep by building level (Normal): $100, $300, $500, $700, $900 for levels 1-5.\n"
+            "Hard doubles that ladder; Nightmare triples it (same relative tiers as before).\n"
+            "Assigned workers: comfort x 20 each, with no extra multiplier from building level."
+        )
+
+    def get_building_level_short_tooltip():
+        return (
+            "Higher building levels raise fixed daily upkeep (see Costs tooltip) and reputation cap. "
+            "Worker charges are comfort x 20 only."
+        )
+
+    def get_building_comfort_line_tooltip():
+        """Worker UI: base comfort line and building-level context."""
+        return (
+            "Base worker comfort cost is comfort x 20. "
+            "Building totals sum that for assigned workers; level does not multiply worker comfort. "
+            "Hover Costs on Manager for the full breakdown. "
+            "Comfort level 1 is baseline (no extra regen). Each comfort level above 1 adds +1 daily energy regeneration at day start (before work)."
+        )
+
+    def compute_worker_portion_daily_costs(workers, base_level):
+        """
+        Returns (total, comfort_part, upkeep_part) for assigned servants.
+        upkeep_part is kept for backward compatibility and is always 0.
+        workers: iterable of worker dicts.
+        base_level is ignored; kept for call-site compatibility.
+        """
+        comfort_mult = get_difficulty_comfort_mult()
+        seq = workers if workers is not None else []
+        comfort_costs = 0
+        for w in seq:
+            if not hasattr(w, "get"):
+                continue
+            try:
+                cl = int(w.get("comfort_level", 1))
+            except Exception:
+                cl = 1
+            comfort_costs += cl * comfort_mult
+        comfort_costs = int(comfort_costs)
+        upkeep_costs = 0
+        return comfort_costs + upkeep_costs, comfort_costs, upkeep_costs
+
+    def compute_single_worker_daily_charge(worker):
+        """
+        Base worker daily comfort charge shown in worker details (comfort x 20).
+        Same per-worker rate is summed for building totals; building level does not multiply it.
+        """
+        if not worker or not hasattr(worker, "get"):
+            return 0
+        try:
+            cl = int(worker.get("comfort_level", 1))
+        except Exception:
+            cl = 1
+        return int(max(1, cl) * get_difficulty_comfort_mult())
+
+    def daily_story_apply_trait_chance_from_cons(worker, cons):
+        """
+        Apply consequences.trait_chance (same schema as training: list of { trait|name, chance_percent|percent, optional duration }).
+        Returns list of trait names actually granted for UI/report.
+        """
+        if not cons or not hasattr(cons, "get"):
+            return []
+        tc = cons.get("trait_chance")
+        if tc is None:
+            return []
+        if hasattr(tc, "get") and callable(getattr(tc, "get", None)):
+            entries = [tc]
+        elif hasattr(tc, "__iter__") and not isinstance(tc, (str, bytes)):
+            entries = list(tc)
+        else:
+            return []
+        if not entries:
+            return []
+        fn = getattr(store, "apply_trait_chance_entries", None)
+        if not callable(fn):
+            return []
+        stat_changes = {}
+        fn(worker, entries, stat_changes, granted_list_key="traits_from_daily_story", log_prefix="Daily story")
+        return list(stat_changes.get("traits_from_daily_story") or [])
+
+    def daily_story_apply_trait_remove_chance_from_cons(worker, cons):
+        """
+        Apply consequences.trait_remove_chance (same entry shape as trait_chance, without duration).
+        Returns list of trait names actually removed for UI/report.
+        """
+        if not cons or not hasattr(cons, "get"):
+            return []
+        tc = cons.get("trait_remove_chance")
+        if tc is None:
+            return []
+        if hasattr(tc, "get") and callable(getattr(tc, "get", None)):
+            entries = [tc]
+        elif hasattr(tc, "__iter__") and not isinstance(tc, (str, bytes)):
+            entries = list(tc)
+        else:
+            return []
+        if not entries:
+            return []
+        fn = getattr(store, "apply_trait_remove_chance_entries", None)
+        if not callable(fn):
+            return []
+        stat_changes = {}
+        fn(worker, entries, stat_changes, removed_list_key="traits_removed_from_daily_story", log_prefix="Daily story")
+        return list(stat_changes.get("traits_removed_from_daily_story") or [])
 
     def _story_stats_match_worker(story, worker):
         """
@@ -53,7 +203,7 @@ init python:
             except Exception:
                 worker_value = 0
 
-            if isinstance(requirement, dict):
+            if hasattr(requirement, "get"):
                 min_val = requirement.get("min")
                 max_val = requirement.get("max")
                 eq_val = requirement.get("eq")
@@ -184,6 +334,123 @@ init python:
         )
         return adjusted, note
 
+    # Staffing: per-profession penalty (0 workers) / bonus (>=1) on building earnings; clamp product.
+    STAFFING_MONEY_MULT_MIN = 1.0 / 3.0
+    STAFFING_MONEY_MULT_MAX = 3.0
+    PRESENCE_ROLL_BONUS_TOTAL_CAP = 40
+
+    def compute_building_staffing_modifiers(btype, building, workers_here):
+        """
+        Returns (building_money_mult, building_roll_bonus).
+        - Money: product of staffing_penalty if job count==0 else staffing_bonus per profession (skip rest); clamp [1/3, 3].
+        - Synergy: sum of presence_roll_bonus * n_workers (added to skill threshold for d100 checks); cap total magnitude.
+        """
+        sj = building.get("servant_jobs") or {}
+        job_counts = {}
+        for w in workers_here:
+            if not hasattr(w, "get"):
+                continue
+            wn = w.get("name")
+            if not wn:
+                continue
+            jid = sj.get(wn, "")
+            job_counts[jid] = job_counts.get(jid, 0) + 1
+
+        raw_money = 1.0
+        roll_bonus_raw = 0
+        for prof in btype.get("professions", []):
+            pid = prof.get("id")
+            if pid == "rest":
+                continue
+            n = job_counts.get(pid, 0)
+            try:
+                if n == 0:
+                    m = float(prof.get("staffing_penalty", 1.0))
+                else:
+                    m = float(prof.get("staffing_bonus", 1.0))
+                raw_money *= m
+            except (TypeError, ValueError):
+                pass
+            prb = prof.get("presence_roll_bonus")
+            if prb is not None:
+                try:
+                    roll_bonus_raw += int(float(prb)) * n
+                except (TypeError, ValueError):
+                    pass
+        money_mult = max(STAFFING_MONEY_MULT_MIN, min(STAFFING_MONEY_MULT_MAX, raw_money))
+        roll_bonus = max(-PRESENCE_ROLL_BONUS_TOTAL_CAP, min(PRESENCE_ROLL_BONUS_TOTAL_CAP, roll_bonus_raw))
+        return money_mult, roll_bonus
+
+    def is_unrefuseable_profession(profession):
+        prof_id = str((profession or {}).get("id", "")).strip().lower()
+        if prof_id == "rest":
+            return True
+        if prof_id.startswith("academy_"):
+            return True
+        return False
+
+    def apply_simple_daily_story_consequences(worker, cons, manager_inv):
+        granted = []
+        removed = []
+        if not cons:
+            return granted, removed
+        if "energy" in cons:
+            old_energy = worker["energy"]
+            worker["energy"] = min(calculate_max_energy(worker), max(0, worker["energy"] + cons["energy"]))
+            renpy.log(f"Academy: {worker['name']} energy {old_energy} -> {worker['energy']} (change: {cons['energy']})")
+        if "health" in cons:
+            old_health = worker["health"]
+            worker["health"] = min(calculate_max_health(worker), max(0, worker["health"] + cons["health"]))
+            renpy.log(f"Academy: {worker['name']} health {old_health} -> {worker['health']} (change: {cons['health']})")
+        if "joy" in cons:
+            old_joy = worker["joy"]
+            apply_attribute_change(worker, "joy", cons["joy"])
+            renpy.log(f"Academy: {worker['name']} joy {old_joy} -> {worker['joy']} (change: {cons['joy']})")
+        if "rebelliousness" in cons:
+            old_rebelliousness = worker["rebelliousness"]
+            apply_attribute_change(worker, "rebelliousness", cons["rebelliousness"])
+            renpy.log(f"Academy: {worker['name']} rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (change: {cons['rebelliousness']})")
+        if "romance" in cons:
+            old_romance = worker["romance"]
+            apply_attribute_change(worker, "romance", cons["romance"])
+            renpy.log(f"Academy: {worker['name']} romance {old_romance} -> {worker['romance']} (change: {cons['romance']})")
+        if "relationship" in cons:
+            old_relationship = worker["relationship"]
+            apply_attribute_change(worker, "relationship", cons["relationship"])
+            renpy.log(f"Academy: {worker['name']} relationship {old_relationship} -> {worker['relationship']} (change: {cons['relationship']})")
+        if "reputation" in cons:
+            rep_delta = cons["reputation"]
+            if rep_delta:
+                try:
+                    rep_delta = int(rep_delta)
+                except Exception:
+                    rep_delta = 0
+                if rep_delta and "Academy" in available_buildings:
+                    ab = available_buildings["Academy"]
+                    cap = get_building_reputation_cap(ab)
+                    new_rep = ab.get("reputation", 0) + rep_delta
+                    ab["reputation"] = max(0, min(new_rep, cap))
+                    renpy.log(f"Academy reputation {rep_delta} -> {ab['reputation']} (cap {cap})")
+        if "libido" in cons and getattr(persistent, "nsfw_enabled", False):
+            old_libido = worker.get("libido", 0)
+            apply_attribute_change(worker, "libido", cons["libido"])
+            renpy.log(f"Academy: {worker['name']} libido {old_libido} -> {worker.get('libido', 0)} (change: {cons['libido']})")
+        granted.extend(daily_story_apply_trait_chance_from_cons(worker, cons))
+        removed.extend(daily_story_apply_trait_remove_chance_from_cons(worker, cons))
+        if "give_item" in cons and manager_inv is not None:
+            item_data = cons["give_item"]
+            if isinstance(item_data, str) and item_data:
+                add_item_to_inventory(manager_inv, item_data)
+                renpy.log(f"Academy daily: gave item '{item_data}' to manager")
+            elif hasattr(item_data, "get"):
+                item_id = item_data.get("item_id") or item_data.get("id")
+                qty = int(item_data.get("quantity", 1))
+                if item_id:
+                    for _ in range(max(1, qty)):
+                        add_item_to_inventory(manager_inv, item_id)
+                    renpy.log(f"Academy daily: gave {qty}x '{item_id}' to manager")
+        return granted, removed
+
     def process_daily_events():
         global daily_report, manager_inventory
         renpy.log("process_daily_events() starting...")
@@ -200,25 +467,22 @@ init python:
         # Precompute name -> store worker map for identity enforcement
         name_to_store = {w.get("name"): w for w in store.workers}
 
-        # Debug snapshot of energies y sincronización con store.workers
         try:
-            renpy.log("ENERGY SNAPSHOT: begin daily events")
+            _daily_debug_log("ENERGY SNAPSHOT: begin daily events")
             for bname in store.owned_buildings:
                 b = available_buildings.get(bname)
-                if not isinstance(b, dict):
+                if not hasattr(b, "get"):
                     continue
                 for aw in b.get("assigned_servants", []) or []:
                     n = aw.get("name")
                     sw = name_to_store.get(n)
-                    # Si el objeto asignado no es el mismo que el de store, sincroniza energía/salud
                     if sw is not None and aw is not sw:
                         aw["energy"] = sw.get("energy", aw.get("energy", 0))
                         aw["health"] = sw.get("health", aw.get("health", 0))
-                    renpy.log(f"  {bname}: {n} assigned energy={aw.get('energy')} id={id(aw)} | store energy={sw.get('energy') if sw else 'N/A'} id={id(sw) if sw else 'N/A'} job={b.get('servant_jobs', {}).get(n)}")
+                    _daily_debug_log(f"  {bname}: {n} assigned energy={aw.get('energy')} id={id(aw)} | store energy={sw.get('energy') if sw else 'N/A'} id={id(sw) if sw else 'N/A'} job={b.get('servant_jobs', {}).get(n)}")
         except Exception as e:
             renpy.log("ENERGY SNAPSHOT error: " + str(e))
 
-        # 1. Agrupar trabajadores REALES (de store.workers) por su edificio asignado
         workers_by_building = {}
         for w in store.workers:
             b_name = w.get("assigned_building", "Unassigned")
@@ -227,14 +491,17 @@ init python:
                     workers_by_building[b_name] = []
                 workers_by_building[b_name].append(w)
 
-        for building_name in store.owned_buildings:
+        all_owned_buildings = list(store.owned_buildings or [])
+        if getattr(store, "academy_enrolled", False) and "Academy" in available_buildings and "Academy" not in all_owned_buildings:
+            all_owned_buildings.append("Academy")
+
+        for building_name in all_owned_buildings:
             building = available_buildings.get(building_name)
             workers_here = workers_by_building.get(building_name, [])
             if not building:
                 renpy.log(f"DAILY: Skipping {building_name} - not found in available_buildings")
                 continue
 
-            # Sincronizamos la lista visual por si acaso, pero no dependemos de ella
             building["assigned_servants"] = workers_here
             
             if not workers_here:
@@ -242,12 +509,20 @@ init python:
                 continue
 
             btype_id = building.get("type")
+            if not btype_id and str(building_name) == "Academy":
+                btype_id = "academy"
             if not btype_id:
                 continue
 
             btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), None)
             if not btype:
                 continue
+
+            building_money_mult, building_roll_bonus = compute_building_staffing_modifiers(btype, building, workers_here)
+            renpy.log(
+                f"DAILY {building_name}: staffing_money_mult={building_money_mult:.4f} "
+                f"presence_roll_bonus={building_roll_bonus}"
+            )
 
             # Update building costs to include skill bonus
             _skill_mult = get_difficulty_building_skill_mult()
@@ -256,108 +531,12 @@ init python:
             building["costs"] = building.get("costs", 0) + bonus_cost
             renpy.log(f"Building {building_name} new costs after skill bonus: {building['costs']}")
 
-            # Process "rest" workers ONCE per building, before processing other professions
-            # Find the rest profession definition (should only be one, but we'll take the first)
-            rest_profession = None
-            for prof in btype.get("professions", []):
-                if prof.get("id") == "rest":
-                    rest_profession = prof
-                    break
-            
-            if rest_profession:
-                # Get all workers in rest for this building from the robust workers_here list
-                workers_in_rest = []
-                for w in workers_here:
-                    worker_name = w.get("name", "")
-                    job_raw = building.get("servant_jobs", {}).get(worker_name, "")
-                    job_norm = str(job_raw).lower()
-                    if "rest" in job_norm:
-                        workers_in_rest.append(w)
-                        renpy.log(f"DAILY: Found worker in rest: {worker_name} in {building_name}")
-                
-                # Process each worker in rest exactly once
-                for worker in workers_in_rest:
-                    stories = rest_profession.get("daily_stories", [])
-                    if not stories:
-                        renpy.log(f"DAILY: No daily_stories for rest profession, skipping")
-                        continue
-                    compatible_rest_stories = [s for s in stories if is_story_eligible_for_worker(s, worker)]
-                    if not compatible_rest_stories:
-                        compatible_rest_stories = stories
-                    chosen_story = random.choice(compatible_rest_stories)
-                    full_description = chosen_story.get("description", "")
-                    full_description = full_description.replace("{worker_name}", worker.get("name", "Unknown"))
-                    outcome = "Rest"
-
-                    if "consequences" in chosen_story:
-                        cons = chosen_story["consequences"].get("success", {})
-                        if cons:
-                            # Apply energy and health changes
-                            if "energy" in cons:
-                                old_energy = worker["energy"]
-                                worker["energy"] = min(calculate_max_energy(worker), max(0, worker["energy"] + cons["energy"]))
-                                renpy.log(f"Event: {worker['name']} energy {old_energy} -> {worker['energy']} (change: {cons['energy']}), Worker ID: {id(worker)}")
-                            if "health" in cons:
-                                old_health = worker["health"]
-                                worker["health"] = min(calculate_max_health(worker), max(0, worker["health"] + cons["health"]))
-                                renpy.log(f"Event: {worker['name']} health {old_health} -> {worker['health']} (change: {cons['health']}), Worker ID: {id(worker)}")
-
-                            # Apply joy changes
-                            if "joy" in cons:
-                                old_joy = worker["joy"]
-                                apply_attribute_change(worker, "joy", cons["joy"])
-                                renpy.log(f"Event: {worker['name']} joy {old_joy} -> {worker['joy']} (change: {cons['joy']}), Worker ID: {id(worker)}")
-
-                            # Apply rebelliousness changes
-                            if "rebelliousness" in cons:
-                                old_rebelliousness = worker["rebelliousness"]
-                                apply_attribute_change(worker, "rebelliousness", cons["rebelliousness"])
-                                renpy.log(f"Event: {worker['name']} rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (change: {cons['rebelliousness']}), Worker ID: {id(worker)}")
-
-                            # Apply romance changes
-                            if "romance" in cons:
-                                old_romance = worker["romance"]
-                                apply_attribute_change(worker, "romance", cons["romance"])
-                                renpy.log(f"Event: {worker['name']} romance {old_romance} -> {worker['romance']} (change: {cons['romance']}), Worker ID: {id(worker)}")
-
-                            # Apply relationship changes
-                            if "relationship" in cons:
-                                old_relationship = worker["relationship"]
-                                apply_attribute_change(worker, "relationship", cons["relationship"])
-                                renpy.log(f"Event: {worker['name']} relationship {old_relationship} -> {worker['relationship']} (change: {cons['relationship']}), Worker ID: {id(worker)}")
-                            if "libido" in cons and getattr(persistent, "nsfw_enabled", False):
-                                old_libido = worker.get("libido", 0)
-                                apply_attribute_change(worker, "libido", cons["libido"])
-                                renpy.log(f"Event: {worker['name']} libido {old_libido} -> {worker.get('libido', 0)} (change: {cons['libido']}), Worker ID: {id(worker)}")
-                    report_entry = {
-                        "building": building_name,
-                        "profession": rest_profession.get("name", "Rest"),
-                        "worker_name": worker.get("name", "Unknown"),
-                        "worker": worker,
-                        "event_data": chosen_story,
-                        "report": chosen_story.get("report", "Resting"),
-                        "description": full_description,
-                        "result": outcome,
-                        "earnings": 0,
-                        "used_skill": "N/A",
-                        "roll": "N/A",
-                        "trait_roll": None,
-                        "trait_success_messages": [],
-                        "group_event": False,
-                        "loot": [],
-                        "story_image": get_event_image(worker, chosen_story, outcome="success")
-                    }
-                    daily_report.append(report_entry)
-
             for profession in btype.get("professions", []):
-                # Skip rest profession as it's already processed above
-                if profession["id"] == "rest":
-                    continue
-
+                _pid = str(profession.get("id", "")).strip().lower()
                 assigned_workers = [
                     name_to_store.get(w.get("name"), w)
                     for w in building["assigned_servants"]
-                    if (building.get("servant_jobs") or {}).get(w.get("name"), "") == profession["id"]
+                    if str((building.get("servant_jobs") or {}).get(w.get("name"), "")).strip().lower() == _pid
                 ]
                 # Keep building list referencing canonical store objects to avoid drift (dedupe by name)
                 _deduped_assigned = []
@@ -377,11 +556,7 @@ init python:
                     continue
 
                 daily_story_count = profession.get("daily_story_count", 0)
-                # Check if building has event_limit set (0 = unlimited, 1 = limit to 1, 2 = limit to 2, 3 = limit to 3)
-                event_limit = building.get("event_limit", 0)
-                if event_limit > 0:
-                    events_per_worker = event_limit
-                elif hasattr(daily_story_count, "get"):
+                if hasattr(daily_story_count, "get"):
                     base_events = int(daily_story_count.get("base", 0))
                     bonus_formula = daily_story_count.get("bonus_formula", "0")
                     try:
@@ -397,38 +572,48 @@ init python:
                 else:
                     events_per_worker = int(daily_story_count)
 
+                # Building event_limit caps stories per worker (0 = unlimited; 1–3 = max per worker per day).
+                event_limit = building.get("event_limit", 0)
+                try:
+                    event_limit = int(event_limit)
+                except Exception:
+                    event_limit = 0
+                if event_limit > 0:
+                    events_per_worker = min(events_per_worker, event_limit)
+
                 for worker in eligible_workers:
                     renpy.log(f"Processing worker: {worker['name']}, ID: {id(worker)}")
                     # Check for rebelliousness
-                    rebelliousness = worker.get("rebelliousness", 50)
-                    if rebelliousness > 80 and random.random() < 0.2:  # 20% chance to refuse work
-                        # Apply rebelliousness decay based on comfort level
-                        comfort = worker.get("comfort_level", 1)
-                        rebelliousness_reduction = comfort * 3
-                        old_rebelliousness = worker["rebelliousness"]
-                        apply_attribute_change(worker, "rebelliousness", -rebelliousness_reduction)
-                        renpy.log(f"Rebelliousness decay: {worker['name']} refused work, rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (comfort {comfort} × 3 = -{rebelliousness_reduction})")
-                        
-                        report_entry = {
-                            "building": building_name,
-                            "profession": profession.get("name", "Unknown Profession"),
-                            "worker_name": worker.get("name", "Unknown"),
-                            "worker": worker,
-                            "event_data": {"story_image": "Refuse"},
-                            "report": f"Rebellious, {worker['name']} refused to work",
-                            "description": f"Rebellious, {worker['name']} refused to work and spent the day doing other activities. However, the comfortable conditions helped calm their rebellious spirit. (-{rebelliousness_reduction} Rebelliousness from comfort)",
-                            "result": "Refused",
-                            "earnings": 0,
-                            "used_skill": "N/A",
-                            "roll": "N/A",
-                            "trait_roll": None,
-                            "trait_success_messages": [],
-                            "group_event": False,
-                            "loot": [],
-                            "story_image": get_event_image(worker, {"story_image": "Refuse"}, outcome="refused")
-                        }
-                        daily_report.append(report_entry)
-                        continue  # Skip further processing for this worker
+                    if not is_unrefuseable_profession(profession):
+                        rebelliousness = worker.get("rebelliousness", 50)
+                        if rebelliousness > 80 and random.random() < 0.2:  # 20% chance to refuse work
+                            # Apply rebelliousness decay based on comfort level
+                            comfort = worker.get("comfort_level", 1)
+                            rebelliousness_reduction = comfort * 3
+                            old_rebelliousness = worker["rebelliousness"]
+                            apply_attribute_change(worker, "rebelliousness", -rebelliousness_reduction)
+                            renpy.log(f"Rebelliousness decay: {worker['name']} refused work, rebelliousness {old_rebelliousness} -> {worker['rebelliousness']} (comfort {comfort} × 3 = -{rebelliousness_reduction})")
+                            
+                            report_entry = {
+                                "building": building_name,
+                                "profession": profession.get("name", "Unknown Profession"),
+                                "worker_name": worker.get("name", "Unknown"),
+                                "worker": worker,
+                                "event_data": {"story_image": "Refuse"},
+                                "report": f"Rebellious, {worker['name']} refused to work",
+                                "description": f"Rebellious, {worker['name']} refused to work and spent the day doing other activities. However, the comfortable conditions helped calm their rebellious spirit. (-{rebelliousness_reduction} Rebelliousness from comfort)",
+                                "result": "Refused",
+                                "earnings": 0,
+                                "used_skill": "N/A",
+                                "roll": "N/A",
+                                "trait_roll": None,
+                                "trait_success_messages": [],
+                                "group_event": False,
+                                "loot": [],
+                                "story_image": get_event_image(worker, {"story_image": "Refuse"}, outcome="refused")
+                            }
+                            daily_report.append(report_entry)
+                            continue  # Skip further processing for this worker
 
                     # Initialize failed_rolls counter for joy adjustment
                     worker["failed_rolls"] = worker.get("failed_rolls", 0)
@@ -436,8 +621,10 @@ init python:
                     # Track the number of events processed
                     processed_events = 0
                     for _ in range(events_per_worker):
+                        daily_story_traits_granted = []
+                        daily_story_traits_removed = []
                         # Check if worker has enough energy to perform another event
-                        if worker["energy"] <= 0:
+                        if worker["energy"] <= 0 and str(profession.get("id", "")).strip().lower() != "rest":
                             renpy.log(f"{worker['name']} has no energy left. Skipping further events.")
                             break
 
@@ -445,21 +632,29 @@ init python:
                         if not stories:
                             continue
                         
-                        # Filter stories by worker gender requirement
+                        # Filter stories by worker gender, manager (Lord/Lady) gender, and eligibility
                         worker_gender = worker.get("gender", "")
-                        compatible_stories = []
-                        for story in stories:
-                            story_gender_req = story.get("worker_gender_requirement", None)
-                            if (story_gender_req is None or story_gender_req == worker_gender) and is_story_eligible_for_worker(story, worker):
-                                compatible_stories.append(story)
 
-                        # Safety fallback to preserve legacy behavior if custom filters remove all stories.
-                        if not compatible_stories:
-                            compatible_stories = []
+                        def _collect_daily_stories_compatible(include_player_filter, include_eligible):
+                            out = []
                             for story in stories:
                                 story_gender_req = story.get("worker_gender_requirement", None)
-                                if story_gender_req is None or story_gender_req == worker_gender:
-                                    compatible_stories.append(story)
+                                if story_gender_req is not None and story_gender_req != worker_gender:
+                                    continue
+                                if include_player_filter and not store.event_passes_player_gender_requirement(story):
+                                    continue
+                                if include_eligible and not is_story_eligible_for_worker(story, worker):
+                                    continue
+                                out.append(story)
+                            return out
+
+                        compatible_stories = _collect_daily_stories_compatible(True, True)
+                        # Relax manager gender if nothing matches (same idea as legacy worker/eligible fallback)
+                        if not compatible_stories:
+                            compatible_stories = _collect_daily_stories_compatible(False, True)
+                        # Safety fallback: worker gender only (ignore eligibility and manager filter)
+                        if not compatible_stories:
+                            compatible_stories = _collect_daily_stories_compatible(False, False)
                             if compatible_stories:
                                 renpy.log(f"Story filter fallback used for {worker.get('name', 'Unknown')} in profession {profession.get('id', 'unknown')}")
                         
@@ -469,6 +664,94 @@ init python:
                         
                         chosen_story = select_weighted_event(compatible_stories)
                         if not chosen_story:
+                            continue
+
+                        profession_id = str(profession.get("id", "")).strip().lower()
+                        if is_unrefuseable_profession(profession):
+                            daily_story_traits_granted = []
+                            daily_story_traits_removed = []
+                            academy_primary_skill = None
+                            academy_applied_uses = {}
+
+                            if profession_id.startswith("academy_"):
+                                academy_primary_skill = chosen_story.get("used_skill")
+                                if not academy_primary_skill and profession.get("skills"):
+                                    academy_primary_skill = profession.get("skills")[0]
+                                if not academy_primary_skill:
+                                    academy_primary_skill = "Clever"
+                                if profession.get("training_skills_distribution") and hasattr(store, "add_academy_training_skill_uses"):
+                                    academy_applied_uses = store.add_academy_training_skill_uses(worker, profession, primary_skill=academy_primary_skill) or {}
+
+                            no_roll_cons = {}
+                            if hasattr(chosen_story.get("consequences"), "get"):
+                                no_roll_cons = chosen_story.get("consequences", {}).get("success", {}) or {}
+                            if no_roll_cons:
+                                daily_story_traits_granted, daily_story_traits_removed = apply_simple_daily_story_consequences(worker, no_roll_cons, manager_inventory)
+
+                            if profession_id.startswith("academy_"):
+                                try:
+                                    _acad_lv = max(1, int(worker.get("level", 1)))
+                                except Exception:
+                                    _acad_lv = 1
+                                earnings = -int(round(300 * (1.0 + 0.06 * float(_acad_lv - 1))))
+                                outcome = "Success"
+                                used_skill = academy_primary_skill or "N/A"
+                            else:
+                                earnings = 0
+                                outcome = "Rest"
+                                used_skill = "N/A"
+                                # Rest comfort bonus: comfort-1 extra energy recovery
+                                try:
+                                    _rc = int(worker.get("comfort_level", 1))
+                                except Exception:
+                                    _rc = 1
+                                _rest_comfort_bonus = max(0, _rc - 1)
+                                if _rest_comfort_bonus > 0:
+                                    _max_e = calculate_max_energy(worker)
+                                    worker["energy"] = min(_max_e, worker["energy"] + _rest_comfort_bonus)
+
+                            _raw_desc = chosen_story.get("description", "")
+                            if not _raw_desc:
+                                _raw_desc = chosen_story.get("descriptions", {}).get("success", "No description available")
+                            full_description = _raw_desc.format(worker_name=worker.get("name", "Unknown"), skill=used_skill)
+
+                            if academy_applied_uses:
+                                parts = [f"{sk}: +{amt} experience" for sk, amt in sorted(academy_applied_uses.items())]
+                                full_description += " Gained: " + ", ".join(parts) + "."
+
+                            if daily_story_traits_granted:
+                                full_description += (
+                                    "\n\n{color=#88cc88}Trait(s) gained: "
+                                    + ", ".join(str(t) for t in daily_story_traits_granted)
+                                    + "{/color}"
+                                )
+                            if daily_story_traits_removed:
+                                full_description += (
+                                    "\n\n{color=#cc8888}Trait(s) removed: "
+                                    + ", ".join(str(t) for t in daily_story_traits_removed)
+                                    + "{/color}"
+                                )
+
+                            report_entry = {
+                                "building": building_name,
+                                "profession": profession.get("name", "Unknown Profession"),
+                                "worker_name": worker.get("name", "Unknown"),
+                                "worker": worker,
+                                "event_data": chosen_story,
+                                "report": chosen_story.get("report", ""),
+                                "description": full_description,
+                                "result": outcome,
+                                "earnings": earnings,
+                                "used_skill": used_skill,
+                                "roll": "N/A",
+                                "trait_roll": None,
+                                "trait_success_messages": [],
+                                "group_event": False,
+                                "loot": [],
+                                "story_image": get_event_image(worker, chosen_story, outcome="success", skill_name=used_skill)
+                            }
+                            daily_report.append(report_entry)
+                            processed_events += 1
                             continue
 
                         skill_options = chosen_story.get("skill_options", [])
@@ -511,33 +794,38 @@ init python:
                         if trait_modifier != 0:
                             adjusted_skill = max(0, adjusted_skill + trait_modifier)
 
-                        # Roll outcome with proper skill-based logic
+                        # Roll outcome: success if d100 <= skill threshold. Synergy bonus raises the threshold (not the die).
                         roll = random.randint(1, 100)
+                        try:
+                            synergy_skill_bonus = int(building_roll_bonus)
+                        except (TypeError, ValueError):
+                            synergy_skill_bonus = 0
+                        skill_threshold = min(100, max(0, adjusted_skill + synergy_skill_bonus))
                         if roll < 50:
                             worker["failed_rolls"] = worker.get("failed_rolls", 0) + 1
 
-                        # Critical success: 10% of skill, max 25%
-                        crit_pct = min(25, max(1, int(round(0.10 * adjusted_skill))))
+                        # Critical success: 10% of effective threshold, max 25%
+                        crit_pct = min(25, max(1, int(round(0.10 * skill_threshold))))
                         
                         if roll <= crit_pct:
                             outcome = "Critical Success"
                             reputation_change = 10
-                        elif roll <= adjusted_skill:
-                            # Success: roll <= skill (the core mechanic)
+                        elif roll <= skill_threshold:
+                            # Success: roll <= threshold (core mechanic)
                             outcome = "Success"
                             reputation_change = 5
-                        elif roll <= adjusted_skill + 10:
-                            # Mediocre: just above skill (skill+1 to skill+10)
+                        elif roll <= skill_threshold + 10:
+                            # Mediocre: just above threshold (threshold+1 to threshold+10)
                             outcome = "Mediocre"
                             reputation_change = 0
                         else:
-                            # Failure: everything above skill+10
+                            # Failure: everything above threshold+10
                             outcome = "Failure"
                             reputation_change = -5
                         outcome_key = outcome.lower().replace(" ", "_")
 
                         earnings_formula = chosen_story.get("earnings", {}).get(outcome_key, "0")
-                        env = {"skill": effective_skill, "level": worker.get("level", 1), "roll": roll}
+                        env = {"skill": skill_threshold, "level": worker.get("level", 1), "roll": roll}
                         try:
                             earnings = eval(earnings_formula, {"__builtins__": None}, env)
                         except Exception:
@@ -566,25 +854,32 @@ init python:
                             if tpl and picked_trait:
                                 try:
                                     txt = tpl.format(worker_name=worker.get("name", "Unknown"), trait=picked_trait)
-                                    trait_success_messages.append(f"{txt} ({trait_modifier:+d} to roll)")
+                                    # trait_modifier is net from ALL matching pos/neg traits; picked_trait is narrative only.
+                                    # Always label the number so it is never read as only this trait weight.
+                                    trait_success_messages.append(
+                                        f"{txt} ({trait_modifier:+d} total from traits)"
+                                    )
                                 except Exception:
-                                    trait_success_messages.append(f"Trait specialization: {trait_modifier:+d} to roll")
+                                    trait_success_messages.append(f"Trait specialization: {trait_modifier:+d}")
                         
-                        # Apply trait earnings multipliers
+                        # Trait + Business Acumen money mult (calculate_earnings skips negatives; staffing mult always applies)
                         earnings = calculate_earnings(worker, earnings)
+                        earnings = int(round(earnings * building_money_mult))
                         
-                        # Easy difficulty: cap how much workers can lose on failure (normal -20, vip -30, premium -40)
-                        if outcome == "Failure" and earnings < 0 and getattr(persistent, "difficulty", "normal") == "easy":
-                            failure_formula = chosen_story.get("earnings", {}).get("failure", "")
-                            if "200" in failure_formula:
-                                earnings = max(earnings, -40)
-                            elif "150" in failure_formula:
-                                earnings = max(earnings, -30)
-                            else:
-                                earnings = max(earnings, -20)
+                        # Story/Easy: floor on failure losses (daily stories use failure: "-roll" after rebalance)
+                        if outcome == "Failure" and earnings < 0:
+                            diff_fail = getattr(persistent, "difficulty", "normal")
+                            if diff_fail == "story":
+                                earnings = max(earnings, -15)
+                            elif diff_fail == "easy":
+                                earnings = max(earnings, -25)
                         
                         # Log individual earnings for debugging
-                        renpy.log(f"EARNINGS DEBUG: {worker['name']} earned ${earnings} (outcome: {outcome}, skill: {effective_skill}, roll: {roll}, difficulty_penalty: -{difficulty_skill_penalty})")
+                        renpy.log(
+                            f"EARNINGS DEBUG: {worker['name']} earned ${earnings} (outcome: {outcome}, skill: {effective_skill}, "
+                            f"die: {roll}, threshold: {skill_threshold} (adj {adjusted_skill} + synergy {synergy_skill_bonus}), "
+                            f"money_mult: {building_money_mult:.4f}, difficulty_penalty: -{difficulty_skill_penalty})"
+                        )
 
                         # Apply consequences
                         if "consequences" in chosen_story:
@@ -637,21 +932,8 @@ init python:
                                     apply_attribute_change(worker, "libido", cons["libido"])
                                     renpy.log(f"Event: {worker['name']} libido {old_libido} -> {worker.get('libido', 0)} (change: {cons['libido']}), Worker ID: {id(worker)}")
 
-                                # Apply add_trait from daily story consequences
-                                if "add_trait" in cons:
-                                    trait_data = cons["add_trait"]
-                                    if isinstance(trait_data, dict):
-                                        trait_name = trait_data.get("name")
-                                        duration = trait_data.get("duration", 0)
-                                    elif isinstance(trait_data, str):
-                                        trait_name = trait_data
-                                        duration = 0
-                                    else:
-                                        trait_name = None
-                                        duration = 0
-                                    if trait_name and worker:
-                                        add_trait_with_duration(worker, trait_name, duration)
-                                        renpy.log(f"Daily story: Added trait '{trait_name}' to {worker.get('name', 'Unknown')}")
+                                daily_story_traits_granted.extend(daily_story_apply_trait_chance_from_cons(worker, cons))
+                                daily_story_traits_removed.extend(daily_story_apply_trait_remove_chance_from_cons(worker, cons))
 
                                 # Apply give_item from daily story consequences (to manager inventory)
                                 if "give_item" in cons:
@@ -659,7 +941,7 @@ init python:
                                     if isinstance(item_data, str) and item_data:
                                         add_item_to_inventory(manager_inventory, item_data)
                                         renpy.log(f"Daily story: Gave item '{item_data}' to manager")
-                                    elif isinstance(item_data, dict):
+                                    elif hasattr(item_data, "get"):
                                         item_id = item_data.get("item_id") or item_data.get("id")
                                         qty = int(item_data.get("quantity", 1))
                                         if item_id:
@@ -682,6 +964,18 @@ init python:
                             full_description += "\n\n{color=#aaddaa}" + "\n".join(trait_success_messages) + "{/color}"
                         if libido_penalty_note:
                             full_description += "\n\n{color=#aa4444}" + libido_penalty_note + "{/color}"
+                        if daily_story_traits_granted:
+                            full_description += (
+                                "\n\n{color=#88cc88}Trait(s) gained: "
+                                + ", ".join(str(t) for t in daily_story_traits_granted)
+                                + "{/color}"
+                            )
+                        if daily_story_traits_removed:
+                            full_description += (
+                                "\n\n{color=#cc8888}Trait(s) removed: "
+                                + ", ".join(str(t) for t in daily_story_traits_removed)
+                                + "{/color}"
+                            )
                         # Determine color based on outcome (matching daily report colors)
                         if outcome in ["Critical Success", "Success", "Rest"]:
                             outcome_color = "#006600"  # Verde
@@ -693,11 +987,41 @@ init python:
                             outcome_color = "#663333"  # Rojo claro
                         else:
                             outcome_color = "#ffffff"  # Blanco por defecto
-                        # Show skill name and value before skill roll
-                        if selected_skill and skill_value > 0:
-                            full_description += "\n\n{{color={}}}{{size=18}}({}: {} - Skill roll: {} - {}){{/size}}{{/color}}".format(outcome_color, selected_skill, skill_value, roll, outcome)
+                        # Check line: multi-skill stories list all skills before ":", then value + " avg"; single skill omits avg.
+                        if synergy_skill_bonus > 0:
+                            syn_seg = " + {} syn".format(synergy_skill_bonus)
+                        elif synergy_skill_bonus < 0:
+                            syn_seg = " − {} syn".format(abs(synergy_skill_bonus))
                         else:
-                            full_description += "\n\n{{color={}}}{{size=18}}(Skill roll: {} - {}){{/size}}{{/color}}".format(outcome_color, roll, outcome)
+                            syn_seg = ""
+                        if len(skill_options) > 1:
+                            check_skill_label = " ".join(str(s) for s in skill_options)
+                            avg_seg = " avg"
+                        else:
+                            check_skill_label = selected_skill
+                            avg_seg = ""
+                        if selected_skill:
+                            full_description += "\n\n{{color={}}}{{size=18}}({}: {}{}{} — Skill roll {} — {}){{/size}}{{/color}}".format(
+                                outcome_color,
+                                check_skill_label,
+                                adjusted_skill,
+                                avg_seg,
+                                syn_seg,
+                                roll,
+                                outcome,
+                            )
+                        else:
+                            full_description += "\n\n{{color={}}}{{size=18}}(Skill roll {} — {}){{/size}}{{/color}}".format(
+                                outcome_color, roll, outcome
+                            )
+
+                        _earn_col = "#228822" if earnings > 0 else ("#aa2222" if earnings < 0 else "#666666")
+                        if earnings > 0:
+                            full_description += "\n{{color={0}}}{{size=18}}Earned +${1}{{/size}}{{/color}}".format(_earn_col, earnings)
+                        elif earnings < 0:
+                            full_description += "\n{{color={0}}}{{size=18}}Lost ${1}{{/size}}{{/color}}".format(_earn_col, -earnings)
+                        else:
+                            full_description += "\n{{color={0}}}{{size=18}}No payout{{/size}}{{/color}}".format(_earn_col)
 
                         # Use skill name directly
                         if selected_skill is not None:
@@ -757,12 +1081,11 @@ init python:
                                     for item_id in loot:
                                         add_item_to_inventory(manager_inventory, item_id)
                                 
-                                # Bonus items handling - specific items with chance
+                                # Bonus items: JSON chance only (no difficulty loot multiplier; same idea as monster_worker).
                                 bonus_items = loot_data.get("bonus_items", [])
-                                loot_mult = get_difficulty_loot_multiplier()
                                 for bonus in bonus_items:
                                     item_id = bonus.get("item_id")
-                                    chance = min(1.0, max(0.0, bonus.get("chance", 1.0) * loot_mult))
+                                    chance = min(1.0, max(0.0, bonus.get("chance", 1.0)))
                                     # Skip NSFW items if NSFW is disabled
                                     if bonus.get("nsfw", False) and not persistent.nsfw_enabled:
                                         continue
@@ -775,9 +1098,9 @@ init python:
                                             report_entry["loot"].append(item_id)
                                         renpy.log(f"Bonus loot: {item_id} (chance: {chance})")
                                 
-                                # Monster worker loot handling
+                                # Monster worker loot handling (JSON chance only; no difficulty loot multiplier).
                                 if "monster_worker" in loot_data:
-                                    chance = min(1.0, max(0.0, loot_data["monster_worker"].get("chance", 1.0) * loot_mult))
+                                    chance = min(1.0, max(0.0, loot_data["monster_worker"].get("chance", 1.0)))
                                     filters = loot_data["monster_worker"].get("filters", {"monster": True})
                                     if random.random() <= chance:
                                         looted_worker = loot_monster_worker(filters)
@@ -794,74 +1117,6 @@ init python:
                         daily_report.append(report_entry)
                         processed_events += 1
 
-        # Academy: process workers assigned to Academy (building not in owned_buildings)
-        ACADEMY_DAILY_COST_PER_WORKER = 300
-        if getattr(store, "academy_enrolled", False) and "Academy" in available_buildings:
-            academy_building = available_buildings["Academy"]
-            academy_workers = workers_by_building.get("Academy", [])
-            btype_academy = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == "academy"), None)
-            if btype_academy and academy_workers:
-                academy_building["assigned_servants"] = academy_workers
-                for worker in academy_workers:
-                    job_id = (academy_building.get("servant_jobs") or {}).get(worker.get("name"), "")
-                    if not job_id:
-                        continue
-                    profession = next((p for p in btype_academy.get("professions", []) if p.get("id") == job_id), None)
-                    if profession and profession.get("training_skills_distribution"):
-                        daily_stories = profession.get("daily_stories") or []
-                        compatible_stories = []
-                        for story in daily_stories:
-                            story_gender_req = story.get("worker_gender_requirement", None)
-                            if (story_gender_req is None or story_gender_req == worker.get("gender", "")) and is_story_eligible_for_worker(story, worker):
-                                compatible_stories.append(story)
-                        if not compatible_stories:
-                            for story in daily_stories:
-                                story_gender_req = story.get("worker_gender_requirement", None)
-                                if story_gender_req is None or story_gender_req == worker.get("gender", ""):
-                                    compatible_stories.append(story)
-                            if compatible_stories:
-                                renpy.log(f"Academy story filter fallback used for {worker.get('name', 'Unknown')}")
-                        chosen_story = select_weighted_event(compatible_stories) if compatible_stories else None
-                        primary_skill = chosen_story.get("used_skill") if chosen_story else None
-                        applied_uses = {}
-                        if hasattr(store, "add_academy_training_skill_uses"):
-                            applied_uses = store.add_academy_training_skill_uses(worker, profession, primary_skill=primary_skill) or {}
-                        story_name = f"Academy: {profession.get('name', 'Training')}"
-                        desc_base = f"{worker.get('name', 'Unknown')} attended {profession.get('name', 'Training')} at the Academy."
-                        if chosen_story:
-                            story_name = chosen_story.get("report") or story_name
-                            desc_tpl = chosen_story.get("description") or desc_base
-                            desc_base = desc_tpl.replace("{worker_name}", worker.get("name", "Unknown"))
-                        if applied_uses:
-                            parts = [f"{sk}: +{amt} experience" for sk, amt in sorted(applied_uses.items())]
-                            desc_base += " Gained: " + ", ".join(parts) + "."
-                        else:
-                            desc_base += " Gained experience in relevant skills."
-                        if not primary_skill and profession.get("skills"):
-                            primary_skill = profession["skills"][0]
-                        if not primary_skill:
-                            primary_skill = "Clever"
-                        report_entry = {
-                            "building": "Academy",
-                            "profession": profession.get("name", "Training"),
-                            "worker_name": worker.get("name", "Unknown"),
-                            "worker": worker,
-                            "event_data": chosen_story if chosen_story else {"report": story_name},
-                            "report": story_name,
-                            "description": desc_base,
-                            "result": "Success",
-                            "earnings": -ACADEMY_DAILY_COST_PER_WORKER,
-                            "used_skill": primary_skill,
-                            "roll": "N/A",
-                            "trait_roll": None,
-                            "trait_success_messages": [],
-                            "group_event": False,
-                            "loot": [],
-                            "story_image": get_event_image(worker, chosen_story or {}, outcome="success", skill_name=primary_skill)
-                        }
-                        daily_report.append(report_entry)
-                        processed_events += 1
-
         renpy.log(f"process_daily_events() finished. Report entries: {len(daily_report)}")
         return None # Function finished successfully
 
@@ -875,14 +1130,14 @@ init python:
             name_to_worker = {w.get("name"): w for w in store.workers}
             for bname in store.owned_buildings:
                 b = available_buildings.get(bname)
-                if not isinstance(b, dict):
+                if not hasattr(b, "get"):
                     continue
                 assigned = b.get("assigned_servants", []) or []
                 jobs = b.get("servant_jobs", {}) or {}
                 relinked = []
                 seen_names = set()
                 for sw in assigned:
-                    wname = sw.get("name") if isinstance(sw, dict) else None
+                    wname = sw.get("name") if hasattr(sw, "get") else None
                     if not wname or wname in seen_names:
                         if wname and wname in seen_names:
                             renpy.log(f"RELINK: duplicate assigned_servant '{wname}' in {bname}, skipping")
@@ -918,7 +1173,7 @@ init python:
             return None
         if isinstance(delta, int):
             return delta
-        if isinstance(delta, dict):
+        if hasattr(delta, "get"):
             lo = delta.get("min")
             hi = delta.get("max")
             if lo is not None and hi is not None:
@@ -941,7 +1196,7 @@ init python:
         - Equipped items: item["effect"]["daily_effects"]
         """
         totals = {s: 0 for s in _DAILY_EFFECT_STATS}
-        if not isinstance(worker, dict):
+        if not hasattr(worker, "get"):
             return totals
 
         # Traits
@@ -950,7 +1205,7 @@ init python:
             if not trait_def:
                 continue
             daily_effects = trait_def.get("daily_effects") or {}
-            if not isinstance(daily_effects, dict):
+            if not hasattr(daily_effects, "get"):
                 continue
             for stat, delta in daily_effects.items():
                 if stat not in totals:
@@ -967,7 +1222,7 @@ init python:
             if isinstance(inv_entry, (list, tuple)) and len(inv_entry) >= 3:
                 item_id = inv_entry[0]
                 equipped = bool(inv_entry[2])
-            elif isinstance(inv_entry, dict):
+            elif hasattr(inv_entry, "get"):
                 item_id = inv_entry.get("id") or inv_entry.get("item_id")
                 equipped = bool(inv_entry.get("equipped", False))
 
@@ -980,7 +1235,7 @@ init python:
 
             effect = item_data.get("effect") or {}
             daily_effects = effect.get("daily_effects") or {}
-            if not isinstance(daily_effects, dict):
+            if not hasattr(daily_effects, "get"):
                 continue
 
             for stat, delta in daily_effects.items():
@@ -1161,7 +1416,7 @@ init python:
 
     def process_next_day():
         # Ensure necessary variables are global (removed filtered_building)
-        global daily_report, displayed_workers, money, can_recruit_today, available_workers, daily_spawns
+        global daily_report, displayed_workers, can_recruit_today, available_workers, daily_spawns
 
         # Hard reset of pending random-event context at day start.
         # Prevents stale events from previous flows from appearing together
@@ -1169,12 +1424,19 @@ init python:
         store.current_event = None
         store.current_worker = None
 
+        # Bankruptcy at day start: catches spending after last daily report (UI uses store.money).
+        _thr = getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", BANKRUPTCY_MONEY_THRESHOLD)
+        _cur = int(getattr(store, "money", 0) or 0)
+        if _cur <= _thr:
+            renpy.log(f"BANKRUPTCY: money ${_cur} at start of day (threshold <= {_thr}), game over.")
+            return "game_over"
+
         # Check and update trait durations
         check_trait_durations()
         # One-time migration: rebelliousness no longer uses modifiers; prime _last_applied to avoid delta spike
         if not getattr(persistent, "_rebelliousness_v2_migrated", False):
             for w in getattr(store, "workers", []) or []:
-                if isinstance(w, dict):
+                if hasattr(w, "get"):
                     la = w.get("_last_applied_trait_modifiers") or {}
                     la["rebelliousness"] = 0
                     w["_last_applied_trait_modifiers"] = la
@@ -1216,37 +1478,22 @@ init python:
                 building["costs"] = 0
                 renpy.log(f"Reset costs for {building_name} to 0")
 
-                # Difficulty: Story (comfort x5, base 100), Easy/Normal (x20, base 100),
-                # Hard (x30, base 200), Nightmare (x40, base 300)
-                comfort_mult = get_difficulty_comfort_mult()
-                diff = getattr(persistent, "difficulty", "normal")
-                if diff == "nightmare":
-                    base_per_level = 300
-                elif diff == "hard":
-                    base_per_level = 200
-                else:
-                    base_per_level = 100
-
-                # Add base maintenance cost (per building level; Hard doubles it)
-                base_cost = base_per_level * building["base_level"]
+                # Add base maintenance cost (difficulty + base level)
+                base_cost = get_building_base_maintenance_cost(building_name, building)
                 building["costs"] += base_cost
 
-                # Add worker costs based on comfort level and upkeep per worker (differs by source)
+                # Add worker comfort costs (comfort x 20 each; no building-level multiplier).
                 if "assigned_servants" in building:
-                    comfort_costs = sum(worker.get("comfort_level", 1) * comfort_mult for worker in building["assigned_servants"])
-                    upkeep_costs = 0
-                    for w in building["assigned_servants"]:
-                        source = w.get("source", "bought")
-                        level = w.get("level", 1)
-                        if source == "recruited":
-                            upkeep_costs += (20 + 3 * level)
-                        else:
-                            upkeep_costs += (5 + 1 * level)
-                    worker_costs = comfort_costs + upkeep_costs
+                    worker_costs, comfort_costs, _upkeep_costs = compute_worker_portion_daily_costs(
+                        building.get("assigned_servants") or [],
+                        building.get("base_level", 1),
+                    )
                     building["costs"] += worker_costs
-                    renpy.log(f"Added base cost {base_cost} + comfort {comfort_costs} + upkeep {upkeep_costs} to {building_name}, total: {building['costs']}")
+                    renpy.log(
+                        f"Added base cost {base_cost} + worker comfort {comfort_costs} "
+                        f"to {building_name}, total: {building['costs']}"
+                    )
 
-        # Poner a descansar / restaurar trabajo ANTES de regenerar: si se regenera primero, los de 0 energía ya no cumplen energy < rest_threshold
         try:
             process_manager_auto_rest()
             renpy.log("Manager auto-rest processing completed (before regen)")
@@ -1280,18 +1527,24 @@ init python:
 
             old_energy = worker["energy"]
             base_energy_regen = worker.get("level", 1)
+            try:
+                _comfort_lv = int(worker.get("comfort_level", 1))
+            except Exception:
+                _comfort_lv = 1
+            # Comfort 1 is minimum/baseline; only levels above 1 add to daily energy regen
+            comfort_energy_regen = max(0, _comfort_lv - 1)
             trait_energy_regen = 0
             try:
                 trait_energy_regen = calculate_energy_regeneration(worker)
             except Exception:
                 trait_energy_regen = 0
-            energy_regen = base_energy_regen + trait_energy_regen
+            energy_regen = base_energy_regen + comfort_energy_regen + trait_energy_regen
             max_energy = calculate_max_energy(worker)
             worker["max_energy"] = max_energy
             new_energy = min(worker["energy"] + energy_regen, max_energy)
             worker["energy"] = new_energy
             if old_energy != new_energy:
-                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen} = level {base_energy_regen} + trait {trait_energy_regen}, max: {max_energy})")
+                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen} = level {base_energy_regen} + comfort {comfort_energy_regen} + trait {trait_energy_regen}, max: {max_energy})")
 
             if persistent.nsfw_enabled:
                 regenerate_libido(worker)
@@ -1343,12 +1596,12 @@ init python:
         renpy.log(f"Calculated total income from daily_report: {total_income}")
         
         # Log detailed breakdown of all earnings
-        renpy.log("EARNINGS BREAKDOWN:")
+        _daily_debug_log("EARNINGS BREAKDOWN:")
         for i, report in enumerate(daily_report):
             earnings = report.get("earnings", 0)
             worker_name = report.get("worker_name", "Unknown")
             outcome = report.get("result", "Unknown")
-            renpy.log(f"  Entry {i+1}: {worker_name} - ${earnings} ({outcome})")
+            _daily_debug_log(f"  Entry {i+1}: {worker_name} - ${earnings} ({outcome})")
 
         for building_name in store.owned_buildings:
             building = available_buildings.get(building_name)
@@ -1379,14 +1632,20 @@ init python:
         update_displayed_workers()
         renpy.log(f"Updated displayed_workers: {[w['name'] for w in displayed_workers]}")
 
-        # Update money BEFORE events so events can modify the updated amount
-        old_money = money
-        money += total_income # Apply calculated income
-        money -= total_building_costs  # Subtract calculated building costs
-        money = int(money) # Ensure money is an integer
+        # Apply daily ledger to store.money (same variable as UI/screens; avoid bare `money` in init python).
+        old_money = int(getattr(store, "money", 0) or 0)
+        store.money = old_money + total_income - total_building_costs
+        store.money = int(store.money)
         
         # Log money changes for debugging
-        renpy.log(f"MONEY CHANGE: ${old_money} + ${total_income} - ${total_building_costs} = ${money}")
+        renpy.log(f"MONEY CHANGE: ${old_money} + ${total_income} - ${total_building_costs} = ${store.money}")
+
+        # Bankruptcy (game over): must run here, before governor/random-event early returns.
+        # Those paths used to skip the check at the end of this function entirely.
+        _thr = getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", BANKRUPTCY_MONEY_THRESHOLD)
+        if store.money <= _thr:
+            renpy.log(f"BANKRUPTCY: final money ${store.money} (threshold <= {_thr}), game over.")
+            return "game_over"
         
         # Check objective completion after money change (for Objective 4: 5000 coins)
         if hasattr(store, 'tutorial_active') and store.tutorial_active:
@@ -1395,10 +1654,10 @@ init python:
             except Exception as e:
                 renpy.log(f"Error checking objective completion after daily money update: {e}")
         
-        # Check for daily revenue achievement (Objective 15)
-        if total_income >= 10000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
+        # Check for daily revenue achievement (Objective 15; flag key is legacy "10k")
+        if total_income >= 5000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
             store.event_flags["daily_revenue_10k_achieved"] = True
-            renpy.log("ACHIEVEMENT: Daily revenue 10k achieved!")
+            renpy.log("ACHIEVEMENT: Daily revenue objective (5,000 in one day) achieved!")
 
         # ===== GOVERNOR'S TENSION SYSTEM =====
         # Update tension level based on current objective
@@ -1543,7 +1802,7 @@ init python:
             if normal_events and has_active_professions:
                 base_probability = 30
                 manager_count = count_active_managers()
-                manager_reduction = manager_count * 10
+                manager_reduction = manager_count * 15
                 effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
                 
                 normal_roll = renpy.random.randint(1, 100)
@@ -1699,10 +1958,10 @@ init python:
                 renpy.log(f"Skipping random event check: Random chance failed.")
 
         # --- THIS CODE RUNS IF NO EVENT WAS RETURNED ---
-        renpy.log(f"End of Day: Income=${total_income}, Costs=${total_building_costs}, Final Money=${money}")
-
-        if money < -5000:
-            return "game_over"
+        renpy.log(
+            f"End of Day: Income=${total_income}, Costs=${total_building_costs}, "
+            f"Final Money=${getattr(store, 'money', 0)}"
+        )
         
         # Daily report will be shown in next_day label after this returns
         return "tavern"

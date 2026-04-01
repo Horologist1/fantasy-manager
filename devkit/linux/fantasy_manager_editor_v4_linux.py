@@ -28,7 +28,6 @@ from typing import Dict, List, Optional, Tuple, Any
 
 VERSION = "4.0-Linux"
 
-# Intentar importar PIL para previsualización de imágenes (opcional)
 try:
     from PIL import Image, ImageTk
     PIL_AVAILABLE = True
@@ -46,7 +45,6 @@ WM_SKILL_MAPPING = {
     "Strip": "Striptease", "Magic": "Craft", "Medicine": "Clever",
     "Performance": "Charm", "Crafting": "Craft", "Farming": "Service",
     "Cooking": "Service", "Herbalism": "Craft", "Brewing": "Clever", "AnimalHandling": "Craft",
-    # Skills que ya existen en FM pero faltaban en el mapeo
     "Anal": "Anal", "BDSM": "BDSM", "Group": "Group", "Service": "Service", "Combat": "Combat",
 }
 
@@ -63,17 +61,14 @@ WM_TRAIT_MAPPING = {
     "Maid": "Maid", "Singer": "Singer", "Teacher": "Teacher", "Waitress": "Waitress",
     "Elf": "Elf", "Dwarf": "Dwarf", "Demon": "Demon", "Angel": "Angel",
     "Vampire": "Vampire", "Orc": "Orc", "Goblin": "Goblin",
-    # Traits que existen en FM pero faltaban en el mapeo
     "Quick Learner": "Quick Learner", "Dependant": "Dependant", "Optimist": "Optimist",
     "Open Minded": "Open Minded", "Cool Scars": "Cool Scars", "Nervous": "Nervous",
     "Sadistic": "Sadistic", "Exotic": "Exotic", "Flexible": "Flexible", "Brawler": "Brawler",
     "Tomboy": "Tomboy", "Tattooed": "Tattooed", "Pessimist": "Pessimist",
-    # Traits que se mapean a otros existentes
     "Cool Person": "Charming",
     "Small Scars": "Cool Scars",
     "Heavily Tattooed": "Tattooed",
     "Horrific Scars": "Scarred",
-    # Traits que se mapean a nuevos traits (a crear en FM)
     "Retarded": "Dumb",
     "Mind Fucked": "Crazy",
 }
@@ -567,15 +562,14 @@ WM_IMAGE_RENAME_PATTERNS = [
     # Cook -> service
     (r'^Cook\b', 'service'),
     
-    # Imágenes específicas adicionales
     (r'^Blacksmith\b', 'craft'),
     (r'^Card\b', 'charm'),
-    (r'^Dance\b', 'charm'),  # O podría ser 'striptease', según preferencia
-    (r'^Doctor\b', 'service'),  # O 'clever' para medicina
+    (r'^Dance\b', 'charm'),
+    (r'^Doctor\b', 'service'),
     (r'^Farm\b', 'service'),
     (r'^Eatout\b', 'oral'),
     (r'^Deepthroat\b', 'oral'),
-    (r'^Futa\b', 'futa_sex'),  # En la mayoría de casos es futa_sex
+    (r'^Futa\b', 'futa_sex'),
     (r'^Sub\b', 'bdsm'),
     (r'^Study\b', 'clever'),
     (r'^Work1\b', 'service'),
@@ -663,7 +657,6 @@ def parse_wm_girl_xml(xml_path: Path) -> Optional[Dict]:
                         'Beauty', 'Confidence', 'Obedience', 'Spirit', 'Libido', 'Mana']:
                 val = girl.get(attr)
                 if val: data['stats'][attr] = int(val)
-            # Leer AskPrice para mapearlo a comfort_desired
             ask_price = girl.get('AskPrice')
             if ask_price:
                 try:
@@ -691,12 +684,10 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
     is_random = wm_data.get('is_random', False)
     
     # Mapear AskPrice a comfort_desired
-    # AskPrice en WM es el precio de compra, que se relaciona con el nivel de comodidad demandado
     # Normalizar AskPrice (0-1000+) a comfort_desired (1-5)
     ask_price = wm_data.get('ask_price', 0)
     if ask_price > 0:
         # Convertir AskPrice a comfort_desired (escala 1-5)
-        # Asumimos que AskPrice 0-200 = comfort 1, 201-400 = 2, 401-600 = 3, 601-800 = 4, 801+ = 5
         if ask_price <= 200:
             comfort_desired = 1
         elif ask_price <= 400:
@@ -733,7 +724,6 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
             else:
                 fm_worker["skills"][fm_skill] = min(100, value)
     
-    # Traits que requieren otros traits automáticamente
     TRAIT_REQUIREMENTS = {
         "Strong Magic": "Magical",
         "Powerful Magic": "Magical",
@@ -745,13 +735,11 @@ def convert_wm_to_fm_worker(wm_data: Dict, folder_name: str, all_skills: List[st
         trait_name = trait.get('name', '') if isinstance(trait, dict) else trait
         fm_trait = WM_TRAIT_MAPPING.get(trait_name)
         if fm_trait and fm_trait not in fm_traits:
-            # Si el trait requiere otro trait, añadirlo automáticamente
             if fm_trait in TRAIT_REQUIREMENTS:
                 required_trait = TRAIT_REQUIREMENTS[fm_trait]
                 if required_trait not in fm_traits:
                     fm_traits.append(required_trait)
             
-            # Remover "Human" si se añade una raza no humana
             if fm_trait in ["Elf", "Dwarf", "Demon", "Angel", "Vampire", "Orc", "Goblin", "Transformed"]:
                 fm_traits = [t for t in fm_traits if t != "Human"]
             fm_traits.append(fm_trait)
@@ -799,7 +787,6 @@ class FantasyManagerEditorV4:
             "Specialty 11", "Specialty 12"
         ]
         
-        # Track cambios sin guardar
         self.has_unsaved_changes = False
         
         self.setup_ui()
@@ -852,11 +839,9 @@ class FantasyManagerEditorV4:
     
     def setup_ui(self):
         """Configurar interfaz de usuario"""
-        # Menú
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         
-        # Menú File
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Select Game Directory", command=self.select_game_directory)
@@ -865,7 +850,6 @@ class FantasyManagerEditorV4:
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.on_closing)
         
-        # Menú Tools
         tools_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Tools", menu=tools_menu)
         tools_menu.add_command(label="Convert GIFs to WebM...", command=self.convert_gifs_dialog)
@@ -873,17 +857,14 @@ class FantasyManagerEditorV4:
         tools_menu.add_separator()
         tools_menu.add_command(label="Create Worker from Image Folder...", command=self.create_worker_from_folder)
         
-        # Menú Help
         help_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Help", menu=help_menu)
         help_menu.add_command(label="About", command=self.show_about)
         
-        # Notebook principal con pestañas
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Crear pestañas
-        self.setup_wm_import_tab()  # Nueva pestaña de importación WM
+        self.setup_wm_import_tab()
         self.setup_workers_tab()
         self.setup_traits_tab()
         self.setup_buildings_tab()
@@ -1445,7 +1426,7 @@ Requirements:
             "workers/workers_nsfw_other.json"
         ]
         
-        seen_names = set()  # Para evitar duplicados
+        seen_names = set()
         
         for file_path in worker_files:
             full_path = data_path / file_path
@@ -1455,13 +1436,11 @@ Requirements:
                         data = json.load(f)
                         if isinstance(data, list):
                             for worker in data:
-                                # Limpiar campos vacíos de images_folder/image_folder
                                 if worker.get('images_folder') == '' or worker.get('images_folder') is None:
                                     worker.pop('images_folder', None)
                                 if worker.get('image_folder') == '' or worker.get('image_folder') is None:
                                     worker.pop('image_folder', None)
                                 
-                                # Evitar duplicados por nombre
                                 worker_name = worker.get('name', '')
                                 if worker_name and worker_name not in seen_names:
                                     self.workers_data.append(worker)
@@ -1588,7 +1567,6 @@ Requirements:
         workers_frame = ttk.Frame(self.notebook)
         self.notebook.add(workers_frame, text="Workers")
         
-        # Frame principal con dos columnas
         main_frame = ttk.Frame(workers_frame)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
@@ -1619,21 +1597,17 @@ Requirements:
         right_frame = ttk.Frame(main_frame)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         
-        # Header con botón de ayuda
         worker_header_frame = ttk.Frame(right_frame)
         worker_header_frame.pack(fill=tk.X, pady=(0, 10))
         ttk.Label(worker_header_frame, text="Worker Editor", font=("Arial", 12, "bold")).pack(side=tk.LEFT)
         ttk.Button(worker_header_frame, text="? Help", command=self.show_worker_help).pack(side=tk.RIGHT)
         
-        # Notebook para información básica e imágenes
         self.worker_notebook = ttk.Notebook(right_frame)
         self.worker_notebook.pack(fill=tk.BOTH, expand=True)
         
-        # Pestaña de información básica
         basic_frame = ttk.Frame(self.worker_notebook)
         self.worker_notebook.add(basic_frame, text="Basic Information")
         
-        # Scroll para información básica
         basic_canvas = tk.Canvas(basic_frame)
         basic_scrollbar = ttk.Scrollbar(basic_frame, orient="vertical", command=basic_canvas.yview)
         basic_scrollable_frame = ttk.Frame(basic_canvas)
@@ -1649,10 +1623,8 @@ Requirements:
         basic_canvas.pack(side="left", fill="both", expand=True)
         basic_scrollbar.pack(side="right", fill="y")
         
-        # Campos básicos
         self.setup_worker_basic_fields(basic_scrollable_frame)
         
-        # Pestaña de imágenes
         images_frame = ttk.Frame(self.worker_notebook)
         self.worker_notebook.add(images_frame, text="Images")
         self.setup_worker_images_tab(images_frame)
@@ -1673,7 +1645,6 @@ Requirements:
         self.worker_description_text.grid(row=row, column=1, sticky="ew", padx=5, pady=5)
         row += 1
         
-        # Folder (para imágenes)
         ttk.Label(parent, text="Folder (images):").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         folder_frame = ttk.Frame(parent)
         folder_frame.grid(row=row, column=1, sticky="ew", padx=5, pady=5)
@@ -1781,7 +1752,6 @@ Requirements:
         ttk.Button(buttons_frame, text="Select All", command=self.select_all_images).pack(side=tk.LEFT, padx=5)
         ttk.Button(buttons_frame, text="Deselect All", command=self.deselect_all_images).pack(side=tk.LEFT, padx=5)
         
-        # Frame con scroll para lista de imágenes
         images_canvas = tk.Canvas(main_frame)
         images_scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=images_canvas.yview)
         self.images_scrollable_frame = ttk.Frame(images_canvas)
@@ -1797,12 +1767,10 @@ Requirements:
         images_canvas.pack(side="left", fill="both", expand=True)
         images_scrollbar.pack(side="right", fill="y")
         
-        # Botón para renombrar archivos seleccionados
         rename_frame = ttk.Frame(main_frame)
         rename_frame.pack(fill=tk.X, pady=(10, 0))
         ttk.Button(rename_frame, text="Rename Selected Files", command=self.rename_selected_images).pack()
         
-        # Variable para carpeta de imágenes
         self.worker_images_folder_var = tk.StringVar()
     
     def browse_worker_folder(self):
@@ -1814,7 +1782,6 @@ Requirements:
             self.worker_folder_var.set(folder_name)
             self.worker_images_folder_var.set(folder)
             self.load_images_from_folder_path(folder)
-            # Actualizar el worker actual si existe
             if self.current_worker:
                 self.current_worker['folder'] = folder_name
     
@@ -1825,10 +1792,8 @@ Requirements:
         if folder:
             self.worker_images_folder_var.set(folder)
             self.load_images_from_folder_path(folder)
-            # Si hay un worker actual, actualizar su campo 'folder'
             if self.current_worker:
                 folder_name = Path(folder).name
-                # Verificar si la carpeta está dentro de workers/
                 if 'workers' in str(folder):
                     self.current_worker['folder'] = folder_name
                     self.worker_folder_var.set(folder_name)
@@ -1838,7 +1803,6 @@ Requirements:
         if not os.path.exists(folder_path):
             return
         
-        # Limpiar configuración anterior
         self.image_configs.clear()
         
         # Buscar archivos de imagen y video
@@ -1852,7 +1816,6 @@ Requirements:
         # Eliminar duplicados y ordenar
         media_files = sorted(list(set(media_files)))
         
-        # Crear configuración para cada archivo
         for filename in media_files:
             self.image_configs[filename] = {
                 'category': 'Skills',
@@ -1862,7 +1825,6 @@ Requirements:
                 'selected': False
             }
         
-        # Auto-detectar configuración
         self.auto_detect_all_images_config()
         
         # Actualizar interfaz
@@ -1898,7 +1860,6 @@ Requirements:
         
         self.image_configs[filename]['trait'] = trait_detected
         
-        # Detectar skill específico
         specific_detected = ''
         for skill in self.all_skills:
             if skill.lower() in name_parts:
@@ -1906,7 +1867,6 @@ Requirements:
                 self.image_configs[filename]['category'] = 'Skills'
                 break
         
-        # Si no es skill, verificar si es evento
         if not specific_detected:
             for event_id in self.events_data.keys():
                 if event_id.lower() in name_parts:
@@ -1914,7 +1874,6 @@ Requirements:
                     self.image_configs[filename]['category'] = 'Events'
                     break
         
-        # Si no es evento, verificar si es interacción
         if not specific_detected:
             for interaction in self.interactions_data:
                 interaction_id = interaction.get('id', '').lower()
@@ -1941,7 +1900,6 @@ Requirements:
         for col, header in enumerate(headers):
             ttk.Label(self.images_scrollable_frame, text=header, font=("Arial", 9, "bold")).grid(row=0, column=col, padx=2, pady=2, sticky="w")
         
-        # Crear filas para cada imagen
         row = 1
         for filename, config in self.image_configs.items():
             self.create_image_config_row(row, filename, config)
@@ -1949,19 +1907,15 @@ Requirements:
     
     def create_image_config_row(self, row, filename, config):
         """Crear fila de configuración para una imagen"""
-        # Checkbox de selección
         selected_var = tk.BooleanVar(value=config['selected'])
         selected_var.trace('w', lambda *args, f=filename, v=selected_var: self.update_image_selection(f, v.get()))
         ttk.Checkbutton(self.images_scrollable_frame, variable=selected_var).grid(row=row, column=0, padx=2, pady=1)
         
-        # Nombre del archivo
         display_name = filename[:25] + "..." if len(filename) > 25 else filename
         ttk.Label(self.images_scrollable_frame, text=display_name).grid(row=row, column=1, padx=2, pady=1, sticky="w")
         
-        # Botón Ver
         ttk.Button(self.images_scrollable_frame, text="View", command=lambda f=filename: self.preview_image(f)).grid(row=row, column=2, padx=2, pady=1)
         
-        # Categoría
         category_var = tk.StringVar(value=config['category'])
         category_combo = ttk.Combobox(self.images_scrollable_frame, textvariable=category_var, 
                                      values=["Events", "Interactions", "Skills"], state="readonly", width=12)
@@ -1979,7 +1933,6 @@ Requirements:
         trait_combo.grid(row=row, column=4, padx=2, pady=1)
         trait_combo.bind('<<ComboboxSelected>>', lambda e, f=filename, v=trait_var: self.update_image_trait(f, v.get()))
         
-        # Específico
         specific_values = self.get_specific_values_for_category(config['category'])
         specific_var = tk.StringVar(value=config['specific'])
         specific_combo = ttk.Combobox(self.images_scrollable_frame, textvariable=specific_var, 
@@ -2041,13 +1994,11 @@ Requirements:
             messagebox.showerror("Error", f"Image not found: {image_path}")
             return
         
-        # Crear ventana de previsualización
         preview_window = tk.Toplevel(self.root)
         preview_window.title(f"Preview: {filename}")
         preview_window.geometry("800x600")
         
         if not PIL_AVAILABLE:
-            # Si PIL no está disponible, mostrar información del archivo
             info_text = f"Image Preview\n\nFile: {filename}\nPath: {image_path}\n\n"
             info_text += "PIL/Pillow is not installed.\n"
             info_text += "To enable image preview, install Pillow:\n"
@@ -2107,7 +2058,6 @@ Requirements:
                 old_path = os.path.join(self.worker_images_folder_var.get(), filename)
                 new_path = os.path.join(self.worker_images_folder_var.get(), new_name)
                 
-                # Evitar sobreescribir archivos existentes
                 counter = 1
                 base_new_path = new_path
                 while os.path.exists(new_path):
@@ -2141,15 +2091,12 @@ Requirements:
         extension = os.path.splitext(original_filename)[1]
         parts = []
         
-        # Añadir trait si no es "No trait"
         if config['trait'] != 'No trait':
             parts.append(config['trait'].lower().replace(' ', '_'))
         
-        # Añadir específico
         if config['specific']:
             parts.append(config['specific'].lower().replace(' ', '_'))
         
-        # Añadir failure si está marcado
         if config['failure']:
             parts.append('failure')
         
@@ -2207,26 +2154,20 @@ Requirements:
         for trait in traits:
             self.worker_traits_listbox.insert(tk.END, trait)
         
-        # Auto-detectar carpeta de imágenes desde el JSON
         # Prioridad: images_folder > image_folder > folder
         images_folder = (self.current_worker.get('images_folder') or 
                         self.current_worker.get('image_folder') or 
                         self.current_worker.get('folder'))
         
         if images_folder and images_folder.strip() and self.game_directory:
-            # Construir ruta completa de imágenes
             images_path = Path(self.game_directory) / "game" / "images" / "workers" / images_folder.strip()
             
             if images_path.exists():
-                # Si la carpeta existe, cargar las imágenes automáticamente
                 self.worker_images_folder_var.set(str(images_path))
                 self.load_images_from_folder_path(str(images_path))
             else:
-                # Si no existe, intentar con el nombre de la carpeta directamente
-                # (puede que el usuario quiera crear la carpeta después)
                 self.worker_images_folder_var.set(str(images_path))
         else:
-            # Si no hay información de carpeta, dejar vacío
             self.worker_images_folder_var.set('')
     
     def save_current_worker_data(self):
@@ -2234,7 +2175,6 @@ Requirements:
         if not self.current_worker:
             return
         
-        # Solo actualizar campos que están en el formulario
         self.current_worker['name'] = self.worker_name_var.get()
         self.current_worker['description'] = self.worker_description_text.get(1.0, tk.END).strip()
         self.current_worker['folder'] = self.worker_folder_var.get()
@@ -2260,37 +2200,28 @@ Requirements:
             traits.append(self.worker_traits_listbox.get(i))
         self.current_worker['traits'] = traits
         
-        # Actualizar carpeta de imágenes
-        # Si el usuario seleccionó una carpeta diferente, actualizar
-        # Si no, usar el campo 'folder' que ya está en el worker
         images_folder_path = self.worker_images_folder_var.get()
         if images_folder_path and images_folder_path.strip():
-            # Extraer el nombre de la carpeta de la ruta completa
             folder_name = Path(images_folder_path).name
             if folder_name and folder_name.strip():
                 # Actualizar el campo 'folder' principal
                 self.current_worker['folder'] = folder_name
-                # También actualizar images_folder/image_folder para compatibilidad
                 self.current_worker['images_folder'] = folder_name
                 self.current_worker['image_folder'] = folder_name
             else:
-                # Si está vacío, usar el campo 'folder' existente o eliminar campos de imágenes
                 if 'folder' in self.current_worker and self.current_worker['folder']:
                     # Mantener el folder original
                     self.current_worker.pop('images_folder', None)
                     self.current_worker.pop('image_folder', None)
                 else:
-                    # Si no hay folder, eliminar todos los campos de imágenes
                     self.current_worker.pop('images_folder', None)
                     self.current_worker.pop('image_folder', None)
         else:
-            # Si no hay carpeta seleccionada, mantener solo 'folder' si existe
             if 'folder' in self.current_worker and self.current_worker['folder']:
                 # Mantener el folder original, eliminar campos redundantes
                 self.current_worker.pop('images_folder', None)
                 self.current_worker.pop('image_folder', None)
             else:
-                # Si no hay folder, eliminar todos los campos de imágenes
                 self.current_worker.pop('images_folder', None)
                 self.current_worker.pop('image_folder', None)
         
@@ -2428,11 +2359,9 @@ Requirements:
                     data = json.load(f)
                 
                 if isinstance(data, list):
-                    # Limpiar campos vacíos de images_folder/image_folder al cargar
                     cleaned_data = []
                     for worker in data:
                         cleaned_worker = worker.copy()
-                        # Eliminar images_folder/image_folder si están vacíos
                         if cleaned_worker.get('images_folder') == '' or cleaned_worker.get('images_folder') is None:
                             cleaned_worker.pop('images_folder', None)
                         if cleaned_worker.get('image_folder') == '' or cleaned_worker.get('image_folder') is None:
@@ -2467,7 +2396,6 @@ Requirements:
         )
         
         if file_path:
-            # Confirmar si el archivo ya existe
             if os.path.exists(file_path):
                 if not messagebox.askyesno("Confirm Overwrite", 
                     f"File {Path(file_path).name} already exists.\n\nOverwrite it?"):
@@ -2511,7 +2439,6 @@ Requirements:
         if not response:  # Cancel o No
             return
         
-        # Determinar en qué archivo guardar cada worker
         data_path = Path(self.game_directory) / "game" / "data" / "workers"
         
         workers_sfw_unique = []
@@ -2544,11 +2471,9 @@ Requirements:
         errors = []
         for file_path, workers_list in files_to_save:
             try:
-                # Limpiar campos vacíos de images_folder/image_folder antes de guardar
                 cleaned_workers = []
                 for worker in workers_list:
                     cleaned_worker = worker.copy()
-                    # Eliminar images_folder/image_folder si están vacíos
                     if cleaned_worker.get('images_folder') == '' or cleaned_worker.get('images_folder') is None:
                         cleaned_worker.pop('images_folder', None)
                     if cleaned_worker.get('image_folder') == '' or cleaned_worker.get('image_folder') is None:
@@ -2621,7 +2546,6 @@ Images Tab:
         traits_frame = ttk.Frame(self.notebook)
         self.notebook.add(traits_frame, text="Traits")
         
-        # Frame principal con dos columnas
         main_frame = ttk.Frame(traits_frame)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
@@ -2652,13 +2576,11 @@ Images Tab:
         right_frame = ttk.Frame(main_frame)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         
-        # Header con botón de ayuda
         trait_header_frame = ttk.Frame(right_frame)
         trait_header_frame.pack(fill=tk.X, pady=(0, 10))
         ttk.Label(trait_header_frame, text="Trait Editor", font=("Arial", 12, "bold")).pack(side=tk.LEFT)
         ttk.Button(trait_header_frame, text="? Help", command=self.show_trait_help).pack(side=tk.RIGHT)
         
-        # Scroll para editor de trait
         trait_canvas = tk.Canvas(right_frame)
         trait_scrollbar = ttk.Scrollbar(right_frame, orient="vertical", command=trait_canvas.yview)
         trait_scrollable_frame = ttk.Frame(trait_canvas)
@@ -2674,7 +2596,6 @@ Images Tab:
         trait_canvas.pack(side="left", fill="both", expand=True)
         trait_scrollbar.pack(side="right", fill="y")
         
-        # Campos del trait
         self.setup_trait_fields(trait_scrollable_frame)
     
     def setup_trait_fields(self, parent):
@@ -3424,7 +3345,6 @@ Modifiers:
         if custom:
             effect['custom'] = custom
         
-        # Solo agregar effect si tiene contenido
         if effect:
             self.current_item['effect'] = effect
         elif 'effect' in self.current_item:
@@ -3590,11 +3510,9 @@ Effects:
         ttk.Label(building_header_frame, text="Building Editor", font=("Arial", 12, "bold")).pack(side=tk.LEFT)
         ttk.Button(building_header_frame, text="? Help", command=self.show_building_help).pack(side=tk.RIGHT)
         
-        # Notebook para organizar building editor
         self.building_notebook = ttk.Notebook(right_frame)
         self.building_notebook.pack(fill=tk.BOTH, expand=True)
         
-        # Pestaña 1: Información básica
         basic_building_frame = ttk.Frame(self.building_notebook)
         self.building_notebook.add(basic_building_frame, text="Basic Information")
         
@@ -3611,7 +3529,6 @@ Effects:
         
         self.setup_building_basic_fields(building_scrollable_frame)
         
-        # Pestaña 2: Professions
         professions_building_frame = ttk.Frame(self.building_notebook)
         self.building_notebook.add(professions_building_frame, text="Professions")
         self.setup_building_professions_tab(professions_building_frame)
@@ -3683,11 +3600,9 @@ Effects:
     
     def setup_building_professions_tab(self, parent):
         """Configurar pestaña de professions del building"""
-        # Notebook para lista y editor de professions
         prof_notebook = ttk.Notebook(parent)
         prof_notebook.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
-        # Pestaña: Lista de professions
         prof_list_frame = ttk.Frame(prof_notebook)
         prof_notebook.add(prof_list_frame, text="Professions List")
         
@@ -3701,7 +3616,6 @@ Effects:
         ttk.Button(prof_buttons_frame, text="New Profession", command=self.add_profession).pack(side=tk.LEFT, padx=5)
         ttk.Button(prof_buttons_frame, text="Delete Profession", command=self.remove_profession).pack(side=tk.LEFT, padx=5)
         
-        # Pestaña: Editor de profession
         prof_edit_frame = ttk.Frame(prof_notebook)
         prof_notebook.add(prof_edit_frame, text="Profession Editor")
         
@@ -4039,11 +3953,9 @@ Effects:
         editor_window.title(f"Edit Daily Story: {story.get('id', 'Unknown')}")
         editor_window.geometry("900x700")
         
-        # Notebook para organizar
         story_notebook = ttk.Notebook(editor_window)
         story_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Pestaña básica
         basic_story_frame = ttk.Frame(story_notebook)
         story_notebook.add(basic_story_frame, text="Basic")
         
@@ -4179,7 +4091,6 @@ Effects:
             locations.append(self.building_locations_listbox.get(i))
         self.current_building['allowed_map_locations'] = locations
         
-        # Guardar profession actual si existe
         if self.current_profession:
             self.save_current_profession()
         
@@ -4338,21 +4249,17 @@ Daily Stories:
         ttk.Label(event_header_frame, text="Event Editor", font=("Arial", 12, "bold")).pack(side=tk.LEFT)
         ttk.Button(event_header_frame, text="? Help", command=self.show_event_help).pack(side=tk.RIGHT)
         
-        # Notebook para organizar event editor
         self.event_notebook = ttk.Notebook(right_frame)
         self.event_notebook.pack(fill=tk.BOTH, expand=True)
         
-        # Pestaña 1: Información básica
         basic_event_frame = ttk.Frame(self.event_notebook)
         self.event_notebook.add(basic_event_frame, text="Basic Information")
         self.setup_event_basic_fields(basic_event_frame)
         
-        # Pestaña 2: Configuración
         config_event_frame = ttk.Frame(self.event_notebook)
         self.event_notebook.add(config_event_frame, text="Configuration")
         self.setup_event_config_fields(config_event_frame)
         
-        # Pestaña 3: Choices
         choices_event_frame = ttk.Frame(self.event_notebook)
         self.event_notebook.add(choices_event_frame, text="Choices")
         self.setup_event_choices_tab(choices_event_frame)
@@ -4636,11 +4543,9 @@ Daily Stories:
         editor_window.title(f"Edit Choice: {choice.get('option', 'Unknown')}")
         editor_window.geometry("900x800")
         
-        # Notebook para organizar
         choice_notebook = ttk.Notebook(editor_window)
         choice_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Pestaña básica
         basic_choice_frame = ttk.Frame(choice_notebook)
         choice_notebook.add(basic_choice_frame, text="Basic")
         
@@ -4674,7 +4579,6 @@ Daily Stories:
         
         basic_choice_frame.columnconfigure(1, weight=1)
         
-        # Pestaña Effects
         effects_choice_frame = ttk.Frame(choice_notebook)
         choice_notebook.add(effects_choice_frame, text="Effects")
         
@@ -4977,16 +4881,13 @@ Choices:
         ttk.Label(interaction_header_frame, text="Interaction Editor", font=("Arial", 12, "bold")).pack(side=tk.LEFT)
         ttk.Button(interaction_header_frame, text="? Help", command=self.show_interaction_help).pack(side=tk.RIGHT)
         
-        # Notebook para organizar interaction editor
         self.interaction_notebook = ttk.Notebook(right_frame)
         self.interaction_notebook.pack(fill=tk.BOTH, expand=True)
         
-        # Pestaña 1: Información básica
         basic_interaction_frame = ttk.Frame(self.interaction_notebook)
         self.interaction_notebook.add(basic_interaction_frame, text="Basic Information")
         self.setup_interaction_basic_fields(basic_interaction_frame)
         
-        # Pestaña 2: Effects y Requirements
         effects_interaction_frame = ttk.Frame(self.interaction_notebook)
         self.interaction_notebook.add(effects_interaction_frame, text="Effects & Requirements")
         self.setup_interaction_effects_fields(effects_interaction_frame)

@@ -14,24 +14,20 @@
         {
           "id": "prostitute",
           "name": "Prostitute",
-          "description": "Provides intimate services to clients. Generates money through various sexual services. Higher skills lead to better earnings and reputation.",
+          "description": "Provides standard intimate services to clients. Oral, hands-on, sex, anal, and same-sex bookings. Steady income; specialty and extreme requests belong to expert attendants.",
           "nsfw": true,
           "difficulty": "medium",
           "skills": [
+            "Oral",
+            "Hand",
             "Sex",
             "Anal",
-            "BDSM",
-            "Hand",
-            "Oral",
-            "Homo",
-            "Special",
-            "Group",
-            "Extreme"
+            "Homo"
           ],
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -47,10 +43,10 @@
               },
               "trait_success": "The client is really into {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_vanilla",
               "failure_image": "prostitute_vanilla_failure",
@@ -62,7 +58,7 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -1,
                   "joy": -2,
                   "rebelliousness": 1,
@@ -70,7 +66,7 @@
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
@@ -78,6 +74,14 @@
                 "critical_success": {
                   "joy": 2,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -100,10 +104,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes him an incredible top for the anal session.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_anal",
               "failure_image": "prostitute_anal_failure",
@@ -115,7 +119,7 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -4,
                   "health": -1,
                   "joy": -2,
                   "rebelliousness": 1,
@@ -123,16 +127,24 @@
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 2,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -156,10 +168,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the client.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_anal",
               "failure_image": "prostitute_anal_failure",
@@ -171,7 +183,7 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -4,
                   "health": -2,
                   "joy": -3,
                   "rebelliousness": 2,
@@ -179,17 +191,25 @@
                   "libido": -4
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -1,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -2
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 1,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
                 }
               },
               "nsfw_only": false,
@@ -204,62 +224,6 @@
               "negative_traits": {}
             },
             {
-              "id": "prostitute_bdsm_client",
-              "weight": 2,
-              "report": "Dom Client paid for BDSM",
-              "skill_options": [
-                "BDSM"
-              ],
-              "trait_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
-              "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
-              },
-              "story_image": "prostitute_bdsm",
-              "failure_image": "prostitute_bdsm_failure",
-              "descriptions": {
-                "failure": "{worker_name} doesn't get what BDSM is about. Either fighting the restraints too much or not showing the submission the client craves. No chemistry, no satisfaction.",
-                "mediocre": "{worker_name} goes along with the bondage and punishment but the heart's not in it. The client gets some physical pleasure but misses the psychological thrill.",
-                "success": "{worker_name} embraces the submissive side completely. Moans of pain mixed with pleasure, begging, and total surrender get the client off on the power trip.",
-                "critical_success": "{worker_name} bereaches their peak the flawless, approaching the divine sub, reading the client's desires and responding to every punishment with intoxicating pain-pleasure. The session reaches overwhelming heights."
-              },
-              "consequences": {
-                "failure": {
-                  "energy": -2,
-                  "health": -3,
-                  "joy": -4,
-                  "rebelliousness": 3,
-                  "reputation": -5,
-                  "libido": -4
-                },
-                "success": {
-                  "energy": -1,
-                  "health": -1,
-                  "joy": -1,
-                  "rebelliousness": -1,
-                  "reputation": 5,
-                  "libido": -1
-                },
-                "critical_success": {
-                  "energy": -1,
-                  "rebelliousness": -2,
-                  "reputation": 10
-                }
-              },
-              "nsfw_only": false,
-              "positive_traits": {
-                "Obedient": 3,
-                "Tough": 3,
-                "Porn Star": 3,
-                "Masochist": 3
-              },
-              "trait_msg_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
-              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
-            },
-            {
               "id": "prostitute_oral_client",
               "weight": 4,
               "report": "Client paid for a Blowjob",
@@ -269,10 +233,10 @@
               ],
               "trait_success": "The client can't get enough of {worker_name}'s {trait} during the blowjob.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_oral",
               "failure_image": "prostitute_oral_failure",
@@ -284,23 +248,30 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "reputation": 10,
                   "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -324,10 +295,10 @@
               ],
               "trait_success": "The female client is amazed by {worker_name}'s {trait} technique.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_hand",
               "failure_image": "prostitute_hand_failure",
@@ -339,23 +310,30 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -379,10 +357,10 @@
               ],
               "trait_success": "The male client is amazed by {worker_name}'s {trait} touch.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_hand",
               "failure_image": "prostitute_hand_failure",
@@ -394,23 +372,30 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 2,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -434,10 +419,10 @@
               ],
               "trait_success": "The male client is thrilled by {worker_name}'s {trait} approach to gay intimacy.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_homo",
               "failure_image": "prostitute_homo_failure",
@@ -449,23 +434,30 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 2,
                   "reputation": -5,
                   "libido": -4
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
                 }
               },
               "nsfw_only": false,
@@ -489,10 +481,10 @@
               ],
               "trait_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_homo",
               "failure_image": "prostitute_homo_failure",
@@ -504,23 +496,30 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 2,
                   "reputation": -5,
                   "libido": -4
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
                 }
               },
               "nsfw_only": false,
@@ -533,21 +532,818 @@
               "trait_msg_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
+            }
+          ],
+          "staffing_penalty": 0.5,
+          "staffing_bonus": 1
+        },
+        {
+          "id": "masseuse",
+          "name": "Masseuse",
+          "description": "Offers scented oils, steam, and slow bodywork that sometimes stays tender—or slips into paid release. Charm matters as much as technique when clients want to feel cared for, not just used.",
+          "nsfw": true,
+          "difficulty": "easy",
+          "skills": [
+            "Charm",
+            "Oral",
+            "Hand"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "masseuse_charm_companionship_after_rub",
+              "weight": 1,
+              "report": "Massage and Quiet Company",
+              "skill_options": [
+                "Charm"
+              ],
+              "trait_success": "The client settles into {worker_name}'s {trait} and forgets the clock.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_companionship",
+              "failure_image": "masseuse_companionship_failure",
+              "descriptions": {
+                "failure": "{worker_name} finishes the rub but comes off distant—short answers, eyes on the door. The client wanted warmth after the knots were gone and leaves feeling more alone than when they arrived.",
+                "mediocre": "{worker_name} keeps things polite: small talk, tea, a steady smile. The client relaxes, tips fairly, and slips out without drama—but there was no spark, only competent comfort.",
+                "success": "The massage ends and the client lingers, half-dressed, talking about travel and weather like an old friend. {worker_name} listens more than flirts; the room feels safe. They pay for time that never turns carnal—and thank {worker_name} for it.",
+                "critical_success": "{worker_name} reads the silence after the last knot releases: no grab, no hint—just company. Laughter comes easy; the candle burns low. The client books another 'rub' next week, already calling it their favorite hour in the city."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "reputation": -4
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "reputation": -4
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 4,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 2,
+                  "reputation": 8,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Smooth Talker": 3,
+                "Elegant": 3
+              },
+              "trait_msg_success": "The client settles into {worker_name}'s {trait} and forgets the clock.",
+              "trait_msg_failure": "{worker_name}'s {trait} felt cold when softness mattered most.",
+              "negative_traits": {}
             },
             {
-              "id": "prostitute_group_clients",
+              "id": "masseuse_oral_steam_and_mouth",
+              "weight": 5,
+              "report": "Steam Room Tipping Point",
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The heat and {worker_name}'s {trait} undo the client's restraint.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_steam_oral",
+              "failure_image": "masseuse_steam_oral_failure",
+              "descriptions": {
+                "failure": "{worker_name} misreads the steam-haze flirtation and pulls back too late—teeth, timing off, laughter that isn't kind. The client towels off embarrassed, muttering that a massage should stay a massage.",
+                "mediocre": "{worker_name} follows through under the hiss of steam: eager enough, but routine—more checklist than craving. The client finishes, tips, and won't remember the face.",
+                "success": "Shoulders first, then breath at the ear—{worker_name} lets the steam do half the work. On the bench, mouth slow and sure, swallowing heat along with pride. The client shakes afterward like they were the one massaged inside out.",
+                "critical_success": "{worker_name} maps want under sweat-slick skin: breath, pause, then devotion with lips and tongue until the client can't stand. They stumble out praising the 'spa package' like a secret religion."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": -1
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Clever": 3,
+                "Playful": 3
+              },
+              "trait_msg_success": "The heat and {worker_name}'s {trait} undo the client's restraint.",
+              "trait_msg_failure": "{worker_name}'s {trait} could not steady the moment.",
+              "negative_traits": {}
+            },
+            {
+              "id": "masseuse_hand_oil_edge",
+              "weight": 4,
+              "report": "Oil, Edge, Finish",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The client's breath syncs to {worker_name}'s {trait} touch.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_oil_hand",
+              "failure_image": "masseuse_oil_hand_failure",
+              "descriptions": {
+                "failure": "{worker_name} chases release too fast—oil slick turns to friction burn, rhythm jagged. The client sits up apologizing for their own body and pays to leave.",
+                "mediocre": "{worker_name} gets there, technically: pressure, pace, finish. The client nods thanks, already dressing—satisfied the way a meal is fine, not memorable.",
+                "success": "Palms wide, then knuckles, then the slow spiral that tightens like a spring. {worker_name} whispers when to breathe; the client breaks on warm oil and shameless gratitude.",
+                "critical_success": "{worker_name} treats it like conducting—rise, hold, deny, release—until the client laughs and curses at once. They tip heavy and ask for the same slot next week, already addicted to hands that listen."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Delicate": 3,
+                "Clever": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The client's breath syncs to {worker_name}'s {trait} touch.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not steady the rhythm.",
+              "negative_traits": {}
+            }
+          ]
+        },
+        {
+          "id": "expert_attendant",
+          "name": "Expert attendant",
+          "description": "Handles the brothel's full menu of intimate services, including specialty and extreme bookings. Higher expectations: each booking is harder to ace than standard floor work.",
+          "nsfw": true,
+          "difficulty": "hard",
+          "skills": [
+            "Sex",
+            "Anal",
+            "BDSM",
+            "Hand",
+            "Oral",
+            "Homo",
+            "Special",
+            "Group",
+            "Extreme"
+          ],
+          "max_daily_workers": 3,
+          "staffing_bonus": 1.1,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "ea_prostitute_vanilla_client",
+              "weight": 4,
+              "report": "Client paid for Sex",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Sex"
+              ],
+              "negative_traits": {
+                "Shy": 3
+              },
+              "trait_success": "The client is really into {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_vanilla",
+              "failure_image": "prostitute_vanilla_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to find the rhythm that should come naturally. The movements are awkward, each movement lacking the spark that transforms contact into passion. The client departs with disappointment weighing heavy in their eyes, complaining about the lack of passion.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire but there's no real spark. It's competent but uninspired sex - the client gets off but yet something essential remains missing—the spark that elevates pleasure to art.",
+                "success": "{worker_name} demonstrates the skill of a master craftsman. Teasing the client with soft touches before things get heated. Genuine moans and movements that flow like water given form guide the client toward heights of satisfaction they never knew existed.",
+                "critical_success": "{worker_name} turns this into something undestined to fade from memory like morning mist. Perfect mix of tender and wild that drives the client crazy. Multiple orgasms and they're already already dreaming of their return to this paradise."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Beautiful": 6,
+                "Graceful": 4,
+                "Elegant": 4,
+                "Sexy Air": 5
+              },
+              "trait_msg_success": "The client is really into {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} put the client off."
+            },
+            {
+              "id": "ea_prostitute_anal_client_male",
+              "worker_gender_requirement": "male",
+              "weight": 3,
+              "report": "Client paid for Anal",
+              "skill_options": [
+                "Anal"
+              ],
+              "trait_success": "{worker_name}'s {trait} makes him an incredible top for the anal session.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_anal",
+              "failure_image": "prostitute_anal_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to take control during the anal session. Poor technique and lack of confidence disappoints the client who wanted to be dominated by a skilled top.",
+                "mediocre": "{worker_name} manages to top the client but lacks the commanding presence and skill. The client gets off but misses the intense domination they were seeking.",
+                "success": "{worker_name} takes complete control as the dominant top. His confident movements, skilled technique, and commanding presence drive the client wild as he pounds them exactly how they crave.",
+                "critical_success": "{worker_name} bereaches their peak the flawless, approaching the divine alpha top. His with the skill of a god made flesh domination, beyond mortal comprehension stamina, and expert technique create such an overwhelming experience that the client is completely owned and fulfilled beyond their wildest dreams."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Aggressive": 3,
+                "Porn Star": 3,
+                "Confident": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes him an incredible top for the anal session.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_anal_client_female",
+              "worker_gender_requirement": "female",
+              "weight": 3,
+              "report": "Client paid for Anal",
+              "skill_options": [
+                "Anal"
+              ],
+              "trait_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the client.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_anal",
+              "failure_image": "prostitute_anal_failure",
+              "descriptions": {
+                "failure": "{worker_name} isn't ready for how overwhelming anal can be. Tensing up from the pain, killing the mood. The client grows frustrated as their expectations crumble into disappointment and the session ends badly.",
+                "mediocre": "{worker_name} endures but clearly isn't enjoying the experience. The discomfort shows and while the client finishes, it's not the hot experience they wanted.",
+                "success": "{worker_name} knows how to take it like a pro. Prepping well and relaxing into the client's rhythm, her moans of pleasure mixed with pain drive them wild as she submits completely.",
+                "critical_success": "{worker_name} is an anal goddess. Working her ass flawless, approaching the divinely to milk every drop of pleasure from the client, her complete submission and skilled movements create an undestined to fade from memory like morning mist experience."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Flexible": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Obedient": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the client.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_bdsm_client",
+              "weight": 2,
+              "report": "Dom Client paid for BDSM",
+              "skill_options": [
+                "BDSM"
+              ],
+              "trait_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_bdsm",
+              "failure_image": "prostitute_bdsm_failure",
+              "descriptions": {
+                "failure": "{worker_name} doesn't get what BDSM is about. Either fighting the restraints too much or not showing the submission the client craves. No chemistry, no satisfaction.",
+                "mediocre": "{worker_name} goes along with the bondage and punishment but the heart's not in it. The client gets some physical pleasure but misses the psychological thrill.",
+                "success": "{worker_name} embraces the submissive side completely. Moans of pain mixed with pleasure, begging, and total surrender get the client off on the power trip.",
+                "critical_success": "{worker_name} bereaches their peak the flawless, approaching the divine sub, reading the client's desires and responding to every punishment with intoxicating pain-pleasure. The session reaches overwhelming heights."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": -1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "rebelliousness": -2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Obedient": 3,
+                "Tough": 3,
+                "Porn Star": 3,
+                "Masochist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} takes the BDSM session to the next level.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_oral_client",
+              "weight": 4,
+              "report": "Client paid for a Blowjob",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_oral",
+              "failure_image": "prostitute_oral_failure",
+              "descriptions": {
+                "failure": "{worker_name} clearly clearly lacks the experience needed for such intimate artistry. Too much teeth, rhythm that clashes against desire like discord in a symphony, and can't find the right flow. The client finds their arousal withering like a flower in winter and gives up frustrated.",
+                "mediocre": "{worker_name} gives a competent but uninspired blowjob that achieves the fundamental goal without creating magic. The client reaches their peak but it's destined to fade from memory like morning mist - nothing that'll make them come back for more.",
+                "success": "{worker_name} knows how to use that mouth. Varying between gentle licks and deep sucking, keeping eye contact while working the client to a satisfying climax.",
+                "critical_success": "{worker_name} gives head like a pro. Perfect technique, rhythm changes, and passionate delivery that has the client crying out in ecstasy and surrendering to waves of sensation harder than ever."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_hand_client_male",
+              "worker_gender_requirement": "male",
+              "weight": 3,
+              "report": "Client paid for Fingering",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_hand",
+              "failure_image": "prostitute_hand_failure",
+              "descriptions": {
+                "failure": "{worker_name} doesn't know how to use his hands properly on a woman. Too rough, wrong pace, or just awkward movements that kill the mood. The female client grows frustrated as their expectations crumble into disappointment and can't reach satisfaction.",
+                "mediocre": "{worker_name} fingers the client but lacks finesse. Basic movements that get her off but nothing memorable or exciting about the experience.",
+                "success": "{worker_name} shows real skill with his fingers. Perfect pressure, rhythm changes, and confident touches that build the female client up to an intense and satisfying climax.",
+                "critical_success": "{worker_name} gives the most beyond mortal comprehension fingering the client has ever experienced. His with the skill of a god made flesh technique, flawless, approaching the divine timing, and skilled touch drive her to multiple overwhelming orgasms."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Aggressive": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_hand_client_female",
+              "worker_gender_requirement": "female",
+              "weight": 3,
+              "report": "Client paid for Handjob",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The male client is amazed by {worker_name}'s {trait} touch.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_hand",
+              "failure_image": "prostitute_hand_failure",
+              "descriptions": {
+                "failure": "{worker_name} doesn't know how to use her hands properly on a man. Too rough, wrong pace, or just awkward movements that kill the mood. The male client grows frustrated as their expectations crumble into disappointment and can't finish.",
+                "mediocre": "{worker_name} gives a competent but uninspired handjob that achieves the fundamental goal without creating magic. Mechanical movements that bring the client to crescendo of pleasure but nothing memorable or exciting.",
+                "success": "{worker_name} shows real skill with her hands. Perfect pressure, rhythm changes, and building tension with the patience of an artist touches that build the male client up to an overwhelming and satisfying release.",
+                "critical_success": "{worker_name} gives the most beyond mortal comprehension handjob the client has ever experienced. Her with the skill of a god made flesh technique, flawless, approaching the divine timing, and sensual touch create an undestined to fade from memory like morning mist crescendo of pleasure."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Playful": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The male client is amazed by {worker_name}'s {trait} touch.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_homo_client_male",
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "Same-Sex Client Service",
+              "skill_options": [
+                "Homo"
+              ],
+              "trait_success": "The male client is thrilled by {worker_name}'s {trait} approach to gay intimacy.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_homo",
+              "failure_image": "prostitute_homo_failure",
+              "descriptions": {
+                "failure": "{worker_name} feels uncomfortable with the gay encounter and it shows. The awkward hesitation and lack of genuine engagement kill the chemistry, leaving the male client feeling rejected and unsatisfied.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire of the gay service but without real passion. The client gets physical satisfaction but misses the authentic masculine connection and enthusiasm he was hoping for.",
+                "success": "{worker_name} embraces the gay encounter with genuine enthusiasm. The masculine touches, passionate kisses, and skilled exploration of the client's body create an authentic and intensely satisfying man-to-man experience.",
+                "critical_success": "{worker_name} delivers an incredible gay experience that feels completely natural and passionate. The perfect masculine chemistry, expert technique, and genuine desire create such an intense connection that the client is completely blown away by the raw male energy."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The male client is thrilled by {worker_name}'s {trait} approach to gay intimacy.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_homo_client_female",
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Same-Sex Client Service",
+              "skill_options": [
+                "Homo"
+              ],
+              "trait_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_homo",
+              "failure_image": "prostitute_homo_failure",
+              "descriptions": {
+                "failure": "{worker_name} feels uncomfortable with the lesbian encounter and it shows. The awkward hesitation and lack of genuine engagement kill the chemistry, leaving the female client feeling rejected and unsatisfied.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire of the lesbian service but without real passion. The client gets physical satisfaction but misses the authentic feminine connection and enthusiasm she was hoping for.",
+                "success": "{worker_name} embraces the lesbian encounter with genuine enthusiasm. The soft feminine touches, passionate kisses, and skilled exploration of the client's body create an authentic and intensely satisfying woman-to-woman experience.",
+                "critical_success": "{worker_name} delivers an incredible lesbian experience that feels completely natural and passionate. The perfect feminine chemistry, expert technique, and genuine desire create such an intense connection that the client is completely blown away by the tender yet wild female energy."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_group_clients",
               "weight": 1,
               "report": "Clients paid for a Gangbang",
-              "difficulty_modifier": -5,
+              "difficulty_modifier": -15,
               "skill_options": [
                 "Group"
               ],
               "trait_success": "The group is blown away by {worker_name}'s {trait} in handling multiple partners.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_group",
               "failure_image": "prostitute_group_failure",
@@ -559,7 +1355,7 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -2,
                   "joy": -3,
                   "rebelliousness": 2,
@@ -567,7 +1363,7 @@
                   "libido": -4
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -1,
                   "joy": 1,
                   "rebelliousness": -1,
@@ -575,11 +1371,19 @@
                   "libido": -2
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "rebelliousness": -2,
                   "reputation": 10,
                   "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
                 }
               },
               "nsfw_only": false,
@@ -594,19 +1398,19 @@
               "negative_traits": {}
             },
             {
-              "id": "prostitute_vip_client",
+              "id": "ea_prostitute_vip_client",
               "weight": 2,
               "report": "VIP paid for the Special",
-              "difficulty_modifier": -5,
+              "difficulty_modifier": -15,
               "skill_options": [
                 "Special"
               ],
               "trait_success": "The VIP client is captivated by {worker_name}'s {trait} and considers making her his regular.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_vip",
               "failure_image": "prostitute_vip_failure",
@@ -618,14 +1422,14 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -10,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 10,
                   "libido": -1
@@ -634,6 +1438,13 @@
                   "joy": 3,
                   "reputation": 20,
                   "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -10,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -647,19 +1458,19 @@
               "negative_traits": {}
             },
             {
-              "id": "prostitute_extreme_client",
+              "id": "ea_prostitute_extreme_client",
               "weight": 1,
               "report": "Client paid for Extreme Fantasy",
-              "difficulty_modifier": -10,
+              "difficulty_modifier": -20,
               "skill_options": [
                 "Extreme"
               ],
               "trait_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
               "earnings": {
-                "success": "400 + skill * 3",
-                "critical_success": "400 + skill * 6",
-                "mediocre": "200 + skill * 2",
-                "failure": "-(200 + roll)"
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "prostitute_extreme",
               "failure_image": "prostitute_extreme_failure",
@@ -671,7 +1482,7 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -4,
                   "health": -2,
                   "joy": -4,
                   "rebelliousness": 3,
@@ -679,16 +1490,24 @@
                   "libido": -5
                 },
                 "success": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -1,
                   "reputation": 15,
                   "libido": -2
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 25
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -10,
+                  "libido": -5
                 }
               },
               "nsfw_only": false,
@@ -717,7 +1536,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -729,10 +1548,10 @@
               ],
               "trait_success": "The client is totally mesmerized by {worker_name}'s {trait} during her performance.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "stripper_regular",
               "failure_image": "stripper_regular_failure",
@@ -744,22 +1563,29 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5,
                   "libido": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 10,
                   "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
                 }
               },
               "nsfw_only": false,
@@ -783,10 +1609,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes the private dance incredibly intimate and hot.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "stripper_private",
               "failure_image": "stripper_private_failure",
@@ -798,23 +1624,30 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 10,
                   "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -837,10 +1670,10 @@
               ],
               "trait_success": "The VIP client is blown away by {worker_name}'s {trait} and considers making her his regular dancer.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "stripper_vip",
               "failure_image": "stripper_vip_failure",
@@ -852,22 +1685,29 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -10,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 10
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 20,
                   "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -10,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -900,26 +1740,28 @@
               ],
               "trait_success": "{worker_name} used {trait} to keep control during sex and maximize the client's spending.",
               "earnings": {
-                "failure": "-(180 + roll)",
-                "mediocre": "160 + (skill * 2)",
-                "success": "340 + (skill * 4)",
-                "critical_success": "420 + (skill * 7)"
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3"
               },
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -8,
                   "libido": 1
                 },
                 "mediocre": {
-                  "energy": -2,
-                  "reputation": 2,
-                  "libido": -1
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -8,
+                  "libido": 1
                 },
                 "success": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 6,
                   "libido": -2,
@@ -934,6 +1776,7 @@
                 }
               },
               "story_image": "striptease_private_dance",
+              "failure_image": "striptease_private_dance_failure",
               "trait_roll_modifiers": {},
               "positive_traits": {
                 "Charming": 3,
@@ -943,7 +1786,8 @@
               },
               "trait_msg_success": "{worker_name} used {trait} to keep control during sex and maximize the client's spending.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             }
           ]
         },
@@ -959,7 +1803,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -971,13 +1815,13 @@
               ],
               "trait_success": "The client appreciates {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
-              "story_image": "charm",
-              "failure_image": "charm_failure",
+              "story_image": "service_story1_brothel",
+              "failure_image": "service_story1_brothel_failure",
               "descriptions": {
                 "failure": "{worker_name} can't deliver the service expected. The lack of charm and poor customer attention results in a disappointing experience that leaves the client unsatisfied with the place.",
                 "mediocre": "{worker_name} provides basic customer service. Handles the minimum tasks but lacks the charisma and personal touch that would make the experience memorable.",
@@ -986,22 +1830,28 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -2,
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 10,
                   "libido": 1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -1014,7 +1864,8 @@
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
             }
-          ]
+          ],
+          "presence_roll_bonus": 1
         },
         {
           "id": "manager",
@@ -1039,10 +1890,10 @@
               ],
               "trait_success": "The establishment benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "manager_brothel",
               "failure_image": "manager_brothel_failure",
@@ -1054,16 +1905,20 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1
                 }
               },
               "nsfw_only": false,
@@ -1103,6 +1958,26 @@
               },
               "story_image": "rest_brothel",
               "nsfw_only": false
+            },
+            {
+              "id": "rest_nsfw_relief_brothel",
+              "weight": 1,
+              "report": "Private Relief",
+              "description": "{worker_name} took private time to release tension and returned calmer for the next shift.",
+              "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
+              "consequences": {
+                "success": {
+                  "energy": 2,
+                  "health": 1,
+                  "joy": 1,
+                  "libido": -3
+                }
+              },
+              "story_image": "rest_libido",
+              "trait_roll_modifiers": {}
             }
           ]
         }
@@ -1120,8 +1995,8 @@
       "professions": [
         {
           "id": "service",
-          "name": "Service",
-          "description": "Serves customers in the restaurant. Generates income through table service. Steady, low-risk work.",
+          "name": "Restaurant server",
+          "description": "Serves tables and keeps service smooth. Generates income through hospitality. Steady, low-risk work.",
           "difficulty": "easy",
           "skills": [
             "Charm"
@@ -1129,7 +2004,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -1141,13 +2016,13 @@
               ],
               "trait_success": "The client appreciates {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
-              "story_image": "charm",
-              "failure_image": "charm_failure",
+              "story_image": "service_story1_restaurant",
+              "failure_image": "service_story1_restaurant_failure",
               "descriptions": {
                 "failure": "{worker_name} struggles to handle multiple tables of regulars. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the dining experience for several groups of customers.",
                 "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",
@@ -1156,21 +2031,27 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -2,
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -1204,35 +2085,39 @@
               "difficulty_modifier": -5,
               "trait_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
               "earnings": {
-                "failure": "-(90 + roll)",
-                "mediocre": "90 + (skill * 2)",
-                "success": "180 + (skill * 3)",
-                "critical_success": "220 + (skill * 5)"
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3"
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -3,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -6
                 },
                 "mediocre": {
-                  "energy": -1
+                  "energy": -3,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -6
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 1,
                   "relationship": 1,
                   "reputation": 4
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -2,
                   "joy": 2,
                   "relationship": 2,
                   "reputation": 8
                 }
               },
-              "story_image": "service_story1_restaurant",
+              "story_image": "clumsy_paperwork_restaurant",
+              "failure_image": "clumsy_paperwork_restaurant_failure",
               "nsfw_only": false,
               "positive_traits": {
                 "Charming": 3,
@@ -1240,9 +2125,11 @@
               },
               "trait_msg_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             }
-          ]
+          ],
+          "presence_roll_bonus": 1
         },
         {
           "id": "cook",
@@ -1255,7 +2142,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -1267,10 +2154,10 @@
               ],
               "trait_success": "The clients are amazed by {worker_name}'s {trait} in the kitchen.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "cook_story1",
               "failure_image": "cook_story1_failure",
@@ -1282,19 +2169,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
                   "joy": 3,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -1315,10 +2208,10 @@
               ],
               "trait_success": "The VIP client praises {worker_name}'s {trait} in crafting the meal.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "cook_story2",
               "failure_image": "cook_story2_failure",
@@ -1330,19 +2223,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -10
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 10
                 },
                 "critical_success": {
                   "joy": 3,
                   "reputation": 20
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -10
                 }
               },
               "nsfw_only": false,
@@ -1355,7 +2254,9 @@
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
             }
-          ]
+          ],
+          "staffing_penalty": 0.5,
+          "staffing_bonus": 1
         },
         {
           "id": "manager",
@@ -1380,10 +2281,10 @@
               ],
               "trait_success": "The restaurant benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "manager_restaurant",
               "failure_image": "manager_restaurant_failure",
@@ -1395,16 +2296,20 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1
                 }
               },
               "nsfw_only": false,
@@ -1451,6 +2356,9 @@
               "report": "Private Relief",
               "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
               "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
               "consequences": {
                 "success": {
                   "energy": 2,
@@ -1459,7 +2367,7 @@
                   "libido": -3
                 }
               },
-              "story_image": "rest",
+              "story_image": "rest_libido",
               "trait_roll_modifiers": {}
             }
           ]
@@ -1481,12 +2389,15 @@
           "description": "Hunts monsters and explores dungeons. High risk, high reward profession. Can find valuable loot but faces dangerous encounters.",
           "difficulty": "hard",
           "skills": [
-            "Combat"
+            "Combat",
+            "Agility",
+            "Clever",
+            "Craft"
           ],
           "max_daily_workers": 5,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -1498,10 +2409,10 @@
               ],
               "trait_success": "The adventurer's {trait} proves invaluable in the battle.",
               "earnings": {
-                "success": "300 + skill * 2",
-                "critical_success": "300 + skill * 4",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} gets overwhelmed by the monster's ferocity. The creature proves too dangerous and cunning, forcing a hasty retreat with wounds and no bounty to show for the failed hunt.",
@@ -1513,22 +2424,29 @@
               "failure_image": "solo_quest_failure",
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -5,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -2,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "loot": {
@@ -1543,7 +2461,8 @@
                     "chance": 0.015,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -1560,14 +2479,15 @@
               "weight": 1,
               "report": "Dungeon Delving",
               "skill_options": [
-                "Combat"
+                "Combat",
+                "Agility"
               ],
               "trait_success": "{worker_name}'s display of {trait} proves decisive.",
               "earnings": {
-                "success": "300 + skill * 2",
-                "critical_success": "300 + skill * 4",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} gets lost in the dungeon's twisting passages and deadly traps. Poor navigation and combat skills lead to a dangerous retreat from the depths, returning empty-handed and badly wounded from the failed expedition.",
@@ -1579,22 +2499,29 @@
               "failure_image": "party_quest_failure",
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -5,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -2,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "loot": {
@@ -1610,7 +2537,8 @@
                     "chance": 0.02,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -1620,7 +2548,10 @@
               },
               "trait_msg_success": "{worker_name}'s display of {trait} proves decisive.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": [
+                "Agility"
+              ]
             },
             {
               "id": "adventurer_story3",
@@ -1631,10 +2562,10 @@
               ],
               "trait_success": "{worker_name}'s decisive {trait} turns the tide of battle.",
               "earnings": {
-                "success": "400 + skill * 3",
-                "critical_success": "400 + skill * 6",
-                "mediocre": "200 + skill * 2",
-                "failure": "-(200 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} stumbles upon something far beyond their capabilities - an ancient guardian, a cursed entity, or forces of nature that should not be trifled with. The encounter is brief and terrifying - a desperate flight for survival leaves them shaken and wounded, but alive. The experience serves as a harsh reminder of the true dangers that lurk in the wilds.",
@@ -1644,22 +2575,29 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -8,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -3
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -3,
                   "joy": 3,
                   "reputation": 8
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 5,
                   "reputation": 15
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -8,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -3
                 }
               },
               "loot": {
@@ -1675,9 +2613,11 @@
                     "chance": 0.025,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
-              "story_image": null,
+              "story_image": "adventurer_story3",
+              "failure_image": "adventurer_story3_failure",
               "nsfw_only": false,
               "positive_traits": {
                 "Robust": 3,
@@ -1687,22 +2627,94 @@
               "trait_msg_success": "{worker_name}'s decisive {trait} turns the tide of battle.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
+            },
+            {
+              "id": "adventurer_guild_monster_study",
+              "weight": 0.05,
+              "report": "Guild brief: monster lore",
+              "skill_options": [
+                "Clever"
+              ],
+              "trait_success": "{worker_name}'s careful {trait} shows in every page of notes.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "descriptions": {
+                "failure": "{worker_name} spends hours chasing rumors and bad ledgers. The notes contradict each other, key details stay missing, and the guild clerk sends the stack back with a tired sigh. Little of it will help anyone in the field.",
+                "mediocre": "{worker_name} pulls together a workable sketch of the creature: habits, a few sightings, and one solid warning. It is not brilliant work, but it is honest, and it fills gaps the job board did not mention.",
+                "success": "{worker_name} builds a clear brief from bestiaries, witness accounts, and recent contracts. Tracks, feeding patterns, and local names line up into something a party can actually use without guessing in the dark.",
+                "critical_success": "{worker_name} turns scattered gossip into a dossier the guild quietly copies. Rare behaviors, likely lairs, and market prices for parts are laid out so cleanly that even veterans pause to read it twice."
+              },
+              "story_image": "adventurer_guild_monster_study",
+              "failure_image": "adventurer_guild_monster_study_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "reputation": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 4
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 8
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "reputation": -3
+                }
+              },
+              "loot": {
+                "bonus_items": [
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.01,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.01,
+                    "nsfw": true
+                  }
+                ],
+                "loot_yield_scale": 0.73
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Determined": 3,
+                "Mystical": 3
+              },
+              "trait_msg_success": "{worker_name}'s careful {trait} shows in every page of notes.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not help the archive shift today.",
+              "negative_traits": {}
             }
-          ]
+          ],
+          "staffing_penalty": 0.5,
+          "staffing_bonus": 1
         },
         {
           "id": "treasure_hunter",
           "name": "Treasure Hunter",
-          "description": "Explores abandoned tombs and temples in search of valuable treasures. Uses stealth and combat skills to navigate traps and avoid danger. Lower risk than adventuring but still rewarding.",
+          "description": "Explores abandoned tombs and temples in search of valuable treasures. Relies on agility and careful movement to navigate traps and slip past danger. Lower risk than adventuring but still rewarding.",
           "difficulty": "medium",
           "skills": [
             "Combat",
-            "Agility"
+            "Agility",
+            "Clever",
+            "Craft"
           ],
           "max_daily_workers": 4,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -1710,15 +2722,14 @@
               "weight": 3,
               "report": "Tomb Exploration",
               "skill_options": [
-                "Combat",
                 "Agility"
               ],
               "trait_success": "{worker_name}'s {trait} proves invaluable in navigating the ancient tomb.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} struggles with the tomb's ancient traps and mechanisms. Poor navigation and timing lead to triggering multiple traps, forcing a hasty retreat empty-handed and exhausted from the failed exploration.",
@@ -1726,24 +2737,30 @@
                 "success": "{worker_name} successfully navigates the tomb's dangerous passages. Skillfully avoids traps, disarms mechanisms, and emerges with valuable ancient artifacts and treasures from the forgotten burial site.",
                 "critical_success": "{worker_name} becomes a master tomb raider with this expedition. Perfectly navigates every trap, discovers hidden chambers, and returns with legendary treasures and artifacts that make them famous among treasure hunters."
               },
-              "story_image": "solo_quest",
-              "failure_image": "solo_quest_failure",
+              "story_image": "treasure_hunter_story1",
+              "failure_image": "treasure_hunter_story1_failure",
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -3
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 4
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "reputation": 8
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -3
                 }
               },
               "loot": {
@@ -1759,7 +2776,8 @@
                     "chance": 0.02,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -1770,22 +2788,22 @@
               },
               "trait_msg_success": "{worker_name}'s {trait} proves invaluable in navigating the ancient tomb.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             },
             {
               "id": "treasure_hunter_story2",
               "weight": 2,
               "report": "Temple Raid",
               "skill_options": [
-                "Combat",
                 "Agility"
               ],
               "trait_success": "{worker_name}'s {trait} helps uncover hidden treasures in the temple.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} gets overwhelmed by the temple's ancient defenses and magical traps. The complex mechanisms prove too difficult to navigate, forcing a retreat with no treasures and exhaustion from the failed raid.",
@@ -1793,24 +2811,30 @@
                 "success": "{worker_name} successfully raids the abandoned temple. Skillfully avoids magical traps, outmaneuvers ancient guardians, and emerges with valuable relics and treasures from the forgotten sanctuary.",
                 "critical_success": "{worker_name} becomes a legendary temple raider with this expedition. Perfectly navigates all magical defenses, discovers secret chambers, and returns with rare artifacts and treasures that make them renowned among treasure hunters."
               },
-              "story_image": "party_quest",
-              "failure_image": "party_quest_failure",
+              "story_image": "treasure_hunter_story2",
+              "failure_image": "treasure_hunter_story2_failure",
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -3
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 4
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "reputation": 8
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -3
                 }
               },
               "loot": {
@@ -1826,7 +2850,8 @@
                     "chance": 0.025,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -1837,7 +2862,8 @@
               },
               "trait_msg_success": "{worker_name}'s {trait} helps uncover hidden treasures in the temple.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             },
             {
               "id": "treasure_hunter_story3",
@@ -1845,15 +2871,14 @@
               "report": "Ancient Crypt Discovery",
               "difficulty_modifier": 5,
               "skill_options": [
-                "Combat",
                 "Agility"
               ],
               "trait_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
               "earnings": {
-                "success": "300 + skill * 2",
-                "critical_success": "300 + skill * 4",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} discovers an ancient crypt but struggles with its complex defenses. The traps and mechanisms prove too advanced, forcing a retreat with exhaustion and no treasures from the failed discovery.",
@@ -1861,24 +2886,30 @@
                 "success": "{worker_name} successfully explores the ancient crypt. Skillfully navigates all traps, solves complex mechanisms, and emerges with valuable ancient treasures and artifacts from the forgotten burial site.",
                 "critical_success": "{worker_name} becomes a master crypt explorer with this discovery. Perfectly navigates every trap, unlocks secret chambers, and returns with legendary treasures and artifacts that make them famous among treasure hunters."
               },
-              "story_image": "party_quest",
-              "failure_image": "party_quest_failure",
+              "story_image": "treasure_hunter_story3",
+              "failure_image": "treasure_hunter_story3_failure",
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 2,
                   "reputation": 6
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 12
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "loot": {
@@ -1894,7 +2925,8 @@
                     "chance": 0.035,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -1905,6 +2937,76 @@
               },
               "trait_msg_success": "{worker_name}'s {trait} reveals the crypt's greatest secrets.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "treasure_hunter_trap_kit_tuneup",
+              "weight": 0.05,
+              "report": "Tomb kit tune-up",
+              "skill_options": [
+                "Craft"
+              ],
+              "trait_success": "{worker_name}'s {trait} shows in tools that actually fit the job.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "descriptions": {
+                "failure": "{worker_name} leaves a pry bar wrong, a line frayed, or a lamp badly seated. The mistake is small on a bench and huge in a dark corridor.",
+                "mediocre": "{worker_name} replaces what was worn and oils what was sticking. The kit returns to baseline—no miracles, no surprises.",
+                "success": "{worker_name} sets up a trap-kit that feels unfairly calm: picks seat true, cordage runs clean, and backups sit where panic will not have to search.",
+                "critical_success": "{worker_name} builds a setup other hunters borrow without asking. Every piece has a reason, every repair has a story, and the whole pack looks ready for stone that bites back."
+              },
+              "story_image": "treasure_hunter_trap_kit_tuneup",
+              "failure_image": "treasure_hunter_trap_kit_tuneup_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "reputation": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 4
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 8
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "reputation": -3
+                }
+              },
+              "loot": {
+                "rolls": 1,
+                "bonus_items": [
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.01,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.01,
+                    "nsfw": true
+                  }
+                ],
+                "loot_yield_scale": 0.73
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Determined": 3,
+                "Optimist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} shows in tools that actually fit the job.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not help at the bench today.",
               "negative_traits": {}
             }
           ]
@@ -1915,12 +3017,15 @@
           "description": "Hunts legendary mythical beasts. Extreme risk with the highest rewards. Can obtain rare loot and legendary materials. Very dangerous.",
           "difficulty": "extreme",
           "skills": [
-            "Combat"
+            "Combat",
+            "Clever",
+            "Agility",
+            "Craft"
           ],
           "max_daily_workers": 2,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 300"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -1929,14 +3034,15 @@
               "report": "Mythical Beast Hunt",
               "difficulty_modifier": -15,
               "skill_options": [
-                "Combat"
+                "Combat",
+                "Clever"
               ],
               "trait_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
               "earnings": {
-                "success": "400 + skill * 4",
-                "critical_success": "400 + skill * 8",
-                "mediocre": "200 + skill * 2",
-                "failure": "-30"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} tracks and confronts the mythical beast, but the legendary creature proves too powerful. The dragon's ancient wisdom, the chimera's ferocious might, or the hydra's regenerative power overwhelms even the most skilled hunter. A desperate retreat is the only option, leaving severe wounds and a humbling reminder of the true power of mythical creatures.",
@@ -1944,31 +3050,50 @@
                 "success": "{worker_name} achieves the legendary feat of slaying a mythical beast. Through masterful strategy, exceptional combat prowess, and unbreakable determination, brings down the dragon, chimera, or hydra. Returns with valuable scales, horns, claws, and other legendary materials that prove the impossible kill, becoming a legend in the guild.",
                 "critical_success": "{worker_name} transcends mortal limits by flawlessly executing the mythical beast hunt. The perfect strategy, god-like combat mastery, and complete domination of the legendary creature creates an epic tale that will be told for generations. Returns with treasures beyond mortal comprehension - dragon scales that shimmer with inner fire, chimera pelts of impossible beauty, or hydra hearts that pulse with ancient power."
               },
-              "story_image": "solo_quest",
-              "failure_image": "solo_quest_failure",
+              "story_image": "epic_quest",
+              "failure_image": "epic_quest_failure",
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -5,
                   "health": -25,
                   "joy": -2,
                   "rebelliousness": 2,
-                  "reputation": -10
+                  "reputation": -10,
+                  "trait_chance": [
+                    {
+                      "trait": "Scarred",
+                      "chance_percent": 1
+                    }
+                  ]
                 },
                 "success": {
-                  "energy": -2,
+                  "energy": -5,
                   "health": -8,
                   "joy": 8,
                   "reputation": 15
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -2,
                   "joy": 15,
                   "reputation": 25
+                },
+                "mediocre": {
+                  "energy": -5,
+                  "health": -15,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -10,
+                  "trait_chance": [
+                    {
+                      "trait": "Scarred",
+                      "chance_percent": 0.1
+                    }
+                  ]
                 }
               },
               "loot": {
-                "rolls": 4,
+                "rolls": 2,
                 "bonus_items": [
                   {
                     "item_id": "obsidian_blade",
@@ -2010,7 +3135,8 @@
                     "chance": 0.01,
                     "nsfw": true
                   }
-                ]
+                ],
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -2021,6 +3147,82 @@
               },
               "trait_msg_success": "{worker_name}'s legendary {trait} proves essential in the hunt.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": [
+                "Clever"
+              ]
+            },
+            {
+              "id": "boss_hunting_approach_recon",
+              "weight": 0.05,
+              "report": "Approach reconnaissance",
+              "skill_options": [
+                "Agility"
+              ],
+              "trait_success": "{worker_name}'s {trait} keeps the approach honest and the exit real.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "descriptions": {
+                "failure": "{worker_name} misreads the ground and pays for it in scrapes, lost time, and a route that ends where pride hoped it would not. The notes are more warning than help.",
+                "mediocre": "{worker_name} maps the approach well enough to stop stupid mistakes. Peaks, washes, and blind corners are marked in plain ink—useful, unromantic, done.",
+                "success": "{worker_name} returns with lines that respect gravity and weather. The approach reads like someone planned to run it twice—once to learn, once to survive.",
+                "critical_success": "{worker_name} charts a path that feels unfairly clean: cover, timing, and retreat slots where panic will not have to invent them. Even cynics bookmark the page."
+              },
+              "story_image": "boss_hunting_approach_recon",
+              "failure_image": "boss_hunting_approach_recon_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "health": -4,
+                  "joy": -1,
+                  "reputation": -4
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 8
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 3,
+                  "reputation": 14
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "health": -4,
+                  "joy": -1,
+                  "reputation": -4
+                }
+              },
+              "loot": {
+                "rolls": 1,
+                "bonus_items": [
+                  {
+                    "item_id": "amulet_wanderer",
+                    "chance": 0.02,
+                    "nsfw": false
+                  },
+                  {
+                    "item_id": "collar_endless_desire",
+                    "chance": 0.02,
+                    "nsfw": true
+                  }
+                ],
+                "loot_yield_scale": 0.73
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Determined": 3,
+                "Robust": 3,
+                "Audacity": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} keeps the approach honest and the exit real.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not help the recon today.",
               "negative_traits": {}
             }
           ]
@@ -2033,7 +3235,9 @@
           "difficulty": "hard",
           "skills": [
             "Combat",
-            "Extreme"
+            "Extreme",
+            "Clever",
+            "Craft"
           ],
           "max_daily_workers": 2,
           "daily_story_count": {
@@ -2050,10 +3254,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes the capture particularly effective.",
               "earnings": {
-                "success": "300 + skill * 2",
-                "critical_success": "300 + skill * 4",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} attempts to capture a monster but the creature proves too wild and dangerous. The failed expedition sets back the guild's monster acquisition efforts and leaves the team wounded and discouraged.",
@@ -2065,21 +3269,28 @@
               "failure_image": "monster_combat_failure",
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -10,
                   "joy": -1,
                   "rebelliousness": 1,
                   "libido": -2
                 },
                 "success": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 5
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -10,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "libido": -2
                 }
               },
               "loot": {
@@ -2089,7 +3300,8 @@
                     "monster": true,
                     "encounter_only": true
                   }
-                }
+                },
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -2112,10 +3324,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
               "earnings": {
-                "success": "300 + skill * 2",
-                "critical_success": "300 + skill * 4",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} ventures into the wilderness to lure a wild creature with seductive displays. But the seduction works too well - instead of becoming docile, the beast's lust turns aggressive. {worker_name} loses control as the creature mounts them roughly, taking what it wants before disappearing into the forest. No servant gained, only bruises and shame.",
@@ -2127,7 +3339,7 @@
               "failure_image": "monster_capture_failure",
               "consequences": {
                 "failure": {
-                  "energy": -3,
+                  "energy": -4,
                   "health": -5,
                   "joy": -3,
                   "rebelliousness": 2,
@@ -2135,17 +3347,25 @@
                   "libido": -3
                 },
                 "success": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": 2,
                   "reputation": 10,
                   "libido": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 20,
                   "libido": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -5,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -3
                 }
               },
               "loot": {
@@ -2156,7 +3376,8 @@
                     "monster": true,
                     "encounter_only": true
                   }
-                }
+                },
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -2168,6 +3389,65 @@
               },
               "trait_msg_success": "{worker_name}'s {trait} makes them utterly mesmerizing to the wild creature.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "monster_taming_capture_rig_prep",
+              "weight": 0.05,
+              "report": "Capture rig preparation",
+              "skill_options": [
+                "Craft"
+              ],
+              "trait_success": "{worker_name}'s {trait} shows in knots, gates, and doses measured twice.",
+              "earnings": {
+                "success": "10",
+                "critical_success": "skill",
+                "mediocre": "5",
+                "failure": "-5"
+              },
+              "descriptions": {
+                "failure": "{worker_name} leaves a latch stiff, a line uneven, or a dose sloppy. The rig looks ready until stress proves it is not, and the guild sends it back to the bench.",
+                "mediocre": "{worker_name} brings the rig back to honest function. Nothing sings, nothing snaps, and the next attempt starts without a stupid handicap.",
+                "success": "{worker_name} builds capture gear that respects teeth, claws, and panic. Everything releases clean, everything tightens on purpose, and the work reads like patience with tools.",
+                "critical_success": "{worker_name} assembles a setup other tamers copy without shame: clever tension, redundant safety, and small touches that keep blood off the contract line."
+              },
+              "story_image": "monster_taming_capture_rig_prep",
+              "failure_image": "monster_taming_capture_rig_prep_failure",
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": 0,
+                  "reputation": -1
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 0,
+                  "reputation": 1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": 0,
+                  "reputation": -1
+                }
+              },
+              "loot": {
+                "rolls": 0,
+                "bonus_items": [],
+                "loot_yield_scale": 0.73
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Determined": 3,
+                "Robust": 3,
+                "Audacity": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} shows in knots, gates, and doses measured twice.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not help the rig work today.",
               "negative_traits": {}
             }
           ]
@@ -2195,10 +3475,10 @@
               ],
               "trait_success": "The guild benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "manager_adventurers_guild",
               "failure_image": "manager_adventurers_guild_failure",
@@ -2210,16 +3490,20 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1
                 }
               },
               "nsfw_only": false,
@@ -2266,6 +3550,9 @@
               "report": "Private Relief",
               "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
               "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
               "consequences": {
                 "success": {
                   "energy": 2,
@@ -2274,7 +3561,7 @@
                   "libido": -3
                 }
               },
-              "story_image": "rest",
+              "story_image": "rest_libido",
               "trait_roll_modifiers": {}
             }
           ]
@@ -2303,7 +3590,7 @@
           "max_daily_workers": 4,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "0"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -2316,10 +3603,10 @@
               ],
               "trait_success": "The client is delighted by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} struggles behind the bar, spilling drinks and mixing up orders. The poor service and lack of tavern atmosphere management disappoints patrons who expected better hospitality.",
@@ -2329,20 +3616,26 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -2,
                   "joy": 2,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "story_image": "bartender_story1",
@@ -2355,9 +3648,12 @@
               },
               "trait_msg_success": "The client is delighted by {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             }
-          ]
+          ],
+          "staffing_penalty": 0.5,
+          "staffing_bonus": 1
         },
         {
           "id": "entertainer",
@@ -2370,7 +3666,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -2382,10 +3678,10 @@
               ],
               "trait_success": "The crowd is delighted by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "entertainer_story1_tavern",
               "failure_image": "entertainer_story1_tavern_failure",
@@ -2397,21 +3693,33 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 10,
-                  "libido": 1
+                  "libido": 1,
+                  "trait_remove_chance": [
+                    {
+                      "trait": "Conservative",
+                      "chance_percent": 1
+                    }
+                  ]
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -2433,10 +3741,10 @@
               ],
               "trait_success": "The VIP guests are mesmerized by {worker_name}'s {trait} during their entertainment.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "entertainer_story2_tavern",
               "failure_image": "entertainer_story2_tavern_failure",
@@ -2448,21 +3756,27 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -10
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 10
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 20,
                   "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -10
                 }
               },
               "nsfw_only": false,
@@ -2475,7 +3789,8 @@
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
             }
-          ]
+          ],
+          "presence_roll_bonus": 1
         },
         {
           "id": "manager",
@@ -2500,10 +3815,10 @@
               ],
               "trait_success": "The tavern benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "manager_tavern",
               "failure_image": "manager_tavern_failure",
@@ -2515,16 +3830,20 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1
                 }
               },
               "nsfw_only": false,
@@ -2538,6 +3857,144 @@
               "negative_traits": {}
             }
           ]
+        },
+        {
+          "id": "tavern_server",
+          "name": "Tavern server",
+          "description": "Serves patrons on the tavern floor. Generates income through quick, attentive hospitality. Steady, low-risk work.",
+          "difficulty": "easy",
+          "skills": [
+            "Charm"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "service_story1_tavern_server",
+              "weight": 5,
+              "report": "Served Patrons",
+              "skill_options": [
+                "Charm"
+              ],
+              "trait_success": "The client appreciates {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "service_story1_tavern",
+              "failure_image": "service_story1_tavern_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to handle multiple crowded tables. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the night experience for several groups of customers.",
+                "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",
+                "success": "{worker_name} provides excellent service to all the regulars. Remembers their preferences, keeps all tables happy, and the friendly attitude makes the regulars feel like they're night at their favorite spot.",
+                "critical_success": "{worker_name} turns serving regulars into an art form. Anticipates every table's needs, provides personalized attention to each group, and creates such a welcoming atmosphere that the regulars feel like family."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Hardworking": 3,
+                "Robust": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The client appreciates {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "service_clumsy_paperwork_tavern_server",
+              "weight": 2,
+              "report": "Order Ledger Disaster",
+              "description": "{worker_name} dropped and mixed up order slips, then tried to charm the patrons to salvage the service.",
+              "required_traits": [
+                "Clumsy"
+              ],
+              "descriptions": {
+                "success": "{worker_name} recovered with quick charm and clear apologies; most guests stayed and tipped anyway.",
+                "failure": "The order chaos spiraled and several tables left irritated.",
+                "mediocre": "{worker_name} fixed part of the mess, but the shift still ended in complaints.",
+                "critical_success": "{worker_name} turned the blunder into a funny moment and won over the whole room."
+              },
+              "skill_options": [
+                "Charm",
+                "Service"
+              ],
+              "difficulty_modifier": -5,
+              "trait_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3"
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -6
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -6
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "relationship": 1,
+                  "reputation": 4
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 2,
+                  "relationship": 2,
+                  "reputation": 8
+                }
+              },
+              "story_image": "clumsy_paperwork_tavern",
+              "failure_image": "clumsy_paperwork_tavern_failure",
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Quick Learner": 3
+              },
+              "trait_msg_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            }
+          ],
+          "presence_roll_bonus": 1
         },
         {
           "id": "rest",
@@ -2571,6 +4028,9 @@
               "report": "Private Relief",
               "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
               "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
               "consequences": {
                 "success": {
                   "energy": 2,
@@ -2579,7 +4039,7 @@
                   "libido": -3
                 }
               },
-              "story_image": "rest",
+              "story_image": "rest_libido",
               "trait_roll_modifiers": {}
             }
           ]
@@ -2607,7 +4067,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -2619,10 +4079,10 @@
               ],
               "trait_success": "The gamblers are impressed by {worker_name}'s {trait} at the table.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "descriptions": {
                 "failure": "{worker_name} struggles as croupier, making dealing mistakes and losing control of the table. Poor card handling and confused rules explanations frustrate the gamblers and hurt the casino's reputation.",
@@ -2632,22 +4092,29 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
                   "joy": 1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "story_image": "dealer_story1",
+              "failure_image": "dealer_story1_failure",
               "nsfw_only": false,
               "positive_traits": {
                 "Charming": 3,
@@ -2658,7 +4125,9 @@
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
             }
-          ]
+          ],
+          "staffing_penalty": 0.5,
+          "staffing_bonus": 1
         },
         {
           "id": "guard",
@@ -2671,7 +4140,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -2683,10 +4152,10 @@
               ],
               "trait_success": "The disruptive patron backs down, intimidated by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "guard_story1_casino",
               "failure_image": "guard_story1_casino_failure",
@@ -2698,22 +4167,29 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -2735,10 +4211,10 @@
               ],
               "trait_success": "The cheating gambler is caught off-guard by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "guard_story2_casino",
               "failure_image": "guard_story2_casino_failure",
@@ -2750,21 +4226,28 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 3,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -2802,10 +4285,10 @@
               ],
               "trait_success": "The casino benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "manager_casino",
               "failure_image": "manager_casino_failure",
@@ -2817,16 +4300,20 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1
                 }
               },
               "nsfw_only": false,
@@ -2838,6 +4325,143 @@
               "trait_msg_success": "The casino benefits from {worker_name}'s {trait} management.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
+            }
+          ]
+        },
+        {
+          "id": "casino_server",
+          "name": "Casino server",
+          "description": "Serves patrons on the casino floor. Generates income through quick, attentive hospitality. Steady, low-risk work.",
+          "difficulty": "easy",
+          "skills": [
+            "Charm"
+          ],
+          "max_daily_workers": 3,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "reputation / 200"
+          },
+          "daily_stories": [
+            {
+              "id": "service_story1_casino_server",
+              "weight": 5,
+              "report": "Served Floor Guests",
+              "skill_options": [
+                "Charm"
+              ],
+              "trait_success": "The client appreciates {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "service_story1_casino",
+              "failure_image": "service_story1_casino_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to handle multiple slots and tables. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the evening out for several groups of customers.",
+                "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",
+                "success": "{worker_name} provides excellent service to all the guests. Remembers their preferences, keeps all tables happy, and the friendly attitude makes the regulars feel like they're dining at their favorite spot.",
+                "critical_success": "{worker_name} turns serving regulars into an art form. Anticipates every table's needs, provides personalized attention to each group, and creates such a welcoming atmosphere that the regulars feel like family."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Hardworking": 3,
+                "Robust": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The client appreciates {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "service_clumsy_paperwork_casino_server",
+              "weight": 2,
+              "report": "Order Ledger Disaster",
+              "description": "{worker_name} dropped and mixed up order slips, then tried to charm the guests to salvage the service.",
+              "required_traits": [
+                "Clumsy"
+              ],
+              "descriptions": {
+                "success": "{worker_name} recovered with quick charm and clear apologies; most guests stayed and tipped anyway.",
+                "failure": "The order chaos spiraled and several tables left irritated.",
+                "mediocre": "{worker_name} fixed part of the mess, but the shift still ended in complaints.",
+                "critical_success": "{worker_name} turned the blunder into a funny moment and won over the whole room."
+              },
+              "skill_options": [
+                "Charm",
+                "Service"
+              ],
+              "difficulty_modifier": -5,
+              "trait_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3"
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -6
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -6
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "relationship": 1,
+                  "reputation": 4
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 2,
+                  "relationship": 2,
+                  "reputation": 8
+                }
+              },
+              "story_image": "clumsy_paperwork_casino",
+              "failure_image": "clumsy_paperwork_casino_failure",
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Quick Learner": 3
+              },
+              "trait_msg_success": "{worker_name} leveraged {trait} to calm frustrated customers.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             }
           ]
         },
@@ -2873,6 +4497,9 @@
               "report": "Private Relief",
               "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
               "nsfw_only": true,
+              "stat_requirements": {
+                "libido": 20
+              },
               "consequences": {
                 "success": {
                   "energy": 2,
@@ -2881,7 +4508,7 @@
                   "libido": -3
                 }
               },
-              "story_image": "rest",
+              "story_image": "rest_libido",
               "trait_roll_modifiers": {}
             }
           ]
@@ -2910,7 +4537,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -2923,10 +4550,10 @@
               ],
               "trait_success": "The trade delegation is impressed by {worker_name}'s {trait} during negotiations.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "ambassador_trade",
               "failure_image": "ambassador_trade_failure",
@@ -2938,19 +4565,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -15
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 20
                 },
                 "critical_success": {
                   "joy": 2,
                   "reputation": 35
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -15
                 }
               },
               "nsfw_only": false,
@@ -2962,7 +4595,8 @@
               },
               "trait_msg_success": "The trade delegation is impressed by {worker_name}'s {trait} during negotiations.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             },
             {
               "id": "ambassador_diplomatic_alliance",
@@ -2975,10 +4609,10 @@
               ],
               "trait_success": "The foreign delegation is won over by {worker_name}'s {trait} during the alliance talks.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "ambassador_alliance",
               "failure_image": "ambassador_alliance_failure",
@@ -2990,19 +4624,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -20
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 25
                 },
                 "critical_success": {
                   "joy": 3,
                   "reputation": 40
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -20
                 }
               },
               "nsfw_only": false,
@@ -3013,7 +4653,8 @@
               },
               "trait_msg_success": "The foreign delegation is won over by {worker_name}'s {trait} during the alliance talks.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             },
             {
               "id": "ambassador_resolve_conflict",
@@ -3026,10 +4667,10 @@
               ],
               "trait_success": "The conflicting parties are persuaded by {worker_name}'s {trait} mediation.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "ambassador_conflict",
               "failure_image": "ambassador_conflict_failure",
@@ -3041,19 +4682,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -18
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 22
                 },
                 "critical_success": {
                   "joy": 2,
                   "reputation": 38
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -18
                 }
               },
               "nsfw_only": false,
@@ -3065,7 +4712,8 @@
               },
               "trait_msg_success": "The conflicting parties are persuaded by {worker_name}'s {trait} mediation.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             },
             {
               "id": "ambassador_cultural_exchange",
@@ -3076,10 +4724,10 @@
               ],
               "trait_success": "The cultural delegation is inspired by {worker_name}'s {trait} during the exchange.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "ambassador_cultural",
               "failure_image": "ambassador_cultural_failure",
@@ -3091,19 +4739,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -12
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 18
                 },
                 "critical_success": {
                   "joy": 2,
                   "reputation": 30
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -12
                 }
               },
               "nsfw_only": false,
@@ -3130,7 +4784,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -3142,10 +4796,10 @@
               ],
               "trait_success": "The noble is captivated by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "courtesan_noble",
               "failure_image": "courtesan_noble_failure",
@@ -3157,19 +4811,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -10
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 10
                 },
                 "critical_success": {
                   "joy": 3,
                   "reputation": 20
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -10
                 }
               },
               "nsfw_only": false,
@@ -3191,10 +4851,10 @@
               ],
               "trait_success": "The diplomatic guests are impressed by {worker_name}'s {trait} at the soiree.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "courtesan_soiree",
               "failure_image": "courtesan_soiree_failure",
@@ -3206,19 +4866,25 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -15
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 15
                 },
                 "critical_success": {
                   "joy": 3,
                   "reputation": 25
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -15
                 }
               },
               "nsfw_only": false,
@@ -3242,10 +4908,10 @@
               ],
               "trait_success": "The aristocratic patron is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "courtesan_seduction",
               "failure_image": "courtesan_seduction_failure",
@@ -3257,14 +4923,14 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 2,
                   "reputation": -10,
                   "libido": -3
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 2,
                   "reputation": 10,
                   "libido": -1
@@ -3273,6 +4939,13 @@
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 20
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -10,
+                  "libido": -3
                 }
               },
               "nsfw_only": false,
@@ -3284,7 +4957,8 @@
               },
               "trait_msg_success": "The aristocratic patron is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             },
             {
               "id": "courtesan_vip_private_chamber",
@@ -3298,10 +4972,10 @@
               ],
               "trait_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "courtesan_vip_chamber",
               "failure_image": "courtesan_vip_chamber_failure",
@@ -3313,14 +4987,14 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "joy": -2,
                   "rebelliousness": 2,
                   "reputation": -15,
                   "libido": -3
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 2,
                   "reputation": 15,
                   "libido": -1
@@ -3329,6 +5003,13 @@
                   "joy": 3,
                   "rebelliousness": -1,
                   "reputation": 25
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -15,
+                  "libido": -3
                 }
               },
               "nsfw_only": false,
@@ -3340,7 +5021,8 @@
               },
               "trait_msg_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             }
           ]
         },
@@ -3355,7 +5037,7 @@
           "max_daily_workers": 5,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -3367,10 +5049,10 @@
               ],
               "trait_success": "The aristocratic guests appreciate {worker_name}'s {trait} service.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "servant_aristocratic",
               "failure_image": "servant_aristocratic_failure",
@@ -3382,21 +5064,27 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -2,
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "nsfw_only": false,
@@ -3427,7 +5115,7 @@
           "max_daily_workers": 3,
           "daily_story_count": {
             "base": 1,
-            "bonus_formula": "reputation / 100"
+            "bonus_formula": "reputation / 200"
           },
           "daily_stories": [
             {
@@ -3442,10 +5130,10 @@
               ],
               "trait_success": "The noble client is enthralled by {worker_name}'s {trait}.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "pleasure_servant_noble",
               "failure_image": "pleasure_servant_noble_failure",
@@ -3457,7 +5145,7 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -1,
                   "joy": -2,
                   "rebelliousness": 1,
@@ -3465,7 +5153,7 @@
                   "libido": -2
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 5,
                   "libido": -1
@@ -3474,6 +5162,14 @@
                   "joy": 2,
                   "rebelliousness": -1,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
                 }
               },
               "nsfw_only": false,
@@ -3485,7 +5181,8 @@
               },
               "trait_msg_success": "The noble client is enthralled by {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
-              "negative_traits": {}
+              "negative_traits": {},
+              "event_image_skill_exclude": []
             }
           ]
         },
@@ -3510,7 +5207,7 @@
               },
               "consequences": {
                 "success": {
-                  "energy": -2,
+                  "energy": -3,
                   "health": -1,
                   "joy": -1,
                   "rebelliousness": -2,
@@ -3543,10 +5240,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} proves decisive in capturing the intruder.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "guards_intruder",
               "failure_image": "guards_intruder_failure",
@@ -3558,31 +5255,39 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -2,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -1,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "loot": {
                 "captured_worker": {
-                  "chance": 0.05,
+                  "chance": 0.0365,
                   "filters": {
                     "unique": false
                   }
-                }
+                },
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -3603,10 +5308,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} proves decisive in apprehending the criminal.",
               "earnings": {
-                "success": "300 + skill * 3",
-                "critical_success": "300 + skill * 6",
-                "mediocre": "150 + skill",
-                "failure": "-(150 + roll)"
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "guards_criminal",
               "failure_image": "guards_criminal_failure",
@@ -3618,31 +5323,39 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "health": -1,
                   "joy": 1,
                   "reputation": 5
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5
                 }
               },
               "loot": {
                 "captured_worker": {
-                  "chance": 0.05,
+                  "chance": 0.0365,
                   "filters": {
                     "unique": false
                   }
-                }
+                },
+                "loot_yield_scale": 0.73
               },
               "nsfw_only": false,
               "positive_traits": {
@@ -3663,10 +5376,10 @@
               ],
               "trait_success": "{worker_name}'s {trait} ensures thorough security during the patrol.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "guards_patrol",
               "failure_image": "guards_patrol_failure",
@@ -3678,21 +5391,28 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -2,
+                  "energy": -4,
                   "health": -1,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -3
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1,
                   "reputation": 3
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2,
                   "reputation": 8
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -3
                 }
               },
               "nsfw_only": false,
@@ -3729,10 +5449,10 @@
               ],
               "trait_success": "The castle benefits from {worker_name}'s {trait} management.",
               "earnings": {
-                "success": "200 + skill * 2",
-                "critical_success": "200 + skill * 4",
-                "mediocre": "100 + skill",
-                "failure": "-(100 + roll)"
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
               },
               "story_image": "chamberlain_castle",
               "failure_image": "chamberlain_castle_failure",
@@ -3744,16 +5464,20 @@
               },
               "consequences": {
                 "failure": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": -1
                 },
                 "success": {
-                  "energy": -1,
+                  "energy": -4,
                   "joy": 1
                 },
                 "critical_success": {
-                  "energy": -1,
+                  "energy": -3,
                   "joy": 2
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1
                 }
               },
               "nsfw_only": false,

@@ -1,0 +1,98 @@
+{
+  "daily_story_extensions": [
+    {
+      "building_id": "test_building",
+      "profession_id": "tester",
+      "merge_mode": "append",
+      "daily_stories": [
+        {
+          "id": "tester_extension_story",
+          "weight": 5,
+          "report": "Test Extension Story",
+          "description": "Daily story added via daily_story_extensions. Proves extensions work.",
+          "difficulty_modifier": 0,
+          "skill_options": ["Charm"],
+          "event_image_skill_exclude": [],
+          "positive_traits": {},
+          "negative_traits": {},
+          "descriptions": {
+            "failure": "{worker_name} fails the extension test.",
+            "mediocre": "{worker_name} completes the extension scenario adequately.",
+            "success": "{worker_name} passes the extension test. Extensions work!",
+            "critical_success": "{worker_name} aces the extension test. Daily story extensions are functional."
+          },
+          "earnings": {
+            "failure": "-(60 + roll)",
+            "mediocre": "90 + skill",
+            "success": "160 + skill * 2",
+            "critical_success": "220 + skill * 3"
+          },
+          "consequences": {
+            "failure": {"energy": -1, "reputation": -2},
+            "success": {"energy": -1, "reputation": 4},
+            "critical_success": {"energy": -1, "reputation": 8}
+          },
+          "story_image": "entertainer_story1_tavern",
+          "failure_image": "entertainer_story1_tavern_failure",
+          "nsfw_only": false,
+          "loot": {"rolls": 0, "bonus_items": []}
+        }
+      ]
+    },
+    {
+      "building_id": "tavern",
+      "profession_id": "entertainer",
+      "merge_mode": "append",
+      "daily_stories": [
+        {
+          "id": "entertainer_test_extension",
+          "weight": 3,
+          "report": "Test Extension Performance",
+          "description": "A daily story added via daily_story_extensions. Proves the extension system works.",
+          "difficulty_modifier": 0,
+          "skill_options": [
+            "Charm"
+          ],
+          "event_image_skill_exclude": [],
+          "positive_traits": {},
+          "negative_traits": {},
+          "descriptions": {
+            "failure": "{worker_name} struggles with the extension test. The crowd looks confused.",
+            "mediocre": "{worker_name} manages the extension scenario. Nothing special.",
+            "success": "{worker_name} handles the extension test well. The mod system works!",
+            "critical_success": "{worker_name} aces the extension test. Daily story extensions are fully functional."
+          },
+          "earnings": {
+            "failure": "-(80 + roll)",
+            "mediocre": "100 + skill",
+            "success": "180 + skill * 2",
+            "critical_success": "250 + skill * 3"
+          },
+          "consequences": {
+            "failure": {
+              "energy": -1,
+              "reputation": -2
+            },
+            "success": {
+              "energy": -1,
+              "joy": 1,
+              "reputation": 4
+            },
+            "critical_success": {
+              "energy": -1,
+              "joy": 2,
+              "reputation": 8
+            }
+          },
+          "story_image": "entertainer_story1_tavern",
+          "failure_image": "entertainer_story1_tavern_failure",
+          "nsfw_only": false,
+          "loot": {
+            "rolls": 0,
+            "bonus_items": []
+          }
+        }
+      ]
+    }
+  ]
+}

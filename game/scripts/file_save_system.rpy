@@ -1,12 +1,11 @@
 ################################################################################
 ### FILE SAVE/LOAD SYSTEM
-### Sistema especial para guardar/cargar desde archivos externos
 ################################################################################
 
 # Custom style for file save/load buttons
 style file_button is button:
     background "images/tablebutton.png"
-    hover_background "#d4a574"  # Color del frame de save al hacer hover
+    hover_background "#d4a574"
     selected_background "images/tablebutton.png"
     insensitive_background "images/tablebutton.png"
     xalign 0.5
@@ -16,18 +15,18 @@ style file_button_text is button_text:
     xalign 0.5
     yalign 0.5
     text_align 0.5
-    color "#5d4037"      # Marrón oscuro para el texto normal
+    color "#5d4037"
     hover_color "#314311"  # Verde oscuro usado en el juego
     selected_color "#5d4037"
     insensitive_color "#888888"
 
 # Custom style for file dialog frames
 style file_dialog_frame is frame:
-    background "#d4a574"  # Color del frame de save al hacer hover
+    background "#d4a574"
     padding (20, 15)
 
 style file_dialog_text is text:
-    color "#5d4037"      # Marrón oscuro
+    color "#5d4037"
     hover_color "#314311"  # Verde oscuro
 
 # Custom styles for interaction screens
@@ -36,7 +35,7 @@ style interaction_frame is frame:
     padding (20, 20)
 
 style interaction_text is text:
-    color "#5d4037"      # Marrón oscuro
+    color "#5d4037"
     hover_color "#314311"  # Verde oscuro
 
 style interaction_button is button:
@@ -49,7 +48,7 @@ style interaction_button_text is button_text:
     xalign 0.5
     yalign 0.5
     text_align 0.5
-    color "#5d4037"      # Marrón oscuro
+    color "#5d4037"
     hover_color "#314311"  # Verde oscuro
 
 init python:
@@ -316,7 +315,7 @@ screen file_browser_simple():
                                     xfill True
                                     yfill True
                                     background "#00000000"
-                                    hover_background "#b8956a"  # Un tono más oscuro del dorado para hover
+                                    hover_background "#b8956a"
                                     action SetScreenVariable("selected_file", save_file['filename'])
                                     
                                     vbox:

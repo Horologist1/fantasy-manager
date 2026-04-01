@@ -14,7 +14,7 @@
     "choices": [
       {
         "option": "Accept the pouch of coin. (Potential: Gold)",
-        "message": "He slides a leather purse across the wood. 'Old currency. Still spends. The Governor's men don't track every coin that changes hands—yet.' He melts into the crowd before you can thank him. (+300 gold)",
+        "message": "He slides a leather purse across the wood. 'Old currency. Still spends. The Governor's men don't trace every sale in the shadows—yet.' He melts into the crowd before you can thank him.",
         "effect": {
           "money": 300,
           "event_flags": {
@@ -24,7 +24,7 @@
       },
       {
         "option": "Ask him to spread word among his contacts. (Potential: Reputation)",
-        "message": "'I know people. The kind who remember when this district had more... options.' He nods once. 'I'll mention your establishment. Quietly.' Within days, a trickle of better clientele begins. (+15 reputation)",
+        "message": "'I know people. The kind who remember when this district had more... options.' He nods once. 'I'll mention your establishment. Quietly.' Within days, a trickle of better clientele begins.",
         "effect": {
           "reputation": 15,
           "event_flags": {
@@ -34,7 +34,7 @@
       },
       {
         "option": "Press him for useful information. (Potential: Gold, Reputation)",
-        "message": "'The merchant quarter? His eyes are everywhere there.' He leans closer. 'But the docks—overworked, underpaid guards. Goods move. People move. The Governor cares about coin, not cargo.' The insight proves useful. (+150 gold, +8 reputation)",
+        "message": "'The merchant quarter? His eyes are everywhere there.' He leans closer. 'But the docks—overworked, underpaid guards. Goods move. People move. The Governor cares about coin, not cargo.' The insight proves useful.",
         "effect": {
           "money": 150,
           "reputation": 8,
@@ -45,7 +45,7 @@
       },
       {
         "option": "Refuse. Your path is yours alone. (Potential: Reputation)",
-        "message": "He studies you a moment, then tucks the packet away. 'Understood. Pride has its place.' He leaves a worn silver coin on the sill. 'For the door. Old superstition.' Somehow, word of your independence still gets around. (+5 reputation)",
+        "message": "He studies you a moment, then tucks the packet away. 'Understood. Pride has its place.' He leaves a worn silver coin on the sill. 'For the door. Old superstition.' Somehow, word of your independence still gets around.",
         "effect": {
           "reputation": 5,
           "event_flags": {
@@ -124,7 +124,7 @@
       },
       {
         "option": "Decline politely. Your path is set without outside gifts. (Potential: Reputation)",
-        "message": "You refuse with a courteous bow. The traveler appreciates your conviction and leaves with a satisfied smile. (+5 Reputation)",
+        "message": "You refuse with a courteous bow. The traveler appreciates your conviction and leaves with a satisfied smile.",
         "effect": {
           "reputation": 5,
           "event_flags": {
@@ -155,15 +155,15 @@
     "choices": [
       {
         "option": "Accept their gift of gold with humble gratitude. (Potential: Gold)",
-        "message": "You bow respectfully and thank them. The central figure gestures, and a leather pouch appears in your hands—weighty with coin. 'A fair exchange. May it serve your purpose.' The three figures fade into mist, leaving behind the faint scent of incense. (+800 gold)",
+        "message": "You bow respectfully and thank them. The central figure gestures, and a leather pouch appears in your hands—weighty with coin. 'A fair exchange. May it serve your purpose.' The three figures fade into mist, leaving behind the faint scent of incense.",
         "effect": {
           "money": 800
         }
       },
       {
         "option": "Attempt to impress them with wit and charm for a greater reward. (Risk: lesser reward; Potential: Gold)",
-        "message_success": "You speak with confidence, weaving a tale of your establishment's promise and your own ambitions. The figures listen in silence. At last, the left one laughs—a sound like wind through ancient stones. 'Bold. We admire boldness.' A second, heavier pouch materializes. 'Twice the gift, for twice the spirit.' (+1500 gold)",
-        "message_failure": "You reach for eloquence, but the words tumble out awkwardly. The central figure raises a hand. 'Enough. Sincerity matters more than performance.' A smaller pouch appears. 'Here. A token, not a reward.' (+300 gold)",
+        "message_success": "You speak with confidence, weaving a tale of your establishment's promise and your own ambitions. The figures listen in silence. At last, the left one laughs—a sound like wind through ancient stones. 'Bold. We admire boldness.' A second, heavier pouch materializes. 'Twice the gift, for twice the spirit.'",
+        "message_failure": "You reach for eloquence, but the words tumble out awkwardly. The central figure raises a hand. 'Enough. Sincerity matters more than performance.' A smaller pouch appears. 'Here. A token, not a reward.'",
         "effect": {
           "success_chance": 0.65,
           "success": {
@@ -176,8 +176,8 @@
       },
       {
         "option": "Ask for their blessing rather than gold. (Potential: Reputation; outcome varies by chance)",
-        "message_success": "You decline the coin. 'What I need is not gold, but fortune—for my establishment and those who depend on it.' The three exchange glances. 'Rare,' murmurs the rightmost figure. They extend their hands in unison. A warm glow envelops you. Word of the encounter spreads: your reputation soars. (+15 Reputation)",
-        "message_failure": "You ask for a blessing instead of gold. The figures are silent for a long moment. 'We offer what we offer,' says the central one. 'Your refusal is noted.' A faint warmth settles over you nonetheless. Something has shifted. (+5 Reputation)",
+        "message_success": "You decline the coin. 'What I need is not gold, but fortune—for my establishment and those who depend on it.' The three exchange glances. 'Rare,' murmurs the rightmost figure. They extend their hands in unison. A warm glow envelops you. Word of the encounter spreads: your reputation soars.",
+        "message_failure": "You ask for a blessing instead of gold. The figures are silent for a long moment. 'We offer what we offer,' says the central one. 'Your refusal is noted.' A faint warmth settles over you nonetheless. Something has shifted.",
         "effect": {
           "success_chance": 0.5,
           "success": {
@@ -190,7 +190,7 @@
       },
       {
         "option": "Refuse. Your path is yours alone. (Potential: Reputation)",
-        "message": "You meet their gaze steadily. 'I thank you, but I'll make my own fortune.' The central figure inclines their head. 'Pride has its place.' They vanish without another word. Yet somehow, tales of your independence reach the right ears. (+3 Reputation)",
+        "message": "You meet their gaze steadily. 'I thank you, but I'll make my own fortune.' The central figure inclines their head. 'Pride has its place.' They vanish without another word. Yet somehow, tales of your independence reach the right ears.",
         "effect": {
           "reputation": 3
         }

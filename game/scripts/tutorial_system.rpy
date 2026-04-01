@@ -134,15 +134,15 @@ default objective_descriptions = {
     
     10: "To wage war against the shadow that haunts this city, I shall require resources beyond mere governance. Fifty thousand coins - a sum vast enough to fund an army, bribe informants, and purchase the tools of vengeance. Every coin earned brings me closer to the reckoning.",
     
-    11: "Knowledge is power, and I must know mine enemy's every move. I require a network of informants - twenty loyal workers who can gather intelligence, spread rumors, and move unseen through the city's underbelly. Each soul I recruit strengthens my web of eyes and ears.",
+    11: "Knowledge is power, and I must know mine enemy's every move. I require a network of informants - fifteen loyal workers who can gather intelligence, spread rumors, and move unseen through the city's underbelly. Each soul I recruit strengthens my web of eyes and ears.",
     
     12: "Mere gold and information will not suffice - I must arm myself for the battles ahead. I seek three artifacts of power: a Binding Gem to break dark pacts, an Obsidian Blade to pierce enchanted armor, and an Enchanted Ring to grant my agents supernatural charm. These treasures shall be my weapons.",
     
-    13: "To challenge the powers that rule from darkness, I must command an empire of mine own. Five buildings under my dominion, each a fortress of influence and a wellspring of resources. Through these strongholds, I shall project power across the city and fund the final campaign.",
+    13: "To challenge the powers that rule from darkness, I must command an empire of mine own. Three buildings under my dominion, each a fortress of influence and a wellspring of resources. Through these strongholds, I shall project power across the city and fund the final campaign.",
     
     14: "For the trials ahead, I require not merely workers, but champions. I must cultivate an elite guard: three warriors of supreme combat prowess (Combat 80+), and two masters of cunning and charm (Clever or Charm 80+). These paragons shall be my sword and shield in the battles to come.",
     
-    15: "All the pieces are in place, yet one final test remains. I must prove my empire's strength by achieving a single day's revenue of ten thousand coins - a demonstration that my operations run with ruthless efficiency. Only then shall I be ready to strike.",
+    15: "All the pieces are in place, yet one final test remains. I must prove my empire's strength by achieving a single day's revenue of five thousand coins - a demonstration that my operations run with ruthless efficiency. Only then shall I be ready to strike.",
     
     16: "The hour of vengeance is at hand. All preparations are complete - my wealth is vast, my network extensive, my arsenal deadly, my empire formidable, and my champions unmatched. Now I must choose the path of reckoning: shall I strike with overwhelming force, or with cunning subterfuge? The choice is mine, and the fate of my enemy hangs in the balance."
 }
@@ -172,7 +172,7 @@ init python:
                 # Handle list format: [item_id] or [item_id, quantity] or [item_id, quantity, equipped]
                 if len(entry) > 0 and entry[0] == item_id:
                     found = True
-            elif isinstance(entry, dict):
+            elif hasattr(entry, "get"):
                 # Handle old dict format for backwards compatibility
                 if entry.get("item_id") == item_id:
                     found = True
@@ -194,11 +194,11 @@ init python:
                         # This handles cases like "['obsidian_blade', 1, False]" or "('obsidian_blade', 1, False)"
                         if f"'{item_id}'" in entry or f'"{item_id}"' in entry:
                             found = True
-            
+
             if found:
                 renpy.log(f"DEBUG has_item_anywhere: Found {item_id} in manager_inventory as {type(entry).__name__}: {entry}")
                 return True
-        
+
         # Check worker inventories (also can be tuples, lists, dicts, or strings)
         for worker in store.workers:
             worker_inventory = worker.get("inventory", [])
@@ -212,7 +212,7 @@ init python:
                     # Handle list format
                     if len(entry) > 0 and entry[0] == item_id:
                         found = True
-                elif isinstance(entry, dict):
+                elif hasattr(entry, "get"):
                     # Handle old dict format
                     if entry.get("item_id") == item_id:
                         found = True
@@ -391,7 +391,7 @@ init python:
             return f"Progress: {money}/50000 Coins"
         elif current_objective == 11:
             actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
-            return f"Progress: {actual_workers}/20 Workers"
+            return f"Progress: {actual_workers}/15 Workers"
         elif current_objective == 12:
             # Validate and fix items when checking objective 12 progress
             validate_objective_12_items()
@@ -410,7 +410,7 @@ init python:
             return f"Progress: {items_collected}/3 Artifacts\n- Binding Gem: {check_gem}\n- Obsidian Blade: {check_blade}\n- Enchanted Ring: {check_ring}"
         elif current_objective == 13:
             actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
-            return f"Progress: {actual_buildings}/5 Buildings"
+            return f"Progress: {actual_buildings}/3 Buildings"
         elif current_objective == 14:
             warriors = count_workers_with_skill("Combat", 80)
             # Count unique workers (a worker can't be counted twice)
@@ -426,9 +426,9 @@ init python:
             return f"Progress (Requires BOTH):\n- Elite Warriors (Combat 80+): {warriors}/3 {warriors_ready}\n- Elite Agents (Clever/Charm 80+): {unique_agents}/2 {agents_ready}"
         elif current_objective == 15:
             if store.event_flags.get("daily_revenue_10k_achieved", False):
-                return "Progress: Daily revenue goal achieved (10,000 coins) ->"
+                return "Progress: Daily revenue goal achieved (5,000 coins) ->"
             else:
-                return "Progress: Achieve 10,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase Building skill"
+                return "Progress: Achieve 5,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase Building skill"
         elif current_objective == 16:
             if store.vengeance_path_chosen:
                 return f"Progress: Path chosen -> {store.vengeance_path}\nMark 'Complete' to begin the final strike"
@@ -494,7 +494,7 @@ init python:
         if not getattr(store, 'objective_10_complete', False):
             return False
         actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
-        return actual_workers >= 20
+        return actual_workers >= 15
     
     def can_complete_objective_12():
         """Check if objective 12 conditions are met"""
@@ -526,7 +526,7 @@ init python:
         if not getattr(store, 'objective_12_complete', False):
             return False
         actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
-        return actual_buildings >= 5
+        return actual_buildings >= 3
     
     def can_complete_objective_14():
         """Check if objective 14 conditions are met"""
@@ -843,8 +843,25 @@ init python:
         if not store.owned_buildings or len(store.owned_buildings) == 0:
             return None
         
-        # Choose a random building
-        building_name = random.choice(list(store.owned_buildings))
+        # Arena and Academy are never sabotaged by governor tension events.
+        _gov_sabotage_excluded_names = frozenset(("Arena", "Academy"))
+        _gov_sabotage_excluded_types = frozenset(("arena", "academy"))
+        candidates = []
+        for bname in list(store.owned_buildings):
+            if bname in _gov_sabotage_excluded_names:
+                continue
+            bld = store.available_buildings.get(bname)
+            if not bld:
+                continue
+            btype = str(bld.get("type", "") or "").lower()
+            if btype in _gov_sabotage_excluded_types:
+                continue
+            candidates.append(bname)
+        if not candidates:
+            renpy.log("TENSION: Sabotage skipped — no eligible buildings (Arena/Academy excluded).")
+            return None
+        
+        building_name = random.choice(candidates)
         building = store.available_buildings.get(building_name)
         
         if not building:
@@ -952,7 +969,6 @@ init python:
             objective_1_complete = True
             current_objective = 2
             renpy.call_in_new_context("show_objective_1_dialogue")
-            # Si el tipo de edificio ya estaba establecido, completar el objetivo 2 inmediatamente
             if building_1_type_set and not objective_2_complete:
                 renpy.log("DEBUG: Building type already set, completing objective 2 immediately")
                 objective_2_complete = True
@@ -1645,14 +1661,14 @@ label show_objective_11_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_11_dialogue - STARTING DIALOGUE")
-    "Twenty souls now serve my cause. Twenty pairs of eyes watching, twenty pairs of ears listening, twenty minds working toward a single purpose: my victory."
+    "Fifteen souls now serve my cause. Fifteen pairs of eyes watching, fifteen pairs of ears listening, fifteen minds working toward a single purpose: my victory."
     "This is not merely a workforce—it is a network that spans the city like a web of shadows."
     "No secret shall escape my notice, no conspiracy remain hidden, no plot go undetected."
     "Each worker I have recruited brings their own skills, their own connections, their own value to my cause."
     "Warriors who can strike with deadly precision, spies who can slip through the tightest security, merchants who can move goods and information with equal ease."
     "The governor may have his guards and his informants, but I have something far more valuable: a network built on loyalty, not fear."
     "My workers serve me because they believe in my cause, because they have seen the future I offer, and because they know that when I triumph, they shall share in that victory."
-    "With twenty souls at my command, I can monitor every corner of the city, gather intelligence on every target, and strike when and where I choose."
+    "With fifteen souls at my command, I can monitor every corner of the city, gather intelligence on every target, and strike when and where I choose."
     "The governor's every move is known to me, his every weakness catalogued, his every ally marked."
     "My journal hath been inscribed with the next duty. The web is complete, and the spider waits."
     $ renpy.log("DEBUG: show_objective_11_dialogue - FINISHED DIALOGUE")
@@ -1683,7 +1699,7 @@ label show_objective_13_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_13_dialogue - STARTING DIALOGUE")
-    "Five strongholds now fly my banner. Five bastions of power, each one a declaration of my growing influence."
+    "Three strongholds now fly my banner. Three bastions of power, each one a declaration of my growing influence."
     "From these fortresses, I command the city."
     "Each building serves a purpose: taverns where information flows like wine, guilds where warriors train and plan, brothels where secrets are whispered in the dark, restaurants where deals are made over fine meals."
     "This is not merely an empire of shadows—it is a network of power that rivals any force in the city."
@@ -1692,7 +1708,7 @@ label show_objective_13_dialogue:
     "Each building is a staging ground, each worker a soldier in my army, each coin a weapon in my arsenal."
     "The governor's influence wanes with each passing day, while mine grows stronger."
     "He may have his title and his crown, but I have something far more valuable: the loyalty of those who control the city's true power—its people, its commerce, its secrets."
-    "When the time comes, when I make my move, these five strongholds shall be the foundation upon which I build a new order."
+    "When the time comes, when I make my move, these three strongholds shall be the foundation upon which I build a new order."
     "The old ways shall fall, and from their ashes, my empire shall rise."
     "My journal hath been inscribed with the next duty. The stage is set, and the players take their positions."
     $ renpy.log("DEBUG: show_objective_13_dialogue - FINISHED DIALOGUE")
@@ -1721,7 +1737,7 @@ label show_objective_15_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_15_dialogue - STARTING DIALOGUE")
-    "Ten thousand coins in a single day. The number alone is staggering, but what it represents is far greater."
+    "Five thousand coins in a single day. The number alone is staggering, but what it represents is far greater."
     "My empire generates wealth like a mighty river, flowing endlessly into my coffers."
     "This is not mere prosperity—it is the power I have built, the machine of commerce that shall fuel my vengeance and fund my rise to dominance."
     "Each coin earned is a testament to the network I have created, the workers I have trained, the buildings I have established."

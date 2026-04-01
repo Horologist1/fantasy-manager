@@ -1,0 +1,346 @@
+# academy_library_quest.rpy — Academy library side quest (sealed training manual + letter puzzle)
+
+# Stages 0–3: one library visit per day; only positive letter/position clues (no “barred alphabet” list).
+# Stage 4: vowel-gap slate puzzle (same visit day as entering stage 4), then same session → stage 5.
+# Stage 5: type the six-letter token or use lattice; may retry same calendar day.
+# Stage 6: codex / unlock Training (same session after success).
+
+init 900 python:
+    try:
+        style.choice_button_text.bold = False
+    except Exception:
+        pass
+
+default academy_lib_stage = 0
+default academy_lib_last_visit_total_days = None
+
+# Set when the manual is first recovered; kept for future stats/UX. Not used to skip quest stages (persistent is global across saves).
+default persistent.academy_lib_quest_completed_once = False
+
+init python:
+    store.ACADEMY_LIB_CIPHER_WORD = "MANAGE"
+
+    def academy_lib_cipher_accept(guess):
+        """
+        True if the typed token opens the seal. MANAGER (7) is accepted as the common mistake for MANAGE (6).
+        Returns (accepted: bool, narrator_nudge: str|None).
+        """
+        g = (guess or "").strip().upper()
+        if not g:
+            return (False, None)
+        key = getattr(store, "ACADEMY_LIB_CIPHER_WORD", "MANAGE")
+        if g == key:
+            return (True, None)
+        if g == "MANAGER":
+            return (True, "manager_not_manage")
+        return (False, None)
+
+    def academy_lib_has_cipher_lattice():
+        inv = getattr(store, "manager_inventory", None) or []
+        for it in inv:
+            if isinstance(it, (list, tuple)) and len(it) >= 2 and it[0] == "cipher_lattice" and int(it[1] or 0) > 0:
+                return True
+        return False
+
+    def academy_lib_ensure_event_flags():
+        if not hasattr(store, "event_flags") or store.event_flags is None:
+            store.event_flags = {}
+        if not hasattr(store.event_flags, "get"):
+            store.event_flags = {}
+
+    def academy_lib_today():
+        return int(calculate_total_days())
+
+    def academy_lib_mark_visit_consumed():
+        store.academy_lib_last_visit_total_days = academy_lib_today()
+
+    def academy_lib_seal_guess_menu_available():
+        """After the first visit (stage ≥ 1), offer Continue vs Attempt seal while the quest is open. First visit is intro only."""
+        if int(getattr(store, "academy_lib_stage", 0) or 0) < 1:
+            return False
+        if not getattr(store, "event_flags", None) or not hasattr(store.event_flags, "get"):
+            return False
+        if store.event_flags.get("academy_lib_manual_found"):
+            return False
+        if store.event_flags.get("academy_lib_decrypt_done"):
+            return False
+        return True
+
+    def academy_lib_on_cipher_lattice_acquired():
+        academy_lib_ensure_event_flags()
+        first = not bool(store.event_flags.get("academy_lib_lattice_acquired"))
+        store.event_flags["academy_lib_lattice_acquired"] = True
+        if first:
+            renpy.notify("Academy library: use this at the wax seal. The house token is six letters: MANAGE.")
+
+
+label academy_lib_quest_return:
+    $ renpy.show_screen("map_screen")
+    $ renpy.show_screen("academy_menu")
+    jump tavern_screen
+
+
+label academy_library_quest:
+    $ academy_lib_ensure_event_flags()
+
+    if store.event_flags.get("academy_lib_manual_found"):
+        narrator "You already recovered the sealed manual. The library has nothing left to yield on that thread."
+        call academy_lib_quest_return
+        return
+
+    $ _today = academy_lib_today()
+    $ _same_day = (academy_lib_last_visit_total_days is not None) and (academy_lib_last_visit_total_days == _today)
+    $ _puzzle_retry = (academy_lib_stage == 5) and (not store.event_flags.get("academy_lib_decrypt_done"))
+    $ _seal_attempt_same_day_ok = (not store.event_flags.get("academy_lib_decrypt_done")) and (not store.event_flags.get("academy_lib_manual_found"))
+    if _same_day and not _puzzle_retry and not _seal_attempt_same_day_ok:
+        narrator "The clerk taps a small placard without looking up. {i}One consultation block per day.{/i}"
+        call academy_lib_quest_return
+        return
+
+    $ _lib_bg = "images/buildings/academy.png"
+    if renpy.loadable("images/buildings/academy.png"):
+        $ _lib_bg = "images/buildings/academy.png"
+    elif renpy.loadable("images/events/academy_director.png"):
+        $ _lib_bg = "images/events/academy_director.png"
+    else:
+        $ _lib_bg = "images/event_bg.png"
+
+    scene expression _lib_bg
+
+    # Do not skip stages from persistent alone: persistent is global across saves and would strand old saves at the wax.
+    # academy_lib_stage + event_flags are per-save; follow those only.
+
+    if academy_lib_seal_guess_menu_available():
+        window hide
+        menu:
+            "Keep investigating.":
+                if _same_day and not _puzzle_retry:
+                    window show
+                    narrator "The clerk taps a small placard without looking up. {i}One consultation block per day.{/i}"
+                    call academy_lib_quest_return
+                    return
+            "Guess the cipher.":
+                jump academy_lib_stage5_from_lattice
+        window show
+    else:
+        window show
+
+    if academy_lib_stage == 0:
+        jump academy_lib_stage0
+    elif academy_lib_stage == 1:
+        jump academy_lib_stage1
+    elif academy_lib_stage == 2:
+        jump academy_lib_stage2
+    elif academy_lib_stage == 3:
+        jump academy_lib_stage3
+    elif academy_lib_stage == 4:
+        jump academy_lib_stage4_vowel_puzzle
+    elif academy_lib_stage == 5:
+        jump academy_lib_stage5_puzzle
+    else:
+        jump academy_lib_stage6_codex
+
+
+label academy_lib_stage0:
+    narrator "The academy library smells of dust, varnish, and the particular arrogance of ink that outlives people."
+    narrator "You are not here for ornament. The card catalog lists a circulating codex—a sealed manual of practical manager training."
+    narrator "Forms, drills, and the phrasing senior stewards use when they turn habit into something teachable."
+    narrator "That copy should sit on an open shelf. It does not."
+    narrator "You find a gap and a label that matches no spine in the room—loan status {i}perpetual{/i}, possession {i}suspiciously absent{/i}."
+    narrator "It is as if the book were on loan to nobody honest."
+    narrator "The clerk finally admits, between sighs, that sensitive circulation copies carry an embossed wax seal."
+    narrator "Six positions around a ring, read outward-in once the first mark is anchored."
+    narrator "Without the right {i}spoken{/i} key, the binder stays shut—no matter how loudly the index insists the title exists."
+    narrator "On the margin of a routing slip, someone has penciled one pairing only."
+    narrator "The hooked glyph—the ring’s starting tooth—maps to M in the academy’s private index. Position one, then, is settled."
+    narrator "If the seal fights you, a few stationers stock ruled “cryptographer’s lattices” for aligning glyphs."
+    narrator "The Elite Emporium on the city map sometimes carries them—at a price that could buy patience outright."
+    narrator "A clerk’s trick, not magic, but it saves hours if you can pay."
+
+    $ store.event_flags["academy_lib_started"] = True
+    $ store.event_flags["academy_lib_hint_a"] = True
+    $ academy_lib_stage = 1
+    $ academy_lib_mark_visit_consumed()
+    window hide
+    call academy_lib_quest_return
+    return
+
+
+label academy_lib_stage1:
+    narrator "Today you need the middle ring of the index—not rumor, not theater. Which teeth bite which letters."
+
+    menu:
+        "Work the archive’s patience.":
+            narrator "You spend the morning being sent to the wrong desk. By afternoon, a tired archivist lets you copy a corner of the seal-rubric."
+            narrator "Two more teeth named plainly—third is N, fifth is G—as if whoever carved the wax wanted competent hands to succeed."
+        "Work the corridors.":
+            narrator "You trade favors for half-sentences. A student’s joke becomes a diagram scratched on a handbill—smudged, but the labels are unmistakable."
+            narrator "Tooth three reads N, tooth five G, matching the archive photograph you were denied yesterday."
+
+    narrator "You update your working strip: M · ? · N · ? · G · ?—six teeth total, three now known by letter."
+
+    $ store.event_flags["academy_lib_hint_b"] = True
+    $ academy_lib_stage = 2
+    $ academy_lib_mark_visit_consumed()
+    window hide
+    call academy_lib_quest_return
+    return
+
+
+label academy_lib_stage2:
+    narrator "A different clerk, a different desk: returns and fines."
+    narrator "Buried in a memo about “non-circulating reserves,” someone underlined the seal’s closing tooth: it resolves to E in the house table."
+    narrator "There is more. A marginal note—different ink—warns that positions two and four carry the {i}same{/i} vowel."
+    narrator "Not adjacent doubles like a stutter; a pair of windows mirroring each other across the ring."
+
+    narrator "Your strip tightens: M · ? · N · ? · G · E, with the two gaps obliged to match."
+
+    $ store.event_flags["academy_lib_hint_c"] = True
+    $ academy_lib_stage = 3
+    $ academy_lib_mark_visit_consumed()
+    window hide
+    call academy_lib_quest_return
+    return
+
+
+label academy_lib_stage3:
+    narrator "You are allowed ten minutes with a practice wax—blunt teeth, no book behind it."
+    narrator "Second and fourth carry the {i}same{/i} vowel-mark. The slab shows only the glyph, not a letter in type. The attendant will not speak the letter aloud—that is for the proving desk, they mutter, as if saying it would spoil the wax."
+    narrator "You trace the mark into your notes. You have seen that stamp before: in the roster annex, beside lines that are open for assignment."
+    narrator "That is the house’s way of admitting a post is live. {i}Which vowel{/i} that glyph names is left for you to defend."
+    narrator "Knowing the shape is not the same as earning the {i}spoken{/i} permission. The live seal will still demand a word, not a drawing."
+
+    $ academy_lib_stage = 4
+    $ academy_lib_mark_visit_consumed()
+    window hide
+    call academy_lib_quest_return
+    return
+
+
+label academy_lib_stage4_vowel_puzzle:
+    narrator "Before you touch the real seal, the proving clerk restores your strip on the slate: M · ( ) · N · ( ) · G · E."
+    narrator "The two gaps must {i}mirror{/i}. Name the vowel you claim for the second tooth."
+    narrator "If you are wrong, the slate is wiped and you begin again—no partial credit."
+
+    jump academy_lib_stage4_slot2
+
+
+label academy_lib_stage4_slot2:
+    menu:
+        "Second position: A.":
+            jump academy_lib_stage4_slot4
+        "Second position: E.":
+            narrator "The clerk scrapes the chalk flat. {i}Not the roster’s open-post mark.{/i}"
+            jump academy_lib_stage4_slot2
+        "Second position: I.":
+            narrator "The clerk scrapes the chalk flat. {i}Too slight for that glyph.{/i}"
+            jump academy_lib_stage4_slot2
+        "Second position: O.":
+            narrator "The clerk scrapes the chalk flat. {i}Wrong roundness.{/i}"
+            jump academy_lib_stage4_slot2
+        "Second position: U.":
+            narrator "The clerk scrapes the chalk flat. {i}The house does not close its posts with that sound.{/i}"
+            jump academy_lib_stage4_slot2
+
+
+label academy_lib_stage4_slot4:
+    menu:
+        "Fourth: A (mirror second).":
+            narrator "The clerk grunts approval. {i}Same vowel, two windows.{/i} The slate is allowed to stand."
+            narrator "What remains is breath—the {i}live{/i} wax will not open for chalk alone."
+            $ store.event_flags["academy_lib_ready_decrypt"] = True
+            $ academy_lib_stage = 5
+            $ academy_lib_mark_visit_consumed()
+            jump academy_lib_stage5_puzzle
+        "Fourth position: E.":
+            narrator "Mirroring fails. The fourth must repeat the second exactly."
+            jump academy_lib_stage4_slot4
+        "Fourth position: I.":
+            narrator "The clerk taps the slate. {i}Mirror the second slot.{/i}"
+            jump academy_lib_stage4_slot4
+        "Fourth position: O.":
+            narrator "The clerk taps the slate. {i}Mirror the second slot.{/i}"
+            jump academy_lib_stage4_slot4
+        "Fourth position: U.":
+            narrator "The clerk taps the slate. {i}Mirror the second slot.{/i}"
+            jump academy_lib_stage4_slot4
+
+
+label academy_lib_stage5_puzzle:
+    narrator "The true impression sits under the lamp. Heat finds the fine lines."
+    narrator "The wax does not read your slate—it listens for a {i}single{/i} house token, six letters, no spaces, spoken as if you meant it."
+
+    narrator "You already fixed the first, third, fifth, and sixth teeth; the proving desk watched you mirror the inner vowels."
+    narrator "Assemble the ring in order in your head, then {i}speak{/i} it—nothing spelled out for you now but memory."
+
+    jump academy_lib_stage5_loop
+
+
+label academy_lib_stage5_from_lattice:
+    window show
+    if academy_lib_has_cipher_lattice():
+        narrator "The proving clerk eyes your ruled transparency, then the live wax."
+        narrator "{i}House rule: one consultation block a day—unless you mean to settle accounts with the seal itself.{/i}"
+        narrator "The lattice does not replace procedure; it {i}is{/i} procedure for the stubborn ring."
+        narrator "The seal still wants a token—six letters—or proof you brought the real grid."
+    else:
+        narrator "You steer the conversation to the proving desk before the day’s errands can scatter you."
+        narrator "The clerk’s mouth tightens. {i}The live wax is not a parlor trick.{/i}"
+        narrator "Still: the ring only cares whether you can {i}name{/i} the house token—six letters, one breath."
+        narrator "Or you walk away and earn the slate the slow way."
+
+    $ store.event_flags["academy_lib_started"] = True
+    $ store.event_flags["academy_lib_hint_a"] = True
+    $ store.event_flags["academy_lib_hint_b"] = True
+    $ store.event_flags["academy_lib_hint_c"] = True
+    $ store.event_flags["academy_lib_ready_decrypt"] = True
+    $ academy_lib_stage = 5
+
+    jump academy_lib_stage5_loop
+
+
+label academy_lib_stage5_loop:
+    window hide
+    menu:
+        "Use the lattice." if academy_lib_has_cipher_lattice():
+            narrator "You slide the ruled transparency over the ring."
+            narrator "The lattice aligns the teeth you already mapped—the house token settles as a single utterance, sure as a key turning."
+            jump academy_lib_stage5_success
+
+        "Speak the house token.":
+            $ _guess = renpy.input("Six letters, one word (six teeth on the ring, not seven):", default="", length=16)
+            $ _acc, _nudge = academy_lib_cipher_accept(_guess)
+            if _acc:
+                if _nudge == "manager_not_manage":
+                    narrator "The wax catches—then bites down. Seven letters will not sit on six teeth."
+                    narrator "You trim the tail: the house form is MANAGE, not the longer common title."
+                jump academy_lib_stage5_success
+            narrator "The wax rejects it—wrong teeth, wrong breath, wrong moment."
+            jump academy_lib_stage5_loop
+
+        "Step back (return later).":
+            window hide
+            call academy_lib_quest_return
+            return
+
+
+label academy_lib_stage5_success:
+    narrator "The fit is correct. The binder’s latch yields."
+    narrator "Inside: not spells—protocol. Margins crowded with practical instruction—the kind house managers swear they “just know.”"
+
+    $ store.event_flags["academy_lib_decrypt_done"] = True
+    $ academy_lib_stage = 6
+    jump academy_lib_stage6_codex
+
+
+label academy_lib_stage6_codex:
+    narrator "You slip the codex into your coat like contraband—which, in a sense, it is."
+    narrator "From now on, when you speak with your workers, you can run structured training sessions with the confidence of someone who finally owns the terminology."
+
+    $ store.event_flags["academy_lib_manual_found"] = True
+    $ persistent.academy_lib_quest_completed_once = True
+    $ academy_lib_mark_visit_consumed()
+    $ renpy.notify("Manager training interactions unlocked (worker interactions menu).")
+    window hide
+    call academy_lib_quest_return
+    return

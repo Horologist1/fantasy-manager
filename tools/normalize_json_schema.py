@@ -134,7 +134,10 @@ def normalize_events() -> None:
             "player_gender_requirement": None,
             "requires_assigned_worker": False,
             "required_building_worker_traits": [],
-            "required_building_traits": [],
+            "required_active_professions": [],
+            "forbidden_active_professions": [],
+            "required_building_worker_min_skill": None,
+            "required_building_worker_skill": None,
             "building_type": [],
             "background_image": None,
             "success_image": None,
@@ -157,6 +160,17 @@ def normalize_events() -> None:
                 all_choices.append(c)
 
     choice_defaults = collect_union_keys(all_choices)
+    effect_worker_filter_defaults = {
+        "required_active_professions": [],
+        "forbidden_active_professions": [],
+        "required_traits": [],
+        "excluded_traits": [],
+        "min_skill": None,
+        "required_building_worker_min_skill": None,
+        "skill_name": None,
+        "required_building_worker_skill": None,
+        "required_trait": None,
+    }
     choice_defaults.update(
         {
             "option": None,
@@ -165,6 +179,9 @@ def normalize_events() -> None:
             "required_trait": None,
             "required_traits": [],
             "excluded_traits": [],
+            "restrict_worker_effects_to_filter": False,
+            "effect_worker_filter": {},
+            "message_failure_worker_effect_skipped": None,
             "trait_visibility": "hide",
             "blocked_message": None,
             "message": None,
@@ -220,8 +237,22 @@ def normalize_events() -> None:
                 event["excluded_flags"] = {}
             if not isinstance(event.get("required_building_worker_traits"), list):
                 event["required_building_worker_traits"] = []
-            if not isinstance(event.get("required_building_traits"), list):
-                event["required_building_traits"] = []
+            event.pop("required_building_traits", None)
+            if not isinstance(event.get("required_active_professions"), list):
+                event["required_active_professions"] = []
+            if not isinstance(event.get("forbidden_active_professions"), list):
+                event["forbidden_active_professions"] = []
+            if "required_building_worker_min_skill" in event:
+                v = event.get("required_building_worker_min_skill")
+                if v is not None and not isinstance(v, int):
+                    try:
+                        event["required_building_worker_min_skill"] = int(v)
+                    except Exception:
+                        event["required_building_worker_min_skill"] = None
+            if event.get("required_building_worker_skill") is not None and not isinstance(
+                event.get("required_building_worker_skill"), str
+            ):
+                event["required_building_worker_skill"] = None
             if not isinstance(event.get("building_type"), list):
                 event["building_type"] = []
             if not isinstance(event.get("choices"), list):
@@ -245,6 +276,9 @@ def normalize_events() -> None:
                     choice["required_traits"] = []
                 if not isinstance(choice.get("excluded_traits"), list):
                     choice["excluded_traits"] = []
+                if not isinstance(choice.get("effect_worker_filter"), dict):
+                    choice["effect_worker_filter"] = {}
+                ensure_keys(choice["effect_worker_filter"], effect_worker_filter_defaults)
 
                 if not isinstance(choice["effect"].get("event_flags"), dict):
                     choice["effect"]["event_flags"] = {}
@@ -345,7 +379,10 @@ def normalize_events() -> None:
                     "worker_gender_requirement",
                     "requires_assigned_worker",
                     "required_building_worker_traits",
-                    "required_building_traits",
+                    "required_active_professions",
+                    "forbidden_active_professions",
+                    "required_building_worker_min_skill",
+                    "required_building_worker_skill",
                     "building_type",
                     "background_image",
                     "success_image",

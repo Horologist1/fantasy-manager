@@ -1,7 +1,7 @@
 [
   {
     "id": "knights_honor_duel",
-    "description": "The heavy oak doors swing wide as steel-clad boots echo across your hall's worn stones. A knight in gleaming mail stands silhouetted against the afternoon light, their hand resting on a sword hilt polished to mirror brightness. The conversations around you die to whispers as they stride forward, spurs chiming with each deliberate step.",
+    "description": "A knight in full mail pushes through the front doors, hand on sword, spurs ringing on stone. The hall goes quiet. They stop in front of you and issue a formal challenge—combat for honor and coin, right here, right now.",
     "event_music": "audio/event_dramatic.ogg",
     "weight": 4,
     "cooldown_days": 7,
@@ -17,8 +17,8 @@
       {
         "option": "Accept the duel. (Risk: Worker Health; Potential: Money, Reputation)",
         "condition": "Combat",
-        "message_success": "Steel rings against steel as [acting_worker] meets each blow with practiced grace.\n\nThe knight's eyes widen with respect as your champion matches their skill stroke for stroke.\n\nWhen the final parry lands, both warriors step back, breathing hard but grinning.\n\nThe knight removes their helm and raises a toast—honor satisfied, reputation earned.\n\nA heavy purse changes hands as the crowd erupts in cheers ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "The clash of metal echoes through the hall as [acting_worker] struggles against the knight's relentless assault. Each parry comes a heartbeat too late, each riposte falls short of its mark. Blood seeps through torn fabric as your champion staggers back, pride wounded deeper than flesh. You step forward with a strained smile, covering the costs of defeat while whispers of weakness follow in your wake ({actual_money}, {actual_reputation} reputation). (-10 Health, -5 Joy)",
+        "message_success": "[acting_worker] meets every blow clean, steel on steel. The knight pushes hard but can't break through. After the final exchange both step back, breathing heavy, grinning.\n\nThe knight pulls off their helm and offers a toast. Honor satisfied, purse earned ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] can't keep up. Every parry lands late, every counter falls short. The knight batters them back until blood shows through torn cloth. You cover the medical costs and the knight's fee while the crowd mutters about your house fielding amateurs ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 1200,
@@ -40,7 +40,7 @@
       },
       {
         "option": "Decline, but offer the knight free drinks. (Cost: Money; Gain: Reputation)",
-        "message": "You raise your hand in a gesture of peace, your voice carrying the weight of diplomacy. 'Your challenge honors us, but tonight we offer fellowship instead of steel.' The knight's stern expression softens as you gesture toward your finest ale. Soon their entourage fills your tables, their tales of distant battles and forgotten kingdoms drawing eager listeners. Coin flows as freely as the stories, and when they finally depart, your reputation for hospitality has grown ({actual_money}, {actual_reputation} reputation).",
+        "message": "You wave off the duel and offer the knight your best table instead. Their entourage settles in, orders flow, and by closing time the knight is buying rounds for the house. The drinks cost you, but the goodwill is worth it ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -200,
           "reputation": 5,
@@ -63,7 +63,7 @@
   },
   {
     "id": "guild_rivalry_taunt",
-    "description": "The morning air carries the sound of hammering as fresh parchments appear on every post and wall. Your name stares back at you from crude illustrations, twisted into caricature and surrounded by mocking verse. The rival guild's seal gleams wet with fresh ink, their challenge written in letters bold enough to be read from across the street. Passersby pause to read and whisper, their eyes finding your establishment with new curiosity.",
+    "description": "Crude flyers plastered across every post in the district—your name mocked in bad verse, your guild drawn as a joke. The rival guild's seal is still wet. Passersby stop to read and glance your way. You need to respond or let this stand.",
     "weight": 4,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -77,8 +77,8 @@
       {
         "option": "Send a worker to publicly refute the taunts. (Risk: Reputation)",
         "condition": "Charm",
-        "message_success": "The crowd gathers as [acting_worker] takes position beneath the largest of the offensive flyers. Their voice carries clear and strong, each word carefully chosen to slice through the rival's arguments like a blade through silk. Laughter ripples through the audience as clever retorts turn the guild's own words against them. By the time your champion finishes, the crowd is cheering your name while the rival's reputation lies in tatters ({actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "The words stumble from [acting_worker]'s lips like stones down a well, each attempt at wit falling flat before the gathered crowd. The rival guild's supporters seize upon every fumbled phrase, their laughter growing louder with each passing moment. When your champion finally retreats, the damage is done—your guild's name has become the day's entertainment, and not in the way you intended ({actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] plants themselves under the biggest flyer and starts tearing the rival's claims apart, point by point. The crowd gathers, laughs build, and by the end people are cheering your guild's name. The rival's insults backfire completely ({actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] stumbles over their own words and the crowd turns on them fast. The rival guild's people are ready with heckles, and every fumbled line makes it worse. By the time your worker retreats, your guild is the district's punchline ({actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -97,7 +97,7 @@
       },
       {
         "option": "Ignore the taunts. (Loss: Reputation)",
-        "message": "You instruct your workers to go about their duties as if the flyers were mere decoration. The parchments flutter in the wind, their message unanswered, and some begin to whisper that perhaps the rival guild's words carry more truth than you care to admit. Silence, you learn, can speak as loudly as any proclamation ({actual_reputation} reputation).",
+        "message": "You tell your people to ignore it and get back to work. The flyers stay up, unanswered. Some folk start wondering if the rival guild might have a point. Silence has a cost ({actual_reputation} reputation).",
         "effect": {
           "reputation": -5,
           "success_chance": 0,
@@ -120,14 +120,13 @@
   },
   {
     "id": "patrons_lost_heirloom",
-    "description": "Panic etches deep lines across a patron's face as they search frantically through empty pockets and overturned purses. Their voice cracks with desperation as they describe a family heirloom—passed down through generations, irreplaceable beyond any measure of coin. The weight of history hangs heavy in their words, and other patrons pause their conversations to listen, some offering sympathetic murmurs while others help overturn cushions and peer beneath tables.",
+    "description": "A patron is tearing through their pockets, overturning cushions, voice cracking. They lost a family heirloom somewhere on your premises—irreplaceable, generations old. Other guests are watching. How you handle this will be remembered.",
     "weight": 3,
     "limited": true,
     "max_occurrences": 1,
     "cooldown_days": 7,
     "worker_selection": "choose",
     "building_type": [
-      "brothel",
       "tavern",
       "restaurant"
     ],
@@ -138,8 +137,8 @@
       {
         "option": "Assign a worker to search for it. (Potential: Money, Reputation)",
         "condition": "Clever",
-        "message_success": "With methodical precision, [acting_worker] retraces the patron's steps, their keen eyes catching what others missed. There, wedged beneath a worn bench where shadows gather thick, the glint of precious metal catches the lamplight. The heirloom emerges—a locket bearing the scratches of countless years and the warmth of countless hands. Tears of relief stream down the patron's face as they press a heavy purse into your worker's hands, their voice breaking with gratitude. Word of your establishment's integrity spreads like wildfire through the district ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "Despite [acting_worker]'s thorough search—every corner examined, every surface scrutinized—the heirloom remains lost to shadow and time. The patron's face crumbles as hope fades with the dying light. They depart in silence, their disappointment hanging in the air like incense, and you know that tonight's failure will be tomorrow's whispered warning to others ({actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] retraces the patron's steps methodically—checks the benches, the floor, the coat hooks. There it is, wedged under a seat in the back. A scratched silver locket, older than anyone in the room. The patron breaks down in relief and presses a heavy purse into your worker's hands. Word spreads fast ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] checks every corner, every surface—nothing. The heirloom is gone. The patron leaves in silence, and the other guests watch them go. Word gets around that things go missing at your place ({actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": 1200,
@@ -159,7 +158,7 @@
       },
       {
         "option": "Offer condolences but do nothing. (Loss: Reputation)",
-        "message": "You approach with gentle words and sympathetic gestures, but your hands remain empty of action. The patron's eyes search your face for something more—some sign that you understand the weight of their loss—but find only polite distance. They gather their remaining belongings with quiet dignity, their disappointment settling over your establishment like a shroud. The other patrons watch this exchange with measuring eyes, and you sense that your reputation for compassion has dimmed ({actual_reputation} reputation).",
+        "message": "You offer sympathetic words but don't lift a finger. The patron searches your face for something more, finds nothing, and gathers their things. The other guests notice. A place that won't help when it matters loses trust quietly ({actual_reputation} reputation).",
         "effect": {
           "reputation": -3,
           "success_chance": 0,
@@ -182,7 +181,7 @@
   },
   {
     "id": "enchanted_dish_mishap",
-    "description": "The kitchen erupts in a symphony of sizzling and shouting as something goes terribly, wonderfully wrong. A volatile magical herb—mistaken for common seasoning—transforms the evening's main course into something that pulses with ethereal light. The dish hums with arcane energy, casting dancing shadows on the walls while patrons lean back in their chairs, torn between fascination and alarm. The very air seems to shimmer around the glowing plates, and whispers of wonder mix with nervous laughter.",
+    "description": "Someone grabbed a magical herb instead of common seasoning. The main course is glowing, humming with arcane energy, and the dining room is split between fascinated and terrified. Plates are literally pulsing with light. You need to act fast.",
     "weight": 3,
     "limited": true,
     "max_occurrences": 1,
@@ -198,8 +197,8 @@
       {
         "option": "Market it as a magical delicacy. (Risk: Reputation; Potential: Money)",
         "condition": "Charm",
-        "message_success": "With theatrical flair, [acting_worker] emerges from the kitchen bearing the luminous dish like a sacred offering. Their voice rings with confidence as they proclaim this a rare delicacy—a fusion of culinary art and mystical craft available only to the most discerning palates. The patrons' fear transforms into excitement as they witness something truly extraordinary. Coins flow freely as word spreads of your establishment's magical cuisine, and soon you have a waiting list of curious nobles eager to experience the impossible ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "The glowing dish trembles in [acting_worker]'s hands as they attempt to present it with confidence, but their nervous energy betrays them. Patrons see not wonder but danger, their chairs scraping against stone as they retreat toward the exits. The magical light that should have enchanted instead terrifies, and soon your dining room stands empty save for the humming, abandoned plates. The night's losses cut deep, and whispers of your 'cursed kitchen' spread through the district like wildfire ({actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] strides out of the kitchen with the glowing dish held high and sells it hard—rare magical delicacy, once-in-a-lifetime experience. The patrons buy it completely. Coin pours in, nobles start asking when you'll serve it again, and the waiting list grows before the night is over ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries to sell it, but their nerves show. Patrons see danger, not novelty—chairs scrape, people head for the exits. The dining room empties fast, and by morning the district is calling your kitchen cursed ({actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": 1000,
@@ -219,7 +218,7 @@
       },
       {
         "option": "Apologize and comp everyone's meals. (Cost: Money; Gain: Reputation)",
-        "message": "You stride into the dining room with hands raised in apology, your voice cutting through the murmur of concern. 'Tonight,' you announce, 'we've discovered something extraordinary—but your comfort comes first.' The glowing dishes disappear back into the kitchen as you declare all meals complimentary. Your patrons appreciate the gesture, their initial alarm giving way to grateful smiles. Though your coffers feel the weight of the evening's generosity, your reputation for putting customers first grows stronger ({actual_money}, {actual_reputation} reputation).",
+        "message": "You pull the glowing plates, apologize to every table, and declare the night's meals free. It stings your purse, but the patrons appreciate the honesty. By closing, most are laughing about it. Your reputation for doing right by the customer holds ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -400,
           "reputation": 5,
@@ -243,7 +242,7 @@
   },
   {
     "id": "high_stakes_gambler",
-    "description": "The dice roll like thunder across felt tables as a sharp-eyed stranger rides an impossible streak of fortune. Their fingers move with practiced precision, coins flowing toward them in an endless golden stream. Whispers coil through the smoky air like serpents—some speak of supernatural luck, others of more earthly deceptions. The other players watch with growing unease as their purses grow lighter and the stranger's smile grows wider, their eyes glittering with the cold fire of someone who knows exactly what they're doing.",
+    "description": "A sharp-eyed stranger is cleaning out your tables on an impossible winning streak. Coins keep flowing their way and the regulars are getting nervous. Could be skill, could be cheating, could be something worse. Either way, the house is bleeding gold.",
     "weight": 4,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -257,8 +256,8 @@
       {
         "option": "Have a skilled dealer take over. (Risk: Money, Reputation)",
         "condition": "Clever",
-        "message_success": "Like a shadow given form, [acting_worker] glides to the table with a smile that promises nothing and reveals everything. Their hands move with fluid grace as they take control of the game, their eyes reading patterns that others miss. The stranger's confidence wavers as the tide of fortune shifts, their supernatural streak broken by skill that matches their own. The crowd watches in fascination as your dealer demonstrates that the house always has its own magic, and when the final hand is played, your reputation for fair but formidable gaming spreads through the district ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "Despite [acting_worker]'s best efforts, the stranger's luck holds like a curse that cannot be broken. Each attempt to regain control only feeds the growing pot, and soon the table groans under the weight of accumulated gold. The crowd watches in stunned silence as your house's fortune flows into the stranger's pockets like water through a broken dam. When they finally depart, their laughter echoes through the suddenly quiet room, and you're left to count the cost of a night when skill met something beyond mortal understanding ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] takes over the table with steady hands and a sharp eye. They read the stranger's patterns, shift the pace, and the streak breaks. The crowd watches the house claw its money back hand by hand. By the final round, the stranger folds and the regulars are cheering ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] can't crack it. Every play feeds the stranger's pile, and the crowd goes quiet as your house gold drains away. The stranger leaves with a fat purse and a grin. You're left counting losses and fielding uncomfortable questions from regulars ({actual_money}, {actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": 1200,
@@ -279,7 +278,7 @@
       },
       {
         "option": "Let the game proceed normally. (Risk: Money)",
-        "message": "You choose to trust in the natural order of chance, watching as the stranger's impossible streak finally meets its inevitable end. The dice that once obeyed their will begin to turn cold, and fortune's wheel spins toward balance. They depart with a modest profit and a knowing smile, leaving behind the sense that you've witnessed something rare but not supernatural. Your losses are manageable, and your reputation for honest gaming remains intact ({actual_money}).",
+        "message": "You let the game run its course. The streak cools on its own eventually—it always does. The stranger walks out with a decent profit and a knowing smile. Losses are manageable, and at least nobody can say you interfered ({actual_money}).",
         "effect": {
           "money": -300,
           "success_chance": 0,
@@ -302,7 +301,7 @@
   },
   {
     "id": "charming_patrons_request",
-    "description": "A figure draped in silk and shadow approaches your establishment as evening deepens into night. Their movements speak of wealth and discretion, each gesture calculated to draw attention while revealing nothing. They lean close to whisper their request, their voice carrying the weight of gold and the promise of secrets. Around them, the air seems to thicken with possibility and danger in equal measure.",
+    "description": "A well-dressed client arrives after dark, all silk and quiet confidence. They pull you aside and make a specific request—private company for the evening, someone exceptional. The coin they flash is real. The question is whether you can deliver.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -316,8 +315,8 @@
       {
         "option": "Assign your best charmer. (Potential: Money)",
         "condition": "Charm",
-        "message_success": "Like a dancer following music only they can hear, [acting_worker] moves with effortless grace into the client's presence. Words flow like honey between them, each gesture perfectly timed, each smile calibrated to kindle desire. The room falls silent around their performance, and when the evening reaches its crescendo, a heavy purse changes hands with whispered promises of return. Your establishment's reputation for discretion and quality spreads through the city's most exclusive circles ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "[acting_worker] makes all the right gestures, but the connection simply isn't there—the client's gaze stays polite and distant, and the evening ends without the intimacy they were seeking. A modest fee changes hands for the time spent, but the opportunity for something far more profitable slips quietly away ({actual_money}). (-5 Joy)",
+        "message_success": "[acting_worker] reads the client perfectly—right tone, right pace, effortless warmth. The evening goes exactly as it should. A heavy purse changes hands at the end, along with a promise to return. Word of your house's quality reaches the right circles ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries, but the chemistry isn't there. The client stays polite, the evening stays flat, and it ends early. A modest fee for the time, but the real money walks out the door ({actual_money}, -5 Joy).",
         "effect": {
           "success": {
             "money": 1000,
@@ -337,7 +336,7 @@
       },
       {
         "option": "Politely decline the request. (Loss: Reputation)",
-        "message": "You approach with diplomatic grace, explaining that your finest staff are currently engaged in other matters. The client's eyes narrow slightly—not with anger, but with the calculating gaze of someone accustomed to having their desires fulfilled. They nod with understanding that doesn't quite reach their eyes, and you watch them disappear into the night, knowing that their coin will find welcome elsewhere ({actual_reputation} reputation).",
+        "message": "You explain that nobody is available tonight. The client nods, but the look says they expected better. They leave without a fuss—and without coming back. Their coin will go to a competitor ({actual_reputation} reputation).",
         "effect": {
           "reputation": -2,
           "success_chance": 0,
@@ -361,15 +360,14 @@
   },
   {
     "id": "secret_admirers_gift",
-    "description": "Morning light reveals an unexpected treasure—a package wrapped in ribbons the color of fresh blood, bearing no seal or signature. The parchment crinkles like autumn leaves as you unfold the note within, its words written in a hand that trembles with either passion or fear. Someone watches from the shadows, their heart laid bare in ink and their identity hidden behind careful anonymity.",
+    "description": "An unsigned package arrives at dawn—expensive wrapping, no seal, no name. Inside: a valuable gift and a note written in a shaky hand, clearly from someone with deep pockets and deeper feelings. The sender wants to stay anonymous.",
     "weight": 3,
     "limited": true,
     "max_occurrences": 2,
     "cooldown_days": 7,
     "worker_selection": "choose",
     "building_type": [
-      "brothel",
-      "restaurant"
+      "brothel"
     ],
     "background_image": "brothel_gift",
     "success_image": "brothel_success",
@@ -378,8 +376,8 @@
       {
         "option": "Have the worker investigate the sender. (Potential: Money, Reputation)",
         "condition": "Clever",
-        "message_success": "With the patience of a hunter and the subtlety of a whisper, [acting_worker] follows the trail of clues hidden within the gift itself. A particular knot in the ribbon, the quality of the parchment, the scent that clings to the fabric—each detail tells part of a story. When the truth finally emerges, it reveals a shy noble whose admiration has grown into something deeper. Their gratitude for your worker's discretion manifests in a purse heavy with gold and a reputation for handling delicate matters with perfect grace ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "Enthusiasm outweighs subtlety as [acting_worker] pursues the mystery with all the delicacy of a charging bull. Their inquiries, though well-intentioned, scatter like startled birds through the district's gossip networks. The secret admirer retreats deeper into shadow, and soon whispers follow your establishment—not of romance, but of indiscretion and prying eyes where privacy should reign ({actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] works the clues—ribbon quality, parchment type, handwriting style—and traces the gift back to a shy noble too nervous to introduce themselves. Handled with discretion, the noble is grateful and generous. A fat purse arrives the next day with a thank-you note ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] asks too many questions in too many places. The gossip spreads before the answer does. The admirer pulls back completely, and now your establishment has a reputation for not knowing when to leave things alone ({actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": 1000,
@@ -399,7 +397,7 @@
       },
       {
         "option": "Accept the gift and ignore the note. (Potential: Money)",
-        "message": "You choose the path of simple acceptance, allowing [acting_worker] to keep the valuable gift while leaving its sender to their cherished anonymity. Sometimes the most precious things are those left unexamined, and tonight the mystery remains intact while your coffers grow heavier. In the shadows, perhaps, someone smiles at your discretion ({actual_money}). (+5 Joy)",
+        "message": "You pocket the gift, let [acting_worker] enjoy it, and leave the mystery alone. The sender stays anonymous and probably appreciates that. Easy money, no drama ({actual_money}, +5 Joy).",
         "effect": {
           "money": 400,
           "joy": 5,
@@ -423,7 +421,7 @@
   },
   {
     "id": "veiled_dancers_allure",
-    "description": "The evening air grows thick with anticipation as a patron of obvious wealth settles into the finest chair your establishment can offer. Their eyes burn with a hunger that transcends mere physical desire—they seek art, beauty, and the kind of performance that lives in memory long after the final veil falls. Gold glints between their fingers like captured starlight, and their whispered request carries the weight of a challenge as much as a proposition.",
+    "description": "A wealthy patron claims the best seat in the house and requests a private dance—veils, music, the full show. They have coin to back the ask and high expectations. Deliver, and the payout is serious. Fall short, and they'll talk.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -438,8 +436,8 @@
       {
         "option": "Assign a worker to perform. (Potential: Money; Risk: Reputation)",
         "condition": "Striptease",
-        "message_success": "The room falls silent as [acting_worker] takes the floor, their movements flowing like water given form. Each gesture speaks a language older than words, each turn of the veil revealing and concealing in perfect harmony. The patron sits transfixed, their breathing shallow as art and desire merge into something transcendent. When the final veil falls, the applause thunders through the room, and gold flows like a river toward your coffers. Word of tonight's performance will draw connoisseurs from across the realm ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "The dance begins with promise, but [acting_worker]'s rhythm falters at the crucial moment. What should have been poetry becomes prose, what should have been fire becomes mere warmth. The patron's expression shifts from anticipation to polite disappointment, and the spell that should have bound the room instead dissipates like morning mist. They depart with courteous words, but you know that tonight's failure will echo in whispered conversations throughout the district ({actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] owns the floor from the first step. Every movement is deliberate, every veil timed perfectly. The patron sits frozen, barely breathing. When the last veil drops the room erupts—applause, coin on the table, requests for a repeat. Word of the performance spreads fast ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] starts strong but loses the rhythm at the worst moment. The tension breaks, the patron's interest fades, and the room goes flat. They leave politely, but the disappointment is obvious. That kind of review travels ({actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": 1000,
@@ -459,7 +457,7 @@
       },
       {
         "option": "Refuse the request. (Loss: Reputation)",
-        "message": "You meet the patron's gaze with steady resolve, explaining that your establishment maintains certain standards that cannot be compromised for any price. Their expression hardens like cooling metal, and you watch respect war with disappointment in their eyes.\n\nThey rise with the fluid grace of someone accustomed to having doors closed in their face, and their departure carries the weight of opportunities lost ({actual_reputation} reputation).",
+        "message": "You turn them down flat—your call, your house. The patron doesn't argue, but the displeasure is plain. They leave quietly, coin and all. That money will end up at a competitor's place by the end of the night ({actual_reputation} reputation).",
         "effect": {
           "reputation": -3,
           "success_chance": 0,
@@ -483,7 +481,7 @@
   },
   {
     "id": "bards_sultry_ballad",
-    "description": "The evening's entertainment takes an unexpected turn as a traveling bard strikes the opening chords of a melody that seems to bypass the ears and speak directly to the heart. Their voice weaves through the smoky air like silk through fingers, each note carefully chosen to kindle fires that polite society pretends don't exist. Patrons lean forward in their chairs, their conversations dying as the music works its ancient magic, and you sense that tonight will be remembered long after the last note fades.",
+    "description": "A traveling bard starts playing something slow, raw, and unmistakably sultry. Conversations die. Patrons lean in. The mood in the room shifts hard—drinks are flowing and the atmosphere is charged. You can ride this wave or shut it down.",
     "weight": 3,
     "limited": true,
     "max_occurrences": 2,
@@ -499,8 +497,8 @@
       {
         "option": "Encourage a worker to join in. (Potential: Reputation)",
         "condition": "Charm",
-        "message_success": "As if drawn by invisible threads, [acting_worker] rises and adds their voice to the bard's melody. The harmony that emerges transcends mere music, becoming something that touches the soul and lifts the spirit. The room sways as one, caught in the spell of perfect collaboration, and when the final note rings out, the applause shakes the very foundations. Your establishment's name will be spoken with reverence wherever lovers of music gather ({actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "With the best of intentions, [acting_worker] attempts to join the bard's performance, but their voice clashes against the melody like discord given form. The spell breaks, the magic dissipates, and what should have been transcendent becomes merely awkward. Patrons shift uncomfortably in their seats, and you watch the evening's potential slip away like sand through fingers. The bard's reproachful glance speaks volumes about opportunities squandered ({actual_reputation} reputation). (-5 Joy)",
+        "message_success": "[acting_worker] steps up and joins the bard mid-verse. Their voices lock together and the whole room holds its breath. When the last note rings out, the applause is deafening. Drinks flow, tips pile up, and your tavern's name gets attached to a night people won't forget ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries to join in and misses the key completely. The mood breaks, patrons cringe, and the bard shoots you a look that could curdle ale. The evening's momentum is gone. People finish their drinks and leave early ({actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -520,7 +518,7 @@
       },
       {
         "option": "Ask the bard to play something less... stimulating. (Cost: Money; Loss: Reputation)",
-        "message": "You approach the bard with diplomatic words, requesting a change to something more suitable for mixed company. The music shifts to safer melodies, the dangerous fire cooling to comfortable warmth. Your patrons settle back into their conversations, but you notice that their purses remain closed and their eyes have lost the spark that drives generous spending. Sometimes safety comes at the cost of passion ({actual_money}, {actual_reputation} reputation).",
+        "message": "You pay the bard to switch to something tamer. The mood cools, conversations resume, and the energy drains out of the room. Purses stay closed for the rest of the night. Safe choice, but it cost you ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -150,
           "reputation": -2,
@@ -544,7 +542,7 @@
   },
   {
     "id": "plague_rumor_panic",
-    "description": "Fear spreads faster than wildfire through your establishment as a whispered rumor takes root and grows. Someone claims to have seen the telltale signs—the pale complexion, the trembling hands, the way one of your workers moves as if carrying an invisible weight. The word 'plague' passes from lip to lip like a curse, and you watch as patrons begin to edge toward the exits, their eyes wide with the kind of terror that reason cannot touch.",
+    "description": "Someone at the back table whispers the word 'plague' and the room freezes. A patron claims one of your workers looks pale, shaky, wrong. Within minutes half your customers are eyeing the door. The rumor is almost certainly baseless, but fear doesn't wait for facts.",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -562,8 +560,8 @@
       {
         "option": "Pay a local healer to publicly examine the worker. (Cost: Money; Risk: Reputation)",
         "condition": "none",
-        "message_success": "The healer arrives with the gravity of a judge and the precision of a scholar, their examination thorough and public. When they finally pronounce [acting_worker] free of any contagion, their words carry the weight of professional authority. The crowd's fear transforms into relief, then into admiration for your swift and responsible action. Your reputation for caring about public health spreads through the district like good news ({actual_money}, {actual_reputation} reputation). (+5 Joy)",
-        "message_failure": "Despite the healer's clean bill of health, doubt lingers in the air like smoke that refuses to clear. Some patrons nod and return to their business, but others whisper that healers can be bought, that symptoms can be hidden. The rumor may be dispelled, but its shadow remains, and you sense that tonight's crisis has left scars that time will be slow to heal ({actual_money}, {actual_reputation} reputation). (-5 Joy)",
+        "message_success": "The healer checks [acting_worker] in front of the whole room—pulse, eyes, throat—and announces a clean bill of health. The crowd exhales. A few patrons order another round. Your quick response earns respect across the district ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "The healer clears [acting_worker], but the damage is done. Some patrons nod and stay. Others mutter that healers can be bought and slip out anyway. The rumor fades slowly, but tonight's empty tables tell their own story ({actual_money}, {actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": -300,
@@ -584,7 +582,7 @@
       },
       {
         "option": "Dismiss the rumor as nonsense. (Loss: Reputation)",
-        "message": "You stand before your patrons with the confidence of someone who knows their own house, declaring the rumor to be nothing more than idle gossip born of fear and ignorance. Some nod and settle back into their seats, trusting in your judgment, but others exchange glances that speak of doubt. The evening continues, but you notice that several tables remain empty, and whispers follow in the wake of those who choose to depart early ({actual_reputation} reputation).",
+        "message": "You wave it off publicly and tell everyone to get back to their drinks. Some do. Others exchange glances and leave early. Several tables stay empty for the rest of the night ({actual_reputation} reputation).",
         "effect": {
           "reputation": -8,
           "success_chance": 0,
@@ -607,7 +605,7 @@
   },
   {
     "id": "supplier_payment_dispute",
-    "description": "The morning brings unwelcome news as your regular supplier arrives with ledgers in hand and storm clouds gathering in their expression. Their voice carries the weight of accumulated frustration as they spread parchments across your table, each line item a small battle in the ongoing war of commerce. The numbers don't lie, but their interpretation remains a matter of perspective, and you sense that today's negotiation will determine whether this partnership survives or crumbles into bitter memory.",
+    "description": "Your regular supplier shows up with ledgers in hand and a sour expression. They spread parchments across your table, pointing at line items and overdue balances. The numbers are debatable, but the frustration isn't.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -622,8 +620,8 @@
       {
         "option": "Have a worker renegotiate terms. (Potential: Money; Risk: Reputation)",
         "condition": "Charm",
-        "message_success": "With the skill of a diplomat and the patience of a saint, [acting_worker] guides the conversation away from accusation and toward understanding. They listen to the supplier's concerns, acknowledge their frustrations, and slowly build a bridge across the chasm of disagreement. When the final signatures dry on the revised contract, both parties smile with genuine satisfaction, and your establishment has gained a reputation for fair dealing that will serve you well in future negotiations ({actual_money}).",
-        "message_failure": "Despite [acting_worker]'s best intentions, the negotiation spirals into the kind of heated exchange that leaves scars on professional relationships. Words are spoken that cannot be taken back, positions harden into immovable stone, and what should have been a simple business discussion becomes a battle of wills. The supplier departs with their dignity intact but their trust shattered, and soon whispers spread through the merchant community about your establishment's aggressive tactics ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] sits down with the supplier and talks it through—acknowledges the backlog, offers a revised schedule, finds middle ground. Both sides sign off satisfied ({actual_money}).",
+        "message_failure": "[acting_worker] pushes too hard and the conversation turns heated. The supplier leaves with their trust shaken. Other merchants hear about it before the day is out ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "money": 100
@@ -640,7 +638,7 @@
       },
       {
         "option": "Pay a rush fee. (Cost: Money)",
-        "message": "You choose the path of expedience over negotiation, producing the required coin with the weary resignation of someone who has fought this battle before. The supplier's expression softens as gold changes hands, their anger dissolving into the satisfaction of prompt payment. Sometimes the simplest solution is the wisest, even when it costs more than pride would prefer ({actual_money}).",
+        "message": "You produce the coin and settle the balance on the spot. The supplier's expression softens immediately. Not the cheapest solution, but the partnership holds ({actual_money}).",
         "effect": {
           "money": -100,
           "success_chance": 0,
@@ -663,15 +661,14 @@
   },
   {
     "id": "misdelivered_crate",
-    "description": "Fate arrives at your doorstep in the form of a wooden crate bearing someone else's name, its contents hidden behind iron bands and wax seals that gleam like promises in the morning light. The delivery boy has long since vanished into the crowd, leaving you alone with a mystery that weighs heavy in your hands. The rightful owner's address is clearly marked, but temptation whispers that sometimes the gods of commerce smile upon those bold enough to seize opportunity when it presents itself.",
+    "description": "A wooden crate with someone else's name on it sits at your doorstep. The delivery boy is long gone. The rightful owner's address is clearly marked, but the iron bands and wax seals hint at something valuable inside.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
     "building_type": [
       "restaurant",
       "tavern",
-      "casino",
-      "brothel"
+      "casino"
     ],
     "background_image": "event_bg",
     "success_image": "generic_success",
@@ -679,7 +676,7 @@
     "choices": [
       {
         "option": "Return the crate to its rightful owner. (Gain: Reputation)",
-        "message": "Honor weighs heavier than curiosity as you dispatch [acting_worker] to deliver the crate to its intended destination. The recipient's gratitude shines brighter than gold, and their words of praise for your integrity spread through the merchant quarter like ripples on still water. Sometimes the greatest profit comes not from what you take, but from what you choose to give ({actual_reputation} reputation).",
+        "message": "You send [acting_worker] to deliver the crate where it belongs. The owner is grateful and vocal about it—your name gets mentioned in the merchant quarter ({actual_reputation} reputation).",
         "effect": {
           "reputation": 5,
           "success_chance": 0,
@@ -690,10 +687,10 @@
         }
       },
       {
-        "option": "Check contents before deciding (risk/reward)",
+        "option": "Check contents before deciding. (Risk: Reputation; Potential: Money)",
         "condition": "Clever",
-        "message_success": "With the delicate touch of a master thief and the caution of a seasoned merchant, [acting_worker] examines the crate's contents without disturbing its seals. Fortune smiles upon your discretion—the goods within are exactly what your establishment needs, and their temporary 'borrowing' will harm no one while benefiting your operation greatly. The crate finds its way to its rightful owner eventually, but not before providing unexpected profit ({actual_money}, {actual_reputation} reputation).",
-        "message_failure": "Curiosity proves stronger than caution as [acting_worker] attempts to examine the crate's contents, but their efforts are observed by eyes that should have been elsewhere. Word spreads faster than spilled wine through the district's gossip networks, and soon your establishment bears the stain of suspicion. Trust, once broken, proves harder to repair than any physical damage ({actual_money}, {actual_reputation} reputation).",
+        "message_success": "[acting_worker] inspects the contents carefully without breaking the seals. Useful supplies, exactly what you needed. The crate reaches its owner eventually, but not before you skim a small profit ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "[acting_worker] gets caught poking through the crate by a passing merchant who recognizes the owner's seal. Word spreads fast ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "success": {
             "money": 150,
@@ -712,7 +709,7 @@
       },
       {
         "option": "Quietly absorb the supplies. (Gain: Money; Loss: Reputation)",
-        "message": "Pragmatism triumphs over principle as you decide that fortune favors the bold. The crate disappears into your storage rooms, its contents becoming part of your inventory as if they had always belonged there. Profit flows into your coffers, but you notice that certain merchants now regard you with calculating eyes, and whispers follow in your wake like shadows at sunset ({actual_money}, {actual_reputation} reputation).",
+        "message": "The crate disappears into your storage. Profit goes up, but certain merchants start giving you sideways looks ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": 100,
           "reputation": -5,
@@ -737,7 +734,7 @@
   {
     "id": "djinn_bond_rumor",
     "event_type": "story",
-    "description": "The whisper arrives like poison on the wind, carried by voices that speak only in shadows and trust only in gold. They speak of the governor's true power—not the armies or the gold or the political connections that all can see, but something far more ancient and terrible. A djinn, they say, bound by chains of starlight and sealed with blood, grants protection that no mortal weapon can pierce. Only one thing, they claim, can break such a bond: a Binding Gem of purest crystal, rare beyond measure and precious beyond price.",
+    "description": "A contact pulls you aside and speaks in low tones. The governor's real protection isn't soldiers or gold—it's a bound djinn, sealed with blood and starlight. Only one thing can break that bond: a Binding Gem of purest crystal, rare and ruinously expensive.",
     "weight": 10,
     "limited": true,
     "event_probability": 80,
@@ -760,7 +757,7 @@
     "choices": [
       {
         "option": "Follow the rumor to its source.",
-        "message": "You commit the whispered words to memory, each syllable burning itself into your thoughts like brands upon flesh. The path ahead grows clearer—somewhere in the city's hidden markets, in the guild's deepest vaults, or along the whispered trails that connect shadow to shadow, a Binding Gem waits to be claimed. The governor's protection may be supernatural, but even djinn must bow to the right kind of power.",
+        "message": "You commit the details to memory. Somewhere in the city's hidden markets or guild vaults, a Binding Gem can be found. The governor's supernatural protection has a weakness—you just need the right leverage.",
         "effect": {
           "event_flags": {
             "binding_gem_lead": true,
@@ -786,7 +783,7 @@
   {
     "id": "binding_gem_lead_2",
     "event_type": "story",
-    "description": "The contact emerges from shadow like a figure from a half-remembered dream, their face hidden beneath a hood that seems to drink light rather than merely block it. In their hands, something glimmers with inner fire—a crystal that pulses with the rhythm of a captured heartbeat. They speak in whispers of challenges and tests, of proving worthiness through deed rather than coin. The Binding Gem hangs between you like a star fallen to earth, waiting for the right hand to claim it.",
+    "description": "A hooded contact steps out of the crowd and opens their palm. A crystal pulses with faint inner light—unmistakably a Binding Gem. They won't sell it outright. They want proof you're worth dealing with first.",
     "weight": 10,
     "event_probability": 25,
     "max_occurrences": 1,
@@ -816,8 +813,8 @@
       {
         "option": "Sway the contact. (Requires Charm)",
         "condition": "Charm",
-        "message_success": "Words flow from [acting_worker]'s lips like honey mixed with wine, each phrase carefully crafted to kindle trust and desire in equal measure. The contact's resistance crumbles beneath the assault of perfect persuasion, their grip on the Binding Gem loosening as your champion weaves a web of promises and possibilities. When the crystal finally changes hands, it does so with the contact's blessing, their eyes bright with the conviction that they have chosen the worthier cause.",
-        "message_failure": "Despite [acting_worker]'s eloquent words and passionate appeals, the contact remains unmoved, their resolve as solid as mountain stone. The Binding Gem remains tantalizingly close yet impossibly distant, its power reserved for those who can prove their worth through other means. Perhaps another path will reveal itself in time.",
+        "message_success": "[acting_worker] talks them around—steady voice, right promises, enough charm to build trust without overdoing it. The Binding Gem changes hands willingly.",
+        "message_failure": "[acting_worker] makes their case, but the contact isn't convinced. The Binding Gem stays in their pocket. You'll need another approach.",
         "effect": {
           "success": {
             "custom": "give_item",
@@ -833,8 +830,8 @@
       {
         "option": "Prove your mettle. (Requires Combat)",
         "condition": "Combat",
-        "message_success": "Steel sings its ancient song as [acting_worker] meets the contact's challenge with blade and blood. The fight is brief but fierce, each strike a test of skill and will that echoes through the shadowed alley. When the final blow lands and the contact yields with grudging respect, the Binding Gem passes to hands that have proven their strength. Victory tastes of iron and possibility.",
-        "message_failure": "The clash of weapons rings hollow in the narrow space as [acting_worker] struggles against an opponent whose skill matches their own. Defeat comes not with shame but with the bitter knowledge that strength alone was not enough. The Binding Gem remains beyond reach, its power reserved for those who can claim it through worthier means.",
+        "message_success": "Steel rings in the alley. [acting_worker] meets the contact's test blow for blow—quick, controlled, decisive. The contact yields with a nod of respect and hands over the Binding Gem.",
+        "message_failure": "[acting_worker] fights well but not well enough. The contact disengages and shakes their head. The Binding Gem stays out of reach for now.",
         "effect": {
           "success": {
             "custom": "give_item",
@@ -859,7 +856,7 @@
   },
   {
     "id": "apothecary_bulk_tonics",
-    "description": "The apothecary's cart creaks to a halt outside your establishment, its wooden wheels worn smooth by countless journeys through the city's winding streets. Glass vials catch the light like captured rainbows, each one filled with liquids that promise healing, energy, or temporary escape from the burdens of mortal flesh. The merchant's eyes gleam with the particular intensity of someone who has stumbled upon a windfall and seeks to share the fortune—for a price, of course.",
+    "description": "An apothecary pulls their cart up to your door, loaded with tonics and remedies at bulk prices. The merchant claims they over-brewed and need to move stock fast—good deal if the quality holds.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -874,8 +871,8 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Buy the batch outright (cost: money)",
-        "message": "Gold flows from your coffers as you secure the collection of tonics and remedies. Your storage rooms grow heavy with bottles. They promise to ease the aches and ailments that plague both workers and patrons alike. The investment stings now, but you know that preparation today prevents crisis tomorrow ({actual_money}).",
+        "option": "Buy the batch outright. (Cost: Money)",
+        "message": "You pay and stock the lot. The tonics are solid—useful for workers and patrons alike ({actual_money}).",
         "effect": {
           "money": -120,
           "success_chance": 0,
@@ -886,10 +883,10 @@
         }
       },
       {
-        "option": "Negotiate a better rate (risk/potential: reputation)",
+        "option": "Negotiate a better rate. (Risk: Reputation; Potential: Money)",
         "condition": "Charm",
-        "message_success": "With the skill of a master merchant and the warmth of an old friend, [acting_worker] draws the apothecary into conversation about shared struggles and mutual benefit. Stories flow between them like wine at a feast, and soon the harsh edges of commerce soften into something approaching partnership. When the final price is agreed upon, both parties smile with genuine satisfaction, and your reputation for fair dealing spreads through the merchant community like good news ({actual_money}, {actual_reputation} reputation).",
-        "message_failure": "Enthusiasm outweighs wisdom as [acting_worker] pushes too hard for concessions that the apothecary cannot afford to give. What begins as friendly negotiation sours into something approaching confrontation, and nearby merchants take note of the raised voices and strained expressions. The deal concludes with mutual dissatisfaction, and whispers of your establishment's aggressive tactics follow the apothecary's cart as it rolls away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] chats up the apothecary, finds common ground, and talks the price down without souring the deal ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "[acting_worker] pushes too hard on price. The apothecary's expression sours, and other merchants nearby overhear ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "money": -80,
@@ -907,8 +904,8 @@
         }
       },
       {
-        "option": "Decline politely",
-        "message": "You offer courteous words and genuine regret as you explain that today's offer, however generous, does not align with your current needs. The apothecary nods with understanding born of countless similar encounters, their cart rolling onward to seek more receptive customers. Sometimes wisdom lies not in seizing every opportunity, but in recognizing which ones truly serve your purpose.",
+        "option": "Decline politely.",
+        "message": "You pass on the offer. The apothecary nods and rolls their cart onward. Not every deal needs taking.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -930,23 +927,22 @@
   },
   {
     "id": "bard_license_officer",
-    "description": "Authority arrives in the form of a city official whose presence seems to drain the music from the very air. Their uniform bears the weight of bureaucratic power, and their eyes scan your establishment with the methodical precision of someone trained to find fault where others see only entertainment. The parchments in their hands rustle like autumn leaves, each document a potential barrier between your business and the freedom to operate as you see fit.",
+    "description": "A city official steps through your door with a ledger and the expression of someone looking for violations. They scan the room, note the entertainment, and ask to see your performance licenses.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
     "building_type": [
-      "tavern",
-      "restaurant"
+      "tavern"
     ],
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Have a worker demonstrate decorum and compliance (potential: reputation)",
+        "option": "Have a worker demonstrate decorum and compliance. (Potential: Reputation)",
         "condition": "Charm",
-        "message_success": "With the grace of a courtier and the precision of a scholar, [acting_worker] guides the official through your establishment, demonstrating not just compliance but excellence in every aspect of your operation. Their words paint pictures of responsible management and community service, while their actions prove that entertainment and order can coexist in perfect harmony. When the inspection concludes, the official's stern expression has softened into something approaching approval, and your reputation for running a respectable establishment spreads through official channels ({actual_reputation} reputation).",
-        "message_failure": "Despite [acting_worker]'s earnest efforts to impress, the official's expression remains as unmoved as carved stone. Every explanation falls flat, every demonstration fails to kindle the spark of approval you desperately seek. When they finally depart, their silence speaks louder than any criticism, and you sense that your establishment has been found wanting in ways that will echo through future inspections ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] walks the official through your operation—clean records, organized setup, professional conduct. The inspector's stern face softens. Your establishment passes with commendation ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries their best, but the official isn't impressed. They leave without a citation but without approval either ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 8
@@ -962,8 +958,8 @@
         }
       },
       {
-        "option": "Pay the routine fee (cost: money)",
-        "message": "You choose the path of expedience over persuasion, producing the required documentation and fees with the weary efficiency of someone who has navigated these waters before. The official's demeanor remains professional but distant as they complete their paperwork and depart, leaving behind the sense that you have purchased compliance rather than earned respect. Sometimes the simplest solution is the most expensive ({actual_money}).",
+        "option": "Pay the routine fee. (Cost: Money)",
+        "message": "You hand over the documentation and the fee. The official stamps your papers and moves on. Quick and painless ({actual_money}).",
         "effect": {
           "money": -50,
           "success_chance": 0,
@@ -986,7 +982,7 @@
   },
   {
     "id": "storm_leak_repair",
-    "description": "The storm's legacy reveals itself in the pale light of morning as a thin stream of water traces its way down your wall like a silver tear. Each drop that falls into the rushes below carries with it the promise of greater damage to come—rot in the timbers, mold in the walls, and the slow decay that turns prosperity into ruin. The leak may seem small now, but you know that the greatest disasters often begin with the smallest cracks.",
+    "description": "Last night's storm left a gift: a steady drip running down the back wall. Small now, but water and wood don't mix well over time. You need to decide how seriously to take it before the rot sets in.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "none",
@@ -1000,8 +996,8 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Repair properly (cost: money; gain: reputation)",
-        "message": "You summon the finest craftsmen the city can offer, their skilled hands working to not merely patch the damage but to strengthen what was weak. The sound of hammers and the scent of fresh timber fill the air as your establishment undergoes the kind of thorough restoration that speaks of pride and permanence. When the work is complete, your building stands stronger than before, and your reputation for maintaining the highest standards spreads through the district like good news ({actual_money}, {actual_reputation} reputation).",
+        "option": "Repair properly. (Cost: Money; Gain: Reputation)",
+        "message": "You bring in proper craftsmen who replace the damage and reinforce what was weak. It costs real coin, but the building is stronger for it ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -150,
           "reputation": 3,
@@ -1013,8 +1009,8 @@
         }
       },
       {
-        "option": "Quick patch for now (cheap; risk: reputation)",
-        "message": "Pragmatism triumphs over perfection as you opt for a temporary solution that stops the immediate problem without addressing its deeper causes. The leak ceases, the floor dries, and business continues as if nothing had happened. Yet you notice that discerning patrons cast occasional glances at the hastily repaired section, their eyes noting the difference between craftsmanship and mere convenience ({actual_reputation} reputation).",
+        "option": "Quick patch for now. (Cost: Money; Risk: Reputation)",
+        "message": "Pitch and rags stop the drip. Cheap and fast, but observant patrons glance at the patch job ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -50,
           "reputation": -2,
@@ -1026,8 +1022,8 @@
         }
       },
       {
-        "option": "Close a corner of the room (minor loss: reputation)",
-        "message": "You choose adaptation over expenditure, sectioning off the affected area with screens and curtains that transform damage into deliberate design. Your establishment continues to function, though with slightly less space and considerably more character. Some patrons appreciate the intimate atmosphere created by the new arrangement, while others wonder what secrets hide behind the decorative barriers ({actual_reputation} reputation).",
+        "option": "Close a corner of the room. (Loss: Reputation)",
+        "message": "You rope off the wet section and rearrange seating. It works, but the room feels smaller and regulars ask questions ({actual_reputation} reputation).",
         "effect": {
           "reputation": -1,
           "success_chance": 0,
@@ -1050,32 +1046,37 @@
   },
   {
     "id": "blademaster_trial",
-    "description": "The tavern falls silent as a figure enters—a warrior whose presence alone speaks of countless battles survived. Scars map their weathered face like roads on an ancient map, and their eyes carry the weight of a thousand kills. They move with the measured grace of someone who has long since mastered the art of death. Their gaze sweeps the room until it settles on one of your workers, and they speak: 'I seek one worthy to inherit my art. The path of the blade demands everything—but rewards those who survive with power beyond measure.'",
+    "description": "A scarred warrior enters and the room goes quiet. They move with the controlled ease of someone who has survived more fights than most people have had meals. Their gaze locks onto one of your workers. 'I seek someone worthy to inherit my art. The blade demands everything—those who endure gain power few can match.'",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern",
       "adventurers_guild"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Combat",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Accept the Blademaster's trial (Requires Combat 60+)",
+        "option": "Accept the Blademaster's trial. (Requires Combat 65+)",
         "condition": "Combat",
-        "threshold": 60,
-        "message_success": "The trial begins at dawn and lasts three days without rest. [acting_worker] faces challenges that would break lesser warriors—blade forms repeated until muscles scream, sparring matches against the master's relentless assault, and meditation exercises that forge the mind into steel. When it ends, something has changed. [acting_worker]'s movements carry new purpose, their strikes flow with deadly precision. The Blademaster nods once—the highest praise they will ever give—and vanishes as mysteriously as they arrived. A true Blademaster has been born.",
-        "message_failure": "[acting_worker] accepts the challenge with determination, but the Blademaster's standards prove impossibly high. After a single exchange of blows, the master sheathes their weapon with a sigh. 'Your spirit is willing, but your blade has not yet sung enough songs of battle. Train harder. Perhaps we shall meet again.' They depart, leaving behind only the echo of what might have been.",
+        "threshold": 65,
+        "message_success": "Three days without rest. Blade forms until muscles give out, sparring against a master who holds nothing back, meditation that forges focus into steel. When it ends, [acting_worker] moves differently—strikes land with new precision, footwork flows without thought. The Blademaster nods once and disappears. A true Blademaster has been made.",
+        "message_failure": "[acting_worker] steps up, but the Blademaster ends the test after a single exchange. 'Your spirit is strong. Your blade isn't ready. Train harder—we may meet again.' They leave without looking back.",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Blademaster",
               "duration": 0
+            },
+            "event_flags": {
+              "blademaster_trial_trained": true
             }
           },
           "failure": {
@@ -1089,8 +1090,8 @@
         }
       },
       {
-        "option": "Politely decline the offer",
-        "message": "You thank the warrior for their consideration but explain that your workers have other duties. The Blademaster regards you with an unreadable expression before nodding slowly. 'The blade chooses its own time,' they say cryptically, then depart into the night. Some opportunities, once passed, never return—but perhaps this one will.",
+        "option": "Politely decline the offer.",
+        "message": "You thank the warrior but explain your workers have other duties. 'The blade chooses its own time,' they say, and leave.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1108,37 +1109,48 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "blademaster_trial_trained": true
+    }
   },
   {
     "id": "archmage_apprentice",
-    "description": "Reality itself seems to bend as an elderly figure materializes in your establishment, surrounded by softly glowing runes that orbit their form like loyal satellites. Their robes shimmer with colors that have no names in mortal tongues, and their eyes hold the light of stars long dead. 'I have traveled far seeking one touched by magic,' the archmage announces, their voice resonating on frequencies that make wine glasses sing. 'True magical potential is rare—rarer still is one worthy of receiving the arcane secrets I carry. Is there such a soul among you?'",
+    "description": "An elderly figure appears in your establishment without using the door. Glowing runes orbit their robes and wine glasses hum faintly. 'I have traveled far seeking one touched by magic,' the archmage says. 'True potential is rare—rarer still is someone worthy of what I carry. Is there such a soul among you?'",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern",
       "adventurers_guild"
     ],
+    "required_building_worker_traits": [
+      "Magical"
+    ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Clever",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present a magical worker for training (Requires Clever 60+ and 'Magical' trait)",
+        "option": "Present a magical worker for training. (Requires Clever 65+ and 'Magical' trait)",
         "condition": "Clever",
-        "threshold": 60,
+        "threshold": 65,
         "required_trait": "Magical",
-        "message_success": "The archmage's eyes widen with recognition as [acting_worker] approaches. 'Yes... the gift burns bright within this one.' What follows is not teaching but awakening—ancient words of power spoken directly into the mind, visions of magical currents that flow beneath reality, and the sensation of doors opening within [acting_worker]'s consciousness that they never knew existed. When the archmage finally departs, [acting_worker] sees the world differently. Magic is no longer something they do—it is something they ARE. They have become an Arcane Adept.",
-        "message_failure": "The archmage examines [acting_worker] carefully, magical energies probing their essence. After a long moment, they shake their head sadly. 'The potential exists, but the foundation is not yet strong enough. Continue your studies, young one. Master the basics before reaching for the stars.' They vanish in a swirl of light, leaving behind only the scent of ozone and unfulfilled promise.",
+        "message_success": "The archmage's eyes widen as [acting_worker] approaches. 'Yes—this one burns bright.' What follows is not teaching but awakening—ancient words spoken into the mind, visions of currents beneath reality, doors opening in consciousness. When the archmage departs, magic is no longer something [acting_worker] does. It is something they are. They have become an Arcane Adept.",
+        "message_failure": "The archmage probes [acting_worker]'s essence carefully, then shakes their head. 'The potential exists, but the foundation is too thin. Master the basics first.' They vanish in a flash of light.",
         "effect": {
           "success": {
             "servant_energy": -5,
             "add_trait": {
               "name": "Arcane Adept",
               "duration": 0
+            },
+            "event_flags": {
+              "archmage_apprentice_trained": true
             }
           },
           "failure": {
@@ -1152,8 +1164,8 @@
         }
       },
       {
-        "option": "Admit you have no one suitable",
-        "message": "You confess that none among your workers possess the magical aptitude the archmage seeks. They nod with ancient patience. 'Magic finds its own vessels in time. Perhaps when next I pass this way, the stars will have aligned differently.' They fade from view like morning mist, leaving you to wonder what secrets were almost within reach.",
+        "option": "Admit you have no one suitable.",
+        "message": "You tell the archmage no one here has the aptitude. They nod. 'Magic finds its own vessels in time.' They fade from sight.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1171,36 +1183,44 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "archmage_apprentice_trained": true
+    }
   },
   {
     "id": "shadow_guild_invitation",
-    "description": "You don't see them arrive—one moment the corner booth is empty, the next a hooded figure occupies it as if they had always been there. Their face remains hidden in impossible shadow despite the room's bright lights, and when they speak, their voice seems to come from everywhere and nowhere. 'The Shadow Guild has observed your establishment with interest,' they whisper, somehow audible despite the ambient noise. 'We seek new blood—someone quick of foot and sharp of mind. Someone who understands that the darkness is not to be feared, but embraced. Do you have such a person?'",
+    "description": "You don't see them arrive. One moment the corner booth is empty; the next, a hooded figure sits there. Their face stays hidden despite bright lamps. 'The Shadow Guild has been watching,' they say. 'We need new blood—someone quick and sharp who understands darkness is a tool, not a threat.'",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern",
       "adventurers_guild"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Agility",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Recommend an agile worker for initiation (Requires Agility 50+)",
+        "option": "Recommend an agile worker for initiation. (Requires Agility 65+)",
         "condition": "Agility",
-        "threshold": 50,
-        "message_success": "[acting_worker] approaches the shadowy figure without hesitation, and something passes between them—a recognition of kindred spirits. The figure produces a black silk blindfold. 'The training begins now. When next you see your servant, they will be... transformed.' [acting_worker] dons the blindfold and seems to melt into the shadows alongside their new mentor. Days later, they return—but different. Their movements are fluid, their presence somehow harder to notice even when standing in plain sight. They have become a Shadowdancer, one with the darkness itself.",
-        "message_failure": "The figure observes [acting_worker]'s approach with what might be disappointment. 'Eager, but not yet ready. The shadows reject those who cannot fully commit to their embrace.' They press a small token into [acting_worker]'s hand—a black coin that seems to absorb light. 'Keep this. Train. When you are ready, you will know how to find us.' Then they are simply gone, leaving no trace they were ever there.",
+        "threshold": 65,
+        "message_success": "[acting_worker] approaches without hesitation, and something passes between them—recognition. The figure produces a black silk blindfold. 'The training begins now.' [acting_worker] puts it on and melts into the shadows. Days later, they return changed—movements fluid, presence harder to notice. They have become a Shadowdancer.",
+        "message_failure": "The figure watches [acting_worker] approach, then shakes their head. 'Eager, but not ready.' They press a black coin into [acting_worker]'s hand. 'Train. When you're ready, you'll know how to find us.' Then they're gone.",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Shadowdancer",
               "duration": 0
+            },
+            "event_flags": {
+              "shadow_guild_invitation_trained": true
             }
           },
           "failure": {
@@ -1214,8 +1234,8 @@
         }
       },
       {
-        "option": "Refuse to deal with the Shadow Guild",
-        "message": "You shake your head firmly, unwilling to involve your establishment with such mysterious organizations. The figure tilts their head in acknowledgment. 'Caution is not without merit. The shadows will remember your choice—for good or ill.' When you blink, they have vanished, leaving behind only the lingering sense that you are being watched from somewhere just beyond perception.",
+        "option": "Refuse to deal with the Shadow Guild.",
+        "message": "You decline firmly. The figure tilts their head. 'Caution has its merits. The shadows will remember your choice.' When you blink, they're gone.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1233,36 +1253,44 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "shadow_guild_invitation_trained": true
+    }
   },
   {
     "id": "high_priest_blessing",
-    "description": "A warm golden light precedes the visitor, and patrons instinctively straighten in their seats as a figure in pristine white robes enters your establishment. Their presence brings with it a sense of peace that settles over the room like a gentle blanket. Where they walk, aches seem to ease and spirits lift. 'I am guided here by divine providence,' the high priest announces, their voice carrying the resonance of temple bells. 'The gods have shown me a vision—one among you carries a pure heart deserving of celestial blessing. Will you permit me to bestow this sacred gift?'",
+    "description": "Golden light fills the doorway before the visitor steps inside. Patrons straighten as a figure in white robes enters—where they walk, aches ease and moods lift. 'I am guided by divine providence,' the high priest says. 'One among you carries a pure heart worthy of celestial blessing.'",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern",
       "restaurant"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Charm",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present a worthy worker for blessing (Requires Charm 50+ and low rebelliousness)",
+        "option": "Present a worthy worker for blessing. (Requires Charm 65+)",
         "condition": "Charm",
-        "threshold": 50,
-        "message_success": "The high priest's eyes light with recognition as [acting_worker] approaches. 'Yes—this is the one the gods spoke of.' They place their hands upon [acting_worker]'s head and begin to chant in a language older than kingdoms. Golden light suffuses [acting_worker]'s form, and for a moment they seem to glow from within. When the ritual concludes, something fundamental has changed—[acting_worker] radiates an inner warmth that draws others to them, and minor wounds seem to heal faster in their presence. They have become Divine Touched, blessed by the gods themselves.",
-        "message_failure": "The high priest studies [acting_worker] carefully, their divine senses probing deep. After a moment, they sigh gently. 'The heart is good, but turbulent waters cloud the spirit. There is too much conflict within for the blessing to take root.' They make a sign of benediction. 'Find peace within yourself first, child. Then perhaps the gods will smile upon you.' They depart, leaving behind a sense of bittersweet almost-was.",
+        "threshold": 65,
+        "message_success": "The high priest's eyes light up as [acting_worker] approaches. 'Yes—this is the one.' Hands on [acting_worker]'s head, chanting in a language older than kingdoms. Golden light suffuses their form. When the ritual ends, [acting_worker] radiates warmth that draws people close, and minor wounds heal faster in their presence. They have become Divine Touched.",
+        "message_failure": "The high priest studies [acting_worker] carefully, then sighs. 'The heart is good, but there's too much conflict within for the blessing to take root. Find peace first.' They depart with a gentle benediction.",
         "effect": {
           "success": {
             "joy": 15,
             "add_trait": {
               "name": "Divine Touched",
               "duration": 0
+            },
+            "event_flags": {
+              "high_priest_blessing_trained": true
             }
           },
           "failure": {
@@ -1276,8 +1304,8 @@
         }
       },
       {
-        "option": "Thank them but decline",
-        "message": "You express gratitude for the offer but explain that your workers are content as they are. The high priest smiles with infinite patience. 'The divine gift is not diminished by mortal hesitation. Should you ever reconsider, know that the gods' favor awaits those who are ready to receive it.' They bless your establishment with a gesture and depart, leaving behind a lingering sense of warmth and missed opportunity.",
+        "option": "Thank them but decline.",
+        "message": "You say your workers are content as they are. The high priest smiles. 'The divine gift is not diminished by hesitation.' They bless the room and depart.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1295,36 +1323,44 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "high_priest_blessing_trained": true
+    }
   },
   {
     "id": "ranger_master_path",
-    "description": "The door opens to admit the smell of pine forests and wild places. A lean figure enters, their clothing a patchwork of leather and fur that seems to shift colors with their movement. Their eyes—sharp as a hawk's—scan every corner of your establishment in an instant, cataloging exits, threats, and opportunities with predatory efficiency. A bow of ancient wood rests across their back, and their hands bear the calluses of one who has survived where others would perish. 'I seek a student,' they announce without preamble. 'Someone who can learn to read the wind, track prey across stone, and strike true when the moment comes. Is there such a one here?'",
+    "description": "The door opens and the smell of pine fills the room. A lean figure enters—leather and fur, hawk-sharp eyes that catalog every exit in a single sweep. An ancient bow across their back. 'I seek a student. Someone who can read the wind, track prey across stone, and strike true when it matters.'",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern",
       "adventurers_guild"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Agility",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer a capable worker for training (Requires Combat 40+ and Agility 40+)",
-        "condition": "Combat",
-        "threshold": 40,
-        "message_success": "The ranger master studies [acting_worker] with the intensity of a wolf sizing up potential pack members. Whatever they see satisfies them. 'Come. We begin now.' What follows are weeks of grueling training in the wilderness—tracking animals through impossible terrain, surviving on what the land provides, learning to move without leaving trace and strike without warning. When [acting_worker] returns, they carry themselves differently. Their eyes see what others miss, their feet find paths where none exist. They have walked the Ranger's Path and emerged as a true Pathfinder.",
-        "message_failure": "The ranger master observes [acting_worker]'s attempt at basic tracking with a slight frown. 'Your spirit is willing, but your body has not yet learned to listen to the wild.' They produce a small carved token—a wolf's head. 'Train your body and mind in equal measure. When you can move through a forest without disturbing a single leaf, seek me out.' They slip away with impossible silence, leaving behind only questions and determination.",
+        "option": "Offer a capable worker for training. (Requires Agility 65+)",
+        "condition": "Agility",
+        "threshold": 65,
+        "message_success": "The ranger master studies [acting_worker] with predator intensity, then nods. 'Come. We begin now.' Weeks of grueling wilderness training follow—tracking across impossible terrain, surviving off the land, moving without trace. When [acting_worker] returns, their eyes catch what others miss, their feet find paths where none exist. They have become a true Pathfinder.",
+        "message_failure": "The ranger master watches [acting_worker] attempt basic tracking, then frowns. 'Your spirit is willing, but your body hasn't learned to listen to the wild.' They hand over a carved wolf-head token. 'Train until you can cross a forest without disturbing a leaf. Then find me.'",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Pathfinder",
               "duration": 0
+            },
+            "event_flags": {
+              "ranger_master_path_trained": true
             }
           },
           "failure": {
@@ -1338,8 +1374,8 @@
         }
       },
       {
-        "option": "Explain you have no suitable candidates",
-        "message": "You admit that none of your current workers possess the combination of skills the ranger seeks. They nod without judgment. 'The wild calls to few, and fewer still answer correctly. Perhaps our paths will cross again when the seasons have turned.' They depart as silently as they arrived, leaving you to wonder if they were ever truly there at all.",
+        "option": "Explain you have no suitable candidates.",
+        "message": "You tell the ranger none of your workers fit. They nod. 'The wild calls to few. Perhaps our paths cross again.' They leave as silently as they arrived.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1357,35 +1393,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "ranger_master_path_trained": true
+    }
   },
   {
     "id": "legendary_barkeep",
-    "description": "An elderly figure shuffles into your tavern, their weathered hands wrapped around a gnarled walking stick. At first glance, they appear to be just another tired traveler—but something in their eyes speaks of depths unfathomed. The regulars fall silent as recognition dawns: this is Old Morrow, the legendary barkeep who once served drinks in the capital's most prestigious establishments, whose talent for reading people and situations was said to prevent wars and broker peace treaties. They settle onto a stool with the ease of someone coming home. 'I've spent decades pouring drinks and pouring out wisdom,' they rasp. 'Before I pass on, I would share what I know with one who has the gift for truly seeing people. Is there such a soul in your employ?'",
+    "description": "An old figure shuffles in on a gnarled walking stick—easy to dismiss as just another tired traveler. Then the regulars go quiet. This is Old Morrow, the legendary barkeep who once served drinks at the capital’s finest houses, said to read people well enough to prevent wars. They settle onto a stool and rasp: ‘I’d share what I know with someone who truly sees people. Is there such a soul here?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Service",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present a promising worker to Old Morrow (Requires Service 50+)",
+        "option": "Present a promising worker to Old Morrow. (Requires Service 65+)",
         "condition": "Service",
-        "threshold": 50,
-        "message_success": "Old Morrow's rheumy eyes sharpen as [acting_worker] approaches, becoming piercing and ageless. 'Yes... you have it. The gift of seeing.' What follows are long nights of quiet conversation and careful observation. Morrow teaches not just how to pour drinks, but how to read the slight tension in a customer's shoulders, the hidden meaning in their order, the stories written in the calluses on their hands. When the old barkeep finally departs—vanishing one morning without farewell, as legends do—[acting_worker] finds they possess something invaluable: the Barkeep's Wisdom. They now see people in ways they never imagined possible.",
-        "message_failure": "Old Morrow studies [acting_worker] for a long moment, then shakes their head sadly. 'The seed is there, but it hasn't sprouted yet. You watch people, but you don't truly see them—not yet.' They press a worn copper coin into [acting_worker]'s palm. 'Carry this. Every time you meet someone new, hold it and ask yourself: what are they really saying? Come find me when you understand.' They depart into the night, leaving behind only questions and a path forward.",
+        "threshold": 65,
+        "message_success": "Old Morrow’s eyes sharpen as [acting_worker] approaches. ‘You have it. The gift of seeing.’ Long nights of quiet conversation follow—not how to pour drinks, but how to read the tension in a patron’s shoulders, the meaning behind their order, the story in the calluses on their hands. When Morrow vanishes one morning without farewell, [acting_worker] discovers they possess Barkeep’s Wisdom. They see people in ways they never imagined.",
+        "message_failure": "Old Morrow studies [acting_worker], then shakes their head. ‘The seed is there, but it hasn’t sprouted. You watch people, but you don’t see them—not yet.’ They press a worn copper coin into [acting_worker]’s palm. ‘Hold this when you meet someone new. Ask yourself what they’re really saying. Come back when you know.’",
         "effect": {
           "success": {
             "servant_energy": -2,
             "add_trait": {
               "name": "Barkeep's Wisdom",
               "duration": 0
+            },
+            "event_flags": {
+              "legendary_barkeep_trained": true
             }
           },
           "failure": {
@@ -1399,8 +1443,8 @@
         }
       },
       {
-        "option": "Thank them but explain you cannot spare anyone",
-        "message": "You respectfully decline, citing the demands of running your establishment. Old Morrow chuckles—a sound like autumn leaves rustling. 'Running a tavern well is its own kind of wisdom,' they say warmly. 'Perhaps that wisdom will find its way to your people through you.' They finish their drink (which you realize you never poured) and shuffle out into the night, leaving behind a sense of missed opportunity and the faint scent of aged oak.",
+        "option": "Thank them but explain you cannot spare anyone.",
+        "message": "You respectfully decline, citing the demands of running your place. Old Morrow chuckles. ‘Running a tavern well is its own wisdom.’ They finish a drink you never poured and shuffle out into the night.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1418,35 +1462,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "legendary_barkeep_trained": true
+    }
   },
   {
     "id": "peoples_hero_visit",
-    "description": "The door slams open to admit a figure that needs no introduction—their face adorns tavern signs and children's storybooks across the realm. This is one of the legendary heroes who saved the kingdom during the Shadow Wars, still bearing the distinctive armor (now battered and travel-worn) that once shone in the front lines of impossible battles. They survey your establishment with eyes that have seen both the best and worst of humanity, then break into a warm smile. 'Finally, a proper drinking establishment!' they boom. 'But I'm not here just for ale. I'm looking for someone with the spark—someone who could become what I once was. Does such a person work here?'",
+    "description": "The door slams open and the figure standing there needs no introduction—their face is on tavern signs and storybooks across the realm. A hero of the Shadow Wars, still wearing the battered armor that once held the front line. They survey the room and break into a grin. ‘Finally, a proper drinking house. But I’m not just here for ale—I’m looking for someone with the spark. Someone who could become what I once was.’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Combat",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Introduce your most promising worker (Requires Charm 50+ and Combat 30+)",
-        "condition": "Charm",
-        "threshold": 50,
-        "message_success": "The hero's eyes light up as [acting_worker] steps forward. 'Yes! I see it—that fire!' What follows is not combat training, but something rarer: lessons in presence, in inspiration, in becoming the kind of person others will follow into darkness. [acting_worker] learns how the hero rallied broken armies with nothing but words, how they turned despair into determination with a single gesture. When the hero finally departs (after many drinks and many stories), [acting_worker] stands differently. They have become a People's Champion—someone others instinctively trust, follow, and believe in.",
-        "message_failure": "The hero studies [acting_worker] with genuine interest, but eventually shakes their head. 'The potential is there, but the fire hasn't caught yet. You know what you lack?' They lean in close. 'You haven't yet found something worth dying for. Find that, and you'll find your power.' They clap [acting_worker] on the shoulder hard enough to stagger them, then turn to order another round, the moment of judgment passed but not forgotten.",
+        "option": "Introduce your most battle-ready worker. (Requires Combat 65+)",
+        "condition": "Combat",
+        "threshold": 65,
+        "message_success": "The hero’s eyes sharpen as [acting_worker] steps forward—weight balanced, gaze steady, hands loose. ‘There it is. Steel under the skin.’ Training follows: stance and spacing, timing a blow, and—rarer still—how to hold a shaken line with nothing but voice and example. When the hero departs after many drinks and stories, [acting_worker] stands differently. They have become a People’s Champion—someone others instinctively trust to stand between them and harm.",
+        "message_failure": "The hero asks [acting_worker] to mirror a simple guard stance and exhales through their teeth. ‘Brave heart. Slow hands.’ They clap [acting_worker] on the shoulder hard enough to stagger them. ‘Come back when your reflexes match your nerve—people don’t follow hesitation into the dark.’",
         "effect": {
           "success": {
             "servant_energy": -2,
             "add_trait": {
               "name": "People's Champion",
               "duration": 0
+            },
+            "event_flags": {
+              "peoples_hero_visit_trained": true
             }
           },
           "failure": {
@@ -1460,8 +1512,8 @@
         }
       },
       {
-        "option": "Simply offer them drinks and conversation",
-        "message": "You opt to simply serve the hero as a valued guest rather than disturb your workers. They accept graciously, regaling your tavern with stories until dawn. 'A good establishment, this,' they declare as they finally depart. 'Run by someone who knows their priorities.' They leave an extremely generous tip and a promise to return—and perhaps that's worth more than training ever could be.",
+        "option": "Simply offer them drinks and conversation.",
+        "message": "You serve the hero as a guest rather than disturb your staff. They tell stories until dawn, leave an enormous tip, and promise to return. ‘A good establishment, this. Run by someone who knows their priorities.’ Sometimes that’s worth more than training.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1479,32 +1531,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "peoples_hero_visit_trained": true
+    }
   },
   {
     "id": "wandering_bard_master",
-    "description": "The sound precedes their arrival—a haunting melody that seems to come from everywhere and nowhere, making patrons pause mid-drink and lovers lean closer together. When the source finally appears, it's an unassuming figure with a lute that looks older than most kingdoms. This is the Wandering Muse, whose songs have toppled tyrants, united lovers across continents, and—according to rumor—once moved the gods themselves to tears. They settle into a corner and play softly as they speak: 'I have sung in a thousand taverns, and each has taught me something. But I grow old, and my stories need new voices. Is there one here who understands that the best tales are not told, but lived?'",
+    "description": "A haunting melody fills the room before its source appears—an unassuming figure with a lute older than most kingdoms. This is the Wandering Muse, whose songs have toppled tyrants and, some say, moved the gods to tears. They settle in a corner and play softly. ‘I’ve sung in a thousand taverns. But I grow old, and my stories need new voices. Is there one here who understands the best tales are lived, not told?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "tavern"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Charm",
+    "excluded_flags": {
+      "wandering_bard_master_trained": true
+    },
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Recommend your most eloquent worker (Requires Charm 60+)",
+        "option": "Recommend your most eloquent worker. (Requires Charm 65+)",
         "condition": "Charm",
-        "threshold": 60,
-        "message_success": "The Muse's music shifts to something questioning as [acting_worker] approaches, then resolves into warm approval. 'You understand already, don't you? That every person is a story waiting to be told.' The training is unlike anything else—not technique, but truth. How to find the tale within any moment, how to weave words that touch hearts directly, how to make listeners forget they're listening and simply live the story. When the Muse finally moves on (their kind never stay), [acting_worker] discovers they have become a Tale Weaver. Their words now carry power that transcends mere entertainment.",
-        "message_failure": "The Muse's melody turns gently melancholic as they study [acting_worker]. 'You have words, but not yet the wisdom to wield them. You tell stories at people, not for them.' They play a final, lingering note. 'Listen more. Speak less. When you can hear the story someone needs before they know it themselves, find me again.' They fade away between one blink and the next, leaving only an echo of impossible beauty.",
+        "threshold": 65,
+        "message_success": "The Muse’s music shifts to warm approval as [acting_worker] approaches. ‘You understand already.’ The training is unlike anything else—not technique, but truth. How to find the tale in any moment, how to weave words that touch hearts directly, how to make listeners forget they’re listening. When the Muse moves on, [acting_worker] discovers they have become a Tale Weaver. Their words now carry power beyond mere entertainment.",
+        "message_failure": "The Muse plays a melancholic note and studies [acting_worker]. ‘You have words, but not yet the wisdom to wield them. You tell stories at people, not for them.’ A final lingering chord. ‘Listen more. Speak less. When you can hear the story someone needs before they know it themselves, find me.’",
         "effect": {
           "success": {
             "servant_energy": -2,
+            "event_flags": {
+              "wandering_bard_master_trained": true
+            },
             "add_trait": {
               "name": "Tale Weaver",
               "duration": 0
@@ -1521,8 +1584,8 @@
         }
       },
       {
-        "option": "Ask them to simply perform for your patrons",
-        "message": "You request only a performance, not wishing to impose on their legendary patience. The Muse smiles knowingly and plays a concert that your patrons will speak of for generations—a single evening that becomes legendary in local lore. 'Art freely given is never wasted,' they say before departing. Your reputation soars, and somehow, everyone who attended seems slightly wiser for the experience.",
+        "option": "Ask them to simply perform for your patrons.",
+        "message": "You request only a performance. The Muse obliges with a concert your patrons will talk about for years. ‘Art freely given is never wasted,’ they say before departing. Your reputation climbs, and somehow everyone who attended seems a little wiser.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1544,31 +1607,36 @@
   },
   {
     "id": "royal_chef_discovery",
-    "description": "A carriage bearing the royal crest stops outside your restaurant, and from it emerges a figure whose reputation is as vast as their hat is tall. This is Master Ambrose Laurent, former head chef of the royal kitchens, whose dishes were once served at the coronation of three consecutive monarchs. They survey your establishment with the critical eye of someone who has tasted perfection and found most things wanting. 'I have eaten at every notable establishment in the realm,' they announce, 'and I have found them... adequate.' Their gaze softens slightly. 'But I sense potential here. Raw talent that could be refined. Is there someone in your kitchen with true culinary passion—not just skill, but fire?'",
+    "description": "A carriage bearing the royal crest stops outside. From it emerges Master Ambrose Laurent, former head chef of the royal kitchens, whose dishes were served at the coronation of three monarchs. He surveys your restaurant with a critical eye. ‘I have eaten at every notable establishment in the realm and found them adequate.’ His gaze softens. ‘But I sense potential here. Raw talent that could be refined. Is there someone in your kitchen with true fire?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "restaurant"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Service",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present your most dedicated kitchen worker (Requires Service 55+)",
+        "option": "Present your most dedicated kitchen worker. (Requires Service 65+)",
         "condition": "Service",
-        "threshold": 55,
-        "message_success": "Master Laurent observes [acting_worker] prepare a simple dish with laser focus, then nods almost imperceptibly—the highest praise they ever offer. 'You. Come.' What follows are months of brutal training in techniques passed down through generations of royal chefs. [acting_worker] learns to coax impossible flavors from humble ingredients, to present dishes as art, to understand that cooking is not just feeding people but touching their souls. When Master Laurent finally pronounces them 'acceptable' (unprecedented praise), [acting_worker] has become a Master Chef. Their dishes now carry the power to evoke memories, heal heartaches, and create moments of pure transcendence.",
-        "message_failure": "Master Laurent tastes [acting_worker]'s preparation and sets down the fork with deliberate precision. 'Competent. But competence is the enemy of greatness.' They produce a small jar of impossibly rare saffron. 'When you can tell me—without tasting—exactly what memory this spice will evoke in the person who eats it, you will be ready to learn what I know.' They depart without another word, leaving behind only standards to aspire to.",
+        "threshold": 65,
+        "message_success": "Master Laurent watches [acting_worker] prepare a simple dish with focus, then nods—almost imperceptibly. ‘You. Come.’ Months of brutal training follow: coaxing impossible flavors from humble ingredients, presenting dishes as art, understanding that cooking touches the soul. When Laurent finally pronounces them ‘acceptable’—unprecedented praise—[acting_worker] has become a Master Chef. Their dishes now evoke memories, heal heartaches, and create moments of pure transcendence.",
+        "message_failure": "Master Laurent tastes [acting_worker]’s preparation and sets down the fork precisely. ‘Competent. But competence is the enemy of greatness.’ He produces a jar of rare saffron. ‘When you can tell me—without tasting—what memory this spice will evoke in the person who eats it, you’ll be ready.’ He leaves without another word.",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Master Chef",
               "duration": 0
+            },
+            "event_flags": {
+              "royal_chef_discovery_trained": true
             }
           },
           "failure": {
@@ -1582,8 +1650,8 @@
         }
       },
       {
-        "option": "Simply prepare your finest meal for them",
-        "message": "You focus on serving Master Laurent rather than imposing on their time. They dine in contemplative silence, and at the meal's end, offer a single nod. 'You understand hospitality. That is rarer than you might think.' They leave an enormous tip and a small notebook of recipes—not their best secrets, but solid foundations. Sometimes the greatest compliment is being taken seriously.",
+        "option": "Simply prepare your finest meal for them.",
+        "message": "You focus on serving Master Laurent as a guest. He dines in contemplative silence and offers a single nod at the end. ‘You understand hospitality. That is rarer than you think.’ He leaves an enormous tip and a notebook of solid recipes. Sometimes being taken seriously is the greatest compliment.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1601,35 +1669,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "royal_chef_discovery_trained": true
+    }
   },
   {
     "id": "noble_sommelier_visit",
-    "description": "An elegant figure glides into your restaurant with the bearing of royalty, though they wear the simple uniform of service. This is Countess Vermillion Ashford, who renounced her noble title to pursue her true passion: wine. Her palate is legendary—she once identified not only the vineyard, vintage, and grape of a wine, but the mood of the vintner who made it. 'I travel the realm seeking those with the gift of taste,' she says, delicately sniffing the air of your establishment. 'True taste is not learned but awakened. I can see immediately whether someone possesses it—if only they would show themselves.'",
+    "description": "An elegant figure enters with the bearing of royalty, though she wears the simple uniform of service. This is Countess Vermillion Ashford, who renounced her title to pursue wine. Her palate is legendary—she once identified not just a wine’s vineyard and vintage but the mood of the vintner who made it. ‘I travel seeking those with the gift of taste,’ she says, sniffing the air. ‘True taste is not learned but awakened.’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "restaurant"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Clever",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Bring forward a worker with refined sensibilities (Requires Clever 50+)",
+        "option": "Bring forward a worker with refined sensibilities. (Requires Clever 65+)",
         "condition": "Clever",
-        "threshold": 50,
-        "message_success": "The Countess offers [acting_worker] a series of increasingly complex tastings, each one a test and a lesson. [acting_worker]'s eyes widen with each revelation as dormant abilities awaken. 'Yes,' the Countess breathes. 'You have it—the Perfect Palate.' What follows is intensive training in the alchemy of taste: how flavors interact, how presentation affects perception, how to pair experiences as much as ingredients. When the Countess departs (pressing a rare vintage into [acting_worker]'s hands), they have developed an almost supernatural sensitivity to taste. Every meal becomes a journey, every sip a story.",
-        "message_failure": "The Countess observes [acting_worker]'s attempts at wine identification with gentle patience. 'Your mind is willing, but your palate still speaks in simple words. It must learn poetry.' She produces a small bottle. 'Drink this each morning for a month—water infused with subtle herbs. It will... clarify things.' She departs gracefully, leaving behind hope and a path to growth.",
+        "threshold": 65,
+        "message_success": "The Countess puts [acting_worker] through a series of increasingly complex tastings. Their eyes widen with each revelation as dormant abilities awaken. ‘Yes. You have it—the Perfect Palate.’ Intensive training follows: how flavors interact, how presentation shapes perception, how to pair experiences as much as ingredients. When the Countess departs, pressing a rare vintage into [acting_worker]’s hands, they possess an almost supernatural sensitivity. Every meal becomes a journey.",
+        "message_failure": "The Countess watches [acting_worker]’s attempts at wine identification with gentle patience. ‘Your mind is willing, but your palate still speaks in simple words. It must learn poetry.’ She leaves a small bottle of herb-infused water. ‘Drink this each morning for a month. It will clarify things.’",
         "effect": {
           "success": {
             "servant_energy": -2,
             "add_trait": {
               "name": "Perfect Palate",
               "duration": 0
+            },
+            "event_flags": {
+              "noble_sommelier_visit_trained": true
             }
           },
           "failure": {
@@ -1643,8 +1719,8 @@
         }
       },
       {
-        "option": "Offer her your finest wines and request recommendations",
-        "message": "You treat the Countess as an honored guest and expert consultant. She samples your offerings with evident pleasure, providing detailed notes on each and suggesting pairings that transform your menu. 'A wise proprietor knows when to serve and when to seek service,' she observes approvingly. She leaves a list of suppliers and vintages that will significantly improve your offerings—knowledge worth its weight in gold.",
+        "option": "Offer her your finest wines and request recommendations.",
+        "message": "You treat the Countess as a guest and consultant. She samples your offerings with pleasure, provides detailed notes on each, and suggests pairings that transform your menu. She leaves a list of suppliers that will significantly improve your stock—knowledge worth its weight in gold.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1662,35 +1738,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "noble_sommelier_visit_trained": true
+    }
   },
   {
     "id": "royal_butler_inspection",
-    "description": "The restaurant falls silent as a figure enters with posture so perfect it seems to define the concept of uprightness. Sebastian Crane, former head butler of the Imperial Household, moves through your establishment with an eye that misses nothing—a water spot on a glass, a table setting one degree off-true, a server's tie slightly askew. His reputation is fearsome: under his tutelage, serving staff from noble houses became legendary for their flawless service. He pauses, adjusts his immaculate gloves, and speaks: 'I have trained servants who now serve kings. I grow weary of perfection.' A ghost of a smile crosses his face. 'I seek raw talent—someone who can learn not just to serve, but to anticipate, to become invisible yet indispensable. Is there such potential here?'",
+    "description": "The restaurant falls silent as Sebastian Crane enters—former head butler of the Imperial Household. His posture alone defines the concept of uprightness. He moves through your space with an eye that misses nothing: a water spot on a glass, a setting one degree off-true, a server’s tie slightly askew. ‘I have trained servants who now serve kings,’ he says. ‘I seek raw talent—someone who can learn to anticipate, to become invisible yet indispensable.’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "restaurant"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Service",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Recommend your most attentive server (Requires Service 50+ and Charm 40+)",
+        "option": "Recommend your most attentive server. (Requires Service 65+)",
         "condition": "Service",
-        "threshold": 50,
-        "message_success": "Sebastian Crane observes [acting_worker] through several service cycles, his expression revealing nothing. Then, almost imperceptibly, he nods. 'You may have potential.' What follows is the most rigorous training imaginable—learning to read body language, anticipate needs before they're expressed, move through spaces without disturbing the air. [acting_worker] practices until their movements become fluid art, their attention becomes omniscient, their presence becomes a comfort rather than an intrusion. When Crane finally pronounces them 'adequate' (his highest praise), [acting_worker] has become a Graceful Server. They now provide service that feels like magic—needs met before they're known, comfort provided before it's sought.",
-        "message_failure": "Sebastian Crane watches [acting_worker]'s service with analytical precision. 'Your technical skills are acceptable. Your presence is not.' He produces a small bell. 'Ring this and approach me. I should not hear you coming, nor see you until you wish to be seen. Practice until you can surprise me.' He departs with footsteps that make no sound, leaving behind an impossible standard to achieve—and the motivation to try.",
+        "threshold": 65,
+        "message_success": "Crane observes [acting_worker] through several service cycles, expression blank. Then, almost imperceptibly, he nods. ‘You may have potential.’ Rigorous training follows—reading body language, anticipating needs before they’re expressed, moving through spaces without disturbing the air. When Crane finally pronounces them ‘adequate’—his highest praise—[acting_worker] has become a Graceful Server. Their service now feels like magic: needs met before they’re known, comfort provided before it’s sought.",
+        "message_failure": "Crane watches [acting_worker]’s service with analytical precision. ‘Your technical skills are acceptable. Your presence is not.’ He produces a small bell. ‘Ring this and approach me. I should not hear you coming nor see you until you wish to be seen. Practice until you can surprise me.’ He departs without a sound.",
         "effect": {
           "success": {
             "servant_energy": -2,
             "add_trait": {
               "name": "Graceful Server",
               "duration": 0
+            },
+            "event_flags": {
+              "royal_butler_inspection_trained": true
             }
           },
           "failure": {
@@ -1704,8 +1788,8 @@
         }
       },
       {
-        "option": "Request only his feedback on your service standards",
-        "message": "You ask for professional consultation rather than training. Sebastian Crane agrees, spending an evening observing and then providing detailed, devastatingly accurate feedback on every aspect of your service. His suggestions, when implemented, dramatically improve customer satisfaction. 'A good establishment knows when to seek expertise,' he acknowledges before departing. 'You have that wisdom.' Sometimes the best training is knowing your limitations.",
+        "option": "Request only his feedback on your service standards.",
+        "message": "You ask for professional consultation. Crane spends an evening observing and then delivers devastatingly accurate feedback on every aspect of your service. His suggestions, once implemented, dramatically improve customer satisfaction. ‘A good establishment knows when to seek expertise,’ he says before departing.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1723,35 +1807,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "royal_butler_inspection_trained": true
+    }
   },
   {
     "id": "legendary_gambler_arrives",
-    "description": "The entire casino seems to hold its breath as a figure enters wearing a smile that has won and lost fortunes. This is 'Lucky' Mathias Cross, the legendary gambler who once won an entire duchy in a single hand of cards—then gave it back because 'owning things is boring.' His presence alone causes other gamblers to either flee or gather close, hoping luck is contagious. He moves through your establishment like a shark through water, finally settling at a table where he can observe everything. 'Fortune is not random,' he announces to no one in particular. 'It's a conversation. I can teach someone to speak its language—if they have ears to hear. Does such a person work here?'",
+    "description": "The whole casino holds its breath as a figure enters wearing a smile that has won and lost fortunes. This is ‘Lucky’ Mathias Cross, the gambler who once won a duchy in a single hand—then gave it back because ‘owning things is boring.’ His presence causes other gamblers to flee or crowd close. He settles at a table. ‘Fortune is not random. It’s a conversation. I can teach someone to speak its language.’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "casino"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Clever",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Introduce a perceptive worker to Lucky (Requires Clever 55+)",
+        "option": "Introduce a perceptive worker to Lucky. (Requires Clever 65+)",
         "condition": "Clever",
-        "threshold": 55,
-        "message_success": "'Lucky' Mathias studies [acting_worker] across a series of hands, his eyes missing nothing. Then he laughs—a sound of genuine delight. 'You see it, don't you? The patterns in the chaos.' What follows are lessons not in cheating or technique, but in perception—reading the subtle shifts in probability, sensing when luck is about to turn, understanding that fortune favors not the bold but the aware. When Mathias finally moves on (he never stays anywhere long), [acting_worker] has become Fortune's Favorite. They possess an almost uncanny sense for timing and probability, knowing when to push and when to fold in all aspects of life.",
-        "message_failure": "'Lucky' Mathias studies [acting_worker]'s play and shakes his head. 'You think too much. Fortune speaks in whispers, not logic.' He flips a coin—it lands on its edge, impossibly balanced. 'When you understand why this coin chose neither side, you'll be ready.' He vanishes into the crowd between one blink and the next, leaving behind only mystery and aspiration.",
+        "threshold": 65,
+        "message_success": "‘Lucky’ Mathias studies [acting_worker] across a series of hands, missing nothing. Then he laughs—genuine delight. ‘You see it, don’t you? The patterns in the chaos.’ Lessons follow in perception: reading shifts in probability, sensing when luck is about to turn, knowing when to push and when to fold. When Mathias moves on, [acting_worker] has become Fortune’s Favorite—possessing an uncanny sense for timing and probability in all aspects of life.",
+        "message_failure": "Mathias studies [acting_worker]’s play and shakes his head. ‘You think too much. Fortune speaks in whispers, not logic.’ He flips a coin—it lands on its edge. ‘When you understand why this coin chose neither side, you’ll be ready.’ He vanishes into the crowd.",
         "effect": {
           "success": {
             "servant_energy": -2,
             "add_trait": {
               "name": "Fortune's Favorite",
               "duration": 0
+            },
+            "event_flags": {
+              "legendary_gambler_arrives_trained": true
             }
           },
           "failure": {
@@ -1765,8 +1857,8 @@
         }
       },
       {
-        "option": "Challenge him to a friendly game yourself",
-        "message": "You opt to play against the legend yourself rather than involve your staff. The game is brief but illuminating—you lose, of course, but Mathias plays in a way that teaches rather than humiliates. 'You play to win,' he observes. 'Try playing to understand.' He leaves you with several insights about your regular gamblers that prove extremely profitable in the weeks to come.",
+        "option": "Challenge him to a friendly game yourself.",
+        "message": "You play against the legend yourself. You lose, of course, but Mathias plays to teach rather than humiliate. ‘You play to win. Try playing to understand.’ He leaves insights about your regular gamblers that prove extremely profitable in the weeks ahead.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1784,35 +1876,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "legendary_gambler_arrives_trained": true
+    }
   },
   {
     "id": "master_card_dealer",
-    "description": "A hush falls over the card tables as an elderly figure takes a seat, their hands—despite their age—moving with the fluid grace of running water. This is the Phantom Dealer, whose identity no one knows but whose reputation precedes them: they've dealt in every major casino in the realm, and their hands are said to be worth more than most fortunes. They shuffle a deck with movements so fast they blur, cards dancing between fingers like living things. 'I have shuffled cards for sixty years,' they say, never looking up. 'Before I retire to somewhere warm, I would pass on what I know. Not to cheat—anyone can cheat. To master. Is there someone here with hands that could learn to sing?'",
+    "description": "A hush falls over the card tables as an elderly figure sits down, hands moving with impossible fluidity. This is the Phantom Dealer—identity unknown, reputation immense. They’ve dealt in every major casino in the realm. Cards blur between their fingers. ‘Sixty years of shuffling,’ they say without looking up. ‘Before I retire, I’d pass on what I know. Not to cheat—to master. Anyone here with hands that could learn to sing?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "casino"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Agility",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present a worker with nimble fingers (Requires Agility 50+)",
+        "option": "Present a worker with nimble fingers. (Requires Agility 65+)",
         "condition": "Agility",
-        "threshold": 50,
-        "message_success": "The Phantom Dealer examines [acting_worker]'s hands with the intensity of a surgeon, then nods slowly. 'Good bones. Good potential.' What follows are months of grueling practice—shuffles and cuts repeated thousands of times until they become instinct, card manipulation so precise it borders on artistry. [acting_worker] learns to feel the cards, to know their positions without looking, to make them dance at will. When the Phantom finally departs (shuffling a final, perfect cascade as farewell), [acting_worker] has become a Card Shark. Their hands are now instruments of impossible precision, equally useful for honest dealing and... other applications.",
-        "message_failure": "The Phantom Dealer watches [acting_worker]'s attempt at a basic shuffle and sighs. 'Your hands want to rush. Cards demand patience.' They produce a single card—the ace of spades. 'Practice this: flip this card between your fingers until you can do it without thinking, without looking, without disturbing your breathing. Then find me.' They fade into the casino crowd, leaving behind only a challenge and a destination.",
+        "threshold": 65,
+        "message_success": "The Phantom examines [acting_worker]’s hands with a surgeon’s intensity, then nods. ‘Good bones.’ Months of grueling practice follow—shuffles and cuts repeated thousands of times until they become instinct, card manipulation so precise it borders on art. [acting_worker] learns to feel the cards, know their positions without looking. When the Phantom departs with a final perfect cascade, [acting_worker] has become a Card Shark. Their hands are instruments of impossible precision.",
+        "message_failure": "The Phantom watches [acting_worker] attempt a basic shuffle and sighs. ‘Your hands want to rush. Cards demand patience.’ They produce the ace of spades. ‘Flip this between your fingers until you can do it without thinking, without looking, without disturbing your breathing. Then find me.’",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Card Shark",
               "duration": 0
+            },
+            "event_flags": {
+              "master_card_dealer_trained": true
             }
           },
           "failure": {
@@ -1826,8 +1926,8 @@
         }
       },
       {
-        "option": "Ask them to demonstrate their skills for entertainment",
-        "message": "You request only a performance, and the Phantom Dealer obliges with a display that draws gasps from even the most jaded gamblers. Cards appear and disappear, shuffle themselves in mid-air, and somehow predict what patrons are thinking. The show becomes legendary, drawing new customers for weeks. 'Entertainment is its own reward,' the Phantom says before vanishing, 'especially when it pays so well.'",
+        "option": "Ask them to demonstrate their skills for entertainment.",
+        "message": "You request only a performance. The Phantom obliges with a display that draws gasps from even the most jaded gamblers—cards appearing, disappearing, predicting thoughts. The show draws new customers for weeks. ‘Entertainment is its own reward,’ the Phantom says, ‘especially when it pays well.’",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1845,35 +1945,43 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "master_card_dealer_trained": true
+    }
   },
   {
     "id": "casino_magnate_survey",
-    "description": "A figure enters your casino wearing wealth so casually it might as well be common clothes—but you recognize the cut, the fabric, the watch worth more than your establishment. This is Victoria Sterling, the Casino Queen, who built an empire of gambling establishments across the continent through sheer force of will and an uncanny ability to identify valuable patrons. She surveys your operation with eyes that calculate odds and opportunities simultaneously. 'I built my fortune by understanding one simple truth,' she says. 'Not all gold glitters equally. Some patrons are worth cultivating—worth building relationships with. I can teach someone to see what I see. Is there someone here with the charm to learn?'",
+    "description": "A figure enters wearing wealth so casually it might be common clothes—but you recognize the cut, the watch worth more than your building. This is Victoria Sterling, the Casino Queen, who built a gambling empire through sheer will and an uncanny eye for valuable patrons. She surveys your operation with calculating eyes. ‘Not all gold glitters equally,’ she says. ‘Some patrons are worth cultivating. I can teach someone to see what I see—if they have the charm to learn.’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "worker_selection": "choose",
     "building_type": [
       "casino"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Charm",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Introduce your most charismatic worker (Requires Charm 55+)",
+        "option": "Introduce your most charismatic worker. (Requires Charm 65+)",
         "condition": "Charm",
-        "threshold": 55,
-        "message_success": "Victoria Sterling studies [acting_worker] as they interact with patrons, her expression revealing nothing. Then, unexpectedly, she smiles. 'You have it. The gift of making people feel special.' What follows is an education in high-stakes hospitality—learning to read wealth through subtle signs, understanding what keeps high rollers returning, mastering the art of making every patron feel like the most important person in the room. When Sterling finally departs (her time is extraordinarily valuable), [acting_worker] has developed the High Roller's Eye. They now instinctively identify valuable patrons and know exactly how to cultivate their loyalty—a skill worth its weight in gold.",
-        "message_failure": "Victoria Sterling observes [acting_worker]'s customer interactions with analytical precision. 'You're charming to everyone equally. That's inefficient.' She produces a small notebook. 'Watch the next hundred patrons. Note who spends freely, who hoards, who seeks attention, who seeks escape. Then you'll begin to understand.' She departs in a whisper of expensive perfume, leaving behind a masterclass in observation.",
+        "threshold": 65,
+        "message_success": "Victoria studies [acting_worker] interacting with patrons, then unexpectedly smiles. ‘You have it. The gift of making people feel special.’ An education in high-stakes hospitality follows—reading wealth through subtle signs, understanding what keeps high rollers returning, making every patron feel like the most important person in the room. When Sterling departs, [acting_worker] has developed the High Roller’s Eye—instinctively identifying valuable patrons and knowing exactly how to earn their loyalty.",
+        "message_failure": "Victoria observes [acting_worker]’s customer interactions with precision. ‘You’re charming to everyone equally. That’s inefficient.’ She produces a small notebook. ‘Watch the next hundred patrons. Note who spends freely, who hoards, who seeks attention, who seeks escape. Then you’ll begin to understand.’",
         "effect": {
           "success": {
             "servant_energy": -2,
             "add_trait": {
               "name": "High Roller's Eye",
               "duration": 0
+            },
+            "event_flags": {
+              "casino_magnate_survey_trained": true
             }
           },
           "failure": {
@@ -1887,8 +1995,8 @@
         }
       },
       {
-        "option": "Simply seek her business advice",
-        "message": "You take advantage of her presence to seek consultation rather than training. Victoria Sterling agrees, spending several hours analyzing your operation and providing pointed recommendations for improving patron retention and identifying high-value customers. Her advice, when implemented, significantly increases your profits. 'A wise proprietor invests in wisdom,' she observes approvingly before departing.",
+        "option": "Simply seek her business advice.",
+        "message": "You ask for consultation rather than training. Victoria spends several hours analyzing your operation and provides pointed recommendations for patron retention and high-value identification. Her advice significantly increases your profits. ‘A wise proprietor invests in wisdom,’ she says before departing.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1906,36 +2014,44 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "casino_magnate_survey_trained": true
+    }
   },
   {
     "id": "legendary_courtesan_visit",
-    "description": "She arrives without fanfare—yet every eye in the establishment turns. There's no obvious reason for her magnetism; her dress is elegant but not ostentatious, her beauty refined but not overwhelming. Yet something about her presence commands attention like gravity commands objects. This is Madame Celestine, the legendary courtesan whose clients have included emperors, archdukes, and—rumor whispers—at least one deity. 'I did not build my reputation on beauty alone,' she says, her voice a melody that seems to caress each listener individually. 'I built it on understanding. On anticipation. On the art of making every moment feel sacred.' Her gaze sweeps your workers. 'Is there one here with the capacity to truly understand another person?'",
+    "description": "She arrives without fanfare, yet every eye turns. No obvious reason for the magnetism—her dress is elegant but not ostentatious. Yet something about her presence commands the room. This is Madame Celestine, the legendary courtesan whose clients have included emperors and archdukes. ‘I did not build my reputation on beauty alone,’ she says. ‘I built it on understanding. On anticipation.’ Her gaze sweeps your workers. ‘Is there one here who can truly understand another person?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "nsfw": true,
     "worker_selection": "choose",
     "building_type": [
       "brothel"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Sex",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present your most promising worker (Requires Charm 55+ and Sex 40+)",
-        "condition": "Charm",
-        "threshold": 55,
-        "message_success": "Madame Celestine observes [acting_worker] with clients over several evenings, her expression thoughtful. Then she nods. 'You have the foundation. Now we build the palace.' What follows is an education in the true art of companionship—learning to read desires that clients themselves don't know they have, mastering conversation as foreplay, understanding that the most powerful seduction happens in the mind before the body. When Celestine finally departs (her time is worth kingdoms), [acting_worker] has achieved Courtesan's Grace. They now move through intimacy with an elegance and understanding that transforms mere physical pleasure into something approaching transcendence.",
-        "message_failure": "Madame Celestine studies [acting_worker]'s interactions and sighs softly. 'You see the body but not the soul within it. True intimacy requires seeing both.' She produces a small vial of perfume. 'Wear this when you work. Let it remind you that every client carries secret gardens. Learn to find the gates.' She glides away, leaving behind wisdom and longing for what might have been.",
+        "option": "Present your most promising worker. (Requires Sex 65+)",
+        "condition": "Sex",
+        "threshold": 65,
+        "message_success": "Celestine observes [acting_worker] with clients over several evenings, then nods. ‘You have the foundation. Now we build the palace.’ An education follows in true companionship—reading desires clients don’t know they have, mastering conversation as foreplay, understanding that seduction happens in the mind first. When Celestine departs, [acting_worker] has achieved Courtesan’s Grace—moving through intimacy with an elegance that transforms physical pleasure into something transcendent.",
+        "message_failure": "Celestine studies [acting_worker]’s interactions and sighs softly. ‘You see the body but not the soul within it. True intimacy requires seeing both.’ She produces a vial of perfume. ‘Wear this when you work. Let it remind you that every client carries secret gardens. Learn to find the gates.’",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Courtesan's Grace",
               "duration": 0
+            },
+            "event_flags": {
+              "legendary_courtesan_visit_trained": true
             }
           },
           "failure": {
@@ -1949,8 +2065,8 @@
         }
       },
       {
-        "option": "Simply ask for advice on improving your establishment",
-        "message": "You request consultation rather than training, and Madame Celestine obliges with insights that transform how you view your business. She speaks of ambiance, of anticipation, of the thousand small details that separate adequate from extraordinary. Her suggestions, when implemented, dramatically elevate the quality of your establishment. 'Excellence is in the details,' she observes before departing. 'And you now know where to look.'",
+        "option": "Simply ask for advice on improving your establishment.",
+        "message": "You request consultation, and Celestine obliges with insights that transform how you view your business—ambiance, anticipation, the thousand small details separating adequate from extraordinary. Her suggestions dramatically elevate quality. ‘Excellence is in the details,’ she says. ‘And you now know where to look.’",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1968,36 +2084,44 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "legendary_courtesan_visit_trained": true
+    }
   },
   {
     "id": "sacred_pleasure_teacher",
-    "description": "The figure who enters wears simple robes that mark them as a temple initiate—yet their presence fills the room with an almost tangible warmth. This is a practitioner of the Sacred Touch, an ancient tradition that views physical pleasure as a form of prayer. Their order is nearly extinct now, but the few remaining masters carry knowledge passed down through a hundred generations. 'In the old days,' they say, their voice soft yet somehow audible in every corner, 'we taught that the body is a temple, and pleasure is the offering we make there. This knowledge must not be lost.' Their eyes, ancient yet ageless, scan your workers. 'Is there one here ready to learn that touch can be sacred?'",
+    "description": "Simple robes mark the visitor as a temple initiate, yet their presence fills the room with tangible warmth. A practitioner of the Sacred Touch—an ancient tradition treating physical pleasure as prayer. Their order is nearly extinct. ‘In the old days, we taught that the body is a temple and pleasure the offering. This knowledge must not be lost.’ Their eyes scan your workers. ‘Is there one here ready to learn that touch can be sacred?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
     "nsfw": true,
     "worker_selection": "choose",
     "building_type": [
       "brothel"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Hand",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Offer your most spiritually inclined worker (Requires Special 45+ or Hand 50+)",
+        "option": "Offer your most spiritually inclined worker. (Requires Hand 65+)",
         "condition": "Hand",
-        "threshold": 50,
-        "message_success": "The temple practitioner places their hands over [acting_worker]'s and closes their eyes. Something passes between them—a warmth, a recognition. 'Yes. You can feel it.' What follows is training unlike anything else: learning to sense the flow of energy through the body, understanding pressure points that unlock pleasure on deeper levels, mastering techniques that have been refined over millennia. When the practitioner finally departs (returning to their hidden temple), [acting_worker] has received the Sacred Touch. Their hands now carry ancient knowledge, and their ministrations bring experiences that transcend mere physical sensation.",
-        "message_failure": "The temple practitioner examines [acting_worker]'s hands, then their eyes. 'Your body knows the movements, but your spirit is not yet aligned.' They press a smooth stone into [acting_worker]'s palm. 'Meditate with this each night. When you can feel the warmth within the stone without your hands, you will be ready.' They bow and depart, leaving behind a path to enlightenment.",
+        "threshold": 65,
+        "message_success": "The practitioner places their hands over [acting_worker]’s and closes their eyes. Something passes between them—warmth, recognition. ‘Yes. You can feel it.’ Training follows in sensing energy flow through the body, pressure points that unlock deeper pleasure, techniques refined over millennia. When the practitioner departs to their hidden temple, [acting_worker] has received the Sacred Touch. Their hands carry ancient knowledge, and their ministrations transcend mere physical sensation.",
+        "message_failure": "The practitioner examines [acting_worker]’s hands, then their eyes. ‘Your body knows the movements, but your spirit is not yet aligned.’ They press a smooth stone into [acting_worker]’s palm. ‘Meditate with this each night. When you can feel its warmth without your hands, you will be ready.’",
         "effect": {
           "success": {
             "servant_energy": -3,
             "add_trait": {
               "name": "Sacred Touch",
               "duration": 0
+            },
+            "event_flags": {
+              "sacred_pleasure_teacher_trained": true
             }
           },
           "failure": {
@@ -2011,8 +2135,8 @@
         }
       },
       {
-        "option": "Request they simply bless your establishment",
-        "message": "You ask only for the practitioner's blessing rather than training. They agree, performing a quiet ritual that seems to make the very air of your establishment warmer, more welcoming. Patrons report feeling inexplicably comforted within your walls. 'Sacred space creates sacred experiences,' the practitioner observes before departing. 'You have created such a space.' Business improves noticeably in the weeks that follow.",
+        "option": "Request they simply bless your establishment.",
+        "message": "You ask only for a blessing. The practitioner performs a quiet ritual that makes the air warmer and more welcoming. Patrons report feeling inexplicably comforted within your walls. ‘Sacred space creates sacred experiences,’ they say before departing. Business improves noticeably.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -2030,33 +2154,44 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},
-    "player_gender_requirement": null
+    "player_gender_requirement": null,
+    "excluded_flags": {
+      "sacred_pleasure_teacher_trained": true
+    }
   },
   {
     "id": "desire_whisperer_arrives",
-    "description": "They appear between one moment and the next—a figure whose very presence makes hearts beat faster and thoughts drift to secret places. This is the Desire Whisperer, a legendary companion whose clients have included the most powerful and most guarded individuals in the realm. Their gift is not beauty but understanding: they can draw out hidden desires that clients themselves don't know they possess and fulfill them before they're spoken. 'True intimacy,' they say, their voice a warm promise, 'is not about the body. It is about the words that come before, the anticipation that builds, the trust that transforms strangers into... more.' They smile, and somehow every person in the room feels it was meant for them alone. 'Can someone here learn to speak the language of desire?'",
+    "description": "They appear between one moment and the next—a figure whose presence makes hearts beat faster. This is the Desire Whisperer, a legendary companion who draws out desires clients don’t know they possess. ‘True intimacy is not about the body,’ they say. ‘It is about the words before, the anticipation, the trust that transforms strangers into more.’ Their smile seems meant for everyone at once. ‘Can someone here learn to speak the language of desire?’",
     "weight": 1,
     "event_probability": 5,
-    "max_occurrences": 8,
-    "cooldown_days": 30,
+    "max_occurrences": 3,
+    "cooldown_days": 180,
+    "excluded_flags": {
+      "desire_whisperer_trained": true
+    },
     "nsfw": true,
     "worker_selection": "choose",
     "building_type": [
       "brothel"
     ],
+    "required_building_worker_min_skill": 65,
+    "required_building_worker_skill": "Oral",
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Present your most verbally gifted worker (Requires Charm 50+ and Oral 40+)",
-        "condition": "Charm",
-        "threshold": 50,
-        "message_success": "The Desire Whisperer converses with [acting_worker] for hours—intimate conversations that reveal nothing yet somehow communicate everything. Then they nod, satisfied. 'You understand that the most powerful intimacy happens in words.' What follows is training in the art of intimate conversation: learning to ask questions that unlock hidden desires, mastering the dance of revelation and mystery, understanding that anticipation is often more powerful than fulfillment. When the Whisperer finally departs (into mystery, as they always do), [acting_worker] has become a fellow Desire Whisperer. They now possess the ability to draw out and fulfill desires that clients didn't know they had—a skill that creates loyalty beyond reason.",
-        "message_failure": "The Desire Whisperer listens to [acting_worker] speak and smiles gently. 'You talk to fill silence. You must learn to talk to create hunger.' They lean close, whispering something that makes [acting_worker] shiver. 'Remember this feeling. When you can create it with words alone, find me.' They vanish into the crowd, leaving behind longing and a clear path forward.",
+        "option": "Present your worker best suited to intimate persuasion. (Requires Oral 65+)",
+        "condition": "Oral",
+        "threshold": 65,
+        "message_success": "The Whisperer converses with [acting_worker] for hours—intimate conversations that reveal nothing yet communicate everything. Then they nod. ‘You understand that the most powerful intimacy happens in words.’ Training follows in the art of intimate conversation: questions that unlock hidden desires, the dance of revelation and mystery, anticipation as power. When the Whisperer departs, [acting_worker] has become a fellow Desire Whisperer—able to draw out and fulfill desires clients didn’t know they had.",
+        "message_failure": "The Whisperer listens to [acting_worker] and smiles gently. ‘You talk to fill silence. You must learn to talk to create hunger.’ They lean close and whisper something that makes [acting_worker] shiver. ‘Remember this feeling. When you can create it with words alone, find me.’",
         "effect": {
           "success": {
             "servant_energy": -2,
+            "event_flags": {
+              "desire_whisperer_trained": true
+            },
             "add_trait": {
               "name": "Desire Whisperer",
               "duration": 0
@@ -2073,8 +2208,8 @@
         }
       },
       {
-        "option": "Simply enjoy their company as a patron",
-        "message": "You engage the Whisperer as a patron rather than seeking training. The evening that follows is... revelatory. Through conversation alone, they help you understand things about yourself and your business you never consciously recognized. You part feeling somehow more complete, with insights that improve both your management and your personal life. 'Understanding ourselves is the first step to understanding others,' they say in farewell. 'You've taken that step.'",
+        "option": "Simply enjoy their company as a patron.",
+        "message": "You engage the Whisperer as a patron. Through conversation alone, they help you understand things about yourself and your business you never consciously recognized. You part feeling more complete, with insights that improve both management and your personal life. ‘Understanding ourselves is the first step to understanding others.’",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -2085,6 +2220,857 @@
       }
     ],
     "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_bandits_no_guards",
+    "description": "Masked figures shoulder through the side door—too many, too fast, too organized to be drunks. One jams a cudgel under the cashier’s chin while another sweeps chips into a sack. Patrons freeze mid-bet. The leader finds you behind the rail. ‘No guards tonight. That makes this easy. Pay up, or someone learns what happens when a casino forgets steel.’",
+    "weight": 4,
+    "cooldown_days": 14,
+    "worker_selection": "choose",
+    "building_type": [
+      "casino"
+    ],
+    "forbidden_active_professions": [
+      "guard"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Pay them off before panic spreads. (Loss: Money)",
+        "message": "You keep your voice level and slide a heavy purse across—enough to sate greed without inviting a return visit. The leader weighs it, signals the others, and they melt back into the street. Tables reopen, but the whispers linger: your casino looked vulnerable tonight ({actual_money}).",
+        "effect": {
+          "money": -550,
+          "reputation": -3,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Send a worker to stand up to them. (Risk: Health; Potential: Money, Reputation)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] steps into the aisle with nothing but nerve—topples a table into the lead robber, scatters the rest before they regroup. A brief, ugly scramble ends with the bandits fleeing into the alley, leaving sacks behind. You still lose some takings to chaos and spooked patrons, but far less than surrender—and word spreads that your house is not undefended ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "[acting_worker] throws the first punch and takes the second twice as hard—a weighted club catches them across the ribs. The robbers grab what they can and run laughing. Medics, apologies, and shaken high-rollers cost you dearly. [acting_worker] leaves leaning on someone’s shoulder, pale and bleeding ({actual_money}, {actual_reputation} reputation, -18 Health).",
+        "effect": {
+          "success": {
+            "money": -220,
+            "reputation": 4
+          },
+          "failure": {
+            "money": -850,
+            "reputation": -6,
+            "health": -18
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "arena_challenge_visitor",
+    "description": "A traveling pit fighter kicks open your door, scarred knuckles wrapped in leather, and bellows a challenge to the room. They want a public bout against your best—winner takes a purse collected from the crowd. Patrons are already placing bets.",
+    "event_music": null,
+    "weight": 4,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "adventurers_guild",
+      "casino"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Send a worker to fight. (Risk: Health; Potential: Money, Reputation)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] steps into the ring and reads the pit fighter's rhythm within the first exchange. A feint, a counter, and the visitor hits the floor hard. The crowd roars. Bets pay out in your favor and the pit fighter buys drinks, laughing about the loss ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] takes a heavy hit in the second exchange and doesn't recover. The pit fighter finishes the bout quickly and collects the purse while your worker limps to the back room. The crowd enjoyed the show, but your reputation takes the hit ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 10,
+            "joy": 5
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -5,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline the challenge and offer hospitality instead. (Cost: Money; Gain: Reputation)",
+        "message": "You wave off the fight and invite the pit fighter to drink on the house. They grumble but settle in, and their stories draw a crowd. The evening costs you ale, but the atmosphere stays lively and no one gets hurt ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -150,
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "bandit_shakedown",
+    "description": "Three armed thugs block your entrance at dusk, blades visible under their cloaks. Their leader demands a weekly protection fee or promises broken furniture and scared customers. Patrons inside are watching through the windows.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 14,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "brothel",
+      "casino"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Send a worker to confront them. (Risk: Health; Potential: Reputation)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] walks out alone and doesn't flinch. The first thug swings; [acting_worker] puts them on the ground before the other two can react. The leader backs off, hands raised. Word spreads through the district that your place doesn't bend ({actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] steps out swinging but the thugs fight dirty. A knife slash across the arm ends it fast. You pay their fee this time and patch up your worker while the neighborhood watches ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "reputation": 12,
+            "joy": 5
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -8,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay them off quietly. (Cost: Money)",
+        "message": "You hand over the coin without a scene. The thugs pocket it and leave. No blood, no drama, but the taste is bitter. You hope they don't come back, but you know they will ({actual_money}).",
+        "effect": {
+          "money": -300,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Threaten to call the city guard. (Risk: Reputation)",
+        "message": "You mention the guard and the thugs laugh, but they leave. Patrons mutter about how you handled it—some think you looked weak, others think you were smart. The thugs will remember you called their bluff ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -3,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "guard_recruitment_test",
+    "description": "A city guard captain enters with two officers and announces an open recruitment trial. Any establishment that fields a strong candidate earns the guard's favor. The captain scans your workers with a practiced eye.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "adventurers_guild",
+      "tavern"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Enter a worker in the trial. (Risk: Health; Potential: Reputation, Money)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] steps onto the training ground and matches the guard's drills blow for blow. The captain nods approval at every test—shield work, footwork, endurance. Your worker doesn't join up, but the captain leaves a commendation and a bounty fee for producing quality fighters ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] gets through the first round but falters on the sparring test. The guard officer lands three clean hits and the captain shakes his head. Your establishment's name goes on the wrong list ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 15,
+            "joy": 5
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -5,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline and offer the guards refreshments. (Cost: Money; Gain: Reputation)",
+        "message": "You pass on the trial but offer the guards a meal on the house. They accept and spend the afternoon talking well of your place. Not the glory route, but the guard remembers who treats them right ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -100,
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "forged_documents_discovery",
+    "description": "A worker finds a bundle of trade documents stuffed behind a loose wall panel. The seals look official but the ink is wrong. Someone has been forging paperwork that could implicate your establishment in smuggling if the authorities find them first.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 12,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "restaurant"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Have a worker analyze the documents and trace the forger. (Risk: Reputation; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "message_success": "[acting_worker] studies the forgeries carefully—ink composition, handwriting pressure, seal inconsistencies. They trace it back to a rival's scribe and present the evidence to the merchant guild. The rival pays a steep fine, part of which comes to you as the wronged party ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] digs into the documents but draws the wrong conclusions. The investigation circles back to your place, and a city inspector spends the afternoon asking uncomfortable questions. You clear your name eventually, but not before the damage is done ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 700,
+            "reputation": 10,
+            "joy": 5
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -8,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Burn the documents and forget about it. (Risk: Reputation)",
+        "message": "You toss the papers into the fireplace and watch them curl to ash. Problem gone—for now. But whoever planted them might try again, and next time you might not find them first ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -2,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "merchant_riddle_wager",
+    "description": "A wealthy merchant slaps a heavy coin purse on the counter and grins. They propose a wager: solve their riddle and the purse is yours. Fail, and you owe them a week of free service. The riddle has stumped scholars across three kingdoms.",
+    "event_music": null,
+    "weight": 4,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "casino",
+      "tavern"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Put a worker forward to solve the riddle. (Risk: Money; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "message_success": "[acting_worker] listens to the riddle twice, stares at the ceiling for a long moment, and delivers the answer with a quiet smile. The merchant's jaw drops. The purse slides across the counter and the crowd breaks into applause. Your place is now known as a house of sharp minds ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] puzzles over the riddle, offers two guesses, and gets both wrong. The merchant collects their winnings with a smirk. Free service for a week means lost revenue, and the regulars won't let your worker forget it ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 1000,
+            "reputation": 8,
+            "joy": 5
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -5,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline the wager politely. (Loss: Reputation)",
+        "message": "You wave off the bet with a smile. The merchant shrugs, pockets the purse, and takes their custom elsewhere. Some patrons look disappointed—they wanted a show ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -2,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "tax_discrepancy_audit",
+    "description": "The governor's auditor arrives unannounced with a stack of ledgers and a stone-cold expression. They have found discrepancies in your tax filings—numbers that don't add up. You have one chance to explain before the fines start.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 14,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel",
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Have a worker walk the auditor through the books. (Risk: Money; Potential: Reputation)",
+        "condition": "Clever",
+        "message_success": "[acting_worker] sits down with the auditor and goes line by line. They find the clerical error, show the corrected figures, and present receipts for every transaction in question. The auditor stamps your ledger clean and notes your cooperation. Word reaches the governor's office that your books are solid ({actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries to explain the numbers but gets tangled in their own records. The auditor finds two more discrepancies and slaps a fine on the table. Your establishment's name goes on the watch list ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "reputation": 10,
+            "joy": 5
+          },
+          "failure": {
+            "money": -600,
+            "reputation": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay the fine without argument. (Cost: Money)",
+        "message": "You hand over the fine without making a scene. The auditor pockets the payment and checks your name off the list. Expensive, but at least the matter is closed and you stay off the governor's bad side ({actual_money}).",
+        "effect": {
+          "money": -400,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "rooftop_chase_thief",
+    "description": "A hooded figure snatches a patron's coin purse and bolts for the back door. The patron screams. The thief is already vaulting over the fence and heading for the rooftops. You have seconds to act before they disappear into the city.",
+    "event_music": null,
+    "weight": 4,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Send a worker to chase the thief. (Risk: Health; Potential: Money, Reputation)",
+        "condition": "Agility",
+        "message_success": "[acting_worker] is out the door before anyone else moves. They clear the fence, hit the rooftop tiles at a sprint, and corner the thief three buildings away. The purse comes back, the patron is overjoyed, and the whole district hears about it by morning ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] gives chase but loses footing on the wet tiles. They slide off a low roof and land hard in the alley below. The thief escapes, the patron demands compensation, and your worker needs a healer ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 12,
+            "joy": 5
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -5,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Compensate the patron from your own pocket. (Cost: Money; Gain: Reputation)",
+        "message": "You let the thief go and cover the patron's loss yourself. They appreciate the gesture, and other patrons notice you take care of your own. The thief gets away, but your reputation holds ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -250,
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "acrobat_troupe_invitation",
+    "description": "An acrobat troupe sets up outside your building, drawing a crowd with flips and catches. Their leader approaches with a proposition: let one of your workers join the finale act tonight, and you keep all the tips collected from the audience.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "casino"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Let a worker join the act. (Risk: Health; Potential: Money, Reputation)",
+        "condition": "Agility",
+        "message_success": "[acting_worker] takes to the routine like they were born in the air. The crowd gasps at every catch and cheers at the landing. Tips rain into the collection hat, and the troupe leader wants to book your place for a return show ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] manages the first few moves but mistimes a catch and tumbles off the platform. The crowd winces. The troupe covers smoothly but the damage is done—your place gets remembered for the fall, not the show ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 700,
+            "reputation": 8,
+            "joy": 5
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -5,
+            "health": -5,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline but let the troupe perform outside. (Gain: Reputation)",
+        "message": "You pass on joining but let the acrobats use your frontage. The crowd drifts inside for drinks after the show. Easy foot traffic without any risk ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "collapsing_scaffold",
+    "description": "A construction scaffold across the street groans and starts to buckle. Timber and tools slide toward a crowd of shoppers below. Someone screams. A fast worker could reach the supports in time or pull people clear before it all comes down.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 12,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "restaurant"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Send a worker to help. (Risk: Health; Potential: Reputation)",
+        "condition": "Agility",
+        "message_success": "[acting_worker] sprints across the street and shoves three people clear just as the scaffold collapses behind them. Timber crashes where the crowd stood seconds ago. The district watches your worker dust themselves off, unhurt. By evening, your establishment is the talk of the neighborhood ({actual_reputation} reputation, +10 Joy).",
+        "message_failure": "[acting_worker] rushes in but catches a falling beam across the shoulder. They manage to pull one person clear before going down. The crowd helps, but your worker needs rest and healing. Good intentions, rough outcome ({actual_reputation} reputation, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "reputation": 15,
+            "joy": 10
+          },
+          "failure": {
+            "reputation": 3,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Call for the city watch instead. (Gain: Reputation)",
+        "message": "You shout a warning and send someone running for the watch. The crowd scatters in time and no one is seriously hurt. Not as heroic, but no one from your place gets injured either ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 2,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "mysterious_map_seller",
+    "description": "A cloaked stranger slides into a booth and spreads a weathered parchment across the table. They claim it leads to a buried cache outside the city walls. The map could be genuine or an elaborate scam. Either way, they want coin for it.",
+    "event_music": null,
+    "weight": 4,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "adventurers_guild",
+      "casino"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Have a worker verify the map's authenticity. (Risk: Money; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "message_success": "[acting_worker] examines the ink, the parchment age, and the landmarks drawn on it. Everything checks out—this is real. You buy the map at a fair price and send a team to the cache. They return with a chest of old coins and a few rare trinkets ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] studies the map and declares it genuine. You buy it. The cache site turns out to be an empty hole someone dug last week. The stranger is long gone with your coin, and your worker's judgment is questioned ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 1200,
+            "reputation": 8,
+            "joy": 5
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -5,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Intimidate the stranger into revealing the truth. (Risk: Reputation; Potential: Money)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] looms over the booth and asks pointed questions with a hand resting on a blade. The stranger cracks fast—the map is real, but they stole it. They hand it over free of charge and bolt. The cache pays off handsomely ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries to pressure the stranger, but they call the bluff and make a scene. Other patrons look uncomfortable, and the stranger storms out loudly accusing your place of thuggery. The map was probably fake anyway ({actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 1000,
+            "reputation": 5,
+            "joy": 5
+          },
+          "failure": {
+            "reputation": -8,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Ignore the stranger entirely. (No effect)",
+        "message": "You tell the stranger you're not interested in treasure maps. They fold the parchment, shrug, and leave. Maybe it was real, maybe not. Either way, your coin stays in your pocket.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "escaped_beast_loose",
+    "description": "A roar shakes the windows. Outside, a scaled beast the size of a cart thrashes free from its cage as a traveling menagerie handler scrambles to contain it. Passersby scatter. The beast is heading toward your building, and the handler is screaming for help.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 14,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Send a worker to subdue the beast by force. (Risk: Health; Potential: Money, Reputation)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] grabs a heavy plank and meets the beast head-on. A solid strike to the snout stuns it long enough for the handler to throw a chain around its neck. The crowd cheers, the handler pays a generous reward, and your place is the hero of the district ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] swings but the beast is faster. A claw rakes across their arm and the beast charges past into a market stall. The handler catches it eventually, but your worker needs stitching and the stall owner blames you ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 12,
+            "joy": 5
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -5,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Send a worker to corral the beast back toward its cage. (Risk: Health; Potential: Reputation)",
+        "condition": "Agility",
+        "message_success": "[acting_worker] circles wide, claps loud, and drives the beast back step by step. Quick feet keep them just out of reach while guiding the animal into a dead-end alley where the handler slams the cage shut. No blood, no damage, and the handler is deeply grateful ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries to herd the beast but it turns sharply and clips them with its tail. They go sprawling into a stack of crates. The handler eventually corrals the beast alone, but your worker limps back bruised and embarrassed ({actual_reputation} reputation, -5 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 10,
+            "joy": 5
+          },
+          "failure": {
+            "reputation": -3,
+            "health": -5,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Bar the doors and wait it out. (Loss: Reputation)",
+        "message": "You lock up and let someone else deal with it. The beast is caught eventually, but people saw you bolt your doors while others helped. Not a great look for the neighborhood ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "underground_fight_ring",
+    "description": "A runner slips you a note with an address and a time. An underground fight ring is running tonight, and they want fresh blood. The purse is fat, the rules are thin, and nobody asks questions about where the fighters come from.",
+    "event_music": null,
+    "weight": 3,
+    "cooldown_days": 10,
+    "worker_selection": "choose",
+    "building_type": [
+      "tavern",
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Enter a worker in the ring. (Risk: Health; Potential: Money)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] walks into the pit and the crowd goes quiet. Three rounds later, their opponent is on the floor and the bookmaker is counting out your winnings. Your worker walks out with bruises and a fat purse. Nobody needs to know the details ({actual_money}, +5 Joy).",
+        "message_failure": "[acting_worker] holds their own for two rounds but takes a brutal hit in the third. The fight is called, the purse stays with the house, and your worker limps home with nothing to show for it but a black eye and sore ribs ({actual_money}, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 1100,
+            "joy": 5
+          },
+          "failure": {
+            "money": -300,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Ignore the note. (No effect)",
+        "message": "You crumple the note and toss it into the fire. Underground rings are trouble waiting to happen. Your workers stay healthy, your coin stays steady, and nobody comes knocking at your door.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
     "event_type": null,
     "worker_name": null,
     "dialogue": null,

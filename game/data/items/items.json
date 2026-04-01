@@ -10,7 +10,8 @@
       },
       "description": "A rare gem said to bind djinn and break their pacts.",
       "price": 800,
-      "weight": 1
+      "weight": 1,
+      "image": "binding_gem"
     },
     {
       "id": "iron_sword",
@@ -25,7 +26,8 @@
       "description": "A sturdy sword made of iron. (+8 Combat)",
       "durability": 120,
       "price": 550,
-      "weight": 10
+      "weight": 10,
+      "image": "iron_sword"
     },
     {
       "id": "steel_sword",
@@ -40,7 +42,8 @@
       "description": "A well-forged steel sword that cuts through armor. (+8 Combat)",
       "durability": 150,
       "price": 1050,
-      "weight": 5
+      "weight": 5,
+      "image": "steel_sword"
     },
     {
       "id": "wooden_staff",
@@ -49,13 +52,15 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 4
+          "Combat": 2,
+          "Clever": 2
         }
       },
-      "description": "A simple wooden staff favored by novices. (+4 Clever)",
+      "description": "A simple wooden staff favored by novices. (+2 Combat, +2 Clever)",
       "durability": 80,
       "price": 300,
-      "weight": 8
+      "weight": 8,
+      "image": "basic_staff"
     },
     {
       "id": "health_potion",
@@ -67,7 +72,8 @@
       },
       "description": "Restores 20 health points when consumed. (+20 Health)",
       "price": 50,
-      "weight": 12
+      "weight": 12,
+      "image": "health_potion"
     },
     {
       "id": "energy_potion",
@@ -79,7 +85,8 @@
       },
       "description": "Restores 5 energy when consumed. (+5 Energy)",
       "price": 60,
-      "weight": 10
+      "weight": 10,
+      "image": "energy_potion"
     },
     {
       "id": "antidote",
@@ -94,7 +101,8 @@
       },
       "description": "A powerful remedy that neutralizes poisons and restores some health. (+5 Health, removes Poisoned)",
       "price": 250,
-      "weight": 5
+      "weight": 5,
+      "image": "antidote"
     },
     {
       "id": "stamina_elixir",
@@ -107,7 +115,8 @@
       },
       "description": "Boosts stamina and restores a little health. (+2 Health, +5 Energy)",
       "price": 70,
-      "weight": 8
+      "weight": 8,
+      "image": "stamina_elixir"
     },
     {
       "id": "chocolates",
@@ -120,7 +129,8 @@
       },
       "description": "A small gift that lifts the mood. (+1 Joy)",
       "price": 250,
-      "weight": 4
+      "weight": 4,
+      "image": "chocolates"
     },
     {
       "id": "bonbons_box",
@@ -133,7 +143,8 @@
       },
       "description": "Sugar-spun sweets with a faint arcane shimmer. (+2 Joy)",
       "price": 350,
-      "weight": 1
+      "weight": 1,
+      "image": "bonbons_box"
     },
     {
       "id": "flower_bouquet",
@@ -147,7 +158,8 @@
       },
       "description": "Enchanted blooms that whisper sweet feelings. (+1 Joy, +1 Romance)",
       "price": 350,
-      "weight": 1
+      "weight": 1,
+      "image": "flower_bouquet"
     },
     {
       "id": "calming_charm",
@@ -161,7 +173,8 @@
       },
       "description": "A soothing charm that helps keep emotions in check. (Daily: -1 Rebelliousness)",
       "price": 220,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet"
     },
     {
       "id": "potion_vitality",
@@ -173,7 +186,8 @@
       },
       "description": "A robust potion that increases vitality. (+15 Health)",
       "price": 65,
-      "weight": 9
+      "weight": 9,
+      "image": "potion_vitality"
     },
     {
       "id": "iron_shield",
@@ -186,7 +200,8 @@
       "description": "A sturdy shield that protects the bearer. (+10 Health)",
       "durability": 120,
       "price": 400,
-      "weight": 6
+      "weight": 6,
+      "image": "metal_shield"
     },
     {
       "id": "leather_armor",
@@ -199,7 +214,8 @@
       "description": "Light armor offering basic protection. (+5 Health)",
       "durability": 80,
       "price": 200,
-      "weight": 10
+      "weight": 10,
+      "image": "leather_armor"
     },
     {
       "id": "magic_robe",
@@ -214,7 +230,8 @@
       "description": "A robe imbued with magical properties. (+5 Clever)",
       "durability": 70,
       "price": 500,
-      "weight": 4
+      "weight": 4,
+      "image": "cloak_stealth"
     },
     {
       "id": "cloak_stealth",
@@ -228,7 +245,8 @@
       },
       "description": "A dark cloak that enhances stealth and charm. (+3 Charm)",
       "price": 450,
-      "weight": 5
+      "weight": 5,
+      "image": "cloak_stealth"
     },
     {
       "id": "ring_fortitude",
@@ -240,7 +258,8 @@
       },
       "description": "A ring that increases the wearer's resilience. (+10 Health)",
       "price": 270,
-      "weight": 5
+      "weight": 5,
+      "image": "ring_fortitude"
     },
     {
       "id": "amulet_power",
@@ -254,7 +273,8 @@
       },
       "description": "An amulet that boosts combat prowess. (+4 Combat)",
       "price": 500,
-      "weight": 3
+      "weight": 3,
+      "image": "amulet_power"
     },
     {
       "id": "boots_speed",
@@ -431,13 +451,14 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Combat": 10
+          "Combat": 4
         }
       },
-      "description": "A razor-sharp blade crafted from volcanic glass. (+10 Combat)",
+      "description": "A razor-sharp blade crafted from volcanic glass. (+4 Combat)",
       "durability": 90,
       "price": 1400,
-      "weight": 4
+      "weight": 4,
+      "image": "steel_sword"
     },
     {
       "id": "flame_dagger",
@@ -452,7 +473,8 @@
       "description": "A small dagger imbued with the power of fire. (+6 Combat)",
       "durability": 70,
       "price": 660,
-      "weight": 3
+      "weight": 3,
+      "image": "iron_sword"
     },
     {
       "id": "ice_staff",
@@ -461,13 +483,15 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 7
+          "Combat": 4,
+          "Clever": 3
         }
       },
-      "description": "A staff that channels the chill of winter. (+7 Clever)",
+      "description": "A staff that channels the chill of winter. (+4 Combat, +3 Clever)",
       "durability": 80,
       "price": 980,
-      "weight": 6
+      "weight": 6,
+      "image": "magic_staff"
     },
     {
       "id": "wind_bow",
@@ -512,7 +536,8 @@
       },
       "description": "An orb crackling with electrical energy. (+4 Clever)",
       "price": 600,
-      "weight": 3
+      "weight": 3,
+      "image": "potion_magical"
     },
     {
       "id": "wakeful_pill",
@@ -526,7 +551,8 @@
       },
       "description": "Grants a burst of energy. Grants the Energetic trait and removes the Lazy trait. (+10 Energy)",
       "price": 1500,
-      "weight": 3
+      "weight": 3,
+      "image": "energy_potion"
     },
     {
       "id": "childless_hag_potion",
@@ -539,7 +565,8 @@
       "description": "A bitter draught distilled from moonwort and widow's tears—a recipe passed down by secluded crones who wished to undo nature's course. Drinking it empties the womb and lifts the burden of pregnancy. Removes the Pregnant trait.",
       "price": 1200,
       "weight": 2,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "enchanted_ring",
@@ -553,7 +580,8 @@
       },
       "description": "Grants an enchanted allure. Grants the Charming trait. (+2 Striptease)",
       "price": 252,
-      "weight": 3
+      "weight": 3,
+      "image": "enchanted_ring"
     },
     {
       "id": "shadow_cloak",
@@ -567,7 +595,8 @@
       },
       "description": "A cloak that shrouds the wearer in darkness. (+5 Charm)",
       "price": 630,
-      "weight": 4
+      "weight": 4,
+      "image": "cloak_stealth"
     },
     {
       "id": "healing_ring",
@@ -579,7 +608,8 @@
       },
       "description": "A ring that slowly regenerates the wearer's health. (+8 Health)",
       "price": 342,
-      "weight": 3
+      "weight": 3,
+      "image": "healing_ring"
     },
     {
       "id": "amulet_desire",
@@ -592,7 +622,8 @@
       },
       "description": "An amulet that stirs deep passions. (+5 Libido Max, +2 Libido Regeneration)",
       "price": 468,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet_desire"
     },
     {
       "id": "elixir_passion",
@@ -605,7 +636,8 @@
       },
       "description": "A potent elixir that boosts libido and hastens its regeneration for a time. (+10 Libido, +3 Libido regeneration)",
       "price": 1000,
-      "weight": 0.02
+      "weight": 0.02,
+      "image": "elixir_passion"
     },
     {
       "id": "incriminating_documents",
@@ -634,7 +666,8 @@
       "durability": 200,
       "price": 6000,
       "weight": 6,
-      "shop_available": false
+      "shop_available": false,
+      "image": "steel_sword"
     },
     {
       "id": "siege_powder",
@@ -694,9 +727,11 @@
       "effect": {
         "custom": "unlock_shop2"
       },
-      "description": "Test item to unlock Shop 2 (Adventurer's Market). For testing purposes only.",
+      "description": "Test item to unlock Shop 2 (Adventurer's Market). Consumed on purchase. For testing purposes only.",
       "price": 1,
-      "weight": 1
+      "weight": 1,
+      "consume_on_purchase": true,
+      "purchase_effect": "custom"
     },
     {
       "id": "test_unlock_shop3",
@@ -706,9 +741,11 @@
       "effect": {
         "custom": "unlock_shop3"
       },
-      "description": "Test item to unlock Shop 3 (Elite Emporium). For testing purposes only.",
+      "description": "Test item to unlock Shop 3 (Elite Emporium). Consumed on purchase. For testing purposes only.",
       "price": 1,
-      "weight": 1
+      "weight": 1,
+      "consume_on_purchase": true,
+      "purchase_effect": "custom"
     },
     {
       "id": "fine_wine",
@@ -791,9 +828,11 @@
       "effect": {
         "money": 50000
       },
-      "description": "A test item that adds 50,000 money when used. For testing purposes only.",
+      "description": "A test item that adds 50,000 money when bought. Consumed on purchase. For testing purposes only.",
       "price": 1,
-      "weight": 1
+      "weight": 1,
+      "consume_on_purchase": true,
+      "purchase_effect": "add_money"
     },
     {
       "id": "chef_apron",
@@ -808,7 +847,8 @@
       "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Service)",
       "durability": 100,
       "price": 300,
-      "weight": 3
+      "weight": 3,
+      "image": "chef_apron"
     },
     {
       "id": "master_chef_apron",
@@ -823,7 +863,8 @@
       "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Service)",
       "durability": 150,
       "price": 1120,
-      "weight": 4
+      "weight": 4,
+      "image": "chef_apron"
     },
     {
       "id": "service_uniform",
@@ -838,7 +879,8 @@
       "description": "A clean and professional uniform that helps servers provide excellent customer service. (+4 Charm)",
       "durability": 90,
       "price": 275,
-      "weight": 5
+      "weight": 5,
+      "image": "alluring_dress"
     },
     {
       "id": "elegant_service_dress",
@@ -853,7 +895,8 @@
       "description": "A sophisticated dress that enhances the server's charm and professionalism. (+6 Charm)",
       "durability": 120,
       "price": 720,
-      "weight": 4
+      "weight": 4,
+      "image": "alluring_dress"
     },
     {
       "id": "kitchen_knife_set",
@@ -868,7 +911,8 @@
       "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Service)",
       "durability": 130,
       "price": 540,
-      "weight": 6
+      "weight": 6,
+      "image": "cooking_utensils_1"
     },
     {
       "id": "master_chef_knife",
@@ -883,7 +927,8 @@
       "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Service)",
       "durability": 180,
       "price": 1225,
-      "weight": 5
+      "weight": 5,
+      "image": "cooking_utensils_3"
     },
     {
       "id": "cooking_utensils",
@@ -897,7 +942,8 @@
       },
       "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Service)",
       "price": 225,
-      "weight": 4
+      "weight": 4,
+      "image": "cooking_utensils_2"
     },
     {
       "id": "sensual_dress",
@@ -913,7 +959,8 @@
       "description": "An alluring dress designed to captivate and entice clients. (+4 Sex, +3 Charm)",
       "durability": 80,
       "price": 400,
-      "weight": 3
+      "weight": 3,
+      "image": "alluring_dress"
     },
     {
       "id": "elegant_courtesan_dress",
@@ -929,7 +976,8 @@
       "description": "A luxurious dress that exudes elegance and sensuality, perfect for high-end clientele. (+7 Sex, +5 Charm)",
       "durability": 140,
       "price": 1520,
-      "weight": 4
+      "weight": 4,
+      "image": "alluring_dress"
     },
     {
       "id": "seductive_lingerie",
@@ -945,7 +993,8 @@
       "description": "Intimate apparel that enhances allure and confidence in intimate encounters. (+5 Sex, +3 Anal)",
       "durability": 60,
       "price": 420,
-      "weight": 1
+      "weight": 1,
+      "image": "seductive_lingerie"
     },
     {
       "id": "luxury_lingerie_set",
@@ -962,7 +1011,8 @@
       "description": "An exquisite set of fine lingerie that makes the wearer irresistible. (+8 Sex, +5 Anal, +4 Charm)",
       "durability": 100,
       "price": 1680,
-      "weight": 2
+      "weight": 2,
+      "image": "luxury_lingerie_set"
     },
     {
       "id": "charming_earrings",
@@ -977,7 +1027,8 @@
       },
       "description": "Beautiful earrings that catch the light and draw attention to the wearer's face. (+4 Charm, +2 Sex)",
       "price": 325,
-      "weight": 1
+      "weight": 1,
+      "image": "basic_earrings"
     },
     {
       "id": "diamond_earrings",
@@ -992,7 +1043,8 @@
       },
       "description": "Sparkling diamond earrings that add elegance and allure to any outfit. (+6 Charm, +4 Sex)",
       "price": 960,
-      "weight": 1
+      "weight": 1,
+      "image": "silver_earrings"
     },
     {
       "id": "sensual_necklace",
@@ -1007,7 +1059,8 @@
       },
       "description": "An elegant necklace that draws attention to the neck and enhances oral skills. (+3 Charm, +3 Oral)",
       "price": 375,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet_desire"
     },
     {
       "id": "pearl_choker",
@@ -1023,7 +1076,8 @@
       },
       "description": "A sophisticated pearl choker that combines elegance with a hint of dominance. (+5 Charm, +5 Oral, +2 BDSM)",
       "price": 870,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet"
     },
     {
       "id": "stripper_heels",
@@ -1038,7 +1092,8 @@
       },
       "description": "High heels designed for performance, enhancing grace and stage presence. (+5 Striptease, +2 Sex)",
       "price": 330,
-      "weight": 3
+      "weight": 3,
+      "image": "stripper_heels"
     },
     {
       "id": "master_performer_heels",
@@ -1053,7 +1108,8 @@
       },
       "description": "Premium heels crafted for professional performers, maximizing stage appeal. (+8 Striptease, +4 Sex)",
       "price": 1080,
-      "weight": 3
+      "weight": 3,
+      "image": "stripper_heels"
     },
     {
       "id": "bartender_apron",
@@ -1069,7 +1125,8 @@
       "description": "A practical apron that helps bartenders mix drinks with precision and charm. (+2 Charm, +2 Service)",
       "durability": 95,
       "price": 250,
-      "weight": 3
+      "weight": 3,
+      "image": "chef_apron"
     },
     {
       "id": "master_bartender_apron",
@@ -1085,7 +1142,8 @@
       "description": "An elegant apron worn by master mixologists, symbolizing expertise in service and charm. (+4 Charm, +3 Service)",
       "durability": 140,
       "price": 1040,
-      "weight": 4
+      "weight": 4,
+      "image": "chef_apron"
     },
     {
       "id": "bar_tools",
@@ -1100,7 +1158,8 @@
       },
       "description": "Essential bar tools including shakers, strainers, and jiggers for perfect cocktails. (+1 Charm, +2 Service)",
       "price": 212,
-      "weight": 4
+      "weight": 4,
+      "image": "bar_set_2"
     },
     {
       "id": "master_mixology_set",
@@ -1115,7 +1174,8 @@
       },
       "description": "A premium set of bar tools used by master mixologists to create legendary drinks. (+3 Charm, +3 Service)",
       "price": 900,
-      "weight": 5
+      "weight": 5,
+      "image": "bar_set_3"
     },
     {
       "id": "tavern_performer_outfit",
@@ -1131,7 +1191,8 @@
       "description": "A vibrant outfit perfect for entertaining tavern patrons with music and dance. (+4 Striptease, +3 Charm)",
       "durability": 85,
       "price": 350,
-      "weight": 4
+      "weight": 4,
+      "image": ""
     },
     {
       "id": "basic_chef_apron",
@@ -1146,7 +1207,8 @@
       "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Service)",
       "durability": 60,
       "price": 100,
-      "weight": 3
+      "weight": 3,
+      "image": "chef_apron"
     },
     {
       "id": "advanced_chef_apron",
@@ -1161,7 +1223,8 @@
       "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Service)",
       "durability": 120,
       "price": 600,
-      "weight": 3
+      "weight": 3,
+      "image": "chef_apron"
     },
     {
       "id": "elite_chef_apron",
@@ -1176,7 +1239,8 @@
       "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Service)",
       "durability": 200,
       "price": 3250,
-      "weight": 4
+      "weight": 4,
+      "image": "chef_apron"
     },
     {
       "id": "basic_service_uniform",
@@ -1191,7 +1255,8 @@
       "description": "A simple uniform for entry-level servers, providing basic charm enhancement. (+2 Charm)",
       "durability": 50,
       "price": 90,
-      "weight": 4
+      "weight": 4,
+      "image": "chef_apron"
     },
     {
       "id": "premium_service_dress",
@@ -1206,7 +1271,8 @@
       "description": "An exquisite dress that makes servers appear more charming and professional than ever. (+8 Charm)",
       "durability": 150,
       "price": 1920,
-      "weight": 4
+      "weight": 4,
+      "image": "chef_apron"
     },
     {
       "id": "basic_kitchen_knife",
@@ -1221,7 +1287,8 @@
       "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Service)",
       "durability": 80,
       "price": 150,
-      "weight": 4
+      "weight": 4,
+      "image": "cooking_utensils_1"
     },
     {
       "id": "advanced_kitchen_knife",
@@ -1236,7 +1303,8 @@
       "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Service)",
       "durability": 150,
       "price": 660,
-      "weight": 5
+      "weight": 5,
+      "image": "cooking_utensils_2"
     },
     {
       "id": "elite_kitchen_knife",
@@ -1251,7 +1319,8 @@
       "description": "Legend says this Kitchen Knife was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Service)",
       "durability": 220,
       "price": 3000,
-      "weight": 5
+      "weight": 5,
+      "image": "cooking_utensils_3"
     },
     {
       "id": "basic_cooking_utensils",
@@ -1265,7 +1334,8 @@
       },
       "description": "Essential cooking tools for everyday kitchen work. (+2 Service)",
       "price": 80,
-      "weight": 3
+      "weight": 3,
+      "image": "cooking_utensils_1"
     },
     {
       "id": "advanced_cooking_utensils",
@@ -1279,7 +1349,8 @@
       },
       "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Service)",
       "price": 375,
-      "weight": 4
+      "weight": 4,
+      "image": "cooking_utensils_2"
     },
     {
       "id": "elite_cooking_utensils",
@@ -1293,7 +1364,8 @@
       },
       "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Service)",
       "price": 1350,
-      "weight": 5
+      "weight": 5,
+      "image": "cooking_utensils_3"
     },
     {
       "id": "basic_sensual_dress",
@@ -1309,7 +1381,8 @@
       "description": "A simple but alluring dress that enhances basic appeal. (+2 Sex, +2 Charm)",
       "durability": 50,
       "price": 140,
-      "weight": 3
+      "weight": 3,
+      "image": "alluring_dress"
     },
     {
       "id": "advanced_sensual_dress",
@@ -1325,7 +1398,8 @@
       "description": "A well-designed dress that significantly enhances allure and charm. (+5 Sex, +4 Charm)",
       "durability": 100,
       "price": 570,
-      "weight": 3
+      "weight": 3,
+      "image": "alluring_dress"
     },
     {
       "id": "elite_courtesan_dress",
@@ -1341,7 +1415,8 @@
       "description": "Legendary dress once worn by the most famous courtesan in history. It is said that kings have gone to war for a single night with its wearer. (+9 Sex, +7 Charm)",
       "durability": 180,
       "price": 4250,
-      "weight": 4
+      "weight": 4,
+      "image": "alluring_dress"
     },
     {
       "id": "basic_lingerie",
@@ -1357,7 +1432,8 @@
       "description": "Simple intimate apparel that provides basic enhancement. (+3 Sex, +2 Anal)",
       "durability": 40,
       "price": 162,
-      "weight": 1
+      "weight": 1,
+      "image": "seductive_lingerie"
     },
     {
       "id": "advanced_lingerie",
@@ -1374,7 +1450,8 @@
       "description": "Well-crafted lingerie that significantly enhances appeal and confidence. (+6 Sex, +4 Anal, +3 Charm)",
       "durability": 80,
       "price": 630,
-      "weight": 1
+      "weight": 1,
+      "image": "seductive_lingerie"
     },
     {
       "id": "elite_lingerie_set",
@@ -1391,7 +1468,8 @@
       "description": "A legendary set once owned by an empress who seduced entire kingdoms. Each piece is woven with threads of pure desire. (+10 Sex, +7 Anal, +6 Charm)",
       "durability": 120,
       "price": 4750,
-      "weight": 2
+      "weight": 2,
+      "image": "luxury_lingerie_set"
     },
     {
       "id": "basic_earrings",
@@ -1406,7 +1484,8 @@
       },
       "description": "Simple earrings that add a touch of charm. (+2 Charm, +1 Sex)",
       "price": 110,
-      "weight": 1
+      "weight": 1,
+      "image": "basic_earrings"
     },
     {
       "id": "advanced_earrings",
@@ -1421,7 +1500,8 @@
       },
       "description": "Beautiful earrings that significantly enhance charm and appeal. (+5 Charm, +3 Sex)",
       "price": 540,
-      "weight": 1
+      "weight": 1,
+      "image": "silver_earrings"
     },
     {
       "id": "elite_diamond_earrings",
@@ -1436,7 +1516,8 @@
       },
       "description": "Legend says these diamonds were formed from the tears of stars who wept at the beauty of the first mortal to wear them. (+8 Charm, +6 Sex)",
       "price": 3520,
-      "weight": 1
+      "weight": 1,
+      "image": "silver_earrings"
     },
     {
       "id": "basic_necklace",
@@ -1451,7 +1532,8 @@
       },
       "description": "A simple necklace that draws attention to the neck. (+2 Charm, +2 Oral)",
       "price": 120,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet"
     },
     {
       "id": "advanced_necklace",
@@ -1466,7 +1548,8 @@
       },
       "description": "An elegant necklace that enhances both charm and oral skills. (+4 Charm, +4 Oral)",
       "price": 425,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet_desire"
     },
     {
       "id": "elite_pearl_choker",
@@ -1482,7 +1565,8 @@
       },
       "description": "Once worn by a queen who ruled through both beauty and power, this choker symbolizes the perfect union of elegance and control. (+7 Charm, +7 Oral, +4 BDSM)",
       "price": 2880,
-      "weight": 2
+      "weight": 2,
+      "image": "amulet_desire"
     },
     {
       "id": "basic_heels",
@@ -1497,7 +1581,8 @@
       },
       "description": "Simple heels for basic stage performances. (+3 Striptease, +1 Sex)",
       "price": 125,
-      "weight": 3
+      "weight": 3,
+      "image": "stripper_heels"
     },
     {
       "id": "advanced_heels",
@@ -1512,7 +1597,8 @@
       },
       "description": "Well-crafted heels that significantly enhance stage presence and appeal. (+6 Striptease, +3 Sex)",
       "price": 480,
-      "weight": 3
+      "weight": 3,
+      "image": "stripper_heels"
     },
     {
       "id": "elite_performer_heels",
@@ -1527,7 +1613,8 @@
       },
       "description": "Legendary heels said to have been worn by a performer so captivating that audiences would forget to breathe while watching her dance. (+10 Striptease, +6 Sex)",
       "price": 4600,
-      "weight": 3
+      "weight": 3,
+      "image": "stripper_heels"
     },
     {
       "id": "basic_bartender_apron",
@@ -1542,7 +1629,8 @@
       "description": "A simple apron for novice bartenders. (+2 Clever)",
       "durability": 50,
       "price": 80,
-      "weight": 3
+      "weight": 3,
+      "image": "chef_apron"
     },
     {
       "id": "advanced_bartender_apron",
@@ -1557,7 +1645,8 @@
       "description": "A professional apron for experienced bartenders, enhancing mixology skills. (+5 Clever)",
       "durability": 110,
       "price": 540,
-      "weight": 3
+      "weight": 3,
+      "image": "chef_apron"
     },
     {
       "id": "elite_bartender_apron",
@@ -1572,7 +1661,8 @@
       "description": "Rumored to have been enchanted by a master alchemist, this apron is said to make any drink mixed while wearing it taste like liquid perfection. (+9 Clever)",
       "durability": 180,
       "price": 3400,
-      "weight": 4
+      "weight": 4,
+      "image": "chef_apron"
     },
     {
       "id": "basic_bar_tools",
@@ -1586,7 +1676,8 @@
       },
       "description": "Essential bar tools for basic drink mixing. (+2 Clever)",
       "price": 70,
-      "weight": 3
+      "weight": 3,
+      "image": "bar_set_1"
     },
     {
       "id": "advanced_bar_tools",
@@ -1600,7 +1691,8 @@
       },
       "description": "High-quality tools crafted specifically for professional bartenders. Each piece is perfectly balanced and designed for precision. (+4 Clever)",
       "price": 350,
-      "weight": 4
+      "weight": 4,
+      "image": "bar_set_2"
     },
     {
       "id": "elite_mixology_set",
@@ -1614,7 +1706,8 @@
       },
       "description": "These tools were once used by a legendary bartender who could mix drinks that could heal wounds, restore youth, or grant wishes. (+8 Clever)",
       "price": 3280,
-      "weight": 5
+      "weight": 5,
+      "image": "bar_set_3"
     },
     {
       "id": "basic_performer_outfit",
@@ -1630,7 +1723,8 @@
       "description": "A simple outfit for tavern performers. (+2 Striptease, +2 Charm)",
       "durability": 50,
       "price": 110,
-      "weight": 4
+      "weight": 4,
+      "image": "alluring_dress"
     },
     {
       "id": "advanced_performer_outfit",
@@ -1646,7 +1740,8 @@
       "description": "A well-designed outfit that significantly enhances performance appeal. (+5 Striptease, +4 Charm)",
       "durability": 100,
       "price": 600,
-      "weight": 4
+      "weight": 4,
+      "image": "cloak_stealth"
     },
     {
       "id": "elite_performer_costume",
@@ -1662,7 +1757,8 @@
       "description": "Worn by the greatest bard in history, this costume is said to make any performance so captivating that audiences forget the world around them. (+9 Striptease, +7 Charm)",
       "durability": 160,
       "price": 3900,
-      "weight": 5
+      "weight": 5,
+      "image": ""
     },
     {
       "id": "training_sword",
@@ -1677,7 +1773,8 @@
       "description": "A basic training sword for novice adventurers. (+3 Combat)",
       "durability": 60,
       "price": 200,
-      "weight": 8
+      "weight": 8,
+      "image": "iron_sword"
     },
     {
       "id": "bronze_sword",
@@ -1692,7 +1789,8 @@
       "description": "A sturdy bronze sword, reliable for most combat situations. (+6 Combat)",
       "durability": 100,
       "price": 450,
-      "weight": 9
+      "weight": 9,
+      "image": "iron_sword"
     },
     {
       "id": "silver_sword",
@@ -1707,7 +1805,8 @@
       "description": "A well-forged silver sword, effective against many creatures. (+9 Combat)",
       "durability": 140,
       "price": 980,
-      "weight": 8
+      "weight": 8,
+      "image": "steel_sword"
     },
     {
       "id": "mithril_sword",
@@ -1722,7 +1821,8 @@
       "description": "A legendary sword forged from mithril, incredibly light yet devastatingly sharp. (+12 Combat)",
       "durability": 200,
       "price": 3400,
-      "weight": 5
+      "weight": 5,
+      "image": "steel_sword"
     },
     {
       "id": "training_staff",
@@ -1731,13 +1831,15 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 3
+          "Combat": 2,
+          "Clever": 1
         }
       },
-      "description": "A simple wooden staff for magical practice. (+3 Clever)",
+      "description": "A simple wooden staff for magical practice. (+2 Combat, +1 Clever)",
       "durability": 50,
       "price": 175,
-      "weight": 6
+      "weight": 6,
+      "image": "basic_staff"
     },
     {
       "id": "oak_staff",
@@ -1746,13 +1848,15 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 6
+          "Combat": 3,
+          "Clever": 3
         }
       },
-      "description": "A staff carved from ancient oak, enhancing magical abilities. (+6 Clever)",
+      "description": "A staff carved from ancient oak, enhancing magical abilities. (+3 Combat, +3 Clever)",
       "durability": 90,
       "price": 480,
-      "weight": 7
+      "weight": 7,
+      "image": "magic_staff"
     },
     {
       "id": "enchanted_staff",
@@ -1761,13 +1865,15 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 9
+          "Combat": 5,
+          "Clever": 4
         }
       },
-      "description": "A staff imbued with magical energy, significantly boosting spellcasting. (+9 Clever)",
+      "description": "A staff imbued with magical energy, significantly boosting spellcasting. (+5 Combat, +4 Clever)",
       "durability": 130,
       "price": 1120,
-      "weight": 6
+      "weight": 6,
+      "image": "magic_staff"
     },
     {
       "id": "archmage_staff",
@@ -1776,14 +1882,15 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 13,
-          "Combat": 5
+          "Combat": 9,
+          "Clever": 9
         }
       },
-      "description": "A legendary staff wielded by archmages, channeling immense magical power. (+13 Clever, +5 Combat)",
+      "description": "A legendary staff wielded by archmages, channeling immense magical power. (+9 Combat, +9 Clever)",
       "durability": 220,
       "price": 5500,
-      "weight": 5
+      "weight": 5,
+      "image": "special_staff"
     },
     {
       "id": "leather_vest",
@@ -1799,7 +1906,8 @@
       "description": "A basic leather vest offering minimal protection. (+8 Health, +2 Combat)",
       "durability": 60,
       "price": 225,
-      "weight": 6
+      "weight": 6,
+      "image": "leather_armor"
     },
     {
       "id": "chainmail_shirt",
@@ -1815,7 +1923,8 @@
       "description": "A chainmail shirt providing solid protection in combat. (+15 Health, +4 Combat)",
       "durability": 120,
       "price": 570,
-      "weight": 10
+      "weight": 10,
+      "image": "iron_plate_armor"
     },
     {
       "id": "iron_plate_armor",
@@ -1831,7 +1940,8 @@
       "description": "Heavy plate armor forged from iron, offering solid protection for warriors. (+22 Health, +5 Combat)",
       "durability": 160,
       "price": 1200,
-      "weight": 16
+      "weight": 16,
+      "image": "iron_plate_armor"
     },
     {
       "id": "steel_plate_armor",
@@ -1847,7 +1957,8 @@
       "description": "Heavy plate armor made of well-forged steel, offering excellent protection for experienced warriors. (+25 Health, +6 Combat)",
       "durability": 180,
       "price": 1575,
-      "weight": 15
+      "weight": 15,
+      "image": "steel_plate_armor"
     },
     {
       "id": "dragon_scale_armor",
@@ -1863,7 +1974,8 @@
       "description": "Legendary armor crafted from dragon scales, offering unparalleled protection and combat prowess. (+40 Health, +10 Combat)",
       "durability": 300,
       "price": 4800,
-      "weight": 12
+      "weight": 12,
+      "image": "dragon_scale_armor"
     },
     {
       "id": "simple_shield",
@@ -1876,7 +1988,8 @@
       "description": "A basic wooden shield for defense. (+5 Health)",
       "durability": 50,
       "price": 150,
-      "weight": 5
+      "weight": 5,
+      "image": "wooden_shield"
     },
     {
       "id": "steel_shield",
@@ -1889,7 +2002,8 @@
       "description": "A sturdy steel shield providing reliable protection. (+18 Health)",
       "durability": 140,
       "price": 720,
-      "weight": 8
+      "weight": 8,
+      "image": "metal_shield"
     },
     {
       "id": "tower_shield",
@@ -1902,7 +2016,8 @@
       "description": "A massive tower shield offering exceptional defensive capabilities. (+30 Health)",
       "durability": 200,
       "price": 1820,
-      "weight": 12
+      "weight": 12,
+      "image": "metal_shield"
     },
     {
       "id": "magic_shield",
@@ -1918,7 +2033,8 @@
       "description": "An enchanted shield that provides both protection and magical enhancement. (+35 Health, +5 Craft)",
       "durability": 250,
       "price": 3520,
-      "weight": 6
+      "weight": 6,
+      "image": "special_shield"
     },
     {
       "id": "adventurer_boots",
@@ -2023,7 +2139,8 @@
       "description": "A mystical amulet found in ancient ruins, imbued with the spirit of countless adventurers. Grants the Adventurer trait. (+10 Combat, +10 Clever, +5 Agility)",
       "price": 3650,
       "weight": 1,
-      "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)"
+      "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)",
+      "image": "amulet"
     },
     {
       "id": "collar_endless_desire",
@@ -2042,7 +2159,8 @@
       "price": 3650,
       "weight": 1,
       "nsfw": true,
-      "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)"
+      "obtain_hint": "Rare drop from adventures (5%) or boss battles (5%)",
+      "image": "amulet_desire"
     },
     {
       "id": "blade_fallen_king",
@@ -2064,7 +2182,8 @@
       "durability": 500,
       "price": 3650,
       "weight": 8,
-      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)",
+      "image": "steel_sword"
     },
     {
       "id": "crown_dominion",
@@ -2109,7 +2228,8 @@
       "durability": 300,
       "price": 3650,
       "weight": 2,
-      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)",
+      "image": "cloak_stealth"
     },
     {
       "id": "staff_archmage",
@@ -2118,7 +2238,8 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Clever": 20,
+          "Combat": 10,
+          "Clever": 10,
           "Craft": 10
         },
         "add_trait": [
@@ -2127,11 +2248,12 @@
           "Mystical"
         ]
       },
-      "description": "The ultimate staff of magical mastery, wielded by the greatest archmages in history. Grants Magical, Powerful Magic, and Mystical traits. (+20 Clever, +10 Craft)",
+      "description": "The ultimate staff of magical mastery, wielded by the greatest archmages in history. Grants Magical, Powerful Magic, and Mystical traits. (+10 Combat, +10 Clever, +10 Craft)",
       "durability": 400,
       "price": 3650,
       "weight": 4,
-      "obtain_hint": "Extremely rare drop from boss battles only (1%)"
+      "obtain_hint": "Extremely rare drop from boss battles only (1%)",
+      "image": "special_staff"
     },
     {
       "id": "chains_submission",
@@ -2186,13 +2308,14 @@
       "type": "weapon",
       "effect": {
         "skill_modifiers": {
-          "Combat": 10
+          "Combat": 20
         }
       },
-      "description": "A blade bestowed by the arena's master for a flawless trial. Favoured by gladiators. (+10 Combat)",
+      "description": "A blade bestowed by the arena's master for a flawless trial. Favoured by gladiators. (+20 Combat)",
       "durability": 180,
       "price": 12000,
-      "weight": 6
+      "weight": 6,
+      "image": "steel_sword"
     },
     {
       "id": "potion_strong",
@@ -2204,7 +2327,8 @@
       },
       "description": "Grants the Strong trait permanently (+5 Health, +3 Combat). Craft-only.",
       "price": 400,
-      "weight": 8
+      "weight": 8,
+      "image": "potion_strong"
     },
     {
       "id": "potion_tough",
@@ -2216,7 +2340,8 @@
       },
       "description": "Grants the Tough trait permanently (+8 Health, +1 Combat). Craft-only.",
       "price": 400,
-      "weight": 8
+      "weight": 8,
+      "image": "potion_tough"
     },
     {
       "id": "potion_large_breasts",
@@ -2229,7 +2354,8 @@
       "description": "Grants the Large Breasts trait permanently. Craft-only. Female only.",
       "price": 500,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_transformed",
@@ -2241,7 +2367,8 @@
       },
       "description": "Grants the Transformed trait permanently (+40% $, +3 Extreme, +2 Charm). Craft-only.",
       "price": 700,
-      "weight": 6
+      "weight": 6,
+      "image": "potion_magical"
     },
     {
       "id": "potion_magical",
@@ -2253,7 +2380,8 @@
       },
       "description": "Grants the Magical trait permanently (+10% $, +2 Craft, +1 Clever). Craft-only.",
       "price": 450,
-      "weight": 5
+      "weight": 5,
+      "image": "potion_magical"
     },
     {
       "id": "potion_troll_blood",
@@ -2265,7 +2393,8 @@
       },
       "description": "A drop of troll essence. Grants the Troll Blood trait permanently (+10 Health Regen per day). Craft-only.",
       "price": 900,
-      "weight": 10
+      "weight": 10,
+      "image": "potion_magical"
     },
     {
       "id": "potion_robust",
@@ -2277,7 +2406,8 @@
       },
       "description": "Grants the Robust trait permanently (+10 Health, +2 Health Regen). Craft-only.",
       "price": 500,
-      "weight": 8
+      "weight": 8,
+      "image": "potion_vitality"
     },
     {
       "id": "potion_energetic",
@@ -2289,7 +2419,8 @@
       },
       "description": "Grants the Energetic trait permanently (+10 Energy). Craft-only.",
       "price": 450,
-      "weight": 6
+      "weight": 6,
+      "image": "stamina_elixir"
     },
     {
       "id": "potion_agile",
@@ -2301,7 +2432,8 @@
       },
       "description": "Grants the Agile trait permanently (+1 Agility, +1 Striptease). Craft-only.",
       "price": 400,
-      "weight": 5
+      "weight": 5,
+      "image": "potion_magical"
     },
     {
       "id": "potion_great_figure",
@@ -2313,7 +2445,8 @@
       },
       "description": "Grants the Great Figure trait permanently (+20% $, +2 Charm, +1 Striptease). Craft-only.",
       "price": 550,
-      "weight": 5
+      "weight": 5,
+      "image": "potion_magical"
     },
     {
       "id": "potion_long_legs",
@@ -2325,7 +2458,8 @@
       },
       "description": "Grants the Long Legs trait permanently (+10% $, +2 Agility, +2 Striptease). Craft-only.",
       "price": 500,
-      "weight": 5
+      "weight": 5,
+      "image": "potion_magical"
     },
     {
       "id": "potion_exotic",
@@ -2337,7 +2471,8 @@
       },
       "description": "Grants the Exotic trait permanently (+25% $). Craft-only.",
       "price": 500,
-      "weight": 5
+      "weight": 5,
+      "image": "elixir_passion"
     },
     {
       "id": "potion_beautiful",
@@ -2349,7 +2484,8 @@
       },
       "description": "Grants the Beautiful trait permanently (+20% $). Craft-only.",
       "price": 550,
-      "weight": 5
+      "weight": 5,
+      "image": "potion_magical"
     },
     {
       "id": "potion_small_breasts",
@@ -2362,7 +2498,8 @@
       "description": "Grants the Small Breasts trait permanently (+5% $, +1 Agility, +1 Charm). Craft-only. Female only.",
       "price": 450,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_firm_ass",
@@ -2375,7 +2512,8 @@
       "description": "Grants the Firm Ass trait permanently (+15% $, +2 Anal, +1 Striptease, +1 Agility). Craft-only.",
       "price": 500,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_soft_ass",
@@ -2388,7 +2526,8 @@
       "description": "Grants the Soft Ass trait permanently (+10% $, +1 Anal, +1 Charm). Craft-only.",
       "price": 450,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_large_hips",
@@ -2401,7 +2540,8 @@
       "description": "Grants the Large Hips trait permanently (+15% $, +2 Sex). Craft-only. Female only.",
       "price": 500,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_deluxe_derriere",
@@ -2414,7 +2554,8 @@
       "description": "Grants the Deluxe Derriere trait permanently (+20% $, +3 Anal, +1 Striptease). Craft-only.",
       "price": 600,
       "weight": 6,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_large_penis",
@@ -2427,7 +2568,8 @@
       "description": "Grants the Large Penis trait permanently (+30% $, +3 Sex, +2 Anal, +2 Homo). Craft-only. Male only.",
       "price": 700,
       "weight": 6,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_tight",
@@ -2440,7 +2582,8 @@
       "description": "Grants the Tight trait permanently (+20% $, +2 Sex, +2 Anal). Craft-only.",
       "price": 550,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "potion_magical"
     },
     {
       "id": "potion_sensitive",
@@ -2453,7 +2596,8 @@
       "description": "Grants the Sensitive trait permanently (+10% $, +1 Sex, +1 Oral, +1 BDSM). Craft-only.",
       "price": 500,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "elixir_passion"
     },
     {
       "id": "potion_high_libido",
@@ -2466,7 +2610,8 @@
       "description": "Grants the High Libido trait permanently (+5 libido regen/day, +5 libido max). Craft-only.",
       "price": 500,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "elixir_passion"
     },
     {
       "id": "potion_nympho",
@@ -2479,7 +2624,8 @@
       "description": "Grants the Nympho trait permanently (libido min 10, +3 Sex, +2 Oral). Craft-only. Female only.",
       "price": 650,
       "weight": 6,
-      "nsfw": true
+      "nsfw": true,
+      "image": "elixir_passion"
     },
     {
       "id": "potion_satyr",
@@ -2492,7 +2638,8 @@
       "description": "Grants the Satyr trait permanently (libido min 10, +3 Sex, +2 Group). Craft-only. Male only.",
       "price": 650,
       "weight": 6,
-      "nsfw": true
+      "nsfw": true,
+      "image": "elixir_passion"
     },
     {
       "id": "potion_cum_addict",
@@ -2505,7 +2652,8 @@
       "description": "Grants the Cum Addict trait permanently (+3 Oral, +3 libido regen/day). Craft-only.",
       "price": 550,
       "weight": 5,
-      "nsfw": true
+      "nsfw": true,
+      "image": "elixir_passion"
     },
     {
       "id": "handwritten_poem",
@@ -2603,6 +2751,19 @@
       "description": "A length of fine silk ribbon. The implication depends entirely on the giver. Yvara: +2 Dominion, +2 Affection. Worker gift effect: +1 Relationship, +1 Joy, +2 Romance, -1 Rebelliousness.",
       "price": 650,
       "shop_available": true
+    },
+    {
+      "id": "cipher_lattice",
+      "name": "Cryptographer's Lattice",
+      "display_name": "Cryptographer's Lattice",
+      "type": "quest_item",
+      "effect": {},
+      "description": "A ruled transparency for aligning academy seal-glyphs. Sold mostly as a curiosity in the Elite Emporium at a price that could buy a year of patience. It will not read a codex for you—but it can force a stubborn ring-cipher open when you refuse to wrestle glyphs by hand.",
+      "price": 15000,
+      "weight": 1,
+      "shop_available": true,
+      "shop_chance": 1.0,
+      "shop_only": "shop3"
     }
   ],
   "excluded_from_shops": [

@@ -123,25 +123,6 @@
     "on_expire": {}
   },
   {
-    "name": "Pregnant",
-    "duration": 100,
-    "modifiers": {
-      "energy": -5,
-      "skill_modifiers": {
-        "Sex": -2
-      }
-    },
-    "description": "The worker is pregnant, reducing energy and physical performance for an extended period. [-5 Energy, -2 Sex]",
-    "nsfw": true,
-    "only_assigned": true,
-    "gender_restriction": "female",
-    "attribute_caps": {},
-    "daily_effects": {},
-    "requires_traits": [],
-    "attribute_minimums": {},
-    "on_expire": {}
-  },
-  {
     "name": "Sick",
     "duration": 7,
     "modifiers": {

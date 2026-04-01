@@ -82,7 +82,7 @@ init -2 python:
     def _snapshot_matches_slot(snap, slot_name):
         """Validate that a snapshot belongs to the expected slot."""
         try:
-            if not isinstance(snap, dict):
+            if not hasattr(snap, "get"):
                 return False
             snap_slot = snap.get("snapshot_slot")
             snap_guid = snap.get("snapshot_guid")
@@ -122,7 +122,7 @@ init -2 python:
     def _upgrade_legacy_snapshot_file(filepath, snap, slot_name):
         """Persist legacy snapshot with slot/guid to prevent cross-slot corruption."""
         try:
-            if not isinstance(snap, dict):
+            if not hasattr(snap, "get"):
                 return
             if not snap.get("_legacy_snapshot"):
                 return
@@ -137,11 +137,11 @@ init -2 python:
     def _sync_building_assignments_from_workers():
         """Rebuild building assigned_servants from workers, preserving servant_jobs."""
         try:
-            name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
+            name_to_worker = {w.get("name"): w for w in store.workers if hasattr(w, "get") and w.get("name")}
 
             for bname in getattr(store, "owned_buildings", []):
                 building = getattr(store, "available_buildings", {}).get(bname)
-                if not isinstance(building, dict):
+                if not hasattr(building, "get"):
                     continue
 
                 assigned = _to_list(building.get("assigned_servants", [])) or []
@@ -154,7 +154,7 @@ init -2 python:
                 for servant in assigned:
                     if not servant:
                         continue
-                    if isinstance(servant, dict):
+                    if hasattr(servant, "get"):
                         wname = servant.get("name")
                     else:
                         wname = str(servant)
@@ -169,7 +169,7 @@ init -2 python:
                 _norm = getattr(store, "_norm_building_key", lambda k: (str(k).strip() if k else ""))
                 bname_norm = _norm(bname)
                 for w in store.workers:
-                    if not isinstance(w, dict):
+                    if not hasattr(w, "get"):
                         continue
                     wname = w.get("name")
                     if not wname or wname in seen:
@@ -221,7 +221,7 @@ init -2 python:
         """Convert value to a native Python dict, handling RevertableDict and other dict-like objects."""
         if value is None:
             return None
-        if isinstance(value, dict):
+        if hasattr(value, "get"):
             return value
         if hasattr(value, '__getitem__') and hasattr(value, 'keys') and hasattr(value, '__len__'):
             try:
@@ -244,7 +244,7 @@ init -2 python:
         """Check if value is dict-like (dict, RevertableDict, or other mapping)."""
         if value is None:
             return False
-        if isinstance(value, dict):
+        if hasattr(value, "get"):
             return True
         if hasattr(value, '__getitem__') and hasattr(value, 'keys') and hasattr(value, '__len__'):
             return True
@@ -276,9 +276,9 @@ init -2 python:
         workers = getattr(store, "workers", [])
         for worker in workers:
             # Ensure worker has required fields
-            if not isinstance(worker, dict):
+            if not hasattr(worker, "get"):
                 continue
-            
+
             # Ensure name exists and is valid
             if not worker.get("name") or not isinstance(worker.get("name"), str):
                 worker["name"] = f"Worker_{sanitized_count}"
@@ -367,7 +367,7 @@ init -2 python:
                         else:
                             items_preview.append(str(item))
             
-            # Log worker_interactions_today with details (quiet mode)
+            # manager_interactions_today saved above
             
             # Build snapshot dict
             # CRITICAL: Get manager_inventory - preserve it as-is but ensure it's a list
@@ -436,7 +436,7 @@ init -2 python:
                 "take_a_walk_in_progress": _safe_getattr(store, "take_a_walk_in_progress", False),
                 "manager_inventory": _cp.deepcopy(manager_inv_final),
                 "unlocked_shops": _cp.deepcopy(getattr(store, "unlocked_shops", {})),
-                "worker_interactions_today": _cp.deepcopy(getattr(store, "worker_interactions_today", {})),
+                "manager_interactions_today": _safe_getattr(store, "manager_interactions_today", 0),
                 "game_initialized": True,
                 "is_new_game": False,
                 "academy_enrolled": _safe_getattr(store, "academy_enrolled", False),
@@ -462,13 +462,40 @@ init -2 python:
                 "yvara_s1_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s1_talks_done", [])) or []),
                 "yvara_s1_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s1_remarks_done", [])) or []),
                 "yvara_gifts_given": _safe_getattr(store, "yvara_gifts_given", 0),
+                "yvara_s2_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s2_talks_done", [])) or []),
+                "yvara_s2_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s2_remarks_done", [])) or []),
+                "yvara_s2_gifts_given": _safe_getattr(store, "yvara_s2_gifts_given", 0),
+                "yvara_s3_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s3_talks_done", [])) or []),
+                "yvara_s3_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s3_remarks_done", [])) or []),
+                "yvara_observed_sessions": _safe_getattr(store, "yvara_observed_sessions", 0),
+                "yvara_observed_last_day": _safe_getattr(store, "yvara_observed_last_day", None),
+                "yvara_lesson_absorbed": _safe_getattr(store, "yvara_lesson_absorbed", False),
+                "yvara_leverage_financial": _safe_getattr(store, "yvara_leverage_financial", False),
+                "yvara_s3_gate_fired": _safe_getattr(store, "yvara_s3_gate_fired", False),
+                "yvara_s4_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s4_talks_done", [])) or []),
+                "yvara_s4_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s4_remarks_done", [])) or []),
+                "yvara_s4_gate_fired": _safe_getattr(store, "yvara_s4_gate_fired", False),
+                "yvara_morning_after_done": _safe_getattr(store, "yvara_morning_after_done", False),
+                "yvara_evening_academy_last_day": _safe_getattr(store, "yvara_evening_academy_last_day", None),
+                "yvara_continuation_notice_shown": _safe_getattr(store, "yvara_continuation_notice_shown", False),
+                "yvara_good_word_count": _safe_getattr(store, "yvara_good_word_count", 0),
+                "yvara_good_word_last_day": _safe_getattr(store, "yvara_good_word_last_day", None),
+                "yvara_good_word_peak": _safe_getattr(store, "yvara_good_word_peak", False),
                 "management_skills": _cp.deepcopy(getattr(store, "management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0})),
                 "manager_portrait": getattr(store, "manager_portrait", ""),
                 "manager_start_skill_chosen": _safe_getattr(store, "manager_start_skill_chosen", False),
-                "manager_level": _safe_getattr(store, "manager_level", 1)
+                "manager_level": _safe_getattr(store, "manager_level", 1),
+                # Arena / Laboratory progression and cooldowns
+                "arena_unlocked": _safe_getattr(store, "arena_unlocked", False),
+                "arena_lanista_paid": _safe_getattr(store, "arena_lanista_paid", False),
+                "arena_special_match_intro_done": _safe_getattr(store, "arena_special_match_intro_done", False),
+                "last_special_match_total_days": _safe_getattr(store, "last_special_match_total_days", None),
+                "last_special_match_worker_name": _safe_getattr(store, "last_special_match_worker_name", None),
+                "alchemy_unlocked": _safe_getattr(store, "alchemy_unlocked", False),
+                "last_laboratory_use_total_days": _safe_getattr(store, "last_laboratory_use_total_days", None)
             }
             if DEBUG_SNAPSHOT:
-                renpy.log(f"SNAPSHOT: DEBUG - _build_snapshot returning type: {type(snapshot_result)}, is dict: {isinstance(snapshot_result, dict)}, keys: {len(snapshot_result.keys()) if isinstance(snapshot_result, dict) else 'N/A'}")
+                renpy.log(f"SNAPSHOT: DEBUG - _build_snapshot returning type: {type(snapshot_result)}, is dict: {hasattr(snapshot_result, 'get')}, keys: {len(snapshot_result.keys()) if hasattr(snapshot_result, 'get') else 'N/A'}")
             return snapshot_result
         except Exception as e:
             renpy.log(f"SNAPSHOT: CRITICAL ERROR - build error: {e}")
@@ -479,9 +506,9 @@ init -2 python:
     
     def _migrate_snapshot(snap):
         """Migrate snapshot to current version format if needed."""
-        if not isinstance(snap, dict):
+        if not hasattr(snap, "get"):
             return snap
-        
+
         version = snap.get("snapshot_version", 0)
         current_version = 1
         
@@ -490,16 +517,12 @@ init -2 python:
         
         renpy.log(f"SNAPSHOT: MIGRATION - Migrating snapshot from version {version} to {current_version}")
         
-        # Version 0 -> 1: Add snapshot_version if missing
         if version == 0:
             snap["snapshot_version"] = 1
             version = 1
         
         # Future migrations can be added here:
-        # if version == 1:
-        #     # Migration logic for version 1 -> 2
         #     snap["snapshot_version"] = 2
-        #     version = 2
         
         renpy.log(f"SNAPSHOT: MIGRATION - Migration complete, snapshot now at version {snap.get('snapshot_version', current_version)}")
         return snap
@@ -519,11 +542,10 @@ init -2 python:
                 return False
             
             # Pre-validation: ensure snapshot is a dict
-            if not isinstance(snap, dict):
+            if not hasattr(snap, "get"):
                 renpy.log(f"SNAPSHOT: ERROR - Snapshot is not a dict (type: {type(snap)})")
                 return False
             
-            # Migrate snapshot to current version if needed
             snap = _migrate_snapshot(snap)
             
             # Track expected fields
@@ -532,7 +554,7 @@ init -2 python:
                 "available_buildings", "owned_buildings", "map_button_buildings",
                 "custom_names", "player_name", "player_title", "tutorial_active",
                 "current_objective", "manager_inventory", "unlocked_shops",
-                "worker_interactions_today", "event_flags", "event_occurrences",
+                "manager_interactions_today", "event_flags", "event_occurrences",
                 "event_last_occurred"
             ]
             
@@ -643,6 +665,36 @@ init -2 python:
             except Exception as e:
                 failed_fields.append("available_workers")
                 renpy.log(f"SNAPSHOT: WARNING - Could not apply available_workers: {e}")
+
+            # CRITICAL: Apply management_skills BEFORE ensure_worker_defaults.
+            # ensure_worker_defaults calls calculate_max_energy/calculate_max_health which read
+            # management_skills for Gang Leader (+10 max Energy), Combat Instruction (+10 max HP),
+            # and get_attribute_cap for Servant Training (reduces max Rebelliousness).
+            for field_name, default_val in [
+                ("management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0}),
+                ("manager_portrait", ""),
+                ("manager_start_skill_chosen", False),
+                ("manager_level", 1)
+            ]:
+                try:
+                    if field_name in snap:
+                        val = snap.get(field_name)
+                        if field_name == "management_skills":
+                            converted = _to_dict(val)
+                            if converted is not None:
+                                setattr(store, field_name, _cp.deepcopy(converted))
+                                applied_any = True
+                                applied_fields.append(field_name)
+                        elif val is not None or default_val is None:
+                            setattr(store, field_name, val if val is not None else default_val)
+                            applied_any = True
+                            applied_fields.append(field_name)
+                        elif not hasattr(store, field_name):
+                            setattr(store, field_name, default_val)
+                    elif not hasattr(store, field_name):
+                        setattr(store, field_name, default_val)
+                except Exception as e:
+                    renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name} (pre-worker-defaults): {e}")
 
             # CRITICAL: Ensure worker defaults (including min 3-5 traits) after snapshot restore.
             # Restored workers never pass through ensure_worker_defaults otherwise.
@@ -910,7 +962,28 @@ init -2 python:
                 ("yvara_s4_donation_highest_tier", 0),
                 ("yvara_s4_favors_total", 0),
                 ("yvara_s4_favor_highest_tier", 0),
-                ("yvara_gifts_given", 0)
+                ("yvara_gifts_given", 0),
+                ("yvara_s2_gifts_given", 0),
+                ("yvara_observed_sessions", 0),
+                ("yvara_observed_last_day", None),
+                ("yvara_lesson_absorbed", False),
+                ("yvara_leverage_financial", False),
+                ("yvara_s3_gate_fired", False),
+                ("yvara_s4_gate_fired", False),
+                ("yvara_morning_after_done", False),
+                ("yvara_evening_academy_last_day", None),
+                ("yvara_continuation_notice_shown", False),
+                ("yvara_good_word_count", 0),
+                ("yvara_good_word_last_day", None),
+                ("yvara_good_word_peak", False),
+                # Arena / Laboratory progression and cooldowns
+                ("arena_unlocked", False),
+                ("arena_lanista_paid", False),
+                ("arena_special_match_intro_done", False),
+                ("last_special_match_total_days", None),
+                ("last_special_match_worker_name", None),
+                ("alchemy_unlocked", False),
+                ("last_laboratory_use_total_days", None)
             ]:
                 try:
                     if field_name in snap:
@@ -930,7 +1003,13 @@ init -2 python:
             # Apply Yvara list fields separately (must stay lists)
             for field_name, default_val in [
                 ("yvara_s1_talks_done", []),
-                ("yvara_s1_remarks_done", [])
+                ("yvara_s1_remarks_done", []),
+                ("yvara_s2_talks_done", []),
+                ("yvara_s2_remarks_done", []),
+                ("yvara_s3_talks_done", []),
+                ("yvara_s3_remarks_done", []),
+                ("yvara_s4_talks_done", []),
+                ("yvara_s4_remarks_done", [])
             ]:
                 try:
                     if field_name in snap:
@@ -948,7 +1027,7 @@ init -2 python:
             for field_name, default_val, field_type in [
                 ("manager_inventory", [], list),
                 ("unlocked_shops", {}, dict),
-                ("worker_interactions_today", {}, dict)
+                ("manager_interactions_today", 0, int)
             ]:
                 try:
                     field_val = snap.get(field_name)
@@ -958,9 +1037,14 @@ init -2 python:
                         converted_val = _to_list(field_val)
                     elif field_type == dict:
                         converted_val = _to_dict(field_val)
+                    elif field_type == int:
+                        try:
+                            converted_val = int(field_val) if field_val is not None else default_val
+                        except (TypeError, ValueError):
+                            converted_val = default_val
                     
                     if converted_val is not None:
-                        restored_val = _cp.deepcopy(converted_val)
+                        restored_val = converted_val if field_type == int else _cp.deepcopy(converted_val)
                         
                         # CRITICAL: For manager_inventory, create new tuples to break reference sharing
                         # But preserve ALL items - don't skip anything
@@ -984,7 +1068,7 @@ init -2 python:
                                         new_items.append((str(item_id) if item_id is not None else "", 
                                                          int(quantity) if quantity is not None else 1, 
                                                          bool(equipped) if equipped is not None else False))
-                                    elif isinstance(item, dict):
+                                    elif hasattr(item, "get"):
                                         # Convert dict to tuple
                                         item_id = item.get("item_id", "")
                                         quantity = item.get("quantity", 1)
@@ -1245,13 +1329,13 @@ init -2 python:
                 if hasattr(store, 'workers') and hasattr(store, 'available_buildings'):
                     # Step 1: Clear all assigned_servants
                     for bname, bdata in store.available_buildings.items():
-                        if isinstance(bdata, dict):
+                        if hasattr(bdata, "get"):
                             bdata["assigned_servants"] = []
-                    
+
                     # Step 2: Rebuild from workers' assigned_building
                     seen_per_building = {}
                     for worker in store.workers:
-                        if not isinstance(worker, dict):
+                        if not hasattr(worker, "get"):
                             continue
                         wname = worker.get("name")
                         if not wname:
@@ -1268,7 +1352,7 @@ init -2 python:
                         store.available_buildings[assigned]["assigned_servants"].append(worker)
                     
                     # Log results
-                    total = sum(len(b.get("assigned_servants", [])) for b in store.available_buildings.values() if isinstance(b, dict))
+                    total = sum(len(b.get("assigned_servants", [])) for b in store.available_buildings.values() if hasattr(b, "get"))
                     renpy.log(f"SNAPSHOT: Rebuilt assigned_servants - {total} workers across {len(seen_per_building)} buildings")
                 else:
                     renpy.log("SNAPSHOT: WARNING - workers or available_buildings not found")
@@ -1404,7 +1488,7 @@ init -2 python:
                     verify_data = json.load(verify_file)
                     # CRITICAL: Convert RevertableDict to dict if needed
                     verify_data = _to_dict(verify_data) if verify_data is not None else None
-                    if verify_data is None or not isinstance(verify_data, dict):
+                    if verify_data is None or not hasattr(verify_data, "get"):
                         raise ValueError(f"Verification failed: temp file is not a dict (type: {type(verify_data)})")
                     if len(verify_data) == 0:
                         raise ValueError("Verification failed: temp file dict is empty")
@@ -1494,7 +1578,7 @@ init -2 python:
                 existing_snap = _read_snapshot_file(existing_path)
                 if existing_snap is None:
                     renpy.notify(f"Snapshot WARNING: existing file for {slot_name} is unreadable; overwriting.")
-                elif isinstance(existing_snap, dict):
+                elif hasattr(existing_snap, "get"):
                     existing_slot = existing_snap.get("snapshot_slot")
                     existing_guid = existing_snap.get("snapshot_guid")
                     expected_guid = _get_slot_guid(slot_name)
@@ -1632,13 +1716,13 @@ init -2 python:
             
             # Debug: Log what we got (only if DEBUG_SNAPSHOT is enabled)
             if DEBUG_SNAPSHOT:
-                renpy.log(f"SNAPSHOT: DEBUG - Loaded data type: {type(data)}, is dict: {isinstance(data, dict)}")
-                if isinstance(data, dict):
+                renpy.log(f"SNAPSHOT: DEBUG - Loaded data type: {type(data)}, is dict: {hasattr(data, 'get')}")
+                if hasattr(data, "get"):
                     renpy.log(f"SNAPSHOT: DEBUG - Dict has {len(data)} keys, first few: {list(data.keys())[:5]}")
             
             # Basic validation - must be a dict
             # Check if it's actually a dict (handle Ren'Py RevertableDict or other dict-like objects)
-            if not isinstance(data, dict):
+            if not hasattr(data, "get"):
                 # Check if it's dict-like (has keys, get, etc.)
                 if hasattr(data, 'keys') and hasattr(data, 'get') and hasattr(data, '__len__'):
                     # It's dict-like, convert to regular dict for safety
@@ -1862,7 +1946,7 @@ label after_load:
                                             new_items.append((str(item_id) if item_id is not None else "", 
                                                              int(quantity) if quantity is not None else 1, 
                                                              bool(equipped) if equipped is not None else False))
-                                        elif isinstance(item, dict):
+                                        elif hasattr(item, "get"):
                                             # Convert dict to tuple
                                             item_id = item.get("item_id", "")
                                             quantity = item.get("quantity", 1)
@@ -1888,15 +1972,15 @@ label after_load:
                         
                         # Available buildings (contains servant_jobs)
                         buildings_val = snap.get("available_buildings")
-                        if buildings_val is not None and isinstance(buildings_val, dict):
+                        if buildings_val is not None and hasattr(buildings_val, "get"):
                             current_buildings = getattr(store, 'available_buildings', {})
                             # Check if servant_jobs are missing
                             needs_restore = False
                             for bname, building in buildings_val.items():
-                                if isinstance(building, dict):
+                                if hasattr(building, "get"):
                                     saved_jobs = building.get("servant_jobs", {})
                                     current_building = current_buildings.get(bname)
-                                    if isinstance(current_building, dict):
+                                    if hasattr(current_building, "get"):
                                         current_jobs = current_building.get("servant_jobs", {})
                                         if len(saved_jobs) != len(current_jobs):
                                             needs_restore = True
@@ -1914,6 +1998,82 @@ label after_load:
                                     relink_func = renpy.store._relink_assigned_servants_to_store_workers
                                 if relink_func:
                                     relink_func()
+
+                        # Re-apply Arena/Laboratory cooldown/progression flags in case
+                        # Ren'Py default restoration overwrote them after callback order.
+                        for _field_name in [
+                            "arena_unlocked",
+                            "arena_lanista_paid",
+                            "arena_special_match_intro_done",
+                            "last_special_match_total_days",
+                            "last_special_match_worker_name",
+                            "alchemy_unlocked",
+                            "last_laboratory_use_total_days",
+                        ]:
+                            if _field_name in snap:
+                                _val = snap.get(_field_name)
+                                setattr(store, _field_name, _val)
+                                setattr(renpy.store, _field_name, _val)
+
+                        # Re-apply Yvara progression/state from snapshot to avoid
+                        # losing VN progression when Ren'Py default restoration
+                        # runs after callback order in some loads.
+                        _yvara_scalar_fields = [
+                            "yvara_known_name",
+                            "yvara_devotion",
+                            "yvara_dominion",
+                            "yvara_affection",
+                            "yvara_stage",
+                            "yvara_visit_count",
+                            "yvara_last_question_total_days",
+                            "yvara_last_gift_total_days",
+                            "yvara_last_talk_total_days",
+                            "yvara_s3_gate_ready",
+                            "yvara_s3_gate_ready_total_days",
+                            "yvara_s4_finance_unlocked",
+                            "yvara_s4_finance_last_day",
+                            "yvara_s4_donation_total",
+                            "yvara_s4_donation_highest_tier",
+                            "yvara_s4_favors_total",
+                            "yvara_s4_favor_highest_tier",
+                            "yvara_gifts_given",
+                            "yvara_s2_gifts_given",
+                            "yvara_observed_sessions",
+                            "yvara_observed_last_day",
+                            "yvara_lesson_absorbed",
+                            "yvara_leverage_financial",
+                            "yvara_s3_gate_fired",
+                            "yvara_s4_gate_fired",
+                            "yvara_morning_after_done",
+                            "yvara_evening_academy_last_day",
+                            "yvara_continuation_notice_shown",
+                            "yvara_good_word_count",
+                            "yvara_good_word_last_day",
+                            "yvara_good_word_peak",
+                        ]
+                        _yvara_list_fields = [
+                            "yvara_s1_talks_done",
+                            "yvara_s1_remarks_done",
+                            "yvara_s2_talks_done",
+                            "yvara_s2_remarks_done",
+                            "yvara_s3_talks_done",
+                            "yvara_s3_remarks_done",
+                            "yvara_s4_talks_done",
+                            "yvara_s4_remarks_done",
+                        ]
+
+                        for _field_name in _yvara_scalar_fields:
+                            if _field_name in snap:
+                                _val = snap.get(_field_name)
+                                setattr(store, _field_name, _val)
+                                setattr(renpy.store, _field_name, _val)
+
+                        for _field_name in _yvara_list_fields:
+                            if _field_name in snap:
+                                _src = snap.get(_field_name)
+                                _val = _cp.deepcopy(_to_list(_src) or [])
+                                setattr(store, _field_name, _val)
+                                setattr(renpy.store, _field_name, _cp.deepcopy(_val))
             
             # Log current state
             _snap_log(f"AFTER_LOAD: store.workers has {len(store.workers)} workers, renpy.store.workers has {len(renpy.store.workers)} workers")
@@ -1939,6 +2099,22 @@ label after_load:
                 _snap_log("AFTER_LOAD: WARNING - _relink_assigned_servants_to_store_workers not found (non-critical)")
             
             _sync_building_assignments_from_workers()
+            
+            # Drop servant_jobs that are invalid for the building type (stale id after moves / data changes).
+            try:
+                san = getattr(store, "sanitize_invalid_servant_job", None)
+                if callable(san):
+                    for w in list(getattr(store, "workers", []) or []):
+                        if not hasattr(w, "get"):
+                            continue
+                        bname = w.get("assigned_building", "Unassigned")
+                        if bname == "Unassigned":
+                            continue
+                        b = (getattr(store, "available_buildings", {}) or {}).get(bname)
+                        if hasattr(b, "get"):
+                            san(b, w.get("name"), w)
+            except Exception as e:
+                renpy.log(f"AFTER_LOAD: sanitize_invalid_servant_job sweep error: {e}")
             
             # Log worker names to verify they're correct
             worker_names = [w.get("name", "Unknown") for w in store.workers]

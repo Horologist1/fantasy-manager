@@ -23,7 +23,7 @@
       "Special"
     ],
     "image": "violet_special",
-    "nsfw": false,
+    "nsfw": true,
     "specific_workers": [
       "Violet"
     ],

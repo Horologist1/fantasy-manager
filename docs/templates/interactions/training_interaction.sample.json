@@ -1,0 +1,54 @@
+{
+  "id": "training_example",
+  "name": "Training: Example",
+  "description": "Short blurb shown in the interaction list (what you are offering).",
+  "interaction_level": null,
+  "cost_energy": 1,
+  "cost_health": 0,
+  "cost_money": 0,
+  "effect": {},
+  "categories": ["Training"],
+  "training_skill": "Hand",
+  "training_pair": "MF",
+  "nsfw": true,
+  "gender_filter": "male",
+  "worker_gender": "female",
+  "image": "Training_Hand_Lord_Female",
+  "training_branch_images": {
+    "refused": "Training_Refused_Lord_Female",
+    "punished": "Training_Punished_Lord_Female"
+  },
+  "training_texts": {
+    "trained": "Outcome 1 — accepted on first try and learned.",
+    "leave_be_first": "Outcome 2 — first refusal, you leave them be (grateful / relieved).",
+    "trained_after_insist": "Outcome 3 — accepted after insist/command, then learned.",
+    "leave_be_second": "Outcome 4 — second refusal / you stop pushing (no extra rewards).",
+    "punished": "Outcome 5 — disappointment path (compliance branch).",
+    "learn_fail": "{pronoun} didn't seem to learn… (Roll {roll} vs difficulty {difficulty}.)"
+  },
+  "training_results": {
+    "1": {
+      "skill_uses": 1,
+      "effect": { "energy": -1, "joy": 1 }
+    },
+    "2": {
+      "skill_uses": 0,
+      "effect": { "joy": 3 }
+    },
+    "trained_after_insist": { "skill_uses": 1, "effect": { "energy": -2 } },
+    "leave_be_second": { "skill_uses": 0, "effect": {} },
+    "punished": {
+      "skill_uses": 0,
+      "effect": { "rebelliousness": -3, "joy": -5 },
+      "trait_chance": [{ "trait": "Masochist", "chance_percent": 1 }]
+    },
+    "learn_fail": { "skill_uses": 0, "effect": {} }
+  },
+  "training_insist_effects": {
+    "insist": { "rebelliousness": 1 },
+    "command": { "rebelliousness": 1 },
+    "romance": { "romance": -1 },
+    "relationship": { "relationship": -1 },
+    "compliance": { "rebelliousness": 1 }
+  }
+}

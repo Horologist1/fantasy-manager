@@ -125,6 +125,25 @@ init python:
 # Ensure store has current_event so handle_random_event never raises AttributeError
 default current_event = None
 
+label _random_event_show_bg(media):
+    # Same idea as interaction image layers in screens.rpy (fit "contain" + 1920×1080 stage):
+    # avoids cropping/"zoom" when art is not exactly the game's aspect ratio.
+    scene black
+    if media and isinstance(media, str) and media.lower().endswith((".webm", ".mp4")):
+        show expression Movie(play=media, size=(1920, 1080), loop=True) zorder 0 as random_event_bg:
+            xalign 0.5
+            yalign 0.5
+    elif media:
+        show expression Image(media) zorder 0 as random_event_bg:
+            xalign 0.5
+            yalign 0.5
+            fit "contain"
+            xysize (1920, 1080)
+    else:
+        show expression Solid("#000000") zorder 0 as random_event_bg
+    with dissolve
+    return
+
 label handle_random_event:
     # Mark start of new conversation for history navigation
     $ start_new_conversation()
@@ -161,6 +180,16 @@ label handle_random_event:
                 (b_name, b) for b_name, b in available_buildings.items()
                 if b.get("type") in event_building_types and b.get("owned", False)
             ]
+            if eligible_buildings and store.event_uses_building_availability_gates(event):
+                filtered = [
+                    (b_name, b) for b_name, b in eligible_buildings
+                    if store.building_matches_random_event_availability(b, event)
+                ]
+                if filtered:
+                    eligible_buildings = filtered
+                else:
+                    renpy.log("handle_random_event: no building passed availability gates for event %r; clearing affected building." % event.get("id"))
+                    eligible_buildings = []
             if eligible_buildings:
                 # Select a specific building and store its name
                 affected_building_name, affected_building = random.choice(eligible_buildings)
@@ -195,7 +224,7 @@ label handle_random_event:
     # --- Start Event Scene ---
     # Initial event scene must always use event background media (not worker outcome media).
     $ current_bg = get_event_background(event, worker=None)
-    scene expression current_bg with dissolve
+    call _random_event_show_bg(current_bg) from _call__random_event_show_bg
     
     # Check if event has no_dialogue flag or if there's actual dialogue content
     $ no_dialogue_flag = event.get("no_dialogue", False)
@@ -256,7 +285,10 @@ label handle_random_event:
                     continue
 
             # Trait gating at choice level.
-            required_traits = choice_option.get("required_traits", []) or []
+            required_traits = list(choice_option.get("required_traits", []) or [])
+            rt_one = choice_option.get("required_trait")
+            if rt_one:
+                required_traits.append(rt_one)
             excluded_traits = choice_option.get("excluded_traits", []) or []
             trait_visibility = choice_option.get("trait_visibility", "hide") or "hide"  # hide|blocked
             blocked_reason = choice_option.get("blocked_message") or "Locked: trait requirement not met."
@@ -391,6 +423,16 @@ label handle_random_event:
                         else:
                             temp_eligible.append(w)
                 
+                req_tr = list(chosen_choice_data.get("required_traits", []) or [])
+                if chosen_choice_data.get("required_trait"):
+                    req_tr.append(chosen_choice_data.get("required_trait"))
+                ex_tr = chosen_choice_data.get("excluded_traits", []) or []
+                if req_tr or ex_tr:
+                    temp_eligible = [
+                        w for w in temp_eligible
+                        if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
+                    ]
+                
                 if not temp_eligible:
                     renpy.log("No eligible workers for choice, cannot proceed.")
                     final_worker = None
@@ -444,6 +486,16 @@ label handle_random_event:
                                     temp_eligible.append(w)
                             else:
                                 temp_eligible.append(w)
+                    
+                    req_tr = list(chosen_choice_data.get("required_traits", []) or [])
+                    if chosen_choice_data.get("required_trait"):
+                        req_tr.append(chosen_choice_data.get("required_trait"))
+                    ex_tr = chosen_choice_data.get("excluded_traits", []) or []
+                    if req_tr or ex_tr:
+                        temp_eligible = [
+                            w for w in temp_eligible
+                            if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
+                        ]
                     
                     if temp_eligible:
                         final_worker = random.choice(temp_eligible)
@@ -533,7 +585,7 @@ label handle_random_event:
     $ skill_for_event_media = chosen_choice_data.get("condition") if chosen_choice_data else None
     $ new_bg = get_event_background(event, event_outcome_for_bg, final_worker, skill_name=skill_for_event_media)
     if new_bg != current_bg:
-        scene expression new_bg with dissolve
+        call _random_event_show_bg(new_bg) from _call__random_event_show_bg_1
         $ current_bg = new_bg # Update the current background variable
 
     # --- Show the final outcome message (split into chunks if long) ---

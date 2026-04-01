@@ -2,19 +2,36 @@
 
 init python:
 
+    _interactions_cache = None
+    _interactions_cache_nsfw = None
+
+    def invalidate_interactions_cache():
+        global _interactions_cache, _interactions_cache_nsfw
+        _interactions_cache = None
+        _interactions_cache_nsfw = None
+
     def load_interactions():
         """
         Load interactions from all JSON files in the interactions folder.
         No longer treats interactions_default.json as special - loads all files equally.
+        Uses a module-level cache to avoid reloading from disk on every call.
         """
+        global _interactions_cache, _interactions_cache_nsfw
+
+        # Return cached result if available and NSFW mode hasn't changed
+        current_nsfw = persistent.nsfw_enabled
+        if _interactions_cache is not None and _interactions_cache_nsfw == current_nsfw:
+            return list(_interactions_cache)
+
         interactions = []
         loaded_files = False
-        
+
         # Log all available files
-        all_files = renpy.list_files()
+        _gcfl = getattr(store, "get_cached_file_list", None)
+        all_files = _gcfl() if callable(_gcfl) else renpy.list_files()
         interaction_files = [f for f in all_files if f.startswith("data/interactions/") and f.endswith(".json")]
         renpy.log(f"Found interaction files: {interaction_files}")
-        
+
         # Load all interaction files from the interactions folder
         for file in interaction_files:
             try:
@@ -22,7 +39,9 @@ init python:
                 with renpy.file(file) as f:
                     file_content = f.read()
                     renpy.log(f"File content: {file_content[:200]}...")  # Log first 200 chars
-                    file_interactions = json.load(renpy.file(file))
+                    if isinstance(file_content, bytes):
+                        file_content = file_content.decode("utf-8")
+                    file_interactions = json.loads(file_content)
                     # Don't filter NSFW interactions - let player choose when NSFW is enabled
                     # When NSFW is disabled, only show SFW interactions
                     if persistent.nsfw_enabled:
@@ -31,7 +50,7 @@ init python:
                         interactions.extend(file_interactions)
                     else:
                         # NSFW disabled: only show SFW interactions
-                        filtered_interactions = [inter for inter in file_interactions 
+                        filtered_interactions = [inter for inter in file_interactions
                                                if not inter.get("nsfw", False)]
                         interactions.extend(filtered_interactions)
                     loaded_files = True
@@ -41,19 +60,38 @@ init python:
                         renpy.log(f"Loaded interaction: {inter.get('name', 'Unknown')} for {inter.get('specific_workers', [])}")
             except Exception as e:
                 renpy.log(f"Error loading interactions from {file}: {str(e)}")
-        
+
         # If no files were successfully loaded, log an error
         if not loaded_files:
             renpy.log("Warning: No interaction files were successfully loaded!")
         else:
             renpy.log(f"Total interactions loaded: {len(interactions)}")
-            
+
+        # Store result in cache before returning
+        _interactions_cache = list(interactions)
+        _interactions_cache_nsfw = current_nsfw
+
         # Always return whatever interactions were loaded, even if empty
         return interactions
 
     def filter_interactions_by_gender(interactions, gender):
-        """Filter interactions by player gender."""
-        return [interaction for interaction in interactions if interaction.get("gender_filter") is None or interaction["gender_filter"] == gender]
+        """Filter by manager gender (male/female from Lord/Lady). gender_filter may use male/female/lord/lady."""
+        result = []
+        norm_fn = getattr(store, "normalize_player_gender_requirement", None)
+        for interaction in interactions:
+            gf = interaction.get("gender_filter")
+            if gf is None:
+                result.append(interaction)
+                continue
+            if callable(norm_fn):
+                cf = norm_fn(gf)
+                if cf is not None:
+                    if cf == gender:
+                        result.append(interaction)
+                    continue
+            if str(gf).strip().lower() == str(gender).strip().lower():
+                result.append(interaction)
+        return result
 
     def filter_interactions_by_worker_gender(interactions, worker):
         """Filter interactions by worker gender."""
@@ -214,7 +252,10 @@ init python:
             return ""
 
         interactions = load_interactions()
-        player_gender = "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+        _pg = getattr(store, "get_player_manager_gender", None)
+        player_gender = _pg() if callable(_pg) else (
+            "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+        )
         filtered = filter_interactions_by_gender(interactions, player_gender)
         filtered = filter_interactions_by_worker_gender(filtered, worker)
         filtered = filter_interactions_by_worker_name(filtered, worker)
@@ -281,12 +322,25 @@ init python:
         if not worker.get("flags"):
             worker["flags"] = {}
         
+        progression_categories = {"Discipline", "Romance", "Friendship"}
         for interaction in interactions:
-            interaction_level = interaction.get("interaction_level", 1)
+            raw_level = interaction.get("interaction_level", 1)
+            if raw_level is None:
+                interaction_level = None
+            else:
+                try:
+                    interaction_level = int(raw_level)
+                except (TypeError, ValueError):
+                    interaction_level = 1
             category = interaction.get("categories", [])
             
-            # If no category or level specified, include it (for backwards compatibility)
+            # Backwards compatibility: include only when NOT a progression interaction with invalid level.
+            # Progression interactions (Discipline, Romance, Friendship) with level 0 or None must never
+            # bypass the unlock check - they would show tier 2+ content on day 1.
             if not category or interaction_level is None or interaction_level <= 0:
+                main_cat = category[0] if category else None
+                if main_cat in progression_categories and (interaction_level is None or interaction_level <= 0):
+                    continue  # Skip malformed progression interaction (level 0 or null)
                 filtered.append(interaction)
                 continue
             
@@ -402,7 +456,10 @@ init python:
         Use this for both the interaction menu and Take a walk so filtering stays in one place.
         """
         interactions = load_interactions()
-        player_gender = "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+        _pg = getattr(store, "get_player_manager_gender", None)
+        player_gender = _pg() if callable(_pg) else (
+            "male" if (store.player_title and store.player_title.lower().strip() == "lord") else "female"
+        )
         filtered = filter_interactions_by_gender(interactions, player_gender)
         filtered = filter_interactions_by_worker_gender(filtered, worker)
         filtered = filter_interactions_by_stats(filtered, worker)
@@ -412,6 +469,13 @@ init python:
         filtered = filter_interactions_by_usage_limits(filtered, worker)
         filtered = filter_interactions_by_unlock_level(filtered, worker)
         filtered = filter_interactions_by_worker_name(filtered, worker)
+        # Meta row: shared training UI/stat strings live in interactions_training.json only (not a real interaction).
+        filtered = [i for i in filtered if hasattr(i, "get") and i.get("id") != "_training_flow_copy"]
+        # Academy library quest: manager-led Training interactions stay locked until the sealed manual is recovered.
+        if not store.event_flags.get("academy_lib_manual_found"):
+            _fn_tr = getattr(store, "is_training_interaction", None)
+            if callable(_fn_tr):
+                filtered = [i for i in filtered if not _fn_tr(i)]
         return filtered
         
     def categorize_interactions(interactions):
@@ -423,6 +487,7 @@ init python:
             "Discipline": [],
             "Romance": [],
             "Friendship": [],
+            "Training": [],
             # "Joy": [],  # Commented out: Joy category removed - romance and relationship already influence joy
             "Other": []
         }
@@ -463,52 +528,23 @@ init python:
         # Remove empty categories (and commented out categories)
         return {k: v for k, v in categories.items() if v and k != "Joy"}
 
+    def get_max_daily_interactions():
+        """Maximum interactions the manager can use per day = 2 + Manager Level."""
+        return 2 + getattr(store, "manager_level", 1)
+    
     def get_worker_interaction_count(worker):
-        """Get the number of interactions a worker has had today."""
-        worker_name = worker.get("name", "")
-        current_day = store.current_day if hasattr(store, 'current_day') else 1
-        
-        if worker_name not in store.worker_interactions_today:
-            return 0
-        
-        day_data = store.worker_interactions_today[worker_name]
-        # Handle both string and int keys (JSON may store as strings)
-        day_key = str(current_day)
-        if day_key not in day_data and current_day not in day_data:
-            return 0
-        
-        # Try both string and int key
-        if day_key in day_data:
-            return day_data[day_key]
-        elif current_day in day_data:
-            return day_data[current_day]
-        return 0
+        """Get the manager's total interactions used today (shared pool, not per worker)."""
+        return getattr(store, "manager_interactions_today", 0)
     
     def can_interact_with_worker(worker):
-        """Check if we can interact with a worker today (limit not reached)."""
+        """Check if the manager can perform more interactions today (limit not reached)."""
         current_count = get_worker_interaction_count(worker)
-        max_interactions = store.MAX_DAILY_INTERACTIONS if hasattr(store, 'MAX_DAILY_INTERACTIONS') else 2
+        max_interactions = get_max_daily_interactions()
         return current_count < max_interactions
     
-    def increment_worker_interaction_count(worker):
-        """Increment the interaction count for a worker today."""
-        worker_name = worker.get("name", "")
-        current_day = store.current_day if hasattr(store, 'current_day') else 1
-        
-        if worker_name not in store.worker_interactions_today:
-            store.worker_interactions_today[worker_name] = {}
-        
-        # Use string key for consistency (JSON stores as strings)
-        day_key = str(current_day)
-        if day_key not in store.worker_interactions_today[worker_name]:
-            # Also check int key and migrate if needed
-            if current_day in store.worker_interactions_today[worker_name]:
-                store.worker_interactions_today[worker_name][day_key] = store.worker_interactions_today[worker_name][current_day]
-                del store.worker_interactions_today[worker_name][current_day]
-            else:
-                store.worker_interactions_today[worker_name][day_key] = 0
-        
-        store.worker_interactions_today[worker_name][day_key] += 1
+    def increment_manager_interaction_count():
+        """Increment the manager's interaction count for today."""
+        store.manager_interactions_today = getattr(store, "manager_interactions_today", 0) + 1
 
     def get_interaction_uses_label(worker, interaction, required_uses=None):
         """
@@ -594,7 +630,7 @@ init python:
         """
         # Ensure we update the canonical worker in store.workers so flags/levels persist
         if worker is not None and hasattr(store, "workers"):
-            worker_name = worker.get("name") if isinstance(worker, dict) else None
+            worker_name = worker.get("name") if hasattr(worker, "get") else None
             if worker_name:
                 canonical = next((w for w in store.workers if w.get("name") == worker_name), None)
                 if canonical is not None:
@@ -603,13 +639,13 @@ init python:
         # Track stat changes for display
         stat_changes = {}
         
-        # Increment daily interaction count (unless skipping limit)
+        # Increment manager's daily interaction count (unless skipping limit, e.g. Take a Walk)
         if not skip_daily_limit:
-            increment_worker_interaction_count(worker)
+            increment_manager_interaction_count()
         # Apply stat changes
         effects = interaction.get("effect", {})
         for stat, change in effects.items():
-            if stat not in ("flags", "libido", "add_trait", "remove_trait"):  # Handle separately
+            if stat not in ("flags", "libido", "add_trait", "remove_trait", "trait_chance", "trait_remove_chance"):  # Handle separately
                 if change == 0:
                     continue
                 if stat in ("rebelliousness", "joy", "romance", "relationship") and hasattr(store, "apply_attribute_change"):
@@ -620,24 +656,72 @@ init python:
                     worker[stat] = new_value
                 stat_changes[stat] = change
 
+        def _coerce_trait_entries(raw):
+            if raw is None:
+                return []
+            if hasattr(raw, "get") and callable(getattr(raw, "get", None)):
+                return [raw]
+            if isinstance(raw, (str, bytes)):
+                return [raw]
+            if hasattr(raw, "__iter__"):
+                return list(raw)
+            return []
+
+        def _trait_name_duration(entry):
+            if entry is None:
+                return None, 0
+            if hasattr(entry, "get") and callable(getattr(entry, "get", None)):
+                name = entry.get("name") or entry.get("trait")
+                try:
+                    dur = int(entry.get("duration", 0) or 0)
+                except Exception:
+                    dur = 0
+                return name, dur
+            if isinstance(entry, (str, bytes)):
+                return str(entry), 0
+            return None, 0
+
         # Apply add_trait from interaction effect
         add_trait_data = effects.get("add_trait")
         if add_trait_data and worker and hasattr(store, "add_trait_with_duration"):
-            trait_name = add_trait_data if isinstance(add_trait_data, str) else add_trait_data.get("name")
-            duration = 0 if isinstance(add_trait_data, str) else int(add_trait_data.get("duration", 0))
-            if trait_name:
-                store.add_trait_with_duration(worker, trait_name, duration)
-                stat_changes["add_trait"] = trait_name
-                renpy.log(f"Interaction: Added trait '{trait_name}' to {worker.get('name', 'Unknown')}")
+            for _entry in _coerce_trait_entries(add_trait_data):
+                trait_name, duration = _trait_name_duration(_entry)
+                if trait_name:
+                    store.add_trait_with_duration(worker, trait_name, duration)
+                    stat_changes["add_trait"] = trait_name
+                    renpy.log(f"Interaction: Added trait '{trait_name}' to {worker.get('name', 'Unknown')}")
 
         # Apply remove_trait from interaction effect
         remove_trait_data = effects.get("remove_trait")
         if remove_trait_data and worker and hasattr(store, "remove_trait_safe"):
-            trait_name = remove_trait_data if isinstance(remove_trait_data, str) else remove_trait_data.get("name")
-            if trait_name:
-                store.remove_trait_safe(worker, trait_name)
-                stat_changes["remove_trait"] = trait_name
-                renpy.log(f"Interaction: Removed trait '{trait_name}' from {worker.get('name', 'Unknown')}")
+            for _entry in _coerce_trait_entries(remove_trait_data):
+                trait_name, _ = _trait_name_duration(_entry)
+                if trait_name:
+                    store.remove_trait_safe(worker, trait_name)
+                    stat_changes["remove_trait"] = trait_name
+                    renpy.log(f"Interaction: Removed trait '{trait_name}' from {worker.get('name', 'Unknown')}")
+
+        def _coerce_trait_roll_list(raw):
+            if raw is None:
+                return []
+            # Ren'Py data may be RevertableDict/RevertableList: prioritize dict-like by .get()
+            if hasattr(raw, "get") and callable(getattr(raw, "get", None)):
+                return [raw]
+            if hasattr(raw, "__iter__") and not isinstance(raw, (str, bytes)):
+                return list(raw)
+            return []
+
+        _tc_list = _coerce_trait_roll_list(effects.get("trait_chance"))
+        if _tc_list and worker:
+            _fn_tc = getattr(store, "apply_trait_chance_entries", None)
+            if callable(_fn_tc):
+                _fn_tc(worker, _tc_list, stat_changes, granted_list_key="traits_from_training", log_prefix="Interaction")
+
+        _trc_list = _coerce_trait_roll_list(effects.get("trait_remove_chance"))
+        if _trc_list and worker:
+            _fn_trc = getattr(store, "apply_trait_remove_chance_entries", None)
+            if callable(_fn_trc):
+                _fn_trc(worker, _trc_list, stat_changes, removed_list_key="traits_removed_by_chance", log_prefix="Interaction")
 
         # Apply flag changes
         flag_effects = effects.get("flags", {})
@@ -749,7 +833,6 @@ init python:
         Returns:
             Ruta a la imagen de la interacción
         """
-        # Crear clave de caché única basada solo en worker e interaction
         worker_name = worker.get("name", "unknown") if hasattr(worker, "get") else "unknown"
         interaction_id = interaction.get("id", "unknown") if hasattr(interaction, "get") else "unknown"
         cache_key = f"{worker_name}_{interaction_id}_interaction_image"
@@ -758,36 +841,30 @@ init python:
         # We want to respect priority (interaction-specific > category fallback),
         # and only use the cache within the chosen priority tier.
         
-        # Extraer el folder del worker exactamente como lo hace get_worker_image
         fallback = get_fallback_folder(worker)
         if hasattr(worker, "get") and callable(worker.get):
             worker_folder = worker.get("folder", fallback)
         else:
             worker_folder = fallback
         
-        # Definir base folder del trabajador
         base_folder = f"images/workers/{worker_folder}/"
         
-        # Determinar el nombre base de la imagen
         image_base = interaction.get("image")
         categories = interaction.get("categories", []) or []
-        worker_gender = (worker.get("gender", "").lower() if hasattr(worker, "get") else "").lower()
         is_player_male = store.player_title and store.player_title.lower().strip() == "lord"
-        # Prefer Lord/Lady suffixes for player-facing interaction images.
-        # Keep legacy _male/_female as fallback for older assets.
         player_title_suffix = "_lord" if is_player_male else "_lady"
         legacy_player_gendered_suffix = "_male" if is_player_male else "_female"
 
         # Preparar candidatos por prioridad
         candidate_bases = []
-        if image_base:
-            # 1) Imagen específica del interaction (con y sin sufijo de género del jugador)
+        if "Training" in categories:
+            candidate_bases.extend(training_interaction_primary_candidate_bases(worker, interaction))
+        elif image_base:
             candidate_bases.append(f"{image_base}{player_title_suffix}")
             candidate_bases.append(f"{image_base}{legacy_player_gendered_suffix}")
             candidate_bases.append(image_base)
 
-        # 2) Fallback por categoría (basado en género del jugador para Romance, género del trabajador para otros)
-        if "Romance" in categories:
+        if "Training" not in categories and "Romance" in categories:
             # Romance images should show the player, so use player gender
             if is_player_male:
                 candidate_bases.append("romance_male")
@@ -800,25 +877,32 @@ init python:
         
         # Priority-based search:
         # pick the FIRST candidate base that has matches, and choose (cached) within that tier.
+        is_training = "Training" in categories
         chosen_matches = []
         for base in candidate_bases:
             if not base:
                 continue
-            matches = get_image_matches_flexible(base_folder, base)
+            matches = (
+                get_training_primary_image_matches(base_folder, base)
+                if is_training
+                else get_image_matches_flexible(base_folder, base)
+            )
             if matches:
                 chosen_matches = matches
                 break
 
         if chosen_matches:
-            renpy.log(f"DEBUG: Cache key: {cache_key}, Matches: {len(chosen_matches)}")
-            selected_media = get_cached_choice(chosen_matches, cache_key)
-            renpy.log(f"¡ENCONTRADO! Usando archivo en carpeta del trabajador: {selected_media}")
-            return selected_media
+            return get_cached_choice(chosen_matches, cache_key)
+
+        if is_training:
+            _tsk = interaction.get("training_skill") if hasattr(interaction, "get") else None
+            if _tsk:
+                skill_media = get_worker_image(worker, _tsk, outcome="success")
+                if skill_media:
+                    get_cached_choice([skill_media], cache_key)
+                    return skill_media
         
-        # FALLBACK: Usar imagen de perfil del trabajador
-        renpy.log("No se encontró ninguna imagen específica, usando imagen de perfil del trabajador")
         profile_image = get_worker_image(worker)
-        # Cachear la imagen de perfil también
         get_cached_choice([profile_image], cache_key)
         return profile_image
     
@@ -847,34 +931,49 @@ init python:
             store.take_a_walk_in_progress = False
             return False
         
-        # Select a random worker
+        # Select a random worker - resolve canonical reference from store.workers
         import random
         selected_worker = random.choice(store.workers)
         worker_name = selected_worker.get("name", "Unknown")
+        canonical_worker = next((w for w in store.workers if w.get("name") == worker_name), selected_worker)
         
-        # Use the same list as the interaction menu: only interactions this worker has available
-        available_interactions = get_available_interactions_for_worker(selected_worker)
+        # Use the same list as the interaction menu: only interactions this worker has available.
+        # All filters (stats, flags, traits, unlock level, etc.) must pass - never show tier 2+ on day 1.
+        available_interactions = get_available_interactions_for_worker(canonical_worker)
+        available_interactions = [i for i in available_interactions if not is_training_interaction(i)]
+        # Take a walk is always a SFW pool (city stroll), even when persistent.nsfw_enabled is True.
+        available_interactions = [i for i in available_interactions if not (hasattr(i, "get") and i.get("nsfw", False))]
         
         if not available_interactions:
             store.take_a_walk_fail_message = f"{worker_name} doesn't have any interactions available at the moment."
             store.take_a_walk_in_progress = False
             return False
         
-        # Select a random interaction
+        # Select a random interaction - must be one the worker could choose in the interaction menu
         chosen_interaction = random.choice(available_interactions)
+        
+        # Safety: ensure chosen interaction is still in the filtered list (defensive against edge cases)
+        chosen_id = chosen_interaction.get("id", "")
+        if not any(i.get("id") == chosen_id for i in available_interactions):
+            renpy.log(f"Take a walk: chosen interaction {chosen_id} not in available list, aborting")
+            store.take_a_walk_fail_message = f"Could not select a valid interaction for {worker_name}."
+            store.take_a_walk_in_progress = False
+            return False
         
         interaction_name = chosen_interaction.get("name", "interaction")
         interaction_name_lower = interaction_name.lower()
         
         # Apply interaction effects (without costs for "take a walk", and skip daily limit)
-        apply_interaction_effects(selected_worker, chosen_interaction, apply_costs=False, skip_daily_limit=True)
+        apply_interaction_effects(canonical_worker, chosen_interaction, apply_costs=False, skip_daily_limit=True)
         
         # Mark as used today
         store.last_take_a_walk_day = store.current_day
         
         # Store the interaction data for the screen to display
-        store.walk_worker = selected_worker
+        store.walk_worker = canonical_worker
         store.walk_interaction = chosen_interaction
+        # One art pick for the whole walk (each stage is a fresh call screen; do not re-roll per click).
+        store.walk_interaction_media = get_interaction_image(canonical_worker, chosen_interaction)
         store.walk_intro_text_1 = "I take a walk through the city..."
         store.walk_intro_text_2 = f"...and I encounter {worker_name}."
         store.walk_intro_text_3 = f"I decide it's time to have a {interaction_name_lower} with {worker_name}."

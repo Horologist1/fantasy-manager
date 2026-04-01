@@ -2,17 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 6484: Line is indented, but the preceding text_hover_color statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
-    action If(money >= price,
-    ^
-                                    [
-                                        Function(add_new_building, building_name, price),
-                                        SetVariable("money", money - price),
-                                        Function(register_new_building, building_name),
-                                        Function(store.rebuild_assigned_servants),
-                                        SetVariable("buildings_owned", len(store.owned_buildings)),
-                                        Hide("buy_buildings"),
-                                    ])
+File "game/scripts/core/screens.rpy", line 6564: 'size' is not a keyword argument or valid child of the label statement.
+    label "Purchase" xalign 0.0 size font_size(26) color "#5a3a1a"
+                                    ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Wed Mar 18 15:07:09 2026
+Thu Mar 26 14:14:45 2026

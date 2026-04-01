@@ -7,6 +7,7 @@ from typing import Dict, Iterable, List, Tuple
 
 
 SUPPORTED_WORKER_SELECTION = {"none", "random", "choose"}
+SUPPORTED_PLAYER_GENDER_REQUIREMENT = {"male", "female", "lord", "lady"}
 SUPPORTED_PREFIXES = (
     "has_flag:",
     "flag_value:",
@@ -68,6 +69,25 @@ def _validate_all_events(all_events: List[Dict]) -> Tuple[List[str], List[str]]:
                 f"[{where}] invalid_worker_selection: {worker_selection!r}"
             )
 
+        pgr = ev.get("player_gender_requirement", None)
+        if pgr is not None:
+            if not isinstance(pgr, str) or not str(pgr).strip():
+                errors.append(
+                    f"[{where}] player_gender_requirement_must_be_non_empty_string_or_null"
+                )
+            elif str(pgr).strip().lower() not in SUPPORTED_PLAYER_GENDER_REQUIREMENT:
+                errors.append(
+                    f"[{where}] invalid_player_gender_requirement: {pgr!r} "
+                    f"(expected one of {sorted(SUPPORTED_PLAYER_GENDER_REQUIREMENT)})"
+                )
+
+        if ev.get("worker_gender_requirement", None) is not None:
+            warnings.append(
+                f"[{where}] worker_gender_requirement_on_event_ignored: "
+                "not applied by random/building event pool (select_possible_events); "
+                "use daily story worker_gender_requirement or interaction worker_gender instead"
+            )
+
         choices = ev.get("choices")
         if not isinstance(choices, list) or not choices:
             errors.append(f"[{where}] choices_missing_or_empty")
@@ -84,6 +104,42 @@ def _validate_all_events(all_events: List[Dict]) -> Tuple[List[str], List[str]]:
             warnings.append(f"[{where}] cooldown_days_missing (engine default applies)")
         elif not isinstance(ev.get("cooldown_days"), int) or ev.get("cooldown_days") < 0:
             errors.append(f"[{where}] cooldown_days_must_be_non_negative_int")
+
+        if "required_building_traits" in ev:
+            warnings.append(
+                f"[{where}] required_building_traits_removed: key ignored/removed; use worker/profession gates instead"
+            )
+
+        rap = ev.get("required_active_professions")
+        if rap is not None and not isinstance(rap, list):
+            errors.append(f"[{where}] required_active_professions_must_be_list")
+        elif isinstance(rap, list) and not all(isinstance(x, str) and x.strip() for x in rap):
+            errors.append(f"[{where}] required_active_professions_must_be_non_empty_strings")
+
+        fap = ev.get("forbidden_active_professions")
+        if fap is not None and not isinstance(fap, list):
+            errors.append(f"[{where}] forbidden_active_professions_must_be_list")
+        elif isinstance(fap, list) and not all(isinstance(x, str) and x.strip() for x in fap):
+            errors.append(f"[{where}] forbidden_active_professions_must_be_non_empty_strings")
+
+        if isinstance(rap, list) and isinstance(fap, list):
+            rset = {str(x).strip().lower() for x in rap if isinstance(x, str) and x.strip()}
+            fset = {str(x).strip().lower() for x in fap if isinstance(x, str) and x.strip()}
+            if rset & fset:
+                warnings.append(
+                    f"[{where}] required_active_professions_overlaps_forbidden_active_professions: {sorted(rset & fset)}"
+                )
+
+        if "required_building_worker_min_skill" in ev:
+            m = ev.get("required_building_worker_min_skill")
+            if m is not None and not isinstance(m, int):
+                errors.append(f"[{where}] required_building_worker_min_skill_must_be_int_or_null")
+            elif isinstance(m, int) and m < 0:
+                errors.append(f"[{where}] required_building_worker_min_skill_must_be_non_negative")
+
+        sk = ev.get("required_building_worker_skill")
+        if sk is not None and (not isinstance(sk, str) or not sk.strip()):
+            errors.append(f"[{where}] required_building_worker_skill_must_be_non_empty_string_or_null")
 
         cond_root = (ev.get("conditions") or {})
         for key in ("start_when", "stop_when"):
@@ -105,15 +161,25 @@ def _validate_all_events(all_events: List[Dict]) -> Tuple[List[str], List[str]]:
                 )
 
             effect = ch.get("effect", {})
+            # Align with script.rpy process_choice: success_chance only triggers a probability roll when
+            # effect contains a "success" and/or "failure" branch. Many events keep success_chance: 0 as
+            # schema metadata alongside flat keys only; the engine ignores it for rolls in that case.
             if isinstance(effect, dict) and "success_chance" in effect:
-                if "success" not in effect or "failure" not in effect:
-                    errors.append(
-                        f"[{cwhere}] success_chance_requires_success_and_failure_blocks"
+                has_s = "success" in effect
+                has_f = "failure" in effect
+                if has_s and has_f:
+                    if "message_success" not in ch or "message_failure" not in ch:
+                        errors.append(
+                            f"[{cwhere}] success_chance_requires_message_success_and_message_failure"
+                        )
+                elif has_s or has_f:
+                    warnings.append(
+                        f"[{cwhere}] success_chance_with_single_branch: has success_chance but only one of success/failure; engine still rolls and uses missing branch as {{}}"
                     )
-                if "message_success" not in ch or "message_failure" not in ch:
-                    errors.append(
-                        f"[{cwhere}] success_chance_requires_message_success_and_message_failure"
-                    )
+                    if "message_success" not in ch or "message_failure" not in ch:
+                        warnings.append(
+                            f"[{cwhere}] success_chance_single_branch_missing_messages"
+                        )
 
             cond_choice = (ch.get("conditions") or {})
             for key in ("start_when", "stop_when"):
@@ -122,6 +188,44 @@ def _validate_all_events(all_events: List[Dict]) -> Tuple[List[str], List[str]]:
                     warnings.append(
                         f"[{cwhere}] {key}_condition_maybe_unsupported: {value!r}"
                     )
+
+            rwf = ch.get("restrict_worker_effects_to_filter")
+            if rwf is not None and not isinstance(rwf, bool):
+                errors.append(f"[{cwhere}] restrict_worker_effects_to_filter_must_be_bool_or_null")
+
+            ewf = ch.get("effect_worker_filter")
+            if ewf is not None and not isinstance(ewf, dict):
+                errors.append(f"[{cwhere}] effect_worker_filter_must_be_object_or_null")
+            elif isinstance(ewf, dict):
+                for list_key in (
+                    "required_active_professions",
+                    "forbidden_active_professions",
+                    "required_traits",
+                    "excluded_traits",
+                ):
+                    lv = ewf.get(list_key)
+                    if lv is not None and not isinstance(lv, list):
+                        errors.append(f"[{cwhere}] effect_worker_filter.{list_key}_must_be_list")
+                    elif isinstance(lv, list) and not all(isinstance(x, str) and x.strip() for x in lv):
+                        errors.append(
+                            f"[{cwhere}] effect_worker_filter.{list_key}_must_be_list_of_non_empty_strings"
+                        )
+                for int_key in ("min_skill", "required_building_worker_min_skill"):
+                    iv = ewf.get(int_key)
+                    if iv is not None and not isinstance(iv, int):
+                        errors.append(f"[{cwhere}] effect_worker_filter.{int_key}_must_be_int_or_null")
+                    elif isinstance(iv, int) and iv < 0:
+                        errors.append(f"[{cwhere}] effect_worker_filter.{int_key}_must_be_non_negative")
+                for str_key in ("skill_name", "required_building_worker_skill", "required_trait"):
+                    sv = ewf.get(str_key)
+                    if sv is not None and (not isinstance(sv, str) or not str(sv).strip()):
+                        errors.append(
+                            f"[{cwhere}] effect_worker_filter.{str_key}_must_be_non_empty_string_or_null"
+                        )
+
+            mfs = ch.get("message_failure_worker_effect_skipped")
+            if mfs is not None and not isinstance(mfs, str):
+                errors.append(f"[{cwhere}] message_failure_worker_effect_skipped_must_be_string_or_null")
 
     return errors, warnings
 

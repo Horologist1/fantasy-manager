@@ -6,7 +6,7 @@ init python:
 
     def render_event_text(event, result="success", extra_replacements=None):
         # Determine worker_name from the event; assume individual event.
-        if isinstance(event.get("worker"), dict):
+        if hasattr(event.get("worker"), "get"):
             worker_name = event["worker"].get("name", "Unknown")
         else:
             worker_name = event.get("worker_name", "Unknown")
@@ -21,7 +21,7 @@ init python:
             replacements.update(extra_replacements)
         
         descriptions = event.get("descriptions")
-        if isinstance(descriptions, dict):
+        if hasattr(descriptions, "get"):
             template = descriptions.get(result, event.get("description", "No description available."))
         else:
             template = descriptions or event.get("description", "No description available.")

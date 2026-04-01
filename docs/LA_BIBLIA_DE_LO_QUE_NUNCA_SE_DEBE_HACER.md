@@ -122,4 +122,22 @@ En pantallas Ren'Py, los bloques `python:` definen variables locales. Si hay pro
 
 ---
 
+## 6. Texto de training y Ren'Py
+
+### Copy en datos, no en `.rpy`
+
+- Todo el **texto jugable** del flujo de training (intros, resultados, etiquetas de menú, previews de stats en opciones) debe vivir en `game/data/interactions/interactions_training.json`.
+- La fila meta `id: "_training_flow_copy"` agrega `training_flow_ui` y `training_stat_preview`; **no es una interacción**: se filtra en el menú y solo sirve de contenedor de strings compartidos.
+
+### Sustitución y pantallas
+
+- Los intros usan plantillas `{name}`, `{focus}`, `{subj}`, etc.; se resuelven en **Python** (`training_substitute_intro_tokens`) **antes** de pasar la cadena a la pantalla.
+- `training_branch_narration` muestra el texto con `text "[_tbm_cap!q]"`: el modificador `!q` cita/escapa el contenido para que corchetes y llaves no disparen sustituciones Ren'Py accidentales. No metas en JSON secuencias tipo `[variable]` pensando que son del motor salvo que sepas cómo se escapan.
+
+### Dict-like al leer JSON
+
+- Las entradas cargadas con `json.load` son `dict` normales, pero el código que lee **workers** o **store** debe seguir la regla de la §1 (`hasattr(x, "get")`, no `isinstance(..., dict)`).
+
+---
+
 *Última actualización: marzo 2026. Añade entradas nuevas cuando encuentres patrones problemáticos.*

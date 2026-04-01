@@ -18,8 +18,18 @@
       {
         "option": "Trust your potion supply and keep working. (Risk: Worker pregnancy; Potential: Money, Reputation)",
         "condition": "building_skill",
+        "restrict_worker_effects_to_filter": true,
+        "effect_worker_filter": {
+          "forbidden_active_professions": [
+            "manager"
+          ],
+          "required_active_professions": [],
+          "required_traits": [],
+          "excluded_traits": []
+        },
         "message_success": "A hidden stash turns up behind the linen shelf—enough to cover the night and then some. Service continues without incident, the VIPs leave satisfied, and your reputation for reliability earns a quiet boost ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The supply runs out two clients before the end of the night. The girls manage as best they can, but the risk catches up with you. Coin flows into your coffers, but one of your workers is left facing consequences you both knew were possible ({actual_money}, a worker got Pregnant).",
+        "message_failure_worker_effect_skipped": "The supply runs out two clients before the end of the night. Coin still finds its way into your coffers ({actual_money}), but no one in a client-facing role was caught by the worst of it—this time.",
         "effect": {
           "success": {
             "money": 500,
@@ -155,7 +165,7 @@
     "failure_image": "restaurant_failure",
     "choices": [
       {
-        "option": "Resolve the shortage (potential: money and reputation; risk: losses)",
+        "option": "Resolve the shortage. (Potential: money and reputation; Risk: losses)",
         "condition": "building_skill",
         "message_success": "A quick trip to the morning market and a favor called in from a neighboring supplier fills the gap before the first cover is laid. Patrons arrive to a full menu, none the wiser. Your cook exhales; your reputation stays intact ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The scramble to find replacements falls short, and the afternoon service runs thin. Half the menu is 'unavailable today,' and the complaints start before the sun sets. Word of an empty kitchen travels fast in this district ({actual_money}, {actual_reputation} reputation).",
@@ -215,7 +225,7 @@
     "failure_image": "restaurant_failure",
     "choices": [
       {
-        "option": "Host the banquet (potential: money and reputation; risk: losses)",
+        "option": "Host the banquet. (Potential: money and reputation; Risk: losses)",
         "condition": "building_skill",
         "message_success": "Three days of preparation, a sleepless night, and a performance that earns a standing ovation from people who never stand for anything. The lord's guests depart full and impressed, and by the following morning your name is circulating in the right dining rooms across the city ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "Something goes wrong in the third course—a sauce that breaks, a timing that slips, a moment the lord notices. He says nothing at the table, but his silence speaks loud enough. The payment arrives without the promised bonus, and a carefully worded note follows it ({actual_money}, {actual_reputation} reputation).",
@@ -236,7 +246,7 @@
         }
       },
       {
-        "option": "Decline the request (loss: reputation)",
+        "option": "Decline the request. (Loss: reputation)",
         "message": "You send a polite reply citing a full calendar. The courier accepts it without expression, but you know these things travel—a lord who doesn't get what he wants has a long memory and a wide circle of acquaintances ({actual_reputation} reputation).",
         "effect": {
           "reputation": -10,
@@ -274,7 +284,7 @@
     "failure_image": "guild_failure",
     "choices": [
       {
-        "option": "Send a party to confront the dragon (potential: money and reputation; risk: worker injury)",
+        "option": "Send a party to confront the dragon. (Potential: money and reputation; Risk: worker injury)",
         "condition": "building_skill",
         "message_success": "The party returns at dusk, scorched at the edges but grinning. The dragon, a young territorial creature, was driven from the ridge before it could establish a lair. The shepherd pays what he can; the city council pays considerably more. Word of the guild's response spreads through three districts by morning ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The party finds the creature, makes a stand, and retreats when it becomes clear the fight is going the wrong way. One member comes back with burns that won't heal clean. The dragon is still out there, and everyone in town knows the guild came back short ({actual_reputation} reputation, a worker got Badly Burnt).",
@@ -299,7 +309,7 @@
         }
       },
       {
-        "option": "Wait and prepare a proper strike (loss: reputation)",
+        "option": "Wait and prepare a proper strike. (Loss: reputation)",
         "message": "You post a lookout, compile what intelligence you can, and draft a proper tactical plan. It's the right call—but patience reads as hesitation from the outside. Clients who wanted swift action start asking questions, and for a week the guild's name carries a footnote it didn't have before ({actual_reputation} reputation).",
         "effect": {
           "reputation": -5,
@@ -335,7 +345,7 @@
     "failure_image": "guild_failure",
     "choices": [
       {
-        "option": "Repel the bandits (potential: reputation; risk: money and reputation)",
+        "option": "Repel the bandits. (Potential: reputation; Risk: money and reputation)",
         "condition": "building_skill",
         "message_success": "Your response team hits the pass before the bandits finish dividing the spoils. The ambush becomes an ambush in reverse, and most of the cargo is recovered. The carter's story changes its ending, and so does the guild's reputation for letting its people get taken ({actual_reputation} reputation).",
         "message_failure": "Your team arrives too late—the bandits are gone and the most valuable goods with them. You salvage what you can, but the loss is significant, and the question of how they knew which wagon to target is one you don't have a good answer for ({actual_money}, {actual_reputation} reputation).",
@@ -680,7 +690,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Inspect the delivery carefully before accepting. (Potential: Smooth night; Risk: Stock loss)",
+        "option": "Inspect the delivery carefully before accepting. (Potential: Reputation; Risk: Money, Reputation)",
         "condition": "building_skill",
         "message_success": "You take your time with the barrels—tapping each one, checking seals, running a slow pour from the first tap. Everything checks out. The stranger's eagerness was just a working man in a hurry, and you have a full stock for the night. A cautious house loses nothing ({actual_reputation} reputation).",
         "message_failure": "Two barrels check out, but the third is watered down at the bottom—whoever filled it was counting on nobody looking that closely. By the time you notice, the stranger is long gone and the night is half ruined ({actual_money}, {actual_reputation} reputation).",
@@ -924,12 +934,14 @@
         "option": "Invite him for a single trial session first. (Potential: Reputation)",
         "condition": "building_skill",
         "message_success": "The trial session runs two hours over time because nobody wants it to end. The veteran finds three weaknesses in your best fighter's form and corrects them on the spot with the patience of a man who has taught the hard way. Your members are already asking when he comes back ({actual_reputation} reputation).",
-        "message_failure": "The veteran is technically exceptional but has no patience for teaching. He demonstrates, grunts at mistakes, and departs after ninety minutes with a contemptuous shake of his head. Your members learned something, but the session leaves more bruised egos than improved skills.",
+        "message_failure": "The veteran is technically exceptional but has no patience for teaching. He demonstrates, grunts at mistakes, and departs after ninety minutes with a contemptuous shake of his head. Your members learned something, but the session leaves more bruised egos than improved skills ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 6
           },
-          "success_chance": 0,
+          "failure": {
+            "reputation": -3
+          },
           "joy": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -1366,7 +1378,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Address the situation directly with the client. (Potential: Defuse; Risk: Losing client, Reputation)",
+        "option": "Address the situation directly with the client. (Potential: Reputation; Risk: Money, Reputation)",
         "condition": "building_skill",
         "message_success": "Your conversation with him is careful and firm. You acknowledge his loyalty, explain the nature of your house, and redirect his expectations before they harden into something that requires a less civil solution. He listens. He leaves with his dignity intact, and you feel reasonably confident he won't make your girl's life difficult. He may not return—but he leaves without incident ({actual_reputation} reputation).",
         "message_failure": "The conversation goes badly. He becomes defensive, then loud, and by the time it's over he's made his grievances known to everyone on the floor. Word that your house manages client obsessions poorly doesn't travel well, and the girl in question is shaken enough to ask for a few days off ({actual_money}, {actual_reputation} reputation).",
@@ -1488,7 +1500,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Arrange a proper performance for clients (potential: money and reputation)",
+        "option": "Arrange a proper performance for clients. (Potential: money and reputation)",
         "condition": "building_skill",
         "message_success": "You clear a corner of the parlor, light the good candles, and let her perform for a small paid audience. By the end of the first song they're tipping before she's finished. Within the week you have clients booking specifically for the performance. Your house has just acquired a new kind of reputation—one that brings in a clientele that didn't know it was looking for this ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The performance is beautiful but the setup is wrong—parlor acoustics, distracted clients, a room not built for it. The girl sings to a mostly inattentive audience, and the magic of that first quiet moment never quite replicates itself. The idea isn't dead, but the execution needs work ({actual_money}).",
@@ -1544,7 +1556,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Alert the interested party for the reward (gain: money; loss: reputation)",
+        "option": "Alert the interested party for the reward. (Gain: money; Loss: reputation)",
         "message": "You send a quiet message before last call. The men who arrive move quickly, the booth is empty before they reach it, but the reward is paid for the information regardless. Your regulars who saw the exchange will talk, and the story they tell is not a flattering one. A house that sells its customers' whereabouts has a certain kind of reputation—useful to some, avoided by others ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": 400,
@@ -1557,7 +1569,7 @@
         }
       },
       {
-        "option": "Let them drink in peace and say nothing (gain: reputation)",
+        "option": "Let them drink in peace and say nothing. (Gain: reputation)",
         "message": "You instruct your staff to treat the booth like any other and extend the same courtesy you'd offer any paying customer. They stay until closing, leave a generous tip, and nod to you on the way out. Whoever they are, word reaches the right circles that your house knows how to mind its own business—which is a valuable thing to be known for ({actual_reputation} reputation).",
         "effect": {
           "reputation": 8,
@@ -1569,7 +1581,7 @@
         }
       },
       {
-        "option": "Approach them discreetly yourself (potential: connection; risk: neutral)",
+        "option": "Approach them discreetly yourself. (Potential: Money, Reputation; Risk: Reputation)",
         "condition": "building_skill",
         "message_success": "You make your way to the booth at a quiet moment and introduce yourself without ceremony or recognition. The conversation is brief, cautious on their side, and ends with a name passed to you—someone useful to know in exactly the kind of situation you occasionally find yourself in. They leave your name with that person too ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "Your approach is well-intentioned but poorly timed—they're already on edge, and your interruption confirms whatever suspicion they were managing. They settle their tab and leave before they were ready to, and you're left watching the door close on a conversation that might have been something ({actual_reputation} reputation).",
@@ -1613,7 +1625,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Agree and ask no questions (gain: money; risk: legal)",
+        "option": "Agree and ask no questions. (Gain: money; Risk: legal)",
         "condition": "building_skill",
         "message_success": "Four men arrive separately over the next hour, each heading to the back room without asking directions. They leave before midnight, nothing broken, the agreed coin on the table. Whatever was discussed stays discussed. You count the money and decide it genuinely doesn't concern you ({actual_money}).",
         "message_failure": "Two city guards arrive an hour into the meeting with the studied politeness of people who were already on their way when your message never came. The meeting disperses through the back exit; your guests are gone before the guards reach the room. The subsequent conversation and the fine for 'facilitating unlicensed assembly' are both expensive in different ways ({actual_money}, {actual_reputation} reputation).",
@@ -1633,7 +1645,7 @@
         }
       },
       {
-        "option": "Ask what the meeting is for before deciding (potential: informed choice)",
+        "option": "Ask what the meeting is for before deciding. (Potential: Money; Risk: Reputation)",
         "condition": "building_skill",
         "message_success": "He weighs the question and decides honesty costs less than evasion. Merchants. A contract negotiation they don't want overheard by competitors. Nothing that will bring guards to your door. You let them in and pocket the fee without losing sleep ({actual_money}).",
         "message_failure": "He smiles thinly, says 'business,' and declines to elaborate. You've either just turned away something harmless or something lucrative, and the ambiguity is uncomfortable. He takes his meeting elsewhere without apparent difficulty ({actual_reputation} reputation).",
@@ -1687,7 +1699,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Lean into the haunting—charge for cellar tours (potential: money and reputation)",
+        "option": "Lean into the haunting—charge for cellar tours. (Potential: money and reputation)",
         "condition": "building_skill",
         "message_success": "You double the candles, lower the prices on the strongest drinks, and personally lead the first cellar tour with a story you've been sharpening for twenty minutes. By the second tour there's a queue. Whatever is or isn't down there, the evening becomes one of your best in months, and your tavern picks up an atmospheric reputation that draws the curious from across the district ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The tour runs fine until a drunk patron knocks over a rack on the third group, and the ensuing chaos is less 'atmospheric' and more 'expensive.' You cover the repair costs before the night ends, and the story that spreads focuses considerably more on the shelf than the ghost ({actual_money}, {actual_reputation} reputation).",
@@ -1708,7 +1720,7 @@
         }
       },
       {
-        "option": "Bring in a priest for a public blessing (cost: money; gain: reputation)",
+        "option": "Bring in a priest for a public blessing. (Cost: money; Gain: reputation)",
         "message": "You commission a local priest for a blessing that is, if nothing else, theatrical. He moves through the cellar with incense and the unhurried authority of someone who is very comfortable with the unusual. Half your patrons watch from the stairs. Whether or not there was anything there before, there isn't anything now—and the story of a tavern that takes its unusual problems seriously draws a certain kind of curious customer ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -150,
@@ -1758,7 +1770,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Have the kitchen prepare its very best and send a complimentary course (potential: major reputation)",
+        "option": "Have the kitchen prepare its very best and send a complimentary course. (Potential: major reputation)",
         "condition": "building_skill",
         "message_success": "The kitchen rises to the occasion. Every plate leaves as the best version of itself, the complimentary course is accepted with a small nod that might be approval, and the woman departs without a word—which is apparently what good critics do. Three weeks later a review appears in the broadsheet. It is brief, specific, and positive. Your reservation book changes shape overnight ({actual_reputation} reputation).",
         "message_failure": "The kitchen panics, which is the worst thing a kitchen can do. Dishes come out technically correct but spiritually cautious—nothing risks, nothing surprises, everything is competent and forgettable. The woman departs with the unhurried expression of someone who has already written the entry in her head ({actual_reputation} reputation).",
@@ -1854,7 +1866,7 @@
         }
       },
       {
-        "option": "Identify the source in your kitchen quietly (potential: prevent future leaks)",
+        "option": "Identify the source in your kitchen quietly. (Potential: Reputation; Risk: Reputation)",
         "condition": "building_skill",
         "message_success": "You don't make the confrontation public. Instead, you observe your kitchen for two days and have a direct conversation with the right person. They leave on their own terms shortly after, the leak is sealed, and you gain one fewer vulnerability without creating a story anyone will repeat ({actual_reputation} reputation).",
         "message_failure": "Your investigation is too obvious. Word reaches the person before you do, and they leave before the conversation can happen. You know who it was, you can't prove it formally, and the recipe is still on their menu ({actual_reputation} reputation).",
@@ -1873,7 +1885,7 @@
         }
       },
       {
-        "option": "Create a new signature dish that supersedes it (cost: money; gain: reputation)",
+        "option": "Create a new signature dish that supersedes it. (Cost: money; Gain: reputation)",
         "message": "You put your cook to work on something new—better than the version they copied, more specific, more ambitious. You announce it as a seasonal special and let the quality speak. Whatever they have becomes the inferior version of a dish that originated here, and everyone who eats both will know it ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -200,
@@ -1910,7 +1922,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Buy it and put it on a tasting menu tonight (potential: major money and reputation; risk: fine)",
+        "option": "Buy it and put it on a tasting menu tonight. (Potential: major money and reputation; Risk: fine)",
         "condition": "building_skill",
         "message_success": "Your cook works fast and inspired. The tasting menu sells out before the second table is cleared, and the clients who had it leave with the particular satisfied silence that means something remarkable happened. Nobody reports anything. The hunter stops by the following week with a larger crate ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "A guild inspector stops in for an unannounced check on precisely the wrong night. The ingredient is seized as unlicensed goods, the fine is significant, and your cook spends a week preparing food that is deliberately, defiantly uncomplicated ({actual_money}, {actual_reputation} reputation).",
@@ -1931,7 +1943,7 @@
         }
       },
       {
-        "option": "Use it for a private dinner for trusted regulars only (cost: money; gain: reputation)",
+        "option": "Use it for a private dinner for trusted regulars only. (Cost: money; Gain: reputation)",
         "message": "You keep the ingredient off the public menu and invite a handful of your most trusted regulars for a private dinner framed as a 'culinary experiment.' The meal is exceptional. The guests are grateful. The story travels in exactly the right direction, to exactly the right people ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -100,
@@ -1944,7 +1956,7 @@
         }
       },
       {
-        "option": "Pass—the risk isn't worth it tonight (safe; neutral)",
+        "option": "Pass—the risk isn't worth it tonight. (Safe; neutral)",
         "message": "You thank the hunter, decline, and watch him shrug and wheel the crate toward whoever comes next on his route. Your cook doesn't speak to you for the rest of the afternoon. The dish remains unmade, the reputation unrealized, the fine unpaid. Not every door needs to be opened.",
         "effect": {
           "success_chance": 0,
@@ -1979,7 +1991,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Hire a specialist to assess and neutralize it (cost: money; potential: profit)",
+        "option": "Hire a specialist to assess and neutralize it. (Cost: Money; Potential: Money, Reputation)",
         "condition": "building_skill",
         "message_success": "The specialist—a retired mage with ink-stained hands and no interest in dramatic assessments—examines the artifact for twenty minutes and produces a verdict: it is worth considerably more than it looks, and the 'curse' was a protection ward applied by its original owner. Properly dispelled, it becomes an asset worth selling ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The specialist confirms what the party suspected, and the dispelling process is considerably more involved than the quote suggested. It takes three days and costs double. During that time two of your workers develop unexplained headaches and one refuses to enter the storage room. The artifact is eventually clean; the bill is not ({actual_money}, {actual_reputation} reputation).",
@@ -2000,7 +2012,7 @@
         }
       },
       {
-        "option": "Sell it as-is to a collector who handles such things (gain: money; loss: reputation)",
+        "option": "Sell it as-is to a collector who handles such things. (Gain: money; Loss: reputation)",
         "message": "You locate a buyer who specializes in exactly this kind of acquisition and complete the transaction quickly with minimal paperwork. The coin is good. The fact that a collector now owns something that may genuinely carry a curse is, strictly speaking, their assessment to make ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": 300,
@@ -2013,7 +2025,7 @@
         }
       },
       {
-        "option": "Lock it in the vault and wait (safe; neutral)",
+        "option": "Lock it in the vault and wait. (Safe; neutral)",
         "message": "You put it in the deepest part of storage, lock it, and instruct your staff that it isn't there. Whether the subsequent week of minor mishaps is coincidence or consequence is a question you're committed to not answering aloud. Eventually the party comes back to deal with it themselves.",
         "effect": {
           "success_chance": 0,
@@ -2048,7 +2060,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Organize a search party immediately (cost: money; potential: reputation)",
+        "option": "Organize a search party immediately. (Cost: money; Potential: reputation)",
         "condition": "building_skill",
         "message_success": "Your search team finds them on the second day—alive, intact, and stuck in a situation that had grown well beyond the original brief. They're brought back with a story that reflects well on your guild's response time. The family thanks you publicly; the client renews his contract ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The search party finds the camp but not the people—tracks leading in three directions, nothing conclusive. They return without answers. The family's questions grow louder, the client files a formal complaint, and the open case eventually passes to the city watch with your name still attached to it ({actual_money}, {actual_reputation} reputation).",
@@ -2069,7 +2081,7 @@
         }
       },
       {
-        "option": "Reach out to regional contacts for information first (condition: Clever; lower risk)",
+        "option": "Reach out to regional contacts for information first. (Condition: Clever; lower risk)",
         "condition": "building_skill",
         "message_success": "A contact at the lowland trading post mentions a group matching the description sheltering at a farmhouse after a 'misunderstanding with local wildlife.' You send a cart with supplies and a message. They return the following day under their own power, which is better for everyone's reputation than a dramatic rescue ({actual_reputation} reputation).",
         "message_failure": "Your contacts have nothing useful. Another day passes, and by then the story has spread faster than information gathering can outpace. You organize the search anyway, only later and with considerably worse optics ({actual_money}, {actual_reputation} reputation).",
@@ -2089,7 +2101,7 @@
         }
       },
       {
-        "option": "Wait another day—experienced parties sometimes run long (risk)",
+        "option": "Wait another day—experienced parties sometimes run long. (risk)",
         "message": "You make the judgment call that your people can handle themselves, and today is not yet the day for alarm. They return the following evening, exhausted and behind schedule, with a story about a route that turned complicated. The delay cost you nothing except the family's goodwill, which takes longer to repair than the contract does.",
         "effect": {
           "reputation": -5,
@@ -2125,7 +2137,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Counter with a raise and improved conditions (cost: money; gain: retention and reputation)",
+        "option": "Counter with a raise and improved conditions. (Cost: money; Gain: retention and reputation)",
         "message": "You sit down with each of the three separately and have the kind of honest conversation that costs coin but saves something harder to replace. The raises are reasonable, the conditions improve in ways that don't require major restructuring, and all three stay. Word that your guild rewards loyalty reaches the market square, and the rival's recruitment effort loses some of its appeal ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -300,
@@ -2138,7 +2150,7 @@
         }
       },
       {
-        "option": "Hold a direct conversation without offering more money (condition: Charm; potential)",
+        "option": "Hold a direct conversation without offering more money. (Potential: Reputation; Risk: Reputation)",
         "condition": "building_skill",
         "message_success": "You gather the three and speak plainly: what does this guild offer that the other doesn't? The answer you build together is more compelling than a signing bonus, because it speaks to reputation, to the quality of contracts, to the relationships already built here. Two stay immediately. The third takes a week, then stays ({actual_reputation} reputation).",
         "message_failure": "The conversation goes well, but words aren't numbers. One of the three leaves by the end of the week for the rival's offer. You keep two and lose one, and spend some time afterward thinking about which one it was and why ({actual_reputation} reputation).",
@@ -2157,7 +2169,7 @@
         }
       },
       {
-        "option": "Let them decide without negotiating—don't chase (risk: neutral)",
+        "option": "Let them decide without negotiating—don't chase. (Risk: neutral)",
         "message": "You tell the three that your guild's terms stand as they are, and you mean it without apology. Two stay because the rival's arrangement wasn't as good as it sounded on paper. One takes the signing bonus and goes. You hire a replacement within a fortnight and spend some time thinking about what made the third one the one who left.",
         "effect": {
           "reputation": -5,
@@ -2193,7 +2205,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Send a collector to his estate (potential: money; risk: relationship)",
+        "option": "Send a collector to his estate. (Potential: money; Risk: relationship)",
         "condition": "building_skill",
         "message_success": "Your collector is professional and firm and returns with three-quarters of the debt and a date for the remainder. Harben does not come back, but he pays, and the story told in the right circles is that your house collects what it is owed without scenes or solicitors ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "Your collector is turned away at the gate with a letter from Harben's steward that manages to be both insulting and legally careful. You have a signed debt note and no leverage, and he knows it. The money sits in question while his debt becomes a story other clients tell to see how you react ({actual_reputation} reputation).",
@@ -2213,7 +2225,7 @@
         }
       },
       {
-        "option": "Invite him to a private dinner—approach it socially (condition: Charm)",
+        "option": "Invite him to a private dinner—approach it socially. (Condition: Charm)",
         "condition": "building_skill",
         "message_success": "An invitation framed as hospitality rather than collection lands differently. He accepts, arrives with his usual composure, and the debt is mentioned once—briefly, gracefully, over the last course. He settles it within the week. The relationship survives, which is worth more than the four thousand in the long run ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "He accepts the dinner and reads the intention immediately. The meal is tense and brief, the debt surfaces too explicitly for either side to pretend otherwise, and he leaves with both the debt and the offense intact. You've burned a client relationship and still haven't been paid ({actual_reputation} reputation).",
@@ -2233,7 +2245,7 @@
         }
       },
       {
-        "option": "Write off the debt entirely as a gesture of goodwill (cost: money; gain: long-term reputation)",
+        "option": "Write off the debt entirely as a gesture of goodwill. (Cost: money; Gain: long-term reputation)",
         "message": "You send a brief note forgiving the debt, framed as a gesture of good faith between serious people. Harben returns within the month, plays with noticeably more caution, and tells at least three influential people what your house did. What you lost at the table you recover in reputation and in the clients who follow his recommendation ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -4000,
@@ -2270,7 +2282,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Accept and give her a dedicated table (potential: money and reputation; risk: existing clients)",
+        "option": "Accept and give her a dedicated table. (Potential: money and reputation; Risk: existing clients)",
         "condition": "building_skill",
         "message_success": "Her presence draws exactly what she promised—wealthy clients who consider themselves skilled players and are willing to pay to find out. The house takes its percentage from games that run long because she makes them interesting. The arrangement proves profitable enough to feel inevitable ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "Two of your regulars lose more than they expected against her in the first week and don't return. The clients she attracts are selective, and the ones who leave angry have loud opinions. The new revenue doesn't cover the existing business it displaces ({actual_money}, {actual_reputation} reputation).",
@@ -2291,7 +2303,7 @@
         }
       },
       {
-        "option": "Agree to a one-week trial with tighter terms (neutral; safe assessment)",
+        "option": "Agree to a one-week trial with tighter terms. (Neutral; safe assessment)",
         "message": "You counter with a trial arrangement—tighter house cut, specific table, one week. She accepts without negotiating, which tells you something. The week is profitable and incident-free. At the end of it you have enough information to decide whether this becomes permanent. You schedule week two.",
         "effect": {
           "money": 200,
@@ -2303,7 +2315,7 @@
         }
       },
       {
-        "option": "Decline—your tables run on your terms (safe; neutral)",
+        "option": "Decline—your tables run on your terms. (Safe; neutral)",
         "message": "You explain that your house runs its own games, and an independent operator with her own clients and her own rules doesn't fit that model. She nods without argument and goes to find a house that does. Whatever she would have brought with her leaves with her.",
         "effect": {
           "success_chance": 0,
@@ -2338,7 +2350,7 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Monetize it—charge for a formal 'luck blessing' ceremony (potential: money and reputation)",
+        "option": "Monetize it—charge for a formal 'luck blessing' ceremony. (Potential: money and reputation)",
         "condition": "building_skill",
         "message_success": "You commission a local hedge-mystic, dress the ceremony up with appropriate theater, and offer it for a modest fee to the willing. The pilgrims pay cheerfully, the regular gamblers find the atmosphere charming rather than disruptive, and your house picks up a secondary revenue stream from people who had no intention of touching a card. The absurdity travels well as a story, which is itself a form of advertising ({actual_money}, {actual_reputation} reputation).",
         "message_failure": "The ceremony goes sideways when the hedge-mystic attempts something more dramatic than you briefed her for, and the resulting smoke situation empties two of your best tables during peak hours. The pilgrims are satisfied. Your paying customers are considerably less so ({actual_money}, {actual_reputation} reputation).",
@@ -2359,7 +2371,7 @@
         }
       },
       {
-        "option": "Turn away the non-gamblers firmly (neutral; restore order)",
+        "option": "Turn away the non-gamblers firmly. (Neutral; restore order)",
         "message": "You post a staff member at the door with clear instructions: entry for paying customers only. The pilgrims disperse with varying degrees of disappointment, the herb burning stops after one firm conversation, and your floor returns to normal. The reputation lingers in the neighborhood, but it stops accumulating on your step.",
         "effect": {
           "success_chance": 0,
@@ -2370,7 +2382,7 @@
         }
       },
       {
-        "option": "Do nothing and watch what develops (curious; potential)",
+        "option": "Do nothing and watch what develops. (Neutral)",
         "message": "You observe for a week without intervening. The pilgrims attract attention; attention attracts the curious; some of the curious sit down and play. Whether your house is genuinely lucky is philosophically irrelevant—the belief that it might be is bringing in traffic that didn't exist last month. You let it run while you decide whether to make it deliberate.",
         "effect": {
           "money": 150,
@@ -2388,6 +2400,2128 @@
     "worker_name": null,
     "dialogue": null,
     "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "castle_spy_network",
+    "description": "A thin man with ink-stained fingers slides a sealed envelope across your desk. Inside: names, routes, and dealings of three rival houses. He wants coin and a quiet arrangement. The intelligence looks genuine, but so does the risk of being caught buying it.",
+    "weight": 3,
+    "cooldown_days": 18,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Buy the intelligence and act on it. (Potential: Money, Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "The intelligence proves accurate down to the last detail. You leverage it quietly—a well-timed trade deal, a political favor at the right moment. The rival houses never trace the advantage back to you, and the spy earns his fee several times over ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The intelligence is a mix of truth and fabrication, and you act on the wrong half. A trade deal sours, a political move backfires, and whispers circulate that someone in your castle deals with back-alley informants. The spy vanishes before you can confront him ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -15
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay for the envelope but file it away unused. (Cost: Money)",
+        "message": "You buy the intelligence and lock it in your desk without acting on a word of it. The spy leaves satisfied. The information may prove useful someday, or it may rot in a drawer—but at least no one can trace a move you never made ({actual_money}).",
+        "effect": {
+          "money": -200,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Turn the spy away and report the approach. (Gain: Reputation)",
+        "message": "You refuse the envelope and send word to the city watch that someone is peddling stolen intelligence. The gesture earns you a favorable nod from the magistrate and the quiet respect of anyone who hears about it ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "castle_tax_revolt",
+    "description": "Your tax collectors return with empty ledgers and bruised pride. The outer villages have organized—gates barred, representatives elected, a list of grievances nailed to the collection post. It is not a riot yet, but the language is getting sharper by the day.",
+    "weight": 4,
+    "cooldown_days": 16,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Negotiate with the village leaders directly. (Potential: Money, Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "You ride out personally and sit across the table from farmers who expected a sword, not a conversation. The grievances are real but manageable—a revised schedule, a reduced rate on grain. Taxes resume within the week, and the story told in the villages shifts from resistance to respect ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The negotiations collapse when a hotheaded elder accuses you of bad faith in front of the crowd. You leave with less than you arrived with—no taxes collected, a public embarrassment, and villages that now believe they can stare down the castle ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 400,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -15
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Send guards to enforce collection. (Gain: Money; Loss: Reputation)",
+        "message": "Armed men at the village gates settle the question quickly. The taxes are collected in full, the grievance list is confiscated, and the representatives disperse under escort. The coin fills your coffers. The resentment fills the district ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": 300,
+          "reputation": -12,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Suspend tax collection for the season. (Loss: Money; Gain: Reputation)",
+        "message": "You announce a temporary suspension and frame it as goodwill during a difficult harvest. The villages receive the news with cautious gratitude. Your treasury feels the absence, but the unrest dissolves before it hardens into something permanent ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -250,
+          "reputation": 10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "castle_prisoner_exchange",
+    "description": "A neighboring lord's envoy arrives under a flag of truce with a straightforward proposal: his captured knight for your captured scout. The exchange seems fair on paper, but the knight holds military secrets and the scout knows your patrol routes.",
+    "weight": 3,
+    "cooldown_days": 21,
+    "worker_selection": "none",
+    "building_type": [
+      "governor_castle"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Negotiate favorable exchange terms. (Potential: Money, Reputation; Risk: Reputation)",
+        "condition": "building_skill",
+        "message_success": "You counter with additional conditions—a trade concession, a border adjustment, and a public acknowledgment of good faith. The envoy balks, consults, and ultimately agrees. Your scout returns home and the deal you struck is the one people remember ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "Your demands are perceived as overreach. The envoy withdraws the offer and rides home with a message that paints you as someone who values leverage over lives. The exchange collapses, and the political cost outlasts any strategic advantage ({actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 300,
+            "reputation": 20
+          },
+          "failure": {
+            "reputation": -15
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Accept the straight exchange without conditions. (Gain: Reputation)",
+        "message": "You agree to the terms as presented. The exchange happens at the border crossing the following morning—quiet, professional, witnessed by both sides. Your reputation for fair dealing travels further than any seized intelligence would have ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Refuse the exchange entirely. (Loss: Reputation)",
+        "message": "You send the envoy home empty-handed. The knight stays in your dungeon, your scout stays in theirs, and the neighboring lord draws conclusions about your willingness to negotiate that will color every future interaction ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_high_roller_tournament",
+    "description": "Word has reached the district's wealthiest gamblers: your casino is hosting a high-stakes tournament with a prize pool that makes serious players take notice. The entry fees alone would cover a good month, but if the house loses the final table, the payout could hurt.",
+    "weight": 3,
+    "cooldown_days": 18,
+    "worker_selection": "none",
+    "building_type": [
+      "casino"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Host the tournament at full stakes. (Potential: Money, Reputation; Risk: Money)",
+        "condition": "building_skill",
+        "message_success": "The tournament draws exactly the crowd you wanted—deep pockets, sharp play, and the kind of atmosphere that makes spectators into future clients. The house takes its edge cleanly, and the winner leaves happy enough to return. Entry fees and side bets more than cover the prize ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "A cold run of cards at the final table bleeds the house dry. The winner walks away with a fortune, the spectators saw a great game, and your ledger shows a number in red that will take weeks to recover from ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 700,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -500,
+            "reputation": 5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Cap the stakes to limit exposure. (Gain: Money; Loss: Reputation)",
+        "message": "You set a ceiling on the prize pool that protects the house but disappoints the high rollers who came expecting bigger numbers. The tournament runs smoothly and profitably, but the talk afterward is about caution, not excitement ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": 200,
+          "reputation": -5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Cancel the tournament. (Loss: Reputation)",
+        "message": "You pull the event before the first hand is dealt. The players who traveled for it leave with opinions they will share freely, and the district's gambling circles note that your house announced something it could not deliver ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_superstition_streak",
+    "description": "Your best dealer has won fourteen hands in a row, and the crowd around her table has doubled. Half the room is mesmerized. The other half is suspicious. A loud gambler near the front is telling anyone who will listen that no honest dealer runs that hot without help.",
+    "weight": 4,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "casino"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Address the accusation publicly and keep dealing. (Potential: Money, Reputation; Risk: Reputation)",
+        "condition": "building_skill",
+        "message_success": "You step onto the floor and invite the accuser to inspect the deck himself—cards, shuffle, everything in plain sight. He finds nothing because there is nothing to find. The crowd watches the transparency, the dealer resumes, and trust in the house climbs with the evening's take ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The public challenge backfires. The accuser makes a scene that draws more attention than the streak itself, and even though the inspection finds nothing, doubt is louder than evidence. Several tables cash out early and the evening's momentum dies ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 300,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -150,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Rotate the dealer off the table quietly. (Cost: Money)",
+        "message": "You swap the dealer out on a break that was not scheduled. The streak ends, the accuser loses his audience, and the evening settles back to normal. It costs you the momentum of a hot table, but removes the controversy before it takes root ({actual_money}).",
+        "effect": {
+          "money": -100,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "guild_monster_bounty",
+    "description": "The city council has posted a bounty on a creature raiding livestock farms along the northern road. The reward is substantial, but so are the reports—something large, fast, and smart enough to avoid the first two parties sent after it. Your members eye the posting with a mix of greed and caution.",
+    "weight": 4,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Accept the bounty and send your best team. (Potential: Money, Reputation; Risk: Worker injury)",
+        "condition": "building_skill",
+        "message_success": "Your team tracks the creature to its den and finishes the job in a single coordinated strike. The bounty is collected in full, the farmers send a cask of their best cider, and the guild's board displays the trophy for a week ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The creature is worse than the reports suggested. Your team engages, takes casualties, and is forced to retreat before the kill. One member comes back with injuries that need serious attention. The bounty stays uncollected ({actual_reputation} reputation, a worker got Wounded).",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 15
+          },
+          "failure": {
+            "reputation": -10,
+            "add_trait": {
+              "name": "Wounded",
+              "duration": 7,
+              "target": "random_worker"
+            }
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Subcontract the job to freelancers. (Cost: Money; Gain: Reputation)",
+        "message": "You hire outside muscle to handle the dirty work and take a management cut. The creature is dealt with, the council pays the bounty through your guild, and you skim enough to cover the subcontract with a modest profit ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -150,
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pass on the bounty. (Loss: Reputation)",
+        "message": "You leave the posting on the board and let another guild take it. The decision is sound—your roster is stretched and the risk is real—but the city council notes which guilds stepped up and which ones did not ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "guild_deserter_refuge",
+    "description": "A young soldier in torn uniform stumbles through your guild doors after midnight, asking for shelter. He deserted his company after refusing an order he calls unlawful. The army will come looking, and harboring a deserter carries legal consequences.",
+    "weight": 3,
+    "cooldown_days": 18,
+    "worker_selection": "none",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Shelter the deserter and manage the fallout. (Potential: Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "You hide the soldier until the search passes, then arrange quiet passage to the border. Word of what you did reaches the people who value that kind of courage—veterans, idealists, the quietly principled. The guild's name gains a weight that contracts alone cannot buy ({actual_reputation} reputation).",
+        "message_failure": "The army traces the deserter to your guild within two days. An officer arrives with a warrant and a detachment. The soldier is dragged away, your guild is fined for harboring, and the public spectacle ensures everyone in the district knows you tried and failed ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 15
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Give him a meal and send him on his way. (Neutral)",
+        "message": "You feed the soldier, let him rest for an hour, and point him toward the south road before dawn. He leaves without complaint. You will never know what happened to him, and your guild stays clear of a situation with no clean endings.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Report him to the authorities. (Gain: Money; Loss: Reputation)",
+        "message": "You send word to the garrison before the soldier finishes his meal. The arrest is quick and efficient. A modest informant fee arrives the following day. Among your guild members, the conversation about it is brief and uncomfortable ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": 150,
+          "reputation": -8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "tavern_debt_collector",
+    "description": "A heavy-set man with a ledger and two armed companions pushes through the front door during the evening rush. He points at one of your regulars and announces the debt loudly enough for half the room to hear. The regular goes pale. The room goes quiet.",
+    "weight": 4,
+    "cooldown_days": 12,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Intervene and defuse the situation. (Potential: Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "You step between the collector and your regular with calm authority. A quiet conversation, a proposed arrangement, and the collector agrees to take it outside. The regular stays, the evening recovers, and your tavern's reputation for fair treatment earns more than the trouble cost ({actual_reputation} reputation).",
+        "message_failure": "The collector does not appreciate your involvement. The confrontation escalates, a table gets knocked over, and the regular bolts out the back while the room watches the chaos. The collector leaves threatening to return, and three groups settle their tabs early ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 10
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -8
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Stay out of it—not your business. (Loss: Reputation)",
+        "message": "You let the scene play out. The collector hauls the regular outside, the room watches in uncomfortable silence, and the evening never quite recovers. Several patrons leave quietly. A tavern that does not protect its own loses the people worth protecting ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay off the debt yourself. (Cost: Money; Gain: Reputation)",
+        "message": "You pull the collector aside and settle the amount from your own purse. The regular is stunned, the collector is satisfied, and the room watches a gesture that will be retold at every table for a month. Expensive loyalty—but the kind that builds a tavern's soul ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -300,
+          "reputation": 12,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "tavern_poisoned_patron",
+    "description": "A patron drops his cup mid-sentence and collapses across the table, skin going grey. The room erupts. Someone screams poison. Your barkeep is already checking the tap, hands shaking. Whether it is foul play or a bad batch, the next ten minutes will define your tavern's future.",
+    "weight": 3,
+    "cooldown_days": 16,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Take charge and investigate immediately. (Potential: Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "You clear the area, send for a healer, and pull every drink served in the last hour. The healer identifies a spoiled ingredient—not poison, just negligence from a supplier. The patron recovers, the source is traced, and your swift response becomes the story people tell ({actual_reputation} reputation).",
+        "message_failure": "The investigation turns up nothing conclusive, the patron is carried out still unconscious, and by morning three different versions of the story are circulating—none favorable. The city watch visits, the healer's bill arrives, and your name carries an asterisk it did not have yesterday ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 12
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -12
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Close for the night and bring in a professional inspector. (Cost: Money; Gain: Reputation)",
+        "message": "You shut the doors, refund every open tab, and hire an independent inspector before sunrise. The findings clear your stock entirely—the patron had a pre-existing condition aggravated by drink. The closure costs a full night's revenue, but the official report is worth its weight ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -350,
+          "reputation": 10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_rival_poaching",
+    "description": "Your best cook pulls you aside after service with a folded letter. A rival restaurant across the district has offered her double her current wage and a share of kitchen profits. She has not accepted yet, but the offer is real and she is not pretending it is not tempting.",
+    "weight": 4,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Counter-offer and fight to keep her. (Potential: Reputation; Risk: Money)",
+        "condition": "building_skill",
+        "message_success": "You match enough of the offer to make staying the better choice—a raise, a title, and creative freedom she will not get at a place that poaches its talent. She stays, the kitchen stays sharp, and the rival learns that your house holds its people ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "Your counter-offer falls short of what she needs to hear. She accepts the rival's terms with genuine regret and two weeks' notice. The kitchen adjusts, but the gap she leaves is felt in every service for a month ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": -200,
+            "reputation": 8
+          },
+          "failure": {
+            "money": -100,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Wish her well and start looking for a replacement. (Loss: Reputation)",
+        "message": "You thank her for her honesty and tell her to take the offer if it is what she wants. She does. The kitchen stumbles for a few weeks while the replacement finds their rhythm, and a few regulars notice the difference ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Offer a significant raise immediately. (Cost: Money; Gain: Reputation)",
+        "message": "You match the rival's number on the spot and add a bonus for loyalty. She tears up the letter. The kitchen stays intact, your reputation for treating staff well spreads through the district's cooks, and the rival gets the message ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -350,
+          "reputation": 10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_rats_rumor",
+    "description": "A patron stands up mid-meal and announces to the dining room that she just saw a rat under the corner table. The room freezes. It does not matter whether she actually saw one—every patron is now looking at the floor, and two tables are already reaching for their coats.",
+    "weight": 4,
+    "cooldown_days": 12,
+    "worker_selection": "none",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Handle it immediately and publicly. (Potential: Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "You address the room directly, apologize for the disturbance, and have staff conduct a visible, thorough inspection. Nothing is found. You comp the patron's meal, offer a round on the house, and turn a panic into a demonstration of composure ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The inspection turns up droppings near the back wall that your morning clean missed. The patron's accusation is vindicated in front of a full dining room. Half your covers walk out, and the story reaches the food guild before you finish sweeping ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": -100,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -15
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Close early and hire a pest inspector. (Cost: Money; Gain: Reputation)",
+        "message": "You end service for the evening, refund open tabs, and bring in a licensed pest inspector before sunrise. The report comes back clean—no infestation, just an opportunistic field mouse. You post the report by the entrance and reopen with a spotless record ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -300,
+          "reputation": 8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Dismiss the claim and carry on. (Risk: Reputation)",
+        "message": "You tell the patron she is mistaken and invite the room to continue their meals. Some do. Others do not. The patron leaves loudly, and the evening limps to a close with half-empty tables and staff that will not meet your eyes ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_blackmail_attempt",
+    "description": "A sealed letter arrives at dawn with no return address. Inside: a list of three prominent clients, their visit dates, and a demand for five hundred gold to keep the information private. The handwriting is deliberate and unfamiliar. Someone has been watching your door.",
+    "weight": 3,
+    "cooldown_days": 18,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Track down the blackmailer. (Potential: Money, Reputation; Risk: Reputation)",
+        "condition": "building_skill",
+        "message_success": "You set a quiet trap—a false drop point, a watched alley, a hired hand with fast legs. The blackmailer is identified within two days: a former servant with a grudge and a good memory. The matter is resolved discreetly, and the clients never learn how close their privacy came to being sold ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The trap catches nothing. The blackmailer proves more careful than expected, and when the deadline passes without payment, fragments of the client list begin circulating in the district's gossip networks. Two of the three clients stop visiting permanently ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 200,
+            "reputation": 12
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -15
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pay the demand and tighten security. (Cost: Money)",
+        "message": "You leave the gold at the specified location and hire two new watchmen for the street. The blackmailer collects and goes silent—for now. The expense stings, but the clients stay, and the new security makes a repeat performance harder ({actual_money}).",
+        "effect": {
+          "money": -500,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Warn the clients and let them decide. (Loss: Reputation)",
+        "message": "You contact the three clients privately and lay out the situation. They appreciate the honesty but not the exposure. One continues visiting; two find establishments with better security. Your candor earns respect but costs you business ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_jealous_partner",
+    "description": "A woman in a traveling cloak hammers on your front door an hour before opening. She is looking for her husband—a merchant who told her he was attending trade meetings three nights running. She has his schedule, his described companion, and a voice that carries through walls.",
+    "weight": 4,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Handle the situation diplomatically. (Potential: Reputation; Risk: Money, Reputation)",
+        "condition": "building_skill",
+        "message_success": "You invite her inside, serve tea, and navigate a conversation that never confirms or denies her husband's presence. She leaves with suspicions but without proof, and your refusal to betray a client's confidence earns your house the kind of reputation discretion-minded clients pay a premium for ({actual_reputation} reputation).",
+        "message_failure": "The conversation deteriorates. She raises her voice, a passing neighbor stops to watch, and by the time she storms away your entrance has become a public stage. The merchant stops visiting. The story spreads faster than the apology ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "reputation": 10
+          },
+          "failure": {
+            "money": -150,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Deny everything and close the door. (Loss: Reputation)",
+        "message": "You tell her you have no idea what she is talking about and shut the door. She does not leave. She stands outside for twenty minutes telling the street what kind of establishment this is before finally departing. The scene damages the discretion your clients expect ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Offer her compensation and a private conversation. (Cost: Money; Gain: Reputation)",
+        "message": "You sit her down in a private room, acknowledge her distress without naming names, and offer a gesture of goodwill. She leaves calmer than she arrived. The merchant remains a client. Your house's reputation for handling delicate situations with grace travels to exactly the right ears ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -200,
+          "reputation": 8,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": true,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_regular_gone_missing",
+    "description": "Your front-of-house keeper pulls you aside with a worried look. Lord Harren—the man who booked every Thursday without fail and tipped like he was trying to empty his vault—hasn't appeared in three weeks. Worse, one of the street girls mentioned seeing his carriage parked outside a new pleasure house across the river. Losing a regular of that caliber is a wound that bleeds slowly.",
+    "weight": 1.0,
+    "cooldown_days": 21,
+    "worker_selection": "choose",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_interior",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "choices": [
+      {
+        "option": "Send a worker to find out what happened. (Charm check; Potential: Money, Reputation)",
+        "condition": "Charm",
+        "message_success": "[acting_worker] tracks Lord Harren down at a wine garden and strikes up a conversation with the ease of someone born to it. Turns out the new place disappointed him—cold rooms, bored staff—and all he needed was a personal reminder that your doors were still open. He returns the following Thursday with a larger purse and a sheepish grin ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "[acting_worker] finds the lord but fumbles the approach—too eager, too obvious. Harren waves them off with visible irritation. Word reaches you that he's now a regular at the rival house and has no plans to return. The loss stings more than the embarrassment ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -100,
+            "reputation": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Let it go—clients come and go. (Small loss)",
+        "message": "You shrug it off. Clients wander; that's the nature of the business. The Thursday slot stays empty for a few weeks before someone else fills it, though the new regular tips considerably less. Life moves on, but the ledger notices ({actual_money}).",
+        "effect": {
+          "money": -200,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_exotic_oils_merchant",
+    "description": "A traveling merchant arrives at your back entrance with a velvet-lined case and the practiced smile of someone who knows exactly what they're selling. Inside: twelve vials of rare pleasure oils from the southern coast—ylang-ylang and moonpetal blends that are said to drive clients to ecstasy and back. The price is steep. The merchant claims they won't last the afternoon.",
+    "weight": 1.0,
+    "cooldown_days": 28,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_interior",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "choices": [
+      {
+        "option": "Buy the oils. (Cost: Money; Gain: Reputation, Joy)",
+        "message": "You inspect a vial, uncork it, and the scent alone makes the decision for you. The oils are the real thing. Within a week your workers are fielding requests specifically for the moonpetal treatment, and clients are paying a premium for the privilege. The merchant's price stings less with every booking ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -600,
+          "reputation": 15,
+          "joy": 5,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pass on the offer. (No cost)",
+        "message": "You wave the merchant off. The oils are probably genuine, but that kind of coin buys a lot of certainty elsewhere. The merchant tips his hat and disappears down the alley. Your workers shrug—business continues as usual, no worse for the missed opportunity.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_noise_complaint",
+    "description": "A sharp knock at the front door—and it isn't a client. The woman standing outside is the owner of the tailor shop next door, arms crossed, face like a closed fist. She's filed a formal complaint with the city watch about the noise coming through the walls at night. Laughter, music, the unmistakable sounds of enthusiastic business. She says the guard will be here by week's end if something isn't done.",
+    "weight": 1.0,
+    "cooldown_days": 21,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_interior",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "choices": [
+      {
+        "option": "Handle it diplomatically—soundproof and compensate. (Cost: Money; Gain: Reputation)",
+        "message": "You invite the tailor in for tea and a civil conversation. By the end of it you've agreed to hang heavy tapestries on the shared wall and send over a bolt of fine fabric as a goodwill gesture. The complaint is withdrawn before it reaches the guard captain's desk. Neighbors talk, and what they say now is that you handle problems like a professional ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -400,
+          "reputation": 10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Ignore the complaint and risk the guard. (Risk: Money, Reputation)",
+        "message": "You decide the tailor is bluffing and go about your evening. She isn't bluffing. Two guardsmen arrive three days later with a citation and a fine that makes the tapestries look like a bargain. The tailor watches from her shop window with grim satisfaction ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -700,
+          "reputation": -10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_client_fight",
+    "description": "Glass shatters downstairs. Two patrons—both regulars, both half-drunk—are on their feet with clenched fists because they both requested the same worker for the evening and neither will yield. One has already shoved a table aside. The other clients are pulling back from the commotion, and your workers are watching from the staircase with wide eyes. This needs handling before someone bleeds on your carpet.",
+    "weight": 1.0,
+    "cooldown_days": 14,
+    "worker_selection": "choose",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_interior",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "choices": [
+      {
+        "option": "Send a worker to de-escalate the situation. (Charm check; Potential: Money, Reputation)",
+        "condition": "Charm",
+        "message_success": "[acting_worker] steps between the two men with the calm authority of someone who has seen worse and handled it better. A few quiet words, a round of drinks on the house, and the suggestion that the evening is long enough for everyone—the tension breaks like a fever. Both men sit down, embarrassed, and end up spending twice what they planned ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries to intervene but misjudges the mood. One of the patrons takes the interruption as an insult, and the argument reignites louder than before. By the time the bouncer drags them both out, a chair is broken and half the room has decided to leave early. The night's earnings are a casualty ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Kick them both out immediately. (Loss: Money; Gain: Reputation)",
+        "message": "You signal the bouncer and both men are escorted out before another word is exchanged. The remaining clients appreciate the swift order—nobody comes here for a brawl. You lose two bookings tonight, but the message to the room is clear: this is a house of standards ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": -200,
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_discreet_noble_party",
+    "description": "A sealed letter arrives bearing a wax crest you recognize—minor nobility, major wealth. The contents are direct: Lord Veltrane wishes to book your entire establishment for a private evening. Every room, every worker, complete discretion. The fee offered is extraordinary, but it means turning away all other clients for the night and committing every available hand to a single patron's whims.",
+    "weight": 0.5,
+    "cooldown_days": 30,
+    "worker_selection": "none",
+    "building_type": [
+      "brothel"
+    ],
+    "background_image": "brothel_interior",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "choices": [
+      {
+        "option": "Accept the booking—clear the house for the noble. (High reward; workers exhausted)",
+        "message": "You clear the evening schedule, turn away the regulars with polite excuses, and prepare every room to the standard a lord expects. The party arrives after dark—masked, quiet, extravagant. By dawn the noble's steward presses a chest of gold into your hands with a nod that says this never happened. Your workers are exhausted but well-compensated, and a connection to nobility is worth more than one busy night ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "money": 1500,
+          "reputation": 15,
+          "energy": -10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline—you can't afford to shut out your regulars. (Small reputation gain)",
+        "message": "You pen a gracious refusal, citing prior commitments. The noble's steward collects the letter without expression. Your regulars arrive to a full house, unaware of the opportunity you passed up. The evening's take is steady, reliable, and unremarkable ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_wine_merchant_deal",
+    "description": "A wine merchant leans against your kitchen door, dust still on his boots from the southern road. He's offering six casks of a vintage you've only heard whispered about—Goldreach Reserve, supposedly from the last harvest before the vineyard burned. The price is below market if it's real. If it's vinegar in a fancy cask, you'll be serving embarrassment to your best tables.",
+    "weight": 1.0,
+    "cooldown_days": 21,
+    "worker_selection": "choose",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "restaurant_interior",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "choices": [
+      {
+        "option": "Have a worker inspect and buy the wine. (Clever check; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "message_success": "[acting_worker] uncorks a sample, holds it to the light, and runs through every test they know. The color is right, the nose is right, and the taste—unmistakable. This is the real thing. You buy all six casks at the offered price. Within the week your dining room is drawing patrons who heard about the Goldreach, and they're ordering full meals to go with it ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "[acting_worker] gives the merchant a confident nod after a quick taste—but confidence isn't the same as expertise. The first cask served to a table of regulars draws immediate complaints: flat, thin, nothing like the legendary vintage. The merchant is long gone, and your credibility takes the hit alongside your coin purse ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -500,
+            "reputation": -10
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pass on the deal—too risky. (No effect)",
+        "message": "You thank the merchant but decline. He shrugs, corks the sample, and heads for the door. Maybe it was genuine. Maybe it wasn't. Either way, the evening service runs on your usual stock, and nobody complains about what they don't know they missed.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_cooking_competition",
+    "description": "A runner from the Gilded Fork—the restaurant two streets over that's been stealing your lunch crowd—delivers a public challenge sealed in wax and pinned to your notice board for all to see. A cooking duel, open to the district, judges drawn from the merchant council. Refuse and you look afraid. Accept and you'd better win.",
+    "weight": 0.5,
+    "cooldown_days": 30,
+    "worker_selection": "choose",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "restaurant_interior",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "choices": [
+      {
+        "option": "Accept the challenge and send your best. (Cooking check; Potential: Reputation, Money)",
+        "condition": "Cooking",
+        "message_success": "[acting_worker] steps up to the competition station with the kind of quiet focus that makes the crowd lean in. Every chop is precise, every flavor deliberate, and when the judges taste the final plate their verdict is unanimous. The Gilded Fork's chef offers a handshake, the crowd cheers, and reservations at your restaurant double by the following morning ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] starts strong but buckles under the pressure—a sauce oversalted, a timing missed, a presentation that looked rushed next to the rival's polished plate. The judges deliberate briefly and the verdict is clear. The crowd disperses, and your competitor's smug smile follows you home. The district remembers who lost ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 20,
+            "joy": 5
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -15,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline the challenge publicly. (Loss: Reputation)",
+        "message": "You send the runner back with a polite refusal, citing a busy schedule. The Gilded Fork wastes no time declaring victory by forfeit. A few of your regulars ask why you didn't compete. The answers you give satisfy no one, least of all yourself ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -10,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_mystery_reviewer",
+    "description": "Your head server pulls you aside during the midday lull, eyes darting. A woman at table seven arrived alone, ordered a glass of water, and has been studying the menu for twenty minutes without ordering. She's taking notes. Small ones, barely visible—but your server is certain: that's Elara Quillbright, the food critic whose column can fill a dining room for a month or empty it overnight. She hasn't been recognized by anyone else yet.",
+    "weight": 1.0,
+    "cooldown_days": 21,
+    "worker_selection": "choose",
+    "building_type": [
+      "restaurant"
+    ],
+    "background_image": "restaurant_interior",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "choices": [
+      {
+        "option": "Assign your best worker to her table. (Service check; Potential: Reputation)",
+        "condition": "Service",
+        "message_success": "[acting_worker] approaches table seven with the kind of attentive grace that makes a guest feel important without feeling watched. Every course arrives at the perfect moment, every recommendation lands, and by the time dessert is cleared the critic is smiling despite herself. Her column the following week mentions your restaurant by name—in terms that make strangers queue at your door ({actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries too hard, and the critic notices. The service is hovering, the recommendations too eager, the attention so pointed that it becomes obvious she's been identified. Her column is brief and cutting: 'A restaurant that performs for critics rather than diners.' The queue at your door thins noticeably ({actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "reputation": 20,
+            "joy": 5
+          },
+          "failure": {
+            "reputation": -15,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Ignore the pressure—treat her like any other guest. (Small reputation gain)",
+        "message": "You tell your server to treat table seven like every other table. The food is what it always is; the service is what it always is. The critic's column the following week is favorable but not glowing—she describes a 'competent establishment with honest fare.' It's not the triumph it could have been, but it's not a wound either ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": 5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_rigged_dice_accusation",
+    "description": "The shouting starts at the craps table. A patron—three losing streaks deep and red in the face—slams his fist on the felt and announces to everyone within earshot that the dice are loaded. The room goes quiet in the way that only a gambling hall can: cards held mid-air, chips frozen between fingers. Every eye in the house is on you. How you handle the next sixty seconds determines whether this is a footnote or a disaster.",
+    "weight": 1.0,
+    "cooldown_days": 21,
+    "worker_selection": "choose",
+    "building_type": [
+      "casino"
+    ],
+    "background_image": "casino_interior",
+    "success_image": "casino_success",
+    "failure_image": "casino_failure",
+    "choices": [
+      {
+        "option": "Handle it publicly—prove the dice are fair. (Charm check; Potential: Reputation)",
+        "condition": "Charm",
+        "message_success": "[acting_worker] steps forward, picks up the accused dice, and invites the patron—and anyone else who cares to watch—to inspect them right there on the table. The dice are clean. The patron's bluster deflates as the crowd murmurs approval. Your house's transparency becomes the story, not the accusation ({actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] tries to defuse the situation but the crowd is already suspicious. The inspection is clumsy, the explanation unconvincing, and by the time the patron storms out he's taken half the room's confidence with him. The evening's tables are half-empty by closing ({actual_reputation} reputation, -5 Joy).",
+        "effect": {
+          "success": {
+            "reputation": 15,
+            "joy": 5
+          },
+          "failure": {
+            "reputation": -15,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Handle it privately—comp the patron and move on. (Cost: Money)",
+        "message": "You pull the patron aside, offer a sincere apology for his evening's luck, and press a stack of house chips and a drink voucher into his hands. He's not happy, but he's quieter. The room resumes, the tension fades, and the cost of silence is cheaper than the cost of a scene ({actual_money}).",
+        "effect": {
+          "money": -300,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_whale_arrives",
+    "description": "The floor manager finds you with the kind of urgency that means either catastrophe or opportunity. It's the latter: a merchant prince from the eastern provinces has walked into your casino with a retinue of four, ordered your most expensive drink without asking the price, and is now asking—politely but firmly—to raise the table limits. He wants to gamble for stakes that would make your accountant weep. The potential payout is extraordinary. So is the potential loss.",
+    "weight": 0.5,
+    "cooldown_days": 30,
+    "worker_selection": "none",
+    "building_type": [
+      "casino"
+    ],
+    "background_image": "casino_interior",
+    "success_image": "casino_success",
+    "failure_image": "casino_failure",
+    "choices": [
+      {
+        "option": "Allow the high-stakes game. (Risk: massive loss; Potential: massive gain)",
+        "condition": "building_skill",
+        "message_success": "The game runs for six hours. The merchant prince plays like someone who enjoys losing almost as much as winning—and tonight, the house wins. Your dealers handle the pressure without flinching, and by dawn the prince stands, tips generously, and promises to return. The take from a single evening exceeds a normal week ({actual_money}, {actual_reputation} reputation).",
+        "message_failure": "The merchant prince plays with terrifying precision. Every bet is calculated, every bluff impeccable. By the fourth hour your floor manager's face tells the story: the house is hemorrhaging gold. The prince collects his extraordinary winnings with a gracious bow and departs, leaving your vault significantly lighter ({actual_money}, {actual_reputation} reputation).",
+        "effect": {
+          "success": {
+            "money": 2000,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -1500,
+            "reputation": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Cap the bets at normal limits. (Small reputation loss)",
+        "message": "You politely explain that house rules apply to all patrons equally. The merchant prince's smile doesn't waver, but his interest does. He plays a few hands at your standard limits, finishes his drink, and leaves before midnight. You hear later that he found a casino willing to accommodate his appetite. The evening is safe, but unremarkable ({actual_reputation} reputation).",
+        "effect": {
+          "reputation": -5,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "guild_ancient_map_discovery",
+    "description": "One of your workers stumbles out of the guild's dusty archive with cobwebs in their hair and excitement in their eyes. Wedged behind a false panel in the back of an old shelf, they found a rolled parchment—brittle, yellowed, but unmistakable. It's a map to a dungeon that doesn't appear on any modern chart, marked with symbols that suggest it was sealed deliberately. The potential haul could be significant. So could the danger.",
+    "weight": 0.5,
+    "cooldown_days": 30,
+    "worker_selection": "choose",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "background_image": "guild_interior",
+    "success_image": "guild_success",
+    "failure_image": "guild_failure",
+    "choices": [
+      {
+        "option": "Organize an expedition to the dungeon. (Combat check; Potential: Money, Reputation)",
+        "condition": "Combat",
+        "message_success": "[acting_worker] leads a small party into the forgotten dungeon and returns three days later dusty, bruised, and grinning. The haul is real—old gold, enchanted trinkets, and a story that will draw adventurers to your guild for months. The map was worth more than anyone guessed ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "[acting_worker] leads the expedition but the dungeon's defenses are worse than the map suggested. The party retreats after a bad encounter on the second level—no treasure secured, supplies wasted, and one worker nursing wounds that will take time to heal. The map goes back in the archive, this time deliberately ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "effect": {
+          "success": {
+            "money": 1500,
+            "reputation": 20,
+            "joy": 5
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -5,
+            "health": -10,
+            "joy": -5
+          },
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Sell the map to a collector. (Gain: Money)",
+        "message": "You put the word out quietly, and within two days a collector arrives with a heavy purse and greedy eyes. The map changes hands. The gold is certain and immediate, even if the thought of what might have been lingers in the back of your mind ({actual_money}).",
+        "effect": {
+          "money": 500,
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Store the map for later—no rush. (No effect)",
+        "message": "You lock the map in your office safe and decide to revisit the matter when the time is right. The archive yielded one secret; perhaps patience will yield more. The map waits, and so do you.",
+        "effect": {
+          "success_chance": 0,
+          "joy": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "nsfw": false,
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_body_oil_session",
+    "description": "A repeat client sends word ahead: tonight he wants the full oil treatment—warm pressed almond from neck to ankle, slow hands, low light, and a worker who knows how to make skin talk louder than words. He’s paying triple the standard rate and expects his body handled like scripture. The kind of booking that builds a reputation—if the hands doing the work are good enough.",
+    "weight": 2,
+    "cooldown_days": 10,
+    "worker_selection": "player",
+    "building_type": [
+      "brothel"
+    ],
+    "nsfw": true,
+    "background_image": "brothel_oil",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Assign a worker with skilled hands. (Requires Hand; Potential: Money, Reputation)",
+        "condition": "Hand",
+        "skill_check": 45,
+        "message_success": "[acting_worker] warms the oil between both palms and starts at the shoulders—long strokes that follow the grain of the muscle, thumbs pressing into the knots along the spine. The client’s breathing slows within minutes. By the time hands reach the inner thighs, every touch reads deliberate: pressure where tension lives, featherweight where skin is thin. The client leaves loose-limbed, flushed, and already asking when he can book again.",
+        "message_failure": "[acting_worker] starts well but loses the rhythm halfway through. Oil pools in the wrong places, pressure turns clumsy on the ribs, and the transition from back to thighs is abrupt enough that the client tenses instead of melting. He pays the base rate, says nothing, and doesn’t rebook.",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 8,
+            "joy": 3
+          },
+          "failure": {
+            "money": 150,
+            "reputation": -3,
+            "joy": -2
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline. The booking is too demanding for tonight’s roster.",
+        "message": "You send polite regrets. The client takes his coin and his expectations elsewhere. No loss, no gain—but someone else’s house earns the story tonight.",
+        "effect": {
+          "reputation": -2,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "brothel_couples_fantasy_night",
+    "description": "A married couple arrives after midnight, nervous and electric. They’ve saved for months. What they want is specific: a threesome with one of your workers—someone who can read the room, move between two bodies without making either feel like a spectator, and keep the night about pleasure instead of awkwardness. They’ve never done this before. The booking fee is generous, the pressure is real, and the wrong worker will turn fantasy into regret.",
+    "weight": 1.5,
+    "cooldown_days": 14,
+    "worker_selection": "player",
+    "building_type": [
+      "brothel"
+    ],
+    "nsfw": true,
+    "background_image": "brothel_couple",
+    "success_image": "brothel_success",
+    "failure_image": "brothel_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Send someone who reads people. (Requires Group; Potential: Money, Reputation)",
+        "condition": "Group",
+        "skill_check": 50,
+        "message_success": "[acting_worker] reads the couple within seconds—who’s bold, who’s shy, who needs eye contact and who needs permission. The night starts slow: wine, conversation, a hand on a knee that nobody pulls away from. When clothes come off, [acting_worker] moves between them like the third voice in a chord—never pushing, never absent. The wife cries afterward, not from sadness. They leave holding hands and whispering. The booking is one for the house ledger.",
+        "message_failure": "[acting_worker] tries, but the dynamic never clicks. The husband freezes up, the wife overcompensates, and [acting_worker] can’t find the rhythm that turns three strangers into something that works. The couple pays and leaves quietly. They won’t be back.",
+        "effect": {
+          "success": {
+            "money": 1000,
+            "reputation": 12,
+            "joy": 5
+          },
+          "failure": {
+            "money": 200,
+            "reputation": -5,
+            "joy": -3
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Turn them away. Your house isn’t set up for couples tonight.",
+        "message": "You explain that the right worker isn’t available and suggest they come back another night. They nod, disappointed but not offended. The coin stays in their pocket. The fantasy stays unresolved.",
+        "effect": {
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_rare_truffle_delivery",
+    "description": "A forager stumbles through your kitchen door at dawn, mud to the elbows, cradling a cloth-wrapped bundle like a newborn. Inside: three black winter truffles the size of a fist—the kind that don’t appear on any market stall because anyone who finds them sells direct to noble houses. He’s offering them to you first because he owes your cook a favor. The price is steep. The dishes you could build around them would be legend.",
+    "weight": 1.5,
+    "cooldown_days": 21,
+    "worker_selection": "player",
+    "building_type": [
+      "restaurant"
+    ],
+    "nsfw": false,
+    "background_image": "restaurant_truffle",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Buy the truffles and build a special menu. (Cost: Money; Requires Craft; Potential: Money, Reputation)",
+        "condition": "Craft",
+        "skill_check": 55,
+        "message_success": "[acting_worker] shaves the first truffle over hand-cut pasta with brown butter and sage—the smell alone stops conversation in the dining room. The second goes into a risotto that takes forty minutes and tastes like the forest floor after rain. The third becomes a sauce for seared venison that a visiting count calls the best thing he’s eaten in two provinces. By week’s end, the menu has a waiting list and your name is in conversations you didn’t start.",
+        "message_failure": "[acting_worker] slices the truffle too thick, drowns it in cream, and serves it over meat that fights the flavor instead of carrying it. The diners eat politely. No one asks for seconds. The remaining truffles are used competently but without the spark that justifies the price. You recoup costs, barely. The forager’s favor was wasted.",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 15
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -3
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pass. The price is too high for a gamble on truffles.",
+        "message": "You thank the forager and send him on his way. He shrugs, wraps the bundle, and walks three doors down to your competitor. By evening the smell of truffle oil drifts across the street. Your cooks say nothing. They don’t need to.",
+        "effect": {
+          "reputation": -2,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "restaurant_noble_poison_scare",
+    "description": "Midway through the second course, a minor lord pushes back from the table, face white, hand on his stomach. His companion shouts the word every kitchen fears: poison. The dining room goes silent. Forks stop. Eyes turn to you. The lord may be ill from bad oysters, cheap wine, or genuine foul play—but until you prove otherwise, every plate on every table is a suspect and your reputation is bleeding by the second.",
+    "weight": 2,
+    "cooldown_days": 14,
+    "worker_selection": "player",
+    "building_type": [
+      "restaurant"
+    ],
+    "nsfw": false,
+    "background_image": "restaurant_poison",
+    "success_image": "restaurant_success",
+    "failure_image": "restaurant_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Have a worker taste-test the dish publicly. (Requires Service; Risk: Health; Potential: Reputation)",
+        "condition": "Service",
+        "skill_check": 40,
+        "message_success": "[acting_worker] picks up the lord’s plate, meets the room’s eyes, and takes a full bite without hesitation. Chews. Swallows. Waits. Nothing happens. The lord’s color returns—bad oyster, not bad intent. [acting_worker] clears the plate with a bow, the kitchen sends a fresh course on the house, and by dessert the whole table is laughing about it. The story becomes an asset: the house where they’ll eat from your plate to prove it’s clean.",
+        "message_failure": "[acting_worker] takes the bite but hesitates—and the hesitation is louder than any reassurance. Two tables ask for their bill. The lord is fine by morning, but the image of a worker pausing before eating their own food lingers in the district’s memory longer than the truth.",
+        "effect": {
+          "success": {
+            "money": 200,
+            "reputation": 12
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -8,
+            "health": -5
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Apologize, comp the meal, and move on. (Cost: Money)",
+        "message": "You cover the lord’s bill, send a bottle to his table, and have a quiet word with the kitchen about shellfish sourcing. The lord accepts graciously. The dining room resumes. No drama, no story—which is exactly what you wanted.",
+        "effect": {
+          "money": -150,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_card_counter_prodigy",
+    "description": "Your pit boss pulls you aside with sweat on his lip. Table six—the quiet one in the grey coat—has been winning for three hours straight. Not flashy wins. Small, steady, relentless. The kind of pattern that says the cards aren’t random to him anymore. He’s counting, and he’s better at it than anyone your dealers have ever faced. The house edge is bleeding. Other tables are watching.",
+    "weight": 1.5,
+    "cooldown_days": 14,
+    "worker_selection": "player",
+    "building_type": [
+      "casino"
+    ],
+    "nsfw": false,
+    "background_image": "casino_counter",
+    "success_image": "casino_success",
+    "failure_image": "casino_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Send your best dealer to outplay him. (Requires Clever; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "skill_check": 55,
+        "message_success": "[acting_worker] takes over table six with fresh decks and a shuffle pattern the counter hasn’t seen. The first hand breaks his rhythm. The second makes him doubt his numbers. By the fifth, he’s betting scared instead of calculated, and [acting_worker] takes back the night’s losses with the calm of someone sorting laundry. The counter cashes out at a modest loss, tips his hat, and leaves knowing this floor has teeth.",
+        "message_failure": "[acting_worker] sits down but the counter adjusts within two hands. He reads the new shuffle, recalibrates, and keeps winning—quieter now, but faster. By the time you pull [acting_worker] off the table, the damage is worse than before. The counter leaves with a fat purse and a smile that says he’ll be back.",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -600,
+            "reputation": -8
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Ask him to leave. House rules.",
+        "message": "You approach table six and explain, quietly, that the house reserves the right to end any session. He nods—no scene, no argument. He pockets his winnings, tips the waitress, and walks out. Clean exit, modest loss. But the regulars saw you blink first.",
+        "effect": {
+          "money": -200,
+          "reputation": -3,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "casino_last_hand_desperation",
+    "description": "A merchant who’s been losing all night stands up from the table with nothing left. Then he puts his signet ring on the felt—the kind that seals trade contracts across three provinces. He wants one last hand, everything on the line. Your dealer looks at you. The ring is worth more than the merchant lost tonight. If you take the bet and he wins, you owe double. If he loses, you own a piece of his commercial identity.",
+    "weight": 1,
+    "cooldown_days": 21,
+    "worker_selection": "player",
+    "building_type": [
+      "casino"
+    ],
+    "nsfw": false,
+    "background_image": "casino_lasthand",
+    "success_image": "casino_success",
+    "failure_image": "casino_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Accept the bet. Let the cards decide. (Risk: Money; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "skill_check": 50,
+        "message_success": "[acting_worker] deals the hand clean. The merchant’s face tells the story before the cards do—he had nothing. The ring stays on your side of the felt. He stands, nods once, and walks out without a word. The room exhales. By morning, the story of the signet ring is in every gambling den in the district. You sell it back to him a week later for twice what he lost—and he’s grateful for the discretion.",
+        "message_failure": "[acting_worker] deals the hand and the merchant turns over three queens. The room erupts. You pay out double from the house coffers while the merchant kisses his ring and walks out a legend. Your regulars love the story. Your accountant does not.",
+        "effect": {
+          "success": {
+            "money": 1200,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -800,
+            "reputation": 5
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Refuse. The house doesn’t take heirlooms.",
+        "message": "You shake your head. The merchant stares, then laughs—a bitter, exhausted sound. He takes his ring and leaves. The room respects the call. No spectacle, no legend. Just a clean floor and a house that knows where the line is.",
+        "effect": {
+          "reputation": 3,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "tavern_legendary_drinking_contest",
+    "description": "A mountain of a man kicks the door open and slams a barrel of dwarven stout on your bar. He bellows a challenge to the room: anyone who can outdrink him gets the barrel and his purse. If nobody lasts, he drinks free for a month and tells every tavern in the province that yours breeds lightweights. Three regulars are already rolling up their sleeves. The room wants blood—or at least vomit.",
+    "weight": 2,
+    "cooldown_days": 14,
+    "worker_selection": "player",
+    "building_type": [
+      "tavern"
+    ],
+    "nsfw": false,
+    "background_image": "tavern_drinking",
+    "success_image": "tavern_success",
+    "failure_image": "tavern_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Enter a worker in the contest. (Risk: Health; Potential: Money, Reputation)",
+        "condition": "Service",
+        "skill_check": 45,
+        "message_success": "[acting_worker] sits down across from the giant, matches him mug for mug, and doesn’t blink. Twelve rounds in, the challenger’s eyes glaze. Fourteen, his hand misses the handle. Sixteen, his forehead hits the bar. [acting_worker] finishes the seventeenth standing, the room roars, and the barrel is yours. The story will be told in this tavern for years.",
+        "message_failure": "[acting_worker] holds strong through eight rounds but the ninth hits like a wall. The challenger grins as [acting_worker] slides sideways off the stool. He claims his month of free drinks to thunderous applause. Your tavern just became famous—for losing.",
+        "effect": {
+          "success": {
+            "money": 400,
+            "reputation": 10,
+            "joy": 5
+          },
+          "failure": {
+            "money": -200,
+            "reputation": -5,
+            "health": -8
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Decline. Your staff isn’t for entertainment.",
+        "message": "You wave the challenger off. He shrugs, drinks the barrel himself over the next three hours, pays his tab, and leaves. The regulars mutter about what could have been.",
+        "effect": {
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": -2
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "tavern_ghost_story_night",
+    "description": "The fire is low, the wind is howling, and a traveler at the corner table starts talking—quietly at first, then louder as the room leans in. A ghost story. Real or not, the voice carries it like gospel. Then the traveler stops mid-sentence, looks at you, and says: ‘Your turn. This room has its own ghosts—I can feel them. Someone here knows the story.’ Every eye turns to your staff.",
+    "weight": 2,
+    "cooldown_days": 10,
+    "worker_selection": "player",
+    "building_type": [
+      "tavern"
+    ],
+    "nsfw": false,
+    "background_image": "tavern_ghost",
+    "success_image": "tavern_success",
+    "failure_image": "tavern_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Have a worker tell the tavern’s story. (Requires Charm; Potential: Reputation)",
+        "condition": "Charm",
+        "skill_check": 40,
+        "message_success": "[acting_worker] pulls a chair to the fire and starts talking. Not loud—just enough to carry. A story about the cellar, a locked door nobody opens, footsteps on stairs that don’t exist anymore. True or invented, it doesn’t matter—the room believes every word. When it ends, the silence lasts three full seconds before someone orders a round for the whole house. Your tavern just became the kind of place people tell other people about.",
+        "message_failure": "[acting_worker] tries, but the delivery is flat—too many details, wrong pacing, a punchline where the dread should be. The room drifts back to their drinks. The traveler finishes the tale themselves, and the crowd cheers for them instead.",
+        "effect": {
+          "success": {
+            "reputation": 8,
+            "joy": 3
+          },
+          "failure": {
+            "reputation": -2,
+            "joy": -1
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Let the traveler have the floor. It’s their show.",
+        "message": "You pour the traveler another drink and let the story run. The room loves it. They tip well and stay late. A good night, but the story belongs to someone who won’t be back.",
+        "effect": {
+          "money": 100,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "guild_wounded_beast_trophy",
+    "description": "A hunter staggers through the guild door dragging something behind him—the severed head of a basilisk, stone eye still glowing faintly amber. He collapses before reaching the bounty board. The head is worth a fortune to the right alchemist, but the hunter is bleeding badly and the basilisk’s mate is almost certainly still out there. The bounty board says dead or alive. The head says the job is half done.",
+    "weight": 1.5,
+    "cooldown_days": 14,
+    "worker_selection": "player",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "nsfw": false,
+    "background_image": "guild_basilisk",
+    "success_image": "guild_success",
+    "failure_image": "guild_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Send a worker to finish the job. (Requires Combat; Risk: Health; Potential: Money, Reputation)",
+        "condition": "Combat",
+        "skill_check": 55,
+        "message_success": "[acting_worker] tracks the mate to its den using the blood trail from the first kill. The fight is ugly—stone gaze, whipping tail, jaws that crush plate—but [acting_worker] keeps low, strikes between lunges, and takes the second head clean. Both trophies on the bounty board by nightfall. The guild earns its cut, the alchemist gets two specimens, and your name climbs the board.",
+        "message_failure": "[acting_worker] finds the den but the basilisk is faster than expected. A glancing hit from the tail cracks ribs before [acting_worker] retreats. The second head stays attached to a very alive, very angry basilisk. You sell the first head for a reduced price. The bounty goes unclaimed.",
+        "effect": {
+          "success": {
+            "money": 1000,
+            "reputation": 12,
+            "joy": 3
+          },
+          "failure": {
+            "money": 200,
+            "reputation": -5,
+            "health": -15
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Sell the head and patch up the hunter. (Gain: Money)",
+        "message": "You treat the hunter’s wounds and sell the basilisk head to the alchemist for a fair price. No second hunt, no second risk. Practical, profitable, and nobody else bleeds today.",
+        "effect": {
+          "money": 400,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {},
+    "player_gender_requirement": null
+  },
+  {
+    "id": "guild_cursed_sword_client",
+    "description": "A woman walks in carrying a longsword wrapped in chains and salt cloth. She sets it on the counter and steps back as if it might bite. The blade hums—faintly, but enough to make the nearest candle gutter. She says it belonged to her father. Since he died, the sword has cut three people who touched it, always on the left hand, always the ring finger. She wants it identified, cleansed, or destroyed. She’ll pay whatever it costs to stop dreaming about it.",
+    "weight": 1,
+    "cooldown_days": 21,
+    "worker_selection": "player",
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "nsfw": false,
+    "background_image": "guild_cursed",
+    "success_image": "guild_success",
+    "failure_image": "guild_failure",
+    "worker_gender_requirement": null,
+    "choices": [
+      {
+        "option": "Have a worker examine and cleanse the blade. (Requires Craft; Risk: Health; Potential: Money, Reputation)",
+        "condition": "Craft",
+        "skill_check": 50,
+        "message_success": "[acting_worker] unwraps the blade with gloved hands and reads the runes along the fuller. Old binding script—a jealousy curse, blood-linked to the father’s wedding ring. The cleansing takes an hour of salt, fire, and a chant [acting_worker] learned from a witch three jobs ago. When it’s done, the hum dies. The candles stop flickering. The woman lifts the sword and nothing happens. She weeps, pays double, and tells every adventurer she knows where to bring cursed steel.",
+        "message_failure": "[acting_worker] identifies the curse but the cleansing goes wrong—the sword screams, the salt circle breaks, and [acting_worker] catches a cut across the left hand before the blade is re-wrapped. The woman takes her sword back, white-faced. You patch [acting_worker] up and refund half the fee.",
+        "effect": {
+          "success": {
+            "money": 700,
+            "reputation": 10
+          },
+          "failure": {
+            "money": -100,
+            "reputation": -3,
+            "health": -10
+          },
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Refuse. Cursed weapons are above your pay grade.",
+        "message": "You tell the woman your guild handles bounties, not exorcisms. She wraps the sword back up, chains clinking, and carries it out. The hum fades. Your workers exchange relieved glances. Smart call—probably.",
+        "effect": {
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0,
+          "joy": 0
+        }
+      }
+    ],
+    "event_music": null,
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "limited": false,
     "random_worker": false,
     "always_available": false,
     "worker_filter": {},

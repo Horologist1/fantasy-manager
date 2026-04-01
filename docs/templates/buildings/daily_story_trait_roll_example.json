@@ -2,9 +2,10 @@
   "id": "example_trait_specialization_story",
   "weight": 5,
   "report": "Example: Trait specialization with weights",
-  "description": "positive_traits and negative_traits are dicts: trait -> weight. Weight affects roll AND message pick frequency.",
+  "description": "positive_traits and negative_traits are dicts: trait -> weight. Weight is added to the d100 skill threshold (not the die) and affects message pick frequency.",
   "difficulty_modifier": 0,
   "worker_gender_requirement": null,
+  "player_gender_requirement": null,
   "nsfw_only": false,
   "skill_options": ["Charm"],
   "positive_traits": {

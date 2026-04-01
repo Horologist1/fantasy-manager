@@ -1382,9 +1382,9 @@
     "modifiers": {
       "skill_modifiers": {
         "Craft": 5,
-        "Combat": 3
+        "Combat": 5
       },
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.1
     },
     "description": "Requires Magical. They possess strong magical abilities, significantly enhancing craft and combat skills. [+20% $, +5 Craft, +3 Combat]",
     "attribute_caps": {},
@@ -1406,7 +1406,7 @@
     "modifiers": {
       "skill_modifiers": {
         "Craft": 6,
-        "Combat": 4
+        "Combat": 6
       },
       "earnings_multiplier": 1.3
     },

@@ -1,24 +1,5 @@
 # building_logic.rpy
-# Cargar tipos de edificios y lógica asociada
-
-# Load building types from JSON (main file + special_buildings: academy, arena, etc.).
-# Always load from disk so we never use a truncated/corrupt building_types_json from a save.
-init 100 python:
-    import json
-    try:
-        with renpy.file("data/buildings/building_types.json") as f:
-            store.building_types_json = json.load(f)
-        with renpy.file("data/buildings/special_buildings.json") as f:
-            special_data = json.load(f)
-        special_list = special_data.get("building_types", [])
-        if special_list:
-            existing_ids = {bt.get("id") for bt in store.building_types_json.get("building_types", [])}
-            for bt in special_list:
-                if bt.get("id") not in existing_ids:
-                    store.building_types_json.setdefault("building_types", []).append(bt)
-                    existing_ids.add(bt.get("id"))
-    except Exception as e:
-        renpy.log("building_logic: Failed to load/merge building types (building_types + special_buildings): " + str(e))
+# Building logic and helpers. Building types are loaded in script.rpy (merge by id + daily_story_extensions).
 
 init python:
 
@@ -173,6 +154,27 @@ init python:
         except Exception as e:
             renpy.log(f"sync_building_assignments_from_workers error: {e}")
 
+    def resolve_profession_for_job(btype, job_id):
+        """Match profession by id case-insensitively. Returns (display_name, profession_dict_or_None).
+        Rest is recognized even when the building type omits a rest profession (e.g. Arena)."""
+        if job_id is None:
+            return ("Unassigned", None)
+        jid = str(job_id).strip()
+        jlow = jid.lower()
+        if jlow in ("", "unassigned"):
+            return ("Unassigned", None)
+        if jlow == "rest":
+            return ("Rest", None)
+        if not btype:
+            return (jid, None)
+        for p in btype.get("professions", []) or []:
+            pid = p.get("id")
+            if pid is not None and str(pid).strip().lower() == jlow:
+                return (p.get("name", jid), p)
+        return (jid, None)
+
+    store.resolve_profession_for_job = resolve_profession_for_job
+
     def get_worker_profession_and_building_display(worker):
         """Returns a string like 'Prostitute - Brothel: Building 1' or 'Unassigned'."""
         if not worker or not hasattr(worker, 'get'):
@@ -201,12 +203,7 @@ init python:
         job_id = jobs.get(worker.get("name", ""), "")
         if not job_id:
             return building_display
-        job_lower = str(job_id).lower()
-        if "rest" in job_lower:
-            prof_display = "Rest"
-        else:
-            prof = next((p for p in btype.get("professions", []) if p.get("id") == job_id), None)
-            prof_display = prof.get("name", job_id) if prof else job_id
+        prof_display, _ = resolve_profession_for_job(btype, job_id)
         return prof_display + " - " + building_display
 
     def change_building_type(building_name):
@@ -348,7 +345,10 @@ init python:
 
     def process_manager_auto_rest(restore_only=False):
         """Sistema robusto: Usa store.workers como única fuente de verdad."""
-        # 1. Agrupar trabajadores por edificio usando store.workers
+        _norm_pct = getattr(store, "normalize_auto_rest_entry_pct_for_worker", None)
+        if not callable(_norm_pct):
+            _norm_pct = lambda ww: 35
+
         workers_by_building = {}
         for w in store.workers:
             b_name = w.get("assigned_building", "Unassigned")
@@ -367,10 +367,6 @@ init python:
                 building["servant_jobs"] = {}
             jobs = building["servant_jobs"]
             
-            # 2. Procesar todos los edificios: poner a descansar a los de poca energía y restaurar a los que ya descansaron.
-            # (Antes se exigía un manager en el edificio; se quitó para que siempre se pongan a descansar / vuelvan al trabajo.)
-
-            # 3. Procesar a todos los trabajadores de este edificio
             for w in workers_here:
                 name = w.get("name")
                 if not name:
@@ -378,11 +374,9 @@ init python:
                 current_job_raw = jobs.get(name, "")
                 current_job_norm = str(current_job_raw).lower()
                 
-                # No procesar si no tiene trabajo asignado
                 if not current_job_raw or current_job_norm == "unassigned":
                     continue
 
-                # Forzar numérico: partidas antiguas o saves pueden tener energy como string y romper la comparación
                 try:
                     energy = int(float(w.get("energy", 0) or 0))
                 except (TypeError, ValueError):
@@ -394,29 +388,59 @@ init python:
                 if max_e <= 0:
                     continue
 
-                # Umbrales
-                rest_threshold = max_e * 0.35
-                restore_threshold = max_e * 0.95
-                
-                # Caso A: Poner a descansar (solo si no es restore_only)
-                if not restore_only and energy < rest_threshold and "rest" not in current_job_norm:
-                    w["previous_profession"] = current_job_raw
-                    jobs[name] = "rest"
-                    renpy.log(f"AUTOREST: {name} puesto a descansar (Energía {energy}/{max_e})")
-                
-                # Caso B: Restaurar trabajo (con fallback para partidas antiguas sin previous_profession)
-                elif "rest" in current_job_norm and energy >= restore_threshold:
-                    prev = w.get("previous_profession")
-                    if prev:
-                        jobs[name] = prev
-                        w["previous_profession"] = None
-                        renpy.log(f"AUTOREST: {name} vuelve a {jobs[name]} (Energía {energy}/{max_e})")
+                try:
+                    health = int(float(w.get("health", 0) or 0))
+                except (TypeError, ValueError):
+                    health = 0
+                try:
+                    max_h = int(calculate_max_health(w))
+                except (TypeError, ValueError):
+                    max_h = 0
+                if max_h < 0:
+                    max_h = 0
+
+                entry_pct = _norm_pct(w)
+                try:
+                    pct_frac = float(entry_pct) / 100.0
+                except (TypeError, ValueError):
+                    pct_frac = 0.35
+
+                rest_threshold_e = max_e * pct_frac
+                restore_threshold_e = max_e * 0.95
+                rest_threshold_h = max_h * pct_frac if max_h > 0 else None
+                restore_threshold_h = max_h * 0.95 if max_h > 0 else None
+
+                auto_on = bool(w.get("auto_rest", False))
+
+                if not restore_only and auto_on and "rest" not in current_job_norm:
+                    need_e = energy < rest_threshold_e
+                    need_h = (rest_threshold_h is not None) and (health < rest_threshold_h)
+                    if need_e or need_h:
+                        w["previous_profession"] = current_job_raw
+                        jobs[name] = "rest"
+                        renpy.log(
+                            f"AUTOREST: {name} puesto a descansar (E {energy}/{max_e}, H {health}/{max_h if max_h > 0 else 'N/A'}, umbral entrada {entry_pct}%)"
+                        )
+
+                elif "rest" in current_job_norm:
+                    if auto_on:
+                        energy_ok = energy >= restore_threshold_e
+                        health_ok = (restore_threshold_h is None) or (health >= restore_threshold_h)
+                        can_restore = energy_ok and health_ok
                     else:
-                        # Partida antigua o worker puesto a Rest sin guardar previous_profession: usar primera profesión del edificio
-                        first_prof = _get_first_profession_id_for_building(building)
-                        if first_prof:
-                            jobs[name] = first_prof
-                            renpy.log(f"AUTOREST: {name} sin previous_profession -> restaurado a {first_prof} (Energía {energy}/{max_e})")
+                        can_restore = energy >= restore_threshold_e
+
+                    if can_restore:
+                        prev = w.get("previous_profession")
+                        if prev:
+                            jobs[name] = prev
+                            w["previous_profession"] = None
+                            renpy.log(f"AUTOREST: {name} vuelve a {jobs[name]} (Energía {energy}/{max_e}, Salud {health}/{max_h if max_h > 0 else 'N/A'})")
+                        else:
+                            first_prof = _get_first_profession_id_for_building(building)
+                            if first_prof:
+                                jobs[name] = first_prof
+                                renpy.log(f"AUTOREST: {name} sin previous_profession -> restaurado a {first_prof} (Energía {energy}/{max_e})")
 
     def clear_worker_autorest_state(worker):
         if worker:
@@ -457,3 +481,67 @@ init python:
         
         building["servant_jobs"][worker_name] = job_id
         renpy.restart_interaction()
+
+    def _fmt_staffing_mult(value):
+        try:
+            v = float(value)
+            if v == int(v):
+                return str(int(v))
+            s = "%g" % v
+            return s
+        except (TypeError, ValueError):
+            return "?"
+
+    def profession_mechanics_summary(prof):
+        """UI hint: Essential; Bonus staffed if >1; Synergy only if presence_roll_bonus != 0 (positive / negative)."""
+        if not prof or not hasattr(prof, "get"):
+            return ""
+        _ess = "#8b5a2a"
+        _bon = "#7a6230"
+        _syn = "#3d6470"
+        _syn_neg = "#6b3d3d"
+        lines = []
+        has_pen = "staffing_penalty" in prof
+        has_bon = "staffing_bonus" in prof
+        if has_pen or has_bon:
+            try:
+                empty_m = float(prof.get("staffing_penalty", 1.0))
+                staffed_m = float(prof.get("staffing_bonus", 1.0))
+                if empty_m <= 0:
+                    empty_m = 1.0
+                if staffed_m <= 0:
+                    staffed_m = 1.0
+                if has_pen and abs(empty_m - 1.0) > 1e-9:
+                    lines.append(
+                        "{{color={0}}}Essential:{{/color}} ×{1} earnings if this job is empty.".format(
+                            _ess,
+                            _fmt_staffing_mult(empty_m),
+                        )
+                    )
+                if staffed_m > 1.0:
+                    lines.append(
+                        "{{color={0}}}Bonus:{{/color}} ×{1} earnings if at least 1 worker is doing this job.".format(
+                            _bon,
+                            _fmt_staffing_mult(staffed_m),
+                        )
+                    )
+            except (TypeError, ValueError):
+                pass
+        if "presence_roll_bonus" in prof:
+            try:
+                x = int(float(prof.get("presence_roll_bonus")))
+                if x > 0:
+                    lines.append(
+                        "{{color={0}}}Synergy:{{/color}} +{1} skill bonus per worker to other jobs.".format(_syn, x)
+                    )
+                elif x < 0:
+                    lines.append(
+                        "{{color={0}}}Negative synergy:{{/color}} this role hinders other professions by −{1} to the skill check per worker in this job.".format(
+                            _syn_neg,
+                            abs(x),
+                        )
+                    )
+                # x == 0: no synergy line (key may exist for schema completeness)
+            except (TypeError, ValueError):
+                pass
+        return "\n".join(lines) if lines else ""

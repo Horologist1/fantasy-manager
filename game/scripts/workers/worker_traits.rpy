@@ -42,7 +42,8 @@ init python:
         """Discover trait files using Ren'Py's file API (same approach as worker_loader).
         Uses renpy.list_files() so traits are found regardless of project layout or gamedir."""
         traits_prefix = "data/traits/"
-        all_files = renpy.list_files() if hasattr(renpy, 'list_files') else []
+        _gcfl = getattr(store, "get_cached_file_list", None)
+        all_files = _gcfl() if callable(_gcfl) else (renpy.list_files() if hasattr(renpy, 'list_files') else [])
         discovered = sorted([
             f for f in all_files
             if f.startswith(traits_prefix) and f.endswith(".json")
@@ -133,7 +134,7 @@ init python:
     def get_all_traits():
         """Return trait definitions from cache. Use store (not globals) so ensure_worker_defaults sees it."""
         cached = getattr(store, "_trait_def_cache", None)
-        if isinstance(cached, dict) and cached:
+        if hasattr(cached, "get") and cached:
             return list(cached.values())
         return refresh_traits_cache(force=True) or []
 
@@ -178,7 +179,7 @@ init python:
         """Return True if trait conflicts with any of worker's existing traits."""
         cache = cache or getattr(store, "_trait_def_cache", {})
         for existing_name in (worker_traits or []):
-            existing_def = cache.get(existing_name) if isinstance(cache, dict) else None
+            existing_def = cache.get(existing_name) if hasattr(cache, "get") else None
             if existing_def and trait.get("name") in existing_def.get("conflicts", []):
                 return True
             if trait.get("name") and existing_name in trait.get("conflicts", []):
@@ -223,7 +224,13 @@ init python:
         if not can_assign_trait_to_worker(trait_def, worker):
             renpy.log(f"Cannot add trait '{trait_name}' to {worker.get('name', 'Unknown')} - gender restriction not met")
             return
-            
+
+        # Check prerequisite traits (requires_traits)
+        if not worker_meets_trait_requirements(trait_def, worker.get("traits") or []):
+            missing = [r for r in (trait_def.get("requires_traits") or []) if r not in (worker.get("traits") or [])]
+            renpy.log(f"Cannot add trait '{trait_name}' to {worker.get('name', 'Unknown')} - missing required traits: {missing}")
+            return
+
         if "traits" not in worker:
             worker["traits"] = []
 
@@ -309,16 +316,30 @@ init python:
                     on_expire = trait_def.get("on_expire") or {}
                     add_trait_data = on_expire.get("add_trait")
                     if add_trait_data:
-                        has_get = hasattr(add_trait_data, "get") and callable(getattr(add_trait_data, "get", None))
-                        if has_get:
-                            new_name = add_trait_data.get("name")
-                            new_duration = int(add_trait_data.get("duration", 0))
+                        if hasattr(add_trait_data, "get") and callable(getattr(add_trait_data, "get", None)):
+                            entries = [add_trait_data]
+                        elif isinstance(add_trait_data, (str, bytes)):
+                            entries = [add_trait_data]
+                        elif hasattr(add_trait_data, "__iter__"):
+                            entries = list(add_trait_data)
+                        else:
+                            entries = []
+                        for entry in entries:
+                            if hasattr(entry, "get") and callable(getattr(entry, "get", None)):
+                                new_name = entry.get("name") or entry.get("trait")
+                                try:
+                                    new_duration = int(entry.get("duration", 0) or 0)
+                                except Exception:
+                                    new_duration = 0
+                            elif isinstance(entry, (str, bytes)):
+                                new_name = str(entry)
+                                new_duration = 0
+                            else:
+                                new_name = None
+                                new_duration = 0
                             if new_name:
                                 add_trait_with_duration(worker, new_name, new_duration)
                                 renpy.log(f"Trait '{trait_name}' expired for {worker.get('name', 'Unknown')}, applied on_expire: {new_name}")
-                        elif isinstance(add_trait_data, str):
-                            add_trait_with_duration(worker, add_trait_data, 0)
-                            renpy.log(f"Trait '{trait_name}' expired for {worker.get('name', 'Unknown')}, applied on_expire: {add_trait_data}")
 
     store.check_trait_durations = check_trait_durations
 
@@ -387,7 +408,6 @@ init python:
 
     def apply_trait_secondary_modifiers(worker):
         """Apply secondary attribute modifiers from traits (joy, rebelliousness, etc.)."""
-        # This is just an alias for the _once version for compatibility
         apply_trait_secondary_modifiers_once(worker)
 
     def recalculate_trait_modifiers(worker):
@@ -543,7 +563,7 @@ init python:
         trait_source = traits_list if traits_list else []
         if not trait_source:
             cache = getattr(store, "_trait_def_cache", None)
-            if isinstance(cache, dict) and cache:
+            if hasattr(cache, "get") and cache:
                 trait_source = list(cache.values())
         if not trait_source:
             renpy.log(f"TRAITS: No trait source available for {worker.get('name', 'Unknown')}; skipping backfill")
@@ -609,4 +629,6 @@ init python:
             recalculate_trait_modifiers(worker)
         else:
             renpy.log(f"Could not add any traits to {worker.get('name', 'Unknown')} - no suitable traits available")
+
+    store.ensure_minimum_traits = ensure_minimum_traits
 

@@ -1,45 +1,31 @@
-# worker_loader.rpy - Improved version that loads from multiple locations
 init python:
+    _worker_json_files_cache = None
+
+    def _get_worker_json_files(refresh=False):
+        """
+        Cache worker JSON file list to avoid repeated renpy.list_files() scans.
+        """
+        global _worker_json_files_cache
+        if refresh or _worker_json_files_cache is None:
+            workers_folder_path = "data/workers"
+            _gcfl = getattr(store, "get_cached_file_list", None)
+            _all_files = _gcfl() if callable(_gcfl) else renpy.list_files()
+            _worker_json_files_cache = [
+                f for f in _all_files
+                if f.startswith(workers_folder_path) and f.endswith(".json")
+            ]
+        return list(_worker_json_files_cache)
+
     def _ensure_worker_min_traits(worker):
-        """Add random traits until worker has 3-5 total. Respects gender_restriction, requires_traits, conflicts, only_assigned, nsfw.
-        Applies to ALL workers including unique - recruitment unique workers should also have 3-5 traits like Buy servants."""
-        traits = worker.get("traits", [])
-        worker["traits"] = [t for t in (traits if isinstance(traits, list) else []) if isinstance(t, str) and t]
+        """Delegate to ensure_minimum_traits in worker_traits.rpy (direct access to validation functions, no getattr fallbacks).
+        Kept as a thin wrapper so callers using store._ensure_worker_min_traits still work.
+        Picks its own random target (3-5) so a second pass can top-up a worker that got a low target on the first pass."""
+        emt = getattr(store, "ensure_minimum_traits", None)
+        if not callable(emt):
+            renpy.log("TRAITS: ensure_minimum_traits not available; skipping backfill for %s" % worker.get("name", "?"))
+            return
         target = random.randint(3, 5)
-        if len(worker["traits"]) >= target:
-            return
-        cache = getattr(store, "_trait_def_cache", None)
-        if not isinstance(cache, dict) or not cache:
-            return
-        nsfw_ok = getattr(persistent, "nsfw_enabled", False)
-        can_assign = getattr(store, "can_assign_trait_to_worker", lambda t, w: True)
-        conflicts_check = getattr(store, "trait_conflicts_with_worker", lambda t, w, c=None: False)
-        meets_reqs = getattr(store, "worker_meets_trait_requirements", lambda t, w: True)
-        # Option: only_traits_without_requirements = True → only traits with no gender_restriction
-        only_no_reqs = getattr(persistent, "only_traits_without_requirements", False)
-        possible = [
-            t for t in cache.values()
-            if t.get("name") and t["name"] not in worker["traits"]
-            and not t.get("only_assigned", False)
-            and (nsfw_ok or not t.get("nsfw", False))
-            and (not only_no_reqs or not t.get("gender_restriction"))
-            and can_assign(t, worker)
-            and meets_reqs(t, worker["traits"])
-            and not conflicts_check(t, worker["traits"], cache)
-        ]
-        if not possible:
-            return
-        random.shuffle(possible)
-        needed = max(0, target - len(worker["traits"]))
-        for t in possible:
-            if needed <= 0:
-                break
-            name = t.get("name")
-            if name and meets_reqs(t, worker["traits"]) and not conflicts_check(t, worker["traits"], cache):
-                worker["traits"].append(name)
-                needed -= 1
-        if hasattr(store, "recalculate_trait_modifiers"):
-            store.recalculate_trait_modifiers(worker)
+        emt(worker, min_traits=target, max_traits=target)
 
     store._ensure_worker_min_traits = _ensure_worker_min_traits
 
@@ -123,12 +109,8 @@ init python:
                 renpy.log(f"data/workers.json not found or error reading: {error_msg}")
         
         # 2. Load from data/workers/*.json (current standard location)
-        workers_folder_path = "data/workers"
         try:
-            worker_files = [
-                f for f in renpy.list_files()
-                if f.startswith(workers_folder_path) and f.endswith(".json")
-            ]
+            worker_files = _get_worker_json_files()
             
             for worker_file in worker_files:
                 try:
@@ -224,11 +206,8 @@ init python:
             info["legacy_file"] = {"status": "not_found"}
         
         # Check folder files
-        workers_folder_path = "data/workers"
         try:
-            worker_files = [f for f in renpy.list_files() 
-                           if f.startswith(workers_folder_path) 
-                           and f.endswith(".json")]
+            worker_files = _get_worker_json_files()
             
             for worker_file in worker_files:
                 try:

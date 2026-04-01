@@ -1,0 +1,34 @@
+{
+  "id": null,
+  "name": null,
+  "description": null,
+  "interaction_level": 0,
+  "interaction_type": null,
+  "cost_energy": 0,
+  "cost_money": 0,
+  "effect": {
+    "romance": 0,
+    "relationship": 0,
+    "joy": 0,
+    "rebelliousness": 0,
+    "libido": 0,
+    "flags": {},
+    "add_trait": null,
+    "remove_trait": null
+  },
+  "gender_filter": null,
+  "worker_gender": null,
+  "categories": [],
+  "image": null,
+  "nsfw": false,
+  "stat_requirements": {
+    "romance": 0,
+    "relationship": 0,
+    "rebelliousness": 0
+  },
+  "specific_workers": [],
+  "required_traits": [],
+  "excluded_traits": [],
+  "required_flags": {},
+  "excluded_flags": {}
+}

@@ -1,5 +1,4 @@
 # script.rpy
-# Fantasy Management Simulator - Full Version with Video Support
 
 
 init python:
@@ -30,6 +29,17 @@ init python:
     import os
     import json
 
+    # Shared file list cache - renpy.list_files() is expensive; call once, reuse everywhere.
+    _renpy_file_list_cache = None
+
+    def get_cached_file_list():
+        global _renpy_file_list_cache
+        if _renpy_file_list_cache is None:
+            _renpy_file_list_cache = renpy.list_files()
+        return _renpy_file_list_cache
+
+    store.get_cached_file_list = get_cached_file_list
+
     #############################
     # Constants
     #############################
@@ -40,32 +50,32 @@ init python:
     #############################
     # Base success bonus added to all skill-based event checks
     # This increases the baseline success chance for all events
-    EVENT_SUCCESS_BASE_BONUS_WORKER = 30  # Easy baseline (+30)
-    EVENT_SUCCESS_BASE_BONUS_BUILDING = 50  # Easy baseline (+50)
+    EVENT_SUCCESS_BASE_BONUS_WORKER = 20  # Easy baseline (+20)
+    EVENT_SUCCESS_BASE_BONUS_BUILDING = 25  # Easy baseline (+25, half of original 50)
     EVENT_SUCCESS_MIN_CHANCE = 0.6  # Easy baseline minimum success chance (60%)
 
     def get_event_success_bonus_worker():
         """Difficulty-scaled worker baseline bonus for event checks."""
         diff = getattr(persistent, "difficulty", "normal")
         if diff == "nightmare":
-            return 5
+            return 0
         if diff == "hard":
-            return 15
+            return 0
         if diff == "normal":
-            return 22
-        # Keep easy/story unchanged as requested.
+            return 10
+        # Easy/story
         return EVENT_SUCCESS_BASE_BONUS_WORKER
 
     def get_event_success_bonus_building():
-        """Difficulty-scaled building baseline bonus for event checks."""
+        """Difficulty-scaled building baseline bonus for event checks (halved from original)."""
         diff = getattr(persistent, "difficulty", "normal")
         if diff == "nightmare":
-            return 20
+            return 10
         if diff == "hard":
-            return 30
+            return 15
         if diff == "normal":
-            return 40
-        # Keep easy/story unchanged as requested.
+            return 20
+        # Easy/story
         return EVENT_SUCCESS_BASE_BONUS_BUILDING
 
     def get_event_success_min_chance():
@@ -81,13 +91,18 @@ init python:
         return EVENT_SUCCESS_MIN_CHANCE
 
     def get_difficulty_loot_multiplier():
-        """Difficulty-scaled loot chance multiplier."""
+        """
+        Scales roll_loot effective rolls only. Daily-story bonus_items and monster_worker use raw JSON chances.
+        """
         diff = getattr(persistent, "difficulty", "normal")
         if diff == "nightmare":
-            return 0.50
+            return 0.15
         if diff == "hard":
-            return 0.75
-        return 1.00
+            return 0.25
+        if diff == "normal":
+            return 0.35
+        # story / easy / unknown
+        return 0.35
 
     #############################
     # Helper Functions & Loading
@@ -101,10 +116,10 @@ init python:
         
         Building Level Bonuses for Random Events:
         - Level 1: No bonus (1.0x)
-        - Level 2: Money +50%, Reputation +30% (1.5x money, 1.3x reputation)
-        - Level 3: Money +100%, Reputation +60% (2.0x money, 1.6x reputation)
-        - Level 4: Money +150%, Reputation +90% (2.5x money, 1.9x reputation)
-        - Level 5: Money +200%, Reputation +120% (3.0x money, 2.2x reputation)
+        - Level 2: Money +10%, Reputation +30% (1.1x money, 1.3x reputation)
+        - Level 3: Money +20%, Reputation +60% (1.2x money, 1.6x reputation)
+        - Level 4: Money +30%, Reputation +90% (1.3x money, 1.9x reputation)
+        - Level 5: Money +40%, Reputation +120% (1.4x money, 2.2x reputation)
         
         Used by: apply_effects() function for random events only
         """
@@ -112,8 +127,7 @@ init python:
         if building_level <= 1:
             return {"money": 1.0, "reputation": 1.0}
         
-        money_multiplier = 1.0 + (building_level - 1) * 0.5  # 50% bonus per level above 1
-        money_multiplier = min(money_multiplier, 1.5)  # clamp to 1.5x max
+        money_multiplier = 1.0 + (building_level - 1) * 0.1  # +10% money per level above 1
         reputation_multiplier = 1.0 + (building_level - 1) * 0.3  # 30% bonus per level above 1
         
         return {
@@ -201,26 +215,142 @@ init python:
         sync_calendar()
         renpy.log(f"Date advanced to: {day_names[(store.current_day - 1) % 7]}, {store.current_day} {month_names[store.current_month - 1]} {store.current_year}")
 
-    building_types_json = {}
-    for file in renpy.list_files():
-        if file.startswith("data/buildings/") and file.endswith(".json"):
+    # Load buildings from all JSON files in data/buildings/ (merge by id; later files override earlier for same id).
+    # Excludes data/buildings/daily_story_extensions/ which is used for story extensions only.
+    def _find_building_type_entry(building_type_id):
+        for bt in store.building_types_json.get("building_types", []):
+            if bt.get("id") == building_type_id:
+                return bt
+        return None
+
+    def _find_profession_entry(building_type_entry, profession_id):
+        if not building_type_entry:
+            return None
+        for prof in building_type_entry.get("professions", []):
+            if prof.get("id") == profession_id:
+                return prof
+        return None
+
+    def _merge_daily_stories_into_profession(profession_entry, stories_to_merge, merge_mode):
+        if not profession_entry:
+            return 0
+        incoming = list(stories_to_merge or [])
+        if not incoming:
+            return 0
+        if merge_mode == "replace_all":
+            profession_entry["daily_stories"] = incoming
+            return len(incoming)
+        daily_stories = profession_entry.get("daily_stories")
+        is_list_like = (hasattr(daily_stories, "__iter__") and not hasattr(daily_stories, "get") and not isinstance(daily_stories, (str, bytes)))
+        daily_stories = list(daily_stories) if is_list_like else []
+        profession_entry["daily_stories"] = daily_stories
+        existing_index_by_id = {}
+        for idx, story in enumerate(daily_stories):
+            sid = story.get("id") if hasattr(story, "get") else None
+            if sid:
+                existing_index_by_id[sid] = idx
+        merged_count = 0
+        for story in incoming:
+            if not hasattr(story, "get"):
+                continue
+            story_id = story.get("id")
+            if merge_mode == "append":
+                if story_id and story_id in existing_index_by_id:
+                    continue
+                daily_stories.append(story)
+                if story_id:
+                    existing_index_by_id[story_id] = len(daily_stories) - 1
+                merged_count += 1
+            else:
+                if story_id and story_id in existing_index_by_id:
+                    daily_stories[existing_index_by_id[story_id]] = story
+                else:
+                    daily_stories.append(story)
+                    if story_id:
+                        existing_index_by_id[story_id] = len(daily_stories) - 1
+                merged_count += 1
+        return merged_count
+
+    def _apply_daily_story_extensions():
+        extension_files = sorted([
+            f for f in get_cached_file_list()
+            if f.startswith("data/buildings/daily_story_extensions/") and f.endswith(".json")
+        ])
+        if not extension_files:
+            return 0
+        total_merged = 0
+        for file_path in extension_files:
             try:
-                with renpy.file(file) as f:
-                    data = json.load(f)
-                if not persistent.nsfw_enabled:
-                    data["building_types"] = [bt for bt in data["building_types"] if not bt.get("nsfw", False)]
-                for bt in data["building_types"]:
-                    for profession in bt.get("professions", []):
-                        profession["original_max_daily_workers"] = profession.get("max_daily_workers", 1)
-                building_types_json.update(data)
+                with renpy.file(file_path) as extension_file:
+                    extension_data = json.load(extension_file)
             except Exception as e:
-                renpy.log("Error loading " + file + ": " + str(e))
+                renpy.log("Error loading daily story extension '" + file_path + "': " + str(e))
+                continue
+            extension_entries = []
+            if hasattr(extension_data, "__iter__") and not hasattr(extension_data, "get") and not isinstance(extension_data, (str, bytes)):
+                extension_entries = list(extension_data)
+            elif hasattr(extension_data, "get"):
+                raw_entries = extension_data.get("daily_story_extensions", None)
+                if hasattr(raw_entries, "__iter__") and not hasattr(raw_entries, "get") and not isinstance(raw_entries, (str, bytes)):
+                    extension_entries = list(raw_entries)
+                elif hasattr(raw_entries, "get"):
+                    extension_entries = [raw_entries]
+                elif all(k in extension_data for k in ("building_id", "profession_id", "daily_stories")):
+                    extension_entries = [extension_data]
+                else:
+                    continue
+            else:
+                continue
+            for entry in extension_entries:
+                if not hasattr(entry, "get"):
+                    continue
+                building_id = entry.get("building_id")
+                profession_id = entry.get("profession_id")
+                merge_mode = str(entry.get("merge_mode", "upsert")).lower().strip()
+                if merge_mode not in ("upsert", "append", "replace_all"):
+                    merge_mode = "upsert"
+                stories = entry.get("daily_stories", [])
+                if not building_id or not profession_id:
+                    continue
+                btype = _find_building_type_entry(building_id)
+                if not btype:
+                    renpy.log("Daily story extension: building not found '" + str(building_id) + "' in " + file_path)
+                    continue
+                profession = _find_profession_entry(btype, profession_id)
+                if not profession:
+                    renpy.log("Daily story extension: profession not found '" + str(building_id) + "/" + str(profession_id) + "' in " + file_path)
+                    continue
+                total_merged += _merge_daily_stories_into_profession(profession, stories, merge_mode)
+        return total_merged
+
+    buildings_by_id = {}
+    for file in sorted(get_cached_file_list()):
+        if not file.startswith("data/buildings/") or not file.endswith(".json"):
+            continue
+        if file.startswith("data/buildings/daily_story_extensions/"):
+            continue
+        try:
+            with renpy.file(file) as f:
+                data = json.load(f)
+            for bt in data.get("building_types", []):
+                if not persistent.nsfw_enabled and bt.get("nsfw", False):
+                    continue
+                for profession in bt.get("professions", []):
+                    profession["original_max_daily_workers"] = profession.get("max_daily_workers", 1)
+                buildings_by_id[bt.get("id")] = bt
+        except Exception as e:
+            renpy.log("Error loading " + file + ": " + str(e))
+
+    building_types_json = {"building_types": list(buildings_by_id.values())}
+    _ext_merged = _apply_daily_story_extensions()
+    if _ext_merged:
+        renpy.log("Daily story extensions applied. Stories merged: " + str(_ext_merged))
 
     # Initialize items_json with an empty list
     items_json = {"items": [], "excluded_from_shops": []}
 
     # Iterate over files in the "data/items/" folder
-    for file in renpy.list_files():
+    for file in get_cached_file_list():
         if file.startswith("data/items/") and file.endswith(".json"):
             try:
                 with renpy.file(file) as f:
@@ -281,7 +411,7 @@ init python:
     def get_fallback_folder(worker=None):
         """Get the appropriate fallback folder based on worker gender.
         Returns 'guy' for males, 'blossom' for females/unknown."""
-        if worker and isinstance(worker, dict):
+        if worker and hasattr(worker, "get"):
             gender = worker.get("gender", "").lower()
             if gender == "male":
                 return "guy"
@@ -290,7 +420,7 @@ init python:
     def get_worker_folder(worker):
         """Resolve the worker's folder based on their data."""
         fallback = get_fallback_folder(worker)
-        if isinstance(worker, dict):
+        if hasattr(worker, "get"):
             folder_name = worker.get("folder", fallback)
             renpy.log(f"Worker name: {worker.get('name', 'Unknown')}, folder resolved: {folder_name}")
         else:
@@ -347,20 +477,10 @@ init python:
         
         base_folder = f"images/workers/{worker_folder}/"
         
-        renpy.log(f"=== get_worker_image DEBUG ===")
-        renpy.log(f"Worker: {worker_name}, Folder: {worker_folder}")
-        renpy.log(f"Looking in: {base_folder}")
-        
-        # Debug: list all files Ren'Py sees in this folder
-        all_files = renpy.list_files()
-        files_in_folder = [f for f in all_files if f.startswith(base_folder)]
-        renpy.log(f"Files Ren'Py sees in {base_folder}: {len(files_in_folder)}")
-        if len(files_in_folder) == 0:
-            renpy.log(f"WARNING: Ren'Py sees NO files in {base_folder}!")
-            # Check if folder exists with different case
-            folder_name_lower = worker_folder.lower()
-            similar_folders = [f for f in all_files if folder_name_lower in f.lower()]
-            renpy.log(f"Similar paths with '{folder_name_lower}': {similar_folders[:5] if similar_folders else 'NONE'}")
+        if getattr(config, "developer", False):
+            renpy.log(f"=== get_worker_image DEBUG ===")
+            renpy.log(f"Worker: {worker_name}, Folder: {worker_folder}")
+            renpy.log(f"Looking in: {base_folder}")
         
         def _worker_allows_profile_variant(local_worker, filepath):
             basename = os.path.basename(filepath).lower()
@@ -389,7 +509,8 @@ init python:
         # Try worker's profile image using robust flexible matching
         profile_matches = get_pattern_matches_flexible(base_folder, "profile")
         profile_matches = [f for f in profile_matches if _worker_allows_profile_variant(worker, f)]
-        renpy.log(f"Profile matches found: {len(profile_matches) if profile_matches else 0}")
+        if getattr(config, "developer", False):
+            renpy.log(f"Profile matches found: {len(profile_matches) if profile_matches else 0}")
 
         # PRIORITY: When worker has Pregnant/Transformed/Magical/Futa, use ONLY trait-prefixed
         # profile images (e.g. pregnant_profile). Do not mix with plain profile.
@@ -401,13 +522,14 @@ init python:
             ]
             if trait_profile_matches:
                 selected = renpy.random.choice(trait_profile_matches)
-                renpy.log(f"Selected trait-priority profile image: {selected}")
+                if getattr(config, "developer", False):
+                    renpy.log(f"Selected trait-priority profile image: {selected}")
                 return selected
 
         if profile_matches:
-            renpy.log(f"Profile matches: {profile_matches}")
             selected = renpy.random.choice(profile_matches)
-            renpy.log(f"Selected profile image: {selected}")
+            if getattr(config, "developer", False):
+                renpy.log(f"Selected profile image: {selected}")
             return selected
         
         # Try any image in worker folder as fallback (excluding failure images)
@@ -415,11 +537,13 @@ init python:
         all_worker_images = [f for f in all_worker_images if not should_exclude_trait_file(f, trait_file_prefixes, [])]
         if all_worker_images:
             selected = renpy.random.choice(all_worker_images)
-            renpy.log(f"Found fallback worker image: {selected}")
+            if getattr(config, "developer", False):
+                renpy.log(f"Found fallback worker image: {selected}")
             return selected
         
         # If no images exist, return None
-        renpy.log(f"No images found for worker in folder: {worker_folder}")
+        if getattr(config, "developer", False):
+            renpy.log(f"No images found for worker in folder: {worker_folder}")
         return None
 
     def _safe_relink_worker_folder(worker_name):
@@ -709,7 +833,7 @@ init python:
         # First, ensure every entry in the inventory is a tuple.
         for i, entry in enumerate(inventory):
             if not isinstance(entry, tuple):
-                if isinstance(entry, dict):
+                if hasattr(entry, "get"):
                     # Handle dict format: {"item_id": ..., "quantity": ..., "equipped": ...}
                     converted = (entry.get("item_id"), entry.get("quantity", 1), entry.get("equipped", False))
                     inventory[i] = converted
@@ -742,51 +866,111 @@ init python:
                     store.event_flags[flag_name] = True
                     renpy.log(f"Objective 12: Marked {mark_item_id} as collected.")
 
-        item_type = item_data.get("type", "unknown")
         is_manager_inventory = (hasattr(store, 'manager_inventory') and 
                                (inventory is store.manager_inventory or 
                                 id(inventory) == id(getattr(store, 'manager_inventory', None))))
         
-        if item_type in ["currency", "consumable", "gift"]:
-            # Consolidate duplicate stacks first so stackables (e.g. gifts) stay on one line.
-            match_indices = [idx for idx, e in enumerate(inventory) if isinstance(e, tuple) and len(e) >= 2 and e[0] == item_id]
-            if match_indices:
-                primary_idx = match_indices[0]
-                total_existing = 0
-                primary_equipped = bool(inventory[primary_idx][2]) if len(inventory[primary_idx]) >= 3 else False
-                for idx in reversed(match_indices):
-                    entry = inventory[idx]
-                    qty_val = entry[1]
-                    try:
-                        qty_val = int(qty_val)
-                    except (ValueError, TypeError):
-                        qty_val = 0
-                    if qty_val < 0:
-                        qty_val = 0
-                    if qty_val > 999999:
-                        qty_val = 999999
-                    total_existing += qty_val
-                    if idx != primary_idx:
-                        del inventory[idx]
-                new_quantity = min(999999, total_existing + quantity)
-                inventory[primary_idx] = (item_id, new_quantity, primary_equipped)
-                renpy.log(f"Added {quantity} of {item_id} to existing stack (new quantity: {new_quantity}).")
-            else:
-                inventory.append((item_id, max(1, quantity), False))
-                renpy.log(f"Added new stack of {item_id} (quantity: {quantity}).")
-            # CRITICAL: Force Ren'Py to recognize changes if this is manager_inventory
-            if is_manager_inventory:
-                # Also ensure the entire list is a new list to break references
-                store.manager_inventory = list(store.manager_inventory)
-                renpy.store.manager_inventory = store.manager_inventory
-            _mark_objective_12_item_if_needed(item_id)
-        else:
-            for _ in range(quantity):
-                inventory.append((item_id, 1, False))
-            renpy.log(f"Added equipment item {item_id} {quantity} time(s).")
-            _mark_objective_12_item_if_needed(item_id)
+        def _as_equipped_flag(v):
+            if isinstance(v, bool):
+                return v
+            if isinstance(v, str):
+                return v.strip().lower() in ("true", "1", "yes", "y", "on")
+            if isinstance(v, (int, float)):
+                return v != 0
+            return bool(v)
 
-    def toggle_equip_item(inventory, item_id, worker=None):
+        # Stack ALL item types in unequipped entries. Equipped copies remain split entries.
+        match_indices = []
+        for idx, e in enumerate(inventory):
+            if not isinstance(e, tuple) or len(e) < 2:
+                continue
+            if e[0] != item_id:
+                continue
+            eq_flag = _as_equipped_flag(e[2]) if len(e) >= 3 else False
+            if not eq_flag:
+                match_indices.append(idx)
+        if match_indices:
+            primary_idx = match_indices[0]
+            total_existing = 0
+            for idx in reversed(match_indices):
+                entry = inventory[idx]
+                qty_val = entry[1]
+                try:
+                    qty_val = int(qty_val)
+                except (ValueError, TypeError):
+                    qty_val = 0
+                if qty_val < 0:
+                    qty_val = 0
+                if qty_val > 999999:
+                    qty_val = 999999
+                total_existing += qty_val
+                if idx != primary_idx:
+                    del inventory[idx]
+            new_quantity = min(999999, total_existing + quantity)
+            inventory[primary_idx] = (item_id, new_quantity, False)
+            renpy.log(f"Added {quantity} of {item_id} to existing stack (new quantity: {new_quantity}).")
+        else:
+            inventory.append((item_id, max(1, quantity), False))
+            renpy.log(f"Added new stack of {item_id} (quantity: {quantity}).")
+        # CRITICAL: Force Ren'Py to recognize changes if this is manager_inventory
+        if is_manager_inventory:
+            # Also ensure the entire list is a new list to break references
+            store.manager_inventory = list(store.manager_inventory)
+            renpy.store.manager_inventory = store.manager_inventory
+        _mark_objective_12_item_if_needed(item_id)
+
+        if is_manager_inventory and item_id == "cipher_lattice":
+            try:
+                _lat_fn = getattr(store, "academy_lib_on_cipher_lattice_acquired", None)
+                if callable(_lat_fn):
+                    _lat_fn()
+            except Exception as e:
+                renpy.log("academy_lib_on_cipher_lattice_acquired: " + str(e))
+
+    def toggle_equip_item(inventory, item_id, worker=None, item_index=None):
+        def _as_equipped_flag(v):
+            if isinstance(v, bool):
+                return v
+            if isinstance(v, str):
+                return v.strip().lower() in ("true", "1", "yes", "y", "on")
+            if isinstance(v, (int, float)):
+                return v != 0
+            return bool(v)
+
+        def _merge_unequipped_stacks_for_item(inv, target_id):
+            if inv is None:
+                return
+            primary_idx = None
+            total_qty = 0
+            remove_indices = []
+            for k, ent in enumerate(inv):
+                if not isinstance(ent, tuple) or len(ent) < 2:
+                    continue
+                if str(ent[0]) != str(target_id):
+                    continue
+                ent_eq = _as_equipped_flag(ent[2]) if len(ent) >= 3 else False
+                if ent_eq:
+                    continue
+                try:
+                    q = int(ent[1]) if ent[1] is not None else 0
+                except Exception:
+                    q = 0
+                if q < 0:
+                    q = 0
+                total_qty += q
+                if primary_idx is None:
+                    primary_idx = k
+                else:
+                    remove_indices.append(k)
+            if primary_idx is None:
+                return
+            if total_qty <= 0:
+                total_qty = 1
+            base_id = inv[primary_idx][0]
+            inv[primary_idx] = (base_id, total_qty, False)
+            for k in reversed(remove_indices):
+                del inv[k]
+
         """
         Toggle the equipped state of an item in the given inventory.
         For equipment items (like "weapon" or "armor"), only one item of that type may be equipped.
@@ -821,7 +1005,7 @@ init python:
                     equipped = entry[2] if len(entry) >= 3 else False
                     converted = (entry[0], entry[1], equipped)
                     inventory[i] = converted
-                elif isinstance(entry, dict):
+                elif hasattr(entry, "get"):
                     # Convert dict to tuple
                     converted = (entry.get("item_id"), entry.get("quantity"), entry.get("equipped", False))
                     inventory[i] = converted
@@ -838,10 +1022,20 @@ init python:
 
         # Find the target item index in the inventory.
         target_index = None
-        for i, item in enumerate(inventory):
-            if item[0] == item_id:
-                target_index = i
-                break
+        if item_index is not None:
+            try:
+                _idx = int(item_index)
+            except Exception:
+                _idx = None
+            if _idx is not None and 0 <= _idx < len(inventory):
+                _it = inventory[_idx]
+                if isinstance(_it, tuple) and len(_it) >= 1 and _it[0] == item_id:
+                    target_index = _idx
+        if target_index is None:
+            for i, item in enumerate(inventory):
+                if item[0] == item_id:
+                    target_index = i
+                    break
         if target_index is None:
             renpy.log("toggle_equip_item: Target item not found in inventory: " + item_id)
             return
@@ -850,11 +1044,12 @@ init python:
         renpy.log(f"toggle_equip_item: Found item {target_item} for item_id {item_id}")
 
         # If the target item is not equipped, we want to equip it.
-        if not target_item[2]:
+        if not _as_equipped_flag(target_item[2] if len(target_item) >= 3 else False):
             # Unequip any other equipped item of the same type.
             # Special case: "clothing" and "armor" are separate slots, so they don't conflict with each other.
+            auto_unequipped_ids = []
             for j, other in enumerate(inventory):
-                if j != target_index and other[2]:
+                if j != target_index and _as_equipped_flag(other[2] if len(other) >= 3 else False):
                     other_data = next((i for i in items_json["items"] if i["id"] == other[0]), None)
                     if other_data:
                         other_type = other_data.get("type")
@@ -863,17 +1058,56 @@ init python:
                             renpy.log(f"Unequipping other item at index {j}: {other}")
                             inventory[j] = (other[0], other[1], False)
                             remove_item_effects(worker, other[0])
-            # Now equip the target item.
-            inventory[target_index] = (target_item[0], target_item[1], True)
+                            auto_unequipped_ids.append(other[0])
+            # Equip exactly one copy from stack; do not equip the whole stack.
+            try:
+                _target_qty = int(target_item[1]) if target_item[1] is not None else 1
+            except Exception:
+                _target_qty = 1
+            if _target_qty > 1:
+                inventory[target_index] = (target_item[0], _target_qty - 1, False)
+                inventory.insert(target_index + 1, (target_item[0], 1, True))
+            else:
+                inventory[target_index] = (target_item[0], 1, True)
             if worker is not None:
                 apply_item_effects(worker, target_item[0])
-            renpy.log(f"Equipped item {target_item[0]}; new inventory entry: {inventory[target_index]}")
+            for _old_item_id in auto_unequipped_ids:
+                _merge_unequipped_stacks_for_item(inventory, _old_item_id)
+            _merge_unequipped_stacks_for_item(inventory, target_item[0])
+            renpy.log(f"Equipped one copy of {target_item[0]}; stack-aware equip applied.")
         else:
-            # If the item is equipped, unequip it.
-            inventory[target_index] = (target_item[0], target_item[1], False)
+            # If the item is equipped, unequip it and merge into an unequipped stack when possible.
+            try:
+                _eq_qty = int(target_item[1]) if target_item[1] is not None else 1
+            except Exception:
+                _eq_qty = 1
+            if _eq_qty < 1:
+                _eq_qty = 1
+            merge_idx = None
+            for j, other in enumerate(inventory):
+                if j == target_index:
+                    continue
+                if not isinstance(other, tuple) or len(other) < 2:
+                    continue
+                if other[0] != target_item[0]:
+                    continue
+                other_eq = _as_equipped_flag(other[2]) if len(other) >= 3 else False
+                if not other_eq:
+                    merge_idx = j
+                    break
+            if merge_idx is not None:
+                try:
+                    _merge_qty = int(inventory[merge_idx][1]) if inventory[merge_idx][1] is not None else 0
+                except Exception:
+                    _merge_qty = 0
+                inventory[merge_idx] = (target_item[0], max(0, _merge_qty) + _eq_qty, False)
+                del inventory[target_index]
+            else:
+                inventory[target_index] = (target_item[0], _eq_qty, False)
             if worker is not None:
                 remove_item_effects(worker, target_item[0])
-            renpy.log(f"Unequipped item {target_item[0]}; new inventory entry: {inventory[target_index]}")
+            _merge_unequipped_stacks_for_item(inventory, target_item[0])
+            renpy.log(f"Unequipped one copy of {target_item[0]}; merged back into stack when available.")
 
         renpy.restart_interaction()
 
@@ -882,13 +1116,63 @@ init python:
         Unequip a specific equipped item by matching item_id and (optionally) quantity.
         Avoids unequipping another copy with the same item_id.
         """
+        def _as_equipped_flag(v):
+            if isinstance(v, bool):
+                return v
+            if isinstance(v, str):
+                return v.strip().lower() in ("true", "1", "yes", "y", "on")
+            if isinstance(v, (int, float)):
+                return v != 0
+            return bool(v)
+
         for i, item in enumerate(inventory):
             if isinstance(item, (list, tuple)) and len(item) >= 3:
-                if str(item[0]) == str(item_id) and bool(item[2]) is True:
+                if str(item[0]) == str(item_id) and _as_equipped_flag(item[2]):
                     if quantity is None or item[1] == quantity:
                         inventory[i] = (item[0], item[1], False)
                         if worker is not None:
                             remove_item_effects(worker, item[0])
+                        # Keep worker inventories compact after forced unequip by match.
+                        try:
+                            _target_id = item[0]
+                            _total = 0
+                            _base_idx = None
+                            _remove = []
+                            for k, ent in enumerate(inventory):
+                                if not isinstance(ent, tuple) or len(ent) < 2:
+                                    continue
+                                if str(ent[0]) != str(_target_id):
+                                    continue
+                                _raw_eq = ent[2] if len(ent) >= 3 else False
+                                if isinstance(_raw_eq, bool):
+                                    _is_eq = _raw_eq
+                                elif isinstance(_raw_eq, str):
+                                    _is_eq = _raw_eq.strip().lower() in ("true", "1", "yes", "y", "on")
+                                elif isinstance(_raw_eq, (int, float)):
+                                    _is_eq = _raw_eq != 0
+                                else:
+                                    _is_eq = bool(_raw_eq)
+                                if _is_eq:
+                                    continue
+                                try:
+                                    _q = int(ent[1]) if ent[1] is not None else 0
+                                except Exception:
+                                    _q = 0
+                                if _q < 0:
+                                    _q = 0
+                                _total += _q
+                                if _base_idx is None:
+                                    _base_idx = k
+                                else:
+                                    _remove.append(k)
+                            if _base_idx is not None:
+                                if _total <= 0:
+                                    _total = 1
+                                inventory[_base_idx] = (_target_id, _total, False)
+                                for k in reversed(_remove):
+                                    del inventory[k]
+                        except Exception:
+                            pass
                         renpy.log(f"unequip_item_by_match: Unequipped item at index {i}: {inventory[i]}")
                         renpy.restart_interaction()
                         return True
@@ -943,6 +1227,33 @@ init python:
         current_traits = worker.get("traits", [])
         return not any(conflict in current_traits for conflict in conflicts)
                 
+    def _coerce_trait_effect_entries(raw):
+        """Normalize trait effect payload (string/dict/list/Revertable*) into a list of entries."""
+        if raw is None:
+            return []
+        if hasattr(raw, "get") and callable(getattr(raw, "get", None)):
+            return [raw]
+        if isinstance(raw, (str, bytes)):
+            return [raw]
+        if hasattr(raw, "__iter__"):
+            return list(raw)
+        return []
+
+    def _trait_name_duration_from_entry(entry):
+        """Return (trait_name, duration) from string or dict-like trait entry."""
+        if entry is None:
+            return None, 0
+        if hasattr(entry, "get") and callable(getattr(entry, "get", None)):
+            name = entry.get("name") or entry.get("trait")
+            try:
+                duration = int(entry.get("duration", 0) or 0)
+            except Exception:
+                duration = 0
+            return name, duration
+        if isinstance(entry, (str, bytes)):
+            return str(entry), 0
+        return None, 0
+
     def apply_item_effects(worker, item_id):
         """Apply the effects of an equipped item to a worker."""
         item = next((i for i in items_json["items"] if i["id"] == item_id), None)
@@ -984,56 +1295,27 @@ init python:
                     worker["energy"] = max(0, min(new_max_energy, int(round(new_max_energy * energy_ratio))))
                 elif effect_type == "add_trait":
                     # Support array of traits, single trait string, or dict with name/duration
-                    renpy.log(f"add_trait effect_value type: {type(effect_value)}, is list: {isinstance(effect_value, list)}, value: {str(effect_value)[:100]}")
-                    # Use type check that works with Ren'Py's JSON loading
-                    if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
-                        # Array of trait names
-                        renpy.log(f"Processing {len(effect_value)} traits from list")
-                        for trait_name in effect_value:
-                            if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
-                                _record_removed_conflicts(worker, item_id, trait_name.get("name", ""))
-                                add_trait_with_duration(worker, trait_name.get("name", ""), trait_name.get("duration", 0))
-                            else:
-                                renpy.log(f"Adding trait: {trait_name}")
-                                _record_removed_conflicts(worker, item_id, trait_name)
-                                add_trait_with_duration(worker, trait_name, 0)
-                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
-                        _record_removed_conflicts(worker, item_id, effect_value.get("name", ""))
-                        add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
-                    else:
-                        _record_removed_conflicts(worker, item_id, effect_value)
-                        add_trait_with_duration(worker, effect_value, 0)
+                    renpy.log(f"add_trait effect_value type: {type(effect_value)}, value: {str(effect_value)[:100]}")
+                    entries = _coerce_trait_effect_entries(effect_value)
+                    renpy.log(f"Processing {len(entries)} add_trait entries")
+                    for trait_entry in entries:
+                        trait_name, trait_duration = _trait_name_duration_from_entry(trait_entry)
+                        if trait_name:
+                            _record_removed_conflicts(worker, item_id, trait_name)
+                            add_trait_with_duration(worker, trait_name, trait_duration)
                 elif effect_type == "remove_trait":
                     # Support array of traits or single trait string - removes traits when equipping
-                    renpy.log(f"remove_trait effect_value type: {type(effect_value)}, is list: {isinstance(effect_value, list)}, value: {str(effect_value)[:100]}")
+                    renpy.log(f"remove_trait effect_value type: {type(effect_value)}, value: {str(effect_value)[:100]}")
                     removed_traits = []
-                    # Use type check that works with Ren'Py's JSON loading
-                    if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
-                        # Array of trait names
-                        renpy.log(f"Processing {len(effect_value)} traits to remove from list")
-                        for trait_name in effect_value:
-                            if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
-                                trait_name_to_remove = trait_name.get("name", "")
-                            else:
-                                trait_name_to_remove = trait_name
-                            if trait_name_to_remove:
-                                renpy.log(f"Removing trait: '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
-                                if trait_name_to_remove in worker.get("traits", []):
-                                    removed_traits.append(trait_name_to_remove)
-                                remove_trait_safe(worker, trait_name_to_remove)
-                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
-                        trait_name_to_remove = effect_value.get("name", "")
+                    entries = _coerce_trait_effect_entries(effect_value)
+                    renpy.log(f"Processing {len(entries)} remove_trait entries")
+                    for trait_entry in entries:
+                        trait_name_to_remove, _ = _trait_name_duration_from_entry(trait_entry)
                         if trait_name_to_remove:
-                            renpy.log(f"Removing trait (dict): '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
+                            renpy.log(f"Removing trait: '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
                             if trait_name_to_remove in worker.get("traits", []):
                                 removed_traits.append(trait_name_to_remove)
                             remove_trait_safe(worker, trait_name_to_remove)
-                    else:
-                        if effect_value:
-                            renpy.log(f"Removing trait (string): '{effect_value}' from worker '{worker.get('name', 'Unknown')}'")
-                            if effect_value in worker.get("traits", []):
-                                removed_traits.append(effect_value)
-                            remove_trait_safe(worker, effect_value)
                     if removed_traits:
                         if "_removed_traits_by_item" not in worker:
                             worker["_removed_traits_by_item"] = {}
@@ -1074,25 +1356,11 @@ init python:
                 elif effect_type == "add_trait":
                     # When unequipping, remove the traits that were added when equipping
                     renpy.log(f"remove_item_effects: Removing traits added by item '{item_id}': {effect_value}")
-                    if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
-                        # Array of trait names
-                        for trait_name in effect_value:
-                            if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
-                                trait_name_to_remove = trait_name.get("name", "")
-                            else:
-                                trait_name_to_remove = trait_name
-                            if trait_name_to_remove:
-                                renpy.log(f"remove_item_effects: Removing trait '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
-                                remove_trait_safe(worker, trait_name_to_remove)
-                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
-                        trait_name_to_remove = effect_value.get("name", "")
+                    for trait_entry in _coerce_trait_effect_entries(effect_value):
+                        trait_name_to_remove, _ = _trait_name_duration_from_entry(trait_entry)
                         if trait_name_to_remove:
                             renpy.log(f"remove_item_effects: Removing trait '{trait_name_to_remove}' from worker '{worker.get('name', 'Unknown')}'")
                             remove_trait_safe(worker, trait_name_to_remove)
-                    else:
-                        if effect_value:
-                            renpy.log(f"remove_item_effects: Removing trait '{effect_value}' from worker '{worker.get('name', 'Unknown')}'")
-                            remove_trait_safe(worker, effect_value)
                     # Restore conflicts that were removed by the added trait(s), if safe
                     removed_conflicts = None
                     if "_removed_conflicts_by_item" in worker:
@@ -1121,21 +1389,10 @@ init python:
                                 add_trait_with_duration(worker, trait_name, 0)
                     else:
                         renpy.log(f"remove_item_effects: Re-adding traits removed by item '{item_id}': {effect_value}")
-                        if type(effect_value).__name__ == 'list' or isinstance(effect_value, (list, tuple)):
-                            for trait_name in effect_value:
-                                if isinstance(trait_name, dict) or type(trait_name).__name__ == 'dict':
-                                    trait_name_to_add = trait_name.get("name", "")
-                                else:
-                                    trait_name_to_add = trait_name
-                                if trait_name_to_add:
-                                    add_trait_with_duration(worker, trait_name_to_add, 0)
-                        elif isinstance(effect_value, dict) or type(effect_value).__name__ == 'dict':
-                            trait_name_to_add = effect_value.get("name", "")
+                        for trait_entry in _coerce_trait_effect_entries(effect_value):
+                            trait_name_to_add, trait_duration = _trait_name_duration_from_entry(trait_entry)
                             if trait_name_to_add:
-                                add_trait_with_duration(worker, trait_name_to_add, 0)
-                        else:
-                            if effect_value:
-                                add_trait_with_duration(worker, effect_value, 0)
+                                add_trait_with_duration(worker, trait_name_to_add, trait_duration)
 
     def remove_item_from_inventory(inventory, item_id, quantity=1):
         # CRITICAL: Check if this is manager_inventory and ALWAYS work directly with store.manager_inventory
@@ -1157,7 +1414,7 @@ init python:
         # First, ensure every entry in the inventory is a tuple and normalize quantities
         for i, entry in enumerate(inventory):
             if not isinstance(entry, tuple):
-                if isinstance(entry, dict):
+                if hasattr(entry, "get"):
                     # Handle dict format: {"item_id": ..., "quantity": ..., "equipped": ...}
                     converted = (entry.get("item_id"), entry.get("quantity", 1), entry.get("equipped", False))
                     inventory[i] = converted
@@ -1310,16 +1567,26 @@ init python:
             renpy.log("DEBUG: Tutorial - Energy potion used on worker")
             check_objective_completion()
 
+    def ensure_manager_inventory_synced_for_potions():
+        """Refresh manager_inventory when worker_details opens. Fixes bug where potions
+        in storage are not detected at start of new day until user visits storage."""
+        _get_normalized_manager_inventory()
+        renpy.store.manager_inventory = store.manager_inventory
+
     def use_or_buy_potion_action(worker, potion_id):
         """
         Returns an action to use a potion (from manager inventory) or show buy confirmation.
+        Always reads from store.manager_inventory at call time to avoid stale state after new day.
         """
         potion_item = next((i for i in items_json["items"] if i["id"] == potion_id), None)
         if not potion_item:
             return Function(lambda: renpy.notify(f"Potion {potion_id} not found!"))
         canonical = next((w for w in store.workers if w.get("name") == worker.get("name")), worker)
+        # CRITICAL: Read from store.manager_inventory explicitly at call time.
+        # After new day, cached references can be stale; Ren'Py may not have synced yet.
+        inv = getattr(store, "manager_inventory", []) or []
         has_in_manager = False
-        for item_entry in manager_inventory:
+        for item_entry in inv:
             if isinstance(item_entry, (list, tuple)) and len(item_entry) >= 2 and item_entry[0] == potion_id and item_entry[1] > 0:
                 has_in_manager = True
                 break
@@ -1357,7 +1624,7 @@ init python:
 
         # Ensure we operate on the canonical worker object from store.workers
         if worker is not None and hasattr(store, "workers"):
-            worker_name = worker.get("name") if isinstance(worker, dict) else None
+            worker_name = worker.get("name") if hasattr(worker, "get") else None
             if worker_name:
                 canonical_worker = next((w for w in store.workers if w.get("name") == worker_name), None)
                 if canonical_worker is not None and canonical_worker is not worker:
@@ -1382,7 +1649,7 @@ init python:
         effect_raw = item.get("effect", None)
         if effect_raw is None:
             effect = {}
-        elif isinstance(effect_raw, dict) or type(effect_raw).__name__ == "dict":
+        elif hasattr(effect_raw, "get"):
             effect = effect_raw
         elif hasattr(effect_raw, "items") and callable(getattr(effect_raw, "items", None)):
             try:
@@ -1421,7 +1688,7 @@ init python:
                 # Consumables that declare skill_modifiers should increase base skills.
                 # This allows repeated uses until reaching the normal base-skill cap.
                 try:
-                    if isinstance(effect_value, dict) or type(effect_value).__name__ == "dict":
+                    if hasattr(effect_value, "get"):
                         for skill_name, delta in effect_value.items():
                             try:
                                 modify_base_skill(worker, skill_name, int(delta))
@@ -1443,16 +1710,10 @@ init python:
             elif effect_type == "add_trait":
                 # Support list, dict, or string
                 try:
-                    if type(effect_value).__name__ == "list" or isinstance(effect_value, (list, tuple)):
-                        for t in effect_value:
-                            if isinstance(t, dict) or type(t).__name__ == "dict":
-                                store.add_trait_with_duration(worker, t.get("name", ""), t.get("duration", 0))
-                            else:
-                                store.add_trait_with_duration(worker, t, 0)
-                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == "dict":
-                        store.add_trait_with_duration(worker, effect_value.get("name", ""), effect_value.get("duration", 0))
-                    else:
-                        store.add_trait_with_duration(worker, effect_value, 0)
+                    for t in _coerce_trait_effect_entries(effect_value):
+                        t_name, t_duration = _trait_name_duration_from_entry(t)
+                        if t_name:
+                            store.add_trait_with_duration(worker, t_name, t_duration)
                 except Exception:
                     try:
                         renpy.log(f"ERROR: use_item add_trait failed for '{item_id}' on '{worker.get('name','?')}' value={effect_value}")
@@ -1460,16 +1721,10 @@ init python:
                         pass
             elif effect_type == "remove_trait":
                 try:
-                    if type(effect_value).__name__ == "list" or isinstance(effect_value, (list, tuple)):
-                        for t in effect_value:
-                            if isinstance(t, dict) or type(t).__name__ == "dict":
-                                store.remove_trait_safe(worker, t.get("name", ""))
-                            else:
-                                store.remove_trait_safe(worker, t)
-                    elif isinstance(effect_value, dict) or type(effect_value).__name__ == "dict":
-                        store.remove_trait_safe(worker, effect_value.get("name", ""))
-                    else:
-                        store.remove_trait_safe(worker, effect_value)
+                    for t in _coerce_trait_effect_entries(effect_value):
+                        t_name, _ = _trait_name_duration_from_entry(t)
+                        if t_name:
+                            store.remove_trait_safe(worker, t_name)
                 except Exception:
                     try:
                         renpy.log(f"ERROR: use_item remove_trait failed for '{item_id}' on '{worker.get('name','?')}' value={effect_value}")
@@ -1563,7 +1818,6 @@ init python:
         return None
 
     # process_manager_auto_rest: definido en building_logic.rpy (poner a descansar + restaurar).
-    # No duplicar aquí para no sobrescribir esa versión.
 
     def evaluate_condition(condition_str):
         """
@@ -2300,7 +2554,7 @@ init python:
         candidates = [
             w for w in all_workers
             if all(
-                (isinstance(v, dict) and w.get(k, {}).items() >= v.items()) or 
+                (hasattr(v, "get") and w.get(k, {}).items() >= v.items()) or
                 (w.get(k) == v)
                 for k, v in filters.items()
             )
@@ -2468,16 +2722,16 @@ init python:
             wname = worker.get("name")
             if wname:
                 for _bname, _b in available_buildings.items():
-                    if not isinstance(_b, dict):
+                    if not hasattr(_b, "get"):
                         continue
                     jobs = _b.get("servant_jobs")
-                    if isinstance(jobs, dict) and wname in jobs:
+                    if hasattr(jobs, "get") and wname in jobs:
                         del jobs[wname]
                     assigned = _b.get("assigned_servants")
                     if isinstance(assigned, list):
                         _b["assigned_servants"] = [
                             aw for aw in assigned
-                            if not (isinstance(aw, dict) and aw.get("name") == wname)
+                            if not (hasattr(aw, "get") and aw.get("name") == wname)
                         ]
         except Exception as e:
             renpy.log(f"recruit_worker stale assignment cleanup error: {e}")
@@ -2842,7 +3096,7 @@ init python:
             return
         filtered = []
         for w in assigned:
-            if isinstance(w, dict):
+            if hasattr(w, "get"):
                 wname = w.get("name")
             else:
                 wname = str(w) if w is not None else None
@@ -2867,7 +3121,7 @@ init python:
         # Always operate on the canonical worker object from store.workers if available.
         canonical_worker = None
         for w in store.workers:
-            if isinstance(w, dict) and w.get("name") == worker_name:
+            if hasattr(w, "get") and w.get("name") == worker_name:
                 canonical_worker = w
                 break
         if canonical_worker is None:
@@ -2891,6 +3145,79 @@ init python:
         except Exception as e:
             renpy.log("add_worker_to_building: ensure servant_jobs error: " + str(e))
 
+        try:
+            sanitize_invalid_servant_job(building, worker_name, canonical_worker)
+        except Exception as e:
+            renpy.log("add_worker_to_building: sanitize_invalid_servant_job error: " + str(e))
+
+    def canonicalize_servant_job_id(building, job_id):
+        """Return canonical profession id for servant_jobs: always lowercase 'rest', else JSON id spelling."""
+        if job_id is None:
+            return "unassigned"
+        s = str(job_id).strip()
+        if not s or s.lower() == "unassigned":
+            return "unassigned"
+        jlow = s.lower()
+        if jlow == "rest":
+            return "rest"
+        btype_id = building.get("type") if building else None
+        if not btype_id:
+            return s
+        btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+        if not btype:
+            return s
+        for p in btype.get("professions", []) or []:
+            pid = p.get("id")
+            if pid is not None and str(pid).strip().lower() == jlow:
+                return str(pid).strip()
+        return s
+
+    def sanitize_invalid_servant_job(building, worker_name, worker_obj=None):
+        """If servant_jobs has a profession id not defined for this building type, reset to unassigned.
+        Prevents stale jobs after moves (e.g. 'service' from another building). Rest is always allowed.
+        Normalizes rest to lowercase 'rest' and profession ids to match JSON casing (fixes job filter duplicates)."""
+        if not building or not worker_name:
+            return
+        jobs_map = building.get("servant_jobs") or {}
+        jid = jobs_map.get(worker_name)
+        if jid is None:
+            return
+        jlow = str(jid).strip().lower()
+        if jlow in ("", "unassigned"):
+            return
+        if jlow == "rest":
+            if str(jid).strip() != "rest":
+                building["servant_jobs"][worker_name] = "rest"
+                renpy.log("sanitize_invalid_servant_job: %s normalized rest job %r -> 'rest'" % (worker_name, jid))
+            return
+        btype_id = building.get("type")
+        if not btype_id:
+            return
+        btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+        if not btype:
+            return
+        canon = None
+        for p in btype.get("professions", []) or []:
+            pid = p.get("id")
+            if pid is not None and str(pid).strip().lower() == jlow:
+                canon = str(pid).strip()
+                break
+        if canon is not None:
+            if str(jid).strip() != canon:
+                building["servant_jobs"][worker_name] = canon
+                renpy.log("sanitize_invalid_servant_job: %s normalized job %r -> %r" % (worker_name, jid, canon))
+            return
+        building["servant_jobs"][worker_name] = "unassigned"
+        renpy.log("sanitize_invalid_servant_job: %s invalid job %r for building type %s -> unassigned" % (worker_name, jid, btype_id))
+        try:
+            cw = worker_obj
+            if cw is None:
+                cw = next((w for w in store.workers if hasattr(w, "get") and w.get("name") == worker_name), None)
+            if cw:
+                clear_worker_autorest_state(cw)
+        except Exception:
+            pass
+
     def set_worker_job(worker, building_name, job_id):
         """Set worker's job in the building. When setting to Rest, store current job as previous_job for auto-restore."""
         if not worker or not building_name or building_name not in available_buildings:
@@ -2901,19 +3228,20 @@ init python:
         worker_name = worker.get("name") if hasattr(worker, "get") else None
         if not worker_name:
             return
-        canonical = next((w for w in store.workers if isinstance(w, dict) and w.get("name") == worker_name), worker)
+        canonical = next((w for w in store.workers if hasattr(w, "get") and w.get("name") == worker_name), worker)
         current_job = (building.get("servant_jobs") or {}).get(worker_name)
         job_id_str = str(job_id).strip().lower() if job_id else ""
         if job_id_str == "rest" and current_job and str(current_job).strip().lower() not in ("rest", "", "unassigned"):
             canonical["previous_job"] = current_job
             renpy.log(f"set_worker_job: {worker_name} -> Rest (stored previous_job={current_job})")
-        building["servant_jobs"][worker_name] = job_id if job_id is not None else "unassigned"
+        canon_job = canonicalize_servant_job_id(building, job_id if job_id is not None else "unassigned")
+        building["servant_jobs"][worker_name] = canon_job
 
     def clear_worker_autorest_state(worker):
         """Clear previous_job when player manually changes job (so auto-restore doesn't override)."""
         if not worker or not hasattr(worker, "get"):
             return
-        canonical = next((w for w in store.workers if isinstance(w, dict) and w.get("name") == worker.get("name")), worker)
+        canonical = next((w for w in store.workers if hasattr(w, "get") and w.get("name") == worker.get("name")), worker)
         if "previous_job" in canonical:
             del canonical["previous_job"]
 
@@ -2962,12 +3290,12 @@ init python:
             if not resolved:
                 return
             building = available_buildings.get(resolved)
-            if not isinstance(building, dict):
+            if not hasattr(building, "get"):
                 return
-            name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
+            name_to_worker = {w.get("name"): w for w in store.workers if hasattr(w, "get") and w.get("name")}
             rebuilt = []
             seen = set()
-            
+
             # Source 1: Workers in servant_jobs
             for wname in list(building.get("servant_jobs", {}) or {}):
                 if not wname or wname in seen:
@@ -2978,11 +3306,11 @@ init python:
                     seen.add(wname)
                     if worker_obj.get("assigned_building", "Unassigned") != resolved:
                         worker_obj["assigned_building"] = resolved
-            
+
             # Source 2: Workers with assigned_building matching this building (with key normalization)
             _norm_bname = _normalize_building_key_for_match(resolved)
             for worker in store.workers:
-                if not isinstance(worker, dict):
+                if not hasattr(worker, "get"):
                     continue
                 wname = worker.get("name")
                 if not wname or wname in seen:
@@ -3008,13 +3336,13 @@ init python:
         """Return workers to display in Manager screen. Uses assigned_servants + resolve to store.workers, then get_building_servants as fallback. Resolves Building 1 / Building_1."""
         try:
             resolved = _resolve_building_key(building_name)
-            bd = building_data if (building_data and isinstance(building_data, dict)) else (available_buildings.get(resolved or building_name, {}))
-            name_to_w = {w.get("name"): w for w in (store.workers or []) if isinstance(w, dict) and w.get("name")}
+            bd = building_data if (building_data and hasattr(building_data, "get")) else (available_buildings.get(resolved or building_name, {}))
+            name_to_w = {w.get("name"): w for w in (store.workers or []) if hasattr(w, "get") and w.get("name")}
             raw = bd.get("assigned_servants") or []
             result = []
             seen = set()
             for sw in raw:
-                if not isinstance(sw, dict) or not sw.get("name"):
+                if not hasattr(sw, "get") or not sw.get("name"):
                     continue
                 wname = sw.get("name")
                 if wname in seen:
@@ -3038,9 +3366,9 @@ init python:
             if not resolved:
                 return []
             building = available_buildings.get(resolved, {})
-            if not isinstance(building, dict):
+            if not hasattr(building, "get"):
                 return []
-            name_to_worker = {w.get("name"): w for w in store.workers if isinstance(w, dict) and w.get("name")}
+            name_to_worker = {w.get("name"): w for w in store.workers if hasattr(w, "get") and w.get("name")}
             servants = []
             seen = set()
             # Merge servant_jobs from alternate key (Building 1 <-> Building_1) when both exist
@@ -3048,7 +3376,7 @@ init python:
             alt_key = _alternate_building_key(building_name) if building_name != resolved else _alternate_building_key(resolved)
             if alt_key and alt_key in available_buildings and alt_key != resolved:
                 alt_b = available_buildings.get(alt_key, {})
-                if isinstance(alt_b, dict):
+                if hasattr(alt_b, "get"):
                     for wname, jid in (alt_b.get("servant_jobs") or {}).items():
                         if wname and wname not in jobs and jid and (not isinstance(jid, str) or jid.strip()):
                             jobs[wname] = jid
@@ -3069,7 +3397,7 @@ init python:
             # Source 2: workers with assigned_building matching this building (fallback, with key normalization)
             _norm_bname = _normalize_building_key_for_match(building_name)
             for worker in store.workers:
-                if not isinstance(worker, dict):
+                if not hasattr(worker, "get"):
                     continue
                 wname = worker.get("name")
                 if not wname or wname in seen:
@@ -3103,18 +3431,18 @@ init python:
                 to_merge.append((canonical, other))
             for canonical, other in to_merge:
                 cb, ob = available_buildings[canonical], available_buildings[other]
-                if not isinstance(cb, dict) or not isinstance(ob, dict):
+                if not hasattr(cb, "get") or not hasattr(ob, "get"):
                     continue
                 for wname, jid in (ob.get("servant_jobs") or {}).items():
                     if wname and (wname not in cb.get("servant_jobs", {})):
                         cb.setdefault("servant_jobs", {})[wname] = jid
                 for w in ob.get("assigned_servants") or []:
-                    if isinstance(w, dict) and w.get("name"):
+                    if hasattr(w, "get") and w.get("name"):
                         cb_list = cb.get("assigned_servants") or []
-                        if not any(x.get("name") == w.get("name") for x in cb_list if isinstance(x, dict)):
+                        if not any(x.get("name") == w.get("name") for x in cb_list if hasattr(x, "get")):
                             cb.setdefault("assigned_servants", []).append(w)
                 for worker in store.workers:
-                    if isinstance(worker, dict) and worker.get("assigned_building") == other:
+                    if hasattr(worker, "get") and worker.get("assigned_building") == other:
                         worker["assigned_building"] = canonical
                 if other in owned:
                     owned.remove(other)
@@ -3168,7 +3496,7 @@ init python:
                 alt = _alternate_building_key(building_name)
                 if alt and alt in available_buildings:
                     for worker in store.workers:
-                        if isinstance(worker, dict) and worker.get("assigned_building") == building_name:
+                        if hasattr(worker, "get") and worker.get("assigned_building") == building_name:
                             worker["assigned_building"] = alt
                     renpy.log(f"validate_and_sync_buildings: Normalized {building_name} -> {alt} (alternate exists)")
                     continue
@@ -3241,13 +3569,13 @@ init python:
 
             # Step 1: Clear all assigned_servants
             for building_name, building in available_buildings.items():
-                if isinstance(building, dict):
+                if hasattr(building, "get"):
                     building["assigned_servants"] = []
 
             # Step 2: Add each worker to their building's assigned_servants (dedupe by name)
             seen_per_building = {}  # {building_name: set of worker names}
             for worker in store.workers:
-                if not isinstance(worker, dict):
+                if not hasattr(worker, "get"):
                     continue
                 wname = worker.get("name")
                 if not wname:
@@ -3268,7 +3596,7 @@ init python:
                     continue  # Skip duplicate
                 seen_per_building[resolved_ab].add(wname)
                 building = available_buildings[resolved_ab]
-                if isinstance(building, dict):
+                if hasattr(building, "get"):
                     building["assigned_servants"].append(worker)
             
             renpy.log("sync_building_assignments_from_workers: done")
@@ -3315,7 +3643,7 @@ init python:
             # Deduplicate assigned_servants per building
             for bname in store.owned_buildings:
                 building = available_buildings.get(bname)
-                if not isinstance(building, dict):
+                if not hasattr(building, "get"):
                     continue
                 assigned = building.get("assigned_servants", []) or []
                 if not assigned:
@@ -3397,7 +3725,7 @@ init python:
         new_relationship = max(10, new_min_relationship + relationship_bonus)
         worker["relationship"] = new_relationship
         
-        # Update daily_cost based on new comfort level (comfort * 20)
+        # Base worker daily cost by design.
         worker["daily_cost"] = new_comfort * 20
         
         renpy.log(f"Comfort adjusted: {current_comfort} -> {new_comfort}, Relationship: {current_relationship} -> {new_relationship} (bonus: {relationship_bonus}), Daily Cost: ${worker['daily_cost']}")
@@ -3443,8 +3771,250 @@ init python:
             store.owned_buildings = []
         if name not in store.owned_buildings:
             store.owned_buildings.append(name)
-        if name in available_buildings and isinstance(available_buildings[name], dict):
+        if name in available_buildings and hasattr(available_buildings[name], "get"):
             available_buildings[name].setdefault("owned", True)
+
+    def _generic_building_slot_index(name):
+        """Parse Building n or Building_n to slot index n, or None. (Space/underscore per save compatibility.)"""
+        if name is None:
+            return None
+        s = str(name).strip()
+        m = re.match(r"^Building\s+(\d+)$", s)
+        if m:
+            try:
+                return int(m.group(1))
+            except Exception:
+                return None
+        m2 = re.match(r"^Building_(\d+)$", s, re.IGNORECASE)
+        if m2:
+            try:
+                return int(m2.group(1))
+            except Exception:
+                return None
+        return None
+
+    def _generic_slot_occupied(n):
+        """True if either Building n or Building_n exists and is owned (dict-like, not isinstance dict)."""
+        for k in ("Building %d" % n, "Building_%d" % n):
+            b = available_buildings.get(k)
+            if b is not None and hasattr(b, "get") and b.get("owned", True):
+                return True
+        return False
+
+    def next_generic_building_slot():
+        """
+        Lowest n >= 1 where slot n has no owned Building n / Building_n. Price = n * 10000.
+        Returns (name, price) or None if max_building slots are filled.
+        """
+        try:
+            mb = int(getattr(store, "max_building", 50) or 50)
+        except Exception:
+            mb = 50
+        for n in range(1, mb + 1):
+            if not _generic_slot_occupied(n):
+                return ("Building %d" % n, n * 10000)
+        return None
+
+    def sell_building(building_name):
+        """
+        Sell generic Building n (n > 1) for max(0, stored price - 5000).
+        Unassigns all workers, removes the slot from available_buildings and owned_buildings.
+        Building 1 cannot be sold. Accepts Building n or Building_n (LA BIBLIA §3).
+        """
+        idx = _generic_building_slot_index(building_name)
+        if idx is None:
+            renpy.notify(_("Only numbered building slots can be sold."))
+            return False
+        if idx <= 1:
+            renpy.notify(_("You cannot sell your first building."))
+            return False
+        key_canon = "Building %d" % idx
+        ob = getattr(store, "owned_buildings", None) or []
+        aliases = [key_canon]
+        alt = _alternate_building_key(key_canon)
+        if alt:
+            aliases.append(alt)
+        if not any(a in ob for a in aliases if a):
+            renpy.notify(_("That building is not in your portfolio."))
+            return False
+
+        resolved = _resolve_building_key(key_canon)
+        if not resolved:
+            resolved = _resolve_building_key(alt) if alt else None
+        if not resolved:
+            renpy.notify(_("Building data is missing."))
+            return False
+        b = available_buildings.get(resolved)
+        if b is None or not hasattr(b, "get"):
+            renpy.notify(_("Building data is missing."))
+            return False
+
+        try:
+            paid = int(b.get("price", 0) or 0)
+        except Exception:
+            paid = 0
+        sale = max(0, paid - 5000)
+
+        norm_target = _normalize_building_key_for_match(key_canon)
+        for w in list(getattr(store, "workers", []) or []):
+            if not hasattr(w, "get"):
+                continue
+            ab = w.get("assigned_building")
+            if not ab or ab == "Unassigned":
+                continue
+            if ab in aliases or (norm_target and _normalize_building_key_for_match(ab) == norm_target):
+                try:
+                    unassign_worker(w)
+                except Exception as ex:
+                    renpy.log("sell_building unassign error: %s" % ex)
+
+        try:
+            b["assigned_servants"] = []
+            sj = b.get("servant_jobs")
+            if sj is not None and hasattr(sj, "clear"):
+                sj.clear()
+            else:
+                b["servant_jobs"] = {}
+        except Exception:
+            pass
+
+        keys_to_drop = []
+        for k in (resolved, _alternate_building_key(resolved), key_canon, alt):
+            if k and k in available_buildings and k not in keys_to_drop:
+                keys_to_drop.append(k)
+        removed_any = False
+        for k in keys_to_drop:
+            try:
+                del available_buildings[k]
+                removed_any = True
+            except Exception:
+                pass
+        if not removed_any:
+            renpy.notify(_("Could not remove building from the map."))
+            return False
+
+        try:
+            for a in aliases:
+                if a in store.owned_buildings:
+                    store.owned_buildings.remove(a)
+        except Exception:
+            pass
+
+        try:
+            cn = getattr(store, "custom_names", None)
+            if cn is not None and hasattr(cn, "__contains__"):
+                for k in keys_to_drop:
+                    if k in cn:
+                        del cn[k]
+        except Exception:
+            pass
+
+        try:
+            mbb = getattr(store, "map_button_buildings", None)
+            if mbb is not None and hasattr(mbb, "items"):
+                dead = [bk for bk, bv in mbb.items() if bv in keys_to_drop or bv in aliases]
+                for bk in dead:
+                    try:
+                        del mbb[bk]
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+        cab = getattr(store, "current_affected_building", None)
+        if cab and (cab in keys_to_drop or cab in aliases or (norm_target and _normalize_building_key_for_match(cab) == norm_target)):
+            store.current_affected_building = None
+
+        try:
+            store.money = int(getattr(store, "money", 0) or 0) + int(sale)
+        except Exception:
+            pass
+
+        if hasattr(store, "buildings_owned"):
+            try:
+                store.buildings_owned = len(store.owned_buildings)
+            except Exception:
+                pass
+
+        try:
+            if callable(getattr(store, "rebuild_assigned_servants", None)):
+                store.rebuild_assigned_servants()
+            else:
+                sync_building_assignments_from_workers()
+        except Exception as ex:
+            renpy.log("sell_building sync error: %s" % ex)
+
+        renpy.notify(_("Sold %(key)s for $%(sale)d (paid $%(paid)d).") % {"key": key_canon, "sale": sale, "paid": paid})
+        renpy.log("sell_building: sold %s for %s (paid %s)" % (key_canon, sale, paid))
+        return True
+
+    def sellable_generic_building_names():
+        """Owned Building n / Building_n slots with n > 1; returns canonical 'Building n' for UI."""
+        out = []
+        seen = set()
+        for bn in getattr(store, "owned_buildings", []) or []:
+            idx = _generic_building_slot_index(bn)
+            if idx is None or idx <= 1:
+                continue
+            canon = "Building %d" % idx
+            if canon not in seen:
+                seen.add(canon)
+                out.append(canon)
+        return out
+
+    def building_sale_preview(building_key):
+        """Returns (sale_price, paid_price) for UI; sale = max(0, paid - 5000)."""
+        idx = _generic_building_slot_index(building_key)
+        if idx is None:
+            return (0, 0)
+        rk = _resolve_building_key("Building %d" % idx)
+        if not rk:
+            rk = _resolve_building_key("Building_%d" % idx)
+        b = available_buildings.get(rk) if rk else None
+        if b is None or not hasattr(b, "get"):
+            return (0, 0)
+        try:
+            paid = int(b.get("price", 0) or 0)
+        except Exception:
+            paid = 0
+        return (max(0, paid - 5000), paid)
+
+    def manager_building_is_sellable(building_name):
+        """True if Manage Buildings can offer Sell for this slot (generic Building n, n > 1, owned)."""
+        idx = _generic_building_slot_index(building_name)
+        if idx is None or idx <= 1:
+            return False
+        canon = "Building %d" % idx
+        try:
+            return canon in sellable_generic_building_names()
+        except Exception:
+            return False
+
+    def manager_sell_current_building_then_exit(building_name):
+        """Run sell_building; on success return to tavern (Manage screen would be stale)."""
+        fn = getattr(store, "sell_building", None)
+        if not callable(fn):
+            return
+        if not fn(building_name):
+            return
+        try:
+            tbg = getattr(store, "tavern_bg", None)
+            if tbg is not None:
+                store.current_bg = tbg
+        except Exception:
+            pass
+        try:
+            renpy.hide_screen("Manager")
+            renpy.show_screen("tavern")
+        except Exception as ex:
+            renpy.log("manager_sell_current_building_then_exit: %s" % ex)
+
+    store.next_generic_building_slot = next_generic_building_slot
+    store.sell_building = sell_building
+    store.sellable_generic_building_names = sellable_generic_building_names
+    store.building_sale_preview = building_sale_preview
+    store.manager_building_is_sellable = manager_building_is_sellable
+    store.manager_sell_current_building_then_exit = manager_sell_current_building_then_exit
 
     def add_academy_building():
         """Create the Academy in available_buildings (not in owned_buildings). Call when player pays tuition."""
@@ -3733,7 +4303,6 @@ init python:
         """
         available = []
         
-        # Determinar el tipo de botón basándose en el nombre
         button_type = None
         if "Greenhouse" in button_id:
             button_type = "greenhouse"
@@ -3746,17 +4315,17 @@ init python:
         elif "Shop" in button_id:
             button_type = "shop"
         
+        NON_PURCHASABLE = {"governor_castle", "arena", "academy"}
+        
         # Greenhouse y Shop son comodines - pueden tener todos los tipos
         if button_type == "greenhouse" or button_type == "shop":
             for btype in building_types_json.get("building_types", []):
-                if btype.get("id") != "governor_castle":  # Castle is only obtained through ending
+                if btype.get("id") not in NON_PURCHASABLE:
                     available.append(btype)
             return available
         
-        # Para otros botones, verificar allowed_map_locations
-        # También verificar si el button_id específico está en la lista (para casos especiales)
         for btype in building_types_json.get("building_types", []):
-            if btype.get("id") != "governor_castle":  # Castle is only obtained through ending
+            if btype.get("id") not in NON_PURCHASABLE:
                 allowed_locations = btype.get("allowed_map_locations", [])
                 if button_type and button_type in allowed_locations:
                     available.append(btype)
@@ -3782,10 +4351,8 @@ init python:
         Si el edificio está comprado, usa "c.png", si no, usa "a.png".
         """
         if get_map_building_name_safe(button_id) is not None:
-            # Edificio comprado, usar imagen "c.png"
             return f"gui/map/{button_id}c.png"
         else:
-            # Edificio no comprado, usar imagen "a.png"
             return f"gui/map/{button_id}a.png"
 
     def get_map_building_display_name(button_id):
@@ -3797,7 +4364,6 @@ init python:
         if building_name is None:
             return None
         
-        # Obtener el nombre de visualización
         parts = building_name.split('_')
         default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
         display_name = store.custom_names.get(building_name, default_name)
@@ -3855,7 +4421,6 @@ init python:
             if not sentence:
                 continue
             
-            # Si la frase sola es muy larga, dividirla por palabras
             if len(sentence) > max_chars:
                 words = sentence.split()
                 current_sentence = ""
@@ -3870,7 +4435,6 @@ init python:
                                     messages.append(current_message)
                                 current_message = current_sentence
                         else:
-                            # Palabra muy larga, añadirla sola
                             if current_message:
                                 messages.append(current_message)
                             current_message = word
@@ -3881,7 +4445,6 @@ init python:
                         else:
                             current_sentence = word
                 
-                # Añadir la última parte de la frase
                 if current_sentence:
                     if len(current_message) + len(current_sentence) + 2 <= max_chars:
                         current_message = (current_message + " " + current_sentence).strip()
@@ -3890,7 +4453,6 @@ init python:
                             messages.append(current_message)
                         current_message = current_sentence
             else:
-                # Si añadir esta frase excede el límite, guardar el mensaje actual y empezar uno nuevo
                 if len(current_message) + len(sentence) + 2 > max_chars:
                     if current_message:
                         messages.append(current_message)
@@ -3901,12 +4463,9 @@ init python:
                     else:
                         current_message = sentence
         
-        # Añadir el último mensaje si existe
         if current_message:
             messages.append(current_message)
 
-        # Evitar trozos finales ridículamente cortos (ej. "been.")
-        # Importante: nunca eliminamos texto. Solo fusionamos si cabe; si no cabe, se deja como último mensaje.
         try:
             if (
                 messages
@@ -3916,7 +4475,6 @@ init python:
                 and len(messages[-1].strip()) < int(min_chunk_chars)
             ):
                 merged = (messages[-2].rstrip() + " " + messages[-1].lstrip()).strip()
-                # Solo fusionar si cabe en el límite (si no cabe, mantener el último trozo aunque sea corto)
                 if len(merged) <= int(max_chars):
                     messages[-2] = merged
                     messages.pop()
@@ -4006,6 +4564,14 @@ init python:
         renpy.log(f"process_choice received acting_worker: {acting_worker}, Type: {type(acting_worker)}")
         import random
         effect = choice.get("effect", {})
+        _ef = choice.get("effect_worker_filter")
+        _ef_dict = _ef if hasattr(_ef, "get") else {}
+        _ef_restrict = bool(choice.get("restrict_worker_effects_to_filter", False))
+        _ef_kw = {
+            "effect_worker_filter": _ef_dict,
+            "restrict_worker_effects_to_filter": _ef_restrict,
+        }
+        _fwf = getattr(store, "filter_workers_for_effect_worker_filter", None)
         selected_worker = None
         outcome_status = "default" # Default status
         # REMOVING THIS LINE: store.current_affected_building = None  # Reset the affected building for this event
@@ -4101,71 +4667,94 @@ init python:
                     # Success case: building skill event
                     success_effects = effect.get("success", {})
                     success_worker = None
-                    if "add_trait" in success_effects:
-                        # Resolve worker for trait application (same logic as failure)
-                        if assigned_servants:
-                            success_worker = random.choice(assigned_servants)
-                        else:
+                    _needs_worker_success = (
+                        ("add_trait" in success_effects)
+                        or ("trait_chance" in success_effects)
+                        or ("trait_remove_chance" in success_effects)
+                    )
+                    if _needs_worker_success:
+                        pool = list(assigned_servants) if assigned_servants else []
+                        if not pool:
                             for w in store.workers:
                                 if w.get("assigned_building") == selected_building_name:
-                                    success_worker = w
-                                    break
-                            if success_worker is None and store.workers:
-                                success_worker = random.choice(store.workers)
-                    applied_values = apply_effects(success_effects, worker=success_worker, building=selected_building)
-                    event_worker_name = success_worker["name"] if success_worker else "Unknown"
+                                    pool.append(w)
+                            if not pool and store.workers:
+                                pool = list(store.workers)
+                        if callable(_fwf) and pool:
+                            pool = _fwf(pool, _ef_dict, _ef_restrict, selected_building)
+                        if pool:
+                            success_worker = random.choice(pool)
+                    applied_values = apply_effects(success_effects, worker=success_worker, building=selected_building, **_ef_kw)
+                    etn = (applied_values.get("event_trait_worker_name") or "").strip()
+                    event_worker_name = etn or (success_worker["name"] if success_worker else "Unknown")
                     acting_worker_name = "Building Team"
                     outcome_status = "success"
                 else:
                     # Failure case: check if we need a worker for trait effects
                     failure_effects = effect.get("failure", {})
-                    needs_worker_for_effect = "add_trait" in failure_effects
+                    needs_worker_for_effect = (
+                        ("add_trait" in failure_effects)
+                        or ("trait_chance" in failure_effects)
+                        or ("trait_remove_chance" in failure_effects)
+                    )
                     
                     # If we need a worker for failure effects but none are assigned
                     if needs_worker_for_effect and not assigned_servants:
                         renpy.log("Failure effect needs a worker (for trait), but no workers are assigned to this building.")
-                        random_worker = None
-                        # Try to find any worker assigned to this specific building
-                        for worker in store.workers:
-                            if worker.get("assigned_building") == selected_building_name:
-                                random_worker = worker
-                                break
-                                
-                        # If still no worker found and we really need one, pick randomly from all workers
-                        if random_worker is None and store.workers:
-                            random_worker = random.choice(store.workers)
-                            renpy.log(f"No worker in target building, selected random worker {random_worker['name']} for trait application")
-                        
-                        # Apply effects with the selected worker
-                        applied_values = apply_effects(failure_effects, worker=random_worker, building=selected_building)
-                        
-                        # Use the worker's name in failure message if one was selected
+                        pool = [w for w in store.workers if w.get("assigned_building") == selected_building_name]
+                        if not pool and store.workers:
+                            pool = list(store.workers)
+                        if callable(_fwf) and pool:
+                            pool = _fwf(pool, _ef_dict, _ef_restrict, selected_building)
+                        random_worker = random.choice(pool) if pool else None
                         if random_worker:
+                            renpy.log(f"Selected worker {random_worker['name']} for failure trait application")
+                        
+                        applied_values = apply_effects(failure_effects, worker=random_worker, building=selected_building, **_ef_kw)
+                        etn = (applied_values.get("event_trait_worker_name") or "").strip()
+                        if etn:
+                            event_worker_name = etn
+                        elif applied_values.get("worker_effect_trait_skipped"):
+                            event_worker_name = "your staff"
+                        elif random_worker:
                             event_worker_name = random_worker["name"]
-                            acting_worker_name = "Building Team"
                         else:
                             event_worker_name = "An adventurer"
-                            acting_worker_name = "Building Team"
+                        acting_worker_name = "Building Team"
                     else:
                         # Either no worker needed for effects, or we have assigned servants
                         if needs_worker_for_effect and assigned_servants:
-                            # Use one of the assigned servants for the trait effect
-                            affected_worker = random.choice(assigned_servants)
-                            event_worker_name = affected_worker["name"]
+                            pool = list(assigned_servants)
+                            if callable(_fwf) and pool:
+                                pool = _fwf(pool, _ef_dict, _ef_restrict, selected_building)
+                            affected_worker = random.choice(pool) if pool else None
+                            applied_values = apply_effects(failure_effects, worker=affected_worker, building=selected_building, **_ef_kw)
+                            etn = (applied_values.get("event_trait_worker_name") or "").strip()
+                            if etn:
+                                event_worker_name = etn
+                            elif applied_values.get("worker_effect_trait_skipped"):
+                                event_worker_name = "your staff"
+                            elif affected_worker:
+                                event_worker_name = affected_worker["name"]
+                            else:
+                                event_worker_name = "An adventurer"
                             acting_worker_name = "Building Team"
-                            applied_values = apply_effects(failure_effects, worker=affected_worker, building=selected_building)
                         else:
                             # No worker traits involved
-                            applied_values = apply_effects(failure_effects, worker=None, building=selected_building)
+                            applied_values = apply_effects(failure_effects, worker=None, building=selected_building, **_ef_kw)
                             event_worker_name = "An adventurer"
                             acting_worker_name = "Building Team"
                     outcome_status = "failure"
+
+                msg_failure_use = message_failure
+                if outcome_status == "failure" and applied_values.get("worker_effect_trait_skipped") and choice.get("message_failure_worker_effect_skipped"):
+                    msg_failure_use = choice.get("message_failure_worker_effect_skipped") or message_failure
 
                 # Apply replacements to new variables
                 replaced_description = description.replace("[event_worker]", event_worker_name).replace("[acting_worker]", acting_worker_name)
                 replaced_option_text = option_text.replace("[event_worker]", event_worker_name).replace("[acting_worker]", acting_worker_name)
                 replaced_message_success = message_success.replace("[event_worker]", event_worker_name).replace("[acting_worker]", acting_worker_name)
-                replaced_message_failure = message_failure.replace("[event_worker]", event_worker_name).replace("[acting_worker]", acting_worker_name)
+                replaced_message_failure = msg_failure_use.replace("[event_worker]", event_worker_name).replace("[acting_worker]", acting_worker_name)
 
                 store.current_event_description = replaced_description
 
@@ -4199,7 +4788,7 @@ init python:
                                 current = s
                         if current:
                             chunks.append(current)
-                        outcome_message = "\n\n".join(chunks)
+                        outcome_message = "\n".join(chunks)
                 except Exception:
                     pass
                 
@@ -4233,7 +4822,7 @@ init python:
                 # If no worker selection is intended for this event, skip skill check.
                 if worker_selection_mode == "none":
                     # Apply base effects directly
-                    applied_values = apply_effects(effect, worker=acting_worker)
+                    applied_values = apply_effects(effect, worker=acting_worker, **_ef_kw)
                     # Use the primary message if available, otherwise a generic one
                     outcome_message = choice.get("message", choice.get("message_success", "The action is taken."))
                     # Replace worker placeholders (safe fallbacks for non-worker events)
@@ -4281,7 +4870,7 @@ init python:
                         # For choices without conditions in a "choose" worker event, skip worker validation
                         renpy.log(f"Worker selection mode is 'choose', but this specific choice has no condition, so no worker needed")
                         # Handle the choice without a worker
-                        applied_values = apply_effects(effect, worker=acting_worker)
+                        applied_values = apply_effects(effect, worker=acting_worker, **_ef_kw)
                         # Get the message and apply replacements
                         message = choice.get("message", "The event concludes.")
                         message = message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
@@ -4349,7 +4938,7 @@ init python:
                 if selected_worker is None:
                     renpy.log("ERROR: Worker is None but trying to calculate skill. Using default skill level.")
                     outcome_message = "Without an assigned worker, the task could not be completed."
-                    apply_effects(effect.get("failure", {}), worker=None)
+                    apply_effects(effect.get("failure", {}), worker=None, **_ef_kw)
                     outcome_status = "failure"
                     # Return dictionary for this error case
                     return {"message": outcome_message, "outcome": outcome_status}
@@ -4364,7 +4953,7 @@ init python:
                         if skill_above_threshold >= 15:
                             renpy.log(f"Worker {selected_worker['name']} skill {skill_level} is {skill_above_threshold} points above threshold {threshold} - guaranteed success")
                             base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
-                            applied_values = apply_effects(effect.get("success", {}), worker=selected_worker)
+                            applied_values = apply_effects(effect.get("success", {}), worker=selected_worker, **_ef_kw)
                             outcome_status = "success"
                         else:
                             # If worker meets threshold, use a minimum success chance of 90%
@@ -4377,11 +4966,11 @@ init python:
                             roll = random.randint(1, 100)
                             if roll <= effective_success_chance:
                                 base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
-                                applied_values = apply_effects(effect.get("success", {}), worker=selected_worker)
+                                applied_values = apply_effects(effect.get("success", {}), worker=selected_worker, **_ef_kw)
                                 outcome_status = "success"
                             else:
                                 base_outcome_message = choice.get("message_failure") or "The attempt falters, and the moment slips away without reward."
-                                applied_values = apply_effects(effect.get("failure", {}), worker=selected_worker)
+                                applied_values = apply_effects(effect.get("failure", {}), worker=selected_worker, **_ef_kw)
                                 outcome_status = "failure"
                     else:
                         # No threshold or doesn't meet it - use normal skill-based roll
@@ -4392,11 +4981,11 @@ init python:
                         renpy.log(f"Worker {selected_worker['name']} skill {skill_level} (with +{worker_bonus}% bonus = {effective_skill}) - roll {roll} vs {effective_skill}%")
                         if roll <= effective_skill:
                             base_outcome_message = choice.get("message_success") or "The plan proceeds smoothly, yielding modest gains."
-                            applied_values = apply_effects(effect.get("success", {}), worker=selected_worker)
+                            applied_values = apply_effects(effect.get("success", {}), worker=selected_worker, **_ef_kw)
                             outcome_status = "success"
                         else:
                             base_outcome_message = choice.get("message_failure") or "The attempt falters, and the moment slips away without reward."
-                            applied_values = apply_effects(effect.get("failure", {}), worker=selected_worker)
+                            applied_values = apply_effects(effect.get("failure", {}), worker=selected_worker, **_ef_kw)
                             outcome_status = "failure"
                     
                     worker_name_to_use = selected_worker["name"]
@@ -4421,9 +5010,18 @@ init python:
         else:
             # Handle choices without conditions (no worker skill check)
             
-            # Check if this choice uses success_chance for probability-based outcomes
+            # Only treat as probability-based when effect has explicit success/failure outcomes.
+            # Many events use success_chance: 0 as metadata meaning "not random" - their money/reputation
+            # are at top level and must be applied directly. If we treated success_chance=0 as
+            # probability, we'd call apply_effects({}) and never apply the real effects.
             success_chance = effect.get("success_chance")
-            if success_chance is not None:
+            has_success_outcome = "success" in effect
+            has_failure_outcome = "failure" in effect
+            is_probability_choice = (
+                success_chance is not None
+                and (has_success_outcome or has_failure_outcome)
+            )
+            if is_probability_choice:
                 # Probability-based outcome (like fortune telling)
                 # Ensure minimum success chance of 60%
                 min_success_chance = get_event_success_min_chance()
@@ -4432,11 +5030,11 @@ init python:
                 if roll <= effective_success_chance:
                     outcome_status = "success"
                     message = choice.get("message_success", "Fortune smiles upon you.")
-                    applied_values = apply_effects(effect.get("success", {}), worker=acting_worker)
+                    applied_values = apply_effects(effect.get("success", {}), worker=acting_worker, **_ef_kw)
                 else:
                     outcome_status = "failure"
                     message = choice.get("message_failure", "Fortune turns her back.")
-                    applied_values = apply_effects(effect.get("failure", {}), worker=acting_worker)
+                    applied_values = apply_effects(effect.get("failure", {}), worker=acting_worker, **_ef_kw)
                 
                 # Replace worker name if present
                 if acting_worker and hasattr(acting_worker, 'get'):
@@ -4449,7 +5047,7 @@ init python:
                     renpy.log(f"Success chance event: roll {roll:.2f} vs {success_chance} = {outcome_status}")
             else:
                 # Simple choice without probability
-                applied_values = apply_effects(effect, worker=acting_worker)
+                applied_values = apply_effects(effect, worker=acting_worker, **_ef_kw)
                 message = choice.get("message", "The event concludes.")
                 outcome_status = "success"
             
@@ -4493,7 +5091,7 @@ init python:
 
         for event in all_events:
             # Check if the event dictionary itself is valid (not None, is a dict)
-            if not isinstance(event, dict):
+            if not hasattr(event, "get"):
                 renpy.log(f"Warning: Encountered non-dictionary item in event list during reset: {event}")
                 continue
 
@@ -4543,27 +5141,15 @@ init python:
             
             def process_trait_entry(trait_entry):
                 """Process a single trait entry (string, dict, or list element)."""
-                if isinstance(trait_entry, dict):
-                    trait_name = trait_entry.get("name")
-                    duration = trait_entry.get("duration", 0)
-                else:
-                    # trait_entry is a string (trait name)
-                    trait_name = trait_entry
-                    duration = 0
+                trait_name, duration = _trait_name_duration_from_entry(trait_entry)
                 
                 if trait_name and trait_name not in worker.get("traits", []):
                     add_trait_with_duration(worker, trait_name, duration)
                     renpy.notify(f"{worker['name']} gained {trait_name} from expired trait")
             
             # Handle different formats: string, list, or dict
-            if isinstance(trait_data, list):
-                for trait_entry in trait_data:
-                    process_trait_entry(trait_entry)
-            elif isinstance(trait_data, dict):
-                process_trait_entry(trait_data)
-            else:
-                # Single string (trait name)
-                process_trait_entry(trait_data)
+            for trait_entry in _coerce_trait_effect_entries(trait_data):
+                process_trait_entry(trait_entry)
 
         # Add new workers with proper condition checking
         if "add_worker" in effects:
@@ -4633,11 +5219,53 @@ init python:
 
     
 
-    def apply_effects(effect_dict, worker=None, building=None):
+    def apply_effects(
+        effect_dict,
+        worker=None,
+        building=None,
+        effect_worker_filter=None,
+        restrict_worker_effects_to_filter=False,
+    ):
         # Track actual values applied for dynamic message replacement
         applied_values = {}
-        
-        # Apply money changes with building level multiplier (FOR RANDOM EVENTS ONLY)
+        filt = effect_worker_filter if hasattr(effect_worker_filter, "get") else {}
+        _hascon = getattr(store, "effect_worker_filter_has_constraints", None)
+        restrict = bool(restrict_worker_effects_to_filter) and callable(_hascon) and _hascon(filt)
+        res_building = building
+        if restrict and worker and (not hasattr(res_building, "get") or res_building is None):
+            try:
+                bn = worker.get("assigned_building") if hasattr(worker, "get") else None
+                if bn and str(bn).strip() and str(bn) != "Unassigned":
+                    res_building = available_buildings.get(bn)
+            except Exception:
+                pass
+        eff_worker = worker
+        if restrict and worker and filt:
+            wm = getattr(store, "worker_matches_effect_worker_filter", None)
+            if callable(wm):
+                try:
+                    if not wm(worker, res_building, filt):
+                        eff_worker = None
+                        renpy.log("apply_effects: worker failed effect_worker_filter; skipping worker-scoped effect keys")
+                except Exception as e:
+                    renpy.log("apply_effects: effect_worker_filter error: " + str(e))
+
+        ewf_filt = filt
+        ewf_restrict = restrict
+        ewf_building = res_building
+
+        def _ewf_filter_workers(wlist):
+            fn = getattr(store, "filter_workers_for_effect_worker_filter", None)
+            if not wlist:
+                return []
+            if not callable(fn):
+                return list(wlist)
+            try:
+                return fn(wlist, ewf_filt, ewf_restrict, ewf_building)
+            except Exception:
+                return list(wlist)
+
+        # Apply money changes
         if "money" in effect_dict:
             money_change = effect_dict["money"]
             
@@ -4710,136 +5338,42 @@ init python:
                     else:
                         renpy.notify(f"Reputation changed by {reputation_change} for {building_name}")
 
-        # Apply effects to a specific worker
-        if worker:
+        # Apply effects to a specific worker (eff_worker may be cleared by effect_worker_filter)
+        if eff_worker:
             # Adjust energy
             if "servant_energy" in effect_dict:
                 energy_change = effect_dict["servant_energy"]
-                worker["energy"] = max(0, worker["energy"] + energy_change)
+                eff_worker["energy"] = max(0, eff_worker["energy"] + energy_change)
                 applied_values["actual_energy"] = energy_change
                 # Only show notification if energy actually changed
                 if energy_change != 0:
-                    renpy.notify(f"{worker['name']}'s energy changed by {energy_change}")
+                    renpy.notify(f"{eff_worker['name']}'s energy changed by {energy_change}")
 
             # Adjust health (support both "health" and "servant_health" for consistency with recruitment/daily stories)
             health_change = effect_dict.get("servant_health") if "servant_health" in effect_dict else effect_dict.get("health")
             if health_change is not None:
                 try:
                     health_change = int(health_change)
-                    worker["health"] = max(0, worker["health"] + health_change)
+                    eff_worker["health"] = max(0, eff_worker["health"] + health_change)
                     applied_values["actual_health"] = health_change
                     # Only show notification if health actually changed
                     if health_change != 0:
-                        renpy.notify(f"{worker['name']}'s health changed by {health_change}")
+                        renpy.notify(f"{eff_worker['name']}'s health changed by {health_change}")
                 except (TypeError, ValueError) as e:
                     renpy.log(f"apply_effects health error: {e}")
 
             # Apply skill modifiers (e.g. Charm +3 from event choice)
             if "skill_modifiers" in effect_dict:
                 skill_data = effect_dict["skill_modifiers"]
-                if isinstance(skill_data, dict) or (hasattr(skill_data, "items") and callable(getattr(skill_data, "items", None))):
+                if hasattr(skill_data, "get") or (hasattr(skill_data, "items") and callable(getattr(skill_data, "items", None))):
                     for skill_name, delta in skill_data.items():
                         try:
                             delta_int = int(delta)
-                            modify_base_skill(worker, skill_name, delta_int)
+                            modify_base_skill(eff_worker, skill_name, delta_int)
                             if delta_int != 0:
-                                renpy.notify(f"{worker.get('name', 'Worker')}'s {skill_name} changed by {delta_int:+d}")
+                                renpy.notify(f"{eff_worker.get('name', 'Worker')}'s {skill_name} changed by {delta_int:+d}")
                         except Exception as e:
                             renpy.log(f"apply_effects skill_modifiers error for {skill_name}: {e}")
-
-        # Add traits with duration (outside if worker: so traits with target random_worker* work when worker=None)
-        if "add_trait" in effect_dict:
-            trait_data = effect_dict["add_trait"]
-
-            def apply_trait_entry(trait_entry):
-                # Robust type checking for Ren'Py JSON-loaded data
-                is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
-                is_string = isinstance(trait_entry, str) and not is_dict
-                
-                if is_dict:
-                    try:
-                        trait_name = trait_entry.get("name") if hasattr(trait_entry, 'get') else None
-                        duration = trait_entry.get("duration", 0) if hasattr(trait_entry, 'get') else 0
-                        target = trait_entry.get("target", None) if hasattr(trait_entry, 'get') else None
-                        if not trait_name:
-                            renpy.log(f"ERROR: add_trait dict missing 'name' key: {trait_entry}")
-                            return
-                    except (AttributeError, TypeError) as e:
-                        renpy.log(f"ERROR: add_trait dict access failed: {e}, type: {type(trait_entry)}, value: {trait_entry}")
-                        return
-                elif is_string:
-                    trait_name = trait_entry
-                    duration = 0
-                    target = None
-                else:
-                    renpy.log(f"ERROR: add_trait entry has invalid type: {type(trait_entry)}, value: {trait_entry}")
-                    return
-
-                # Handle different target types (worker param = event worker; target overrides)
-                target_worker = worker
-
-                if isinstance(target, str) and target not in ("acting_worker", "event_worker", "random_worker", "random_worker_female", "random_worker_male"):
-                    # Target by worker name (e.g. "Aspen")
-                    for w in store.workers:
-                        if w.get("name") == target:
-                            target_worker = w
-                            renpy.log(f"Resolved trait target by name: {target}")
-                            break
-                elif target == "random_worker":
-                    # Choose a random worker from all available
-                    if store.workers:
-                        target_worker = random.choice(store.workers)
-                        renpy.log(f"Selected random worker {target_worker['name']} for trait application")
-
-                elif target == "random_worker_female":
-                    # Choose a random female worker
-                    female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
-                    if female_workers:
-                        target_worker = random.choice(female_workers)
-                        renpy.log(f"Selected random female worker {target_worker['name']} for trait application")
-                    else:
-                        renpy.log("No female workers available for trait application - skipping")
-                        target_worker = None
-
-                elif target == "random_worker_male":
-                    # Choose a random male worker
-                    male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
-                    if male_workers:
-                        target_worker = random.choice(male_workers)
-                        renpy.log(f"Selected random male worker {target_worker['name']} for trait application")
-                    else:
-                        renpy.log("No male workers available for trait application - skipping")
-                        target_worker = None
-
-                if trait_name and target_worker:
-                    target_worker = _resolve_worker_for_automation(target_worker)
-                    if target_worker:
-                        add_trait_with_duration(target_worker, trait_name, duration)
-                        renpy.log(f"Applied trait '{trait_name}' to {target_worker.get('name', '?')}")
-                elif trait_name:
-                    renpy.log(f"Could not add trait '{trait_name}' - no suitable worker found")
-                else:
-                    renpy.log("Error: 'add_trait' effect is missing 'name' key.")
-
-            # Robust type checking for Ren'Py JSON-loaded data.
-            # Check dict-like/string FIRST: Ren'Py dict-like objects are iterable (keys), so they'd wrongly be treated as lists.
-            has_get = hasattr(trait_data, 'get') and callable(getattr(trait_data, 'get', None))
-            is_dict_like = isinstance(trait_data, dict) or (has_get and not isinstance(trait_data, str))
-            is_string = isinstance(trait_data, str)
-            is_list = isinstance(trait_data, list)
-            
-            try:
-                if is_dict_like or is_string:
-                    apply_trait_entry(trait_data)
-                elif is_list:
-                    for trait_entry in trait_data:
-                        apply_trait_entry(trait_entry)
-                else:
-                    renpy.log(f"ERROR: add_trait has invalid type: {type(trait_data)}, value: {trait_data}")
-            except Exception as e:
-                renpy.log(f"ERROR processing add_trait: {e}, type: {type(trait_data)}, value: {trait_data}")
-                import traceback
-                renpy.log(traceback.format_exc())
 
         # Handle event flags - add, remove, or modify flags used for event chains and conditions
         if "event_flags" in effect_dict:
@@ -5013,7 +5547,7 @@ init python:
                 """Helper function to apply a single trait entry. Resolves target when worker is None (e.g. building_skill events)."""
                 # Robust type checking for Ren'Py JSON-loaded data
                 # Check if it's a dict-like object (has 'get' method)
-                is_dict = isinstance(trait_entry, dict) or (hasattr(trait_entry, 'get') and callable(getattr(trait_entry, 'get', None)))
+                is_dict = hasattr(trait_entry, "get") and callable(getattr(trait_entry, "get", None))
                 # Check if it's a string (but not a dict that happens to have get)
                 is_string = isinstance(trait_entry, str) and not is_dict
                 
@@ -5037,26 +5571,45 @@ init python:
                     renpy.log(f"ERROR: add_trait entry has invalid type: {type(trait_entry)}, value: {trait_entry}")
                     return
                 
-                target_worker = target_worker_override if target_worker_override is not None else worker
-                # When worker is None (e.g. building_skill events), resolve target to select a worker
+                target_worker = target_worker_override if target_worker_override is not None else eff_worker
+                # Resolve acting/event worker placeholders
+                if target_worker is None and isinstance(target, str) and target in ("acting_worker", "event_worker"):
+                    target_worker = eff_worker
+                    if target_worker is None and target == "event_worker":
+                        ewn = getattr(store, "event_worker_name", None) or ""
+                        if ewn:
+                            for w in store.workers:
+                                if w.get("name") == ewn:
+                                    target_worker = w
+                                    break
+                # When eff_worker is None (e.g. building_skill events), resolve target to select a worker
                 if target_worker is None and target and store.workers:
                     if target == "random_worker":
-                        target_worker = random.choice(store.workers)
-                        renpy.log(f"Selected random worker {target_worker['name']} for trait application (no worker context)")
+                        pool = _ewf_filter_workers(list(store.workers))
+                        if pool:
+                            target_worker = random.choice(pool)
+                            renpy.log(f"Selected random worker {target_worker['name']} for trait application (no worker context)")
+                        else:
+                            renpy.log("No eligible workers for trait application (effect_worker_filter) - skipping")
+                            applied_values["worker_effect_trait_skipped"] = True
                     elif target == "random_worker_female":
                         female_workers = [w for w in store.workers if w.get("gender", "") == "female"]
+                        female_workers = _ewf_filter_workers(female_workers)
                         if female_workers:
                             target_worker = random.choice(female_workers)
                             renpy.log(f"Selected random female worker {target_worker['name']} for trait application (no worker context)")
                         else:
-                            renpy.log("No female workers available for trait application - skipping")
+                            renpy.log("No eligible female workers for trait application - skipping")
+                            applied_values["worker_effect_trait_skipped"] = True
                     elif target == "random_worker_male":
                         male_workers = [w for w in store.workers if w.get("gender", "") == "male"]
+                        male_workers = _ewf_filter_workers(male_workers)
                         if male_workers:
                             target_worker = random.choice(male_workers)
                             renpy.log(f"Selected random male worker {target_worker['name']} for trait application (no worker context)")
                         else:
-                            renpy.log("No male workers available for trait application - skipping")
+                            renpy.log("No eligible male workers for trait application - skipping")
+                            applied_values["worker_effect_trait_skipped"] = True
                     elif isinstance(target, str) and target not in ("acting_worker", "event_worker"):
                         # Target by worker name (e.g. "Aspen")
                         for w in store.workers:
@@ -5064,13 +5617,30 @@ init python:
                                 target_worker = w
                                 renpy.log(f"Resolved trait target by name: {target}")
                                 break
-                
+
+                if trait_name and target_worker and ewf_restrict:
+                    wm = getattr(store, "worker_matches_effect_worker_filter", None)
+                    hc = getattr(store, "effect_worker_filter_has_constraints", None)
+                    if callable(wm) and callable(hc) and hc(ewf_filt):
+                        tb = ewf_building
+                        if (not tb or not hasattr(tb, "get")) and hasattr(target_worker, "get"):
+                            bn = target_worker.get("assigned_building")
+                            if bn and str(bn).strip() and str(bn) != "Unassigned":
+                                tb = available_buildings.get(bn)
+                        try:
+                            if not wm(target_worker, tb, ewf_filt):
+                                renpy.log("apply_effects add_trait: target failed effect_worker_filter")
+                                applied_values["worker_effect_trait_skipped"] = True
+                                target_worker = None
+                        except Exception as e:
+                            renpy.log("apply_effects add_trait filter error: " + str(e))
+
                 if trait_name and target_worker:
                     # Resolve to canonical worker in store.workers so trait changes persist (fixes copy-from-screen)
                     target_worker = _resolve_worker_for_automation(target_worker)
                     if target_worker:
                         cache = getattr(store, "_trait_def_cache", {}) or {}
-                        trait_def = cache.get(trait_name) if isinstance(cache, dict) else None
+                        trait_def = cache.get(trait_name) if hasattr(cache, "get") else None
                         if not trait_def and hasattr(store, "get_trait_definition"):
                             trait_def = store.get_trait_definition(trait_name)
                         if trait_def:
@@ -5078,27 +5648,29 @@ init python:
                                 duration = trait_def.get("duration", 0)
                             add_trait_with_duration(target_worker, trait_name, duration)
                             renpy.log(f"Applied trait '{trait_name}' to {target_worker.get('name', '?')}")
+                            try:
+                                applied_values["event_trait_worker_name"] = target_worker.get("name", "")
+                            except Exception:
+                                pass
                         else:
                             renpy.log(f"Trait '{trait_name}' not found in traits_list")
                 elif trait_name:
                     renpy.log(f"Cannot add trait '{trait_name}' - worker is None")
             
-            # Robust type checking for Ren'Py JSON-loaded data
-            # Check if it's a list (but not a string, which is also iterable)
-            is_list = isinstance(trait_data, list) or (hasattr(trait_data, '__iter__') and not isinstance(trait_data, str) and not isinstance(trait_data, dict))
-            # Check if it's a dict-like object
-            is_dict = isinstance(trait_data, dict) or (hasattr(trait_data, 'get') and callable(getattr(trait_data, 'get', None)) and not isinstance(trait_data, str))
-            # Check if it's a string (but not a dict that happens to have get)
-            is_string = isinstance(trait_data, str) and not is_dict
+            # Ren'Py can supply RevertableDict/RevertableList. Prioritize dict-like via .get()
+            # so add_trait objects {"name": "...", "duration": 0} are not mis-read as iterables.
+            is_dict_like = hasattr(trait_data, "get") and callable(getattr(trait_data, "get", None))
+            is_string = isinstance(trait_data, str)
+            is_list_like = hasattr(trait_data, "__iter__") and not is_string and not is_dict_like
             
             try:
-                if is_list:
+                if is_dict_like:
+                    # Single dict-like entry with name/duration/target
+                    apply_trait_entry(trait_data)
+                elif is_list_like:
                     # Array of trait names or dicts
                     for trait_entry in trait_data:
                         apply_trait_entry(trait_entry)
-                elif is_dict:
-                    # Single dict with name/duration
-                    apply_trait_entry(trait_data)
                 elif is_string:
                     # Single string (trait name)
                     apply_trait_entry(trait_data)
@@ -5108,6 +5680,34 @@ init python:
                 renpy.log(f"ERROR processing add_trait: {e}, type: {type(trait_data)}, value: {trait_data}")
                 import traceback
                 renpy.log(traceback.format_exc())
+
+        def _coerce_trait_roll_list(raw):
+            if raw is None:
+                return []
+            if hasattr(raw, "get"):
+                return [raw]
+            if hasattr(raw, "__iter__") and not isinstance(raw, (str, bytes)):
+                return list(raw)
+            return []
+
+        _tc_list = _coerce_trait_roll_list(effect_dict.get("trait_chance"))
+        if _tc_list and eff_worker:
+            _fn_tc = getattr(store, "apply_trait_chance_entries", None)
+            if callable(_fn_tc):
+                _fn_tc(eff_worker, _tc_list, applied_values, granted_list_key="traits_from_training", log_prefix="Event")
+
+        _trc_list = _coerce_trait_roll_list(effect_dict.get("trait_remove_chance"))
+        if _trc_list and eff_worker:
+            _fn_trc = getattr(store, "apply_trait_remove_chance_entries", None)
+            if callable(_fn_trc):
+                _fn_trc(eff_worker, _trc_list, applied_values, removed_list_key="traits_removed_by_chance", log_prefix="Event")
+        
+        # Apply joy to worker when present (events use joy like interactions)
+        if "joy" in effect_dict:
+            joy_change = effect_dict["joy"]
+            if joy_change != 0 and eff_worker and hasattr(store, "apply_attribute_change"):
+                store.apply_attribute_change(eff_worker, "joy", joy_change)
+                applied_values["actual_joy"] = joy_change
         
         # Return applied values for dynamic message replacement
         return applied_values
@@ -5115,29 +5715,31 @@ init python:
     def format_dynamic_message(message, applied_values):
         """
         Replace dynamic placeholders in event messages with actual values.
-        Change values (money, reputation, health, energy) are NOT injected into the narrative
-        since they appear in the "Changes" summary; their placeholders are removed instead.
+        Change values (money, reputation, health, energy, joy) are NOT duplicated in the narrative:
+        money/reputation/health/energy placeholders are removed (shown in Changes); a trailing
+        literal "(+N Joy)" is stripped when actual_joy is set so Joy appears only in Changes.
         
         Available placeholders:
         {actual_money}, {actual_reputation}, {actual_health}, {actual_energy} - removed (shown in Changes)
         {base_money}, {base_reputation} - for internal use / special cases
         {money_multiplier}, {reputation_multiplier} - Building multiplier display
         """
-        # Change placeholders: remove from narrative (they appear in Changes summary)
+        # Change placeholders: remove from narrative (they appear in Changes summary).
+        # Many messages end with a parenthetical like "({actual_money}, {actual_reputation} reputation, +5 Joy)."
+        # We strip the entire trailing parenthetical when it contains change placeholders,
+        # since build_changes_summary() already shows all of that info cleanly.
         import re
+        _has_change_ph = any(ph in message for ph in ["{actual_money}", "{actual_reputation}", "{actual_health}", "{actual_energy}"])
         for ph in ["{actual_money}", "{actual_reputation}", "{actual_health}", "{actual_energy}"]:
             message = message.replace(ph, "")
-        # Clean up orphaned parentheses and commas left after removal
-        message = re.sub(r"\s*\(\s*\)\s*", " ", message)
-        message = re.sub(r"\s*\(\s*,\s*\)\s*", " ", message)
-        message = re.sub(r"\s*\(\s*,\s*reputation\s*\)\s*", " ", message, flags=re.IGNORECASE)
-        message = re.sub(r"\s*\(\s*reputation\s*\)\s*", " ", message, flags=re.IGNORECASE)
+        if _has_change_ph:
+            # Remove trailing parenthetical that held the placeholders (may still contain literals like "+5 Joy", "reputation")
+            message = re.sub(r"\s*\([^()]*\)\s*\.?\s*$", "", message)
+        # Clean up any remaining orphaned patterns
+        message = re.sub(r"\s*\(\s*\)", "", message)
         message = re.sub(r",\s*,", ",", message)
         message = re.sub(r"\s*,\s*\.", ".", message)
-        message = re.sub(r"\(\s*,", "(", message)
-        message = re.sub(r",\s*\)", ")", message)
-        message = re.sub(r"\(\s*\)", "", message)
-        message = re.sub(r"\s+\.", ".", message)  # " ." -> "."
+        message = re.sub(r"\s+\.", ".", message)
         message = re.sub(r"  +", " ", message).strip()
 
         # Format base_money, base_reputation (less common in narrative)
@@ -5177,7 +5779,13 @@ init python:
         else:
             # Replace with default multiplier if not available
             message = message.replace("{reputation_multiplier}", "1.0x")
-        
+
+        # Standalone "(+N Joy)" at end of message (no other change placeholders were present): strip it too
+        if applied_values and applied_values.get("actual_joy"):
+            message = re.sub(r"\s*\(\s*[+-]?\d+\s*Joy\s*\)\s*\.?\s*$", "", message, flags=re.IGNORECASE)
+        message = re.sub(r"[ \t]+\n", "\n", message)
+        message = str(message).strip()
+
         return message
 
     def build_changes_summary(applied_values):
@@ -5204,9 +5812,13 @@ init python:
             e = applied_values["actual_energy"]
             if e != 0:
                 parts.append(f"+{e} Energy" if e > 0 else f"{e} Energy")
+        if "actual_joy" in applied_values:
+            j = applied_values["actual_joy"]
+            if j != 0:
+                parts.append(f"+{j} Joy" if j > 0 else f"{j} Joy")
         if not parts:
             return ""
-        return "\n\nChanges: " + ", ".join(parts)
+        return "\nChanges: " + ", ".join(parts)
 
     def combat_check():
         for worker in store.workers:
@@ -5332,12 +5944,19 @@ init python:
         if not building:
             return None
         job_id = (building.get("servant_jobs") or {}).get(worker.get("name", ""), "")
-        if not job_id or str(job_id).strip().lower() == "rest":
+        jlow = str(job_id).strip().lower() if job_id is not None else ""
+        if not jlow or jlow in ("rest", "unassigned"):
             return None
-        for bt in building_types_json.get("building_types", []):
-            for prof in bt.get("professions", []):
-                if prof.get("id") == job_id:
-                    return prof
+        btype_id = building.get("type")
+        if not btype_id:
+            return None
+        btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+        if not btype:
+            return None
+        for prof in btype.get("professions", []) or []:
+            pid = prof.get("id")
+            if pid is not None and str(pid).strip().lower() == jlow:
+                return prof
         return None
 
     def get_item_profession_score(item_data, profession_skills):
@@ -5369,7 +5988,7 @@ init python:
             equipped = bool(entry[2]) if len(entry) >= 3 else False
             return (item_id, max(0, qty), equipped)
         # Dict entry.
-        if isinstance(entry, dict):
+        if hasattr(entry, "get"):
             item_id = entry.get("item_id") or entry.get("id")
             if not item_id:
                 return None
@@ -5414,10 +6033,12 @@ init python:
         return normalized
 
     def _get_normalized_manager_inventory():
-        """Return normalized manager inventory and keep store.manager_inventory synchronized."""
+        """Return normalized manager inventory and keep store.manager_inventory synchronized.
+        Also syncs renpy.store so worker menu potion detection works after new day."""
         inv = getattr(store, "manager_inventory", None)
         norm = _normalize_inventory_container(inv)
         store.manager_inventory = norm
+        renpy.store.manager_inventory = store.manager_inventory
         return store.manager_inventory
 
     def _resolve_worker_for_automation(worker):
@@ -5651,6 +6272,67 @@ init python:
         renpy.log(f"AUTO_SUPPLY_COUNT: {canonical.get('name', '?')} -> {new_count}")
         renpy.restart_interaction()
 
+    # Worker details: one control — Off, x3, x4, x5, x1, x2 (repeat)
+    AUTO_SUPPLY_UI_CYCLE = (
+        (False, 3),
+        (True, 3),
+        (True, 4),
+        (True, 5),
+        (True, 1),
+        (True, 2),
+    )
+
+    def worker_auto_supply_compact_label(wref):
+        """Short label for compact Stock Potions control."""
+        w = _resolve_worker_for_automation(wref) if wref else None
+        if not w:
+            return "Off"
+        if not w.get("auto_supply_potions", False):
+            return "Off"
+        try:
+            c = int(w.get("auto_supply_potion_count", 3))
+        except (TypeError, ValueError):
+            c = 3
+        c = max(1, min(5, c))
+        return "x%d" % c
+
+    def cycle_worker_auto_supply_compact(worker):
+        """Cycle Stock Potions: Off -> x3 -> x4 -> x5 -> x1 -> x2 -> Off."""
+        canonical = _resolve_worker_for_automation(worker)
+        cycle = AUTO_SUPPLY_UI_CYCLE
+        on = bool(canonical.get("auto_supply_potions", False))
+        try:
+            c = int(canonical.get("auto_supply_potion_count", 3))
+        except (TypeError, ValueError):
+            c = 3
+        c = max(1, min(5, c))
+        if not on:
+            idx = 0
+        else:
+            idx = None
+            for i, (oo, cc) in enumerate(cycle):
+                if oo and cc == c:
+                    idx = i
+                    break
+            if idx is None:
+                idx = 1
+        nxt = cycle[(idx + 1) % len(cycle)]
+        new_on, new_count = nxt[0], nxt[1]
+        canonical["auto_supply_potions"] = new_on
+        canonical["auto_supply_potion_count"] = new_count
+        try:
+            worker["auto_supply_potions"] = new_on
+            worker["auto_supply_potion_count"] = new_count
+        except Exception:
+            pass
+        renpy.log(f"AUTO_SUPPLY_COMPACT: {canonical.get('name', '?')} -> on={new_on} count={new_count}")
+        if new_on:
+            try:
+                run_worker_auto_supply_potions(canonical)
+            except Exception as e:
+                renpy.log("cycle_worker_auto_supply_compact immediate run error: " + str(e))
+        renpy.restart_interaction()
+
     def toggle_worker_auto_equip(worker):
         """Toggle auto_equip for the worker (used from Worker details screen)."""
         canonical = _resolve_worker_for_automation(worker)
@@ -5669,7 +6351,229 @@ init python:
                 renpy.log("toggle_worker_auto_equip immediate run error: " + str(e))
         renpy.restart_interaction()
 
-    
+    AUTO_REST_ENTRY_PCTS = (15, 25, 35, 45)
+
+    def normalize_auto_rest_entry_pct_for_worker(worker):
+        """Clamp auto_rest_entry_pct to allowed presets (15, 25, 35, 45)."""
+        allowed = AUTO_REST_ENTRY_PCTS
+        if not worker:
+            return 35
+        raw = worker.get("auto_rest_entry_pct", 35)
+        try:
+            v = int(raw)
+        except (TypeError, ValueError):
+            v = 35
+        if v in allowed:
+            return v
+        return min(allowed, key=lambda x: abs(x - v))
+
+    store.normalize_auto_rest_entry_pct_for_worker = normalize_auto_rest_entry_pct_for_worker
+
+    def toggle_worker_auto_rest(worker):
+        """Toggle manager auto-rest for the worker (Worker details screen)."""
+        canonical = _resolve_worker_for_automation(worker)
+        new_value = not bool(canonical.get("auto_rest", False))
+        canonical["auto_rest"] = new_value
+        try:
+            worker["auto_rest"] = new_value
+        except Exception:
+            pass
+        renpy.log(f"AUTO_REST_TOGGLE: {canonical.get('name', '?')} -> {new_value}")
+        renpy.restart_interaction()
+
+    def cycle_worker_auto_rest_entry_pct(worker):
+        """Cycle auto_rest_entry_pct: 15 -> 25 -> 35 -> 45 -> 15."""
+        canonical = _resolve_worker_for_automation(worker)
+        order = AUTO_REST_ENTRY_PCTS
+        cur = normalize_auto_rest_entry_pct_for_worker(canonical)
+        try:
+            idx = order.index(cur)
+        except ValueError:
+            idx = 2
+        new_pct = order[(idx + 1) % len(order)]
+        canonical["auto_rest_entry_pct"] = new_pct
+        try:
+            worker["auto_rest_entry_pct"] = new_pct
+        except Exception:
+            pass
+        renpy.log(f"AUTO_REST_ENTRY_PCT: {canonical.get('name', '?')} -> {new_pct}")
+        renpy.restart_interaction()
+
+    # Worker details: one control - Off, 15%, 25%, 35%, 45% (repeat)
+    AUTO_REST_UI_CYCLE = (
+        (False, None),
+        (True, 15),
+        (True, 25),
+        (True, 35),
+        (True, 45),
+    )
+
+    def worker_auto_rest_compact_label(wref):
+        """Short label for compact Auto-rest control."""
+        w = _resolve_worker_for_automation(wref) if wref else None
+        if not w or not w.get("auto_rest", False):
+            return "Off"
+        return "%d%%" % normalize_auto_rest_entry_pct_for_worker(w)
+
+    def cycle_worker_auto_rest_compact(worker):
+        """Cycle Auto-rest: Off -> 15% -> 25% -> 35% -> 45% -> Off."""
+        canonical = _resolve_worker_for_automation(worker)
+        cycle = AUTO_REST_UI_CYCLE
+        on = bool(canonical.get("auto_rest", False))
+        pct = normalize_auto_rest_entry_pct_for_worker(canonical)
+        if not on:
+            idx = 0
+        else:
+            idx = None
+            for i, (oo, pp) in enumerate(cycle):
+                if oo and pp is not None and pp == pct:
+                    idx = i
+                    break
+            if idx is None:
+                idx = 1
+        nxt_on, nxt_pct = cycle[(idx + 1) % len(cycle)]
+        canonical["auto_rest"] = nxt_on
+        if nxt_pct is not None:
+            canonical["auto_rest_entry_pct"] = int(nxt_pct)
+        try:
+            worker["auto_rest"] = nxt_on
+            if nxt_pct is not None:
+                worker["auto_rest_entry_pct"] = int(nxt_pct)
+        except Exception:
+            pass
+        renpy.log(f"AUTO_REST_COMPACT: {canonical.get('name', '?')} -> on={nxt_on} pct={nxt_pct}")
+        renpy.restart_interaction()
+
+    def _normalize_persistent_worker_automation_defaults():
+        """Normalize persistent defaults used by global worker automation controls."""
+        persistent.default_auto_supply_potions = bool(getattr(persistent, "default_auto_supply_potions", False))
+        persistent.default_auto_equip = bool(getattr(persistent, "default_auto_equip", False))
+        persistent.default_auto_rest = bool(getattr(persistent, "default_auto_rest", False))
+
+        try:
+            _count = int(getattr(persistent, "default_auto_supply_potion_count", 3))
+        except Exception:
+            _count = 3
+        persistent.default_auto_supply_potion_count = max(1, min(5, _count))
+
+        allowed = AUTO_REST_ENTRY_PCTS
+        try:
+            _pct = int(getattr(persistent, "default_auto_rest_entry_pct", 35))
+        except Exception:
+            _pct = 35
+        if _pct not in allowed:
+            _pct = min(allowed, key=lambda x: abs(x - _pct))
+        persistent.default_auto_rest_entry_pct = int(_pct)
+
+    def default_auto_supply_compact_label():
+        _normalize_persistent_worker_automation_defaults()
+        if not getattr(persistent, "default_auto_supply_potions", False):
+            return "Off"
+        return "x%d" % int(getattr(persistent, "default_auto_supply_potion_count", 3))
+
+    def default_auto_rest_compact_label():
+        _normalize_persistent_worker_automation_defaults()
+        if not getattr(persistent, "default_auto_rest", False):
+            return "Off"
+        return "%d%%" % int(getattr(persistent, "default_auto_rest_entry_pct", 35))
+
+    def apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True):
+        """
+        Apply persistent automation defaults to all current workers.
+        This intentionally overrides per-worker automation settings.
+        """
+        _normalize_persistent_worker_automation_defaults()
+        workers = list(getattr(store, "workers", []) or [])
+        auto_supply_on = bool(getattr(persistent, "default_auto_supply_potions", False))
+        auto_supply_count = int(getattr(persistent, "default_auto_supply_potion_count", 3))
+        auto_equip_on = bool(getattr(persistent, "default_auto_equip", False))
+        auto_rest_on = bool(getattr(persistent, "default_auto_rest", False))
+        auto_rest_pct = int(getattr(persistent, "default_auto_rest_entry_pct", 35))
+
+        for worker in workers:
+            if not hasattr(worker, "get"):
+                continue
+            worker["auto_supply_potions"] = auto_supply_on
+            worker["auto_supply_potion_count"] = auto_supply_count
+            worker["auto_equip"] = auto_equip_on
+            worker["auto_rest"] = auto_rest_on
+            worker["auto_rest_entry_pct"] = auto_rest_pct
+
+            if auto_supply_on:
+                try:
+                    run_worker_auto_supply_potions(worker)
+                except Exception as e:
+                    renpy.log("apply defaults auto-supply error: " + str(e))
+            if auto_equip_on:
+                try:
+                    run_worker_auto_equip(worker)
+                except Exception as e:
+                    renpy.log("apply defaults auto-equip error: " + str(e))
+
+        renpy.log(
+            "AUTO_DEFAULTS_APPLY_ALL: workers=%d supply=%s x%d equip=%s rest=%s %d%%" % (
+                len(workers),
+                str(auto_supply_on),
+                int(auto_supply_count),
+                str(auto_equip_on),
+                str(auto_rest_on),
+                int(auto_rest_pct),
+            )
+        )
+        if restart_ui:
+            renpy.restart_interaction()
+
+    def cycle_persistent_default_auto_supply_compact():
+        """Cycle global Stock Potions default: Off -> x3 -> x4 -> x5 -> x1 -> x2 -> Off."""
+        _normalize_persistent_worker_automation_defaults()
+        cycle = AUTO_SUPPLY_UI_CYCLE
+        on = bool(getattr(persistent, "default_auto_supply_potions", False))
+        count = int(getattr(persistent, "default_auto_supply_potion_count", 3))
+        count = max(1, min(5, count))
+        if not on:
+            idx = 0
+        else:
+            idx = None
+            for i, (oo, cc) in enumerate(cycle):
+                if oo and cc == count:
+                    idx = i
+                    break
+            if idx is None:
+                idx = 1
+        nxt_on, nxt_count = cycle[(idx + 1) % len(cycle)]
+        persistent.default_auto_supply_potions = bool(nxt_on)
+        persistent.default_auto_supply_potion_count = int(nxt_count)
+        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True)
+
+    def toggle_persistent_default_auto_equip():
+        """Toggle global Auto Equip default and apply to all workers."""
+        _normalize_persistent_worker_automation_defaults()
+        persistent.default_auto_equip = not bool(getattr(persistent, "default_auto_equip", False))
+        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True)
+
+    def cycle_persistent_default_auto_rest_compact():
+        """Cycle global Auto-rest default: Off -> 15% -> 25% -> 35% -> 45% -> Off."""
+        _normalize_persistent_worker_automation_defaults()
+        cycle = AUTO_REST_UI_CYCLE
+        on = bool(getattr(persistent, "default_auto_rest", False))
+        pct = int(getattr(persistent, "default_auto_rest_entry_pct", 35))
+        if pct not in AUTO_REST_ENTRY_PCTS:
+            pct = 35
+        if not on:
+            idx = 0
+        else:
+            idx = None
+            for i, (oo, pp) in enumerate(cycle):
+                if oo and pp is not None and pp == pct:
+                    idx = i
+                    break
+            if idx is None:
+                idx = 1
+        nxt_on, nxt_pct = cycle[(idx + 1) % len(cycle)]
+        persistent.default_auto_rest = bool(nxt_on)
+        if nxt_pct is not None:
+            persistent.default_auto_rest_entry_pct = int(nxt_pct)
+        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True)
 
     
     
@@ -5703,7 +6607,7 @@ init python:
         # Prefer servant_jobs maps to avoid relying on worker.assigned_building
         seen_names = set()
         for building in available_buildings.values():
-            if not isinstance(building, dict):
+            if not hasattr(building, "get"):
                 continue
             for worker_name, job_id in (building.get("servant_jobs") or {}).items():
                 if job_id and job_id.lower() == "manager" and worker_name and worker_name not in seen_names:
@@ -5744,11 +6648,11 @@ init python:
         
         for worker in assigned_servants:
             # Extract worker name safely
-            if isinstance(worker, dict):
+            if hasattr(worker, "get"):
                 worker_name = worker.get("name", "")
             else:
                 worker_name = str(worker) if worker else ""
-            
+
             # Skip if we don't have a valid worker name
             if not worker_name or not isinstance(worker_name, str):
                 continue
@@ -5780,11 +6684,11 @@ init python:
         # Check each worker
         for worker in assigned_servants:
             # Extract worker name safely
-            if isinstance(worker, dict):
+            if hasattr(worker, "get"):
                 worker_name = worker.get("name", "")
             else:
                 worker_name = str(worker) if worker else ""
-            
+
             # Skip if we don't have a valid worker name
             if not worker_name or not isinstance(worker_name, str):
                 continue
@@ -5974,7 +6878,7 @@ init python:
     def add_management_skill_point(skill_id):
         """Add +1 to a management skill. Called from confirm_all_management_skill_points or legacy single confirm."""
         skills = getattr(store, "management_skills", None)
-        if not isinstance(skills, dict):
+        if not hasattr(skills, "get"):
             store.management_skills = {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0}
             skills = store.management_skills
         current = skills.get(skill_id, 0)
@@ -5987,7 +6891,7 @@ init python:
         skills = getattr(store, "management_skills", None) or {}
         spent = sum(skills.get(k, 0) for k in keys)
         pending = getattr(store, "manager_pending_skills", None) or {}
-        if not isinstance(pending, dict):
+        if not hasattr(pending, "get"):
             store.manager_pending_skills = {}
             pending = store.manager_pending_skills
         total_pending = sum(pending.values())
@@ -6001,7 +6905,7 @@ init python:
     def confirm_all_management_skill_points():
         """Apply all pending skill points (from multiple + clicks) and clear pending."""
         pending = getattr(store, "manager_pending_skills", None) or {}
-        if not isinstance(pending, dict):
+        if not hasattr(pending, "get"):
             store.manager_pending_skills = {}
             return
         for sid, count in list(pending.items()):
@@ -6015,7 +6919,7 @@ init python:
     def manager_has_unspent_skill_points():
         """True if manager has skill points to assign (manager_level minus spent points)."""
         skills = getattr(store, "management_skills", None) or {}
-        if not isinstance(skills, dict):
+        if not hasattr(skills, "get"):
             return False
         keys = ["business_acumen", "whore_mastery", "combat_instruction", "servant_training", "gang_leader"]
         spent = sum(skills.get(k, 0) for k in keys)
@@ -6050,7 +6954,6 @@ define skill_order = [
     "Specialty 10", "Specialty 11", "Specialty 12"
 ]
 
-# Eliminado: Mapeo de IDs numéricos a nombres de skills - solo se usan nombres
 
 # Define SFW skill IDs
 define sfw_skills = [
@@ -6171,8 +7074,7 @@ default last_map_refill_day = None  # Track which day the map refill count was r
 default buy_servants_filter_gender = None  # None = All, "male" = Male only, "female" = Female only (filter for Buy Servants list)
 default take_a_walk_in_progress = False
 default last_take_a_walk_day = None
-default worker_interactions_today = {}  # Track daily interactions per worker: {worker_name: {day: count}}
-default MAX_DAILY_INTERACTIONS = 2  # Maximum interactions per worker per day
+default manager_interactions_today = 0  # Manager's total interactions used today (shared pool; limit = 2 + Manager Level)
 default custom_names = {
     "Building 1": "Building 1"
 }
@@ -6224,10 +7126,14 @@ default yvara_s4_gate_fired = False         # Flag: Stage 4 gate scene (The Stor
 default yvara_morning_after_done = False    # Flag: Morning After scene already fired
 default yvara_evening_academy_last_day = None  # Last day Evening at Academy was visited
 default yvara_continuation_notice_shown = False  # One-time notice that more story content is planned
+default yvara_good_word_count = 0
+default yvara_good_word_last_day = None
+default yvara_good_word_peak = False
 default arena_unlocked = False  # True after arena trial succeeds/mediocre/critical
 default arena_lanista_paid = False  # True after player pays Lanista permit
 define LANISTA_PERMIT_COST = 10000  # Cost to obtain Lanista permit for the coliseum
 define SPECIAL_MATCH_COST = 5000  # Cost to enter a special match (2 rounds + combat roll)
+define FIRST_BUILDING_BASE_DAILY_DISCOUNT = 0  # Daily base maintenance discount for Building 1 / Building_1 (disabled)
 default alchemy_unlocked = False  # True after player pays alchemist pass at Academy laboratory
 define ALCHEMY_PASS_COST = 6000  # One-time cost to unlock the Academy laboratory
 define ALCHEMY_COST_BASIC = 350  # Batch of basic potions (health/energy)
@@ -6316,7 +7222,7 @@ init python:
         """Return list of (item_id, display_name, qty) from manager inventory that Yvara accepts."""
         inv_store = getattr(store, "manager_inventory", [])
         inv_global = manager_inventory if "manager_inventory" in globals() else []
-        item_defs = items_json.get("items", []) if "items_json" in globals() and isinstance(items_json, dict) else []
+        item_defs = items_json.get("items", []) if "items_json" in globals() and hasattr(items_json, "get") else []
         allowed = set(getattr(store, "YVARA_GIFTS", YVARA_GIFTS).keys())
         blocked_ids = {"diamond", "ruby", "emerald", "sapphire"}
         allowed -= blocked_ids
@@ -6404,7 +7310,7 @@ init python:
     def _sanitize_persistent_obj(obj):
         """Convert SafeNameDict to plain dict inside persistent data."""
         try:
-            if isinstance(obj, dict):
+            if hasattr(obj, "get"):
                 if obj.__class__.__name__ == "SafeNameDict":
                     obj = dict(obj)
                 return {k: _sanitize_persistent_obj(v) for k, v in obj.items()}
@@ -6453,7 +7359,7 @@ init python:
             # Safety sync: if Arena is already owned in save data, keep it unlocked.
             arena_data = getattr(store, "available_buildings", {}).get("Arena", None)
             arena_in_owned = "Arena" in getattr(store, "owned_buildings", [])
-            arena_owned_flag = isinstance(arena_data, dict) and bool(arena_data.get("owned", False))
+            arena_owned_flag = hasattr(arena_data, "get") and bool(arena_data.get("owned", False))
             if arena_in_owned or arena_owned_flag:
                 store.arena_unlocked = True
         except Exception as e:
@@ -6645,7 +7551,7 @@ transform yvara_bg_blur:
 label yvara_prologue:
     jump academy_tuition_dialogue
 
-# Academy tuition: Ren'Py say (dialogue box + name) + menu (same style as recruitment). After pay → map + academy_menu overlay.
+# Academy tuition: Ren'Py say (dialogue box + name) + menu (same style as recruitment). After pay â†’ map + academy_menu overlay.
 label academy_tuition_dialogue:
     $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     $ _yvara_bust = "images/yvara/yvara_formal_neutral.png" if renpy.loadable("images/yvara/yvara_formal_neutral.png") else None
@@ -6887,7 +7793,7 @@ label yvara_assess_feelings:
         narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection] | Stage [yvara_stage]"
     jump yvara_visit_menu
 
-# ── Stage 1 talk router ──────────────────────────────────────────────────────
+# â”€â”€ Stage 1 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_talk_router:
     if "s1_t1" not in yvara_s1_talks_done:
         jump yvara_s1_talk_1
@@ -6898,7 +7804,7 @@ label yvara_s1_talk_router:
     else:
         jump yvara_talk_generic
 
-# ── Stage 1 Talk 1: The Academy ──────────────────────────────────────────────
+# â”€â”€ Stage 1 Talk 1: The Academy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_talk_1:
     $ _total_days = calculate_total_days()
     yvara "This institution has been standing for longer than most of the buildings on this street."
@@ -6940,7 +7846,7 @@ label yvara_s1_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance
     jump yvara_visit_menu
 
-# ── Stage 1 Talk 2: The Students ─────────────────────────────────────────────
+# â”€â”€ Stage 1 Talk 2: The Students â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_talk_2:
     $ _total_days = calculate_total_days()
     yvara "A student asked me yesterday why we practice the same exercise every morning."
@@ -6985,7 +7891,7 @@ label yvara_s1_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_1
     jump yvara_visit_menu
 
-# ── Stage 1 Talk 3: The Methods ──────────────────────────────────────────────
+# â”€â”€ Stage 1 Talk 3: The Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_talk_3:
     $ _total_days = calculate_total_days()
     yvara "I learned to teach from a woman I hated for six years."
@@ -7034,7 +7940,7 @@ label yvara_s1_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_2
     jump yvara_visit_menu
 
-# ── Generic talk (after all S1 conversations done or S2+) ────────────────────
+# â”€â”€ Generic talk (after all S1 conversations done or S2+) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_talk_generic:
     $ _total_days = calculate_total_days()
     if yvara_stage == 1:
@@ -7105,7 +8011,7 @@ label yvara_talk_generic:
     $ yvara_last_talk_total_days = _total_days
     jump yvara_visit_menu
 
-# ── Stage 2 talk router ───────────────────────────────────────────────────────
+# â”€â”€ Stage 2 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_talk_router:
     if "s2_t1" not in yvara_s2_talks_done:
         jump yvara_s2_talk_1
@@ -7116,7 +8022,7 @@ label yvara_s2_talk_router:
     else:
         jump yvara_talk_generic
 
-# ── Stage 2 Talk 1: The Question She Asks ────────────────────────────────────
+# â”€â”€ Stage 2 Talk 1: The Question She Asks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_talk_1:
     $ _total_days = calculate_total_days()
     narrator "She does not look up when you come in, which is normal. What is not normal is that she speaks first."
@@ -7184,7 +8090,7 @@ label yvara_s2_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_3
     jump yvara_visit_menu
 
-# ── Stage 2 Talk 2: The Correction ───────────────────────────────────────────
+# â”€â”€ Stage 2 Talk 2: The Correction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She does not greet you. She waits until you have settled, and then she says:"
@@ -7251,7 +8157,7 @@ label yvara_s2_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_4
     jump yvara_visit_menu
 
-# ── Stage 2 Talk 3: The Evening ───────────────────────────────────────────────
+# â”€â”€ Stage 2 Talk 3: The Evening â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_talk_3:
     $ _total_days = calculate_total_days()
     narrator "The light through the east window has gone from gold to grey. You have been here longer than usual."
@@ -7319,7 +8225,7 @@ label yvara_s2_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_5
     jump yvara_visit_menu
 
-# ── Stage 2 remark router ─────────────────────────────────────────────────────
+# â”€â”€ Stage 2 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_remark_router:
     $ _total_days = calculate_total_days()
     if "s2_r1" not in yvara_s2_remarks_done:
@@ -7330,7 +8236,7 @@ label yvara_s2_remark_router:
         yvara "You have said everything worth saying for now."
         jump yvara_visit_menu
 
-# ── Stage 2 Remark 1: What No One Notices ────────────────────────────────────
+# â”€â”€ Stage 2 Remark 1: What No One Notices â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_remark_1:
     narrator "You have been watching her long enough to notice things. You say one of them."
     menu:
@@ -7375,7 +8281,7 @@ label yvara_s2_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_6
     jump yvara_visit_menu
 
-# ── Stage 2 Remark 2: An Admission ───────────────────────────────────────────
+# â”€â”€ Stage 2 Remark 2: An Admission â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s2_remark_2:
     narrator "You say something you do not usually say."
     menu:
@@ -7418,7 +8324,7 @@ label yvara_s2_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_7
     jump yvara_visit_menu
 
-# ── Stage 3 talk router ───────────────────────────────────────────────────────
+# â”€â”€ Stage 3 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_talk_router:
     if "s3_t1" not in yvara_s3_talks_done:
         jump yvara_s3_talk_1
@@ -7429,7 +8335,7 @@ label yvara_s3_talk_router:
     else:
         jump yvara_talk_generic
 
-# ── Stage 3 Talk 1: The Garden ───────────────────────────────────────────────
+# â”€â”€ Stage 3 Talk 1: The Garden â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_talk_1:
     $ _total_days = calculate_total_days()
     narrator "She is outside during a break, sitting on the low bench beside the east wall with a book open in her lap."
@@ -7496,7 +8402,7 @@ label yvara_s3_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_8
     jump yvara_visit_menu
 
-# ── Stage 3 Talk 2: The Favor ────────────────────────────────────────────────
+# â”€â”€ Stage 3 Talk 2: The Favor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She has left the ledger open on the side of the desk rather than putting it away before you arrived. The numbers are visible."
@@ -7566,7 +8472,7 @@ label yvara_s3_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_9
     jump yvara_visit_menu
 
-# ── Stage 3 Talk 3: The Incident ─────────────────────────────────────────────
+# â”€â”€ Stage 3 Talk 3: The Incident â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_talk_3:
     $ _total_days = calculate_total_days()
     narrator "You are present when it happens — a student stumbles during a practical demonstration, catches a shelf edge badly, goes down hard."
@@ -7635,7 +8541,7 @@ label yvara_s3_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_10
     jump yvara_visit_menu
 
-# ── Stage 3 remark router ─────────────────────────────────────────────────────
+# â”€â”€ Stage 3 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_remark_router:
     $ _total_days = calculate_total_days()
     if "s3_r1" not in yvara_s3_remarks_done:
@@ -7646,7 +8552,7 @@ label yvara_s3_remark_router:
         yvara "You have said everything worth saying for now."
         jump yvara_visit_menu
 
-# ── Stage 3 Remark 1: Different ──────────────────────────────────────────────
+# â”€â”€ Stage 3 Remark 1: Different â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_remark_1:
     menu:
         "You seem less guarded than when I first came here.":
@@ -7688,7 +8594,7 @@ label yvara_s3_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_11
     jump yvara_visit_menu
 
-# ── Stage 3 Remark 2: How Long ───────────────────────────────────────────────
+# â”€â”€ Stage 3 Remark 2: How Long â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_remark_2:
     narrator "She says it in the middle of something else entirely, without looking up."
     menu:
@@ -7732,7 +8638,7 @@ label yvara_s3_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_12
     jump yvara_visit_menu
 
-# ── Stage 3 Gate Scene: After the Tour ───────────────────────────────────────
+# â”€â”€ Stage 3 Gate Scene: After the Tour â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s3_gate_scene:
     $ yvara_s3_gate_ready = False
     $ yvara_affection = max(yvara_affection, 51)
@@ -7867,7 +8773,7 @@ label yvara_visit_after_hours:
     narrator "She knew you would understand what after hours meant."
     jump yvara_s3_gate_scene
 
-# ── Off-Camera Mechanic A: The Good Word ─────────────────────────────────────
+# â”€â”€ Off-Camera Mechanic A: The Good Word â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_good_word:
     $ _total_days = calculate_total_days()
     narrator "You arrange for a worker to spend the day at the Academy — extra tutoring, on your recommendation."
@@ -7896,7 +8802,7 @@ label yvara_good_word:
         narrator "She does not mention it at the next visit. But something is slightly different when she looks at you."
     jump yvara_visit_menu
 
-# ── Off-Camera Mechanic B: The Observed Lesson ───────────────────────────────
+# â”€â”€ Off-Camera Mechanic B: The Observed Lesson â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_observed_lesson:
     $ _total_days = calculate_total_days()
     if money < 200:
@@ -7928,7 +8834,7 @@ label yvara_observed_lesson:
         narrator "The pause before the last word is long."
     jump yvara_visit_menu
 
-# ── Stage 4 talk router ───────────────────────────────────────────────────────
+# â”€â”€ Stage 4 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_talk_router:
     if "s4_t1" not in yvara_s4_talks_done:
         jump yvara_s4_talk_1
@@ -7939,7 +8845,7 @@ label yvara_s4_talk_router:
     else:
         jump yvara_talk_generic
 
-# ── Stage 4 Talk 1: The Frame ────────────────────────────────────────────────
+# â”€â”€ Stage 4 Talk 1: The Frame â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_talk_1:
     $ _total_days = calculate_total_days()
     narrator "She is working when you arrive — or performing the act of working. The distinction has become readable."
@@ -8013,7 +8919,7 @@ label yvara_s4_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_13
     jump yvara_visit_menu
 
-# ── Stage 4 Talk 2: The Limit ────────────────────────────────────────────────
+# â”€â”€ Stage 4 Talk 2: The Limit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She is standing at the window when you arrive — facing it, not looking out of it."
@@ -8088,7 +8994,7 @@ label yvara_s4_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_14
     jump yvara_visit_menu
 
-# ── Stage 4 Talk 3: Before the Rain ─────────────────────────────────────────
+# â”€â”€ Stage 4 Talk 3: Before the Rain â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_talk_3:
     $ _total_days = calculate_total_days()
     narrator "The sky outside the office windows has the particular quality of a sky that has made up its mind."
@@ -8161,7 +9067,7 @@ label yvara_s4_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_15
     jump yvara_visit_menu
 
-# ── Stage 4 remark router ─────────────────────────────────────────────────────
+# â”€â”€ Stage 4 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_remark_router:
     $ _total_days = calculate_total_days()
     if "s4_r1" not in yvara_s4_remarks_done:
@@ -8172,7 +9078,7 @@ label yvara_s4_remark_router:
         yvara "You have already said everything worth saying for now."
         jump yvara_visit_menu
 
-# ── Stage 4 Remark 1: The Tell ────────────────────────────────────────────────
+# â”€â”€ Stage 4 Remark 1: The Tell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_remark_1:
     $ _total_days = calculate_total_days()
     narrator "You notice something she does — a small thing. The way she keeps her pen in her hand when she has stopped writing. The way her expression holds an extra half-second before it reassembles."
@@ -8219,7 +9125,7 @@ label yvara_s4_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_16
     jump yvara_visit_menu
 
-# ── Stage 4 Remark 2: The Implication ────────────────────────────────────────
+# â”€â”€ Stage 4 Remark 2: The Implication â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_remark_2:
     $ _total_days = calculate_total_days()
     narrator "The conversation has been ordinary. Then it isn't."
@@ -8271,7 +9177,7 @@ label yvara_s4_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_17
     jump yvara_visit_menu
 
-# ── Stage 4 Finance: Donate money ─────────────────────────────────────────────
+# â”€â”€ Stage 4 Finance: Donate money â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_donate_money:
     $ _tier_two_unlocked = yvara_s4_donation_highest_tier >= 1 or yvara_s4_donation_total >= 1
     $ _tier_three_unlocked = yvara_s4_donation_highest_tier >= 2 or yvara_s4_donation_total >= 2
@@ -8420,7 +9326,7 @@ label yvara_s4_donate_tier_4:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_21
     jump yvara_visit_menu
 
-# ── Stage 4 Finance: Buy favors ───────────────────────────────────────────────
+# â”€â”€ Stage 4 Finance: Buy favors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_buy_favors:
     $ _tier_two_unlocked = yvara_s4_favor_highest_tier >= 1 or yvara_s4_favors_total >= 1
     $ _tier_three_unlocked = yvara_s4_favor_highest_tier >= 2 or yvara_s4_favors_total >= 2
@@ -8568,7 +9474,7 @@ label yvara_s4_favor_striptease:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_25
     jump yvara_visit_menu
 
-# ── Stage 4 Gate Scene: The Storm ─────────────────────────────────────────────
+# â”€â”€ Stage 4 Gate Scene: The Storm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_gate_scene:
     $ yvara_affection = max(yvara_affection, 64)
     $ _title = (getattr(store, "player_title", "") or "").strip().lower()
@@ -8739,7 +9645,7 @@ label yvara_s4_gate_end:
             yoffset 40
     jump yvara_visit_menu
 
-# ── Stage 4: The Morning After ────────────────────────────────────────────────
+# â”€â”€ Stage 4: The Morning After â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s4_morning_after:
     narrator "She is already at her desk when you wake."
     narrator "Professional posture. Papers arranged. Tea made — there are two cups."
@@ -8769,7 +9675,7 @@ label yvara_s4_morning_after:
     $ yvara_affection += 0
     jump yvara_visit_menu
 
-# ── Stage 4: Evening at the Academy (repeatable) ─────────────────────────────
+# â”€â”€ Stage 4: Evening at the Academy (repeatable) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_evening_academy:
     $ _total_days = calculate_total_days()
     $ yvara_evening_academy_last_day = _total_days
@@ -8828,7 +9734,7 @@ label yvara_evening_academy:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_26
     jump yvara_visit_menu
 
-# ── Stage 1 remark router ─────────────────────────────────────────────────────
+# â”€â”€ Stage 1 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_remark_router:
     $ _total_days = calculate_total_days()
     if "s1_r1" not in yvara_s1_remarks_done:
@@ -8841,7 +9747,7 @@ label yvara_s1_remark_router:
         yvara "You have made your point."
         jump yvara_visit_menu
 
-# ── Stage 1 Remark 1 ──────────────────────────────────────────────────────────
+# â”€â”€ Stage 1 Remark 1 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_remark_1:
     narrator "You look around the room before speaking."
     menu:
@@ -8879,7 +9785,7 @@ label yvara_s1_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_27
     jump yvara_visit_menu
 
-# ── Stage 1 Remark 2 ──────────────────────────────────────────────────────────
+# â”€â”€ Stage 1 Remark 2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_remark_2:
     menu:
         "Your students seem to respect you. Not just obey you.":
@@ -8916,7 +9822,7 @@ label yvara_s1_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_28
     jump yvara_visit_menu
 
-# ── Stage 1 Remark 3 ──────────────────────────────────────────────────────────
+# â”€â”€ Stage 1 Remark 3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_s1_remark_3:
     menu:
         "Ask if she ever gets tired of it.":
@@ -8951,7 +9857,7 @@ label yvara_s1_remark_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_29
     jump yvara_visit_menu
 
-# ── Stage gate check ──────────────────────────────────────────────────────────
+# â”€â”€ Stage gate check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 label yvara_check_stage_advance:
     if yvara_stage == 1 and len(yvara_s1_talks_done) >= 3 and yvara_affection >= 16:
         $ yvara_recalculate_stage()
@@ -9181,7 +10087,7 @@ label academy_alchemy_choose_worker:
     $ renpy.call_screen("choose_worker_for_alchemy_craft")
     $ _worker = _alchemy_chosen_worker
     $ _alchemy_chosen_worker = None
-    if _worker is None or not isinstance(_worker, dict) or not _worker.get("name"):
+    if _worker is None or not hasattr(_worker, "get") or not _worker.get("name"):
         $ money += ALCHEMY_COST_BASIC if _alchemy_investment_tier == "basic" else (ALCHEMY_COST_QUALITY if _alchemy_investment_tier == "quality" else ALCHEMY_COST_PREMIUM)
         $ renpy.show_screen("map_screen")
         $ renpy.show_screen("academy_menu")
@@ -9256,13 +10162,13 @@ label arena_first_dialogue:
     $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
     scene expression _arena_bg
     if not arena_lanista_paid:
-        arena_promoter "The coliseum welcomes you—but the sands do not. I am master here: the Lanista. These grounds have tasted blood and glory for generations, and they do not open to just anyone."
-        arena_promoter "If you would train gladiators under my banner, you must first buy in. [LANISTA_PERMIT_COST] coins—one payment, no haggling. After that, we speak of worth. Proof is in the sand: a trial by combat. What say you?"
+        arena_promoter "The coliseum welcomes you -- but the sands do not. I am master here: the Lanista. These grounds have tasted blood and glory for generations, and they do not open to just anyone."
+        arena_promoter "If you would train gladiators under my banner, you must first buy in. [LANISTA_PERMIT_COST] coins -- one payment, no haggling. After that, we speak of worth. Proof is in the sand: a trial by combat. What say you?"
         jump arena_permit_menu
     # Already paid permit, need trial
-    arena_promoter "The permit is yours. Paper and coin open the gate—but the crowd and the sands demand more. They demand proof."
+    arena_promoter "The permit is yours. Paper and coin open the gate -- but the crowd and the sands demand more. They demand proof."
     arena_promoter "Send me one of your own for a trial by combat before the masses. The bout may be to the death; the sands show no mercy."
-    arena_promoter "If your fighter survives—or falls with honour, blade in hand—the Arena is yours to use. Do you accept?"
+    arena_promoter "If your fighter survives -- or falls with honour, blade in hand -- the Arena is yours to use. Do you accept?"
     jump arena_combatant_menu
 
 label arena_permit_menu:
@@ -9292,7 +10198,7 @@ label arena_do_trial:
     $ renpy.call_screen("choose_worker_for_arena_trial")
     $ _worker = _arena_chosen_worker
     $ _arena_chosen_worker = None
-    if _worker is None or not isinstance(_worker, dict) or not _worker.get("name"):
+    if _worker is None or not hasattr(_worker, "get") or not _worker.get("name"):
         $ renpy.show_screen("map_screen")
         jump tavern_screen
     jump arena_run_trial_and_result
@@ -9319,7 +10225,7 @@ label arena_run_trial_and_result(worker_name=None):
     elif _outcome == "success":
         $ add_arena_building()
         $ renpy.say(narrator, _worker["name"] + " took the sand and gave as good as they got. Bloodied but unbowed, they outlasted their opponent and raised their weapon to the crowd's approval.")
-        $ renpy.say(narrator, "The trial is won. The Arena opens its gates to you—you may use it from the map from now on.")
+        $ renpy.say(narrator, "The trial is won. The Arena opens its gates to you -- you may use it from the map from now on.")
         $ renpy.notify("Arena unlocked!")
         $ renpy.show_screen("map_screen")
         $ renpy.show_screen("arena_menu")

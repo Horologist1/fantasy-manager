@@ -1,5 +1,4 @@
 # worker_defaults.rpy
-# funciones que definen y mantienen la estructura básica de los trabajadores
 
 init python:
 
@@ -118,24 +117,43 @@ init python:
             except Exception:
                 pass
         
-        # Fixed health initialization - only set to max if doesn't exist
+        # Fixed health initialization
+        # If a worker template ships with base health but traits increase max HP,
+        # promote to full HP to avoid "injured by default" in recruitment lists.
         max_health = calculate_max_health(worker)
+        base_health = 10 + (worker.get("level", 1) * 5)
         if "health" not in worker:
             worker["health"] = max_health
         else:
-            # Only cap health to maximum, don't set to maximum
+            try:
+                worker["health"] = int(worker.get("health", 0))
+            except Exception:
+                worker["health"] = 0
+            # Heal template workers that still have legacy/base health after max increased by traits/items.
+            if worker["health"] == base_health and max_health > base_health:
+                worker["health"] = max_health
+            # Only cap health to maximum otherwise
             if worker["health"] > max_health:
                 worker["health"] = max_health
             # Make sure health doesn't go below 0
             elif worker["health"] < 0:
                 worker["health"] = 0
 
-        # Fixed energy initialization - only set to max if doesn't exist
+        # Fixed energy initialization
+        # Same compatibility rule as health for "tired by default" templates.
         max_energy = calculate_max_energy(worker)
+        base_energy = worker.get("level", 1) * 5
         if "energy" not in worker:
             worker["energy"] = max_energy
         else:
-            # Only cap energy to maximum, don't set to maximum
+            try:
+                worker["energy"] = int(worker.get("energy", 0))
+            except Exception:
+                worker["energy"] = 0
+            # Recover template workers with old/base energy when traits/items raise max.
+            if worker["energy"] == base_energy and max_energy > base_energy:
+                worker["energy"] = max_energy
+            # Only cap energy to maximum otherwise
             if worker["energy"] > max_energy:
                 worker["energy"] = max_energy
             # Make sure energy doesn't go below 0
@@ -151,7 +169,7 @@ init python:
         if not trait_catalog and hasattr(store, "refresh_traits_cache"):
             trait_catalog = list(store.refresh_traits_cache(force=True) or [])
 
-        known_trait_names = set(t.get("name") for t in trait_catalog if isinstance(t, dict) and t.get("name"))
+        known_trait_names = set(t.get("name") for t in trait_catalog if hasattr(t, "get") and t.get("name"))
         has_trait_catalog = len(known_trait_names) > 0
 
         raw_traits = worker.get("traits", [])
@@ -192,6 +210,12 @@ init python:
         # Preserve existing comfort_level if it exists, otherwise set to comfort_desired or default to 1
         if "comfort_level" not in worker:
             worker["comfort_level"] = worker.get("comfort_desired", 1)
+        try:
+            _comfort_cost_lv = int(worker.get("comfort_level", 1))
+        except Exception:
+            _comfort_cost_lv = 1
+        # Canon rule: worker daily cost is comfort x 20.
+        worker["daily_cost"] = max(1, _comfort_cost_lv) * 20
         worker.setdefault("comfort_desired", 1)  # Initialize from JSON or default to 1
         worker.setdefault("rebelliousness", 50)
         worker.setdefault("joy", random.randint(20, 80))
@@ -199,10 +223,31 @@ init python:
         worker.setdefault("relationship", 10 + worker.get("comfort_level", 1))
         worker.setdefault("libido", 10)  # New Libido stat, max 20
 
-        # Auto-supply potions and auto-equip (worker details toggles)
-        worker.setdefault("auto_supply_potions", False)
-        worker.setdefault("auto_supply_potion_count", 3)
-        worker.setdefault("auto_equip", False)
+        # Automation defaults for new workers come from persistent global Defaults.
+        _def_supply_on = bool(getattr(persistent, "default_auto_supply_potions", False))
+        try:
+            _def_supply_count = int(getattr(persistent, "default_auto_supply_potion_count", 3))
+        except Exception:
+            _def_supply_count = 3
+        _def_supply_count = max(1, min(5, _def_supply_count))
+        _def_auto_equip = bool(getattr(persistent, "default_auto_equip", False))
+        _def_auto_rest = bool(getattr(persistent, "default_auto_rest", False))
+        try:
+            _def_rest_pct = int(getattr(persistent, "default_auto_rest_entry_pct", 35))
+        except Exception:
+            _def_rest_pct = 35
+        _allowed_rest_pcts = (15, 25, 35, 45)
+        if _def_rest_pct not in _allowed_rest_pcts:
+            _def_rest_pct = min(_allowed_rest_pcts, key=lambda x: abs(x - _def_rest_pct))
+
+        worker.setdefault("auto_supply_potions", _def_supply_on)
+        worker.setdefault("auto_supply_potion_count", _def_supply_count)
+        worker.setdefault("auto_equip", _def_auto_equip)
+        worker.setdefault("auto_rest", _def_auto_rest)
+        worker.setdefault("auto_rest_entry_pct", _def_rest_pct)
+        _narp = getattr(store, "normalize_auto_rest_entry_pct_for_worker", None)
+        if callable(_narp):
+            worker["auto_rest_entry_pct"] = _narp(worker)
 
         if "trait_modifiers" not in worker:
             worker["trait_modifiers"] = {}

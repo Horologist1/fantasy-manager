@@ -4,7 +4,6 @@
 
 init python:
     import copy as _copy
-    # Inicializar variables del sistema de música por capas
     if not hasattr(store, 'bgm_volume'):
         store.bgm_volume = 0.6  # Volumen normal de BGM (60%)
     if not hasattr(store, 'event_volume'):
@@ -40,23 +39,19 @@ init python:
         Si es lunes y cumple la condición, inicia la BGM.
         """
         try:
-            # Calcular si es lunes (día 1 de la semana)
             is_monday = (store.current_day % 7 == 1) or (store.current_day == 1)
             
             if not is_monday:
                 renpy.log(f"BGM DEBUG: Not Monday - Day {store.current_day}")
                 return
             
-            # Calcular qué lunes del mes es (1-4)
             week_of_month = ((store.current_day - 1) // 7) + 1
             
-            # Verificar si ya se reprodujo este mes
             month_key = f"bgm_played_month_{store.current_year}_{store.current_month}"
             bgm_played_this_month = getattr(store, month_key, False)
             
-            # Solo reproducir en el primer lunes (semana 1) o último lunes del mes
             is_first_monday = (week_of_month == 1)
-            is_last_monday = (week_of_month >= 4)  # Última semana del mes
+            is_last_monday = (week_of_month >= 4)
             
             if (is_first_monday or is_last_monday) and not bgm_played_this_month:
                 start_bgm_simple("audio/BGM.ogg")
@@ -82,12 +77,10 @@ init python:
         try:
             event_music = None
             
-            # Si se proporcionan datos del evento, buscar el campo event_music
-            if event_data and isinstance(event_data, dict):
+            if event_data and hasattr(event_data, "get"):
                 event_music = event_data.get('event_music')
                 renpy.log(f"EVENT MUSIC: Found event_music field: {event_music}")
             
-            # Si no hay música específica, usar fallback
             if not event_music:
                 event_music = "audio/event.ogg"
                 renpy.log("EVENT MUSIC: Using fallback event.ogg")
@@ -96,7 +89,6 @@ init python:
             renpy.music.set_volume(0.05, delay=1.0, channel="music")
             renpy.log("EVENT MUSIC: BGM volume reduced to 0.05 (5%)")
             
-            # Intentar reproducir la música del evento en canal separado
             try:
                 renpy.file(event_music)
                 renpy.music.play(event_music, loop=False, if_changed=True, fadein=1.5, channel="sound")
@@ -104,7 +96,6 @@ init python:
                 store.event_volume = 0.4
                 renpy.log(f"EVENT MUSIC: Successfully playing {event_music} on sound channel at 40% volume")
             except:
-                # Si falla, usar event.ogg como fallback final
                 try:
                     renpy.file("audio/event.ogg")
                     renpy.music.play("audio/event.ogg", loop=False, if_changed=True, fadein=1.5, channel="sound")
@@ -122,7 +113,6 @@ init python:
         Termina la música del evento y restaura el volumen de la BGM principal.
         """
         try:
-            # Fade-out de la música del evento en canal sound
             renpy.music.set_volume(0.0, delay=3.0, channel="sound")
             
             # Restaurar volumen de BGM principal
@@ -145,7 +135,6 @@ init python:
                 remaining = max(0.0, resume_at - now)
             else:
                 remaining = float(desired)
-            # No extender si ya hay un temporizador activo; conservar la misma fecha objetivo.
             if resume_at <= now:
                 store.bgm_resume_at_epoch = now + remaining
             return remaining
@@ -183,11 +172,9 @@ init python:
         Restaura la música de fondo principal después de un evento con fade-out de 10 segundos.
         """
         try:
-            # Hacer fade-out de la música actual durante 10 segundos
             renpy.music.set_volume(0.0, delay=10.0, channel="music")
             
-            # Después del fade-out, restaurar la BGM principal
-            renpy.music.queue("<silence 10.0>")  # Esperar 10 segundos para el fade-out
+            renpy.music.queue("<silence 10.0>")
             renpy.music.queue("audio/BGM.ogg", loop=False, fadein=2.0)
             renpy.music.queue("<silence 120.0>")  # 2 minutes of silence
             renpy.music.queue("audio/BGM.ogg", loop=True, fadein=3.0)  # Loop with fade-in
@@ -227,7 +214,6 @@ init python:
         Restaura el volumen de la BGM principal.
         """
         try:
-            # Fade-out rápido de la música del evento en canal sound
             renpy.music.set_volume(0.0, delay=1.5, channel="sound")
             
             # Restaurar volumen de BGM principal
@@ -243,7 +229,6 @@ init python:
         Restaura el volumen de la BGM principal.
         """
         try:
-            # Fade-out inmediato de la música del evento en canal sound
             renpy.music.set_volume(0.0, delay=1.0, channel="sound")
             
             # Restaurar volumen de BGM principal
@@ -463,8 +448,8 @@ label start:
             persistent._slot_to_apply = None
             persistent.loaded_via_save = False
             persistent._context_restored = False
-            # Reset screen intro popups for every New Game.
-            persistent.intro_popups_enabled = True
+            # Reset which intro popups were shown (so they appear again in new game if enabled).
+            # Do NOT reset intro_popups_enabled – user preference persists across new games.
             persistent.intro_popups_seen = {}
             store._intro_popup_current = None
             # Note: We don't clear _slot_snapshots or _last_snapshot as they're needed for saves
@@ -489,7 +474,7 @@ label start:
             store.event_flags = {}
             store.event_occurrences = {}
             store.event_last_occurred = {}
-            store.worker_interactions_today = {}
+            store.manager_interactions_today = 0
             store.last_take_a_walk_day = None
             store.last_save_slot = None
             
@@ -1108,8 +1093,8 @@ label next_day:
     $ renpy.log("DEBUG: next_day label - STARTING")
     # Reset walk flag for new day
     $ take_a_walk_in_progress = False
-    # Reset daily interaction counts for all workers
-    $ worker_interactions_today = {}
+    # Reset manager's daily interaction count
+    $ manager_interactions_today = 0
     python:
         renpy.log("DEBUG: next_day - about to call process_next_day")
         result = process_next_day()
@@ -1160,6 +1145,12 @@ label handle_event_then_daily_report:
     
     # Process the event with full visual presentation (exactly as before)
     call handle_random_event from _call_handle_random_event
+
+    python:
+        _bthr = getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", -5000)
+        if store.money <= _bthr:
+            renpy.log(f"BANKRUPTCY after random event: money ${store.money} (threshold <= {_bthr}), game over.")
+            renpy.jump("game_over")
     
     # After event is complete, continue with the rest of the day (daily report)
     python:
@@ -1193,6 +1184,10 @@ label handle_governor_retaliation_then_daily_report:
     $ renpy.log("DEBUG: handle_governor_retaliation_then_daily_report - STARTING")
     call governor_retaliation from _call_governor_retaliation_from_next_day
     python:
+        _bthr = getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", -5000)
+        if store.money <= _bthr:
+            renpy.log(f"BANKRUPTCY after governor retaliation flow: money ${store.money} (threshold <= {_bthr}), game over.")
+            renpy.jump("game_over")
         renpy.call_screen("daily_report")
         try:
             for w in store.workers:
@@ -1216,6 +1211,10 @@ label handle_governor_tension_then_daily_report:
     $ renpy.log("DEBUG: handle_governor_tension_then_daily_report - STARTING")
     call governor_tension_event from _call_governor_tension_from_next_day
     python:
+        _bthr = getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", -5000)
+        if store.money <= _bthr:
+            renpy.log(f"BANKRUPTCY after governor tension event: money ${store.money} (threshold <= {_bthr}), game over.")
+            renpy.jump("game_over")
         renpy.call_screen("daily_report")
         try:
             for w in store.workers:
@@ -1315,6 +1314,7 @@ label take_a_walk:
             # User clicked to finish or pressed return button
             $ walk_continue = False
     
+    $ store.walk_interaction_media = None
     # Return to map after walk is complete
     show screen map_screen
     return

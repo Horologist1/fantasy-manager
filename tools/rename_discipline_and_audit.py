@@ -137,7 +137,6 @@ def main():
         if missing_joy:
             report_lines.append(f"- **Faltan:** " + ", ".join(missing_joy))
         report_lines.append("")
-        # Lista completa de archivos (solo nombres que contienen discipline, romance, friendship, joy, obedience)
         relevant = [f for f in all_files if any(x in f.lower() for x in ("discipline", "romance", "friendship", "joy", "obedience"))]
         report_lines.append("### Archivos relevantes en carpeta")
         for f in relevant:

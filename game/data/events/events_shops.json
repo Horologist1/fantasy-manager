@@ -491,7 +491,7 @@
       "shop2_unlocked": true
     },
     "conditions": {
-      "start_when": "after_days:30"
+      "start_when": "after_days:90"
     },
     "choices": [
       {
@@ -700,7 +700,7 @@
       "shop3_unlocked": true
     },
     "conditions": {
-      "start_when": "after_days:90",
+      "start_when": "after_days:120",
       "stop_when": "has_flag:shop3_unlocked OR store.unlocked_shops.get(\"shop3\", False)"
     },
     "choices": [

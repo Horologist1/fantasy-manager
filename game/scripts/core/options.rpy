@@ -23,9 +23,8 @@ define config.name = _("Fantasy Manager")
 define gui.show_name = True
 
 
-## The version of the game.
 
-define config.version = "0.9.5.3"
+define config.version = "0.9.5.4test4"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -165,9 +164,6 @@ define config.window_icon = "gui/window_icon.png"
 ## IMPORTANT: For Windows, you need a .ico file (not .png)
 ## The icon file should be in the project root directory (not in game/)
 
-# Icono del ejecutable en las distribuciones
-# IMPORTANTE: build.icon es relativo a la RAÍZ del proyecto, no a game/
-# El archivo icon.ico debe estar en la raíz (junto a project.json)
 define build.windows_icon = "icon.ico"
 define build.icon = "icon.ico"
 
@@ -221,6 +217,9 @@ init python:
 
     build.documentation('*.html')
     build.documentation('*.txt')
+    build.documentation('user_docs/**.md')
+    build.documentation('user_docs/**.txt')
+    build.documentation('user_docs/**.json')
 
 
 ## A Google Play license key is required to perform in-app purchases. It can be
@@ -242,6 +241,43 @@ init python:
     # Worker gender filter: "both", "male", "female" - filters workers as if the other gender didn't exist
     if not hasattr(persistent, "worker_gender_filter") or persistent.worker_gender_filter not in ("both", "male", "female"):
         persistent.worker_gender_filter = "both"
+
+    # Global defaults for worker automation (used by More Options > Defaults).
+    if not hasattr(persistent, "default_auto_supply_potions"):
+        persistent.default_auto_supply_potions = False
+    else:
+        persistent.default_auto_supply_potions = bool(persistent.default_auto_supply_potions)
+
+    if not hasattr(persistent, "default_auto_supply_potion_count"):
+        persistent.default_auto_supply_potion_count = 3
+    else:
+        try:
+            _auto_supply_count = int(persistent.default_auto_supply_potion_count)
+        except Exception:
+            _auto_supply_count = 3
+        persistent.default_auto_supply_potion_count = max(1, min(5, _auto_supply_count))
+
+    if not hasattr(persistent, "default_auto_equip"):
+        persistent.default_auto_equip = False
+    else:
+        persistent.default_auto_equip = bool(persistent.default_auto_equip)
+
+    if not hasattr(persistent, "default_auto_rest"):
+        persistent.default_auto_rest = False
+    else:
+        persistent.default_auto_rest = bool(persistent.default_auto_rest)
+
+    if not hasattr(persistent, "default_auto_rest_entry_pct"):
+        persistent.default_auto_rest_entry_pct = 35
+    else:
+        try:
+            _auto_rest_pct = int(persistent.default_auto_rest_entry_pct)
+        except Exception:
+            _auto_rest_pct = 35
+        _allowed_rest_pcts = (15, 25, 35, 45)
+        if _auto_rest_pct not in _allowed_rest_pcts:
+            _auto_rest_pct = min(_allowed_rest_pcts, key=lambda x: abs(x - _auto_rest_pct))
+        persistent.default_auto_rest_entry_pct = _auto_rest_pct
 
     # Optionally, customize the preferences screen to include this option
     def add_nsfw_preference():

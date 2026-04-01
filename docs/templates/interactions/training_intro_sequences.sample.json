@@ -1,0 +1,11 @@
+{
+  "_readme": "Place a 'training_intro_sequences' object on each training interaction in interactions_training.json (same level as training_texts). Keys: first_refusal, second_refusal, learn_fail, trained (optional). Each value is a list of strings (one line per click in training_branch_narration) or one string with paragraphs separated by a blank line. Voice: see docs/writing/training_voice.md. learn_fail in training_texts: use only {pronoun} (and optional {roll}/{difficulty})—not {poss}/{subj} unless you extend the engine.",
+  "training_intro_sequences": {
+    "first_refusal": [
+      "Placeholders: {name} {worker} {focus} {skill} {listen} {try} {follow} {apply} {subj} {Subj} {obj} {poss} {refl}"
+    ],
+    "second_refusal": ["..."],
+    "learn_fail": ["..."],
+    "trained": ["Optional preamble clicks before success interaction_result."]
+  }
+}

@@ -1,6 +1,112 @@
-# worker_stats.rpy - Extended version with secondary attributes support
 init python:
     DEBUG_WORKER_STATS = False
+    _trait_defs_cache_key = None
+    _trait_defs_cache = {}
+    _item_defs_cache_key = None
+    _item_defs_cache = {}
+
+    def _coerce_equipped_flag(equipped_flag):
+        """Match inventory UI / snapshot semantics for the third slot of (id, qty, equipped)."""
+        if isinstance(equipped_flag, bool):
+            return equipped_flag
+        if isinstance(equipped_flag, str):
+            return equipped_flag.lower() in ("true", "1", "yes")
+        if isinstance(equipped_flag, (int, float)):
+            return bool(equipped_flag) and equipped_flag != 0
+        return bool(equipped_flag)
+
+    def _inventory_row_like(raw):
+        """True if raw supports indexed access like a save-game inventory row (RevertableList-safe; see LA_BIBLIA §1)."""
+        return raw is not None and hasattr(raw, "__len__") and hasattr(raw, "__getitem__")
+
+    def _iter_normalized_inventory_rows(worker):
+        """Yield (item_id, quantity, is_equipped) per inventory slot.
+
+        Uses store._normalize_inventory_entry when available so dict-shaped rows and
+        Ren'Py RevertableList rows (not always isinstance(..., list)) still count toward
+        equipped item effects. Without this, after_load can cap health/energy to the
+        unequipped max because calculate_max_* never sees gear bonuses.
+        """
+        if not worker or not hasattr(worker, "get"):
+            return
+        inv = worker.get("inventory")
+        if not inv:
+            return
+        try:
+            seq = list(inv)
+        except Exception:
+            return
+        norm_fn = getattr(store, "_normalize_inventory_entry", None)
+        for raw in seq:
+            item_id = None
+            qty = 1
+            is_equipped = False
+            if callable(norm_fn):
+                ent = norm_fn(raw)
+                if ent is None:
+                    continue
+                item_id, qty, is_equipped = ent[0], ent[1], ent[2]
+                # _normalize_inventory_entry uses bool(slot3) for list rows; fix string "true"/"false" (§1: row may be RevertableList, not list).
+                try:
+                    if _inventory_row_like(raw) and len(raw) >= 3 and isinstance(raw[2], str):
+                        is_equipped = _coerce_equipped_flag(raw[2])
+                except Exception:
+                    pass
+            elif _inventory_row_like(raw):
+                try:
+                    ln = len(raw)
+                except Exception:
+                    ln = 0
+                if ln < 1:
+                    continue
+                item_id = raw[0]
+                if not item_id:
+                    continue
+                if ln >= 2:
+                    try:
+                        qty = int(raw[1]) if raw[1] is not None else 1
+                    except Exception:
+                        qty = 1
+                is_equipped = _coerce_equipped_flag(raw[2]) if ln >= 3 else False
+            else:
+                continue
+            if item_id:
+                yield (item_id, max(0, int(qty) if qty is not None else 1), bool(is_equipped))
+
+    def _get_trait_defs_by_name():
+        """
+        Fast name->trait map for the current traits_list snapshot.
+        """
+        global _trait_defs_cache_key, _trait_defs_cache
+        key = (id(traits_list), len(traits_list))
+        if _trait_defs_cache_key != key:
+            mapped = {}
+            for trait in (traits_list or []):
+                if hasattr(trait, "get"):
+                    name = trait.get("name")
+                    if name:
+                        mapped[name] = trait
+            _trait_defs_cache = mapped
+            _trait_defs_cache_key = key
+        return _trait_defs_cache
+
+    def _get_item_defs_by_id():
+        """
+        Fast id->item map for the current items_json snapshot.
+        """
+        global _item_defs_cache_key, _item_defs_cache
+        items_seq = (items_json or {}).get("items", []) if hasattr(items_json, "get") else []
+        key = (id(items_seq), len(items_seq))
+        if _item_defs_cache_key != key:
+            mapped = {}
+            for item in (items_seq or []):
+                if hasattr(item, "get"):
+                    item_id = item.get("id")
+                    if item_id:
+                        mapped[item_id] = item
+            _item_defs_cache = mapped
+            _item_defs_cache_key = key
+        return _item_defs_cache
 
     def calculate_skill_with_traits(worker, skill_name):
         """Return effective skill level (base + trait bonus + equipment bonus + libido bonus). Base skills are capped at 100, but total can exceed 100 with bonuses."""
@@ -19,9 +125,12 @@ init python:
         base = int(base_skills.get(skill_name, 0))
         bonus = 0
 
+        trait_defs = _get_trait_defs_by_name()
+        item_defs = _get_item_defs_by_id()
+
         # Add trait bonuses - read from traits.json definitions
         for trait_name in worker.get("traits", []):
-            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            trait_def = trait_defs.get(trait_name)
             if trait_def and "modifiers" in trait_def:
                 if "skill_modifiers" in trait_def["modifiers"]:
                     trait_bonus = trait_def["modifiers"]["skill_modifiers"].get(skill_name, 0)
@@ -30,29 +139,16 @@ init python:
                     bonus += trait_bonus
 
         # Add equipment bonuses
-        for item in worker.get("inventory", []):
-            # Handle both lists (from JSON) and tuples (from Python)
-            is_equipped = False
-            item_id = None
-            if isinstance(item, (list, tuple)) and len(item) >= 3:
-                item_id = item[0]
-                equipped_flag = item[2]
-                # Convert to boolean if needed
-                if isinstance(equipped_flag, bool):
-                    is_equipped = equipped_flag
-                elif isinstance(equipped_flag, str):
-                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
-                elif isinstance(equipped_flag, (int, float)):
-                    is_equipped = bool(equipped_flag) and equipped_flag != 0
-            
-            if is_equipped and item_id:
-                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
-                if item_data and "effect" in item_data:
-                    if "skill_modifiers" in item_data["effect"]:
-                        equip_bonus = item_data["effect"]["skill_modifiers"].get(skill_name, 0)
-                        if equip_bonus != 0 and DEBUG_WORKER_STATS:
-                            renpy.log(f"calculate_skill_with_traits: Adding {equip_bonus} bonus from equipped item '{item_id}' to {skill_name} for {worker.get('name', 'Unknown')}")
-                        bonus += equip_bonus
+        for item_id, _qty, is_equipped in _iter_normalized_inventory_rows(worker):
+            if not is_equipped:
+                continue
+            item_data = item_defs.get(item_id)
+            if item_data and "effect" in item_data:
+                if "skill_modifiers" in item_data["effect"]:
+                    equip_bonus = item_data["effect"]["skill_modifiers"].get(skill_name, 0)
+                    if equip_bonus != 0 and DEBUG_WORKER_STATS:
+                        renpy.log(f"calculate_skill_with_traits: Adding {equip_bonus} bonus from equipped item '{item_id}' to {skill_name} for {worker.get('name', 'Unknown')}")
+                    bonus += equip_bonus
 
         # Add libido bonus to sexual skills (only in NSFW mode)
         if persistent.nsfw_enabled and skill_name in get_sexual_skill_names():
@@ -82,42 +178,35 @@ init python:
         bonus = 0
         health_cap = None
         
+        trait_defs = _get_trait_defs_by_name()
+        item_defs = _get_item_defs_by_id()
+
         # Add trait bonuses
         for trait_name in worker.get("traits", []):
-            for trait in traits_list:
-                if trait["name"] == trait_name:
-                    modifiers = trait.get("modifiers", {})
-                    bonus += modifiers.get("health", 0)
-                    bonus += modifiers.get("health_max", 0)
-                    if "health_max_cap" in modifiers:
-                        cap_val = modifiers.get("health_max_cap")
-                        # Ignore neutral/invalid caps (0 or negative) introduced by schema defaults.
-                        if isinstance(cap_val, (int, float)) and cap_val > 0:
-                            health_cap = cap_val if health_cap is None else min(health_cap, cap_val)
+            trait = trait_defs.get(trait_name)
+            if trait:
+                modifiers = trait.get("modifiers", {})
+                bonus += modifiers.get("health", 0)
+                bonus += modifiers.get("health_max", 0)
+                if "health_max_cap" in modifiers:
+                    cap_val = modifiers.get("health_max_cap")
+                    # Ignore neutral/invalid caps (0 or negative) introduced by schema defaults.
+                    if isinstance(cap_val, (int, float)) and cap_val > 0:
+                        health_cap = cap_val if health_cap is None else min(health_cap, cap_val)
         
         # Add item bonuses from equipped items
-        inventory = worker.get("inventory", [])
-        for item in inventory:
-            # Handle both lists (from JSON) and tuples (from Python)
-            is_equipped = False
-            item_id = None
-            if isinstance(item, (list, tuple)) and len(item) >= 3:
-                item_id = item[0]
-                equipped_flag = item[2]
-                # Convert to boolean if needed
-                if isinstance(equipped_flag, bool):
-                    is_equipped = equipped_flag
-                elif isinstance(equipped_flag, str):
-                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
-                elif isinstance(equipped_flag, (int, float)):
-                    is_equipped = bool(equipped_flag) and equipped_flag != 0
-            
-            if is_equipped and item_id:
-                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
-                if item_data and "effect" in item_data:
-                    health_bonus = item_data["effect"].get("health", 0)
-                    if health_bonus > 0:  # Only positive bonuses (max_health increases)
-                        bonus += health_bonus
+        for item_id, _qty, is_equipped in _iter_normalized_inventory_rows(worker):
+            if not is_equipped:
+                continue
+            item_data = item_defs.get(item_id)
+            if item_data and "effect" in item_data:
+                effect = item_data["effect"]
+                try:
+                    health_bonus = int(effect.get("health") or 0) + int(effect.get("health_max") or 0)
+                except (TypeError, ValueError):
+                    health_bonus = 0
+                if health_bonus > 0:
+                    bonus += health_bonus
         
         # Management skill: Combat Instruction (+10 max HP per point)
         mgmt = getattr(store, "management_skills", None) or {}
@@ -135,9 +224,12 @@ init python:
         bonus_energy = 0
         energy_cap = None
         
+        trait_defs = _get_trait_defs_by_name()
+        item_defs = _get_item_defs_by_id()
+
         # Add trait bonuses
         for trait_name in worker.get("traits", []):
-            trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
+            trait_def = trait_defs.get(trait_name)
             if trait_def and "modifiers" in trait_def:
                 modifiers = trait_def["modifiers"]
                 bonus_energy += modifiers.get("energy", 0)
@@ -149,28 +241,18 @@ init python:
                         energy_cap = cap_val if energy_cap is None else min(energy_cap, cap_val)
         
         # Add item bonuses from equipped items
-        inventory = worker.get("inventory", [])
-        for item in inventory:
-            # Handle both lists (from JSON) and tuples (from Python)
-            is_equipped = False
-            item_id = None
-            if isinstance(item, (list, tuple)) and len(item) >= 3:
-                item_id = item[0]
-                equipped_flag = item[2]
-                # Convert to boolean if needed
-                if isinstance(equipped_flag, bool):
-                    is_equipped = equipped_flag
-                elif isinstance(equipped_flag, str):
-                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
-                elif isinstance(equipped_flag, (int, float)):
-                    is_equipped = bool(equipped_flag) and equipped_flag != 0
-            
-            if is_equipped and item_id:
-                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
-                if item_data and "effect" in item_data:
-                    energy_bonus = item_data["effect"].get("energy", 0)
-                    if energy_bonus > 0:  # Only positive bonuses (max_energy increases)
-                        bonus_energy += energy_bonus
+        for item_id, _qty, is_equipped in _iter_normalized_inventory_rows(worker):
+            if not is_equipped:
+                continue
+            item_data = item_defs.get(item_id)
+            if item_data and "effect" in item_data:
+                effect = item_data["effect"]
+                try:
+                    energy_bonus = int(effect.get("energy") or 0) + int(effect.get("energy_max") or 0)
+                except (TypeError, ValueError):
+                    energy_bonus = 0
+                if energy_bonus > 0:
+                    bonus_energy += energy_bonus
         
         # Management skill: Gang Leader (+10 max Energy per point)
         mgmt = getattr(store, "management_skills", None) or {}
@@ -185,17 +267,19 @@ init python:
         """Return effective health regeneration (base 1 plus trait bonus)."""
         base_regen = 1
         bonus = 0
+        trait_defs = _get_trait_defs_by_name()
         for trait_name in worker.get("traits", []):
-            for trait in traits_list:
-                if trait["name"] == trait_name:
-                    bonus += trait.get("modifiers", {}).get("health_regeneration", 0)
+            trait = trait_defs.get(trait_name)
+            if trait:
+                bonus += trait.get("modifiers", {}).get("health_regeneration", 0)
         return base_regen + bonus
 
     def calculate_energy_regeneration(worker):
         """Return additional daily energy regeneration from traits (added on top of level-based regen)."""
         bonus = 0
+        trait_defs = _get_trait_defs_by_name()
         for trait_name in worker.get("traits", []):
-            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            trait_def = trait_defs.get(trait_name)
             if trait_def and "modifiers" in trait_def:
                 bonus += trait_def["modifiers"].get("energy_regeneration", 0)
         return bonus
@@ -209,8 +293,9 @@ init python:
         cap = None
         minimum = None
 
+        trait_defs = _get_trait_defs_by_name()
         for trait_name in worker.get("traits", []):
-            trait_def = next((t for t in traits_list if t.get("name") == trait_name), None)
+            trait_def = trait_defs.get(trait_name)
             if not trait_def:
                 continue
 
@@ -233,19 +318,25 @@ init python:
 
     def calculate_earnings(worker, base_earnings, client_seeked_traits=[]):
         """
-        Return earnings after applying trait multipliers.
-        Each trait's earnings_multiplier is multiplied in; if the client seeks a trait that the worker has,
-        an extra multiplier is applied.
+        Return earnings after applying trait multipliers and Business Acumen.
+        Losses (negative base_earnings) are returned unchanged so traits like "Beautiful"
+        do not deepen failure payouts; building staffing money_mult still applies in the caller.
         """
+        try:
+            if float(base_earnings) < 0:
+                return base_earnings
+        except (TypeError, ValueError):
+            pass
         multiplier = 1.0
+        trait_defs = _get_trait_defs_by_name()
         for trait_name in worker.get("traits", []):
-            for trait in traits_list:
-                if trait["name"] == trait_name:
-                    per_trait = trait.get("modifiers", {}).get("earnings_multiplier", 1.0)
-                    per_trait = min(per_trait, 1.5)  # cap per-trait impact
-                    multiplier *= per_trait
-                    if trait_name in client_seeked_traits:
-                        multiplier *= 1.2
+            trait = trait_defs.get(trait_name)
+            if trait:
+                per_trait = trait.get("modifiers", {}).get("earnings_multiplier", 1.0)
+                per_trait = min(per_trait, 1.5)  # cap per-trait impact
+                multiplier *= per_trait
+                if trait_name in client_seeked_traits:
+                    multiplier *= 1.2
         multiplier = min(multiplier, 2.0)
         # Management skill: Business Acumen (+0.1 money multiplier per point)
         mgmt = getattr(store, "management_skills", None) or {}
@@ -325,33 +416,22 @@ init python:
         """
         base_regen = 1 + worker.get("level", 1)
         bonus = 0
+        trait_defs = _get_trait_defs_by_name()
+        item_defs = _get_item_defs_by_id()
         
         # Trait bonuses
         for trait_name in worker.get("traits", []):
-            for trait in traits_list:
-                if trait["name"] == trait_name:
-                    bonus += trait.get("modifiers", {}).get("libido_regeneration", 0)
+            trait = trait_defs.get(trait_name)
+            if trait:
+                bonus += trait.get("modifiers", {}).get("libido_regeneration", 0)
         
         # Item bonuses
-        for item in worker.get("inventory", []):
-            # Handle both lists (from JSON) and tuples (from Python)
-            is_equipped = False
-            item_id = None
-            if isinstance(item, (list, tuple)) and len(item) >= 3:
-                item_id = item[0]
-                equipped_flag = item[2]
-                # Convert to boolean if needed
-                if isinstance(equipped_flag, bool):
-                    is_equipped = equipped_flag
-                elif isinstance(equipped_flag, str):
-                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
-                elif isinstance(equipped_flag, (int, float)):
-                    is_equipped = bool(equipped_flag) and equipped_flag != 0
-            
-            if is_equipped and item_id:
-                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
-                if item_data and "effect" in item_data and isinstance(item_data["effect"], dict):
-                    bonus += item_data["effect"].get("libido_regeneration", 0)
+        for item_id, _qty, is_equipped in _iter_normalized_inventory_rows(worker):
+            if not is_equipped:
+                continue
+            item_data = item_defs.get(item_id)
+            if item_data and "effect" in item_data and hasattr(item_data["effect"], "get"):
+                bonus += item_data["effect"].get("libido_regeneration", 0)
         
         # Calculate work penalty
         sexual_work_count = count_sexual_work_today(worker)
@@ -367,31 +447,20 @@ init python:
         """Return the maximum libido considering base, traits, items, and trait caps."""
         base_max = 20
         extra = 0
+        trait_defs = _get_trait_defs_by_name()
+        item_defs = _get_item_defs_by_id()
         # Trait-based max bonuses
         for trait_name in worker.get("traits", []):
-            for trait in traits_list:
-                if trait["name"] == trait_name:
-                    extra += trait.get("modifiers", {}).get("libido_max", 0)
+            trait = trait_defs.get(trait_name)
+            if trait:
+                extra += trait.get("modifiers", {}).get("libido_max", 0)
         # Item-based max bonuses
-        for item in worker.get("inventory", []):
-            # Handle both lists (from JSON) and tuples (from Python)
-            is_equipped = False
-            item_id = None
-            if isinstance(item, (list, tuple)) and len(item) >= 3:
-                item_id = item[0]
-                equipped_flag = item[2]
-                # Convert to boolean if needed
-                if isinstance(equipped_flag, bool):
-                    is_equipped = equipped_flag
-                elif isinstance(equipped_flag, str):
-                    is_equipped = equipped_flag.lower() in ("true", "1", "yes")
-                elif isinstance(equipped_flag, (int, float)):
-                    is_equipped = bool(equipped_flag) and equipped_flag != 0
-            
-            if is_equipped and item_id:
-                item_data = next((i for i in items_json["items"] if i["id"] == item_id), None)
-                if item_data and "effect" in item_data and isinstance(item_data["effect"], dict):
-                    extra += item_data["effect"].get("libido_max", 0)
+        for item_id, _qty, is_equipped in _iter_normalized_inventory_rows(worker):
+            if not is_equipped:
+                continue
+            item_data = item_defs.get(item_id)
+            if item_data and "effect" in item_data and hasattr(item_data["effect"], "get"):
+                extra += item_data["effect"].get("libido_max", 0)
         max_libido = base_max + extra
         # Respect trait-enforced caps if present
         cap = get_attribute_cap(worker, "libido")

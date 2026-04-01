@@ -179,6 +179,25 @@ init python:
         Handle ESC key using the same close actions as the X/Close buttons on screens.
         This ensures consistent behavior and proper navigation flow.
         """
+        # job_selection now closes to underlying caller context (Manager/workers).
+        if renpy.get_screen("job_selection"):
+            renpy.hide_screen("job_selection")
+            return
+
+        # workers close is context-aware: if Manager is visible underneath, return there;
+        # otherwise go back to tavern.
+        if renpy.get_screen("workers"):
+            renpy.hide_screen("workers")
+            if not renpy.get_screen("Manager"):
+                renpy.show_screen("tavern")
+            return
+
+        # Training: interaction_result is under `call screen`; hide_screen() does not finish the call (black backdrop stuck).
+        # Use Return(0): bare Return() is Return(None) and can trigger ShowMenu(main_menu) in Ren'Py's action handler.
+        if renpy.get_screen("interaction_result") and getattr(store, "_training_interaction_result_active", False):
+            renpy.run(Return(0))
+            return
+
         # Map screens to their specific close actions (same as their close buttons)
         screen_close_actions = {
             # Main screens with back buttons
@@ -199,7 +218,7 @@ init python:
             
             # Sub-screens that return to workers
             "Building_select": [Hide("Building_select"), Show("workers")],
-            "job_selection": [Hide("job_selection"), Show("workers")],
+            "job_selection": Hide("job_selection"),
             "building_selection": [Hide("building_selection"), Show("workers")],
             
             # Simple hide actions for popups
