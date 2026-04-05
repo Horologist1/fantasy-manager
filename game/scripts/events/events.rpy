@@ -37,8 +37,49 @@ init python:
                 return True
         return False
 
+    def _parse_event_worker_name_list(event):
+        """Parse event['worker_name'] into a flat list of name strings.
+
+        Handles all formats found in JSON: a single string, a list of strings,
+        or a nested list (e.g. [["Aspen", "Violet"]]).  Uses duck-typing per
+        LA_BIBLIA (no isinstance checks on Ren'Py runtime data).
+        """
+        raw = event.get("worker_name") if event else None
+        if not raw:
+            return []
+        names = []
+        if hasattr(raw, "strip"):
+            _name = str(raw).strip()
+            if _name:
+                names.append(_name)
+        elif hasattr(raw, "__iter__"):
+            for entry in list(raw):
+                if not entry:
+                    continue
+                if hasattr(entry, "strip"):
+                    _name = str(entry).strip()
+                    if _name:
+                        names.append(_name)
+                elif hasattr(entry, "__iter__"):
+                    for nested in list(entry):
+                        if not nested:
+                            continue
+                        _name = str(nested).strip()
+                        if _name:
+                            names.append(_name)
+                else:
+                    _name = str(entry).strip()
+                    if _name:
+                        names.append(_name)
+        else:
+            _name = str(raw).strip()
+            if _name:
+                names.append(_name)
+        return names
+
     store._worker_meets_trait_requirements = _worker_meets_trait_requirements
     store._any_eligible_worker_meets_traits = _any_eligible_worker_meets_traits
+    store._parse_event_worker_name_list = _parse_event_worker_name_list
 
     def _split_for_narrator(msg: str, limit: int = 180):
         """
@@ -222,8 +263,8 @@ label handle_random_event:
         store.building_notification = building_notification
 
     # --- Start Event Scene ---
-    # Initial event scene must always use event background media (not worker outcome media).
-    $ current_bg = get_event_background(event, worker=None)
+    # Initial event scene may use worker-specific media when a worker is already preselected.
+    $ current_bg = get_event_background(event, worker=final_worker)
     call _random_event_show_bg(current_bg) from _call__random_event_show_bg
     
     # Check if event has no_dialogue flag or if there's actual dialogue content
@@ -432,7 +473,12 @@ label handle_random_event:
                         w for w in temp_eligible
                         if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
                     ]
-                
+
+                # Filter by event worker_name if specified
+                _wn_list = store._parse_event_worker_name_list(event)
+                if _wn_list:
+                    temp_eligible = [w for w in temp_eligible if w.get("name") in _wn_list]
+
                 if not temp_eligible:
                     renpy.log("No eligible workers for choice, cannot proceed.")
                     final_worker = None
@@ -496,7 +542,12 @@ label handle_random_event:
                             w for w in temp_eligible
                             if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
                         ]
-                    
+
+                    # Filter by event worker_name if specified
+                    _wn_list = store._parse_event_worker_name_list(event)
+                    if _wn_list:
+                        temp_eligible = [w for w in temp_eligible if w.get("name") in _wn_list]
+
                     if temp_eligible:
                         final_worker = random.choice(temp_eligible)
                         store.current_worker = final_worker
@@ -583,7 +634,7 @@ label handle_random_event:
     # Pass choice condition as skill hint so worker-folder skill media can be used
     # when success/failure-specific event media is not present.
     $ skill_for_event_media = chosen_choice_data.get("condition") if chosen_choice_data else None
-    $ new_bg = get_event_background(event, event_outcome_for_bg, final_worker, skill_name=skill_for_event_media)
+    $ new_bg = get_event_background(event, event_outcome_for_bg, final_worker, skill_name=skill_for_event_media, choice=chosen_choice_data)
     if new_bg != current_bg:
         call _random_event_show_bg(new_bg) from _call__random_event_show_bg_1
         $ current_bg = new_bg # Update the current background variable
