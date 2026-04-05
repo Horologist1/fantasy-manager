@@ -1509,45 +1509,10 @@ init python:
                 except Exception as e:
                     renpy.log(f"AUTO_EQUIP_DAYSTART error for {worker.get('name', 'Unknown')}: {e}")
 
-        # Regenerate energy/health and update stats BEFORE events
+        # Recalculate max health/energy and reset daily counters (regen moved to after events and dead check)
         for worker in store.workers:
-            old_health = worker["health"]
-            base_regen = worker.get("level", 1)
-            trait_regen = calculate_health_regeneration(worker)
-            health_regen = base_regen + trait_regen
-            max_health = calculate_max_health(worker)
-            worker["max_health"] = max_health
-            new_health = min(worker["health"] + health_regen, max_health)
-            worker["health"] = new_health
-            # Always log health regeneration to verify it's working
-            if old_health != new_health:
-                renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} -> {new_health} (regen: +{health_regen} = level {base_regen} + trait {trait_regen}, max: {max_health})")
-            else:
-                renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} (already at max {max_health}, regen would be +{health_regen} = level {base_regen} + trait {trait_regen})")
-
-            old_energy = worker["energy"]
-            base_energy_regen = worker.get("level", 1)
-            try:
-                _comfort_lv = int(worker.get("comfort_level", 1))
-            except Exception:
-                _comfort_lv = 1
-            # Comfort 1 is minimum/baseline; only levels above 1 add to daily energy regen
-            comfort_energy_regen = max(0, _comfort_lv - 1)
-            trait_energy_regen = 0
-            try:
-                trait_energy_regen = calculate_energy_regeneration(worker)
-            except Exception:
-                trait_energy_regen = 0
-            energy_regen = base_energy_regen + comfort_energy_regen + trait_energy_regen
-            max_energy = calculate_max_energy(worker)
-            worker["max_energy"] = max_energy
-            new_energy = min(worker["energy"] + energy_regen, max_energy)
-            worker["energy"] = new_energy
-            if old_energy != new_energy:
-                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen} = level {base_energy_regen} + comfort {comfort_energy_regen} + trait {trait_energy_regen}, max: {max_energy})")
-
-            if persistent.nsfw_enabled:
-                regenerate_libido(worker)
+            worker["max_health"] = calculate_max_health(worker)
+            worker["max_energy"] = calculate_max_energy(worker)
 
             worker["failed_rolls"] = 0
 
@@ -1619,6 +1584,45 @@ init python:
             else:
                 names_text = ", ".join(dead_workers[:-1]) + f" and {dead_workers[-1]}"
                 renpy.say(None, f"{names_text} have died and had to be let go.")
+
+        # --- NIGHTLY REST: Regenerate health/energy/libido AFTER events and dead check ---
+        for worker in store.workers:
+            old_health = worker["health"]
+            base_regen = worker.get("level", 1)
+            trait_regen = calculate_health_regeneration(worker)
+            health_regen = base_regen + trait_regen
+            max_health = calculate_max_health(worker)
+            worker["max_health"] = max_health
+            new_health = min(worker["health"] + health_regen, max_health)
+            worker["health"] = new_health
+            if old_health != new_health:
+                renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} -> {new_health} (regen: +{health_regen} = level {base_regen} + trait {trait_regen}, max: {max_health})")
+            else:
+                renpy.log(f"HEALTH REGEN: {worker.get('name', 'Unknown')} health {old_health} (already at max {max_health}, regen would be +{health_regen} = level {base_regen} + trait {trait_regen})")
+
+            old_energy = worker["energy"]
+            base_energy_regen = worker.get("level", 1)
+            try:
+                _comfort_lv = int(worker.get("comfort_level", 1))
+            except Exception:
+                _comfort_lv = 1
+            comfort_energy_regen = max(0, _comfort_lv - 1)
+            trait_energy_regen = 0
+            try:
+                trait_energy_regen = calculate_energy_regeneration(worker)
+            except Exception:
+                trait_energy_regen = 0
+            energy_regen = base_energy_regen + comfort_energy_regen + trait_energy_regen
+            max_energy = calculate_max_energy(worker)
+            worker["max_energy"] = max_energy
+            new_energy = min(worker["energy"] + energy_regen, max_energy)
+            worker["energy"] = new_energy
+            if old_energy != new_energy:
+                renpy.log(f"ENERGY REGEN: {worker.get('name', 'Unknown')} energy {old_energy} -> {new_energy} (regen: +{energy_regen} = level {base_energy_regen} + comfort {comfort_energy_regen} + trait {trait_energy_regen}, max: {max_energy})")
+
+            if persistent.nsfw_enabled:
+                regenerate_libido(worker)
+        # --- END NIGHTLY REST ---
 
         # Update skill levels and worker levels
         update_skill_levels()
@@ -1720,24 +1724,111 @@ init python:
         except Exception as e:
             renpy.log(f"ERROR building exact_date fallback pool: {e}")
 
-        # Immediate path: if there are guaranteed/date-specific events, trigger one directly
+        # Immediate path: if there are guaranteed/date-specific events, trigger one directly.
+        # IMPORTANT: apply worker availability/name filters here too, otherwise this path can
+        # bypass worker_name constraints for 100% events.
         if guaranteed_pool:
-            # Weighted pick among guaranteed
-            total_weight = sum(e.get("weight", 1) for e in guaranteed_pool)
-            pick = renpy.random.uniform(0, total_weight)
-            cum = 0
-            chosen = None
-            for e in guaranteed_pool:
-                cum += e.get("weight", 1)
-                if pick <= cum:
-                    chosen = e
-                    break
-            if chosen is None:
-                chosen = guaranteed_pool[0]
-            renpy.log(f"Triggering guaranteed event immediately: {chosen.get('id')}")
-            store.current_event = chosen
-            store.current_worker = None
-            return "handle_random_event"
+            guaranteed_valid_events = []
+            for event in guaranteed_pool:
+                _raw_wn = event.get("worker_name")
+                worker_name_list = []
+                if _raw_wn:
+                    if hasattr(_raw_wn, "strip"):
+                        _name = str(_raw_wn).strip()
+                        if _name:
+                            worker_name_list.append(_name)
+                    elif hasattr(_raw_wn, "__iter__"):
+                        for _entry in list(_raw_wn):
+                            if not _entry:
+                                continue
+                            if hasattr(_entry, "strip"):
+                                _name = str(_entry).strip()
+                                if _name:
+                                    worker_name_list.append(_name)
+                            elif hasattr(_entry, "__iter__"):
+                                for _nested in list(_entry):
+                                    if not _nested:
+                                        continue
+                                    _name = str(_nested).strip()
+                                    if _name:
+                                        worker_name_list.append(_name)
+                            else:
+                                _name = str(_entry).strip()
+                                if _name:
+                                    worker_name_list.append(_name)
+                    else:
+                        _name = str(_raw_wn).strip()
+                        if _name:
+                            worker_name_list.append(_name)
+
+                random_worker_flag = event.get("random_worker", False)
+                worker_selection = event.get("worker_selection", "none")
+                event_building_types = event.get("building_type", [])
+
+                eligible_workers = []
+                if event_building_types:
+                    eligible_workers = [
+                        w for w in store.workers
+                        if w.get("assigned_building", "Unassigned") != "Unassigned"
+                        and w.get("assigned_building") in available_buildings
+                        and available_buildings[w.get("assigned_building")].get("type") in event_building_types
+                    ]
+                else:
+                    eligible_workers = store.workers
+
+                worker_gender_requirement = event.get("worker_gender_requirement", None)
+                if worker_gender_requirement:
+                    eligible_workers = [w for w in eligible_workers if w.get("gender", "") == worker_gender_requirement]
+
+                worker = None
+                is_available = False
+
+                if worker_name_list and not random_worker_flag:
+                    target_worker = next((w for w in eligible_workers if w.get("name") in worker_name_list), None)
+                    if target_worker:
+                        worker, is_available = target_worker, True
+                elif random_worker_flag:
+                    if worker_selection == "none" or worker_selection == "random":
+                        candidate_workers = eligible_workers
+                        if worker_name_list:
+                            candidate_workers = [w for w in eligible_workers if w.get("name") in worker_name_list]
+                        if candidate_workers:
+                            worker, is_available = random.choice(candidate_workers), True
+                    elif worker_selection == "choose":
+                        if worker_name_list:
+                            is_available = any(w.get("name") in worker_name_list for w in eligible_workers)
+                        else:
+                            is_available = bool(eligible_workers)
+                elif worker_selection == "random":
+                    if eligible_workers:
+                        worker, is_available = random.choice(eligible_workers), True
+                elif worker_selection == "choose":
+                    is_available = bool(eligible_workers)
+                elif worker_selection == "none":
+                    is_available = True
+
+                if is_available:
+                    guaranteed_valid_events.append((event, worker))
+
+            if guaranteed_valid_events:
+                total_weight = sum(evt.get("weight", 1) for evt, _ in guaranteed_valid_events)
+                pick = renpy.random.uniform(0, total_weight)
+                cum = 0
+                chosen_tuple = None
+                for evt_tuple in guaranteed_valid_events:
+                    cum += evt_tuple[0].get("weight", 1)
+                    if pick <= cum:
+                        chosen_tuple = evt_tuple
+                        break
+                if chosen_tuple is None:
+                    chosen_tuple = guaranteed_valid_events[0]
+                chosen_event, chosen_worker = chosen_tuple
+                renpy.log(f"Triggering guaranteed event immediately: {chosen_event.get('id')}")
+                store.current_event = chosen_event
+                store.current_worker = chosen_worker
+                return "handle_random_event"
+            else:
+                renpy.log("Guaranteed/date-specific pool had no valid events after worker availability checks.")
 
         # Check for guaranteed events (100% probability or date-specific)
         guaranteed_events = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 30) >= 100]
@@ -1827,7 +1918,36 @@ init python:
                     event_id = event.get("id", "unknown")
                     renpy.log(f"Checking worker availability for event {event_id}...")
 
-                    worker_name = event.get("worker_name")
+                    _raw_wn = event.get("worker_name")
+                    worker_name_list = []
+                    if _raw_wn:
+                        if hasattr(_raw_wn, "strip"):
+                            _name = str(_raw_wn).strip()
+                            if _name:
+                                worker_name_list.append(_name)
+                        elif hasattr(_raw_wn, "__iter__"):
+                            for _entry in list(_raw_wn):
+                                if not _entry:
+                                    continue
+                                if hasattr(_entry, "strip"):
+                                    _name = str(_entry).strip()
+                                    if _name:
+                                        worker_name_list.append(_name)
+                                elif hasattr(_entry, "__iter__"):
+                                    for _nested in list(_entry):
+                                        if not _nested:
+                                            continue
+                                        _name = str(_nested).strip()
+                                        if _name:
+                                            worker_name_list.append(_name)
+                                else:
+                                    _name = str(_entry).strip()
+                                    if _name:
+                                        worker_name_list.append(_name)
+                        else:
+                            _name = str(_raw_wn).strip()
+                            if _name:
+                                worker_name_list.append(_name)
                     random_worker_flag = event.get("random_worker", False) # Renamed to avoid conflict
                     worker_selection = event.get("worker_selection", "none")
                     event_building_types = event.get("building_type", [])
@@ -1852,16 +1972,22 @@ init python:
                     worker = None
                     is_available = False
                     
-                    if worker_name and not random_worker_flag:
-                        target_worker = next((w for w in eligible_workers if w["name"] == worker_name), None)
+                    if worker_name_list and not random_worker_flag:
+                        target_worker = next((w for w in eligible_workers if w["name"] in worker_name_list), None)
                         if target_worker:
                             worker, is_available = target_worker, True
                     elif random_worker_flag:
                         if worker_selection == "none" or worker_selection == "random":
-                            if eligible_workers:
-                                worker, is_available = random.choice(eligible_workers), True
+                            candidate_workers = eligible_workers
+                            if worker_name_list:
+                                candidate_workers = [w for w in eligible_workers if w.get("name") in worker_name_list]
+                            if candidate_workers:
+                                worker, is_available = random.choice(candidate_workers), True
                         elif worker_selection == "choose":
-                            is_available = bool(eligible_workers)
+                            if worker_name_list:
+                                is_available = any(w.get("name") in worker_name_list for w in eligible_workers)
+                            else:
+                                is_available = bool(eligible_workers)
                     elif worker_selection == "random":
                         if eligible_workers:
                             worker, is_available = random.choice(eligible_workers), True

@@ -754,7 +754,7 @@ worker["energy"] = min(max_energy, worker["energy"] + energy_regen)
 1. **Day Start:**
    - Advance calendar (`advance_date()`)
    - Reset building costs to 0
-   - Regenerate health/energy/libido for workers (BEFORE events)
+   - Recalculate max health/energy
    - Reset daily counters (failed_rolls, skill_uses)
    - Apply comfort bonuses to joy
    - Enforce minimum relationship (10 + comfort_level)
@@ -771,16 +771,24 @@ worker["energy"] = min(max_energy, worker["energy"] + energy_regen)
    - Calculate total costs (base_cost + skill_bonus_cost + worker_costs)
    - Net = income - costs
 
-4. **Update Workers:**
+4. **Check Dead Workers:**
+   - Workers with health <= 0 are removed
+
+5. **Nightly Rest (Regeneration):**
+   - Regenerate health: level + (1 + trait bonuses)
+   - Regenerate energy: level + comfort bonus + trait bonuses
+   - Regenerate libido (NSFW): considers same-day sexual work count
+
+6. **Update Workers:**
    - Check level ups (success_count >= 20 × level)
    - Check skill ups (success_count >= 10 × skill)
    - Apply secondary attribute changes
 
-5. **Random Events:**
+7. **Random Events:**
    - Chance for random event (if workers active)
    - If triggered, show event
 
-6. **Show Daily Report:**
+8. **Show Daily Report:**
    - Summary of all events of the day
    - Earnings, reputation, attribute changes
 
