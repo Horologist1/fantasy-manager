@@ -419,35 +419,59 @@ init python:
         return filtered
         
     def filter_interactions_by_worker_name(interactions, worker):
-        """Filter interactions based on worker name."""
+        """Filter interactions by specific_workers (names) and/or specific_worker_images (folders).
+
+        Semantics:
+          - No filters on the interaction -> included.
+          - Only names -> worker name must be in the list (case-insensitive).
+          - Only folders -> worker folder must be in the list (exact match).
+          - Both -> OR (match by name or by folder).
+        """
         filtered = []
         worker_name = worker.get("name", "Unknown")
+        _parse = getattr(store, "_parse_identity_string_list", None)
+        _match = getattr(store, "_worker_matches_identity_filters", None)
         renpy.log(f"Filtering interactions for worker: {worker_name}")
-        
+
         for interaction in interactions:
-            # Check if interaction is restricted to specific workers
-            specific_workers = interaction.get("specific_workers", [])
-            
-            # Debug log for interactions with specific workers
-            if specific_workers:
-                renpy.log(f"Found interaction '{interaction.get('name')}' for specific workers: {specific_workers}")
-                
-            # If not restricted to specific workers, include it
-            if not specific_workers:
+            name_list = []
+            folder_list = []
+            if callable(_parse):
+                name_list = _parse(interaction.get("specific_workers"))
+                folder_list = _parse(interaction.get("specific_worker_images"))
+            else:
+                # Defensive fallback — helper not yet registered
+                raw_names = interaction.get("specific_workers", [])
+                raw_folders = interaction.get("specific_worker_images", [])
+                if hasattr(raw_names, "__iter__") and not hasattr(raw_names, "strip"):
+                    name_list = [str(n).strip() for n in raw_names if n]
+                elif raw_names:
+                    name_list = [str(raw_names).strip()]
+                if hasattr(raw_folders, "__iter__") and not hasattr(raw_folders, "strip"):
+                    folder_list = [str(f).strip() for f in raw_folders if f]
+                elif raw_folders:
+                    folder_list = [str(raw_folders).strip()]
+
+            if not name_list and not folder_list:
                 filtered.append(interaction)
                 continue
-            
-            # Case-insensitive name matching
-            worker_name_lower = worker_name.lower() if worker_name else ""
-            specific_workers_lower = [name.lower() for name in specific_workers]
-                
-            # Check if this worker is in the list of specific workers (case-insensitive)
-            if worker_name_lower in specific_workers_lower:
+
+            if callable(_match):
+                matched = _match(worker, name_list, folder_list)
+            else:
+                wn_lower = (worker_name or "").lower()
+                wf = worker.get("folder", "") if hasattr(worker, "get") else ""
+                matched = (
+                    (name_list and wn_lower in [n.lower() for n in name_list])
+                    or (folder_list and wf and wf in folder_list)
+                )
+
+            if matched:
                 renpy.log(f"✓ Added specific interaction for {worker_name}: {interaction.get('name')}")
                 filtered.append(interaction)
             else:
-                renpy.log(f"✗ Skipped specific interaction, not for {worker_name}: {interaction.get('name')} (looking for {specific_workers})")
-        
+                renpy.log(f"✗ Skipped specific interaction, not for {worker_name}: {interaction.get('name')} (names={name_list} folders={folder_list})")
+
         return filtered
 
     def get_available_interactions_for_worker(worker):
@@ -865,10 +889,13 @@ init python:
             candidate_bases.append(image_base)
 
         if "Training" not in categories and "Romance" in categories:
-            # Romance images should show the player, so use player gender
+            # Romance fallback should key by player title (lord/lady).
+            # Keep legacy male/female names as aliases for backward compatibility.
             if is_player_male:
+                candidate_bases.append("romance_lord")
                 candidate_bases.append("romance_male")
             else:
+                candidate_bases.append("romance_lady")
                 candidate_bases.append("romance_female")
         elif "Friendship" in categories:
             candidate_bases.append("friendship")
@@ -943,6 +970,8 @@ init python:
         available_interactions = [i for i in available_interactions if not is_training_interaction(i)]
         # Take a walk is always a SFW pool (city stroll), even when persistent.nsfw_enabled is True.
         available_interactions = [i for i in available_interactions if not (hasattr(i, "get") and i.get("nsfw", False))]
+        # Restrict Take a walk to friendship interactions only.
+        available_interactions = categorize_interactions(available_interactions).get("Friendship", [])
         
         if not available_interactions:
             store.take_a_walk_fail_message = f"{worker_name} doesn't have any interactions available at the moment."

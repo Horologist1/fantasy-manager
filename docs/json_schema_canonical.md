@@ -20,6 +20,8 @@ Documentation and templates under `docs/` are not loaded by the game.
 - `id`, `description`
 - `weight`, `limited`, `max_occurrences`, `cooldown_days`
 - `event_probability`, `guaranteed`
+- `worker_name` — optional; string or list of strings. Restricts the event to workers whose `name` matches (case-sensitive here, since names are canonical). Combined with `specific_worker_images` using **OR** semantics when both are present.
+- `specific_worker_images` — optional; list of worker image folder names (matches `worker["folder"]` exactly). Use this to target any worker that ships with a shared image pack (mods). Combined with `worker_name` using **OR** semantics.
 - `worker_selection`
 - `worker_gender_requirement` — **not used** by random/building event selection (`select_possible_events`); prefer daily story `worker_gender_requirement` or interaction `worker_gender`. Validators may warn if present.
 - `player_gender_requirement` — optional; restricts event to manager gender: values `male`, `female`, or aliases `lord`, `lady`. Runtime maps **Lord** title → male, **Lady** (or other) → female, then compares to normalized requirement.
@@ -71,7 +73,8 @@ Documentation and templates under `docs/` are not loaded by the game.
 - `worker_gender`
 - `categories`, `image`, `nsfw`
 - `stat_requirements`
-- `specific_workers`, `required_traits`, `excluded_traits` — worker must have **all** required traits and **none** of the excluded traits (interactions do not use `required_trait`; use `required_traits` only).
+- `specific_workers`, `required_traits`, `excluded_traits` — worker must have **all** required traits and **none** of the excluded traits (interactions do not use `required_trait`; use `required_traits` only). `specific_workers` matches worker names (case-insensitive).
+- `specific_worker_images` — optional list of worker image folder names (matches `worker["folder"]` exactly). Use to share interactions across any worker that uses a given image pack. Combined with `specific_workers` using **OR** semantics when both are set.
 - `required_flags`, `excluded_flags`
 
 ### Interaction effect object

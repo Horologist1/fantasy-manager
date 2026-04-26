@@ -49,8 +49,9 @@ The system searches for images based on worker skills. If a worker has a high sk
 
 If the worker participates in interactions, these images can be useful:
 
-- `romance_female.png` - For romantic interactions (female workers)
-- `romance_male.png` - For romantic interactions (male workers)
+- `romance_lady.png` - For romantic interactions when player is Lady
+- `romance_lord.png` - For romantic interactions when player is Lord
+- Legacy aliases are still supported: `romance_female.png` / `romance_male.png`
 - `friendship.png` - For friendship interactions
 - `joy_female.png` / `joy_male.png` - For joy interactions
 - `obedience.png` - For discipline interactions

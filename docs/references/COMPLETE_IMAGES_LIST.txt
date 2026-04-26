@@ -119,13 +119,15 @@ Each skill has two variants: **normal** and **failure**. You can also have multi
 
 ### Romance
 
-#### Romance Female (for female workers)
-- `romance_female.png` / `romance_female.jpg` / `romance_female.jpeg` / `romance_female.webp`
-- **Numbered variants:** `romance_female (1).png`, `romance_female (2).png`, etc.
+#### Romance Lady (player is Lady)
+- `romance_lady.png` / `romance_lady.jpg` / `romance_lady.jpeg` / `romance_lady.webp`
+- **Numbered variants:** `romance_lady (1).png`, `romance_lady (2).png`, etc.
 
-#### Romance Male (for male workers)
-- `romance_male.png` / `romance_male.jpg` / `romance_male.jpeg` / `romance_male.webp`
-- **Numbered variants:** `romance_male (1).png`, `romance_male (2).png`, etc.
+#### Romance Lord (player is Lord)
+- `romance_lord.png` / `romance_lord.jpg` / `romance_lord.jpeg` / `romance_lord.webp`
+- **Numbered variants:** `romance_lord (1).png`, `romance_lord (2).png`, etc.
+
+**Legacy aliases still supported:** `romance_female*` and `romance_male*`.
 
 **Note:** The system also searches for images with player gender suffixes:
 - `romance_female_male.png` (if player is Lord/male)

@@ -32,7 +32,7 @@ EXPECTED_IMAGES = {
     "romance_confess_feelings_lady_female", "romance_confess_feelings_lady_male",
     "friendship_chat", "friendship_heart", "friendship_joy_gift", "friendship_perfect", "friendship_confidants",
     "joy_gift", "joy_celebration", "joy_festival", "joy_perfect",
-    "romance_male", "romance_female", "joy_male", "joy_female", "friendship", "obedience",
+    "romance_lord", "romance_lady", "romance_male", "romance_female", "joy_male", "joy_female", "friendship", "obedience",
 }
 
 def file_base_matches(fname, base):
@@ -112,7 +112,7 @@ def main():
             "romance_perfect_night_lady_female", "romance_perfect_night_lady_male",
             "romance_confess_feelings_lord_female", "romance_confess_feelings_lord_male",
             "romance_confess_feelings_lady_female", "romance_confess_feelings_lady_male",
-            "romance_male", "romance_female",
+            "romance_lord", "romance_lady", "romance_male", "romance_female",
         ]
         missing_rom = [b for b in romance_bases if not has_match(all_files, b)]
         present_rom = [b for b in romance_bases if has_match(all_files, b)]

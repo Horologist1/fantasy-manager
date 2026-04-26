@@ -67,7 +67,7 @@
   {
     "id": "rich_traveler_day10",
     "_disabled": "Evento desactivado temporalmente. Para reactivarlo: cambiar start_when a exact_date:10,1",
-    "description": "A wealthy traveler, cloaked in fine velvet and dust from the road, takes a seat at your table. 'I reward promising establishments,' he says. 'Choose your boon, and may fortune favor your choice.'",
+    "description": "A wealthy traveler sweeps through the door, cloaked in fine velvet with dust from distant roads still clinging to his boots. He surveys the room with the appraising eye of someone who's seen a hundred establishments and invested in a dozen. He takes a seat at your best table and folds his hands. 'I reward promising ventures,' he says. 'I see potential here. Choose your boon, and may fortune favor your choice.'",
     "weight": 100,
     "max_occurrences": 1,
     "event_probability": 100,
@@ -80,7 +80,7 @@
     "choices": [
       {
         "option": "Accept the traveler's heirloom sword. (Potential: Iron Sword)",
-        "message": "You accept the heirloom blade with gratitude. Its balance is exquisite, its edge keen. (Iron Sword added to inventory)",
+        "message": "The traveler draws a wrapped bundle from beneath his cloak and lays it on the table. Inside: a sword of old make, its balance exquisite and its edge keen despite years of travel. 'This served me well on roads you'll never walk,' he says. 'May it serve you better.' (Iron Sword added to inventory)",
         "effect": {
           "custom": "give_item",
           "item_id": "iron_sword",
@@ -91,7 +91,7 @@
       },
       {
         "option": "Take the sealed gift box. Whatever it holds is yours. (Potential: Random loot)",
-        "message": "You choose the mystery. The traveler grins, 'May luck be on your side.' (Random loot added)",
+        "message": "The traveler produces a sealed box of lacquered wood, its surface warm to the touch. 'Even I don't know what's inside,' he says with a grin. 'Bought it from a fortune teller who swore it would find its rightful owner. Today, that's you.' You lift the lid. (Random loot added)",
         "effect": {
           "custom": "grant_loot",
           "loot_rolls": 1,
@@ -102,7 +102,7 @@
       },
       {
         "option": "Invite Violet to join your roster. (Potential: Violet — only if not already recruited)",
-        "message": "You extend a formal invitation to Violet. 'I've been watching your progress,' she says. 'Very well, I'll lend you my talents.'",
+        "message": "You ask the traveler about the woman he arrived with—the one with watchful eyes who's been nursing the same drink all evening. He smiles. 'Violet has been looking for the right establishment. Yours has the quality she demands.' He waves her over. She sets down her glass and approaches. 'I've been watching your progress,' she says. 'Very well. I'll lend you my talents.'",
         "effect": {
           "custom": "recruit_worker",
           "worker_name": "Violet"
@@ -113,7 +113,7 @@
       },
       {
         "option": "Recruit a capable worker from passing caravans. (Potential: Random worker)",
-        "message": "You hold quick trials at dusk. A capable recruit impresses you and joins your ranks immediately.",
+        "message": "The traveler spreads the word among the caravans camped outside the city walls. By dusk, a handful of candidates arrive. You run quick trials—questions, demonstrations, a test of temperament. One stands out: capable, steady, and looking for exactly the kind of work you offer. They join your ranks before nightfall.",
         "effect": {
           "custom": "recruit_worker",
           "random_worker": true,
@@ -124,7 +124,7 @@
       },
       {
         "option": "Decline politely. Your path is set without outside gifts. (Potential: Reputation)",
-        "message": "You refuse with a courteous bow. The traveler appreciates your conviction and leaves with a satisfied smile.",
+        "message": "You refuse with a courteous bow. 'I appreciate the offer, but what I've built here stands on its own.' The traveler studies you for a moment, then nods slowly. 'Pride in one's own work—that's rarer than gold in my experience.' He finishes his drink, leaves a generous tip, and steps back into the evening. Word of your independence reaches the right ears.",
         "effect": {
           "reputation": 5,
           "event_flags": {

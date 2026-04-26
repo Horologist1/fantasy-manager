@@ -270,7 +270,7 @@
         "cost": 1300,
         "nsfw": false,
         "unique": false,
-        "encounter_only": true,
+        "encounter_only": false,
         "monster": false,
         "procedural": false,
         "skills": {
@@ -309,12 +309,12 @@
         "comfort_desired": 1
     },
     {
-        "name": "Guy",
+        "name": "Bud",
         "folder": "guy",
         "cost": 1300,
         "nsfw": false,
         "unique": false,
-        "encounter_only": true,
+        "encounter_only": false,
         "monster": false,
         "procedural": false,
         "skills": {

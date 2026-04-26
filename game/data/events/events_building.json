@@ -1017,7 +1017,7 @@
         }
       },
       {
-        "option": "Turn him away. (Neutral)",
+        "option": "Refuse the arrangement. Your house, your rules. (No effect)",
         "message": "You fold the note back across the counter and hold his gaze without blinking. 'We don't take arrangements that come with conditions attached,' you say simply. He holds the silence for a moment, then collects his note and leaves without a word. The carriage disappears into the dark. The coin was good—but so is your sleep.",
         "effect": {
           "success_chance": 0,

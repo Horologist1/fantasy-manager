@@ -135,63 +135,44 @@ init -2 python:
             _snap_err(f"SNAPSHOT: ERROR - Failed to upgrade legacy snapshot for {slot_name}: {e}")
 
     def _sync_building_assignments_from_workers():
-        """Rebuild building assigned_servants from workers, preserving servant_jobs."""
+        """Rebuild building assigned_servants from workers' assigned_building (single source of truth).
+        Deduplicates by name. Cleans orphaned servant_jobs entries."""
         try:
-            name_to_worker = {w.get("name"): w for w in store.workers if hasattr(w, "get") and w.get("name")}
+            ab_dict = getattr(store, "available_buildings", {}) or {}
 
-            for bname in getattr(store, "owned_buildings", []):
-                building = getattr(store, "available_buildings", {}).get(bname)
-                if not hasattr(building, "get"):
+            # Step 1: Clear all assigned_servants
+            for bname, bdata in ab_dict.items():
+                if hasattr(bdata, "get"):
+                    bdata["assigned_servants"] = []
+
+            # Step 2: Rebuild from workers
+            seen_per_building = {}
+            for w in store.workers:
+                if not hasattr(w, "get"):
                     continue
+                wname = w.get("name")
+                if not wname:
+                    continue
+                assigned = w.get("assigned_building", "Unassigned")
+                if assigned == "Unassigned" or assigned not in ab_dict:
+                    continue
+                if assigned not in seen_per_building:
+                    seen_per_building[assigned] = set()
+                if wname in seen_per_building[assigned]:
+                    continue
+                seen_per_building[assigned].add(wname)
+                ab_dict[assigned]["assigned_servants"].append(w)
 
-                assigned = _to_list(building.get("assigned_servants", [])) or []
-                jobs = _to_dict(building.get("servant_jobs", {})) or {}
-
-                rebuilt = []
-                seen = set()
-
-                # Start with current assigned_servants, but only if they exist in store.workers.
-                for servant in assigned:
-                    if not servant:
-                        continue
-                    if hasattr(servant, "get"):
-                        wname = servant.get("name")
-                    else:
-                        wname = str(servant)
-                    if not wname or wname in seen:
-                        continue
-                    worker_obj = name_to_worker.get(wname)
-                    if worker_obj:
-                        rebuilt.append(worker_obj)
-                        seen.add(wname)
-
-                # Add workers who claim this building (use normalization for Building 1/Building_1 etc).
-                _norm = getattr(store, "_norm_building_key", lambda k: (str(k).strip() if k else ""))
-                bname_norm = _norm(bname)
-                for w in store.workers:
-                    if not hasattr(w, "get"):
-                        continue
-                    wname = w.get("name")
-                    if not wname or wname in seen:
-                        continue
-                    ab = w.get("assigned_building")
-                    if ab == bname or (bname_norm and _norm(ab) == bname_norm):
-                        rebuilt.append(w)
-                        seen.add(wname)
-
-                # Add workers referenced by servant_jobs.
-                for wname in list(jobs.keys()):
-                    if not wname or wname in seen:
-                        continue
-                    worker_obj = name_to_worker.get(wname)
-                    if worker_obj:
-                        rebuilt.append(worker_obj)
-                        seen.add(wname)
-                        if worker_obj.get("assigned_building", "Unassigned") != bname:
-                            worker_obj["assigned_building"] = bname
-
-                building["assigned_servants"] = rebuilt
-                building["servant_jobs"] = jobs
+            # Step 3: Clean orphaned servant_jobs
+            for bname, bdata in ab_dict.items():
+                if not hasattr(bdata, "get"):
+                    continue
+                sj = bdata.get("servant_jobs")
+                if not sj or not hasattr(sj, "keys"):
+                    continue
+                assigned_here = seen_per_building.get(bname, set())
+                for k in [k for k in sj if k not in assigned_here]:
+                    del sj[k]
         except Exception as e:
             _snap_err(f"SNAPSHOT: ERROR - sync building assignments failed: {e}")
     
@@ -208,9 +189,7 @@ init -2 python:
         """Convert value to a native Python list, handling RevertableList and other list-like objects."""
         if value is None:
             return None
-        if isinstance(value, list):
-            return value
-        if hasattr(value, '__iter__') and hasattr(value, '__len__'):
+        if hasattr(value, '__iter__') and hasattr(value, '__len__') and not isinstance(value, str):
             try:
                 return list(value)
             except Exception:
@@ -234,9 +213,7 @@ init -2 python:
         """Check if value is list-like (list, RevertableList, or other iterable with length)."""
         if value is None:
             return False
-        if isinstance(value, list):
-            return True
-        if hasattr(value, '__iter__') and hasattr(value, '__len__'):
+        if hasattr(value, '__iter__') and hasattr(value, '__len__') and not isinstance(value, str):
             return True
         return False
     
@@ -262,7 +239,7 @@ init -2 python:
         # The items exist in the game, so they are valid by definition
         if manager_inv_list is not None:
             # Only update if it's not already a normal list (to prevent RevertableList issues)
-            if not isinstance(store.manager_inventory, list):
+            if not (hasattr(store.manager_inventory, "__iter__") and not isinstance(store.manager_inventory, str)):
                 store.manager_inventory = manager_inv_list
                 renpy.store.manager_inventory = store.manager_inventory
                 _snap_log(f"SNAPSHOT: SANITIZE - Converted manager_inventory from {type(manager_inv)} to list ({len(manager_inv_list)} items)")
@@ -293,7 +270,7 @@ init -2 python:
                 else:
                     # Only convert to normal list if needed, but DON'T validate or reject items
                     # The items exist in the game, so they are valid by definition
-                    if not isinstance(worker["inventory"], list):
+                    if not (hasattr(worker["inventory"], "__iter__") and not isinstance(worker["inventory"], str)):
                         worker["inventory"] = inv
                         _snap_log(f"SNAPSHOT: SANITIZE - Converted {worker.get('name')}'s inventory from {type(worker.get('inventory'))} to list ({len(inv)} items)")
         
@@ -378,7 +355,7 @@ init -2 python:
                 _snap_log(f"SNAPSHOT: _build_snapshot - First few items: {manager_inv_final[:3]}")
             
             snapshot_result = {
-                "snapshot_version": 1,
+                "snapshot_version": 2,
                 "money": int(store.money) if hasattr(store, "money") else 6000,
                 "current_day": getattr(store, "current_day", 1),
                 "current_month": getattr(store, "current_month", 1),
@@ -477,10 +454,25 @@ init -2 python:
                 "yvara_s4_gate_fired": _safe_getattr(store, "yvara_s4_gate_fired", False),
                 "yvara_morning_after_done": _safe_getattr(store, "yvara_morning_after_done", False),
                 "yvara_evening_academy_last_day": _safe_getattr(store, "yvara_evening_academy_last_day", None),
+                "yvara_evening_tier": _safe_getattr(store, "yvara_evening_tier", 1),
+                "yvara_evening_variant_index": _safe_getattr(store, "yvara_evening_variant_index", 0),
+                "yvara_academy_investment_tier": _safe_getattr(store, "yvara_academy_investment_tier", 0),
+                "yvara_academy_investment_total": _safe_getattr(store, "yvara_academy_investment_total", 0),
+                "yvara_academy_investments_count": _safe_getattr(store, "yvara_academy_investments_count", 0),
+                "yvara_s5_gate_fired": _safe_getattr(store, "yvara_s5_gate_fired", False),
+                "yvara_s6_gate_fired": _safe_getattr(store, "yvara_s6_gate_fired", False),
+                "yvara_ending_route": _safe_getattr(store, "yvara_ending_route", ""),
+                "yvara_is_worker": _safe_getattr(store, "yvara_is_worker", False),
+                "yvara_ending_done": _safe_getattr(store, "yvara_ending_done", False),
+                "yvara_academy_discount": _safe_getattr(store, "yvara_academy_discount", 0.0),
+                "yvara_lab_access": _safe_getattr(store, "yvara_lab_access", False),
                 "yvara_continuation_notice_shown": _safe_getattr(store, "yvara_continuation_notice_shown", False),
                 "yvara_good_word_count": _safe_getattr(store, "yvara_good_word_count", 0),
                 "yvara_good_word_last_day": _safe_getattr(store, "yvara_good_word_last_day", None),
                 "yvara_good_word_peak": _safe_getattr(store, "yvara_good_word_peak", False),
+                "yvara_s5_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s5_talks_done", [])) or []),
+                "yvara_s5_remarks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s5_remarks_done", [])) or []),
+                "yvara_s6_talks_done": _cp.deepcopy(_to_list(_safe_getattr(store, "yvara_s6_talks_done", [])) or []),
                 "management_skills": _cp.deepcopy(getattr(store, "management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0})),
                 "manager_portrait": getattr(store, "manager_portrait", ""),
                 "manager_start_skill_chosen": _safe_getattr(store, "manager_start_skill_chosen", False),
@@ -504,26 +496,173 @@ init -2 python:
             # Return empty dict but log critical error - caller should check for empty
             return {}
     
+    def _normalize_trait_set(raw):
+        out = set()
+        if raw is None:
+            return out
+        if isinstance(raw, str):
+            if raw:
+                out.add(raw.strip().lower())
+            return out
+        if hasattr(raw, "__iter__"):
+            try:
+                for t in raw:
+                    if t is None:
+                        continue
+                    out.add(str(t).strip().lower())
+            except Exception:
+                pass
+        return out
+
+    def _build_json_template_index():
+        # Returns (by_name, by_folder). Each row is the JSON template dict.
+        # Returns (None, None) if templates can't be loaded — caller must abort migration.
+        by_name = {}
+        by_folder = {}
+        try:
+            _loader = getattr(store, "load_workers", None)
+            if not callable(_loader):
+                return None, None
+            templates = _loader(include_unique=True, include_encounter_only=True, for_events=True) or []
+            if not templates:
+                return None, None
+            for tpl in templates:
+                if not hasattr(tpl, "get"):
+                    continue
+                if tpl.get("procedural", False) or tpl.get("monster", False):
+                    continue
+                name = tpl.get("name")
+                folder = tpl.get("folder")
+                if not name or not folder:
+                    continue
+                by_name.setdefault(name, []).append(tpl)
+                by_folder.setdefault(folder, tpl)
+            return by_name, by_folder
+        except Exception as e:
+            renpy.log(f"MIGRATION v2: failed to build JSON template index: {e}")
+            return None, None
+
+    def _migrate_worker_folders_inplace(workers_list, by_name, by_folder, label=""):
+        # Conservative, idempotent. Returns (stamped, fixed_folder, skipped_ambiguous).
+        # Never overwrites a valid template_id. Never touches procedural/monster.
+        # When ambiguous, leaves the worker alone rather than guessing.
+        stamped = 0
+        fixed_folder = 0
+        skipped_ambiguous = 0
+        if not workers_list:
+            return stamped, fixed_folder, skipped_ambiguous
+
+        for worker in workers_list:
+            if not hasattr(worker, "get"):
+                continue
+            if worker.get("procedural", False) or worker.get("monster", False):
+                continue
+
+            name = worker.get("name")
+            if not name:
+                continue
+
+            existing_tid = worker.get("template_id") or ""
+            current_folder = worker.get("folder", "") or ""
+
+            resolved_tid = None
+
+            # Preference 1: existing template_id still valid in current JSON.
+            if existing_tid and existing_tid in by_folder:
+                mapped = by_folder.get(existing_tid)
+                if mapped and mapped.get("name") == name:
+                    resolved_tid = existing_tid
+
+            # Preference 2: current folder maps to a known template with matching name.
+            if not resolved_tid and current_folder and current_folder in by_folder:
+                mapped = by_folder.get(current_folder)
+                if mapped and mapped.get("name") == name:
+                    resolved_tid = current_folder
+
+            # Preference 3: unique name match across JSON.
+            if not resolved_tid:
+                candidates = by_name.get(name, [])
+                if len(candidates) == 1:
+                    resolved_tid = candidates[0].get("folder")
+                elif len(candidates) > 1:
+                    # Disambiguate by trait intersection, race as a strong secondary signal.
+                    worker_traits = _normalize_trait_set(worker.get("traits"))
+                    worker_race = (worker.get("race") or "").strip().lower()
+
+                    best_tid = None
+                    best_score = -1
+                    tied = False
+                    for cand in candidates:
+                        cand_traits = _normalize_trait_set(cand.get("traits"))
+                        cand_race = (cand.get("race") or "").strip().lower()
+                        score = len(worker_traits & cand_traits)
+                        if worker_race and cand_race and worker_race == cand_race:
+                            score += 10
+                        if score > best_score:
+                            best_score = score
+                            best_tid = cand.get("folder")
+                            tied = False
+                        elif score == best_score:
+                            tied = True
+
+                    if best_tid and best_score > 0 and not tied:
+                        resolved_tid = best_tid
+
+            if not resolved_tid:
+                if by_name.get(name):
+                    renpy.log(f"MIGRATION v2{label}: ambiguous template for '{name}' (folder='{current_folder}') — leaving unchanged")
+                    skipped_ambiguous += 1
+                continue
+
+            if existing_tid != resolved_tid:
+                worker["template_id"] = resolved_tid
+                stamped += 1
+
+            if current_folder != resolved_tid:
+                renpy.log(f"MIGRATION v2{label}: '{name}' folder '{current_folder}' -> '{resolved_tid}'")
+                worker["folder"] = resolved_tid
+                fixed_folder += 1
+
+        return stamped, fixed_folder, skipped_ambiguous
+
+    # Expose to store so other modules (script.rpy fallback, debug helper) can reuse.
+    store._build_json_template_index = _build_json_template_index
+    store._migrate_worker_folders_inplace = _migrate_worker_folders_inplace
+
     def _migrate_snapshot(snap):
         """Migrate snapshot to current version format if needed."""
         if not hasattr(snap, "get"):
             return snap
 
         version = snap.get("snapshot_version", 0)
-        current_version = 1
-        
+        current_version = 2
+
         if version == current_version:
             return snap  # No migration needed
-        
+
         renpy.log(f"SNAPSHOT: MIGRATION - Migrating snapshot from version {version} to {current_version}")
-        
+
         if version == 0:
             snap["snapshot_version"] = 1
             version = 1
-        
-        # Future migrations can be added here:
-        #     snap["snapshot_version"] = 2
-        
+
+        if version == 1:
+            # v1 -> v2: stamp template_id, correct legacy folder corruption from name-based sync.
+            by_name, by_folder = _build_json_template_index()
+            if by_name is None:
+                renpy.log("MIGRATION v2: JSON templates unavailable — aborting migration, will retry on next load")
+                # Do NOT bump version; snap stays at 1 so next load retries.
+                return snap
+
+            s1, f1, sk1 = _migrate_worker_folders_inplace(snap.get("workers") or [], by_name, by_folder, label=" [workers]")
+            s2, f2, sk2 = _migrate_worker_folders_inplace(snap.get("available_workers") or [], by_name, by_folder, label=" [available]")
+            renpy.log(
+                f"MIGRATION v2: stamped template_id on {s1 + s2} workers, fixed folder on {f1 + f2}, "
+                f"skipped {sk1 + sk2} ambiguous"
+            )
+            snap["snapshot_version"] = 2
+            version = 2
+
         renpy.log(f"SNAPSHOT: MIGRATION - Migration complete, snapshot now at version {snap.get('snapshot_version', current_version)}")
         return snap
     
@@ -972,6 +1111,18 @@ init -2 python:
                 ("yvara_s4_gate_fired", False),
                 ("yvara_morning_after_done", False),
                 ("yvara_evening_academy_last_day", None),
+                ("yvara_evening_tier", 1),
+                ("yvara_evening_variant_index", 0),
+                ("yvara_academy_investment_tier", 0),
+                ("yvara_academy_investment_total", 0),
+                ("yvara_academy_investments_count", 0),
+                ("yvara_s5_gate_fired", False),
+                ("yvara_s6_gate_fired", False),
+                ("yvara_ending_route", ""),
+                ("yvara_is_worker", False),
+                ("yvara_ending_done", False),
+                ("yvara_academy_discount", 0.0),
+                ("yvara_lab_access", False),
                 ("yvara_continuation_notice_shown", False),
                 ("yvara_good_word_count", 0),
                 ("yvara_good_word_last_day", None),
@@ -1009,7 +1160,10 @@ init -2 python:
                 ("yvara_s3_talks_done", []),
                 ("yvara_s3_remarks_done", []),
                 ("yvara_s4_talks_done", []),
-                ("yvara_s4_remarks_done", [])
+                ("yvara_s4_remarks_done", []),
+                ("yvara_s5_talks_done", []),
+                ("yvara_s5_remarks_done", []),
+                ("yvara_s6_talks_done", [])
             ]:
                 try:
                     if field_name in snap:
@@ -1050,7 +1204,7 @@ init -2 python:
                         # But preserve ALL items - don't skip anything
                         if field_name == "manager_inventory":
                             # Convert to list if needed
-                            if not isinstance(restored_val, list):
+                            if not (hasattr(restored_val, "__iter__") and not isinstance(restored_val, str)):
                                 restored_val = list(restored_val) if restored_val else []
                             
                             # Create new tuples to break references, but preserve everything
@@ -1059,7 +1213,7 @@ init -2 python:
                             
                             for item in restored_val:
                                 try:
-                                    if isinstance(item, (list, tuple)) and len(item) >= 1:
+                                    if (isinstance(item, tuple) or (hasattr(item, "__getitem__") and not isinstance(item, str) and not hasattr(item, "get"))) and len(item) >= 1:
                                         # Create new tuple from values
                                         item_id = item[0] if len(item) > 0 else ""
                                         quantity = item[1] if len(item) > 1 else 1
@@ -1095,7 +1249,7 @@ init -2 python:
                         # CRITICAL: Force Ren'Py to recognize changes for manager_inventory
                         if field_name == "manager_inventory":
                             # Ensure it's a list (already normalized above, but double-check)
-                            if not isinstance(store.manager_inventory, list):
+                            if not (hasattr(store.manager_inventory, "__iter__") and not isinstance(store.manager_inventory, str)):
                                 store.manager_inventory = list(store.manager_inventory) if store.manager_inventory else []
                             renpy.store.manager_inventory = store.manager_inventory
                             _snap_log(f"SNAPSHOT: Final manager_inventory set with {len(store.manager_inventory)} items")
@@ -1232,7 +1386,7 @@ init -2 python:
                                     _snap_err(f"SNAPSHOT: Error applying effects for item '{item_id}': {e}")
                                     import traceback
                                     renpy.log(f"SNAPSHOT: traceback: {traceback.format_exc()}")
-                        elif isinstance(item, list) and len(item) >= 3:
+                        elif hasattr(item, "__getitem__") and not isinstance(item, (tuple, str)) and not hasattr(item, "get") and len(item) >= 3:
                             # Still a list, try to convert and apply
                             item_id = item[0]
                             quantity = item[1]
@@ -1363,7 +1517,7 @@ init -2 python:
             try:
                 has_money = hasattr(store, 'money') and store.money is not None
                 has_day = hasattr(store, 'current_day') and store.current_day is not None
-                has_workers = hasattr(store, 'workers') and isinstance(store.workers, list)
+                has_workers = hasattr(store, 'workers') and hasattr(store.workers, "__iter__") and not isinstance(store.workers, str)
                 
                 if not (has_money or has_day or has_workers):
                     renpy.log("SNAPSHOT: ERROR - Post-validation failed: no critical fields were applied")
@@ -1652,8 +1806,10 @@ init -2 python:
                     slot_name = f"{page}-{slot_num}"
                 else:
                     slot_name = f"{int(page)}-{slot_num}"
-            # Store in persistent so it survives the load
+            # Store in persistent so it survives the load.
+            # Keep both fields aligned to avoid first-load misses on some platforms.
             persistent._loading_slot = slot_name
+            persistent._last_loaded_snapshot_slot = slot_name
         except Exception as e:
             renpy.log(f"SNAPSHOT: Error marking load slot: {e}")
     
@@ -1661,13 +1817,18 @@ init -2 python:
         pass
     
     def snapshot_mark_load(slot_number):
-        pass
+        snapshot_mark_load_slot(slot_number)
     
     def snapshot_pre_save_name(slot_name):
         pass
     
     def snapshot_mark_load_name(slot_name):
-        pass
+        try:
+            if slot_name:
+                persistent._loading_slot = slot_name
+                persistent._last_loaded_snapshot_slot = slot_name
+        except Exception as e:
+            renpy.log(f"SNAPSHOT: Error marking load slot by name: {e}")
     
     class PageAwareFileAction(renpy.store.Action):
         """Compatibility wrapper that defers to FileAction."""
@@ -1765,6 +1926,8 @@ init -2 python:
         try:
             # Get the slot that was marked for loading
             slot_name = getattr(persistent, "_loading_slot", None)
+            if not slot_name:
+                slot_name = getattr(persistent, "_last_loaded_snapshot_slot", None)
             if not slot_name:
                 # Fallback: use Ren'Py's loadname when slot wasn't marked (first-save edge case)
                 try:
@@ -1920,7 +2083,7 @@ label after_load:
                         manager_inv_val = snap.get("manager_inventory")
                         if manager_inv_val is not None:
                             # Convert to list if needed
-                            if not isinstance(manager_inv_val, list):
+                            if not (hasattr(manager_inv_val, "__iter__") and not isinstance(manager_inv_val, str)):
                                 manager_inv_val = list(manager_inv_val) if manager_inv_val else []
                             
                             current_inv = getattr(store, 'manager_inventory', [])
@@ -1937,7 +2100,7 @@ label after_load:
                                 
                                 for item in manager_inv_val:
                                     try:
-                                        if isinstance(item, (list, tuple)) and len(item) >= 1:
+                                        if (isinstance(item, tuple) or (hasattr(item, "__getitem__") and not isinstance(item, str) and not hasattr(item, "get"))) and len(item) >= 1:
                                             # Create new tuple from values
                                             item_id = item[0] if len(item) > 0 else ""
                                             quantity = item[1] if len(item) > 1 else 1
@@ -2046,6 +2209,18 @@ label after_load:
                             "yvara_s4_gate_fired",
                             "yvara_morning_after_done",
                             "yvara_evening_academy_last_day",
+                            "yvara_evening_tier",
+                            "yvara_evening_variant_index",
+                            "yvara_academy_investment_tier",
+                            "yvara_academy_investment_total",
+                            "yvara_academy_investments_count",
+                            "yvara_s5_gate_fired",
+                            "yvara_s6_gate_fired",
+                            "yvara_ending_route",
+                            "yvara_is_worker",
+                            "yvara_ending_done",
+                            "yvara_academy_discount",
+                            "yvara_lab_access",
                             "yvara_continuation_notice_shown",
                             "yvara_good_word_count",
                             "yvara_good_word_last_day",
@@ -2060,6 +2235,9 @@ label after_load:
                             "yvara_s3_remarks_done",
                             "yvara_s4_talks_done",
                             "yvara_s4_remarks_done",
+                            "yvara_s5_talks_done",
+                            "yvara_s5_remarks_done",
+                            "yvara_s6_talks_done",
                         ]
 
                         for _field_name in _yvara_scalar_fields:

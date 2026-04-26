@@ -130,6 +130,45 @@ def _validate_all_events(all_events: List[Dict]) -> Tuple[List[str], List[str]]:
                     f"[{where}] required_active_professions_overlaps_forbidden_active_professions: {sorted(rset & fset)}"
                 )
 
+        wn = ev.get("worker_name")
+        if wn is not None:
+            def _flat_name_strings(value):
+                if isinstance(value, str):
+                    return [value] if value.strip() else []
+                if isinstance(value, list):
+                    out = []
+                    for entry in value:
+                        if isinstance(entry, str):
+                            if entry.strip():
+                                out.append(entry)
+                        elif isinstance(entry, list):
+                            out.extend(_flat_name_strings(entry))
+                        else:
+                            return None
+                    return out
+                return None
+
+            flat = _flat_name_strings(wn)
+            if flat is None:
+                errors.append(
+                    f"[{where}] worker_name_must_be_string_or_list_of_strings"
+                )
+            elif not flat and (isinstance(wn, str) or isinstance(wn, list)) and wn != []:
+                errors.append(
+                    f"[{where}] worker_name_must_contain_non_empty_strings"
+                )
+
+        swi = ev.get("specific_worker_images")
+        if swi is not None:
+            if not isinstance(swi, list):
+                errors.append(
+                    f"[{where}] specific_worker_images_must_be_list"
+                )
+            elif not all(isinstance(x, str) and x.strip() for x in swi):
+                errors.append(
+                    f"[{where}] specific_worker_images_must_be_list_of_non_empty_strings"
+                )
+
         if "required_building_worker_min_skill" in ev:
             m = ev.get("required_building_worker_min_skill")
             if m is not None and not isinstance(m, int):

@@ -7,6 +7,8 @@
   "cooldown_days": 0,
   "event_probability": 0,
   "guaranteed": false,
+  "worker_name": null,
+  "specific_worker_images": [],
   "worker_selection": null,
   "worker_gender_requirement": null,
   "player_gender_requirement": null,

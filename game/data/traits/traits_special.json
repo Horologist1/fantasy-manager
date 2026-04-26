@@ -181,12 +181,12 @@
   {
     "name": "Futa",
     "modifiers": {
-      "earnings_multiplier": 1.3,
+      "earnings_multiplier": 1.15,
       "skill_modifiers": {
-        "Special": 2
+        "Special": 3
       }
     },
-    "description": "They possess unique anatomy that attracts specialized clientele and commands premium rates. [+30% $, +2 Special]",
+    "description": "They possess unique anatomy that attracts specialized clientele and commands premium rates. [+15% $, +3 Special]",
     "nsfw": true,
     "only_assigned": true,
     "gender_restriction": "female",
@@ -204,14 +204,14 @@
       "Furry"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.10,
       "skill_modifiers": {
         "Charm": 3,
         "Extreme": 2,
         "Craft": 1
       }
     },
-    "description": "Undead beings with supernatural charm and mysterious allure. [+20% $, +3 Charm, +2 Extreme, +1 Craft]",
+    "description": "Undead beings with supernatural charm and mysterious allure. [+10% $, +3 Charm, +2 Extreme, +1 Craft]",
     "nsfw": true,
     "only_assigned": true,
     "attribute_caps": {},
@@ -271,14 +271,14 @@
   },
   {
     "name": "Blademaster",
-    "description": "Trained by a legendary warrior in the ancient arts of combat. Their blade becomes an extension of their will, striking with precision and power. [+10% $, +15 Health, +6 Combat]",
+    "description": "Trained by a legendary warrior in the ancient arts of combat. Their blade becomes an extension of their will, striking with precision and power. [+5% $, +15 Health, +6 Combat]",
     "only_assigned": true,
     "modifiers": {
       "health": 15,
       "skill_modifiers": {
         "Combat": 6
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
     "attribute_caps": {},
     "daily_effects": {},
@@ -311,7 +311,7 @@
   },
   {
     "name": "Shadowdancer",
-    "description": "Trained in the arts of shadow and misdirection by the guild's masters. They move like smoke and strike like lightning. [+15% $, +5 Agility, +4 Striptease, +3 Charm]",
+    "description": "Trained in the arts of shadow and misdirection by the guild's masters. They move like smoke and strike like lightning. [+8% $, +5 Agility, +4 Striptease, +3 Charm]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -319,7 +319,7 @@
         "Striptease": 4,
         "Charm": 3
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
     "attribute_caps": {},
     "daily_effects": {},
@@ -371,7 +371,7 @@
   },
   {
     "name": "Barkeep's Wisdom",
-    "description": "Trained by the legendary Old Morrow. Sees through facades and knows exactly what every patron needs. [+15% $, +2 Health Regen, +15 Joy, +8 Charm, +7 Service, +6 Clever, +4 Striptease]",
+    "description": "Trained by the legendary Old Morrow. Sees through facades and knows exactly what every patron needs. [+8% $, +2 Health Regen, +15 Joy, +8 Charm, +7 Service, +6 Clever, +4 Striptease]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -380,7 +380,7 @@
         "Clever": 6,
         "Striptease": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "health_regeneration": 2,
       "joy": 15
     },
@@ -394,7 +394,7 @@
   },
   {
     "name": "People's Champion",
-    "description": "Blessed by a legendary hero. Radiates confidence and inspiration that draws others to them. [+15% $, +25 Health, +10 Energy, +20 Joy, +8 Charm, +5 Service, +6 Combat, +4 Clever, +3 Striptease]",
+    "description": "Blessed by a legendary hero. Radiates confidence and inspiration that draws others to them. [+8% $, +25 Health, +10 Energy, +20 Joy, +8 Charm, +5 Service, +6 Combat, +4 Clever, +3 Striptease]",
     "only_assigned": true,
     "modifiers": {
       "health": 25,
@@ -405,7 +405,7 @@
         "Clever": 4,
         "Striptease": 3
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "energy": 10,
       "joy": 20
     },
@@ -419,7 +419,7 @@
   },
   {
     "name": "Tale Weaver",
-    "description": "Trained by the Wandering Muse. Has mastered the ancient art of weaving words into magic. [+15% $, +3 Health Regen, +25 Joy, +10 Charm, +7 Clever, +5 Service, +5 Striptease]",
+    "description": "Trained by the Wandering Muse. Has mastered the ancient art of weaving words into magic. [+8% $, +3 Health Regen, +25 Joy, +10 Charm, +7 Clever, +5 Service, +5 Striptease]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -428,7 +428,7 @@
         "Service": 5,
         "Striptease": 5
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "health_regeneration": 3,
       "joy": 25
     },
@@ -442,7 +442,7 @@
   },
   {
     "name": "Master Chef",
-    "description": "Trained by Master Ambrose Laurent. Doesn't merely cook—creates edible memories that patrons will remember forever. [+15% $, +15 Health, +2 Health Regen, +20 Joy, +8 Service, +10 Craft, +5 Charm, +4 Clever]",
+    "description": "Trained by Master Ambrose Laurent. Doesn't merely cook—creates edible memories that patrons will remember forever. [+8% $, +15 Health, +2 Health Regen, +20 Joy, +8 Service, +10 Craft, +5 Charm, +4 Clever]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -451,7 +451,7 @@
         "Charm": 5,
         "Clever": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "health_regeneration": 2,
       "health": 15,
       "joy": 20
@@ -466,7 +466,7 @@
   },
   {
     "name": "Perfect Palate",
-    "description": "Trained by Countess Vermillion Ashford. Possesses an almost magical sensitivity to flavors. [+15% $, +8 Energy, +2 Health Regen, +8 Clever, +7 Service, +6 Charm, +5 Craft]",
+    "description": "Trained by Countess Vermillion Ashford. Possesses an almost magical sensitivity to flavors. [+8% $, +8 Energy, +2 Health Regen, +8 Clever, +7 Service, +6 Charm, +5 Craft]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -475,7 +475,7 @@
         "Charm": 6,
         "Craft": 5
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "health_regeneration": 2,
       "energy": 8
     },
@@ -489,7 +489,7 @@
   },
   {
     "name": "Graceful Server",
-    "description": "Trained by Sebastian Crane. Moves like flowing water, anticipating needs and making every patron feel like royalty. [+15% $, +12 Energy, +15 Joy, +10 Service, +7 Charm, +6 Agility, +4 Craft, +3 Clever]",
+    "description": "Trained by Sebastian Crane. Moves like flowing water, anticipating needs and making every patron feel like royalty. [+8% $, +12 Energy, +15 Joy, +10 Service, +7 Charm, +6 Agility, +4 Craft, +3 Clever]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -499,7 +499,7 @@
         "Craft": 4,
         "Clever": 3
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "energy": 12,
       "joy": 15
     },
@@ -513,7 +513,7 @@
   },
   {
     "name": "Fortune's Favorite",
-    "description": "Trained by 'Lucky' Mathias Cross. Possesses an uncanny intuition for timing and fortune. [+15% $, +10 Health, +3 Health Regen, +20 Joy, +9 Clever, +7 Charm, +5 Agility, +4 Hand]",
+    "description": "Trained by 'Lucky' Mathias Cross. Possesses an uncanny intuition for timing and fortune. [+8% $, +10 Health, +3 Health Regen, +20 Joy, +9 Clever, +7 Charm, +5 Agility, +4 Hand]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -522,7 +522,7 @@
         "Agility": 5,
         "Hand": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "health_regeneration": 3,
       "joy": 20,
       "health": 10
@@ -537,7 +537,7 @@
   },
   {
     "name": "Card Shark",
-    "description": "Trained by the Phantom Dealer. Fingers move with impossible precision—cards dance and flow like living things. [+15% $, +10 Energy, +2 Health Regen, +10 Agility, +8 Clever, +8 Hand, +4 Charm]",
+    "description": "Trained by the Phantom Dealer. Fingers move with impossible precision—cards dance and flow like living things. [+8% $, +10 Energy, +2 Health Regen, +10 Agility, +8 Clever, +8 Hand, +4 Charm]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -546,7 +546,7 @@
         "Hand": 8,
         "Charm": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "energy": 10,
       "health_regeneration": 2
     },
@@ -560,7 +560,7 @@
   },
   {
     "name": "High Roller's Eye",
-    "description": "Trained by Victoria Sterling, the Casino Queen. Has developed a supernatural ability to identify valuable patrons. [+15% $, +10 Health, +8 Energy, +15 Joy, +10 Charm, +7 Clever, +4 Agility, +3 Hand]",
+    "description": "Trained by Victoria Sterling, the Casino Queen. Has developed a supernatural ability to identify valuable patrons. [+8% $, +10 Health, +8 Energy, +15 Joy, +10 Charm, +7 Clever, +4 Agility, +3 Hand]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -569,7 +569,7 @@
         "Agility": 4,
         "Hand": 3
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "joy": 15,
       "health": 10,
       "energy": 8
@@ -584,7 +584,7 @@
   },
   {
     "name": "Courtesan's Grace",
-    "description": "Trained by Madame Celestine, whose grace enchanted emperors. Has mastered the art of refined seduction. [+15% $, +2 Health Regen, +25 Joy, +15 Libido, +10 Charm, +7 Sex, +6 Oral, +6 Striptease, +5 Service, +4 Special]",
+    "description": "Trained by Madame Celestine, whose grace enchanted emperors. Has mastered the art of refined seduction. [+8% $, +2 Health Regen, +25 Joy, +15 Libido, +10 Charm, +7 Sex, +6 Oral, +6 Striptease, +5 Service, +4 Special]",
     "nsfw": true,
     "only_assigned": true,
     "modifiers": {
@@ -596,7 +596,7 @@
         "Service": 5,
         "Special": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "joy": 25,
       "health_regeneration": 2,
       "libido": 15
@@ -611,7 +611,7 @@
   },
   {
     "name": "Sacred Touch",
-    "description": "Trained in millennia-old techniques by a temple practitioner. Touch carries ancient wisdom, creating transformative experiences. [+15% $, +20 Health, +10 Energy, +4 Health Regen, +10 Special, +8 Hand, +7 Sex, +5 BDSM, +5 Service, +4 Oral]",
+    "description": "Trained in millennia-old techniques by a temple practitioner. Touch carries ancient wisdom, creating transformative experiences. [+8% $, +20 Health, +10 Energy, +4 Health Regen, +10 Special, +8 Hand, +7 Sex, +5 BDSM, +5 Service, +4 Oral]",
     "nsfw": true,
     "only_assigned": true,
     "modifiers": {
@@ -623,7 +623,7 @@
         "Service": 5,
         "Oral": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "health_regeneration": 4,
       "health": 20,
       "energy": 10
@@ -638,7 +638,7 @@
   },
   {
     "name": "Desire Whisperer",
-    "description": "Trained by the legendary Desire Whisperer. Has mastered the art of intimate communication, sensing hidden desires. [+15% $, +2 Health Regen, +30 Joy, +20 Libido, +9 Charm, +8 Oral, +6 BDSM, +5 Sex, +5 Striptease, +4 Service]",
+    "description": "Trained by the legendary Desire Whisperer. Has mastered the art of intimate communication, sensing hidden desires. [+8% $, +2 Health Regen, +30 Joy, +20 Libido, +9 Charm, +8 Oral, +6 BDSM, +5 Sex, +5 Striptease, +4 Service]",
     "nsfw": true,
     "only_assigned": true,
     "modifiers": {
@@ -650,7 +650,7 @@
         "Striptease": 5,
         "Service": 4
       },
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "joy": 30,
       "libido": 20,
       "health_regeneration": 2
@@ -666,13 +666,13 @@
   {
     "name": "Loves you",
     "modifiers": {
-      "earnings_multiplier": 1.3
+      "earnings_multiplier": 1.15
     },
     "attribute_caps": {
       "libido": 5,
       "rebelliousness": 20
     },
-    "description": "Deeply in love with the manager. Works with unwavering dedication, but has little desire to entertain clients. [+30% $, Max Libido 5, Max Rebelliousness 20]",
+    "description": "Deeply in love with the manager. Works with unwavering dedication, but has little desire to entertain clients. [+15% $, Max Libido 5, Max Rebelliousness 20]",
     "only_assigned": true,
     "daily_effects": {},
     "gender_restriction": null,
@@ -702,7 +702,7 @@
   {
     "name": "Trial Worker",
     "duration": 30,
-    "description": "On a probationary period, eager to prove their worth. Works with extra dedication to earn a permanent place. [+8% $, +10 Joy, +4 Service, +3 Charm, +2 Clever]",
+    "description": "On a probationary period, eager to prove their worth. Works with extra dedication to earn a permanent place. [+4% $, +10 Joy, +4 Service, +3 Charm, +2 Clever]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -710,7 +710,7 @@
         "Charm": 3,
         "Clever": 2
       },
-      "earnings_multiplier": 1.08,
+      "earnings_multiplier": 1.04,
       "joy": 10
     },
     "attribute_caps": {},
@@ -723,7 +723,7 @@
   {
     "name": "Scholar's Joy",
     "duration": 90,
-    "description": "Graduated from the Academy with honors. Knowledge and dedication shine through in every task. [+8% $, +1 Health Regen, +10 Joy, +4 Clever, +3 Charm, +3 Craft, +2 Service]",
+    "description": "Graduated from the Academy with honors. Knowledge and dedication shine through in every task. [+4% $, +1 Health Regen, +10 Joy, +4 Clever, +3 Charm, +3 Craft, +2 Service]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -732,7 +732,7 @@
         "Craft": 3,
         "Service": 2
       },
-      "earnings_multiplier": 1.08,
+      "earnings_multiplier": 1.04,
       "health_regeneration": 1,
       "joy": 10
     },
@@ -746,7 +746,7 @@
   {
     "name": "Nature's Blessing",
     "duration": 90,
-    "description": "Blessed by the natural world, their connection to flora and the elements brings comfort and serenity. [+8% $, +2 Charm, +2 Service, +2 Craft]",
+    "description": "Blessed by the natural world, their connection to flora and the elements brings comfort and serenity. [+4% $, +2 Charm, +2 Service, +2 Craft]",
     "only_assigned": true,
     "modifiers": {
       "skill_modifiers": {
@@ -754,7 +754,7 @@
         "Service": 2,
         "Craft": 2
       },
-      "earnings_multiplier": 1.08
+      "earnings_multiplier": 1.04
     },
     "attribute_caps": {},
     "daily_effects": {},

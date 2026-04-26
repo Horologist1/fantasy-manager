@@ -81,7 +81,7 @@ init python:
             worker["inventory"] = []
         elif worker["inventory"] is None:
             worker["inventory"] = []
-        elif not isinstance(worker["inventory"], list):
+        elif not (hasattr(worker["inventory"], "__iter__") and not isinstance(worker["inventory"], str)):
             try:
                 worker["inventory"] = list(worker["inventory"]) if worker["inventory"] else []
             except Exception:
@@ -184,6 +184,28 @@ init python:
             normalized_traits = []
         worker["traits"] = normalized_traits
 
+        # Enforce trait validity on existing worker data (requirements/conflicts/gender restrictions).
+        _sanitize_traits = getattr(store, "sanitize_worker_trait_state", None)
+        if callable(_sanitize_traits):
+            _sanitize_traits(worker, trait_catalog=trait_catalog)
+
+        # Arena Champion must come from 5 special match victories, never from random generation.
+        # Keep backward compatibility by cleaning legacy invalid states on load.
+        if "Arena Champion" in (worker.get("traits") or []):
+            try:
+                _arena_wins = int(worker.get("special_match_victories", 0) or 0)
+            except Exception:
+                _arena_wins = 0
+            if _arena_wins < 5:
+                worker["traits"] = [t for t in (worker.get("traits") or []) if t != "Arena Champion"]
+                _dur = worker.get("trait_durations")
+                if hasattr(_dur, "pop"):
+                    _dur.pop("Arena Champion", None)
+                renpy.log(
+                    f"TRAITS: Removed invalid 'Arena Champion' from {worker.get('name', 'Unknown')} "
+                    f"(special_match_victories={_arena_wins})"
+                )
+
         if has_trait_catalog:
             missing_definitions = [t for t in worker["traits"] if t not in known_trait_names]
             if missing_definitions:
@@ -214,8 +236,8 @@ init python:
             _comfort_cost_lv = int(worker.get("comfort_level", 1))
         except Exception:
             _comfort_cost_lv = 1
-        # Canon rule: worker daily cost is comfort x 20.
-        worker["daily_cost"] = max(1, _comfort_cost_lv) * 20
+        # Canon rule: worker daily cost is comfort x difficulty rate.
+        worker["daily_cost"] = int(max(1, _comfort_cost_lv) * get_difficulty_comfort_mult())
         worker.setdefault("comfort_desired", 1)  # Initialize from JSON or default to 1
         worker.setdefault("rebelliousness", 50)
         worker.setdefault("joy", random.randint(20, 80))

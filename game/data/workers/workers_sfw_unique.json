@@ -45,7 +45,7 @@
         ],
         "description": "A skilled and experienced worker with a calm demeanor, perfect for general tasks.",
         "gender": "male",
-        "comfort_desired": 5,
+        "comfort_desired": 4,
         "images_folder": "aspen",
         "image_folder": "aspen"
     },
@@ -95,7 +95,7 @@
         ],
         "description": "A skilled worker with a calm, alluring presence, suited for customer service and hospitality roles.",
         "gender": "male",
-        "comfort_desired": 5
+        "comfort_desired": 4
     },
     {
         "name": "Sage",
@@ -143,7 +143,7 @@
         ],
         "description": "A mysterious figure known for her elegance and charm, ideal for refined tasks.",
         "gender": "female",
-        "comfort_desired": 5,
+        "comfort_desired": 4,
         "recruit_only": false
     },
     {
@@ -192,7 +192,7 @@
         ],
         "description": "An enigmatic performer whose dramatic flair excels in entertainment and performance settings.",
         "gender": "female",
-        "comfort_desired": 5
+        "comfort_desired": 4
     },
     {
         "name": "Primrose",
@@ -240,7 +240,7 @@
         ],
         "description": "A passionate performer whose fiery spirit excels in entertainment and artistic performances.",
         "gender": "female",
-        "comfort_desired": 5
+        "comfort_desired": 4
     },
     {
         "name": "Jasmine",
@@ -288,7 +288,7 @@
         ],
         "description": "A graceful performer with excellent social skills and natural charm.",
         "gender": "female",
-        "comfort_desired": 5
+        "comfort_desired": 4
     },
     {
         "name": "Daisy",
@@ -336,7 +336,7 @@
         ],
         "description": "A cheerful and hardworking individual with a bright smile, suited for service roles.",
         "gender": "female",
-        "comfort_desired": 5
+        "comfort_desired": 4
     },
     {
         "name": "Poppy",
@@ -384,6 +384,6 @@
         ],
         "description": "A vibrant and charismatic performer with exceptional charm and social grace.",
         "gender": "female",
-        "comfort_desired": 5
+        "comfort_desired": 4
     }
 ]

@@ -1249,32 +1249,33 @@ init python:
 
         return None
 
-    def get_event_background(event, outcome=None, worker=None, skill_name=None):
+    def get_event_background(event, outcome=None, worker=None, skill_name=None, choice=None):
         """
         Get event scene media with this priority:
         1) Initial event display: background_image from events folder.
-        2) Resolved success/failure with selected worker: worker-folder success/failure image.
-        3) Fallback to events folder success/failure.
-        4) Fallback to generic event_bg.
+        2) Per-choice success/failure image (choice-level override).
+        3) Resolved success/failure with selected worker: worker-folder success/failure image.
+        4) Fallback to events folder success/failure.
+        5) Fallback to generic event_bg.
         """
         outcome = outcome.lower() if outcome else ""
 
-        # Outcome-specific image keys from event JSON.
+        # Outcome-specific image keys: choice-level first, then event-level fallback.
         if outcome in ("success", "critical_success"):
-            media_name = event.get("success_image") or event.get("success_background")
+            media_name = (choice.get("success_image") if choice else None) or event.get("success_image") or event.get("success_background")
         elif "failure" in outcome or outcome == "mediocre":
-            media_name = event.get("failure_image") or event.get("failure_background")
+            media_name = (choice.get("failure_image") if choice else None) or event.get("failure_image") or event.get("failure_background")
         else:
             media_name = event.get("background_image")
 
-        # For resolved outcomes with a selected worker, prefer worker-folder media first.
-        if worker and hasattr(worker, "get") and outcome in ("success", "critical_success", "failure", "mediocre"):
+        # When a selected worker exists, prefer worker-folder media first.
+        if worker and hasattr(worker, "get"):
             worker_media = _resolve_worker_media_name(worker, media_name)
             if worker_media:
                 return worker_media
 
             # If explicit success/failure media is missing in worker folder, try skill media.
-            if skill_name:
+            if skill_name and outcome in ("success", "critical_success", "failure", "mediocre"):
                 worker_skill_media = _resolve_worker_skill_media_name(worker, skill_name, outcome)
                 if worker_skill_media:
                     return worker_skill_media

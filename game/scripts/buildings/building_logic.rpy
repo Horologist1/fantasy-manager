@@ -29,56 +29,12 @@ init python:
     store._resolve_building_by_name = _resolve_building_by_name
 
     def get_building_servants(building_name):
-        """
-        Returns workers assigned to a building. Uses servant_jobs + workers (assigned_building).
-        Resolves building by normalized key so Building 1/2/3/N work regardless of key format.
-        """
-        try:
-            building, _ = _resolve_building_by_name(building_name)
-            if not building:
-                return []
-            _rw = lambda w: hasattr(w, "get") and w.get("name")
-            name_to_worker = {w.get("name"): w for w in getattr(store, "workers", []) if _rw(w)}
-            jobs = building.get("servant_jobs") or {}
-            jobs = dict(jobs) if hasattr(jobs, "keys") else {}
-            result = []
-            seen = set()
-            target_norm = _norm_building_key(building_name) if building_name else ""
-            # 1) From servant_jobs
-            for wname in list(jobs.keys()):
-                if not wname or wname in seen:
-                    continue
-                w = name_to_worker.get(wname)
-                if w:
-                    result.append(w)
-                    seen.add(wname)
-            # 2) From workers' assigned_building (match by normalized key)
-            for w in getattr(store, "workers", []):
-                if not _rw(w):
-                    continue
-                wname = w.get("name")
-                if not wname or wname in seen:
-                    continue
-                ab_val = w.get("assigned_building")
-                if not ab_val:
-                    continue
-                if ab_val == building_name or (target_norm and _norm_building_key(ab_val) == target_norm):
-                    result.append(w)
-                    seen.add(wname)
-            # 3) Fallback: assigned_servants
-            for sw in (building.get("assigned_servants") or []):
-                if not (hasattr(sw, "get") and sw.get("name")):
-                    continue
-                wname = sw.get("name")
-                if wname and wname not in seen:
-                    w = name_to_worker.get(wname)
-                    if w:
-                        result.append(w)
-                        seen.add(wname)
-            return result
-        except Exception as e:
-            renpy.log(f"get_building_servants error: {e}")
-            return []
+        """Delegates to canonical implementation in script.rpy.
+        worker['assigned_building'] is the single source of truth."""
+        canonical_fn = getattr(store, "_canonical_get_building_servants", None)
+        if callable(canonical_fn):
+            return canonical_fn(building_name)
+        return []
 
     store.get_building_servants = get_building_servants
 
@@ -96,59 +52,24 @@ init python:
     store._norm_building_key = _norm_building_key
 
     def sync_assigned_servants_for_building(building_name):
-        """
-        Syncs building's assigned_servants from servant_jobs and workers.
-        Uses _resolve_building_by_name so Building 1/2/3 vs Building_1/2/3 always match.
-        """
-        try:
-            building, actual_key = _resolve_building_by_name(building_name)
-            if not building or not hasattr(building, "get"):
-                return
-            owned = getattr(store, "owned_buildings", []) or []
-            _norm = _norm_building_key(building_name)
-            if not any(_norm_building_key(b) == _norm for b in owned):
-                return
-            _rw = lambda w: hasattr(w, "get") and w.get("name")
-            name_to_worker = {w.get("name"): w for w in getattr(store, "workers", []) if _rw(w)}
-            rebuilt = []
-            seen = set()
-            for wname in list((building.get("servant_jobs") or {}).keys()):
-                if not wname or wname in seen:
-                    continue
-                w = name_to_worker.get(wname)
-                if w:
-                    rebuilt.append(w)
-                    seen.add(wname)
-                    if w.get("assigned_building", "Unassigned") != actual_key:
-                        w["assigned_building"] = actual_key
-            for w in getattr(store, "workers", []):
-                if not _rw(w):
-                    continue
-                wname = w.get("name")
-                if not wname or wname in seen:
-                    continue
-                ab_val = w.get("assigned_building")
-                if ab_val == actual_key or (_norm and _norm_building_key(ab_val) == _norm):
-                    rebuilt.append(w)
-                    seen.add(wname)
-                    if ab_val != actual_key:
-                        w["assigned_building"] = actual_key
-                    if wname not in (building.get("servant_jobs") or {}):
-                        building.setdefault("servant_jobs", {})[wname] = "unassigned"
-            building["assigned_servants"] = rebuilt
-        except Exception as e:
-            renpy.log(f"sync_assigned_servants_for_building error: {e}")
+        """Delegates to canonical implementation in script.rpy.
+        worker['assigned_building'] is the single source of truth."""
+        canonical_fn = getattr(store, "_canonical_sync_assigned_servants_for_building", None)
+        if callable(canonical_fn):
+            canonical_fn(building_name)
 
     def validate_and_sync_buildings(include_worker_refs=True):
-        """Validates buildings and syncs assigned_servants. Never overwrites worker data."""
-        try:
-            for bname in getattr(store, "owned_buildings", []):
-                sync_assigned_servants_for_building(bname)
-        except Exception as e:
-            renpy.log(f"validate_and_sync_buildings error: {e}")
+        """Delegates to canonical implementation in script.rpy."""
+        canonical_fn = getattr(store, "_canonical_validate_and_sync_buildings", None)
+        if callable(canonical_fn):
+            canonical_fn(include_worker_refs=include_worker_refs)
 
     def sync_building_assignments_from_workers():
         """Syncs all buildings' assigned_servants from store.workers. Never overwrites worker data."""
+        canonical_fn = getattr(store, "_canonical_sync_building_assignments_from_workers", None)
+        if callable(canonical_fn):
+            canonical_fn()
+            return
         try:
             validate_and_sync_buildings()
         except Exception as e:
@@ -301,12 +222,11 @@ init python:
             return "Master"
 
     def get_reputation_bonus_stories(reputation, bonus_formula):
-        """Calculate bonus stories per profession per day based on reputation and formula, with 50% reduction."""
+        """Calculate bonus stories per profession per day based on reputation and formula."""
         if not bonus_formula or bonus_formula == "0":
             return 0
         try:
             bonus = int(eval(bonus_formula, {"__builtins__": None}, {"reputation": int(reputation)}))
-            bonus = int(bonus * 0.5)  # Apply same 50% reduction as events
             return bonus
         except Exception:
             return 0
@@ -443,10 +363,18 @@ init python:
                                 renpy.log(f"AUTOREST: {name} sin previous_profession -> restaurado a {first_prof} (Energía {energy}/{max_e})")
 
     def clear_worker_autorest_state(worker):
+        canonical_fn = getattr(store, "_canonical_clear_worker_autorest_state", None)
+        if callable(canonical_fn):
+            canonical_fn(worker)
+            return
         if worker:
             worker["previous_profession"] = None
 
     def set_worker_job(worker, building_name, job_id):
+        canonical_fn = getattr(store, "_canonical_set_worker_job", None)
+        if callable(canonical_fn):
+            canonical_fn(worker, building_name, job_id)
+            return
         if not building_name or building_name not in available_buildings:
             return
         

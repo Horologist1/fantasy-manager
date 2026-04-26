@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Yvara",
+        "folder": "yvara",
+        "cost": 0,
+        "nsfw": true,
+        "unique": true,
+        "recruitment_locked": true,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 35,
+            "Anal": 20,
+            "BDSM": 30,
+            "Hand": 35,
+            "Oral": 38,
+            "Homo": 32,
+            "Special": 28,
+            "Group": 20,
+            "Extreme": 15,
+            "Striptease": 40,
+            "Combat": 15,
+            "Clever": 50,
+            "Charm": 51,
+            "Service": 41,
+            "Agility": 35,
+            "Craft": 30
+        },
+        "names_list": "western_female",
+        "traits": ["Human"],
+        "description": "The Academy Director. She runs an institution by day and serves your establishment by arrangement.",
+        "gender": "female",
+        "comfort_desired": 4
+    }
+]

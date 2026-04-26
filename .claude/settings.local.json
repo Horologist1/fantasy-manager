@@ -3,7 +3,19 @@
     "allow": [
       "Bash(python3 -c \":*)",
       "Bash(python -c \":*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(grep -l \"money\" \"/c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/game/data/events\"/*.json)",
+      "Bash(grep -o '\"[a-z_]*money[a-z_]*\"' \"/c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/game/data/events\"/*.json)",
+      "Bash(python3:*)",
+      "Bash(grep -E '^\\\\s+\"id\":\\\\s+\"[a-z_]+\",$' /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/game/data/buildings/building_types.json)",
+      "Read(//tmp/**)",
+      "Bash(mv florian/cook_story2.jpg florian/cook_story2_restaurant.jpg)",
+      "Bash(mv iris/cook_story2.jpg iris/cook_story2_restaurant.jpg)",
+      "Bash(mv lily/cook_story2.jpg lily/cook_story2_restaurant.jpg)",
+      "Bash(mv violet/cook_story2.jpg violet/cook_story2_restaurant.jpg)",
+      "Bash(mv florian/cook_story2_failure.jpg florian/cook_story2_restaurant_failure.jpg)",
+      "Bash(winget upgrade:*)",
+      "Bash(awk *)"
     ]
   }
 }

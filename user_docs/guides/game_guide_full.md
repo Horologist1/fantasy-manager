@@ -157,6 +157,8 @@ Detailed technical rules:
 ## Recruiting
 - Event-based and market-like flows exist.
 - Limited by day and internal caps.
+- Procedural recruit candidates default to `comfort_desired = 4`.
+- If a recruit offer applies a wage discount (`cost_modifier < 1.0`), entry comfort is set to one point below desired (typically `3` for those procedural recruits).
 
 ## Academy / Training
 - Academy training jobs (`academy_*`) run through the same profession pipeline as other jobs, with deterministic/no-roll resolution.

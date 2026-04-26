@@ -27,6 +27,7 @@
     "rebelliousness": 0
   },
   "specific_workers": [],
+  "specific_worker_images": [],
   "required_traits": [],
   "excluded_traits": [],
   "required_flags": {},

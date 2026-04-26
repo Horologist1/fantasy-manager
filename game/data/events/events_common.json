@@ -856,7 +856,7 @@
   },
   {
     "id": "apothecary_bulk_tonics",
-    "description": "An apothecary pulls their cart up to your door, loaded with tonics and remedies at bulk prices. The merchant claims they over-brewed and need to move stock fast—good deal if the quality holds.",
+    "description": "An apothecary pulls their cart up to your door, glass vials clinking like wind chimes. The shelves are packed with tonics and remedies at bulk prices. The merchant claims they over-brewed for a festival that fell through and need to move stock fast. The quality looks sound, but discounted goods always come with a question mark.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -872,7 +872,7 @@
     "choices": [
       {
         "option": "Buy the batch outright. (Cost: Money)",
-        "message": "You pay and stock the lot. The tonics are solid—useful for workers and patrons alike ({actual_money}).",
+        "message": "You count out the coin and the apothecary unloads crate after crate. The tonics are solid—well-brewed, properly sealed, and useful for workers and patrons alike. A good deal on a good day ({actual_money}).",
         "effect": {
           "money": -120,
           "success_chance": 0,
@@ -886,7 +886,7 @@
         "option": "Negotiate a better rate. (Risk: Reputation; Potential: Money)",
         "condition": "Charm",
         "message_success": "[acting_worker] chats up the apothecary, finds common ground, and talks the price down without souring the deal ({actual_money}, {actual_reputation} reputation).",
-        "message_failure": "[acting_worker] pushes too hard on price. The apothecary's expression sours, and other merchants nearby overhear ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] pushes too hard on the price. The apothecary's smile vanishes and they start packing up. Nearby merchants exchange glances—nobody likes watching a deal go sour in public ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "money": -80,
@@ -904,8 +904,8 @@
         }
       },
       {
-        "option": "Decline politely.",
-        "message": "You pass on the offer. The apothecary nods and rolls their cart onward. Not every deal needs taking.",
+        "option": "Pass on the offer. Not today. (No effect)",
+        "message": "You wave the apothecary off with a polite shake of the head. They shrug, cover the cart, and wheel it down the street to try the next establishment. The tonics were probably fine, but your coffers have other plans today.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -927,7 +927,7 @@
   },
   {
     "id": "bard_license_officer",
-    "description": "A city official steps through your door with a ledger and the expression of someone looking for violations. They scan the room, note the entertainment, and ask to see your performance licenses.",
+    "description": "A city official steps through your door with a leather ledger and the pinched expression of someone who's been looking for violations all morning and hasn't found any yet. They scan the room, note the entertainment, count the seats, and turn to you with a pen already raised. 'Performance licenses, please. All current acts, signed and dated.'",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "choose",
@@ -959,7 +959,7 @@
       },
       {
         "option": "Pay the routine fee. (Cost: Money)",
-        "message": "You hand over the documentation and the fee. The official stamps your papers and moves on. Quick and painless ({actual_money}).",
+        "message": "You hand over the documentation and the routine fee without fuss. The official flips through the papers, stamps each one with practiced efficiency, and tucks the payment into the ledger. 'Everything's in order,' they say, already heading for the door. Quick, professional, and painless ({actual_money}).",
         "effect": {
           "money": -50,
           "success_chance": 0,
@@ -982,7 +982,7 @@
   },
   {
     "id": "storm_leak_repair",
-    "description": "Last night's storm left a gift: a steady drip running down the back wall. Small now, but water and wood don't mix well over time. You need to decide how seriously to take it before the rot sets in.",
+    "description": "Last night's storm left a gift: a steady drip running down the back wall, pooling on the flagstones near the storeroom. Small now, but the dark stain spreading across the plaster tells a bigger story. Water and wood don't mix well over time, and rot doesn't announce itself twice. You need to decide how seriously to take this before the damage gets real.",
     "weight": 3,
     "cooldown_days": 7,
     "worker_selection": "none",
@@ -1010,7 +1010,7 @@
       },
       {
         "option": "Quick patch for now. (Cost: Money; Risk: Reputation)",
-        "message": "Pitch and rags stop the drip. Cheap and fast, but observant patrons glance at the patch job ({actual_money}, {actual_reputation} reputation).",
+        "message": "Pitch and rags stop the drip by midday. It holds, and the cost is trivial. But the dark stain on the wall is still visible, and the sharp-eyed regulars notice the patch job. A few exchange glances. Not a disaster, but it doesn't inspire confidence ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -50,
           "reputation": -2,
@@ -1023,7 +1023,7 @@
       },
       {
         "option": "Close a corner of the room. (Loss: Reputation)",
-        "message": "You rope off the wet section and rearrange seating. It works, but the room feels smaller and regulars ask questions ({actual_reputation} reputation).",
+        "message": "You rope off the wet section and rearrange the seating to compensate. It works—nobody sits in a puddle—but the room feels smaller, and regulars notice the missing tables. 'Renovation?' one asks. You nod and change the subject ({actual_reputation} reputation).",
         "effect": {
           "reputation": -1,
           "success_chance": 0,
@@ -1090,8 +1090,8 @@
         }
       },
       {
-        "option": "Politely decline the offer.",
-        "message": "You thank the warrior but explain your workers have other duties. 'The blade chooses its own time,' they say, and leave.",
+        "option": "Decline—no one is ready for this. (No effect)",
+        "message": "You meet the Blademaster's gaze and shake your head. 'Not today. My people have skill, but not the kind you're looking for—not yet.' The warrior studies you for a long moment, then nods with something that might be respect. 'The blade chooses its own time,' they say, and walk out the way they came. The room stays quiet a beat longer than it should.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1164,8 +1164,8 @@
         }
       },
       {
-        "option": "Admit you have no one suitable.",
-        "message": "You tell the archmage no one here has the aptitude. They nod. 'Magic finds its own vessels in time.' They fade from sight.",
+        "option": "Admit no one here has the gift. (No effect)",
+        "message": "You spread your hands. 'I wish I could help, but no one under my roof carries that kind of spark.' The archmage's gaze sweeps the room one last time, lingering on faces that don't know they're being measured. 'Magic finds its own vessels in time,' they say softly, and dissolve into the air like morning fog. The runes fade. The wine glasses stop humming.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1304,8 +1304,8 @@
         }
       },
       {
-        "option": "Thank them but decline.",
-        "message": "You say your workers are content as they are. The high priest smiles. 'The divine gift is not diminished by hesitation.' They bless the room and depart.",
+        "option": "Decline graciously—no one is ready. (No effect)",
+        "message": "You bow your head. 'My people are good, but I'm not sure any of them carry the kind of purity you're describing. I wouldn't want to waste your time.' The high priest smiles—not disappointed, but patient, the way someone smiles when they know they'll be back. 'The divine gift is not diminished by hesitation.' They bless the room with a gesture and depart. The golden light lingers a moment after they're gone.",
         "effect": {
           "success_chance": 0,
           "joy": 0,

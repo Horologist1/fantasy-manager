@@ -319,8 +319,16 @@ init python:
         
         # Handle worker recruitment
         if effect_dict.get("recruit_worker", False) and worker:
-            # Apply cost modifier if present
-            cost_modifier = effect_dict.get("cost_modifier", 1.0)
+            # Apply cost modifier if present.
+            # Legacy event data often uses 0 as "no modifier", so normalize
+            # non-positive values to 1.0 instead of treating them as discounts.
+            _raw_cost_modifier = effect_dict.get("cost_modifier", 1.0)
+            try:
+                cost_modifier = float(_raw_cost_modifier)
+            except (TypeError, ValueError):
+                cost_modifier = 1.0
+            if cost_modifier <= 0:
+                cost_modifier = 1.0
 
             desired_comfort = get_effective_comfort_desired(worker)
             # If price was negotiated down, comfort should be exactly one point below desired (min 1)
@@ -330,7 +338,7 @@ init python:
                 negotiated_comfort = int(desired_comfort)
             worker["comfort_level"] = negotiated_comfort
 
-            # Canon rule: worker daily cost is comfort x 20.
+            # Canon rule: worker daily cost is comfort x difficulty rate.
             _cm = get_difficulty_comfort_mult()
             final_cost = int(max(1, negotiated_comfort) * _cm)
             worker["daily_cost"] = final_cost

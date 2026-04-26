@@ -14,6 +14,8 @@ Default neutral values:
 ### Event keys
 - `id`, `description`, `weight`, `limited`, `max_occurrences`, `cooldown_days`
 - `event_probability`, `guaranteed`
+- `worker_name` — string or list of strings; restricts event to workers with those names. OR'd with `specific_worker_images`.
+- `specific_worker_images` — list of worker folder names (matches `worker["folder"]`); lets mods share events across any worker using a given image pack. OR'd with `worker_name`.
 - `worker_selection`
 - `worker_gender_requirement` — **ignored** by random/building event pool; use daily story / interaction fields for worker gender. Validator warns if set.
 - `player_gender_requirement` — optional `male`/`female`/`lord`/`lady`; Lord title → male, else female; filters `select_possible_events`.
@@ -58,6 +60,7 @@ Top-level keys:
 - `categories`, `image`, `nsfw`
 - `stat_requirements`
 - `specific_workers`, `required_traits`
+- `specific_worker_images` — list of worker folder names. OR'd with `specific_workers` when both are present.
 - `excluded_traits`
 - `required_flags`, `excluded_flags`
 

@@ -24,7 +24,7 @@ define gui.show_name = True
 
 
 
-define config.version = "0.9.5.4test4"
+define config.version = "0.9.5.4b"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -206,6 +206,30 @@ init python:
     ## This ensures the entire devkit folder is excluded from builds
     build.classify('devkit/**', None)
     build.classify('devkit/', None)
+
+    ## Exclude local AI/tooling metadata and debug artifacts from releases.
+    build.classify('AGENTS.md', None)
+    build.classify('**/AGENTS.md', None)
+    build.classify('.claude/**', None)
+    build.classify('.cursor/**', None)
+    build.classify('claude-*.log', None)
+    build.classify('cursor-*.log', None)
+    build.classify('*-debug.log', None)
+    build.classify('*_debug.log', None)
+
+    ## Exclude local runtime/cache artifacts from releases.
+    build.classify('game/saves/**', None)
+    build.classify('game/cache/**', None)
+    build.classify('errors.txt', None)
+    build.classify('log.txt', None)
+    build.classify('traceback.txt', None)
+
+    ## Exclude Android signing/config files from PC distributions.
+    build.classify('android.json', None)
+    build.classify('**.keystore', None)
+    build.classify('**.jks', None)
+    build.classify('**/keystore.properties', None)
+    build.classify('**/local.properties', None)
 
     ## To archive files, classify them as 'archive'.
 

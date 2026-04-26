@@ -18,7 +18,7 @@
     "success_image": "generic_success",
     "failure_image": "generic_failure",
     "required_flags": {
-      "objective_8_complete": true
+      "objective_6_complete": true
     },
     "excluded_flags": {
       "shop2_unlocked": true
@@ -511,8 +511,8 @@
         }
       },
       {
-        "option": "Decline politely. (Neutral)",
-        "message": "You thank her but explain you're not in need. She nods and moves on. The opportunity may present itself again.",
+        "option": "Thank her, but pass for now. (No effect)",
+        "message": "You thank the merchant for the offer but explain that your current supply lines are serving you well enough. She takes it in stride—clearly not the first time she's heard this. 'The offer stands,' she says, tucking the writ back into her satchel. 'You know where to find me.' She wheels her cart onward down the street.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -609,7 +609,7 @@
     "description": "The merchant returns, hope still burning in her eyes. 'I haven't given up on the Elite Emporium,' she says. 'The opportunity remains—ten thousand coins to open the most exclusive market in the city. Will you reconsider your investment?'",
     "weight": 10,
     "event_probability": 80,
-    "cooldown_days": 10,
+    "cooldown_days": 21,
     "worker_selection": "none",
     "building_type": [
       "tavern",
@@ -629,7 +629,7 @@
       "shop3_unlocked": true
     },
     "conditions": {
-      "start_when": "after_days_from_flag:shop_expansion_decline_timestamp,10"
+      "start_when": "after_days_from_flag:shop_expansion_decline_timestamp,21"
     },
     "choices": [
       {
@@ -681,7 +681,7 @@
     "weight": 100,
     "guaranteed": true,
     "event_probability": 100,
-    "cooldown_days": 7,
+    "cooldown_days": 21,
     "worker_selection": "none",
     "building_type": [
       "tavern",

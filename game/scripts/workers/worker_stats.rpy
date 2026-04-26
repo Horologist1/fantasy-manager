@@ -108,8 +108,9 @@ init python:
             _item_defs_cache_key = key
         return _item_defs_cache
 
-    def calculate_skill_with_traits(worker, skill_name):
-        """Return effective skill level (base + trait bonus + equipment bonus + libido bonus). Base skills are capped at 100, but total can exceed 100 with bonuses."""
+    def calculate_skill_with_traits(worker, skill_name, include_libido=True):
+        """Return effective skill level (base + trait bonus + equipment bonus + libido bonus). Base skills are capped at 100, but total can exceed 100 with bonuses.
+        Set include_libido=False to exclude the temporary libido bonus (for display purposes)."""
         # Ensure we're using the real worker from store.workers to get current equipment state
         if hasattr(store, 'workers') and worker:
             worker_name = worker.get("name")
@@ -150,8 +151,8 @@ init python:
                         renpy.log(f"calculate_skill_with_traits: Adding {equip_bonus} bonus from equipped item '{item_id}' to {skill_name} for {worker.get('name', 'Unknown')}")
                     bonus += equip_bonus
 
-        # Add libido bonus to sexual skills (only in NSFW mode)
-        if persistent.nsfw_enabled and skill_name in get_sexual_skill_names():
+        # Add libido bonus to sexual skills (only in NSFW mode, skipped for display)
+        if include_libido and persistent.nsfw_enabled and skill_name in get_sexual_skill_names():
             libido_bonus = worker.get("libido", 0)
             libido_bonus = int(libido_bonus / 2)
             bonus += libido_bonus
@@ -333,11 +334,11 @@ init python:
             trait = trait_defs.get(trait_name)
             if trait:
                 per_trait = trait.get("modifiers", {}).get("earnings_multiplier", 1.0)
-                per_trait = min(per_trait, 1.5)  # cap per-trait impact
+                per_trait = min(per_trait, 1.2)  # cap per-trait impact
                 multiplier *= per_trait
                 if trait_name in client_seeked_traits:
                     multiplier *= 1.2
-        multiplier = min(multiplier, 2.0)
+        multiplier = min(multiplier, 1.5)
         # Management skill: Business Acumen (+0.1 money multiplier per point)
         mgmt = getattr(store, "management_skills", None) or {}
         money_mult = 1.0 + 0.1 * mgmt.get("business_acumen", 0)

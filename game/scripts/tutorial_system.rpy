@@ -132,7 +132,7 @@ default objective_descriptions = {
     
     9: "Two paths diverge before me in this wood of vengeance: I may orchestrate the governor's final breath through shadow and steel, or I may corner the wretch with cunning theft and the chains of blackmail. Each road leads to justice, yet by different means shall it be achieved.",
     
-    10: "To wage war against the shadow that haunts this city, I shall require resources beyond mere governance. Fifty thousand coins - a sum vast enough to fund an army, bribe informants, and purchase the tools of vengeance. Every coin earned brings me closer to the reckoning.",
+    10: "To wage war against the shadow that haunts this city, I shall require resources beyond mere governance. Thirty thousand coins - a sum vast enough to fund an army, bribe informants, and purchase the tools of vengeance. Every coin earned brings me closer to the reckoning.",
     
     11: "Knowledge is power, and I must know mine enemy's every move. I require a network of informants - fifteen loyal workers who can gather intelligence, spread rumors, and move unseen through the city's underbelly. Each soul I recruit strengthens my web of eyes and ears.",
     
@@ -142,7 +142,7 @@ default objective_descriptions = {
     
     14: "For the trials ahead, I require not merely workers, but champions. I must cultivate an elite guard: three warriors of supreme combat prowess (Combat 80+), and two masters of cunning and charm (Clever or Charm 80+). These paragons shall be my sword and shield in the battles to come.",
     
-    15: "All the pieces are in place, yet one final test remains. I must prove my empire's strength by achieving a single day's revenue of five thousand coins - a demonstration that my operations run with ruthless efficiency. Only then shall I be ready to strike.",
+    15: "All the pieces are in place, yet one final test remains. I must prove my empire's strength by achieving a single day's revenue of three thousand coins - a demonstration that my operations run with ruthless efficiency. Only then shall I be ready to strike.",
     
     16: "The hour of vengeance is at hand. All preparations are complete - my wealth is vast, my network extensive, my arsenal deadly, my empire formidable, and my champions unmatched. Now I must choose the path of reckoning: shall I strike with overwhelming force, or with cunning subterfuge? The choice is mine, and the fate of my enemy hangs in the balance."
 }
@@ -168,7 +168,7 @@ init python:
             if isinstance(entry, tuple):
                 if len(entry) > 0 and entry[0] == item_id:
                     found = True
-            elif isinstance(entry, list):
+            elif hasattr(entry, "__getitem__") and not isinstance(entry, (tuple, str)) and not hasattr(entry, "get"):
                 # Handle list format: [item_id] or [item_id, quantity] or [item_id, quantity, equipped]
                 if len(entry) > 0 and entry[0] == item_id:
                     found = True
@@ -208,7 +208,7 @@ init python:
                 if isinstance(entry, tuple):
                     if len(entry) > 0 and entry[0] == item_id:
                         found = True
-                elif isinstance(entry, list):
+                elif hasattr(entry, "__getitem__") and not isinstance(entry, (tuple, str)) and not hasattr(entry, "get"):
                     # Handle list format
                     if len(entry) > 0 and entry[0] == item_id:
                         found = True
@@ -388,7 +388,7 @@ init python:
             else:
                 return "Progress: Choose your path in the Journal"
         elif current_objective == 10:
-            return f"Progress: {money}/50000 Coins"
+            return f"Progress: {money}/30000 Coins"
         elif current_objective == 11:
             actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
             return f"Progress: {actual_workers}/15 Workers"
@@ -426,9 +426,9 @@ init python:
             return f"Progress (Requires BOTH):\n- Elite Warriors (Combat 80+): {warriors}/3 {warriors_ready}\n- Elite Agents (Clever/Charm 80+): {unique_agents}/2 {agents_ready}"
         elif current_objective == 15:
             if store.event_flags.get("daily_revenue_10k_achieved", False):
-                return "Progress: Daily revenue goal achieved (5,000 coins) ->"
+                return "Progress: Daily revenue goal achieved (3,000 coins) ->"
             else:
-                return "Progress: Achieve 5,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase Building skill"
+                return "Progress: Achieve 3,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase Building skill"
         elif current_objective == 16:
             if store.vengeance_path_chosen:
                 return f"Progress: Path chosen -> {store.vengeance_path}\nMark 'Complete' to begin the final strike"
@@ -486,7 +486,7 @@ init python:
         # Check prerequisite: objective 9 must be complete
         if not getattr(store, 'objective_9_complete', False):
             return False
-        return money >= 50000
+        return money >= 30000
     
     def can_complete_objective_11():
         """Check if objective 11 conditions are met"""
@@ -1087,8 +1087,8 @@ screen journal_panel():
         yalign 0.5
         background Transform("gui/Journalback.png", align=(0.5, 0.5))
         padding (40, 40)  # Slightly reduced vertical padding
-        xsize 720  # Increased width
-        ysize 720  # Increased height for more verticality
+        xsize 780  # Increased width
+        ysize 740  # Increased height for more verticality
         
         vbox:
             spacing 15  # Match shop_selection spacing
@@ -1096,12 +1096,12 @@ screen journal_panel():
             label "JOURNAL" xalign 0.5 style "header_style"
             null height 10  # Less space after JOURNAL title
             viewport:
-                scrollbars "vertical"
+                scrollbars None
                 mousewheel True
                 draggable True
-                ysize 480
-                xsize 590
-                xoffset 40
+                ysize 500
+                xsize 650
+                xoffset 60
                 yoffset 25
                 has vbox
                 spacing 10
@@ -1109,29 +1109,29 @@ screen journal_panel():
                 if tutorial_active:
                     if current_objective < 9:
                         text "The governor destroyed everything I loved. Every step I take—every coin, every ally, every stronghold—brings me closer to the day I can make him pay.":
-                            xsize 520
-                            size font_size(20)
+                            xsize 580
+                            size font_size(22)
                             color "#6b6528"
                             text_align 0.0
                             italic True
                         null height 12
 
                     text "[get_current_objective_title()]":
-                        xsize 520
-                        size font_size(32)
+                        xsize 580
+                        size font_size(34)
                         color "#7a4b2a"
 
                     text "[get_current_objective_description()]":
-                        xsize 520
-                        size font_size(24)
+                        xsize 580
+                        size font_size(26)
                         color "#7a4b2a"
                         text_align 0.0
 
                     null height 15
 
                     text "[get_current_objective_progress()]":
-                        xsize 520
-                        size font_size(22)
+                        xsize 580
+                        size font_size(24)
                         color "#6b6528"
 
                     null height 20
@@ -1139,110 +1139,113 @@ screen journal_panel():
                     # Tutorial quick access links for objectives 1-7
                     if current_objective == 1:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Explore > Recruit workers or Buy Servants":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("map_screen")]
                         textbutton "Context menu (right) > [player_title] [player_name] (Character sheet) > Assign first management skill":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("map_screen")]
                     
                     elif current_objective == 2:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Manage Buildings > Select building > Building Type":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
                     
                     elif current_objective == 3:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Workers > Worker Name > Assign Building > Select Job":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
                     
                     elif current_objective == 4:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Tavern > Next Day":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("tavern")]
+                        text "Tip: Lower worker comfort when needed to save daily costs and build gold faster." size font_size(20) color "#7a4b2a" italic True
                     
                     elif current_objective == 5:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Map > Shop":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("map_screen")]
                         textbutton "Workers > Worker Name > Details > Inventory":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
-                        text "Tip: For this tutorial, purchase the potion from the shop and transfer it manually. In the future, you can use potions directly from Manage Workers or Manage Buildings." size font_size(20) color "#7a4b2a"
+                        text "Tip: For this tutorial, purchase the potion from the shop and transfer it manually. In the future, you can use potions directly from Manage Workers or Manage Buildings." size font_size(22) color "#7a4b2a"
                     
                     elif current_objective == 6:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Manage Buildings > Select building > Upgrade Building":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
                         textbutton "Manage Buildings > Select building > Skill Bonus":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("Building_select_global")]
-                        text "Tip: Each +10 Building skill bonus costs $100/day." size font_size(20) color "#7a4b2a"
+                        text "Tip: Each +10 Building skill bonus costs $100/day." size font_size(22) color "#7a4b2a"
                     
                     elif current_objective == 7:
                         text "Tutorial:":
-                            size font_size(24)
+                            size font_size(26)
                             color "#7a4b2a"
                         textbutton "Workers > Worker Name > Details > Interactions > Friendship > Friendly Lunch":
-                            xsize 520
-                            text_size font_size(22)
+                            xsize 580
+                            text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
-                        text "Tip: Friendly Lunch costs $150. Choose a worker, open Interactions, then Friendship, and select Friendly Lunch." size font_size(20) color "#7a4b2a"
+                        text "Tip: Friendly Lunch costs $150. Choose a worker, open Interactions, then Friendship, and select Friendly Lunch." size font_size(22) color "#7a4b2a"
 
                     # MARK AS COMPLETE buttons for objectives 8+
                     if current_objective == 8:
+                        null height 10
+                        text "Tip: Lower worker comfort when needed to save daily costs and grow your treasury faster." size font_size(20) color "#7a4b2a" italic True
                         $ can_complete_8 = can_complete_objective_8()
                         if can_complete_8:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1256,8 +1259,8 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 10:
@@ -1265,8 +1268,8 @@ screen journal_panel():
                         if can_complete_10:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1278,8 +1281,8 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 11:
@@ -1287,8 +1290,8 @@ screen journal_panel():
                         if can_complete_11:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1300,8 +1303,8 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 12:
@@ -1309,8 +1312,8 @@ screen journal_panel():
                         if can_complete_12:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1322,8 +1325,8 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 13:
@@ -1331,8 +1334,8 @@ screen journal_panel():
                         if can_complete_13:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1344,8 +1347,8 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 14:
@@ -1353,8 +1356,8 @@ screen journal_panel():
                         if can_complete_14:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1366,8 +1369,8 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 15:
@@ -1375,8 +1378,8 @@ screen journal_panel():
                         if can_complete_15:
                             null height 10
                             textbutton "MARK AS COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1388,13 +1391,13 @@ screen journal_panel():
                         else:
                             null height 10
                             text "Complete the requirements above to mark this objective as complete.":
-                                xsize 520
-                                size font_size(20)
+                                xsize 580
+                                size font_size(22)
                                 color "#7a4b2a"
                     
                     elif current_objective == 9:
                         null height 10
-                        text "Choose Your Gambit:" size font_size(24) color "#7a4b2a" xalign 0.5
+                        text "Choose Your Gambit:" size font_size(26) color "#7a4b2a" xalign 0.5
                         null height 15
                         
                         # Calculate requirements dynamically
@@ -1403,8 +1406,8 @@ screen journal_panel():
                         
                         # Assassination path button (same style as objective 16)
                         textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Magic)":
-                            xsize 520
-                            text_size font_size(24)
+                            xsize 580
+                            text_size font_size(26)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [
@@ -1418,8 +1421,8 @@ screen journal_panel():
 
                         # Blackmail path button (same style as objective 16)
                         textbutton "Heist and Blackmail\n(requires 1 with 70+ Clever/Charm and 2 with 70+ Charm)":
-                            xsize 520
-                            text_size font_size(24)
+                            xsize 580
+                            text_size font_size(26)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [
@@ -1432,13 +1435,13 @@ screen journal_panel():
                             sensitive can_blackmail
                         
                         null height 10
-                        text "Tip: Check out shops for items to boost skills!" size font_size(18) color "#7a4b2a" italic True
+                        text "Tip: Check out shops for items to boost skills!" size font_size(20) color "#7a4b2a" italic True
                         
                         if store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False):
                             null height 15
                             textbutton "MARK COMPLETE":
-                                xsize 520
-                                text_size font_size(24)
+                                xsize 580
+                                text_size font_size(26)
                                 text_color "#2a7a4b"
                                 text_hover_color "#1a5a3b"
                                 action [
@@ -1449,14 +1452,14 @@ screen journal_panel():
                                 ]
                     
                     elif current_objective == 16:
-                        text "Choose Your Path of Vengeance:" size font_size(24) color "#7a4b2a"
+                        text "Choose Your Path of Vengeance:" size font_size(26) color "#7a4b2a"
                         
                         $ combat_count = count_workers_with_skill("Combat", 70)
                         $ clever_count = count_workers_with_skill("Clever", 70)
                         
                         textbutton "Path of the Blade - Strike with overwhelming force (requires 5 with Combat 70+)":
-                            xsize 520
-                            text_size font_size(24)
+                            xsize 580
+                            text_size font_size(26)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [
@@ -1467,8 +1470,8 @@ screen journal_panel():
                             ]
                         
                         textbutton "Path of the Shadow - Strike with cunning subterfuge (requires 5 with Clever 70+)":
-                            xsize 520
-                            text_size font_size(24)
+                            xsize 580
+                            text_size font_size(26)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [
@@ -1483,8 +1486,8 @@ screen journal_panel():
                             # Use vengeance_path from objective 16 choice (Blade vs Shadow), not objective 9
                             if getattr(store, "vengeance_path", None) == "Blade":
                                 textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
-                                    xsize 520
-                                    text_size font_size(24)
+                                    xsize 580
+                                    text_size font_size(26)
                                     text_color "#2a7a4b"
                                     text_hover_color "#1a5a3b"
                                     action [
@@ -1495,8 +1498,8 @@ screen journal_panel():
                                     ]
                             elif getattr(store, "vengeance_path", None) == "Shadow":
                                 textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
-                                    xsize 520
-                                    text_size font_size(24)
+                                    xsize 580
+                                    text_size font_size(26)
                                     text_color "#2a7a4b"
                                     text_hover_color "#1a5a3b"
                                     action [
@@ -1509,8 +1512,8 @@ screen journal_panel():
                                 # Fallback for old saves without vengeance_path: use objective 9 branch
                                 if store.event_flags.get("branch_blackmail", False):
                                     textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
-                                        xsize 520
-                                        text_size font_size(24)
+                                        xsize 580
+                                        text_size font_size(26)
                                         text_color "#2a7a4b"
                                         text_hover_color "#1a5a3b"
                                         action [
@@ -1521,8 +1524,8 @@ screen journal_panel():
                                         ]
                                 else:
                                     textbutton "MARK COMPLETE - BEGIN THE FINAL STRIKE":
-                                        xsize 520
-                                        text_size font_size(24)
+                                        xsize 580
+                                        text_size font_size(26)
                                         text_color "#2a7a4b"
                                         text_hover_color "#1a5a3b"
                                         action [
@@ -1537,7 +1540,7 @@ screen journal_panel():
                         textbutton "Skip Tutorial":
                             xalign 0.0
                             xsize 200
-                            text_size font_size(22)
+                            text_size font_size(24)
                             text_color "#444444"
                             text_hover_color "#777777"
                             action Show("skip_tutorial_confirm")
@@ -1545,7 +1548,7 @@ screen journal_panel():
                     text "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished.":
                         xsize 580
                         xalign 0.0
-                        size font_size(28)
+                        size font_size(30)
                         color "#7a4b2a"
                         text_align 0.0
         
@@ -1556,7 +1559,7 @@ screen journal_panel():
             action Hide("journal_panel")
             xalign 1.0
             yalign 0.0
-            xoffset -15  # Slight adjustment from edge
+            xoffset -35
             yoffset 5    # Higher up
         
 
@@ -1569,21 +1572,21 @@ screen skip_tutorial_confirm():
         xalign 0.5
         yalign 0.5
         xsize 600
-        ysize 300
+        ysize 320
         background "#1a1a1a"
-        
+
         vbox:
             spacing 30
             xalign 0.5
             yalign 0.5
-            
+
             text "Skip Tutorial?":
-                size 28
+                size 30
                 color "#7a4b2a"
                 xalign 0.5
-            
+
             text "Are you sure you want to skip the tutorial?\nYou'll jump to the final tutorial objective.":
-                size 16
+                size 20
                 color "#cccccc"
                 text_align 0.5
                 xalign 0.5
@@ -1643,7 +1646,7 @@ label show_objective_10_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_10_dialogue - STARTING DIALOGUE")
-    "Fifty thousand coins. The number echoes in my mind like a promise fulfilled."
+    "Thirty thousand coins. The number echoes in my mind like a promise fulfilled."
     "My coffers overflow with gold, each coin a testament to the empire I have built from nothing."
     "This is not mere wealth—it is power made manifest, the fuel that shall drive my campaign of vengeance to its inevitable conclusion."
     "With such resources, I can move mountains and topple tyrants."
@@ -1737,7 +1740,7 @@ label show_objective_15_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_15_dialogue - STARTING DIALOGUE")
-    "Five thousand coins in a single day. The number alone is staggering, but what it represents is far greater."
+    "Three thousand coins in a single day. The number alone is staggering, but what it represents is far greater."
     "My empire generates wealth like a mighty river, flowing endlessly into my coffers."
     "This is not mere prosperity—it is the power I have built, the machine of commerce that shall fuel my vengeance and fund my rise to dominance."
     "Each coin earned is a testament to the network I have created, the workers I have trained, the buildings I have established."

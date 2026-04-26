@@ -30,17 +30,19 @@ label start_recruitment_system:
                     # Random worker events are always available
                     available_events.append(event)
                 else:
-                    # Specific worker event - check if that worker is available
-                    worker_name = event.get("worker_name")
-                    if worker_name:
-                        worker_available = any(w.get("name") == worker_name for w in recruit_candidates)
+                    # Specific worker event - match by worker_name and/or specific_worker_images (OR)
+                    _has_filter = getattr(store, "_event_has_identity_filters", None)
+                    _match = getattr(store, "_worker_matches_event_identity", None)
+                    has_identity_filter = _has_filter(event) if callable(_has_filter) else False
+                    if has_identity_filter and callable(_match):
+                        worker_available = any(_match(w, event) for w in recruit_candidates)
                         if worker_available:
                             available_events.append(event)
-                            renpy.log(f"Event {event.get('id')} is available - worker {worker_name} found")
+                            renpy.log(f"Event {event.get('id')} is available - matching candidate found")
                         else:
-                            renpy.log(f"Event {event.get('id')} filtered out - worker {worker_name} not available")
+                            renpy.log(f"Event {event.get('id')} filtered out - no matching candidate")
                     else:
-                        # Event has random_worker=false but no worker_name - include it anyway
+                        # Event has random_worker=false but no identity filter - include it anyway
                         available_events.append(event)
             
             if not available_events:
@@ -56,12 +58,14 @@ label start_recruitment_system:
             json_defined_workers = []
             procedural_workers = []
             
+            _match = getattr(store, "_worker_matches_event_identity", None)
             for worker in recruit_candidates:
                 worker_name = worker.get("name", "")
                 is_procedural = worker.get("procedural", False)
                 has_specific_event = any(
-                    not event.get("random_worker", True) 
-                    and event.get("worker_name") == worker_name
+                    not event.get("random_worker", True)
+                    and callable(_match)
+                    and _match(worker, event)
                     for event in available_events
                 )
                 
@@ -88,10 +92,11 @@ label start_recruitment_system:
             
             # Check if there's a specific event for this worker
             specific_event = None
+            _match = getattr(store, "_worker_matches_event_identity", None)
+            _has_filter = getattr(store, "_event_has_identity_filters", None)
             for event in available_events:
                 if not event.get("random_worker", True):
-                    event_worker_name = event.get("worker_name")
-                    if event_worker_name and event_worker_name == worker_name:
+                    if callable(_has_filter) and _has_filter(event) and callable(_match) and _match(selected_worker, event):
                         specific_event = event
                         renpy.log(f"Found specific event {event.get('id')} for worker {worker_name}")
                         break

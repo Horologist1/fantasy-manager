@@ -232,20 +232,20 @@ earnings = calculate_earnings(worker, earnings)
 multiplier = 1.0
 for trait in worker.traits:
     per_trait = trait.earnings_multiplier
-    per_trait = min(per_trait, 1.15)  # Cap per trait: 1.15x
+    per_trait = min(per_trait, 1.2)  # Cap per trait: 1.2x
     multiplier *= per_trait
     if trait in client_seeked_traits:
         multiplier *= 1.2  # Bonus if client seeks that trait
 
-multiplier = min(multiplier, 1.6)  # Total cap: 1.6x
+multiplier = min(multiplier, 1.5)  # Total cap: 1.5x
 final_earnings = base_earnings × multiplier
 ```
 
 **Example:**
 - Base earnings: $100
 - Traits: Beautiful (1.2x), Charming (1.15x), Exotic (1.25x)
-- Multiplier: 1.2 × 1.15 × 1.25 = 1.725 → capped to 1.6
-- **Final:** $100 × 1.6 = $160
+- Multiplier: 1.2 × 1.15 × 1.25 = 1.725 → capped to 1.5
+- **Final:** $100 × 1.5 = $150
 
 ---
 
@@ -258,8 +258,8 @@ final_earnings = base_earnings × multiplier
    - For each profession:
      - Filter workers assigned to that profession
      - Calculate events per worker: `max(1, base_events + reputation_bonus)`
-       - If `base_events >= 2`: reduce by 1 (max 1)
-       - Reputation bonus: `eval(bonus_formula) × 0.5` (reduced to 50%)
+      - Base events: read directly from `daily_story_count.base`
+      - Reputation bonus: `eval(bonus_formula)` (data-driven from `building_types.json`, default `reputation / 400`)
      - For each worker:
        - Check rebelliousness (if >80, 20% chance to refuse work)
          - On refusal: `rebelliousness -= comfort_level × 3`
@@ -519,14 +519,10 @@ max_libido = base_max + trait_bonus + item_bonus
 
 ```python
 bonus_events = eval(bonus_formula, {"reputation": reputation})
-bonus_events = int(bonus_events × 0.5)  # Reduced to 50%
-
-# Base events reduction: if base_events >= 2, reduce by 1
-if base_events >= 2:
-    base_events = max(1, base_events - 1)
-
 events_per_worker = max(1, base_events + bonus_events)
 ```
+
+`bonus_formula` is data-driven from `game/data/buildings/building_types.json` (default currently `reputation / 400`).
 
 ---
 
@@ -797,8 +793,8 @@ worker["energy"] = min(max_energy, worker["energy"] + energy_regen)
 ### 19. Important Constants
 
 - **SKILL_MAX:** 100 (base skills cap)
-- **Max Earnings Multiplier:** 1.6x (total multiplier cap)
-- **Per-Trait Earnings Cap:** 1.15x (individual trait cap)
+- **Max Earnings Multiplier:** 1.5x (total multiplier cap)
+- **Per-Trait Earnings Cap:** 1.2x (individual trait cap)
 - **Level Up Threshold:** 20 × current_level successes
 - **Skill Up Threshold:** 10 × current_skill successes
 - **Rebelliousness Refuse Threshold:** >80 (20% chance)

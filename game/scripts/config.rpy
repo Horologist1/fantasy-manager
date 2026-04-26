@@ -307,7 +307,7 @@ init python:
                 close_action = screen_close_actions.get(screen_name)
                 if close_action:
                     renpy.log(f"ESC: Executing close action for '{screen_name}': {close_action}")
-                    if isinstance(close_action, list):
+                    if hasattr(close_action, "__iter__") and not isinstance(close_action, str):
                         # Multiple actions
                         for action in close_action:
                             if hasattr(action, '__call__'):

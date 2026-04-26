@@ -8,9 +8,9 @@
       },
       "joy": 10,
       "energy_regeneration": 1,
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.10
     },
-    "description": "Aelis' dancing is a miracle worth seeing at least once in life. [+20% $, +4 Charm, +1 Energy Regen]"
+    "description": "Aelis' dancing is a miracle worth seeing at least once in life. [+10% $, +4 Charm, +1 Energy Regen]"
   },
   {
     "name": "Aelis, The Charming Waitress",
@@ -21,8 +21,8 @@
       },
       "joy": 10,
       "energy_regeneration": 1,
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.10
     },
-    "description": "Aelis' service is perfect and her smile keeps customers happy. [+20% $, +4 Service, +1 Energy Regen]"
+    "description": "Aelis' service is perfect and her smile keeps customers happy. [+10% $, +4 Service, +1 Energy Regen]"
   }
 ]

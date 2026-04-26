@@ -13,7 +13,7 @@
     "failure_image": "guild_magic_failure",
     "choices": [
       {
-        "option": "Channel a stabilizing spell through a gifted worker. (Requires Mystical; Potential: Money, Reputation; Risk: Money, Reputation)",
+        "option": "Stabilize the breach with a Mystical worker. (Requires Mystical; Potential: Money, Reputation)",
         "condition": "Special",
         "threshold": 35,
         "required_traits": [
@@ -40,7 +40,7 @@
         }
       },
       {
-        "option": "Evacuate the block and hire outside mages. (Cost: Money; Gain: Reputation)",
+        "option": "Evacuate civilians and hire outside mages. (Cost: Money; Gain: Reputation)",
         "message": "You choose caution over heroics. You clear the nearby streets and pay a senior circle of mages to seal the rift. The crisis ends without major injuries, but the guild is seen as dependent on outside help. ({actual_money}, {actual_reputation} reputation)",
         "effect": {
           "money": -450,
@@ -60,7 +60,7 @@
   },
   {
     "id": "unique_cedar_lore_event",
-    "description": "Cedar asks for a private audience after closing time. Old obligations from their past have resurfaced, and someone expects a debt to be paid in your district.",
+    "description": "Cedar is waiting in the back office, tension written across their jaw. They produce a crumpled letter—cheap ink, expensive seal. A debt collector from Cedar's past has tracked them to your district. The letter names an inflated sum and a three-day deadline. 'The original amount was a fraction of this,' Cedar says. 'They've been stacking interest since I left. If they come here looking for me, it won't just be my problem.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -76,33 +76,23 @@
     },
     "choices": [
       {
-        "option": "Back Cedar and settle the debt your way. (Potential: Reputation)",
-        "message": "You stand with Cedar and take control of negotiations before things escalate. The matter closes under your terms, and your house's authority becomes harder to question. ({actual_reputation} reputation)",
+        "option": "Challenge the debt before a neutral arbiter. (Potential: Money)",
+        "message": "Cedar produces their original contract—not the doctored copy—and the arbiter's expression turns cold. The inflated interest is struck down. The collector leaves with a fraction of what they demanded, and word travels that your household doesn't fold under pressure. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 200,
           "event_flags": {
             "unique_cedar_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Pay quietly to avoid attention. (Cost: Money)",
-        "message": "You pay to bury the issue and keep Cedar out of immediate danger. It works, but the cost is felt in your accounts. ({actual_money})",
+        "option": "Pay the full amount to make it disappear tonight. (Cost: Money)",
+        "message": "You count out the coins in silence and slide the purse to the collector's messenger. No arbiter, no witnesses, no trail. Cedar exhales slowly. 'I'll pay you back,' they say. You both know the math doesn't work that way—but the threat is gone, and your household sleeps soundly tonight. ({actual_money})",
         "effect": {
-          "money": -350,
+          "money": -450,
           "event_flags": {
             "unique_cedar_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -117,7 +107,7 @@
   },
   {
     "id": "unique_laurel_lore_event",
-    "description": "Laurel receives a sealed message tied to an old patron from before joining your household. The request sounds harmless, but the timing is suspicious.",
+    "description": "A sealed letter arrives at dusk, carried by a boy who won't give his name. The wax bears the crest of a house that no longer exists—at least, not officially. Laurel recognizes it at once. 'This is from someone who owned me before,' they say. The letter is devastatingly polite. It requests a meeting and closes with a line that reads like velvet over iron: 'I trust we can resolve this between friends, without involving the magistrate.' Laurel sets it down. 'If I don't answer, they'll come here. If I answer wrong, they'll use it against me.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -133,33 +123,23 @@
     },
     "choices": [
       {
-        "option": "Let Laurel answer with your support. (Potential: Reputation)",
-        "message": "You trust Laurel to speak while you secure the room and watch reactions. The response is firm, diplomatic, and it boosts confidence in your leadership. ({actual_reputation} reputation)",
+        "option": "Draft a careful reply together—your seal, your authority. (Potential: Money)",
+        "message": "You compose a response that says everything and nothing—courteous, firm, carrying your official seal. Two days later, the old patron 'withdraws their enquiry with regret.' A small gift of silver accompanies it—face-saving wrapped in coin. Some doors close best when you let the other person pretend they chose to walk away. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 180,
           "event_flags": {
             "unique_laurel_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Close the door and refuse all contact. (Loss: Reputation)",
-        "message": "You deny the request and cut off contact channels immediately. The risk fades for now, but relations with a potential ally sour. ({actual_reputation} reputation)",
+        "option": "Burn the letter. No response, no engagement. (Cost: Money)",
+        "message": "You feed the letter to the hearth and watch the wax crest melt. Over the following week, you hire a runner to watch the district entrances and pay a clerk to bury certain records. The old patron never writes again. The precautions aren't cheap, but they buy something money can't replace: silence. ({actual_money})",
         "effect": {
-          "reputation": -2,
+          "money": -300,
           "event_flags": {
             "unique_laurel_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -174,7 +154,7 @@
   },
   {
     "id": "unique_sage_lore_event",
-    "description": "Sage identifies coded marks on shipments entering your area. The pattern matches smuggling routes tied to their old life.",
+    "description": "Sage finds you before breakfast with a map spread across your desk—fresh ink, their hand. 'I recognized the markings on yesterday's supply crate. Those aren't merchant stamps. They're smuggler glyphs from a network I used to run with.' The map shows three transfer points in your district. Sage taps the nearest one. 'This drop happens tomorrow night. The cargo is valuable—medicines, rare dyes. We can intercept it, or report it and let the guard handle it. Slower, safer, and we don't make coin.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -190,34 +170,23 @@
     },
     "choices": [
       {
-        "option": "Use Sage's intel and intercept the route. (Potential: Money, Reputation)",
-        "message": "Sage maps the route from memory and you hit the transfer point before dawn. You seize contraband and gain influence among local officials. ({actual_money}, {actual_reputation} reputation)",
+        "option": "Intercept the shipment using Sage's knowledge. (Potential: Money)",
+        "message": "You move at dusk. The drop is a false-bottomed crate behind a chandler's shop—rare dyes and healing tonics worth a fortune. You take what you can carry and leave just enough to make it look like a short count, not a raid. By morning, the goods are sold through trusted contacts. The smugglers will suspect each other before they suspect you. ({actual_money})",
         "effect": {
-          "money": 330,
-          "reputation": 6,
+          "money": 500,
           "event_flags": {
             "unique_sage_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Avoid involvement and report anonymously. (Potential: Reputation)",
-        "message": "You send an anonymous tip and keep your operation distant from the case. The streets quiet down, but you gain little from it. ({actual_reputation} reputation)",
+        "option": "Report it anonymously and stay clear. (Cost: Money)",
+        "message": "You send a sealed note to the district watch through a paid intermediary. The guard raids the drop and seizes the cargo. It makes the broadsheets. The intermediary's fee and the cost of keeping your involvement invisible add up, and there's nothing to show for it except knowing you did the cautious thing. ({actual_money})",
         "effect": {
-          "reputation": 2,
+          "money": -200,
           "event_flags": {
             "unique_sage_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -232,7 +201,7 @@
   },
   {
     "id": "unique_lotus_lore_event",
-    "description": "Lotus is recognized by a traveling troupe that once tried to recruit them. The troupe offers a public showcase that could draw crowds and scrutiny.",
+    "description": "A troupe of traveling performers has camped in the market square—acrobats, fire-eaters, a fortune teller. Their lead dancer keeps glancing toward your establishment. Lotus notices. 'The Stellara Company. I trained with them before I came here. Their patron pulled funding and they've been playing market squares instead of theaters.' Lotus turns from the window. 'Maren won't beg, but she wants a joint performance. My name draws a crowd. Theirs doesn't, not anymore.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -248,34 +217,23 @@
     },
     "choices": [
       {
-        "option": "Stage the showcase under your banner. (Potential: Money, Reputation)",
-        "message": "You turn the performance into a controlled event that highlights Lotus and your establishment equally. The turnout is huge and your name spreads fast. ({actual_money}, {actual_reputation} reputation)",
+        "option": "Stage the joint performance under your banner. (Potential: Money)",
+        "message": "You rent the square and hang your colors alongside the Stellara's faded pennants. Lotus performs with an intensity you haven't seen before, fed by the old partnership. The crowd swells past the square and into adjoining streets. A noble insists on booking a private recital. By the time the last torch gutters out, you've turned a market square into an event people will talk about for weeks. ({actual_money})",
         "effect": {
-          "money": 420,
-          "reputation": 6,
+          "money": 600,
           "event_flags": {
             "unique_lotus_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Decline and keep Lotus off the stage. (Potential: Reputation)",
-        "message": "You decline politely and keep the day routine. Lotus appreciates the caution, though you miss a chance at publicity. ({actual_reputation} reputation)",
+        "option": "Decline the show. Help them quietly instead. (Cost: Money)",
+        "message": "You meet Maren privately and press a leather pouch into her hand—enough to cover the troupe's road costs to the next city. No banners, no spectacle, no association. Maren counts the coin. 'This is generous,' she says, and means it. Lotus watches them leave from the window, expression unreadable. Some debts aren't yours, and paying them anyway is its own kind of investment. ({actual_money})",
         "effect": {
-          "reputation": 1,
+          "money": -250,
           "event_flags": {
             "unique_lotus_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -290,7 +248,7 @@
   },
   {
     "id": "unique_primrose_lore_event",
-    "description": "Primrose confesses that a former employer is spreading lies to damage your house and force a return.",
+    "description": "Primrose hasn't been themselves for three days—quieter, distracted, lingering in doorways. You corner them in the storeroom. A former employer has been spreading whispers through the district: that Primrose left under a cloud, that they stole from the house. None of it is true, but gossip is faster than truth. Merchants and suppliers are already forming opinions. Primrose pulls out copied broadsheets, each carrying the same poisoned insinuations. 'If we don't answer this, it answers itself.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -306,33 +264,23 @@
     },
     "choices": [
       {
-        "option": "Counter publicly with testimony and records. (Potential: Reputation)",
-        "message": "You bring records, witnesses, and Primrose's own account into the open. The smear campaign collapses and your credibility rises. ({actual_reputation} reputation)",
+        "option": "Launch a public counter-campaign with evidence. (Potential: Money)",
+        "message": "You assemble Primrose's actual employment records and post them in the market square. The whisper campaign collapses under the weight of paper and ink. Within a week, people are talking about the employer's vindictiveness instead. Two merchants who had cooled on you send notes of apology—one includes a standing order that more than covers the campaign's cost. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 350,
           "event_flags": {
             "unique_primrose_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Ignore the rumors and move on. (Loss: Reputation)",
-        "message": "You refuse to amplify gossip and stay focused on business. The noise fades slowly, but some doubt remains. ({actual_reputation} reputation)",
+        "option": "Pay the former employer for silence. (Cost: Money)",
+        "message": "You send a discreet intermediary with a purse and a message: money for silence, not settlement. The employer takes the coin without argument—which tells you everything about the kind of person you're dealing with. The broadsheets stop. The whispers die. The cost sits in your ledger like a bruise—ugly, but it fades. ({actual_money})",
         "effect": {
-          "reputation": -2,
+          "money": -400,
           "event_flags": {
             "unique_primrose_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -347,7 +295,7 @@
   },
   {
     "id": "unique_jasmine_lore_event",
-    "description": "Jasmine is asked to mediate a dispute between two contacts from their past. If mishandled, both sides could become enemies.",
+    "description": "Two strangers arrive within an hour, neither knowing about the other. Both ask for Jasmine by name. 'The Varenthi siblings,' Jasmine explains after you seat them in separate rooms. 'They were my employers before the family split over an inheritance. Both used me as a go-between. Now each claims I can settle the dispute with my testimony.' The problem: whichever side loses will not forget. 'If I pick wrong,' Jasmine says, 'the other one burns every bridge they can reach. Including yours.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -363,33 +311,23 @@
     },
     "choices": [
       {
-        "option": "Host mediation on neutral ground. (Potential: Reputation)",
-        "message": "You prepare strict terms and Jasmine leads a clean negotiation. Both sides leave with a fragile peace and a better opinion of your house. ({actual_reputation} reputation)",
+        "option": "Host a formal mediation. Charge both sides. (Potential: Money)",
+        "message": "You set the terms: neutral ground, your rules, mediator's fee paid by both parties before Jasmine says a word. Jasmine testifies with a precision that silences the room. The outcome isn't clean—compromises never are—but both sides leave with enough to operate, and the fees cover your trouble and then some. Jasmine collapses into a chair afterward. 'Never again,' they say. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 450,
           "event_flags": {
             "unique_jasmine_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Refuse involvement in outside politics. (Loss: Reputation)",
-        "message": "You keep your distance and deny the meeting. The conflict moves elsewhere, but one faction blames your refusal. ({actual_reputation} reputation)",
+        "option": "Turn both away. Pay for Jasmine's safety. (Cost: Money)",
+        "message": "You deliver the same message to each sibling: Jasmine is under your protection and will not testify. Both leave unsatisfied. Over the next week, you pay for a watcher on the street, relocate Jasmine's quarters, and hire a clerk to draft a formal statement of non-involvement. The cost of neutrality is real, but so is the peace it buys. ({actual_money})",
         "effect": {
-          "reputation": -2,
+          "money": -350,
           "event_flags": {
             "unique_jasmine_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -404,7 +342,7 @@
   },
   {
     "id": "unique_daisy_lore_event",
-    "description": "Daisy spots a forged contract using your seal style. The fraud targets newcomers and could be traced back to you.",
+    "description": "Daisy bursts into your office holding a contract—not yours. The seal is a convincing replica of your own, the paper the right weight, but the terms are fabricated: inflated fees, penalty clauses that would bankrupt anyone who signs. 'I found this in the morning post, addressed to a new family in the market district. They were about to sign.' Someone is using your name to defraud newcomers. If it continues, the victims will come looking for you, and no amount of protest will undo the damage.",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -420,34 +358,23 @@
     },
     "choices": [
       {
-        "option": "Run a sting and expose the forger. (Potential: Money, Reputation)",
-        "message": "With Daisy's help, you bait the forger into a controlled exchange and expose the operation publicly. Victims praise your intervention. ({actual_money}, {actual_reputation} reputation)",
+        "option": "Set a trap with Daisy's help and catch the forger. (Potential: Money)",
+        "message": "Daisy knows how forgers think. Within two days, you've identified the culprit—a disgraced clerk. Daisy poses as a buyer, and when the clerk produces the printing plates bearing your stolen seal, you walk in with a watchman. The plates are confiscated, the targeted families send gifts of gratitude, and the forger's equipment fetches a decent price at auction. ({actual_money})",
         "effect": {
-          "money": 270,
-          "reputation": 6,
+          "money": 400,
           "event_flags": {
             "unique_daisy_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Privately buy the forged copies and burn them. (Cost: Money)",
-        "message": "You quietly purchase and destroy the forged documents before the issue spreads. The risk is contained but expensive. ({actual_money})",
+        "option": "Buy up the forgeries quietly before they spread. (Cost: Money)",
+        "message": "You send Daisy to track down every circulating copy. It takes three days and more coin than you'd like—some copies have already been sold to intermediaries who know their value as leverage. One by one, the forgeries come back. You burn them that evening. The forger is still out there, but without the plates and copies, they'd need to start from scratch. ({actual_money})",
         "effect": {
-          "money": -300,
+          "money": -350,
           "event_flags": {
             "unique_daisy_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -462,7 +389,7 @@
   },
   {
     "id": "unique_poppy_lore_event",
-    "description": "Poppy's old handler appears with a threat disguised as a business proposal. The terms are predatory and time-sensitive.",
+    "description": "The man in your front room doesn't look like trouble—well-dressed, patient, hands folded. But Poppy freezes the moment they see him. 'That's Harwick,' Poppy whispers. 'He's a broker. He finds workers, trains them just enough, and leases them on terms that make them dependent for life. I broke free, but the contract was designed so that leaving looks like breach.' Harwick's proposal is simple: Poppy returns to his roster, or your household compensates him. The figure he names is calculated to hurt.",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -478,33 +405,23 @@
     },
     "choices": [
       {
-        "option": "Confront them directly with witnesses present. (Potential: Reputation)",
-        "message": "You force the discussion into the open, where intimidation loses power. The handler backs off under pressure and your position strengthens. ({actual_reputation} reputation)",
+        "option": "Challenge Harwick's contract in front of witnesses. (Potential: Money)",
+        "message": "You invite Harwick into the common room—publicly, with staff present. Under a dozen gazes, you produce the district's labor code. Harwick's contract violates three provisions. Poppy speaks up, describing the real terms they worked under. Harwick retreats to the door and drops a purse on the table. 'For the inconvenience,' he says, as if it were his idea. Someone in the room starts clapping. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 350,
           "event_flags": {
             "unique_poppy_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Pay for temporary distance. (Cost: Money)",
-        "message": "You buy time with a hard payment and secure Poppy's immediate safety. The danger is postponed, not solved. ({actual_money})",
+        "option": "Pay Harwick's fee to end it now. (Cost: Money)",
+        "message": "You count out the coins without argument. Harwick watches with the expression of a man who expected a fight and got a transaction. 'Pleasure doing business,' he says, tucking the purse away. He leaves without looking at Poppy. The silence that follows is the expensive kind. But Poppy shows up early the next morning, and they don't flinch at the front door anymore. ({actual_money})",
         "effect": {
-          "money": -400,
+          "money": -500,
           "event_flags": {
             "unique_poppy_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -519,7 +436,7 @@
   },
   {
     "id": "unique_aspen_lore_event",
-    "description": "Aspen receives news that an old rival is hunting anyone tied to their former crew. Your staff could be collateral.",
+    "description": "Aspen is pacing with focused energy, closing every window before speaking. A former associate called Corvus has resurfaced—someone from the crew Aspen ran with before joining you. Corvus has been asking questions in places where answers cost money. 'I left the crew without permission,' Aspen says. 'In their world, that's betrayal. They've been patient because they didn't know where I was. Now they do.' Corvus operates with a small band of enforcers, and their method is direct.",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -535,33 +452,23 @@
     },
     "choices": [
       {
-        "option": "Preempt the rival with a controlled ambush. (Potential: Reputation)",
-        "message": "You use Aspen's route knowledge to set a trap at a safe distance from your properties. The rival withdraws after a sharp warning. ({actual_reputation} reputation)",
+        "option": "Use Aspen's knowledge to set a trap. (Potential: Money)",
+        "message": "Aspen knows how Corvus operates. A bait shipment of empty crates travels through the district at the expected time. Corvus takes the bait. When the enforcers open the crates and find stone ballast, the city watch closes in from three sides—tipped off by your anonymous letter. The watch captain forwards a modest finder's fee to your household. 'They won't come back,' Aspen says. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 300,
           "event_flags": {
             "unique_aspen_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Relocate Aspen for a few days. (Cost: Money)",
-        "message": "You move Aspen to a safe house and reduce visibility until the hunt cools. It protects your people, but operations lose tempo. ({actual_money})",
+        "option": "Move Aspen to a safe location and wait it out. (Cost: Money)",
+        "message": "You relocate Aspen to a rented room on the far side of the district. For two weeks, they live like a ghost—different routes, odd hours, never the same door twice. Corvus's people visit your establishment three times, find nothing, and move on. The safe house costs more than you budgeted, but no blood was spilled and no doors were kicked in. ({actual_money})",
         "effect": {
-          "money": -250,
+          "money": -300,
           "event_flags": {
             "unique_aspen_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -576,7 +483,7 @@
   },
   {
     "id": "unique_florian_lore_event",
-    "description": "Florian is invited to complete unfinished work from before recruitment, work that now sits in a politically sensitive location.",
+    "description": "A courier delivers a parcel wrapped in oiled cloth—inside, a half-finished manuscript of breathtaking artistry. Florian recognizes it instantly. 'Master Aldric. The best illuminator in the province, until the governor decided independent artists were a political risk.' The note explains: Aldric needs Florian's hands to complete a genealogical record for a noble house. His eyesight is failing. The work is sensitive—the noble house has enemies who'd pay to see it botched. Completing it means payment and a powerful ally, but also days away in a location that isn't safe.",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -592,34 +499,23 @@
     },
     "choices": [
       {
-        "option": "Authorize the job with your own oversight. (Potential: Money, Reputation)",
-        "message": "You supervise the completion personally, ensuring no one can twist the outcome. The result earns favor among influential clients. ({actual_money}, {actual_reputation} reputation)",
+        "option": "Send Florian with an escort. Negotiate a fee. (Potential: Money)",
+        "message": "You accompany Florian to Aldric's cramped studio. They work in near-silence for four days. The noble house's representative visits twice—once to check progress, once to increase the payment 'for the inconvenience of discretion.' The finished record is exquisite. They pay in coin, not promises. Aldric presses more into your hand. 'For keeping Florian safe,' he says. ({actual_money})",
         "effect": {
-          "money": 300,
-          "reputation": 6,
+          "money": 450,
           "event_flags": {
             "unique_florian_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Decline and keep Florian in-house. (Loss: Reputation)",
-        "message": "You decline the invitation and keep Florian away from political crossfire. It's safer, but some doors close. ({actual_reputation} reputation)",
+        "option": "Decline. Send materials and payment to Aldric. (Cost: Money)",
+        "message": "You send Florian's regrets along with the finest brushes you can source, a set of mineral pigments, and enough coin to hire a local assistant. Whether Aldric can finish without Florian is an open question. A week later, a short note arrives: 'The work continues. Thank you for the brushes. They are better than mine.' Florian reads it twice and puts it away without comment. ({actual_money})",
         "effect": {
-          "reputation": -2,
+          "money": -280,
           "event_flags": {
             "unique_florian_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -634,7 +530,7 @@
   },
   {
     "id": "unique_violet_lore_event",
-    "description": "Violet recognizes coded perfume notes used by an information broker network and traces them to your neighborhood.",
+    "description": "Violet pulls you aside after the evening service. Three glass vials sit in a velvet-lined case—each a different perfume. 'Smell the middle one,' they say. Under rose and sandalwood, there's a faint chemical sharpness. 'That's a cipher scent. Information brokers use coded perfumes to mark safe houses and dead drops. This one means a broker's cache is active in our neighborhood.' The cache would contain a ledger of transactions—leverage, or a liability. 'We can find it,' Violet says. 'But once we open it, we own whatever's inside.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -650,34 +546,23 @@
     },
     "choices": [
       {
-        "option": "Use Violet as your liaison and buy the ledger. (Potential: Money, Reputation)",
-        "message": "Violet negotiates access to the broker ledger under strict anonymity. The information pays off quickly in leverage and opportunities. ({actual_money}, {actual_reputation} reputation)",
+        "option": "Find the cache and sell the information. (Potential: Money)",
+        "message": "Violet leads you through the district after midnight, reading scent markers like a language written in air. The cache is behind a loose brick in a disused well house—a ledger naming crooked merchants, bribed officials, double-collecting landlords. You sell the information selectively and anonymously to the parties who benefit most from the truth. Each transaction is clean, deniable, and profitable. ({actual_money})",
         "effect": {
-          "money": 360,
-          "reputation": 5,
+          "money": 550,
           "event_flags": {
             "unique_violet_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Destroy the network's local cache. (Potential: Reputation)",
-        "message": "You decide the safest intelligence is no intelligence and burn the cache. The immediate threat is gone, but so are potential gains. ({actual_reputation} reputation)",
+        "option": "Destroy the cache and erase Violet's trail. (Cost: Money)",
+        "message": "You retrieve the cache unopened. The temptation to read the ledger is real, but Violet's expression says everything about what happens to people who get tangled in broker networks. You burn the ledger, scatter the letters, and pay a contact to re-seal the hiding spot with a counter-scent marking it compromised. The cleanup isn't cheap, but when Violet sees the empty well house, the tension leaves their shoulders. ({actual_money})",
         "effect": {
-          "reputation": 1,
+          "money": -300,
           "event_flags": {
             "unique_violet_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -692,7 +577,7 @@
   },
   {
     "id": "unique_lily_lore_event",
-    "description": "A gaunt man in dusty scholar's robes appears at your door, clutching a worn parchment. His eyes linger on Lily with the cold satisfaction of a creditor. 'She signed,' he says, spreading the document on your table. 'Years of training—dancing, poise, comportment—all financed by this contract. The terms are clear: if she leaves my employ without fulfilling the full period of service, the debt becomes due. In full.' He names a sum that would crush most households. Lily stands rigid, her face pale. 'I thought I had paid... I worked for him for seasons...' The tutor smirks. 'The contract says five years. You served two. Three remain—or you settle the outstanding balance now.' He taps the parchment. 'The law backs me. So does the magistrate.'",
+    "description": "A gaunt man in dusty scholar's robes appears at your door, clutching a worn parchment. His eyes linger on Lily with the cold satisfaction of a creditor. 'She signed,' he says, spreading the document on your table. 'Years of training—dancing, poise, comportment—all financed by this contract.' He names a sum that would crush most households. Lily stands rigid. 'I thought I had paid... I worked for him for seasons...' The tutor smirks. 'The contract says five years. You served two. Three remain—or you settle now.' He taps the parchment. 'The law backs me.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -708,33 +593,23 @@
     },
     "choices": [
       {
-        "option": "Challenge the contract's legality in public. (Potential: Reputation)",
-        "message": "You demand an open hearing before the district magistrate. In the crowded hall, you read the contract clause by clause—the usurious interest, the ambiguous definition of 'service,' the clause that extends the term if the signatory falls ill. The magistrate's brow furrows. The tutor's confidence wavers. By the end, the contract is ruled unconscionable and void. Lily is freed from the claim. The story spreads: you stood for your people and won. (+6 reputation)",
+        "option": "Challenge the contract's legality in public. (Potential: Money)",
+        "message": "You demand an open hearing. In the crowded hall, you read the contract clause by clause—usurious interest, ambiguous definitions, a clause extending the term if the signatory falls ill. The magistrate rules it unconscionable and void. The tutor is ordered to pay court costs and a penalty for filing a predatory claim. Lily is freed. The coin goes to you as the representing party. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 250,
           "event_flags": {
             "unique_lily_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
         "option": "Settle privately to end the dispute now. (Cost: Money)",
-        "message": "You negotiate behind closed doors. The tutor drives a hard bargain, but you pay the settlement in full. The document is destroyed; the matter is closed. Lily breathes easier, but your coffers are lighter. Some battles are won by walking away.",
+        "message": "You negotiate behind closed doors. The tutor drives a hard bargain, but you pay the settlement in full. The document is destroyed; the matter is closed. Lily breathes easier, but your coffers are lighter. Some battles are won by walking away. ({actual_money})",
         "effect": {
           "money": -380,
           "event_flags": {
             "unique_lily_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -749,7 +624,7 @@
   },
   {
     "id": "unique_rose_lore_event",
-    "description": "Rose discovers someone has been copying their performance style to impersonate your staff in nearby venues.",
+    "description": "Rose is staring at a handbill advertising 'The Crimson Petal'—a new act at a rival venue with a silhouette that looks uncomfortably familiar. 'That's my routine,' Rose says, voice flat. 'The opening, the costume changes, even the signature finale. Someone memorized my show and is selling it as their own.' Worse, the imitator performs under a name deliberately close to Rose's, charging premium prices. 'If this goes on, people will stop coming to see me. Why pay for the real thing when the copy is cheaper?'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -765,33 +640,23 @@
     },
     "choices": [
       {
-        "option": "Expose the impersonator with a public challenge. (Potential: Reputation)",
-        "message": "Rose outperforms the copy in front of a packed crowd, leaving no doubt about who is real. The impersonator vanishes and your brand strengthens. ({actual_reputation} reputation)",
+        "option": "Stage a public performance that makes the copy irrelevant. (Potential: Money)",
+        "message": "You book the largest venue in the district. Rose rehearses with an intensity that borders on fury—new sequences the imitator has never seen, a finale that requires genuine skill. The venue fills to standing room. Over the following week, the rival's attendance drops sharply. 'The Crimson Petal' quietly disappears from the handbills. The venue's take, after expenses, sits comfortably in your accounts. ({actual_money})",
         "effect": {
-          "reputation": 6,
+          "money": 500,
           "event_flags": {
             "unique_rose_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Handle it quietly through back channels. (Potential: Reputation)",
-        "message": "You pressure the venue owners privately until the copy disappears. The issue ends with minimal noise, but no public gain. ({actual_reputation} reputation)",
+        "option": "Pay the rival venue to drop the act. (Cost: Money)",
+        "message": "You visit the rival venue's owner—a pragmatist who cares about coin, not art. You pay enough to cover the lost revenue from dropping the imitator. 'Business is business,' they say, the truest thing spoken all night. The handbills come down, the imitator drifts away. Rose never learns exactly how you resolved it, though they notice the absence and draw their own conclusions. ({actual_money})",
         "effect": {
-          "reputation": 2,
+          "money": -350,
           "event_flags": {
             "unique_rose_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],
@@ -806,7 +671,7 @@
   },
   {
     "id": "unique_iris_lore_event",
-    "description": "Iris receives an encoded invitation from a circle tied to their recruitment past. Attendance could unlock favors or expose vulnerabilities.",
+    "description": "A black envelope arrives sealed with silver wax—no crest, no return address. Just a date, a time, and a location in elegant script. 'The Silvered Table,' Iris says after a long pause. 'Brokers of favors and arrangements that don't appear in any ledger. I was connected to them before—not a member, a resource.' An invitation means they want something and they're willing to pay. 'But they'll want something in return. They always do. And once you sit at their table, they remember your face.'",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
@@ -822,34 +687,23 @@
     },
     "choices": [
       {
-        "option": "Attend with layered security and hear the offer. (Potential: Money, Reputation)",
-        "message": "You attend under controlled conditions and leave with a favor owed by influential intermediaries. The risk pays off cleanly. ({actual_money}, {actual_reputation} reputation)",
+        "option": "Attend the meeting and hear their offer. (Potential: Money)",
+        "message": "The salon is candlelit and tasteful. Four people sit at a round table. The offer: a discreet courier job within the city. Legal cargo, sensitive timing, far above market rate. You accept. A sealed case travels from warehouse to residence without incident. The payment arrives the next morning in an unmarked pouch. 'They'll remember this,' Iris says. Whether that's a promise or a warning is a question for another day. ({actual_money})",
         "effect": {
-          "money": 300,
-          "reputation": 6,
+          "money": 400,
           "event_flags": {
             "unique_iris_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       },
       {
-        "option": "Decline and sever contact permanently. (Loss: Reputation)",
-        "message": "You reject the invitation and burn the cipher route. The threat surface drops, but so does your access to useful channels. ({actual_reputation} reputation)",
+        "option": "Decline and sever the connection. (Cost: Money)",
+        "message": "You send the envelope back with a modest gift of wine—the traditional signal for 'no, but no offense.' Over the following days, small disruptions appear: a reliable supplier becomes 'unavailable,' a confirmed booking gets cancelled. Nothing dramatic. Just the subtle friction of doors closing you didn't know the Table was keeping open. Rebuilding through other channels costs more than you'd like. ({actual_money})",
         "effect": {
-          "reputation": -2,
+          "money": -350,
           "event_flags": {
             "unique_iris_lore_done": true
-          },
-          "success_chance": 0,
-          "joy": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
+          }
         }
       }
     ],

@@ -198,9 +198,108 @@ init python:
         worker_set = set(worker_traits or [])
         return all(r in worker_set for r in required if isinstance(r, str))
 
+    def sanitize_worker_trait_state(worker, trait_catalog=None):
+        """
+        Normalize and validate a worker trait list in-place.
+        - Removes duplicates
+        - Removes known traits that fail gender restrictions
+        - Removes known traits whose requires_traits are missing
+        - Resolves conflicts by preserving earlier traits and dropping later ones
+        Unknown traits are preserved.
+        """
+        if not hasattr(worker, "get"):
+            return []
+
+        raw_traits = worker.get("traits") or []
+        if isinstance(raw_traits, str):
+            normalized = [raw_traits] if raw_traits else []
+        elif hasattr(raw_traits, "__iter__"):
+            try:
+                normalized = [t for t in list(raw_traits) if isinstance(t, str) and t]
+            except Exception:
+                normalized = []
+        else:
+            normalized = []
+
+        trait_map = {}
+        if trait_catalog:
+            for trait_def in trait_catalog:
+                if hasattr(trait_def, "get"):
+                    trait_name = trait_def.get("name")
+                    if isinstance(trait_name, str) and trait_name and trait_name not in trait_map:
+                        trait_map[trait_name] = trait_def
+        if not trait_map:
+            raw_cache = getattr(store, "_trait_def_raw_cache", None)
+            if hasattr(raw_cache, "get") and raw_cache:
+                trait_map.update(raw_cache)
+            filtered_cache = getattr(store, "_trait_def_cache", None)
+            if hasattr(filtered_cache, "get") and filtered_cache:
+                for trait_name, trait_def in filtered_cache.items():
+                    if trait_name not in trait_map:
+                        trait_map[trait_name] = trait_def
+
+        # De-duplicate while preserving order.
+        deduped = []
+        seen = set()
+        for trait_name in normalized:
+            if trait_name in seen:
+                continue
+            seen.add(trait_name)
+            deduped.append(trait_name)
+
+        cleaned = list(deduped)
+        changed = True
+        while changed:
+            changed = False
+            worker_trait_set = set(cleaned)
+            next_traits = []
+            for trait_name in cleaned:
+                trait_def = trait_map.get(trait_name) if hasattr(trait_map, "get") else None
+                if not (hasattr(trait_def, "get") and callable(getattr(trait_def, "get", None))):
+                    next_traits.append(trait_name)
+                    continue
+
+                if not can_assign_trait_to_worker(trait_def, worker):
+                    renpy.log(f"TRAITS: Removing '{trait_name}' from {worker.get('name', 'Unknown')} - gender restriction mismatch")
+                    changed = True
+                    continue
+
+                if not worker_meets_trait_requirements(trait_def, worker_trait_set):
+                    renpy.log(f"TRAITS: Removing '{trait_name}' from {worker.get('name', 'Unknown')} - missing required trait(s)")
+                    changed = True
+                    continue
+
+                conflicts = trait_def.get("conflicts", [])
+                if isinstance(conflicts, str):
+                    conflicts = [conflicts]
+                elif not hasattr(conflicts, "__iter__"):
+                    conflicts = []
+
+                has_conflict = False
+                for existing in next_traits:
+                    if existing in conflicts:
+                        has_conflict = True
+                        break
+                    existing_def = trait_map.get(existing) if hasattr(trait_map, "get") else None
+                    if hasattr(existing_def, "get") and trait_name in (existing_def.get("conflicts", []) or []):
+                        has_conflict = True
+                        break
+                if has_conflict:
+                    renpy.log(f"TRAITS: Removing '{trait_name}' from {worker.get('name', 'Unknown')} - conflicts with existing trait")
+                    changed = True
+                    continue
+
+                next_traits.append(trait_name)
+
+            cleaned = next_traits
+
+        worker["traits"] = cleaned
+        return cleaned
+
     store.can_assign_trait_to_worker = can_assign_trait_to_worker
     store.trait_conflicts_with_worker = trait_conflicts_with_worker
     store.worker_meets_trait_requirements = worker_meets_trait_requirements
+    store.sanitize_worker_trait_state = sanitize_worker_trait_state
 
     def add_trait_with_duration(worker, trait_name, duration, is_variant=False):
         """
@@ -247,6 +346,11 @@ init python:
                 worker["trait_durations"] = {}
             worker["trait_durations"][trait_name] = duration
 
+        # Keep dependency graph valid (e.g. remove traits that now fail requirements).
+        _sanitize = getattr(store, "sanitize_worker_trait_state", None)
+        if callable(_sanitize):
+            _sanitize(worker)
+
         # Recalculate trait modifiers
         recalculate_trait_modifiers(worker)
 
@@ -267,6 +371,11 @@ init python:
             # Remove duration if it exists
             if "trait_durations" in worker and trait_name in worker["trait_durations"]:
                 del worker["trait_durations"][trait_name]
+
+            # Removing a prerequisite trait may invalidate dependent traits.
+            _sanitize = getattr(store, "sanitize_worker_trait_state", None)
+            if callable(_sanitize):
+                _sanitize(worker)
             
             # Recalculate trait modifiers
             recalculate_trait_modifiers(worker)
@@ -290,6 +399,9 @@ init python:
                     del worker["trait_durations"][key]
                     removed_any = True
         if removed_any:
+            _sanitize = getattr(store, "sanitize_worker_trait_state", None)
+            if callable(_sanitize):
+                _sanitize(worker)
             recalculate_trait_modifiers(worker)
 
     def check_trait_durations():

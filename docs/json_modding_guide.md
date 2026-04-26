@@ -85,7 +85,8 @@ Behavior notes:
    - `stat_requirements`
    - `required_traits`
    - `excluded_traits`
-   - `specific_workers`
+   - `specific_workers` — list of worker names (case-insensitive).
+   - `specific_worker_images` — list of worker `folder` ids. Combined with `specific_workers` using **OR** (an interaction passes if the worker matches by name OR by folder). Use this to share interactions across any worker that ships with a compatible image pack / mod.
    - `required_flags` and `excluded_flags`
 5. Keep flag structure explicit for readability.
 
@@ -119,14 +120,15 @@ See `docs/templates/buildings/daily_story_trait_roll_example.json` for a full ex
 
 ## 7) Recipe: Create event chain for a specific worker
 
-1. Use `worker_name` to pin the event to a worker (e.g. `"worker_name": "Aelis"`).
-2. Use `worker_selection`: `"random"` so the pre-selected worker is used for skill checks.
-3. Use `building_type` to restrict to buildings where the worker is assigned.
-4. Use `conditions.start_when`: `"has_worker:WorkerName"` so the event only appears when that worker exists.
-5. Chain events with flags:
+1. Use `worker_name` to pin the event to a worker (e.g. `"worker_name": "Aelis"`). Accepts a single string or a list of names.
+2. **Mod-friendly alternative:** use `specific_worker_images` to target workers by their image folder (e.g. `"specific_worker_images": ["elven_mage"]` matches any worker whose `folder` is `elven_mage`). Combine with `worker_name` — semantics are **OR**, so an event fires for a worker matching by name OR by folder. Useful for shared packs / mod compatibility.
+3. Use `worker_selection`: `"random"` so the pre-selected worker is used for skill checks.
+4. Use `building_type` to restrict to buildings where the worker is assigned.
+5. Use `conditions.start_when`: `"has_worker:WorkerName"` so the event only appears when that worker exists.
+6. Chain events with flags:
    - Event 1: `effect.event_flags`: `{ "event_1_done": true }`, `excluded_flags`: `{ "event_1_done": true }` (so it does not repeat).
    - Event 2: `required_flags`: `{ "event_1_done": true }`, `excluded_flags`: `{ "event_2_done": true }`, `effect.event_flags`: `{ "event_2_done": true }`.
-6. For skill rewards (e.g. Charm), add `skill_modifiers` to effects. See `docs/EVENT_SKILL_MODIFIERS_NEEDED.md` for required code changes.
+7. For skill rewards (e.g. Charm), add `skill_modifiers` to effects. See `docs/EVENT_SKILL_MODIFIERS_NEEDED.md` for required code changes.
 
 See `game/data/events/events_aelis_chain.json` for a full 5-event chain example.
 

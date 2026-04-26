@@ -29,6 +29,22 @@ init python:
 
     store._ensure_worker_min_traits = _ensure_worker_min_traits
 
+    def _stamp_template_id_from_json(worker):
+        # Stable identifier pinned at JSON-read time. Never mutated by later loads
+        # or by ensure_worker_defaults — only by the versioned migration.
+        # Rationale: `folder` gets overwritten by buggy legacy sync; `template_id`
+        # stays grounded in the JSON source of truth.
+        if not hasattr(worker, "get"):
+            return
+        if worker.get("procedural", False) or worker.get("monster", False):
+            return
+        if worker.get("template_id"):
+            return
+        folder = worker.get("folder")
+        if not folder or not isinstance(folder, str):
+            return
+        worker["template_id"] = folder
+
     def load_workers(include_unique=False, include_encounter_only=False, for_events=False):
         """
         Load all workers from multiple locations with optional filters.
@@ -94,9 +110,10 @@ init python:
                         # Ensure defaults are applied
                         ensure_worker_defaults(worker)
                         _ensure_worker_min_traits(worker)
+                        _stamp_template_id_from_json(worker)
                         all_workers.append(worker)
                         loaded_names.add(worker_name)
-                        
+
                     renpy.log(f"Loaded {len([w for w in workers_data if w.get('name') in loaded_names])} workers from data/workers.json")
                 
         except Exception as e:
@@ -147,6 +164,7 @@ init python:
                             # Ensure defaults are applied
                             ensure_worker_defaults(worker)
                             _ensure_worker_min_traits(worker)
+                            _stamp_template_id_from_json(worker)
                             all_workers.append(worker)
                             loaded_names.add(worker_name)
                             file_workers_loaded += 1

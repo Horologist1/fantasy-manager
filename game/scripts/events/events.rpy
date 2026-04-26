@@ -77,9 +77,120 @@ init python:
                 names.append(_name)
         return names
 
+    def _parse_identity_string_list(raw):
+        """Parse a string / list / nested-list field into a flat list of trimmed strings.
+
+        Duck-typed per LA_BIBLIA. Used for worker_name and specific_worker_images
+        on events, and specific_workers / specific_worker_images on interactions.
+        """
+        if not raw:
+            return []
+        names = []
+        if hasattr(raw, "strip"):
+            _name = str(raw).strip()
+            if _name:
+                names.append(_name)
+        elif hasattr(raw, "__iter__"):
+            for entry in list(raw):
+                if not entry:
+                    continue
+                if hasattr(entry, "strip"):
+                    _name = str(entry).strip()
+                    if _name:
+                        names.append(_name)
+                elif hasattr(entry, "__iter__"):
+                    for nested in list(entry):
+                        if not nested:
+                            continue
+                        _name = str(nested).strip()
+                        if _name:
+                            names.append(_name)
+                else:
+                    _name = str(entry).strip()
+                    if _name:
+                        names.append(_name)
+        else:
+            _name = str(raw).strip()
+            if _name:
+                names.append(_name)
+        return names
+
+    def _parse_event_worker_images_list(event):
+        """Parse event['specific_worker_images'] into a flat list of folder strings."""
+        raw = event.get("specific_worker_images") if event else None
+        return _parse_identity_string_list(raw)
+
+    def _worker_matches_identity_filters(worker, name_list, folder_list):
+        """Return True if worker passes identity filters.
+
+        Semantics (retro-compatible):
+          - Both filters empty -> True (no restriction).
+          - Only names -> worker.name must be in names.
+          - Only folders -> worker.folder must be in folders.
+          - Both -> OR (name match OR folder match).
+        Name matching is case-insensitive to match existing interaction behavior
+        (see filter_interactions_by_worker_name); folder matching is exact since
+        folder strings are canonical identifiers written by pack authors.
+        """
+        if not name_list and not folder_list:
+            return True
+        if not worker:
+            return False
+        if name_list:
+            w_name = worker.get("name", "") if hasattr(worker, "get") else ""
+            if w_name and w_name.lower() in [str(n).lower() for n in name_list]:
+                return True
+        if folder_list:
+            w_folder = worker.get("folder", "") if hasattr(worker, "get") else ""
+            if w_folder and w_folder in folder_list:
+                return True
+        return False
+
+    def _worker_matches_event_identity(worker, event):
+        """Convenience: OR filter for events using worker_name + specific_worker_images."""
+        name_list = _parse_event_worker_name_list(event)
+        folder_list = _parse_event_worker_images_list(event)
+        return _worker_matches_identity_filters(worker, name_list, folder_list)
+
+    def _event_has_identity_filters(event):
+        """True if the event restricts by worker_name or specific_worker_images."""
+        return bool(_parse_event_worker_name_list(event)) or bool(_parse_event_worker_images_list(event))
+
     store._worker_meets_trait_requirements = _worker_meets_trait_requirements
     store._any_eligible_worker_meets_traits = _any_eligible_worker_meets_traits
     store._parse_event_worker_name_list = _parse_event_worker_name_list
+    store._parse_event_worker_images_list = _parse_event_worker_images_list
+    store._parse_identity_string_list = _parse_identity_string_list
+    store._worker_matches_identity_filters = _worker_matches_identity_filters
+    store._worker_matches_event_identity = _worker_matches_event_identity
+    store._event_has_identity_filters = _event_has_identity_filters
+
+    def clear_random_event_context(reason=""):
+        """Reset per-event transient state to prevent stale UI/event filters."""
+        try:
+            store.current_affected_building = None
+        except Exception:
+            pass
+        try:
+            store.current_worker = None
+        except Exception:
+            pass
+        try:
+            store.temp_eligible_workers_for_event = []
+        except Exception:
+            pass
+        try:
+            store.building_notification = None
+        except Exception:
+            pass
+        try:
+            store.chosen_choice_data = None
+        except Exception:
+            pass
+        if reason:
+            renpy.log(f"EVENT_CONTEXT: cleared ({reason})")
+
+    store.clear_random_event_context = clear_random_event_context
 
     def _split_for_narrator(msg: str, limit: int = 180):
         """
@@ -192,6 +303,7 @@ label handle_random_event:
     # Initial checks and setup (Ren'Py)
     if store.current_event is None:
         $ renpy.log("No current_event in handle_random_event; returning to caller without re-running next_day.")
+        $ store.clear_random_event_context("no_current_event")
         return
 
     # Get event data (Ren'Py $)
@@ -364,6 +476,17 @@ label handle_random_event:
             else:
                 option_text = option_text.replace("[event_worker]", "a worker")
                 option_text = option_text.replace("[acting_worker]", "a worker")
+            condition_for_preview = choice_option.get("condition", None)
+            check_preview = ""
+            if condition_for_preview == "building_skill" and hasattr(store, "current_affected_building") and store.current_affected_building:
+                preview_building = available_buildings.get(store.current_affected_building)
+                preview_info = get_event_building_skill_check_info(preview_building)
+                check_preview = preview_info.get("label", "") if preview_info.get("valid") else ""
+            elif final_worker is not None and condition_for_preview and condition_for_preview != "building_skill":
+                preview_info = get_event_worker_skill_check_info(final_worker, choice_option)
+                check_preview = preview_info.get("label", "") if preview_info.get("valid") else ""
+            if check_preview and check_preview not in option_text:
+                option_text = option_text + " [" + check_preview + "]"
             new_choice["option"] = option_text
             # Prepare success/failure messages with placeholders resolved; avoid empty messages
             # When final_worker is None (e.g. worker_selection "choose" before pick), keep
@@ -402,11 +525,13 @@ label handle_random_event:
     # Show choices screen (Ren'Py) - ONLY shows the choices now
     call screen random_event_choice(event_choices=store.temp_prepared_choices)
     $ chosen_choice_data = _return
+    $ store.chosen_choice_data = chosen_choice_data
 
     if chosen_choice_data is None:
         $ outcome_message = "No valid option selected."
         narrator "[outcome_message]"
         window hide
+        $ store.clear_random_event_context("no_choice_selected")
         return
 
     # --- Python block to evaluate the choice and determine next steps ---
@@ -435,7 +560,7 @@ label handle_random_event:
                         if w.get("assigned_building") == affected_building:
                             # Check threshold if specified
                             if threshold > 0 and condition_skill:
-                                worker_skill = calculate_skill_with_traits(w, condition_skill)
+                                worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
                                 if worker_skill >= threshold:
                                     temp_eligible.append(w)
                             else:
@@ -449,7 +574,7 @@ label handle_random_event:
                             if available_buildings[assigned_bldg].get("type") in event_building_types:
                                 # Check threshold if specified
                                 if threshold > 0 and condition_skill:
-                                    worker_skill = calculate_skill_with_traits(w, condition_skill)
+                                    worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
                                     if worker_skill >= threshold:
                                         temp_eligible.append(w)
                                 else:
@@ -458,7 +583,7 @@ label handle_random_event:
                     for w in store.workers:
                         # Check threshold if specified
                         if threshold > 0 and condition_skill:
-                            worker_skill = calculate_skill_with_traits(w, condition_skill)
+                            worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
                             if worker_skill >= threshold:
                                 temp_eligible.append(w)
                         else:
@@ -474,10 +599,9 @@ label handle_random_event:
                         if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
                     ]
 
-                # Filter by event worker_name if specified
-                _wn_list = store._parse_event_worker_name_list(event)
-                if _wn_list:
-                    temp_eligible = [w for w in temp_eligible if w.get("name") in _wn_list]
+                # Filter by event worker_name and/or specific_worker_images (OR semantics)
+                if store._event_has_identity_filters(event):
+                    temp_eligible = [w for w in temp_eligible if store._worker_matches_event_identity(w, event)]
 
                 if not temp_eligible:
                     renpy.log("No eligible workers for choice, cannot proceed.")
@@ -504,7 +628,7 @@ label handle_random_event:
                             if w.get("assigned_building") == affected_building:
                                 # Check threshold if specified
                                 if threshold > 0 and condition_skill:
-                                    worker_skill = calculate_skill_with_traits(w, condition_skill)
+                                    worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
                                     if worker_skill >= threshold:
                                         temp_eligible.append(w)
                                 else:
@@ -518,7 +642,7 @@ label handle_random_event:
                                 if available_buildings[assigned_bldg].get("type") in event_building_types:
                                     # Check threshold if specified
                                     if threshold > 0 and condition_skill:
-                                        worker_skill = calculate_skill_with_traits(w, condition_skill)
+                                        worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
                                         if worker_skill >= threshold:
                                             temp_eligible.append(w)
                                     else:
@@ -527,7 +651,7 @@ label handle_random_event:
                         for w in store.workers:
                             # Check threshold if specified
                             if threshold > 0 and condition_skill:
-                                worker_skill = calculate_skill_with_traits(w, condition_skill)
+                                worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
                                 if worker_skill >= threshold:
                                     temp_eligible.append(w)
                             else:
@@ -543,10 +667,9 @@ label handle_random_event:
                             if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
                         ]
 
-                    # Filter by event worker_name if specified
-                    _wn_list = store._parse_event_worker_name_list(event)
-                    if _wn_list:
-                        temp_eligible = [w for w in temp_eligible if w.get("name") in _wn_list]
+                    # Filter by event worker_name and/or specific_worker_images (OR semantics)
+                    if store._event_has_identity_filters(event):
+                        temp_eligible = [w for w in temp_eligible if store._worker_matches_event_identity(w, event)]
 
                     if temp_eligible:
                         final_worker = random.choice(temp_eligible)
@@ -619,15 +742,15 @@ label handle_random_event:
         $ event_outcome_for_bg = outcome_details.get("outcome", "default") # Get success/failure status
         $ renpy.log(f"Event outcome for background: {event_outcome_for_bg}")
     elif event_status == "no_worker_available":
-        $ outcome_message = "No eligible workers were found for this task."
+        $ outcome_message = "You look around, but none of your people have the skills this situation demands. The moment passes without resolution—an opportunity lost to a gap in your roster."
         $ event_outcome_for_bg = "failure"
     elif event_status == "cancelled":
-        $ outcome_message = "You decided not to choose a worker. The event is cancelled."
+        $ outcome_message = "You weigh the options and decide not to commit anyone. The situation resolves itself—for better or worse—without your intervention."
     elif event_status == "no_suitable_worker":
-        $ outcome_message = "No suitable worker was available for this task."
+        $ outcome_message = "You run through your roster in your head, but no one fits the bill. Without the right person for the job, all you can do is watch the opportunity slip by."
         $ event_outcome_for_bg = "failure"
     elif event_status == "error_no_worker":
-        $ outcome_message = "You can't find any other workers to recruit today."
+        $ outcome_message = "The day's been long, and your people are stretched thin. There's no one left to send—you'll have to wait for tomorrow."
         $ event_outcome_for_bg = "failure"
 
     # --- Update background based on outcome ---
@@ -654,6 +777,7 @@ label handle_random_event:
     
     # NOTE: Daily report will be shown by process_next_day() after this returns
     # Removed duplicate call screen daily_report to prevent double display
+    $ store.clear_random_event_context("event_completed")
     return # Exit the label cleanly
 
 label tavern:

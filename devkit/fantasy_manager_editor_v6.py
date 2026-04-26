@@ -45,7 +45,8 @@ VERSION = "6.0"
 # Templates embebidos (no dependen de archivos externos)
 EMBEDDED_EVENT_TEMPLATE = {
     "id": None, "description": None, "weight": 0, "limited": False, "max_occurrences": 0,
-    "cooldown_days": 0, "event_probability": 0, "guaranteed": False, "worker_selection": None,
+    "cooldown_days": 0, "event_probability": 0, "guaranteed": False,
+    "worker_name": None, "specific_worker_images": [], "worker_selection": None,
     "worker_gender_requirement": None, "player_gender_requirement": None, "requires_assigned_worker": False,
     "required_building_worker_traits": [], "required_active_professions": [], "forbidden_active_professions": [],
     "required_building_worker_min_skill": None, "required_building_worker_skill": None, "building_type": [],
@@ -5372,7 +5373,37 @@ Variables in messages: {worker_name}, {skill}, {trait}
         self.event_worker_selection_var = tk.StringVar(value="choose")
         ttk.Combobox(event_scrollable, textvariable=self.event_worker_selection_var, values=["choose", "none", "random"], state="readonly", width=15).grid(row=row, column=1, sticky="w", padx=5, pady=5)
         row += 1
-        
+
+        # Worker Name filter (specific worker names — comma-separated or list)
+        ttk.Label(event_scrollable, text="Worker Name(s) filter:", font=("Arial", 9, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(10, 5))
+        row += 1
+        ttk.Label(event_scrollable, text="Restricts the event to these worker names. Combined with 'Specific Worker Images' using OR.", font=("Arial", 8), foreground="gray").grid(row=row, column=0, columnspan=2, sticky="w", padx=5)
+        row += 1
+        wn_frame = ttk.Frame(event_scrollable)
+        wn_frame.grid(row=row, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        self.event_worker_name_listbox = tk.Listbox(wn_frame, height=3)
+        self.event_worker_name_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        wn_btns = ttk.Frame(wn_frame)
+        wn_btns.pack(side=tk.LEFT, fill=tk.Y)
+        ttk.Button(wn_btns, text="Add", command=self.add_event_worker_name).pack(pady=2)
+        ttk.Button(wn_btns, text="Remove", command=lambda: self.event_worker_name_listbox.delete(tk.ANCHOR)).pack(pady=2)
+        row += 1
+
+        # Specific Worker Images (folder ids — mod-friendly)
+        ttk.Label(event_scrollable, text="Specific Worker Images (folders):", font=("Arial", 9, "bold")).grid(row=row, column=0, columnspan=2, sticky="w", padx=5, pady=(10, 5))
+        row += 1
+        ttk.Label(event_scrollable, text="Folder ids from worker JSON 'folder' field. Lets mods share events across any worker with a compatible image pack.", font=("Arial", 8), foreground="gray").grid(row=row, column=0, columnspan=2, sticky="w", padx=5)
+        row += 1
+        swi_frame = ttk.Frame(event_scrollable)
+        swi_frame.grid(row=row, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        self.event_specific_worker_images_listbox = tk.Listbox(swi_frame, height=3)
+        self.event_specific_worker_images_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        swi_btns = ttk.Frame(swi_frame)
+        swi_btns.pack(side=tk.LEFT, fill=tk.Y)
+        ttk.Button(swi_btns, text="Add", command=self.add_event_specific_worker_image).pack(pady=2)
+        ttk.Button(swi_btns, text="Remove", command=lambda: self.event_specific_worker_images_listbox.delete(tk.ANCHOR)).pack(pady=2)
+        row += 1
+
         # Worker Gender Requirement
         ttk.Label(event_scrollable, text="Worker Gender Requirement:").grid(row=row, column=0, sticky="w", padx=5, pady=5)
         self.event_worker_gender_var = tk.StringVar(value="any")
@@ -5497,6 +5528,33 @@ Variables in messages: {worker_name}, {skill}, {trait}
         self.event_max_occurrences_var.set(self.current_event.get('max_occurrences', 1))
         self.event_cooldown_var.set(self.current_event.get('cooldown_days', 7))
         self.event_worker_selection_var.set(self.current_event.get('worker_selection', 'choose'))
+
+        # Worker name filter (string | list | nested list → flat list)
+        if hasattr(self, 'event_worker_name_listbox'):
+            self.event_worker_name_listbox.delete(0, tk.END)
+            raw_wn = self.current_event.get('worker_name')
+            if raw_wn:
+                wn_items = []
+                if isinstance(raw_wn, str):
+                    if raw_wn.strip():
+                        wn_items.append(raw_wn.strip())
+                elif isinstance(raw_wn, list):
+                    for entry in raw_wn:
+                        if isinstance(entry, str) and entry.strip():
+                            wn_items.append(entry.strip())
+                        elif isinstance(entry, list):
+                            for nested in entry:
+                                if isinstance(nested, str) and nested.strip():
+                                    wn_items.append(nested.strip())
+                for item in wn_items:
+                    self.event_worker_name_listbox.insert(tk.END, item)
+
+        if hasattr(self, 'event_specific_worker_images_listbox'):
+            self.event_specific_worker_images_listbox.delete(0, tk.END)
+            for folder in (self.current_event.get('specific_worker_images') or []):
+                if isinstance(folder, str) and folder.strip():
+                    self.event_specific_worker_images_listbox.insert(tk.END, folder.strip())
+
         self.event_worker_gender_var.set(self.current_event.get('worker_gender_requirement', 'any'))
         
         # Player gender, requires assigned worker
@@ -5595,6 +5653,20 @@ Variables in messages: {worker_name}, {skill}, {trait}
         pid = simpledialog.askstring("Profession id", "Enter profession id that must NOT be active (e.g. guard):")
         if pid and str(pid).strip():
             self.event_forbidden_professions_listbox.insert(tk.END, str(pid).strip())
+
+    def add_event_worker_name(self):
+        name = simpledialog.askstring("Worker name filter", "Enter a worker name to restrict this event to (e.g. Aelis):")
+        if name and str(name).strip():
+            self.event_worker_name_listbox.insert(tk.END, str(name).strip())
+
+    def add_event_specific_worker_image(self):
+        folder = simpledialog.askstring(
+            "Worker image folder",
+            "Enter a worker folder id (matches worker JSON 'folder', e.g. elven_mage).\n"
+            "Any worker with this folder will match this event.",
+        )
+        if folder and str(folder).strip():
+            self.event_specific_worker_images_listbox.insert(tk.END, str(folder).strip())
     
     def _add_to_choice_listbox(self, listbox):
         """Add trait to choice listbox (required_traits or excluded_traits)"""
@@ -6179,6 +6251,33 @@ Variables in messages: {worker_name}, {skill}, {trait}
             self.current_event['max_occurrences'] = self.event_max_occurrences_var.get()
         self.current_event['cooldown_days'] = self.event_cooldown_var.get()
         self.current_event['worker_selection'] = self.event_worker_selection_var.get()
+
+        # Worker name filter: save as list (or omit key when empty)
+        if hasattr(self, 'event_worker_name_listbox'):
+            wn_items = [
+                self.event_worker_name_listbox.get(i).strip()
+                for i in range(self.event_worker_name_listbox.size())
+                if str(self.event_worker_name_listbox.get(i)).strip()
+            ]
+            if len(wn_items) == 0:
+                self.current_event.pop('worker_name', None)
+            elif len(wn_items) == 1:
+                self.current_event['worker_name'] = wn_items[0]
+            else:
+                self.current_event['worker_name'] = wn_items
+
+        # Specific worker images (folder ids)
+        if hasattr(self, 'event_specific_worker_images_listbox'):
+            swi_items = [
+                self.event_specific_worker_images_listbox.get(i).strip()
+                for i in range(self.event_specific_worker_images_listbox.size())
+                if str(self.event_specific_worker_images_listbox.get(i)).strip()
+            ]
+            if swi_items:
+                self.current_event['specific_worker_images'] = swi_items
+            else:
+                self.current_event.pop('specific_worker_images', None)
+
         worker_gender_req = self.event_worker_gender_var.get()
         if worker_gender_req and worker_gender_req != 'any':
             self.current_event['worker_gender_requirement'] = worker_gender_req
@@ -6580,7 +6679,7 @@ Variables in messages: [acting_worker]
         # Excluded Flags
         ttk.Label(interaction_scrollable, text="Excluded Flags", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
         row += 1
-        
+
         exc_flags_frame = ttk.Frame(interaction_scrollable)
         exc_flags_frame.grid(row=row, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
         self.interaction_exc_flags_listbox = tk.Listbox(exc_flags_frame, height=3)
@@ -6589,8 +6688,52 @@ Variables in messages: [acting_worker]
         exc_flags_buttons.pack(side=tk.LEFT, fill=tk.Y)
         ttk.Button(exc_flags_buttons, text="Add", command=self.add_excluded_flag_interaction).pack(pady=2)
         ttk.Button(exc_flags_buttons, text="Remove", command=self.remove_excluded_flag_interaction).pack(pady=2)
-        
+        row += 1
+
+        # Specific Workers (names, case-insensitive)
+        ttk.Label(interaction_scrollable, text="Specific Workers (names)", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
+        row += 1
+        ttk.Label(interaction_scrollable, text="Restricts interaction to these worker names. Combined with 'Specific Worker Images' using OR.", font=("Arial", 8), foreground="gray").grid(row=row, column=0, columnspan=3, sticky="w", padx=5)
+        row += 1
+        sw_frame = ttk.Frame(interaction_scrollable)
+        sw_frame.grid(row=row, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        self.interaction_specific_workers_listbox = tk.Listbox(sw_frame, height=3)
+        self.interaction_specific_workers_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        sw_buttons = ttk.Frame(sw_frame)
+        sw_buttons.pack(side=tk.LEFT, fill=tk.Y)
+        ttk.Button(sw_buttons, text="Add", command=self.add_interaction_specific_worker).pack(pady=2)
+        ttk.Button(sw_buttons, text="Remove", command=lambda: self.interaction_specific_workers_listbox.delete(tk.ANCHOR)).pack(pady=2)
+        row += 1
+
+        # Specific Worker Images (folders — mod-friendly)
+        ttk.Label(interaction_scrollable, text="Specific Worker Images (folders)", font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=3, sticky="w", padx=5, pady=(20, 5))
+        row += 1
+        ttk.Label(interaction_scrollable, text="Folder ids from worker JSON 'folder'. Lets mods share interactions across any worker with a compatible image pack.", font=("Arial", 8), foreground="gray").grid(row=row, column=0, columnspan=3, sticky="w", padx=5)
+        row += 1
+        swi_frame = ttk.Frame(interaction_scrollable)
+        swi_frame.grid(row=row, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        self.interaction_specific_worker_images_listbox = tk.Listbox(swi_frame, height=3)
+        self.interaction_specific_worker_images_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        swi_buttons = ttk.Frame(swi_frame)
+        swi_buttons.pack(side=tk.LEFT, fill=tk.Y)
+        ttk.Button(swi_buttons, text="Add", command=self.add_interaction_specific_worker_image).pack(pady=2)
+        ttk.Button(swi_buttons, text="Remove", command=lambda: self.interaction_specific_worker_images_listbox.delete(tk.ANCHOR)).pack(pady=2)
+
         interaction_scrollable.columnconfigure(1, weight=1)
+
+    def add_interaction_specific_worker(self):
+        name = simpledialog.askstring("Specific worker name", "Enter a worker name (case-insensitive, e.g. Aelis):")
+        if name and str(name).strip():
+            self.interaction_specific_workers_listbox.insert(tk.END, str(name).strip())
+
+    def add_interaction_specific_worker_image(self):
+        folder = simpledialog.askstring(
+            "Worker image folder",
+            "Enter a worker folder id (matches worker JSON 'folder', e.g. elven_mage).\n"
+            "Any worker with this folder will match this interaction.",
+        )
+        if folder and str(folder).strip():
+            self.interaction_specific_worker_images_listbox.insert(tk.END, str(folder).strip())
     
     def load_interaction_data(self):
         """Cargar datos del interaction seleccionado"""
@@ -6625,6 +6768,18 @@ Variables in messages: [acting_worker]
         # Flags
         self.refresh_required_flags_list()
         self.refresh_excluded_flags_list()
+
+        # Specific workers (names) and specific worker images (folders)
+        if hasattr(self, 'interaction_specific_workers_listbox'):
+            self.interaction_specific_workers_listbox.delete(0, tk.END)
+            for name in (self.current_interaction.get('specific_workers') or []):
+                if isinstance(name, str) and name.strip():
+                    self.interaction_specific_workers_listbox.insert(tk.END, name.strip())
+        if hasattr(self, 'interaction_specific_worker_images_listbox'):
+            self.interaction_specific_worker_images_listbox.delete(0, tk.END)
+            for folder in (self.current_interaction.get('specific_worker_images') or []):
+                if isinstance(folder, str) and folder.strip():
+                    self.interaction_specific_worker_images_listbox.insert(tk.END, folder.strip())
     
     def refresh_stat_modifications_list(self):
         """Actualizar lista de stat modifications"""
@@ -6975,7 +7130,31 @@ Variables in messages: [acting_worker]
                 parts = flag_str.split(': ', 1)
                 exc_flags[parts[0]] = parts[1]
         self.current_interaction['excluded_flags'] = exc_flags
-        
+
+        # Specific workers (names)
+        if hasattr(self, 'interaction_specific_workers_listbox'):
+            sw_items = [
+                self.interaction_specific_workers_listbox.get(i).strip()
+                for i in range(self.interaction_specific_workers_listbox.size())
+                if str(self.interaction_specific_workers_listbox.get(i)).strip()
+            ]
+            if sw_items:
+                self.current_interaction['specific_workers'] = sw_items
+            else:
+                self.current_interaction.pop('specific_workers', None)
+
+        # Specific worker images (folders)
+        if hasattr(self, 'interaction_specific_worker_images_listbox'):
+            swi_items = [
+                self.interaction_specific_worker_images_listbox.get(i).strip()
+                for i in range(self.interaction_specific_worker_images_listbox.size())
+                if str(self.interaction_specific_worker_images_listbox.get(i)).strip()
+            ]
+            if swi_items:
+                self.current_interaction['specific_worker_images'] = swi_items
+            else:
+                self.current_interaction.pop('specific_worker_images', None)
+
         self.refresh_interactions_list()
         self.has_unsaved_changes = True
         self.update_title()

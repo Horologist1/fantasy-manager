@@ -324,7 +324,7 @@ screen file_browser_simple():
                                         yalign 0.5
                                         
                                         text save_file['filename'] style "file_dialog_text" size 20
-                                        text "Modified: [save_file['modified']] - Size: [save_file['size']] bytes" style "file_dialog_text" size 16
+                                        text "Modified: [save_file['modified']] - Size: [save_file['size']] bytes" style "file_dialog_text" size 18
             
             hbox:
                 spacing 20

@@ -45,13 +45,13 @@
   {
     "name": "Pierced",
     "modifiers": {
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "skill_modifiers": {
         "Oral": 1,
         "Sex": 1
       }
     },
-    "description": "They have strategic piercings that enhance certain activities. [+15% $, +1 Oral, +1 Sex]",
+    "description": "They have strategic piercings that enhance certain activities. [+8% $, +1 Oral, +1 Sex]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -69,14 +69,14 @@
       "Flat Chest"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.1,
       "skill_modifiers": {
         "Sex": 2,
         "Striptease": 2,
         "Charm": 1
       }
     },
-    "description": "They have an impressive bust that attracts significant attention. [+20% $, +2 Sex, +2 Striptease, +1 Charm]",
+    "description": "They have an impressive bust that attracts significant attention. [+10% $, +2 Sex, +2 Striptease, +1 Charm]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -94,13 +94,13 @@
       "Flat Chest"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.05,
+      "earnings_multiplier": 1.02,
       "skill_modifiers": {
         "Agility": 1,
         "Charm": 1
       }
     },
-    "description": "They have a petite bust that some clients find particularly appealing. [+5% $, +1 Agility, +1 Charm]",
+    "description": "They have a petite bust that some clients find particularly appealing. [+2% $, +1 Agility, +1 Charm]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -118,13 +118,13 @@
       "Small Breasts"
     ],
     "modifiers": {
-      "earnings_multiplier": 0.95,
+      "earnings_multiplier": 0.97,
       "skill_modifiers": {
         "Agility": 2,
         "Combat": 1
       }
     },
-    "description": "They have a flat chest that appeals to clients with specific preferences. [-5% $, +2 Agility, +1 Combat]",
+    "description": "They have a flat chest that appeals to clients with specific preferences. [-3% $, +2 Agility, +1 Combat]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -141,14 +141,14 @@
       "Soft Ass"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "skill_modifiers": {
         "Anal": 2,
         "Striptease": 1,
         "Agility": 1
       }
     },
-    "description": "They have a well-toned posterior that enhances their physical appeal. [+15% $, +2 Anal, +1 Striptease, +1 Agility]",
+    "description": "They have a well-toned posterior that enhances their physical appeal. [+8% $, +2 Anal, +1 Striptease, +1 Agility]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -165,13 +165,13 @@
       "Firm Ass"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.1,
+      "earnings_multiplier": 1.05,
       "skill_modifiers": {
         "Anal": 1,
         "Charm": 1
       }
     },
-    "description": "They have a soft, inviting posterior that clients love to touch. [+10% $, +1 Anal, +1 Charm]",
+    "description": "They have a soft, inviting posterior that clients love to touch. [+5% $, +1 Anal, +1 Charm]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -188,14 +188,14 @@
       "Small Penis"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.3,
+      "earnings_multiplier": 1.15,
       "skill_modifiers": {
-        "Sex": 3,
+        "Sex": 4,
         "Anal": 2,
         "Homo": 2
       }
     },
-    "description": "They are exceptionally well-endowed, commanding premium rates. [+30% $, +3 Sex, +2 Anal, +2 Homo]",
+    "description": "They are exceptionally well-endowed, commanding premium rates. [+15% $, +4 Sex, +2 Anal, +2 Homo]",
     "nsfw": true,
     "gender_restriction": "male",
     "attribute_caps": {},
@@ -212,13 +212,13 @@
       "Large Penis"
     ],
     "modifiers": {
-      "earnings_multiplier": 0.9,
+      "earnings_multiplier": 0.95,
       "skill_modifiers": {
         "Oral": 1,
         "Charm": 1
       }
     },
-    "description": "They compensate for their modest size with skill and charm. [-10% $, +1 Oral, +1 Charm]",
+    "description": "They compensate for their modest size with skill and charm. [-5% $, +1 Oral, +1 Charm]",
     "nsfw": true,
     "gender_restriction": "male",
     "attribute_caps": {},
@@ -235,13 +235,13 @@
       "Loose"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.1,
       "skill_modifiers": {
         "Sex": 2,
         "Anal": 2
       }
     },
-    "description": "They have exceptional muscle control that clients find irresistible. [+20% $, +2 Sex, +2 Anal]",
+    "description": "They have exceptional muscle control that clients find irresistible. [+10% $, +2 Sex, +2 Anal]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -258,13 +258,13 @@
       "Tight"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.1,
+      "earnings_multiplier": 1.05,
       "skill_modifiers": {
         "Group": 2,
         "Extreme": 1
       }
     },
-    "description": "They can accommodate larger groups and extreme activities with ease. [+10% $, +2 Group, +1 Extreme]",
+    "description": "They can accommodate larger groups and extreme activities with ease. [+5% $, +2 Group, +1 Extreme]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -281,14 +281,14 @@
       "Numb"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.1,
+      "earnings_multiplier": 1.05,
       "skill_modifiers": {
         "Sex": 1,
         "Oral": 1,
         "BDSM": 1
       }
     },
-    "description": "They are highly responsive to touch, enhancing the experience for clients. [+10% $, +1 Sex, +1 Oral, +1 BDSM]",
+    "description": "They are highly responsive to touch, enhancing the experience for clients. [+5% $, +1 Sex, +1 Oral, +1 BDSM]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -305,13 +305,13 @@
       "Sensitive"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.05,
+      "earnings_multiplier": 1.02,
       "skill_modifiers": {
         "BDSM": 2,
         "Extreme": 1
       }
     },
-    "description": "They have reduced sensitivity, allowing them to endure more intense activities. [+5% $, +2 BDSM, +1 Extreme]",
+    "description": "They have reduced sensitivity, allowing them to endure more intense activities. [+2% $, +2 BDSM, +1 Extreme]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -440,9 +440,9 @@
       "skill_modifiers": {
         "Sex": 2
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "They have wide hips that enhance their appeal and performance. [+15% $, +2 Sex]",
+    "description": "They have wide hips that enhance their appeal and performance. [+8% $, +2 Sex]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -456,13 +456,13 @@
   {
     "name": "Deluxe Derriere",
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.1,
       "skill_modifiers": {
         "Anal": 3,
         "Striptease": 1
       }
     },
-    "description": "They have an exceptional posterior that commands premium rates. [+20% $, +3 Anal, +1 Striptease]",
+    "description": "They have an exceptional posterior that commands premium rates. [+10% $, +3 Anal, +1 Striptease]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -480,9 +480,9 @@
         "Charm": 1,
         "Striptease": 2
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "Their perky nipples enhance their appeal and striptease performances. [+10% $, +1 Charm, +2 Striptease]",
+    "description": "Their perky nipples enhance their appeal and striptease performances. [+5% $, +1 Charm, +2 Striptease]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -500,9 +500,9 @@
         "Oral": 2,
         "Charm": 1
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "They are skilled at kissing, enhancing their oral and charm abilities. [+10% $, +2 Oral, +1 Charm]",
+    "description": "They are skilled at kissing, enhancing their oral and charm abilities. [+5% $, +2 Oral, +1 Charm]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -516,12 +516,12 @@
   {
     "name": "Sexy Air",
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.1,
       "skill_modifiers": {
         "Charm": 2
       }
     },
-    "description": "They exude a sexy aura that captivates clients and increases earnings. [+20% $, +2 Charm]",
+    "description": "They exude a sexy aura that captivates clients and increases earnings. [+10% $, +2 Charm]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -535,14 +535,14 @@
   {
     "name": "Yandere",
     "modifiers": {
-      "earnings_multiplier": 1.3,
+      "earnings_multiplier": 1.15,
       "skill_modifiers": {
         "Charm": 2,
-        "BDSM": 3
+        "BDSM": 4
       },
       "relationship": -10
     },
-    "description": "They are obsessively in love, which can be both appealing and dangerous. [+30% $, +2 Charm, +3 BDSM, -10 Relationship]. Female only.",
+    "description": "They are obsessively in love, which can be both appealing and dangerous. [+15% $, +2 Charm, +4 BDSM, -10 Relationship]. Female only.",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -560,9 +560,9 @@
         "BDSM": 5,
         "Extreme": 3
       },
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.1
     },
-    "description": "They derive pleasure from pain, excelling in BDSM and extreme activities. [+20% $, +5 BDSM, +3 Extreme]",
+    "description": "They derive pleasure from pain, excelling in BDSM and extreme activities. [+10% $, +5 BDSM, +3 Extreme]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -576,12 +576,12 @@
   {
     "name": "Pierced Nipples",
     "modifiers": {
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "skill_modifiers": {
         "Charm": 1
       }
     },
-    "description": "They have pierced nipples that enhance their appeal and earnings. [+15% $, +1 Charm]",
+    "description": "They have pierced nipples that enhance their appeal and earnings. [+8% $, +1 Charm]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -595,12 +595,12 @@
   {
     "name": "Pierced Clit",
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.1,
       "skill_modifiers": {
         "Sex": 2
       }
     },
-    "description": "They have a pierced clitoris that enhances sexual performance and earnings. [+20% $, +2 Sex]",
+    "description": "They have a pierced clitoris that enhances sexual performance and earnings. [+10% $, +2 Sex]",
     "nsfw": true,
     "gender_restriction": "female",
     "attribute_caps": {},
@@ -617,9 +617,9 @@
       "skill_modifiers": {
         "Oral": 4
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "They have a pierced tongue that significantly enhances oral skills. [+15% $, +4 Oral]",
+    "description": "They have a pierced tongue that significantly enhances oral skills. [+8% $, +4 Oral]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -636,9 +636,9 @@
       "skill_modifiers": {
         "Oral": 5
       },
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.08
     },
-    "description": "They lack a gag reflex, allowing them to excel in deep oral activities. [+20% $, +5 Oral]",
+    "description": "They lack a gag reflex, allowing them to excel in deep oral activities. [+8% $, +5 Oral]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -652,9 +652,9 @@
   {
     "name": "Fertile",
     "modifiers": {
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "They are highly fertile, attracting clients seeking pregnancy. [+15% $]",
+    "description": "They are highly fertile, attracting clients seeking pregnancy. [+8% $]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -672,9 +672,9 @@
         "Striptease": 3,
         "Charm": 2
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "They enjoy being watched, excelling in striptease and charm activities. [+15% $, +3 Striptease, +2 Charm]",
+    "description": "They enjoy being watched, excelling in striptease and charm activities. [+8% $, +3 Striptease, +2 Charm]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},
@@ -707,15 +707,15 @@
   {
     "name": "Porn Star",
     "modifiers": {
-      "earnings_multiplier": 1.4,
+      "earnings_multiplier": 1.2,
       "skill_modifiers": {
-        "Sex": 4,
+        "Sex": 6,
         "Anal": 3,
         "Oral": 3,
         "Group": 3
       }
     },
-    "description": "They are a professional porn star with exceptional sexual skills across all activities. [+40% $, +4 Sex, +3 Anal, +3 Oral, +3 Group]",
+    "description": "They are a professional porn star with exceptional sexual skills across all activities. [+20% $, +6 Sex, +3 Anal, +3 Oral, +3 Group]",
     "nsfw": true,
     "attribute_caps": {},
     "daily_effects": {},

@@ -22,8 +22,18 @@ init python:
             renpy.log(message)
 
     def get_difficulty_comfort_mult():
-        """Comfort unit cost by design: fixed 20 gold per comfort point."""
-        return 20
+        """Comfort unit cost scaled by difficulty."""
+        diff = getattr(persistent, "difficulty", "normal")
+        if diff == "nightmare":
+            return 30
+        if diff == "hard":
+            return 25
+        if diff == "normal":
+            return 20
+        if diff == "easy":
+            return 18
+        # story
+        return 15
 
     def get_difficulty_building_skill_mult():
         """Return skill-bonus cost multiplier for building upkeep based on difficulty."""
@@ -78,25 +88,29 @@ init python:
 
     def get_building_daily_cost_scaling_tooltip():
         """Tooltip copy for UI: how building level affects fixed upkeep."""
+        _cm = get_difficulty_comfort_mult()
         return (
             "Fixed daily upkeep by building level (Normal): $100, $300, $500, $700, $900 for levels 1-5.\n"
             "Hard doubles that ladder; Nightmare triples it (same relative tiers as before).\n"
-            "Assigned workers: comfort x 20 each, with no extra multiplier from building level."
+            "Assigned workers: comfort x " + str(_cm) + " each, with no extra multiplier from building level."
         )
 
     def get_building_level_short_tooltip():
+        _cm = get_difficulty_comfort_mult()
         return (
             "Higher building levels raise fixed daily upkeep (see Costs tooltip) and reputation cap. "
-            "Worker charges are comfort x 20 only."
+            "Worker charges are comfort x " + str(_cm) + " only."
         )
 
     def get_building_comfort_line_tooltip():
         """Worker UI: base comfort line and building-level context."""
+        _cm = get_difficulty_comfort_mult()
         return (
-            "Base worker comfort cost is comfort x 20. "
+            "Base worker comfort cost is comfort x " + str(_cm) + ". "
             "Building totals sum that for assigned workers; level does not multiply worker comfort. "
             "Hover Costs on Manager for the full breakdown. "
-            "Comfort level 1 is baseline (no extra regen). Each comfort level above 1 adds +1 daily energy regeneration at day start (before work)."
+            "Comfort level 1 is baseline (no extra regen). Each comfort level above 1 adds +1 daily energy regeneration at day start (before work). "
+            "Comfort above desired adds daily Joy (which reduces Rebelliousness above 80)."
         )
 
     def compute_worker_portion_daily_costs(workers, base_level):
@@ -123,7 +137,7 @@ init python:
 
     def compute_single_worker_daily_charge(worker):
         """
-        Base worker daily comfort charge shown in worker details (comfort x 20).
+        Base worker daily comfort charge shown in worker details (comfort x rate, scaled by difficulty).
         Same per-worker rate is summed for building totals; building level does not multiply it.
         """
         if not worker or not hasattr(worker, "get"):
@@ -197,7 +211,13 @@ init python:
             return True
 
         for stat_name, requirement in requirements.items():
-            worker_value = worker.get(stat_name, 0)
+            # Prefer nested worker skills while preserving legacy top-level stat checks.
+            worker_stats = worker.get("skills", {}) if hasattr(worker, "get") else {}
+            if hasattr(worker_stats, "get"):
+                legacy_value = worker.get(stat_name, 0) if hasattr(worker, "get") else 0
+                worker_value = worker_stats.get(stat_name, legacy_value)
+            else:
+                worker_value = worker.get(stat_name, 0) if hasattr(worker, "get") else 0
             try:
                 worker_value = int(worker_value)
             except Exception:
@@ -564,10 +584,6 @@ init python:
                         bonus = int(eval(bonus_formula, {"__builtins__": None}, {"reputation": effective_rep}))
                     except Exception:
                         bonus = 0
-                    # Balance tweaks: reduce base by 1 if >=2, and soften reputation bonus by 50%
-                    if base_events >= 2:
-                        base_events = max(1, base_events - 1)
-                    bonus = int(bonus * 0.5)
                     events_per_worker = max(1, base_events + bonus)
                 else:
                     events_per_worker = int(daily_story_count)
@@ -865,12 +881,16 @@ init python:
                         # Trait + Business Acumen money mult (calculate_earnings skips negatives; staffing mult always applies)
                         earnings = calculate_earnings(worker, earnings)
                         earnings = int(round(earnings * building_money_mult))
-                        
+
+                        # Difficulty earnings scaling (applies to positive earnings only)
+                        if earnings > 0:
+                            earnings = int(round(earnings * get_difficulty_earnings_mult()))
+
                         # Story/Easy: floor on failure losses (daily stories use failure: "-roll" after rebalance)
                         if outcome == "Failure" and earnings < 0:
                             diff_fail = getattr(persistent, "difficulty", "normal")
                             if diff_fail == "story":
-                                earnings = max(earnings, -15)
+                                earnings = 0
                             elif diff_fail == "easy":
                                 earnings = max(earnings, -25)
                         
@@ -1482,7 +1502,7 @@ init python:
                 base_cost = get_building_base_maintenance_cost(building_name, building)
                 building["costs"] += base_cost
 
-                # Add worker comfort costs (comfort x 20 each; no building-level multiplier).
+                # Add worker comfort costs (comfort x rate each; no building-level multiplier).
                 if "assigned_servants" in building:
                     worker_costs, comfort_costs, _upkeep_costs = compute_worker_portion_daily_costs(
                         building.get("assigned_servants") or [],
@@ -1528,6 +1548,16 @@ init python:
                 set_attribute_with_caps(worker, "joy", 50)
             if relationship > 80 and joy < 20:
                 set_attribute_with_caps(worker, "joy", 80)
+
+            # Joy affects rebelliousness: high joy calms, low joy agitates
+            if joy > 80:
+                old_rebel = worker.get("rebelliousness", 50)
+                apply_attribute_change(worker, "rebelliousness", -3)
+                renpy.log(f"Joy calming: {worker['name']} rebelliousness {old_rebel} -> {worker['rebelliousness']} (joy {joy} > 80, -3)")
+            elif joy < 20:
+                old_rebel = worker.get("rebelliousness", 50)
+                apply_attribute_change(worker, "rebelliousness", 2)
+                renpy.log(f"Joy agitation: {worker['name']} rebelliousness {old_rebel} -> {worker['rebelliousness']} (joy {joy} < 20, +2)")
 
             minimum_relationship = 10 + comfort
             if relationship < minimum_relationship:
@@ -1659,9 +1689,9 @@ init python:
                 renpy.log(f"Error checking objective completion after daily money update: {e}")
         
         # Check for daily revenue achievement (Objective 15; flag key is legacy "10k")
-        if total_income >= 5000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
+        if total_income >= 3000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
             store.event_flags["daily_revenue_10k_achieved"] = True
-            renpy.log("ACHIEVEMENT: Daily revenue objective (5,000 in one day) achieved!")
+            renpy.log("ACHIEVEMENT: Daily revenue objective (3,000 in one day) achieved!")
 
         # ===== GOVERNOR'S TENSION SYSTEM =====
         # Update tension level based on current objective
@@ -1726,40 +1756,11 @@ init python:
 
         # Immediate path: if there are guaranteed/date-specific events, trigger one directly.
         # IMPORTANT: apply worker availability/name filters here too, otherwise this path can
-        # bypass worker_name constraints for 100% events.
+        # bypass worker_name / specific_worker_images constraints for 100% events.
         if guaranteed_pool:
             guaranteed_valid_events = []
             for event in guaranteed_pool:
-                _raw_wn = event.get("worker_name")
-                worker_name_list = []
-                if _raw_wn:
-                    if hasattr(_raw_wn, "strip"):
-                        _name = str(_raw_wn).strip()
-                        if _name:
-                            worker_name_list.append(_name)
-                    elif hasattr(_raw_wn, "__iter__"):
-                        for _entry in list(_raw_wn):
-                            if not _entry:
-                                continue
-                            if hasattr(_entry, "strip"):
-                                _name = str(_entry).strip()
-                                if _name:
-                                    worker_name_list.append(_name)
-                            elif hasattr(_entry, "__iter__"):
-                                for _nested in list(_entry):
-                                    if not _nested:
-                                        continue
-                                    _name = str(_nested).strip()
-                                    if _name:
-                                        worker_name_list.append(_name)
-                            else:
-                                _name = str(_entry).strip()
-                                if _name:
-                                    worker_name_list.append(_name)
-                    else:
-                        _name = str(_raw_wn).strip()
-                        if _name:
-                            worker_name_list.append(_name)
+                has_identity_filter = store._event_has_identity_filters(event)
 
                 random_worker_flag = event.get("random_worker", False)
                 worker_selection = event.get("worker_selection", "none")
@@ -1783,20 +1784,20 @@ init python:
                 worker = None
                 is_available = False
 
-                if worker_name_list and not random_worker_flag:
-                    target_worker = next((w for w in eligible_workers if w.get("name") in worker_name_list), None)
+                if has_identity_filter and not random_worker_flag:
+                    target_worker = next((w for w in eligible_workers if store._worker_matches_event_identity(w, event)), None)
                     if target_worker:
                         worker, is_available = target_worker, True
                 elif random_worker_flag:
                     if worker_selection == "none" or worker_selection == "random":
                         candidate_workers = eligible_workers
-                        if worker_name_list:
-                            candidate_workers = [w for w in eligible_workers if w.get("name") in worker_name_list]
+                        if has_identity_filter:
+                            candidate_workers = [w for w in eligible_workers if store._worker_matches_event_identity(w, event)]
                         if candidate_workers:
                             worker, is_available = random.choice(candidate_workers), True
                     elif worker_selection == "choose":
-                        if worker_name_list:
-                            is_available = any(w.get("name") in worker_name_list for w in eligible_workers)
+                        if has_identity_filter:
+                            is_available = any(store._worker_matches_event_identity(w, event) for w in eligible_workers)
                         else:
                             is_available = bool(eligible_workers)
                 elif worker_selection == "random":
@@ -1918,36 +1919,7 @@ init python:
                     event_id = event.get("id", "unknown")
                     renpy.log(f"Checking worker availability for event {event_id}...")
 
-                    _raw_wn = event.get("worker_name")
-                    worker_name_list = []
-                    if _raw_wn:
-                        if hasattr(_raw_wn, "strip"):
-                            _name = str(_raw_wn).strip()
-                            if _name:
-                                worker_name_list.append(_name)
-                        elif hasattr(_raw_wn, "__iter__"):
-                            for _entry in list(_raw_wn):
-                                if not _entry:
-                                    continue
-                                if hasattr(_entry, "strip"):
-                                    _name = str(_entry).strip()
-                                    if _name:
-                                        worker_name_list.append(_name)
-                                elif hasattr(_entry, "__iter__"):
-                                    for _nested in list(_entry):
-                                        if not _nested:
-                                            continue
-                                        _name = str(_nested).strip()
-                                        if _name:
-                                            worker_name_list.append(_name)
-                                else:
-                                    _name = str(_entry).strip()
-                                    if _name:
-                                        worker_name_list.append(_name)
-                        else:
-                            _name = str(_raw_wn).strip()
-                            if _name:
-                                worker_name_list.append(_name)
+                    has_identity_filter = store._event_has_identity_filters(event)
                     random_worker_flag = event.get("random_worker", False) # Renamed to avoid conflict
                     worker_selection = event.get("worker_selection", "none")
                     event_building_types = event.get("building_type", [])
@@ -1963,7 +1935,7 @@ init python:
                         ]
                     else:
                         eligible_workers = store.workers
-                    
+
                     # Gender requirement
                     worker_gender_requirement = event.get("worker_gender_requirement", None)
                     if worker_gender_requirement:
@@ -1971,21 +1943,21 @@ init python:
 
                     worker = None
                     is_available = False
-                    
-                    if worker_name_list and not random_worker_flag:
-                        target_worker = next((w for w in eligible_workers if w["name"] in worker_name_list), None)
+
+                    if has_identity_filter and not random_worker_flag:
+                        target_worker = next((w for w in eligible_workers if store._worker_matches_event_identity(w, event)), None)
                         if target_worker:
                             worker, is_available = target_worker, True
                     elif random_worker_flag:
                         if worker_selection == "none" or worker_selection == "random":
                             candidate_workers = eligible_workers
-                            if worker_name_list:
-                                candidate_workers = [w for w in eligible_workers if w.get("name") in worker_name_list]
+                            if has_identity_filter:
+                                candidate_workers = [w for w in eligible_workers if store._worker_matches_event_identity(w, event)]
                             if candidate_workers:
                                 worker, is_available = random.choice(candidate_workers), True
                         elif worker_selection == "choose":
-                            if worker_name_list:
-                                is_available = any(w.get("name") in worker_name_list for w in eligible_workers)
+                            if has_identity_filter:
+                                is_available = any(store._worker_matches_event_identity(w, event) for w in eligible_workers)
                             else:
                                 is_available = bool(eligible_workers)
                     elif worker_selection == "random":

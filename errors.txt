@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/scripts/core/screens.rpy", line 6564: 'size' is not a keyword argument or valid child of the label statement.
-    label "Purchase" xalign 0.0 size font_size(26) color "#5a3a1a"
-                                    ^
+File "game/scripts/core/screens.rpy", line 11041: Line is indented, but the preceding add statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
+    text file_text xpos 11 ypos -20 size font_size(16) color "#000000"
+    ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Thu Mar 26 14:14:45 2026
+Mon Apr 13 20:28:41 2026

@@ -2,9 +2,9 @@
   {
     "name": "Beautiful",
     "modifiers": {
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.10
     },
-    "description": "Clients love beauty. Increases earnings when clients are seeking attractive servants. [+20% $]",
+    "description": "Clients love beauty. Increases earnings when clients are seeking attractive servants. [+10% $]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -20,9 +20,9 @@
       "skill_modifiers": {
         "Charm": 2
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "Charm enhances performance and attracts high-paying clients. [+15% $, +2 Charm]",
+    "description": "Charm enhances performance and attracts high-paying clients. [+8% $, +2 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -35,9 +35,9 @@
   {
     "name": "Nice Tan",
     "modifiers": {
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "A nice tan makes a servant more appealing, increasing client tips. [+10% $]",
+    "description": "A nice tan makes a servant more appealing, increasing client tips. [+5% $]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -108,9 +108,9 @@
       "skill_modifiers": {
         "Clever": 3
       },
-      "earnings_multiplier": 1.05
+      "earnings_multiplier": 1.02
     },
-    "description": "A clever servant can make smart decisions, slightly boosting earnings. [+5% $, +3 Clever]",
+    "description": "A clever servant can make smart decisions, slightly boosting earnings. [+2% $, +3 Clever]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -147,9 +147,9 @@
       "skill_modifiers": {
         "Craft": 4
       },
-      "earnings_multiplier": 1.2
+      "earnings_multiplier": 1.10
     },
-    "description": "A mystical servant possesses an otherworldly allure that clients find irresistible. [+20% $, +4 Craft]",
+    "description": "A mystical servant possesses an otherworldly allure that clients find irresistible. [+10% $, +4 Craft]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -187,9 +187,9 @@
         "Charm": 2,
         "Clever": 1
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "Gracefulness enhances performance on stage and attracts premium clients. [+10% $, +2 Charm, +1 Clever]",
+    "description": "Gracefulness enhances performance on stage and attracts premium clients. [+5% $, +2 Charm, +1 Clever]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -226,9 +226,9 @@
       "skill_modifiers": {
         "Charm": 2
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "Charisma attracts clients and increases tips during high-demand events. [+15% $, +2 Charm]",
+    "description": "Charisma attracts clients and increases tips during high-demand events. [+8% $, +2 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -241,11 +241,11 @@
   {
     "name": "Radiant",
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.10,
       "health_regeneration": 1,
       "joy": 10
     },
-    "description": "A radiant appearance not only boosts client satisfaction but also improves health regeneration. [+20% $, +1 Health Regen, +10 Joy]",
+    "description": "A radiant appearance not only boosts client satisfaction but also improves health regeneration. [+10% $, +1 Health Regen, +10 Joy]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -261,9 +261,9 @@
       "skill_modifiers": {
         "Charm": 3
       },
-      "earnings_multiplier": 1.25
+      "earnings_multiplier": 1.12
     },
-    "description": "Being a smooth talker means better negotiation with clients and increased earnings. [+25% $, +3 Charm]",
+    "description": "Being a smooth talker means better negotiation with clients and increased earnings. [+12% $, +3 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -276,13 +276,13 @@
   {
     "name": "Elegant",
     "modifiers": {
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "skill_modifiers": {
         "Striptease": 1,
         "Charm": 1
       }
     },
-    "description": "Elegance not only enhances the servant's presence but also entices premium clientele. [+15% $, +1 Striptease, +1 Charm]",
+    "description": "Elegance not only enhances the servant's presence but also entices premium clientele. [+8% $, +1 Striptease, +1 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -347,10 +347,13 @@
   {
     "name": "Magnetic",
     "modifiers": {
-      "earnings_multiplier": 1.3,
-      "romance": 10
+      "earnings_multiplier": 1.15,
+      "romance": 10,
+      "skill_modifiers": {
+        "Charm": 1
+      }
     },
-    "description": "Magnetic traits draw clients in and substantially increase the earnings per client. [+30% $, +10 Romance]",
+    "description": "Magnetic traits draw clients in and substantially increase the earnings per client. [+15% $, +10 Romance, +1 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -380,9 +383,9 @@
   {
     "name": "Elegant Eyes",
     "modifiers": {
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "Unique traits like elegant eyes are highly sought after by discerning clients. [+10% $]",
+    "description": "Unique traits like elegant eyes are highly sought after by discerning clients. [+5% $]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -429,7 +432,7 @@
     "attribute_minimums": {},
     "duration": 0,
     "on_expire": {},
-    "only_assigned": false
+    "only_assigned": true
   },
   {
     "name": "Shy",
@@ -777,9 +780,9 @@
   {
     "name": "Exotic",
     "modifiers": {
-      "earnings_multiplier": 1.25
+      "earnings_multiplier": 1.12
     },
-    "description": "They have an unusual and captivating appearance that draws attention. [+25% $]",
+    "description": "They have an unusual and captivating appearance that draws attention. [+12% $]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -792,13 +795,13 @@
   {
     "name": "Tattooed",
     "modifiers": {
-      "earnings_multiplier": 1.1,
+      "earnings_multiplier": 1.05,
       "skill_modifiers": {
         "BDSM": 1,
         "Extreme": 1
       }
     },
-    "description": "They have artistic tattoos that add to their rebellious appeal. [+10% $, +1 BDSM, +1 Extreme]",
+    "description": "They have artistic tattoos that add to their rebellious appeal. [+5% $, +1 BDSM, +1 Extreme]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -814,12 +817,12 @@
       "Scarred"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.05,
+      "earnings_multiplier": 1.02,
       "skill_modifiers": {
         "Combat": 1
       }
     },
-    "description": "They have attractive battle scars that tell stories of adventure. [+5% $, +1 Combat]",
+    "description": "They have attractive battle scars that tell stories of adventure. [+2% $, +1 Combat]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -832,12 +835,12 @@
   {
     "name": "Beauty Mark",
     "modifiers": {
-      "earnings_multiplier": 1.1,
+      "earnings_multiplier": 1.05,
       "skill_modifiers": {
         "Charm": 1
       }
     },
-    "description": "They have a distinctive mark that enhances their natural beauty. [+10% $, +1 Charm]",
+    "description": "They have a distinctive mark that enhances their natural beauty. [+5% $, +1 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -850,12 +853,12 @@
   {
     "name": "Cute",
     "modifiers": {
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "skill_modifiers": {
         "Charm": 2
       }
     },
-    "description": "They have an adorable appearance that melts hearts. [+15% $, +2 Charm]",
+    "description": "They have an adorable appearance that melts hearts. [+8% $, +2 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1023,14 +1026,14 @@
       "Stiff"
     ],
     "modifiers": {
-      "earnings_multiplier": 1.15,
+      "earnings_multiplier": 1.08,
       "skill_modifiers": {
         "Agility": 2,
         "Striptease": 2,
         "Sex": 1
       }
     },
-    "description": "They have exceptional flexibility that opens up new possibilities. [+15% $, +2 Agility, +2 Striptease, +1 Sex]",
+    "description": "They have exceptional flexibility that opens up new possibilities. [+8% $, +2 Agility, +2 Striptease, +1 Sex]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1046,14 +1049,14 @@
       "Flexible"
     ],
     "modifiers": {
-      "earnings_multiplier": 0.95,
+      "earnings_multiplier": 0.97,
       "skill_modifiers": {
         "Agility": -2,
         "Striptease": -1,
         "Combat": 1
       }
     },
-    "description": "They lack flexibility but make up for it with other strengths. [-5% $, -2 Agility, -1 Striptease, +1 Combat]",
+    "description": "They lack flexibility but make up for it with other strengths. [-3% $, -2 Agility, -1 Striptease, +1 Combat]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1084,9 +1087,9 @@
       "skill_modifiers": {
         "Craft": 3
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance. [+15% $, +3 Craft]",
+    "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance. [+8% $, +3 Craft]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1099,13 +1102,13 @@
   {
     "name": "Great Figure",
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.10,
       "skill_modifiers": {
         "Charm": 2,
         "Striptease": 1
       }
     },
-    "description": "They have an exceptional figure that captivates clients and enhances their appeal. [+20% $, +2 Charm, +1 Striptease]",
+    "description": "They have an exceptional figure that captivates clients and enhances their appeal. [+10% $, +2 Charm, +1 Striptease]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1122,9 +1125,9 @@
         "Agility": 2,
         "Striptease": 2
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "Long legs enhance their grace and agility, making them excellent performers. [+10% $, +2 Agility, +2 Striptease]",
+    "description": "Long legs enhance their grace and agility, making them excellent performers. [+5% $, +2 Agility, +2 Striptease]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1137,12 +1140,12 @@
   {
     "name": "Mature Body",
     "modifiers": {
-      "earnings_multiplier": 1.25,
+      "earnings_multiplier": 1.12,
       "skill_modifiers": {
         "Charm": 2
       }
     },
-    "description": "A mature body exudes confidence and experience, attracting discerning clients. [+25% $, +2 Charm]",
+    "description": "A mature body exudes confidence and experience, attracting discerning clients. [+12% $, +2 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1159,9 +1162,9 @@
         "Charm": 1,
         "Combat": 2
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "Their height gives them a commanding presence and combat advantage. [+10% $, +1 Charm, +2 Combat]",
+    "description": "Their height gives them a commanding presence and combat advantage. [+5% $, +1 Charm, +2 Combat]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1235,13 +1238,13 @@
   {
     "name": "Idol",
     "modifiers": {
-      "earnings_multiplier": 1.4,
+      "earnings_multiplier": 1.20,
       "skill_modifiers": {
-        "Charm": 4,
+        "Charm": 6,
         "Striptease": 3
       }
     },
-    "description": "They are a pop idol with exceptional charm and performance skills. [+40% $, +4 Charm, +3 Striptease]",
+    "description": "They are a pop idol with exceptional charm and performance skills. [+20% $, +6 Charm, +3 Striptease]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1254,13 +1257,13 @@
   {
     "name": "Princess",
     "modifiers": {
-      "earnings_multiplier": 1.3,
+      "earnings_multiplier": 1.15,
       "skill_modifiers": {
-        "Charm": 3
+        "Charm": 4
       },
       "comfort_desired": 2
     },
-    "description": "They have a regal attitude that attracts premium clients but demands better accommodations. [+30% $, +3 Charm, +2 Comfort Desired]. Female only.",
+    "description": "They have a regal attitude that attracts premium clients but demands better accommodations. [+15% $, +4 Charm, +2 Comfort Desired]. Female only.",
     "gender_restriction": "female",
     "attribute_caps": {},
     "daily_effects": {},
@@ -1273,7 +1276,7 @@
   {
     "name": "Tsundere",
     "modifiers": {
-      "earnings_multiplier": 1.25,
+      "earnings_multiplier": 1.12,
       "skill_modifiers": {
         "Charm": 2
       }
@@ -1284,7 +1287,7 @@
         "max": 2
       }
     },
-    "description": "They act cold but are actually warm inside, creating an appealing contrast. [+25% $, +2 Charm, daily -1~+2 Rebelliousness]",
+    "description": "They act cold but are actually warm inside, creating an appealing contrast. [+12% $, +2 Charm, daily -1~+2 Rebelliousness]",
     "gender_restriction": "female",
     "attribute_caps": {},
     "requires_traits": [],
@@ -1323,12 +1326,12 @@
   {
     "name": "Audacity",
     "modifiers": {
-      "earnings_multiplier": 1.2,
+      "earnings_multiplier": 1.10,
       "skill_modifiers": {
         "Charm": 2
       }
     },
-    "description": "They have bold confidence that attracts clients and increases earnings. [+20% $, +2 Charm]",
+    "description": "They have bold confidence that attracts clients and increases earnings. [+10% $, +2 Charm]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1384,9 +1387,9 @@
         "Craft": 5,
         "Combat": 5
       },
-      "earnings_multiplier": 1.1
+      "earnings_multiplier": 1.05
     },
-    "description": "Requires Magical. They possess strong magical abilities, significantly enhancing craft and combat skills. [+20% $, +5 Craft, +3 Combat]",
+    "description": "Requires Magical. They possess strong magical abilities, significantly enhancing craft and combat skills. [+5% $, +5 Craft, +5 Combat]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1405,12 +1408,12 @@
     ],
     "modifiers": {
       "skill_modifiers": {
-        "Craft": 6,
+        "Craft": 7,
         "Combat": 6
       },
-      "earnings_multiplier": 1.3
+      "earnings_multiplier": 1.15
     },
-    "description": "Requires Magical. Cannot have Strong Magic. They wield powerful magic, making them exceptional in craft and combat. [+30% $, +6 Craft, +4 Combat]",
+    "description": "Requires Magical. Cannot have Strong Magic. They wield powerful magic, making them exceptional in craft and combat. [+15% $, +7 Craft, +6 Combat]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1430,9 +1433,9 @@
         "Clever": 3,
         "Combat": 2
       },
-      "earnings_multiplier": 1.15
+      "earnings_multiplier": 1.08
     },
-    "description": "Requires Magical. Psychic abilities that enhance magical, mental, and combat capabilities. [+15% $, +4 Craft, +3 Clever, +2 Combat]",
+    "description": "Requires Magical. Psychic abilities that enhance magical, mental, and combat capabilities. [+8% $, +4 Craft, +3 Clever, +2 Combat]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,
@@ -1462,13 +1465,13 @@
   {
     "name": "Actress",
     "modifiers": {
-      "earnings_multiplier": 1.3,
+      "earnings_multiplier": 1.15,
       "skill_modifiers": {
-        "Charm": 4,
+        "Charm": 5,
         "Striptease": 3
       }
     },
-    "description": "They are a skilled actress with exceptional charm and performance abilities. [+30% $, +4 Charm, +3 Striptease]",
+    "description": "They are a skilled actress with exceptional charm and performance abilities. [+15% $, +5 Charm, +3 Striptease]",
     "attribute_caps": {},
     "daily_effects": {},
     "gender_restriction": null,

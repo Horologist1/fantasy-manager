@@ -35,52 +35,14 @@ init python:
     store._is_equipped = _is_equipped
 
     def rebuild_assigned_servants():
-        """Rebuild assigned_servants for all buildings from workers' assigned_building.
-        If workers don't have assigned_building set, restore from snapshot file."""
-        import json
-        import os
+        """Rebuild assigned_servants from current runtime state (no snapshot restore in UI flow)."""
+        canonical_fn = getattr(store, "_canonical_rebuild_assigned_servants", None)
+        if callable(canonical_fn):
+            canonical_fn()
+            return
         try:
             if not hasattr(store, 'workers') or not hasattr(store, 'available_buildings'):
                 return
-            
-            # Check if we need to restore assigned_building from snapshot.
-            # Only restore when workers have None/missing (corrupt load). Do NOT restore when
-            # workers are "Unassigned" - that is intentional for new recruits and new games.
-            needs_restore = True
-            for w in store.workers[:5]:
-                if hasattr(w, 'get'):
-                    ab = w.get("assigned_building")
-                    if ab == "Unassigned":
-                        needs_restore = False
-                        break
-                    if ab and ab not in (None, ""):
-                        needs_restore = False
-                        break
-            
-            if needs_restore:
-                # Find and load the most recent snapshot
-                save_dir = renpy.config.savedir
-                snapshots = [f for f in os.listdir(save_dir) if f.startswith("snapshot_") and f.endswith(".json")]
-                if snapshots:
-                    snapshots.sort(key=lambda x: os.path.getmtime(os.path.join(save_dir, x)), reverse=True)
-                    snapshot_path = os.path.join(save_dir, snapshots[0])
-                    if os.path.exists(snapshot_path):
-                        with open(snapshot_path, 'r', encoding='utf-8') as f:
-                            snap_data = json.load(f)
-                        # Build name -> assigned_building map from snapshot
-                        name_to_building = {}
-                        for sw in snap_data.get("workers", []):
-                            if hasattr(sw, 'get'):
-                                name = sw.get("name")
-                                ab = sw.get("assigned_building")
-                                if name and ab and ab != "Unassigned":
-                                    name_to_building[name] = ab
-                        # Apply to current workers
-                        for w in store.workers:
-                            if hasattr(w, 'get'):
-                                wname = w.get("name")
-                                if wname in name_to_building:
-                                    w["assigned_building"] = name_to_building[wname]
             
             # Rebuild assigned_servants from workers' assigned_building.
             # Use normalized key matching so "Building 1" and "Building_1" both work.
@@ -194,7 +156,7 @@ init python:
                 "This screen handles expansion, recruiting, shopping, and city progression outside the tavern menu.",
                 "",
                 "{u}Recruit workers{/u}: available once per day. this runs recruitment events where unique or encounter candidates can join if you succeed.",
-                "{u}Buy servants{/u}: direct market purchase with upfront gold cost. servants usually start with lower comfort demand than recruited workers.",
+                "{u}Buy servants{/u}: direct market purchase with upfront gold cost. Bought workers usually start at desired comfort 1, while recruited workers usually start around 4 (or 3 after successful wage negotiation).",
                 "{u}Servant refresh{/u}: buy servants has one free refresh and one paid refresh per day, then no more rerolls until tomorrow.",
                 "{u}Buy buildings{/u}: expands your economy with new properties and more assignment capacity.",
                 "{u}Visit shops{/u}: each shop has different inventory/value tiers, and higher tiers unlock later through progression.",
@@ -675,7 +637,7 @@ screen dialogue_history_nav():
                 xpos 350
                 yalign 0.95
                 yoffset -120
-                size 14
+                size 16
                 color "#D2691E"
                 xanchor 0.5
 
@@ -809,9 +771,18 @@ style quick_button_text is button_text
 
 style quick_button:
     properties gui.button_properties("quick_button")
+    variant "touch"
+    xminimum 240
+    yminimum 92
+    xpadding 18
+    ypadding 12
+    background Frame("gui/button/quick_[prefix_]_background.png", gui.quick_button_borders, tile=gui.button_tile)
 
 style quick_button_text:
     properties gui.text_properties("quick_button")
+    variant "touch"
+    xalign 0.5
+    yalign 0.5
 
 
 ################################################################################
@@ -1717,11 +1688,11 @@ screen more_options():
             $ _ch = "#6b6528" if _diff == "hard" else "#3c1f14"
             $ _cnm = "#6b6528" if _diff == "nightmare" else "#3c1f14"
             $ _diff_descriptions = {
-                "story": "Most relaxed mode. Low costs and very forgiving event success baseline.",
-                "easy": "Forgiving mode. Same success baseline as Story, with capped failure money losses.",
-                "normal": "Standard challenge. Lower event success baseline and no failure-loss cap.",
-                "hard": "High challenge. Lower success baseline, no skill-roll penalty, x2 failure consequences, slightly reduced loot, and higher costs.",
-                "nightmare": "Extreme challenge. Lower success baseline, -10 to skill rolls, x3 failure consequences, heavily reduced loot, and highest costs."
+                "story": "Relaxed. +30 worker bonus, 75% min success, no money loss on failure, earnings x1.3, comfort $15/pt, normal maintenance.",
+                "easy": "Forgiving. +20 worker bonus, 60% min success, failure losses capped at -$25, earnings x1.15, comfort $18/pt, normal maintenance.",
+                "normal": "Standard. +10 worker bonus, 55% min success, no failure cap, earnings x1.0, comfort $20/pt, normal maintenance.",
+                "hard": "Tough. No worker bonus, 45% min success, no failure cap, earnings x0.85, x2 consequences, comfort $25/pt, x2 maintenance, x1.5 skill upkeep, reduced loot.",
+                "nightmare": "Brutal. No worker bonus, 35% min success, -10 skill penalty, earnings x0.7, x3 consequences, comfort $30/pt, x3 maintenance, x2 skill upkeep, heavily reduced loot."
             }
             hbox:
                 spacing 6
@@ -2772,6 +2743,8 @@ screen quick_menu():
 
             xalign 0.5
             yalign 1.0
+            yoffset -8
+            spacing 10
 
             textbutton _("Back") action Rollback()
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
@@ -2781,27 +2754,31 @@ screen quick_menu():
 
 style window:
     variant "small"
-    background "gui/phone/textbox.png"
+    background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+
+style choice_button:
+    variant "small"
+    background Frame("gui/button/choice_[prefix_]_background.png", gui.choice_button_borders, tile=gui.choice_button_tile)
 
 style radio_button:
     variant "small"
-    foreground "gui/phone/button/radio_[prefix_]foreground.png"
+    foreground "gui/button/radio_[prefix_]foreground.png"
 
 style check_button:
     variant "small"
-    foreground "gui/phone/button/check_[prefix_]foreground.png"
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 style nvl_window:
     variant "small"
-    background "gui/phone/nvl.png"
+    background "gui/nvl.png"
 
 style main_menu_frame:
     variant "small"
-    background "gui/phone/overlay/main_menu.png"
+    background "gui/overlay/main_menu.png"
 
 style game_menu_outer_frame:
     variant "small"
-    background "gui/phone/overlay/game_menu.png"
+    background "gui/overlay/game_menu.png"
 
 style game_menu_navigation_frame:
     variant "small"
@@ -2818,38 +2795,38 @@ style pref_vbox:
 style bar:
     variant "small"
     ysize gui.bar_size
-    left_bar Frame("gui/phone/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
-    right_bar Frame("gui/phone/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
+    left_bar Frame("gui/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
+    right_bar Frame("gui/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
 
 style vbar:
     variant "small"
     xsize gui.bar_size
-    top_bar Frame("gui/phone/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
-    bottom_bar Frame("gui/phone/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
+    top_bar Frame("gui/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
+    bottom_bar Frame("gui/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
 
 style scrollbar:
     variant "small"
     ysize gui.scrollbar_size
-    base_bar Frame("gui/phone/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
-    thumb Frame("gui/phone/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+    base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
 
 style vscrollbar:
     variant "small"
     xsize gui.scrollbar_size
-    base_bar Frame("gui/phone/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
-    thumb Frame("gui/phone/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
 
 style slider:
     variant "small"
     ysize gui.slider_size
-    base_bar Frame("gui/phone/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
-    thumb "gui/phone/slider/horizontal_[prefix_]thumb.png"
+    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
+    thumb "gui/slider/horizontal_[prefix_]thumb.png"
 
 style vslider:
     variant "small"
     xsize gui.slider_size
-    base_bar Frame("gui/phone/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
-    thumb "gui/phone/slider/vertical_[prefix_]thumb.png"
+    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
+    thumb "gui/slider/vertical_[prefix_]thumb.png"
 
 style slider_vbox:
     variant "small"
@@ -2906,8 +2883,8 @@ screen screen_intro_popup(screen_id):
         padding (40, 40)
 
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Function(close_intro_popup, screen_id)
             xalign 1.0
             yalign 0.0
@@ -3091,9 +3068,9 @@ screen choose_event_worker_screen(eligible_workers):
                             for worker in eligible_workers:
                                 # Only display skill value if we found a condition skill
                                 if condition_skill:
-                                    $ skill_value = calculate_skill_with_traits(worker, condition_skill)
-                                    $ skill_name = skill_names.get(condition_skill, "Skill")
-                                    textbutton "[worker['name']] - [skill_name]: [skill_value]":
+                                    $ check_info = get_event_worker_skill_check_info(worker, store.chosen_choice_data)
+                                    $ skill_label = check_info.get("label") or (str(skill_names.get(condition_skill, condition_skill)) + ": " + str(check_info.get("roll_skill", 0)))
+                                    textbutton "[worker['name']] - [skill_label]":
                                         xsize 640  # Wider buttons for longer text
                                         text_size font_size(25)  # Increased by 5 points
                                         text_color "#7a4b2a"
@@ -3110,8 +3087,8 @@ screen choose_event_worker_screen(eligible_workers):
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Return(None)
             xalign 1.0
             yalign 0.0
@@ -3136,7 +3113,7 @@ screen choose_worker_for_event(skill_name, threshold):
                     if worker.get("assigned_building") != store.current_affected_building:
                         continue
                         
-                worker_skill = calculate_skill_with_traits(worker, skill_name)
+                worker_skill = get_event_worker_skill_check_info(worker, {"condition": skill_name, "threshold": threshold}).get("roll_skill", 0)
                 
                 # Log for debugging
                 renpy.log(f"Worker: {worker['name']}, Skill: {skill_name}, Value: {worker_skill}, Threshold: {threshold}")
@@ -3198,8 +3175,9 @@ screen choose_worker_for_event(skill_name, threshold):
                         vbox:
                             spacing 10
                             for worker in eligible_workers:
-                                $ worker_skill = calculate_skill_with_traits(worker, skill_name)
-                                textbutton "[worker['name']] ([skill_name]: [worker_skill])":
+                                $ check_info = get_event_worker_skill_check_info(worker, {"condition": skill_name, "threshold": threshold})
+                                $ skill_label = check_info.get("label") or (str(skill_name) + ": " + str(check_info.get("roll_skill", 0)))
+                                textbutton "[worker['name']] ([skill_label])":
                                     xsize 640  # Wider buttons for longer text
                                     text_size font_size(25)  # Increased by 5 points
                                     text_color "#7a4b2a"
@@ -3208,8 +3186,8 @@ screen choose_worker_for_event(skill_name, threshold):
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Return(None)
             xalign 1.0
             yalign 0.0
@@ -3434,12 +3412,12 @@ screen Building_select_global():
                                     text_size font_size(26)  # Larger font like journal
                                     text_color "#7a4b2a"  # Brown text like journal
                                     text_hover_color "#6b6528"  # Unified dark green hover
-                                    action [Function(sync_assigned_servants_for_building, building), Hide("tavern"), Hide("Building_select_global"), Show("Manager", building_name=building)]
+                                    action [Hide("tavern"), Hide("Building_select_global"), Show("Manager", building_name=building)]
         
         # Close button positioned like journal (outside vbox)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action [Hide("Building_select_global"), Show("tavern")]
             xalign 1.0
             yalign 0.0
@@ -3466,9 +3444,6 @@ screen Building_select(worker):
                             Function(remove_worker_from_building, worker),
                             # Add the worker to this building (with dedup protection).
                             Function(add_worker_to_building, worker, building_name),
-                            # Set the worker's assigned_building field.
-                            SetDict(worker, "assigned_building", building_name),
-                            Function(sync_assigned_servants_for_building, building_name),
                             Hide("Building_select"),
                             Show("workers")
                         ]
@@ -3484,7 +3459,7 @@ screen Building_select(worker):
                 action [Hide("Building_select"), Show("workers")]
 
 # Alias so workers screen can call Show("building_selection", worker=worker)
-screen building_selection(worker):
+screen building_selection(worker, return_to_workers=True):
     use Building_select(worker)
 
 screen job_selection(worker):
@@ -3517,8 +3492,6 @@ screen job_selection(worker):
                     $ building_name = worker.get("assigned_building", "Unassigned")
                     if building_name != "Unassigned":
                         $ building = available_buildings.get(building_name, {})
-                        # CRITICAL: Sync assigned_servants before calculating role counts
-                        $ sync_assigned_servants_for_building(building_name)
                     else:
                         $ building = None
                     
@@ -3539,8 +3512,6 @@ screen job_selection(worker):
                                     sensitive True
                                     action [
                                         Function(add_worker_to_building, worker, b_name),
-                                        SetDict(worker, "assigned_building", b_name),
-                                        Function(sync_assigned_servants_for_building, b_name),
                                         Hide("job_selection"),
                                         Show("job_selection", worker=worker)
                                     ]
@@ -3583,7 +3554,7 @@ screen job_selection(worker):
                                 $ total = 0
                                 $ count = 0
                                 for s in skills_used:
-                                    $ total += calculate_skill_with_traits(worker, str(s))
+                                    $ total += calculate_skill_with_traits(worker, str(s), include_libido=False)
                                     $ count += 1
                                 if count > 0:
                                     $ avg_skill = total // count
@@ -3621,7 +3592,6 @@ screen job_selection(worker):
                                                 Function(add_worker_to_building, worker, building_name),
                                                 # CRITICAL: Use function to set job, ensuring we modify the real dict
                                                 Function(set_worker_job, worker, building_name, profession["id"]),
-                                                Function(sync_assigned_servants_for_building, building_name),
                                                 # Clear autorest state when manually changing profession
                                                 Function(clear_worker_autorest_state, worker),
                                                 # Auto-equip best items for new profession if worker has auto_equip on
@@ -3665,8 +3635,8 @@ screen job_selection(worker):
                         text "No building assigned or building type not set" size font_size(28) xalign 0.5
         
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             # Close this modal and return to whatever screen opened it
             # (Manager, workers, etc.) instead of always jumping to workers.
             action Hide("job_selection")
@@ -3698,6 +3668,8 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
     default right_sort_by_name = False  # False = arrival order, True = alphabetical
     default right_shop_sort_by_price = False  # Right panel in shop: price descending toggle
     default quick_panel_mode = "stats"  # Compact worker panel: "stats" or "skills"
+    default last_row_click_key = None
+    default last_row_click_ts = 0.0
 
     python:
         def cycle_trade_multiplier():
@@ -3712,6 +3684,254 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             renpy.restart_interaction()
 
         # _is_equipped is now defined at module level (init python) to avoid pickling issues
+
+        def _set_left_row_selection(item, idx, item_info):
+            renpy.set_screen_variable("selected_manager_item", item)
+            renpy.set_screen_variable("selected_manager_index", idx)
+            renpy.set_screen_variable("selected_worker_item", None)
+            renpy.set_screen_variable("selected_worker_index", None)
+            renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+        def _clear_row_selection():
+            renpy.set_screen_variable("selected_manager_item", None)
+            renpy.set_screen_variable("selected_manager_index", None)
+            renpy.set_screen_variable("selected_worker_item", None)
+            renpy.set_screen_variable("selected_worker_index", None)
+            renpy.set_screen_variable("selected_description", "")
+
+        def _set_right_worker_row_selection(item, idx, item_info):
+            renpy.set_screen_variable("selected_worker_item", item)
+            renpy.set_screen_variable("selected_worker_index", idx)
+            renpy.set_screen_variable("selected_manager_item", None)
+            renpy.set_screen_variable("selected_manager_index", None)
+            renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+        def _set_right_shop_row_selection(item, item_info):
+            renpy.set_screen_variable("selected_worker_item", item)
+            renpy.set_screen_variable("selected_worker_index", None)
+            renpy.set_screen_variable("selected_manager_item", None)
+            renpy.set_screen_variable("selected_manager_index", None)
+            renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+        def handle_inventory_row_click(row_scope, row_idx, item, item_info, is_shop_mode=False, can_transfer_right=True, can_transfer_left=True):
+            def set_left_row_selection():
+                renpy.set_screen_variable("selected_manager_item", item)
+                renpy.set_screen_variable("selected_manager_index", row_idx)
+                renpy.set_screen_variable("selected_worker_item", None)
+                renpy.set_screen_variable("selected_worker_index", None)
+                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+            def clear_row_selection():
+                renpy.set_screen_variable("selected_manager_item", None)
+                renpy.set_screen_variable("selected_manager_index", None)
+                renpy.set_screen_variable("selected_worker_item", None)
+                renpy.set_screen_variable("selected_worker_index", None)
+                renpy.set_screen_variable("selected_description", "")
+
+            def set_right_worker_row_selection():
+                renpy.set_screen_variable("selected_worker_item", item)
+                renpy.set_screen_variable("selected_worker_index", row_idx)
+                renpy.set_screen_variable("selected_manager_item", None)
+                renpy.set_screen_variable("selected_manager_index", None)
+                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+            def set_right_shop_row_selection():
+                renpy.set_screen_variable("selected_worker_item", item)
+                renpy.set_screen_variable("selected_worker_index", None)
+                renpy.set_screen_variable("selected_manager_item", None)
+                renpy.set_screen_variable("selected_manager_index", None)
+                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+            now = __import__("time").time()
+            item_id = item[0] if isinstance(item, (list, tuple)) and len(item) >= 1 else str(item)
+            row_key = "{}:{}:{}".format(row_scope, row_idx, item_id)
+            last_key = renpy.get_screen_variable("last_row_click_key")
+            last_ts = renpy.get_screen_variable("last_row_click_ts")
+            is_double = (last_key == row_key) and ((now - float(last_ts or 0.0)) <= 0.32)
+
+            if row_scope == "left":
+                current_idx = renpy.get_screen_variable("selected_manager_index")
+                if is_double:
+                    set_left_row_selection()
+                    if not renpy.get_screen_variable("is_transferring"):
+                        if is_shop_mode:
+                            _sell_fn = getattr(store, "_mi_sell_item", None)
+                            if _sell_fn:
+                                _sell_fn(item_id)
+                        elif can_transfer_right:
+                            _to_right_fn = getattr(store, "_mi_transfer_to_right", None)
+                            if _to_right_fn:
+                                _to_right_fn()
+                    renpy.set_screen_variable("last_row_click_key", None)
+                    renpy.set_screen_variable("last_row_click_ts", 0.0)
+                    return
+                if current_idx != row_idx:
+                    set_left_row_selection()
+                else:
+                    clear_row_selection()
+
+            elif row_scope == "right_worker":
+                current_idx = renpy.get_screen_variable("selected_worker_index")
+                if is_double:
+                    set_right_worker_row_selection()
+                    if can_transfer_left and (not renpy.get_screen_variable("is_transferring")):
+                        _to_left_fn = getattr(store, "_mi_transfer_to_left", None)
+                        if _to_left_fn:
+                            _to_left_fn()
+                    renpy.set_screen_variable("last_row_click_key", None)
+                    renpy.set_screen_variable("last_row_click_ts", 0.0)
+                    return
+                if current_idx != row_idx:
+                    set_right_worker_row_selection()
+                else:
+                    clear_row_selection()
+
+            elif row_scope == "right_shop":
+                current_item = renpy.get_screen_variable("selected_worker_item")
+                if is_double:
+                    set_right_shop_row_selection()
+                    if (not renpy.get_screen_variable("is_transferring")) and store.money >= item_info.get("price", 0):
+                        _buy_fn = getattr(store, "_mi_buy_item_from_shop", None)
+                        if _buy_fn:
+                            _buy_fn(item_id)
+                    renpy.set_screen_variable("last_row_click_key", None)
+                    renpy.set_screen_variable("last_row_click_ts", 0.0)
+                    return
+                if current_item != item:
+                    set_right_shop_row_selection()
+                else:
+                    clear_row_selection()
+
+            renpy.set_screen_variable("last_row_click_key", row_key)
+            renpy.set_screen_variable("last_row_click_ts", now)
+
+        def _get_item_info_by_id(item_id):
+            return next((i for i in items_json["items"] if i["id"] == item_id), None)
+
+        def _get_canonical_worker_ref(worker):
+            if not worker or worker is False:
+                return None
+            worker_name = worker.get("name", None) if hasattr(worker, "get") else None
+            if worker_name:
+                for w in store.workers:
+                    if hasattr(w, "get") and w.get("name", None) == worker_name:
+                        return w
+            return worker
+
+        def _get_equipped_item_id_for_types(inventory, slot_types):
+            for slot_type in slot_types:
+                for item in inventory:
+                    if not item or len(item) < 2 or not store._is_equipped(item):
+                        continue
+                    item_info = _get_item_info_by_id(item[0])
+                    if item_info and item_info.get("type") == slot_type:
+                        return item[0]
+            return None
+
+        def _get_slot_candidate_item_ids(inventory, slot_types):
+            candidate_ids = []
+            for item in inventory:
+                if not item or len(item) < 2:
+                    continue
+                item_id = item[0]
+                if item_id in candidate_ids:
+                    continue
+                item_info = _get_item_info_by_id(item_id)
+                if item_info and item_info.get("type") in slot_types:
+                    candidate_ids.append(item_id)
+            return candidate_ids
+
+        def cycle_summary_equipment_slot(worker, slot_key, direction=1):
+            def get_item_info_by_id(item_id):
+                return next((i for i in items_json["items"] if i["id"] == item_id), None)
+
+            def get_canonical_worker_ref(raw_worker):
+                if not raw_worker or raw_worker is False:
+                    return None
+                worker_name = raw_worker.get("name", None) if hasattr(raw_worker, "get") else None
+                if worker_name:
+                    for w in store.workers:
+                        if hasattr(w, "get") and w.get("name", None) == worker_name:
+                            return w
+                return raw_worker
+
+            def get_equipped_item_id_for_types(inventory, slot_types):
+                for slot_type in slot_types:
+                    for item in inventory:
+                        if not item or len(item) < 2 or not store._is_equipped(item):
+                            continue
+                        item_info = get_item_info_by_id(item[0])
+                        if item_info and item_info.get("type") == slot_type:
+                            return item[0]
+                return None
+
+            def get_slot_candidate_item_ids(inventory, slot_types):
+                candidate_ids = []
+                for item in inventory:
+                    if not item or len(item) < 2:
+                        continue
+                    item_id = item[0]
+                    if item_id in candidate_ids:
+                        continue
+                    item_info = get_item_info_by_id(item_id)
+                    if item_info and item_info.get("type") in slot_types:
+                        candidate_ids.append(item_id)
+                return candidate_ids
+
+            worker_ref = get_canonical_worker_ref(worker)
+            if not worker_ref:
+                return
+
+            slot_types_map = {
+                "weapon": ["weapon"],
+                "body": ["armor", "clothing"],
+                "accessory": ["accessory"],
+            }
+            slot_label_map = {
+                "weapon": "Weapon",
+                "body": "Clothing/Armor",
+                "accessory": "Accessory",
+            }
+            slot_types = slot_types_map.get(slot_key, None)
+            if not slot_types:
+                return
+
+            inventory = worker_ref.get("inventory", []) if hasattr(worker_ref, "get") else []
+            options = [None] + get_slot_candidate_item_ids(inventory, slot_types)
+            if len(options) <= 1:
+                renpy.notify("{}: no available items".format(slot_label_map.get(slot_key, "Slot")))
+                return
+
+            current_item_id = get_equipped_item_id_for_types(inventory, slot_types)
+            current_idx = options.index(current_item_id) if current_item_id in options else 0
+            step = -1 if direction < 0 else 1
+            next_idx = (current_idx + step) % len(options)
+            next_item_id = options[next_idx]
+
+            # Clear currently equipped entries in this slot family first.
+            for idx, inv_item in enumerate(inventory):
+                if not inv_item or len(inv_item) < 3 or not store._is_equipped(inv_item):
+                    continue
+                equipped_info = get_item_info_by_id(inv_item[0])
+                if equipped_info and equipped_info.get("type") in slot_types:
+                    inventory[idx] = (inv_item[0], inv_item[1], False)
+                    remove_item_effects(worker_ref, inv_item[0])
+
+            if next_item_id:
+                equip_index = None
+                for idx, inv_item in enumerate(inventory):
+                    if not inv_item or len(inv_item) < 2:
+                        continue
+                    if str(inv_item[0]) == str(next_item_id):
+                        equip_index = idx
+                        break
+                toggle_equip_item(inventory, next_item_id, worker=worker_ref, item_index=equip_index)
+                next_info = get_item_info_by_id(next_item_id) or {}
+                renpy.notify("{}: {}".format(slot_label_map.get(slot_key, "Slot"), next_info.get("name", "Equipped")))
+            else:
+                renpy.notify("{}: Empty".format(slot_label_map.get(slot_key, "Slot")))
+
+            renpy.restart_interaction()
         
         def get_item_action_elements(item, item_info, worker, item_index=None):
             item_type = item_info.get("type", "unknown")
@@ -4105,6 +4325,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         renpy.log(f"DEBUG: Tutorial - Purchase conditions not met: tutorial_active={hasattr(store, 'tutorial_active')}, current_objective={store.current_objective if hasattr(store, 'current_objective') else 'NOT_SET'}, item_name={item_info.get('name', 'Unknown')}")
                 renpy.restart_interaction()
 
+        # Expose local screen actions through store for callback-safe access.
+        store._mi_transfer_to_right = transfer_to_right
+        store._mi_transfer_to_left = transfer_to_left
+        store._mi_sell_item = sell_item
+        store._mi_buy_item_from_shop = buy_item_from_shop
+
     modal True
     zorder 99
     tag manager_inventory
@@ -4126,7 +4352,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
         # Money display with icon-style $ symbol
         hbox:
             spacing 5
-            text "$" color "#3c1f14" size 22 bold True yalign 0.5
+            text "$" color "#3c1f14" size 24 bold True yalign 0.5
             text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
         # Calendar display with icon
         hbox:
@@ -4134,7 +4360,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 26 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
@@ -4144,7 +4370,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             action Show("manager_character_sheet")
             text_color _manager_name_color
             text_hover_color "#6b6528"
-            text_size 20
+            text_size 26
             text_italic True
             background None
             hover_background None
@@ -4158,7 +4384,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             ysize 30
             background Solid("#3c1f14cc")
             hover_background Solid("#3c1f14ee")
-            text "Toggle test items" size font_size(14) color "#ffffff" hover_color "#ffffff" xalign 0.5 yalign 0.5
+            text "Toggle test items" size font_size(16) color "#ffffff" hover_color "#ffffff" xalign 0.5 yalign 0.5
             action ToggleScreenVariable("show_test_items")
             tooltip "Toggle test items visibility"
 
@@ -4360,17 +4586,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     ysize 40
                                     padding (0, 0, 0, 0)
                                     hover_background Solid("#c0c0c0cc")
-                                    action If(selected_manager_index != idx,
-                                            [SetScreenVariable("selected_manager_item", item),
-                                            SetScreenVariable("selected_manager_index", idx),
-                                            SetScreenVariable("selected_worker_item", None),
-                                            SetScreenVariable("selected_worker_index", None),
-                                            SetScreenVariable("selected_description", item_info.get("description", ""))],
-                                            [SetScreenVariable("selected_manager_item", None),
-                                            SetScreenVariable("selected_manager_index", None),
-                                            SetScreenVariable("selected_worker_item", None),
-                                            SetScreenVariable("selected_worker_index", None),
-                                            SetScreenVariable("selected_description", "")])
+                                    action Function(handle_inventory_row_click, "left", idx, item, item_info, bool(shop_mode), (right_worker is not False), False)
                                     hbox:
                                         spacing 0
                                         frame:
@@ -4392,7 +4608,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
                                             action [SetScreenVariable("selected_manager_item", item), SetScreenVariable("selected_manager_index", idx), SetScreenVariable("selected_worker_item", None), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)]
                                             sensitive ((right_worker is not False or shop_mode) and not is_transferring)
-                                            hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message=("Sell selected item to shop." if shop_mode else "Move selected item to the right panel target."), screen_name="manager_inventory"), NullAction())
+                                            hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message=("Sell selected item to shop. Double-click row for quick sell." if shop_mode else "Move selected item to the right panel target. Double-click row for quick transfer."), screen_name="manager_inventory"), NullAction())
                                             unhovered Hide("tooltip")
 
                             for i, idx_item in enumerate(unequipped_items):
@@ -4407,23 +4623,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     ysize 40
                                     padding (0, 0, 0, 0)
                                     hover_background Solid("#c0c0c0cc")
-                                    action If(selected_manager_index != idx,
-                                                [
-                                                    SetScreenVariable("selected_manager_item", item),
-                                                    SetScreenVariable("selected_manager_index", idx),
-                                                    SetScreenVariable("selected_worker_item", None),
-                                                    SetScreenVariable("selected_worker_index", None),
-                                                    SetScreenVariable("selected_description",
-                                                    item_info.get("description", ""))
-                                                ],
-                                                [
-                                                    SetScreenVariable("selected_manager_item", None),
-                                                    SetScreenVariable("selected_manager_index", None),
-                                                    SetScreenVariable("selected_worker_item", None),
-                                                    SetScreenVariable("selected_worker_index", None),
-                                                    SetScreenVariable("selected_description", "")
-                                                ]
-                                            )
+                                    action Function(handle_inventory_row_click, "left", idx, item, item_info, bool(shop_mode), (right_worker is not False), False)
                                     hbox:
                                         spacing 0
                                         frame:
@@ -4445,7 +4645,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
                                             action [SetScreenVariable("selected_manager_item", item), SetScreenVariable("selected_manager_index", idx), SetScreenVariable("selected_worker_item", None), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)]
                                             sensitive ((right_worker is not False or shop_mode) and not is_transferring)
-                                            hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message=("Sell selected item to shop." if shop_mode else "Move selected item to the right panel target."), screen_name="manager_inventory"), NullAction())
+                                            hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message=("Sell selected item to shop. Double-click row for quick sell." if shop_mode else "Move selected item to the right panel target. Double-click row for quick transfer."), screen_name="manager_inventory"), NullAction())
                                             unhovered Hide("tooltip")
 
             frame:
@@ -4515,13 +4715,26 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             python:
                                 _sel_item = selected_worker_item if selected_worker_item is not None else selected_manager_item
                                 _sel_item_name = ""
+                                _sel_item_category = ""
+                                _category_labels = {
+                                    "weapon": "Weapon",
+                                    "armor": "Armor",
+                                    "clothing": "Clothing",
+                                    "accessory": "Accessory",
+                                    "consumable": "Consumable",
+                                    "gift": "Gift",
+                                    "currency": "Currency",
+                                    "quest_item": "Quest Item",
+                                    "misc": "Misc",
+                                }
                                 if _sel_item:
                                     _sel_item_info = next((i for i in items_json["items"] if i["id"] == _sel_item[0]), {})
                                     _sel_item_name = _sel_item_info.get("name", "")
+                                    _sel_item_category = _category_labels.get(_sel_item_info.get("type", "misc"), str(_sel_item_info.get("type", "misc")).replace("_", " ").title())
                             if _sel_item_name:
                                 vbox:
                                     spacing 5
-                                    text "[_sel_item_name]" size font_size(24) color "#d4a574"
+                                    text "{color=#d4a574}[_sel_item_name]{/color}  {color=#d8bf9a}Category: [_sel_item_category]{/color}" size font_size(24) xalign 0.0 yalign 0.5 xmaximum 340
                                     text "[selected_description]" size font_size(24) color "#ffffff"
                             else:
                                 text "[selected_description]" size font_size(26) color "#ffffff"
@@ -4700,23 +4913,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             ysize 40
                                             padding (0, 0, 0, 0)
                                             hover_background Solid("#c0c0c0cc")
-                                            action If(
-                                                        selected_worker_item != item,
-                                                        [
-                                                            SetScreenVariable("selected_worker_item", item),
-                                                            SetScreenVariable("selected_worker_index", None),
-                                                            SetScreenVariable("selected_manager_item", None),
-                                                            SetScreenVariable("selected_manager_index", None),
-                                                            SetScreenVariable("selected_description", item_info.get("description", ""))
-                                                        ],
-                                                        [
-                                                            SetScreenVariable("selected_worker_item", None),
-                                                            SetScreenVariable("selected_worker_index", None),
-                                                            SetScreenVariable("selected_manager_item", None),
-                                                            SetScreenVariable("selected_manager_index", None),
-                                                            SetScreenVariable("selected_description", "")
-                                                        ]
-                                                    )
+                                            action Function(handle_inventory_row_click, "right_shop", item_idx, item, item_info, True, False, False)
                                             hbox:
                                                 spacing 0
                                                 frame:
@@ -4737,6 +4934,8 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                     text "{u}Buy{/u}" size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
                                                     action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(buy_item_from_shop, item[0])]
                                                     sensitive (not is_transferring and store.money >= item_info.get("price", 0))
+                                                    hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Buy selected item. Double-click row for quick buy.", screen_name="manager_inventory"), NullAction())
+                                                    unhovered Hide("tooltip")
                                 else:
                                     $ right_inventory = [] if right_worker is False else (manager_inventory if right_worker is None else right_worker.get("inventory", []))
                                     # Sort and filter items - alphabetically or by arrival order based on toggle
@@ -4787,23 +4986,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             ysize 40
                                             padding (0, 0, 0, 0)
                                             hover_background Solid("#c0c0c0cc")
-                                            action If(
-                                                        selected_worker_index != idx,
-                                                        [
-                                                            SetScreenVariable("selected_worker_item", item),
-                                                            SetScreenVariable("selected_worker_index", idx),
-                                                            SetScreenVariable("selected_manager_item", None),
-                                                            SetScreenVariable("selected_manager_index", None),
-                                                            SetScreenVariable("selected_description", item_info.get("description", ""))
-                                                        ],
-                                                        [
-                                                            SetScreenVariable("selected_worker_item", None),
-                                                            SetScreenVariable("selected_worker_index", None),
-                                                            SetScreenVariable("selected_manager_item", None),
-                                                            SetScreenVariable("selected_manager_index", None),
-                                                            SetScreenVariable("selected_description", "")
-                                                        ]
-                                                    )
+                                            action Function(handle_inventory_row_click, "right_worker", idx, item, item_info, False, False, (left_worker is not False))
                                             hbox:
                                                 spacing 0
                                                 frame:
@@ -4827,7 +5010,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                     text "{u}Left{/u}" size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
                                                     action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", idx), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(transfer_to_left)]
                                                     sensitive ((left_worker is not False) and not is_transferring)
-                                                    hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Move selected item to the left panel target.", screen_name="manager_inventory"), NullAction())
+                                                    hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Move selected item to the left panel target. Double-click row for quick transfer.", screen_name="manager_inventory"), NullAction())
                                                     unhovered Hide("tooltip")
 
                                     for i, idx_item in enumerate(unequipped_items):
@@ -4843,23 +5026,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             ysize 40
                                             padding (0, 0, 0, 0)
                                             hover_background Solid("#c0c0c0cc")
-                                            action If(
-                                                        selected_worker_index != idx,
-                                                        [
-                                                            SetScreenVariable("selected_worker_item", item),
-                                                            SetScreenVariable("selected_worker_index", idx),
-                                                            SetScreenVariable("selected_manager_item", None),
-                                                            SetScreenVariable("selected_manager_index", None),
-                                                            SetScreenVariable("selected_description", item_info.get("description", ""))
-                                                        ],
-                                                        [
-                                                            SetScreenVariable("selected_worker_item", None),
-                                                            SetScreenVariable("selected_worker_index", None),
-                                                            SetScreenVariable("selected_manager_item", None),
-                                                            SetScreenVariable("selected_manager_index", None),
-                                                            SetScreenVariable("selected_description", "")
-                                                        ]
-                                                    )
+                                            action Function(handle_inventory_row_click, "right_worker", idx, item, item_info, False, False, (left_worker is not False))
                                             hbox:
                                                 spacing 0
                                                 frame:
@@ -4883,7 +5050,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                     text "{u}Left{/u}" size font_size(22) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
                                                     action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", idx), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(transfer_to_left)]
                                                     sensitive ((left_worker is not False) and not is_transferring)
-                                                    hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Move selected item to the left panel target.", screen_name="manager_inventory"), NullAction())
+                                                    hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Move selected item to the left panel target. Double-click row for quick transfer.", screen_name="manager_inventory"), NullAction())
                                                     unhovered Hide("tooltip")
 
     # Context menu drawn last so it appears on top
@@ -4918,7 +5085,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             xalign 0.5
             yalign 0.5
             xoffset -17
-            yoffset (-70 if shop_mode is None else 20)
+            yoffset (20 if shop_mode is None else 20)
             spacing 10
             if shop_mode is None:
                 # Compact worker summary panel (for quick stats/skills while trading)
@@ -4927,8 +5094,8 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     frame:
                         background "#00000033"
                         xsize 300
-                        ysize 340
-                        padding (10, 10)
+                        ysize 390
+                        padding (10, 14)
                         vbox:
                             spacing 6
                             xsize 280
@@ -4944,7 +5111,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     yalign 0.5
                                     hovered If(get_tooltips_state_for_screen(screen_name), ShowTransient("tooltip", message="Open this worker's full details screen.", screen_name=screen_name), NullAction())
                                     unhovered Hide("tooltip")
-                                text "(click for details)" size font_size(18) color "#3c1f14" yalign 0.5
+                                text "(click for details)" size font_size(20) color "#3c1f14" yalign 0.5
                             null height 0
                             # Energy / Health mini bars
                             hbox:
@@ -4969,7 +5136,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             ysize 24
                                             left_bar "#4a6fa5"
                                             right_bar "#444444"
-                                        text "E [summary_worker.get('energy',0)]/[calculate_max_energy(summary_worker)]" size font_size(14) color "#ffffff" xalign 0.5 yalign 0.5
+                                        text "E [summary_worker.get('energy',0)]/[calculate_max_energy(summary_worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
                                 button:
                                     background None
                                     xsize 136
@@ -4988,10 +5155,10 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             ysize 24
                                             left_bar "#a54a4a"
                                             right_bar "#444444"
-                                        text "H [summary_worker.get('health',0)]/[calculate_max_health(summary_worker)]" size font_size(14) color "#ffffff" xalign 0.5 yalign 0.5
+                                        text "H [summary_worker.get('health',0)]/[calculate_max_health(summary_worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
 
                             textbutton "Switch to [quick_panel_mode == 'skills' and 'Stats' or 'Skills']":
-                                text_size font_size(18)
+                                text_size font_size(20)
                                 text_color "#ffffff"
                                 text_hover_color "#6b6528"
                                 background None
@@ -5039,7 +5206,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                             ysize 24
                                                             left_bar "#6b6528"
                                                             right_bar "#444444"
-                                                        text "[stat_name]: [stat_value]/[stat_max]" size font_size(16) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 124
+                                                        text "[stat_name]: [stat_value]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 124
                                         vbox:
                                             spacing 6
                                             xsize 136
@@ -5060,13 +5227,13 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                             ysize 24
                                                             left_bar "#6b6528"
                                                             right_bar "#444444"
-                                                        text "[stat_name]: [stat_value]/[stat_max]" size font_size(16) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 124
+                                                        text "[stat_name]: [stat_value]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 124
                                     null height 6
                                     # Profession and building (dynamic)
                                     textbutton "[get_worker_profession_and_building_display(summary_worker)]":
                                         action NullAction()
                                         background None
-                                        text_size font_size(19)
+                                        text_size font_size(21)
                                         text_color "#3d2914"
                                         text_hover_color "#3d2914"
                                         xalign 0.0
@@ -5075,11 +5242,11 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             else:
                                 vbox:
                                     xsize 280
-                                    ysize 210
-                                    xoffset 0
+                                    ysize 238
+                                    xoffset 3
                                     yoffset 0
                                     vbox:
-                                        spacing 0
+                                        spacing 2
                                         $ _summary_skills = list(get_visible_skills(summary_worker))
                                         $ _summary_skills_half = (len(_summary_skills) + 1) // 2
                                         $ _summary_skills_left = _summary_skills[:_summary_skills_half]
@@ -5088,55 +5255,92 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                         for _row_idx in range(_skills_row_count):
                                             $ _left_skill = _summary_skills_left[_row_idx] if _row_idx < len(_summary_skills_left) else None
                                             $ _right_skill = _summary_skills_right[_row_idx] if _row_idx < len(_summary_skills_right) else None
-                                            $ _left_value = calculate_skill_with_traits(summary_worker, _left_skill[0]) if _left_skill else None
-                                            $ _right_value = calculate_skill_with_traits(summary_worker, _right_skill[0]) if _right_skill else None
+                                            $ _left_value = calculate_skill_with_traits(summary_worker, _left_skill[0], include_libido=False) if _left_skill else None
+                                            $ _right_value = calculate_skill_with_traits(summary_worker, _right_skill[0], include_libido=False) if _right_skill else None
                                             $ _row_bg = "#0000002a" if _row_idx % 2 == 0 else "#00000044"
                                             hbox:
                                                 spacing 0
                                                 xsize 276
-                                                ysize 22
+                                                ysize 26
                                                 xalign 0.5
                                                 frame:
                                                     background _row_bg
                                                     xsize 136
-                                                    ysize 22
+                                                    ysize 26
                                                     padding (0, 0)
                                                     hbox:
                                                         spacing 0
                                                         xsize 136
-                                                        ysize 22
+                                                        ysize 26
                                                         fixed:
                                                             xsize 92
-                                                            ysize 22
+                                                            ysize 26
                                                             if _left_skill:
-                                                                text " [_left_skill[0]]:" size font_size(18) color "#3c1f14" yalign 0.5 xmaximum 90
+                                                                text " [_left_skill[0]]:" size font_size(20) color "#3c1f14" yalign 0.5 xmaximum 90
                                                         fixed:
                                                             xsize 44
-                                                            ysize 22
+                                                            ysize 26
                                                             if _left_value is not None:
-                                                                text "[_left_value]" size font_size(18) color "#3c1f14" yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 41 xoffset -1
+                                                                text "[_left_value]" size font_size(20) color "#3c1f14" yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 39 xoffset -4
                                                 null width 4
                                                 frame:
                                                     background _row_bg
                                                     xsize 136
-                                                    ysize 22
+                                                    ysize 26
                                                     padding (0, 0)
                                                     hbox:
                                                         spacing 0
                                                         xsize 136
-                                                        ysize 22
+                                                        ysize 26
                                                         fixed:
                                                             xsize 92
-                                                            ysize 22
+                                                            ysize 26
                                                             if _right_skill:
-                                                                text " [_right_skill[0]]:" size font_size(18) color "#3c1f14" yalign 0.5 xmaximum 90
+                                                                text " [_right_skill[0]]:" size font_size(20) color "#3c1f14" yalign 0.5 xmaximum 90
                                                         fixed:
                                                             xsize 44
-                                                            ysize 22
+                                                            ysize 26
                                                             if _right_value is not None:
-                                                                text "[_right_value]" size font_size(18) color "#3c1f14" yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 41 xoffset -1
+                                                                text "[_right_value]" size font_size(20) color "#3c1f14" yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 39 xoffset -4
                                         null height 28
                             null height 0
+                    frame:
+                        background "#00000033"
+                        xsize 300
+                        ysize 180
+                        padding (10, 12)
+                        vbox:
+                            spacing 6
+                            xsize 280
+                            text "Equipment" size font_size(24) color "#3c1f14" xalign 0.0
+                            null height 2
+                            $ _eq_pairs = [(i, next((x for x in items_json["items"] if x["id"] == i[0]), None)) for i in summary_worker.get("inventory", []) if store._is_equipped(i)]
+                            $ _eq_weapon_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "weapon"), "Empty")
+                            $ _eq_armor_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "armor"), None)
+                            $ _eq_clothing_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "clothing"), None)
+                            $ _eq_body_name = _eq_armor_name or _eq_clothing_name or "Empty"
+                            $ _eq_accessory_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "accessory"), "Empty")
+                            for _slot_key, _slot_label, _slot_value in [("weapon", "Weapon", _eq_weapon_name), ("body", "Clothing/Armor", _eq_body_name), ("accessory", "Accessory", _eq_accessory_name)]:
+                                button:
+                                    background "#00000044"
+                                    xsize 272
+                                    ysize 32
+                                    padding (6, 4)
+                                    action Function(cycle_summary_equipment_slot, summary_worker, _slot_key, 1)
+                                    hovered If(get_tooltips_state_for_screen(screen_name), ShowTransient("tooltip", message="Click to cycle this slot. Includes Empty.", screen_name=screen_name), NullAction())
+                                    unhovered Hide("tooltip")
+                                    hbox:
+                                        spacing 0
+                                        xsize 260
+                                        ysize 24
+                                        fixed:
+                                            xsize 120
+                                            ysize 24
+                                            text "[_slot_label]:" size font_size(18) color "#ffffff" yalign 0.5 xalign 0.0 xmaximum 116
+                                        fixed:
+                                            xsize 140
+                                            ysize 24
+                                            text "[_slot_value]" size font_size(18) color "#ffffff" yalign 0.5 xalign 0.0 xmaximum 136
 
         textbutton "Close":
             action If(
@@ -5165,31 +5369,6 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             xalign 0.5
             yalign 1.0
             yoffset -30
-
-    # Money and Date positioned over context menu area (top-right)
-    vbox:
-        xpos 1615
-        ypos 70
-        spacing 8
-        hbox:
-            spacing 5
-            text "$" color "#3c1f14" size 22 bold True yalign 0.5
-            text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
-        hbox:
-            spacing 5
-            add "images/calendar.png" zoom 0.7 yalign 0.5
-            $ day_name = day_names[(store.current_day - 1) % 7]
-            $ month_name = month_names[store.current_month]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
-        # Player title and name (click to open character sheet)
-        textbutton "[player_title] [player_name]":
-            action Show("manager_character_sheet")
-            text_color "#3c1f14"
-            text_hover_color "#6b6528"
-            text_size 20
-            text_italic True
-            background None
-            hover_background None
 
 screen worker_selection_popup(panel, current_left, current_right, shop_mode=None):
     modal True
@@ -5260,8 +5439,8 @@ screen worker_selection_popup(panel, current_left, current_right, shop_mode=None
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("worker_selection_popup")
             xalign 1.0
             yalign 0.0
@@ -5283,8 +5462,8 @@ screen inventory_filter_popup(target_var="left_panel_filter_category", current_c
 
         # Close button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("inventory_filter_popup")
             xalign 1.0
             yalign 0.0
@@ -5429,8 +5608,8 @@ screen building_type_selection(building_name):
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("building_type_selection")
             xalign 1.0
             yalign 0.0
@@ -5698,7 +5877,7 @@ screen adjust_skill_bonus(building_name):
                             sensitive building["skill_bonus"] > 0
                 
                 if building["skill_bonus"] < 50:
-                    $ _adj_sk_bonus_tt = "Total/day preview = Fixed + Workers + Skill Bonus.\n\nFixed: $" + str(fixed_cost) + "\nWorkers: $" + str(worker_costs) + " (sum of comfort x 20; building level does not multiply this)\nSkill Bonus upkeep (current): $" + str(current_bonus_cost) + "\nSkill Bonus upkeep (next): $" + str(new_bonus_cost)
+                    $ _adj_sk_bonus_tt = "Total/day preview = Fixed + Workers + Skill Bonus.\n\nFixed: $" + str(fixed_cost) + "\nWorkers: $" + str(worker_costs) + " (sum of comfort x " + str(get_difficulty_comfort_mult()) + "; building level does not multiply this)\nSkill Bonus upkeep (current): $" + str(current_bonus_cost) + "\nSkill Bonus upkeep (next): $" + str(new_bonus_cost)
                     button:
                         background None
                         padding (0, 0)
@@ -5712,8 +5891,8 @@ screen adjust_skill_bonus(building_name):
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("adjust_skill_bonus")
             xalign 1.0
             yalign 0.0
@@ -5729,6 +5908,14 @@ screen Manager(building_name):
         _tgt = _norm_fn(_bn)
         _roster = store.workers or []
         manager_servants = [w for w in _roster if hasattr(w, "get") and w.get("name") and _norm_fn(w.get("assigned_building", "")) == _tgt and w.get("assigned_building") not in (None, "", "Unassigned")]
+        # Keep a stable visual order across repeated re-renders/open-close cycles.
+        manager_servants = sorted(
+            manager_servants,
+            key=lambda ww: (
+                str(ww.get("name", "")).strip().lower(),
+                int(ww.get("level", 1) or 1),
+            ),
+        )
         _displayed_servants = manager_servants
         _resolved_data = store._resolve_building_by_name(_bn)[0] if hasattr(store, "_resolve_building_by_name") else None
         _resolved_data = _resolved_data or store.available_buildings.get(_bn) or {}
@@ -5755,14 +5942,14 @@ screen Manager(building_name):
         spacing 8
         hbox:
             spacing 5
-            text "$" color "#3c1f14" size 22 bold True yalign 0.5
+            text "$" color "#3c1f14" size 24 bold True yalign 0.5
             text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
         hbox:
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 26 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
@@ -5772,7 +5959,7 @@ screen Manager(building_name):
             action Show("manager_character_sheet")
             text_color _manager_name_color
             text_hover_color "#6b6528"
-            text_size 20
+            text_size 26
             text_italic True
             background None
             hover_background None
@@ -5804,8 +5991,8 @@ screen Manager(building_name):
                 $ rep_tier = get_reputation_tier(capped_reputation)
                 $ rep_is_capped = (capped_reputation >= rep_cap and rep_cap > 0)
                 $ _erep_for_stories = get_effective_reputation_for_events(building) if building else 0
-                # Typical extra stories from reputation (formula reputation/200; shown once at building header).
-                $ typical_bonus_stories = get_reputation_bonus_stories(_erep_for_stories, "reputation / 200")
+                # Typical extra stories from reputation (default formula reputation/400; shown once at building header).
+                $ typical_bonus_stories = get_reputation_bonus_stories(_erep_for_stories, "reputation / 400")
                 hbox:
                     spacing 10
                     text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color "#7a4b2a"
@@ -5813,12 +6000,12 @@ screen Manager(building_name):
                 $ worker_costs = compute_worker_portion_daily_costs(manager_servants, building.get("base_level", 1))[0]
                 $ bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
-                $ _mgr_cost_tt = "How daily costs are calculated:\n\nTotal/day = Fixed + Workers + Skill Bonus\nFixed: $" + str(fixed_cost) + " (scales with building level; Normal: $100, $300, $500, $700, $900 for levels 1-5)\nWorkers: $" + str(worker_costs) + " (sum of comfort x 20; not multiplied by level)\nSkill Bonus upkeep: $" + str(bonus_cost) + "\n\nWorker Details shows per-worker comfort cost only."
-                textbutton "Costs/day: $[total_costs] {size=18}(Fixed: $[fixed_cost], Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size}":
+                $ _mgr_cost_tt = "How daily costs are calculated:\n\nTotal/day = Fixed + Workers + Skill Bonus\nFixed: $" + str(fixed_cost) + " (scales with building level; Normal: $100, $300, $500, $700, $900 for levels 1-5)\nWorkers: $" + str(worker_costs) + " (sum of comfort x " + str(get_difficulty_comfort_mult()) + "; not multiplied by level)\nSkill Bonus upkeep: $" + str(bonus_cost) + "\n\nWorker Details shows per-worker comfort cost only."
+                textbutton "Costs/day: $[total_costs] {size=22}(Fixed: $[fixed_cost], Workers: $[worker_costs], Skill Bonus: $[bonus_cost]){/size}":
                     xalign 0.0
                     yalign 0.5
                     action NullAction()
-                    text_size font_size(24)
+                    text_size font_size(26)
                     text_color "#ffffff"
                     text_hover_color "#f5e6d3"
                     background None
@@ -5832,29 +6019,29 @@ screen Manager(building_name):
                     action NullAction()
                     hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message=get_building_level_short_tooltip(), screen_name="Manager"), NullAction())
                     unhovered Hide("tooltip")
-                    text "Level: [building.get('base_level', 1)]" size font_size(24) color "#ffffff"
-                text "Reputation: [capped_reputation][rep_is_capped and ' (capped by building level)' or ''] - {b}[rep_tier]{/b}" size font_size(24) color "#ffffff" xalign 0.0
+                    text "Level: [building.get('base_level', 1)]" size font_size(26) color "#ffffff"
+                text "Reputation: [capped_reputation][rep_is_capped and ' (capped by building level)' or ''] - {b}[rep_tier]{/b}" size font_size(26) color "#ffffff" xalign 0.0
                 $ event_limit = building.get("event_limit", 0)
                 if typical_bonus_stories > 0:
                     if event_limit == 0:
-                        text "  → +[typical_bonus_stories] stories per profession per day" size font_size(20) color "#d4a574" xalign 0.0
+                        text "  → +[typical_bonus_stories] stories per profession per day" size font_size(24) color "#d4a574" xalign 0.0
                     elif event_limit == 1:
-                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 1)" size font_size(20) color "#d4a574" xalign 0.0
+                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 1)" size font_size(24) color "#d4a574" xalign 0.0
                     elif event_limit == 2:
-                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 2)" size font_size(20) color "#d4a574" xalign 0.0
+                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 2)" size font_size(24) color "#d4a574" xalign 0.0
                     elif event_limit == 3:
-                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 3)" size font_size(20) color "#d4a574" xalign 0.0
+                        text "  → +[typical_bonus_stories] stories per profession per day (limited to 3)" size font_size(24) color "#d4a574" xalign 0.0
                 elif event_limit > 0:
-                    text "  → Limited to [event_limit] event[event_limit != 1 and 's' or ''] per worker per day" size font_size(20) color "#d4a574" xalign 0.0
-                text "[skill_name]: [total_skill] {size=18}(Base: [building.get('skill', 10)], Bonus: [building.get('skill_bonus', 0)]){/size=}" size font_size(24) color "#ffffff" xalign 0.0
+                    text "  → Limited to [event_limit] event[event_limit != 1 and 's' or ''] per worker per day" size font_size(24) color "#d4a574" xalign 0.0
+                text "[skill_name]: [total_skill] {size=22}(Base: [building.get('skill', 10)], Bonus: [building.get('skill_bonus', 0)]){/size=}" size font_size(26) color "#ffffff" xalign 0.0
                 hbox:
                     spacing 10
-                    text "Daily Stories Limit:" size font_size(22) color "#ffffff" yalign 0.5
+                    text "Daily Stories Limit:" size font_size(26) color "#ffffff" yalign 0.5
                     $ event_limit = building.get("event_limit", 0)
                     $ limit_texts = ["Unlimited (with reputation bonus)", "Limited to 1 per worker", "Limited to 2 per worker", "Limited to 3 per worker"]
                     $ current_text = limit_texts[event_limit] if event_limit < len(limit_texts) else limit_texts[0]
                     textbutton "[current_text]":
-                        text_size font_size(20)
+                        text_size font_size(26)
                         text_color "#7a4b2a"
                         text_hover_color "#6b6528"
                         action SetDict(building, "event_limit", (event_limit + 1) % 4)
@@ -5877,13 +6064,13 @@ screen Manager(building_name):
                                 text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color "#7a4b2a"
                                 $ _prof_mech = profession_mechanics_summary(profession)
                                 if _prof_mech:
-                                    text "[_prof_mech]" size font_size(22) xalign 0.0 color "#9a8a6a"
+                                    text "[_prof_mech]" size font_size(26) xalign 0.0 color "#9a8a6a"
                                 frame:
                                     background Solid("#1a1a1a99")
                                     padding (10, 10)
                                     xfill True
                                     viewport:
-                                        scrollbars "vertical"
+                                        scrollbars None
                                         mousewheel True
                                         draggable True
                                         ysize 300
@@ -5897,34 +6084,52 @@ screen Manager(building_name):
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Name (Level)" size font_size(24) color "#7a4b2a"
+                                                    text "Name (Level)" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                                 button:
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Average / Best skill" size font_size(24) color "#7a4b2a"
+                                                    text "Average / Best skill" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                                 button:
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Energy - Health" size font_size(24) color "#7a4b2a"
+                                                    text "Energy - Health" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                                 button:
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Actions" size font_size(24) color "#7a4b2a"
+                                                    text "Actions" size font_size(26) color "#7a4b2a"
                                                     sensitive False
-                                            for worker in [w for w in _displayed_servants if _building_jobs_use.get(w["name"], "") == profession["id"]]:
+                                            python:
+                                                _workers_in_prof = [
+                                                    w for w in _displayed_servants
+                                                    if _building_jobs_use.get(w["name"], "") == profession["id"]
+                                                ]
+                                                _skills_for_prof = profession.get("skills", []) or []
+                                                def _prof_sort_key(_w, _skills=_skills_for_prof):
+                                                    if _skills:
+                                                        _vals = [calculate_skill_with_traits(_w, str(_s), include_libido=False) for _s in _skills]
+                                                        _avg = int(sum(_vals) // len(_vals)) if _vals else 0
+                                                        _best = int(max(_vals)) if _vals else 0
+                                                    else:
+                                                        _avg = 0
+                                                        _best = 0
+                                                    _name = str(_w.get("name", "")).strip().lower()
+                                                    # Higher avg/best skill first, stable tie-break by name.
+                                                    return (-_avg, -_best, _name)
+                                                _workers_in_prof = sorted(_workers_in_prof, key=_prof_sort_key)
+                                            for worker in _workers_in_prof:
                                                 $ worker_level = worker.get('level', 1)
                                                 hbox:
                                                     spacing 5
                                                     xsize 1440
                                                     textbutton "[worker['name']] ([worker_level])":
                                                         xsize 275
-                                                        text_size font_size(21)
+                                                        text_size font_size(24)
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
                                                         action Show("worker_details", worker=worker, in_roster=True)
@@ -5936,7 +6141,7 @@ screen Manager(building_name):
                                                     $ count_worker = 0
                                                     $ best_skill_id = None
                                                     for s in skills_used_worker:
-                                                        $ skill_value = calculate_skill_with_traits(worker, str(s))
+                                                        $ skill_value = calculate_skill_with_traits(worker, str(s), include_libido=False)
                                                         $ total_worker += skill_value
                                                         $ count_worker += 1
                                                         if skill_value > best_skill_value:
@@ -5949,7 +6154,7 @@ screen Manager(building_name):
                                                     $ skill_text = f"{avg_skill} / {best_skill_name}: {best_skill_value}" if avg_skill > 0 and best_skill_id is not None else "N/A"
                                                     textbutton "[skill_text]":
                                                         xsize 275
-                                                        text_size font_size(21)
+                                                        text_size font_size(24)
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
                                                     hbox:
@@ -5957,26 +6162,27 @@ screen Manager(building_name):
                                                         xsize 275
                                                         textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
                                                             xsize 136
-                                                            text_size font_size(20)
+                                                            text_size font_size(24)
                                                             text_color "#ffffff"
                                                             text_hover_color "#2c4aa6"
                                                             action use_or_buy_potion_action(worker, "energy_potion")
                                                             sensitive worker["energy"] < calculate_max_energy(worker)
                                                         textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
                                                             xsize 137
-                                                            text_size font_size(20)
+                                                            text_size font_size(24)
                                                             text_color "#ffffff"
                                                             text_hover_color "#a63c3c"
                                                             action use_or_buy_potion_action(worker, "health_potion")
                                                             sensitive worker["health"] < calculate_max_health(worker)
                                                     textbutton "Change / View skills":
                                                         xsize 275
-                                                        text_size font_size(21)
+                                                        text_size font_size(24)
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
                                                         action Show("job_selection", worker=worker)
                             # Unassigned: workers in building but with no profession or "unassigned"
                             $ _unassigned = [w for w in _displayed_servants if str(_building_jobs_use.get(w["name"], "unassigned") or "").strip().lower() in ("", "unassigned")]
+                            $ _unassigned = sorted(_unassigned, key=lambda _w: str(_w.get("name", "")).strip().lower())
                             if _unassigned:
                                 text "Unassigned ([len(_unassigned)])" size font_size(26) xalign 0.0 color "#7a4b2a"
                                 frame:
@@ -5984,7 +6190,7 @@ screen Manager(building_name):
                                     padding (10, 10)
                                     xfill True
                                     viewport:
-                                        scrollbars "vertical"
+                                        scrollbars None
                                         mousewheel True
                                         draggable True
                                         ysize 300
@@ -5998,25 +6204,25 @@ screen Manager(building_name):
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Name (Level)" size font_size(24) color "#7a4b2a"
+                                                    text "Name (Level)" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                                 button:
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Assign a role to participate" size font_size(24) color "#7a4b2a"
+                                                    text "Assign a role to participate" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                                 button:
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Energy - Health" size font_size(24) color "#7a4b2a"
+                                                    text "Energy - Health" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                                 button:
                                                     background "tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Actions" size font_size(24) color "#7a4b2a"
+                                                    text "Actions" size font_size(26) color "#7a4b2a"
                                                     sensitive False
                                             for worker in _unassigned:
                                                 $ worker_level = worker.get('level', 1)
@@ -6025,13 +6231,13 @@ screen Manager(building_name):
                                                     xsize 1440
                                                     textbutton "[worker['name']] ([worker_level])":
                                                         xsize 275
-                                                        text_size font_size(21)
+                                                        text_size font_size(24)
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
                                                         action Show("worker_details", worker=worker, in_roster=True)
                                                     textbutton "—":
                                                         xsize 275
-                                                        text_size font_size(21)
+                                                        text_size font_size(24)
                                                         text_color "#888888"
                                                         sensitive False
                                                     hbox:
@@ -6039,21 +6245,21 @@ screen Manager(building_name):
                                                         xsize 275
                                                         textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
                                                             xsize 136
-                                                            text_size font_size(20)
+                                                            text_size font_size(24)
                                                             text_color "#ffffff"
                                                             text_hover_color "#2c4aa6"
                                                             action use_or_buy_potion_action(worker, "energy_potion")
                                                             sensitive worker["energy"] < calculate_max_energy(worker)
                                                         textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
                                                             xsize 137
-                                                            text_size font_size(20)
+                                                            text_size font_size(24)
                                                             text_color "#ffffff"
                                                             text_hover_color "#a63c3c"
                                                             action use_or_buy_potion_action(worker, "health_potion")
                                                             sensitive worker["health"] < calculate_max_health(worker)
                                                     textbutton "Assign role":
                                                         xsize 275
-                                                        text_size font_size(21)
+                                                        text_size font_size(24)
                                                         text_color "#ffffff"
                                                         text_hover_color "#6b6528"
                                                         action Show("job_selection", worker=worker)
@@ -6211,7 +6417,7 @@ screen Manager(building_name):
 
     # (Removed duplicate foreground left panel)
 
-screen building_selection(worker):
+screen building_selection(worker, return_to_workers=True):
     modal True
     zorder 99
     add Solid("#000000dd")
@@ -6247,7 +6453,7 @@ screen building_selection(worker):
                         action [
                             Function(unassign_worker, worker),
                             Hide("building_selection"),
-                            Show("workers")
+                            If(return_to_workers, Show("workers"), NullAction())
                         ]
                     $ bnames = sorted(available_buildings.keys())
                     for building_name in bnames:
@@ -6269,10 +6475,8 @@ screen building_selection(worker):
                                     Function(remove_worker_from_building, worker),
                                     # Add worker to building with dedup protection
                                     Function(add_worker_to_building, worker, building_name),
-                                    SetDict(worker, "assigned_building", building_name),
-                                    Function(sync_assigned_servants_for_building, building_name),
                                     Hide("building_selection"),
-                                    Show("workers")
+                                    If(return_to_workers, Show("workers"), NullAction())
                                 ]
                                 sensitive True  # Always sensitive if owned
                         else:
@@ -6284,9 +6488,9 @@ screen building_selection(worker):
                                 sensitive False
         
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
-            action [Hide("building_selection"), Show("workers")]
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            action [Hide("building_selection"), If(return_to_workers, Show("workers"), NullAction())]
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -6308,8 +6512,8 @@ screen rename_building(building_name):
         
         # Close button positioned like journal (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("rename_building")
             xalign 1.0
             yalign 0.0
@@ -6329,7 +6533,7 @@ screen rename_building(building_name):
                 yoffset 25
                 
                 # Input field
-                text "New Name:" size font_size(20) color "#7a4b2a" xalign 0.0
+                text "New Name:" size font_size(34) color "#7a4b2a" xalign 0.0
                 null height 10
                 input:
                     id "new_name"
@@ -6387,8 +6591,8 @@ screen manager_character_sheet():
             background Transform("gui/gallery.png", xysize=(1920, 1080))
             padding (20, 20)
             imagebutton:
-                idle Transform("gui/button/return_idle.png", zoom=0.5)
-                hover Transform("gui/button/return_hover.png", zoom=0.5)
+                idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+                hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
                 action If(_total_pending > 0, Confirm("Your changes have not been saved. Do you want to continue?", [SetVariable("manager_pending_skills", {}), Hide("manager_character_sheet")], NullAction()), Hide("manager_character_sheet"))
                 xalign 1.0
                 yalign 0.0
@@ -6427,7 +6631,7 @@ screen manager_character_sheet():
                                 spacing 4
                                 xmaximum 240
                                 text "No portrait" size font_size(20) color "#ffffff" bold True xalign 0.5
-                                text "Character portrait (256×256). Place lord.png or lady.png in game/images/manager_portraits/ for a custom look." size font_size(14) color "#ffffff" xalign 0.5 text_align 0.5
+                    text "Character portrait (256×256). Place lord.png or lady.png in game/images/manager_portraits/ for a custom look." size font_size(16) color "#ffffff" xalign 0.5 text_align 0.5
                     label "[player_title] [player_name]" xalign 0.0 style "header_style" text_size font_size(38)
                     hbox:
                         spacing 12
@@ -6577,8 +6781,8 @@ screen buy_buildings():
         padding (40, 40)
         # Close button in the top-right inside the panel
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -6662,8 +6866,8 @@ screen recruitment_menu():
         padding (40, 40)
         # Close button in the top-right inside the panel
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -6736,8 +6940,8 @@ screen academy_first_dialogue():
     add academy_bg
     add Solid("#000000dd")
     imagebutton:
-        idle Transform("gui/button/return_idle.png", zoom=0.5)
-        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+        hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
         xalign 1.0
         yalign 0.0
         xoffset -15
@@ -6805,8 +7009,8 @@ screen yvara_gift_picker():
         ysize 720
         padding (40, 40)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -6855,8 +7059,8 @@ screen academy_menu():
         ysize 720
         padding (40, 40)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -6915,8 +7119,8 @@ screen academy_training_menu():
         ysize 720
         padding (40, 40)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -7018,8 +7222,8 @@ screen choose_worker_for_arena_trial():
                                     action [Hide("choose_worker_for_arena_trial"), Function(renpy.call_in_new_context, "arena_run_trial_and_result", worker["name"])]
         # Close button: top-right inside the frame (drawn on top)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action [SetVariable("_arena_chosen_worker", None), Return(False)]
             xalign 1.0
             yalign 0.0
@@ -7079,8 +7283,8 @@ screen choose_worker_for_arena_special_match():
                                     text_hover_color "#6b6528"
                                     action [Hide("choose_worker_for_arena_special_match"), SetVariable("_arena_special_chosen_worker", worker), Function(renpy.call_in_new_context, "arena_special_match_run", worker["name"])]
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action [SetVariable("_arena_special_chosen_worker", None), Return()]
             xalign 1.0
             yalign 0.0
@@ -7138,8 +7342,8 @@ screen choose_worker_for_alchemy_craft():
                                     text_hover_color "#6b6528"
                                     action [SetVariable("_alchemy_chosen_worker", worker), Hide("choose_worker_for_alchemy_craft"), Function(renpy.call_in_new_context, "academy_alchemy_craft_run")]
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action [SetVariable("_alchemy_chosen_worker", None), Return()]
             xalign 1.0
             yalign 0.0
@@ -7184,8 +7388,8 @@ screen arena_first_dialogue():
     add arena_bg
     add Solid("#000000dd")
     imagebutton:
-        idle Transform("gui/button/return_idle.png", zoom=0.5)
-        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+        hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
         xalign 1.0
         yalign 0.0
         xoffset -15
@@ -7243,8 +7447,8 @@ screen arena_menu():
         ysize 720
         padding (40, 40)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -7301,8 +7505,8 @@ screen arena_training_menu():
         ysize 720
         padding (40, 40)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -7349,8 +7553,8 @@ screen buy_map_building(map_button_id):
         padding (40, 40)
         # Close button in the top-right inside the panel
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -7440,8 +7644,8 @@ screen buy_servants_table():
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("buy_servants_table")
             xalign 1.0
             yalign 0.0
@@ -7630,8 +7834,8 @@ screen shop_selection():
         padding (40, 40)
         # Close button in the top-right inside the panel
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             xalign 1.0
             yalign 0.0
             xoffset -15
@@ -7696,8 +7900,8 @@ screen more_details_screen(worker):
         
         # Close button positioned like journal (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("more_details_screen")
             xalign 1.0
             yalign 0.0
@@ -7815,7 +8019,7 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                         sk_label = sstat[len("skill_uses_") :]
                         change_parts.append("+%d %s training" % (su, sk_label))
                     continue
-                if isinstance(change, list) or hasattr(change, "get"):
+                if hasattr(change, "get") or (hasattr(change, "__iter__") and not isinstance(change, str)):
                     continue
                 try:
                     chv = int(change)
@@ -7958,7 +8162,7 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
             xalign 0.5
             yalign 0.85
             spacing gui.choice_spacing
-            textbutton "Make it official: gain trait (Earnings x1.5, Libido cap 5, Rebelliousness cap 20).":
+            textbutton "Make it official: gain trait (Earnings x1.15, Libido cap 5, Rebelliousness cap 20).":
                 action ([
                     Function(lambda w=worker: w.setdefault("flags", {}).update({"romance_confess_done": {"value": True, "duration": -1}})),
                     Function(add_trait_with_duration, worker, "Loves you", 0),
@@ -8031,8 +8235,8 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
     
     # Return button (top-right corner) - always available, on top of everything
     imagebutton:
-        idle Transform("gui/button/return_idle.png", zoom=0.5)
-        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+        hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
         action If(
             is_romance_confess or is_friendship_final or is_discipline_final or is_discipline_sell,
             NullAction(),
@@ -8198,8 +8402,8 @@ screen take_a_walk_result(stage=0):
     
     # Return button (top-right corner) - always available
     imagebutton:
-        idle Transform("gui/button/return_idle.png", zoom=0.5)
-        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+        hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
         action Return("done")
         xalign 1.0
         yalign 0.0
@@ -8413,8 +8617,8 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
     
     # Return button (top-right corner) - always available, on top of everything
     imagebutton:
-        idle Transform("gui/button/return_idle.png", zoom=0.5)
-        hover Transform("gui/button/return_hover.png", zoom=0.5)
+        idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+        hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
         action Return(True)
         xalign 1.0
         yalign 0.0
@@ -8464,7 +8668,7 @@ screen adjust_comfort(worker):
                     null height 12
                     
                     # Comfort description
-                    text "Comfort determines the quality of life and accommodations provided to your worker. Higher comfort levels improve worker satisfaction and relationship. Comfort level 1 is the minimum; each level above 1 adds +1 to daily energy regeneration at day start, but increases daily maintenance costs. Comfortable workers are more loyal and perform better over time." size font_size(24) color "#7a4b2a" text_align 0.0 xalign 0.0
+                    text "Comfort determines the quality of life and accommodations provided to your worker. Higher comfort levels improve worker satisfaction and relationship. Comfort level 1 is the minimum; each level above 1 adds +1 to daily energy regeneration at day start, but increases daily maintenance costs. Desired Comfort is the worker's personal baseline set by recruitment/template data and can be affected by traits. Changing worker JSON affects new recruits, not already-hired workers in your current save." size font_size(24) color "#7a4b2a" text_align 0.0 xalign 0.0
                     
                     null height 20
                     
@@ -8533,8 +8737,8 @@ screen adjust_comfort(worker):
         
         # Return button (top-right)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Hide("adjust_comfort")
             xalign 1.0
             yalign 0.0
@@ -8602,16 +8806,16 @@ screen interaction_category(worker, category_name, interactions_list):
             label "[category_name] for [worker['name']]" xalign 0.0 style "header_style"
             $ progression_subtitle = get_category_progress_subtitle(worker, category_name)
             if progression_subtitle:
-                text "[progression_subtitle]" style "interaction_text" size font_size(20) color "#5a4a2a" xalign 0.0
+                text "[progression_subtitle]" style "interaction_text" size font_size(22) color "#5a4a2a" xalign 0.0
             
             # Show daily interaction limit info (manager pool: 2 + Manager Level)
             $ interaction_count = get_worker_interaction_count(worker)
             $ _max_interactions = get_max_daily_interactions()
             $ remaining_interactions = _max_interactions - interaction_count
             if remaining_interactions <= 0:
-                text "Manager interaction limit reached ([interaction_count]/[_max_interactions]). Interactions disabled until next day." style "interaction_text" size font_size(22) color "#a63c3c" xalign 0.0
+                text "Manager interaction limit reached ([interaction_count]/[_max_interactions]). Interactions disabled until next day." style "interaction_text" size font_size(24) color "#a63c3c" xalign 0.0
             else:
-                text "Manager interactions remaining today: [remaining_interactions]/[_max_interactions]" style "interaction_text" size font_size(22) color "#7a4b2a" xalign 0.0
+                text "Manager interactions remaining today: [remaining_interactions]/[_max_interactions]" style "interaction_text" size font_size(24) color "#7a4b2a" xalign 0.0
             
             null height 5  # Small spacing between message and interactions list
             
@@ -8682,11 +8886,11 @@ screen interaction_category(worker, category_name, interactions_list):
                                             spacing 10
                                             xalign 0.0
                                             if interaction.get("cost_energy", 0) > 0:
-                                                text "Energy: [interaction.get('cost_energy', 0)]" style "interaction_text" size font_size(14) color "#2c4aa6"
+                                                text "Energy: [interaction.get('cost_energy', 0)]" style "interaction_text" size font_size(20) color "#2c4aa6"
                                             if interaction.get("cost_health", 0) > 0:
-                                                text "Health: [interaction.get('cost_health', 0)]" style "interaction_text" size font_size(14) color "#a63c3c"
+                                                text "Health: [interaction.get('cost_health', 0)]" style "interaction_text" size font_size(20) color "#a63c3c"
                                             if interaction.get("cost_money", 0) > 0:
-                                                text "Money: $[interaction.get('cost_money', 0)]" style "interaction_text" size font_size(14) color "#2a6b2a"
+                                                text "Money: $[interaction.get('cost_money', 0)]" style "interaction_text" size font_size(20) color "#2a6b2a"
                                     # Effects (stats gained)
                                     $ effects = interaction.get("effect", {})
                                     hbox:
@@ -8696,24 +8900,24 @@ screen interaction_category(worker, category_name, interactions_list):
                                         $ rom_val = effects.get("romance", 0)
                                         if rom_val != 0:
                                             $ rom_text = f"Romance: {rom_val:+d}"
-                                            text "[rom_text]" style "interaction_text" size font_size(14) color "#c2185b"
+                                            text "[rom_text]" style "interaction_text" size font_size(20) color "#c2185b"
 
                                         $ rel_val = effects.get("relationship", 0)
                                         if rel_val != 0:
                                             $ rel_text = f"Relationship: {rel_val:+d}"
-                                            text "[rel_text]" style "interaction_text" size font_size(14) color "#1976d2"
+                                            text "[rel_text]" style "interaction_text" size font_size(20) color "#1976d2"
 
                                         $ reb_val = effects.get("rebelliousness", 0)
                                         if reb_val != 0:
                                             $ reb_color = "#d32f2f" if reb_val < 0 else "#388e3c"
                                             $ reb_text = f"Rebelliousness: {reb_val:+d}"
-                                            text "[reb_text]" style "interaction_text" size font_size(14) color reb_color
+                                            text "[reb_text]" style "interaction_text" size font_size(20) color reb_color
 
                                         # Joy last (secondary stat) + brown color for readability
                                         $ joy_val = effects.get("joy", 0)
                                         if joy_val != 0:
                                             $ joy_text = f"Joy: {joy_val:+d}"
-                                            text "[joy_text]" style "interaction_text" size font_size(14) color "#7a4b2a"
+                                            text "[joy_text]" style "interaction_text" size font_size(20) color "#7a4b2a"
                 
             hbox:
                 spacing 20
@@ -8761,8 +8965,8 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
 
             # Return button (top-right inside the frame)
             imagebutton:
-                idle Transform("gui/button/return_idle.png", zoom=0.5)
-                hover Transform("gui/button/return_hover.png", zoom=0.5)
+                idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+                hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
                 xalign 1.0
                 yalign 0.0
                 xoffset -125
@@ -8882,7 +9086,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 action NullAction()
                                 hovered ShowTransient("tooltip", message="Worker's current level. Higher levels unlock more interactions and improve performance.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
-                                text "Level: [worker.get('level', 1)]" size font_size(20) color "#ffffff" yalign 0.5
+                                text "Level: [worker.get('level', 1)]" size font_size(22) color "#ffffff" yalign 0.5
                             button:
                                 background None
                                 yalign 0.5
@@ -8891,7 +9095,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 action NullAction()
                                 hovered ShowTransient("tooltip", message="Experience points. Workers gain XP from successful daily activities. Reach the target to level up.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
-                                text "XP: [worker.get('success_count', 0)]/[20 * worker.get('level', 1)]" size font_size(20) color "#ffffff" yalign 0.5
+                                text "XP: [worker.get('success_count', 0)]/[20 * worker.get('level', 1)]" size font_size(22) color "#ffffff" yalign 0.5
                             if in_roster:
                                 hbox:
                                     spacing 5
@@ -8900,11 +9104,11 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                     xoffset 5
                                     textbutton "Comfort: [comfort_level] - $[daily_cost]":
                                         background None
-                                        text_size font_size(20)
+                                        text_size font_size(22)
                                         text_color "#7a4b2a"
                                         text_hover_color "#6b6528"
                                         action Show("adjust_comfort", worker=worker)
-                                        hovered ShowTransient("tooltip", message="Adjust worker comfort level. Daily worker cost is comfort x 20. Building-level comfort scaling is applied in building totals (hover Costs on Manager for formulas).", screen_name="WorkerDetails")
+                                        hovered ShowTransient("tooltip", message="Adjust worker comfort level. Daily worker cost is comfort x " + str(get_difficulty_comfort_mult()) + ". Building-level comfort scaling is applied in building totals (hover Costs on Manager for formulas).", screen_name="WorkerDetails")
                                         unhovered Hide("tooltip")
                                     python:
                                         screen_name = "WorkerDetails"
@@ -8926,46 +9130,50 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 background "#00000044"
                                 xsize 200
                                 ysize 40
-                                padding (5, 5)
-                                hovered ShowTransient("tooltip", message="Energy is consumed by daily activities. Workers regenerate 1 energy per day. Maximum energy and regeneration increase with level. Use energy potions to restore more.", screen_name="WorkerDetails")
+                                padding (1, 0)
+                                hovered ShowTransient("tooltip", message="Energy is consumed by daily activities. Daily energy regeneration formula: +Level + comfort bonus + trait bonus (level part = +1 per level, e.g. Lv1 +1, Lv5 +5). Use energy potions to restore more.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
                                 action NullAction()
                                 fixed:
-                                    xsize 190
-                                    ysize 30
+                                    xsize 192
+                                    ysize 32
+                                    xalign 0.5
+                                    yalign 0.5
                                     bar:
                                         value worker["energy"]
                                         range calculate_max_energy(worker)
-                                        xsize 190
-                                        ysize 30
+                                        xsize 192
+                                        ysize 32
                                         left_bar "#4a6fa5"  # Azul desaturado
                                         right_bar "#444444"
-                                    text "Energy [worker['energy']]/[calculate_max_energy(worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                                    text "Energy [worker['energy']]/[calculate_max_energy(worker)]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
                             button:
                                 background "#00000044"
                                 xsize 200
                                 ysize 40
-                                padding (5, 5)
+                                padding (1, 0)
                                 hovered ShowTransient("tooltip", message="Health decreases from dangerous activities or failures. Low health reduces performance. Maximum health and regeneration increase with level. Use health potions to restore.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
                                 action NullAction()
                                 fixed:
-                                    xsize 190
-                                    ysize 30
+                                    xsize 192
+                                    ysize 32
+                                    xalign 0.5
+                                    yalign 0.5
                                     bar:
                                         value worker["health"]
                                         range calculate_max_health(worker)
-                                        xsize 190
-                                        ysize 30
+                                        xsize 192
+                                        ysize 32
                                         left_bar "#a54a4a"  # Rojo desaturado
                                         right_bar "#444444"
-                                    text "Health [worker['health']]/[calculate_max_health(worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                                    text "Health [worker['health']]/[calculate_max_health(worker)]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
                 
                     # Auto-supply / Auto-equip
                     hbox:
                         spacing 8
                         yalign 0.0
-                        textbutton "[details_view == 'main' and 'Switch to Traits' or 'Switch to Stats + Skills']":
+                        textbutton "[details_view == 'main' and 'Switch to Traits' or 'Switch to Stats']":
                             text_size font_size(22)
                             yoffset -2
                             text_hover_color "#6b6528"
@@ -8976,21 +9184,21 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                             hovered ShowTransient("tooltip", message="Flip panel between stats+skills and traits-only view.", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
                         textbutton "Stock Potions: [worker_auto_supply_compact_label(worker)]":
-                            text_size font_size(20)
+                            text_size font_size(22)
                             text_color "#3c2a1a"
                             text_hover_color "#6b6528"
                             action Function(cycle_worker_auto_supply_compact, worker)
                             hovered ShowTransient("tooltip", message="Click to cycle: Off, then x3/x4/x5/x1/x2. When not Off, each day take that many health and energy potions from manager stock (up to limit per type).", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
                         textbutton "Auto-rest: [worker_auto_rest_compact_label(worker)]":
-                            text_size font_size(20)
+                            text_size font_size(22)
                             text_color "#3c2a1a"
                             text_hover_color "#6b6528"
                             action Function(cycle_worker_auto_rest_compact, worker)
                             hovered ShowTransient("tooltip", message="Click to cycle: Off, 15%, 25%, 35%, 45%. When not Off, manager assigns Rest if energy OR health is below that % of max; return at 95% energy and health. When Off, leaving Rest only needs 95% energy.", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
                         textbutton "Auto Equip: [worker.get('auto_equip', False) and 'On' or 'Off']":
-                            text_size font_size(20)
+                            text_size font_size(22)
                             text_color "#3c2a1a"
                             text_hover_color "#6b6528"
                             action Function(toggle_worker_auto_equip, worker)
@@ -9006,7 +9214,42 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                             padding (12, 10)
                             vbox:
                                 spacing 8
-                                text "Assignment: [get_worker_profession_and_building_display(worker)]" size font_size(22) color "#3d2914" xalign 0.0
+                                $ _assigned_building = worker.get("assigned_building", "Unassigned")
+                                $ _details_job_label = "Unassigned"
+                                $ _details_building_label = "Unassigned: No Building"
+                                if _assigned_building != "Unassigned" and _assigned_building in available_buildings:
+                                    $ _details_building_data = available_buildings.get(_assigned_building, {})
+                                    $ _details_btype_id = _details_building_data.get("type")
+                                    $ _details_btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == _details_btype_id), None)
+                                    $ _details_type_name = "Unassigned" if _details_btype_id is None else (_details_btype.get("name", _details_btype_id) if _details_btype else _details_btype_id)
+                                    $ _details_parts = _assigned_building.split("_")
+                                    $ _details_default_name = "Building " + _details_parts[1] if len(_details_parts) > 1 else _assigned_building
+                                    $ _details_display_name = store.custom_names.get(_assigned_building, _details_default_name)
+                                    $ _details_building_label = f"{_details_type_name}: {_details_display_name}"
+                                    $ _details_job_id = (_details_building_data.get("servant_jobs") or {}).get(worker.get("name", ""), "Unassigned")
+                                    $ _details_rpj = getattr(store, "resolve_profession_for_job", None)
+                                    $ _details_job_label = (_details_rpj(_details_btype, _details_job_id)[0] if callable(_details_rpj) else str(_details_job_id))
+                                hbox:
+                                    spacing 4
+                                    xalign 0.0
+                                    text "Assignment:" size font_size(24) color "#3d2914" yalign 0.5
+                                    textbutton "{u}[_details_job_label]{/u}":
+                                        background None
+                                        text_size font_size(24)
+                                        text_color "#3d2914"
+                                        text_hover_color "#6b6528"
+                                        action Show("job_selection", worker=worker)
+                                        hovered ShowTransient("tooltip", message="Change this worker's role (profession), including Unassigned/Rest, using the same rules as Manage Workers.", screen_name="WorkerDetails")
+                                        unhovered Hide("tooltip")
+                                    text " - " size font_size(24) color "#3d2914" yalign 0.5
+                                    textbutton "{u}[_details_building_label]{/u}":
+                                        background None
+                                        text_size font_size(24)
+                                        text_color "#3d2914"
+                                        text_hover_color "#6b6528"
+                                        action Show("building_selection", worker=worker, return_to_workers=False)
+                                        hovered ShowTransient("tooltip", message="Move this worker to another building or set No Building, with the same synchronization as Manage Workers.", screen_name="WorkerDetails")
+                                        unhovered Hide("tooltip")
                                 $ _details_reb_cap = get_attribute_cap(worker, "rebelliousness")
                                 $ _details_reb_cap_display = int(_details_reb_cap if _details_reb_cap is not None else 100)
                                 $ _details_reb_bar_range = max(1, _details_reb_cap_display)
@@ -9014,8 +9257,8 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 $ _details_lib_bar_range = max(1, _details_lib_cap_display)
                                 python:
                                     _stats_items = [
-                                        ("Rebelliousness", worker.get("rebelliousness", 0), _details_reb_cap_display, _details_reb_bar_range, "Rebelliousness increases from poor treatment or failures. High rebelliousness reduces worker performance and loyalty."),
-                                        ("Joy", worker.get("joy", 0), 100, 100, "Joy increases from successful activities and positive interactions. High joy improves worker performance and relationship."),
+                                        ("Rebelliousness", worker.get("rebelliousness", 0), _details_reb_cap_display, _details_reb_bar_range, "Rebelliousness increases from poor treatment or failures. Above 80, workers may refuse to work. Low joy (below 20) adds +2 daily; high joy (above 80) reduces it by 3."),
+                                        ("Joy", worker.get("joy", 0), 100, 100, "Joy increases from comfort above desired and positive interactions. Above 80, reduces Rebelliousness by 3/day. Below 20, adds +2 Rebelliousness/day."),
                                         ("Romance", worker.get("romance", 0), 100, 100, "Romance builds through intimate interactions. High romance improves relationship and unlocks special interactions."),
                                         ("Relationship", worker.get("relationship", 0), 100, 100, "Relationship reflects the bond between you and this worker. Higher relationship improves loyalty and unlocks special interactions."),
                                     ]
@@ -9034,21 +9277,23 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                 background "#00000044"
                                                 xsize 275
                                                 ysize 38
-                                                padding (5, 5)
+                                                padding (1, 0)
                                                 action NullAction()
                                                 hovered ShowTransient("tooltip", message=stat_tooltip, screen_name="WorkerDetails")
                                                 unhovered Hide("tooltip")
                                                 fixed:
-                                                    xsize 265
+                                                    xsize 267
                                                     ysize 30
+                                                    xalign 0.5
+                                                    yalign 0.5
                                                     bar:
                                                         value stat_value
                                                         range stat_bar_range
-                                                        xsize 265
+                                                        xsize 267
                                                         ysize 30
                                                         left_bar "#6b6528"
                                                         right_bar "#444444"
-                                                    text "[stat_name]: [stat_value]/[stat_max_display]" size font_size(21) color "#ffffff" xalign 0.5 yalign 0.5
+                                                    text "[stat_name]: [stat_value]/[stat_max_display]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
                                     vbox:
                                         spacing 8
                                         xsize 280
@@ -9057,21 +9302,23 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                 background "#00000044"
                                                 xsize 275
                                                 ysize 38
-                                                padding (5, 5)
+                                                padding (1, 0)
                                                 action NullAction()
                                                 hovered ShowTransient("tooltip", message=stat_tooltip, screen_name="WorkerDetails")
                                                 unhovered Hide("tooltip")
                                                 fixed:
-                                                    xsize 265
+                                                    xsize 267
                                                     ysize 30
+                                                    xalign 0.5
+                                                    yalign 0.5
                                                     bar:
                                                         value stat_value
                                                         range stat_bar_range
-                                                        xsize 265
+                                                        xsize 267
                                                         ysize 30
                                                         left_bar "#6b6528"
                                                         right_bar "#444444"
-                                                    text "[stat_name]: [stat_value]/[stat_max_display]" size font_size(21) color "#ffffff" xalign 0.5 yalign 0.5
+                                                    text "[stat_name]: [stat_value]/[stat_max_display]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
 
                                 python:
                                     _skills = list(get_visible_skills(worker))
@@ -9091,56 +9338,60 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                             spacing 5
                                             xsize 280
                                             for skill_name, level in _skills_left:
-                                                $ total_skill = calculate_skill_with_traits(worker, skill_name)
+                                                $ total_skill = calculate_skill_with_traits(worker, skill_name, include_libido=False)
                                                 $ skill_uses = worker["skill_uses"].get(skill_name, 0)
                                                 $ uses_needed = level
                                                 $ skill_progress = skill_uses / float(uses_needed) if uses_needed > 0 else 0.0
                                                 button:
                                                     background "#00000044"
                                                     xsize 275
-                                                    ysize 40
-                                                    padding (5, 5)
+                                                    ysize 36
+                                                    padding (1, 0)
                                                     action SetScreenVariable("current_image", get_worker_image_random(worker, skill_name) or get_worker_image(worker))
                                                     hovered ShowTransient("tooltip", message="Click to view worker performing this skill. Progress bar shows current uses and uses required for next level.", screen_name="WorkerDetails")
                                                     unhovered Hide("tooltip")
                                                     fixed:
-                                                        xsize 265
-                                                        ysize 30
+                                                        xsize 267
+                                                        ysize 28
+                                                        xalign 0.5
+                                                        yalign 0.5
                                                         bar:
                                                             value skill_progress
                                                             range 1.0
-                                                            xsize 265
-                                                            ysize 30
+                                                            xsize 267
+                                                            ysize 28
                                                             left_bar "#7a7a7a"
                                                             right_bar "#444444"
-                                                        text "[skill_name]: [total_skill]/100" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
+                                                        text "[skill_name]: [total_skill]/100" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
                                         vbox:
                                             spacing 5
                                             xsize 280
                                             for skill_name, level in _skills_right:
-                                                $ total_skill = calculate_skill_with_traits(worker, skill_name)
+                                                $ total_skill = calculate_skill_with_traits(worker, skill_name, include_libido=False)
                                                 $ skill_uses = worker["skill_uses"].get(skill_name, 0)
                                                 $ uses_needed = level
                                                 $ skill_progress = skill_uses / float(uses_needed) if uses_needed > 0 else 0.0
                                                 button:
                                                     background "#00000044"
                                                     xsize 275
-                                                    ysize 40
-                                                    padding (5, 5)
+                                                    ysize 36
+                                                    padding (1, 0)
                                                     action SetScreenVariable("current_image", get_worker_image_random(worker, skill_name) or get_worker_image(worker))
                                                     hovered ShowTransient("tooltip", message="Click to view worker performing this skill. Progress bar shows current uses and uses required for next level.", screen_name="WorkerDetails")
                                                     unhovered Hide("tooltip")
                                                     fixed:
-                                                        xsize 265
-                                                        ysize 30
+                                                        xsize 267
+                                                        ysize 28
+                                                        xalign 0.5
+                                                        yalign 0.5
                                                         bar:
                                                             value skill_progress
                                                             range 1.0
-                                                            xsize 265
-                                                            ysize 30
+                                                            xsize 267
+                                                            ysize 28
                                                             left_bar "#7a7a7a"
                                                             right_bar "#444444"
-                                                        text "[skill_name]: [total_skill]/100" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
+                                                        text "[skill_name]: [total_skill]/100" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 258
                     else:
                         frame:
                             background "#00000044"
@@ -9185,13 +9436,13 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                         fixed:
                                                             xsize 150
                                                             yfit True
-                                                            text "[trait]" size font_size(21) text_align 0.0 xalign 0.0 yalign 0.0 xsize 150 color "#3c1f14"
+                                                            text "[trait]" size font_size(22) text_align 0.0 xalign 0.0 yalign 0.0 xsize 150 color "#3c1f14"
                                                         fixed:
                                                             xsize 320
                                                             yfit True
-                                                            text "[desc]" size font_size(21) text_align 0.0 xalign 0.0 xsize 320 color "#3c1f14"
+                                                            text "[desc]" size font_size(22) text_align 0.0 xalign 0.0 xsize 320 color "#3c1f14"
                                 else:
-                                    text "No traits" size font_size(21) color "#3c1f14" xalign 0.0 yalign 0.5
+                                    text "No traits" size font_size(22) color "#3c1f14" xalign 0.0 yalign 0.5
 
                     # Action Buttons Section
                     vbox:
@@ -9298,8 +9549,8 @@ screen workers():
             xfill True
             yfill True
             imagebutton:
-                idle Transform("gui/button/return_idle.png", zoom=0.5)
-                hover Transform("gui/button/return_hover.png", zoom=0.5)
+                idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+                hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
                 # Context-aware close: if Workers was opened over Manager, return there;
                 # otherwise, go back to tavern as usual.
                 action If(
@@ -9324,7 +9575,7 @@ screen workers():
                 
                 hbox:
                     spacing 10
-                    text "Filter by Building:" size font_size(18) color "#7a4b2a" yalign 0.5
+                    text "Filter by Building:" size font_size(20) color "#7a4b2a" yalign 0.5
                     
                     python:
                         # Ensure worker_building_filter is set to default if not defined
@@ -9354,13 +9605,13 @@ screen workers():
                             background "#5a3a1a"
                             hover_background "#6b4a2a"
                             
-                            text "[worker_building_filter]" size font_size(16) color "#ffffff" xalign 0.5 yalign 0.5
+                            text "[worker_building_filter]" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5
                             
                             action Show("worker_building_filter_menu", buildings=unique_buildings)
                 
                 hbox:
                     spacing 10
-                    text "Filter by Job:" size font_size(18) color "#7a4b2a" yalign 0.5
+                    text "Filter by Job:" size font_size(20) color "#7a4b2a" yalign 0.5
                     
                     python:
                         # Ensure worker_job_filter is set to default if not defined
@@ -9421,7 +9672,7 @@ screen workers():
                             background "#5a3a1a"
                             hover_background "#6b4a2a"
                             
-                            text "[worker_job_filter]" size font_size(16) color "#ffffff" xalign 0.5 yalign 0.5
+                            text "[worker_job_filter]" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5
                             
                             action Show("worker_job_filter_menu", jobs=unique_jobs)
             
@@ -9530,30 +9781,39 @@ screen workers():
                                 filtered_workers.append(worker)
                         
                         # Rest job always goes last within each building
+                        _norm_building_key = getattr(store, "_norm_building_key", lambda k: str(k or "").strip())
+
                         def get_worker_sort_key(w):
                             b_name = w.get('assigned_building', 'Unassigned')
+                            skill_metric = 0
                             if b_name != "Unassigned" and b_name in available_buildings:
                                 b_data = available_buildings[b_name]
                                 b_type_id = b_data.get("type")
                                 j_id = b_data.get("servant_jobs", {}).get(w["name"], "Unassigned")
                                 b_type_def = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == b_type_id), None)
-                                if j_id.lower() != "unassigned" and b_type_def:
+                                j_id_lc = str(j_id).strip().lower()
+                                if j_id_lc != "unassigned" and b_type_def:
                                     _rpj2 = getattr(store, "resolve_profession_for_job", None)
                                     if callable(_rpj2):
                                         j_name, j_def = _rpj2(b_type_def, j_id)
                                     else:
-                                        jlow = str(j_id).strip().lower()
-                                        j_def = next((p for p in b_type_def.get("professions", []) if str(p.get("id", "")).strip().lower() == jlow), None)
-                                        j_name = j_def.get("name", "ZZZ") if j_def else ("Rest" if jlow == "rest" else "ZZZ")
-                                    skill_sum = sum(calculate_skill_with_traits(w, sk) for sk in j_def.get("skills", [])) if j_def else 0
+                                        j_def = next((p for p in b_type_def.get("professions", []) if str(p.get("id", "")).strip().lower() == j_id_lc), None)
+                                        j_name = j_def.get("name", "ZZZ") if j_def else ("Rest" if j_id_lc == "rest" else "ZZZ")
+                                    # Preserve skill-priority ordering inside each role.
+                                    if j_def and hasattr(j_def, "get"):
+                                        ssum = 0
+                                        for sk in j_def.get("skills", []) or []:
+                                            ssum += calculate_skill_with_traits(w, str(sk), include_libido=False)
+                                        skill_metric = int(ssum)
                                     j_sort_name = "zzz_rest" if j_name.lower() == "rest" else j_name.lower()
                                 else:
                                     j_sort_name = "zzz"
-                                    skill_sum = 0
                             else:
                                 j_sort_name = "zzz"
-                                skill_sum = 0
-                            return (b_name, j_sort_name, -skill_sum)
+                            # Stable tie-breakers avoid jitter while keeping skill priority.
+                            b_sort = _norm_building_key(b_name)
+                            w_name = str(w.get("name", "")).strip().lower()
+                            return (b_sort, j_sort_name, -skill_metric, w_name)
                         
                         filtered_workers = sorted(filtered_workers, key=get_worker_sort_key)
                     
@@ -9571,7 +9831,7 @@ screen workers():
                                 background "tablebutton1b.png"
                                 xsize 180
                                 ysize 50
-                                text "[worker['name']] ([worker_level])" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
+                                text "[worker['name']] ([worker_level])" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
                                 action Show("worker_details", worker=worker, in_roster=True, nav_worker_names=_workers_nav_names, nav_worker_index=_workers_nav_index)
                             $ assigned_building = worker.get("assigned_building", "Unassigned")
                             $ building_display_name = custom_names.get(assigned_building, assigned_building)
@@ -9579,7 +9839,7 @@ screen workers():
                                 background "tablebutton1b.png"
                                 xsize 180
                                 ysize 50
-                                text "[building_display_name]" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
+                                text "[building_display_name]" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
                                 action Show("building_selection", worker=worker)
                             if worker.get("assigned_building", "Unassigned") != "Unassigned":
                                 $ building_name = worker["assigned_building"]
@@ -9600,7 +9860,7 @@ screen workers():
                                         $ total = 0
                                         $ count = 0
                                         for s in skills_used:
-                                            $ total += calculate_skill_with_traits(worker, str(s))
+                                            $ total += calculate_skill_with_traits(worker, str(s), include_libido=False)
                                             $ count += 1
                                         if count > 0:
                                             $ avg_skill = total // count
@@ -9610,14 +9870,14 @@ screen workers():
                                     background "tablebutton1b.png"
                                     xsize 180
                                     ysize 50
-                                    text "[job_name_with_skill]" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
+                                    text "[job_name_with_skill]" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
                                     action Show("job_selection", worker=worker)
                             else:
                                 button:
                                     background "tablebutton1b.png"
                                     xsize 180
                                     ysize 50
-                                    text "Unassigned" size font_size(20) color "#7a4b2a" hover_color "#6b6528"
+                                    text "Unassigned" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
                                     action Show("job_selection", worker=worker)
                             # Energy - Health column (split into two buttons)
                             hbox:
@@ -9628,7 +9888,7 @@ screen workers():
                                     background "tablebutton1b.png"
                                     xsize 89
                                     ysize 50
-                                    text_size font_size(18)
+                                    text_size font_size(20)
                                     text_color "#7a4b2a"
                                     text_hover_color "#2c4aa6"
                                     action use_or_buy_potion_action(worker, "energy_potion")
@@ -9637,7 +9897,7 @@ screen workers():
                                     background "tablebutton1b.png"
                                     xsize 89
                                     ysize 50
-                                    text_size font_size(18)
+                                    text_size font_size(20)
                                     text_color "#7a4b2a"
                                     text_hover_color "#a63c3c"
                                     action use_or_buy_potion_action(worker, "health_potion")
@@ -9654,9 +9914,9 @@ screen workers():
                                     xalign 0.0
                                     yalign 0.5
                                     spacing 0
-                                    text "[worker_type] / " size font_size(20) color "#7a4b2a" yalign 0.5
+                                    text "[worker_type] / " size font_size(22) color "#7a4b2a" yalign 0.5
                                     textbutton "[action_text]":
-                                        text_size font_size(20)
+                                        text_size font_size(22)
                                         text_color "#7a4b2a"
                                         text_hover_color "#6b6528"
                                         action Show("confirm_sell_worker", worker=worker)
@@ -10071,7 +10331,7 @@ screen map_screen():
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 25 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
@@ -10081,7 +10341,7 @@ screen map_screen():
             action Show("manager_character_sheet")
             text_color _manager_name_color
             text_hover_color "#6b6528"
-            text_size 20
+            text_size 24
             text_italic True
             background None
             hover_background None
@@ -10201,8 +10461,8 @@ screen daily_report():
         
         # Return button positioned at top-right (outside vbox)
         imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=0.5)
-            hover Transform("gui/button/return_hover.png", zoom=0.5)
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action Jump("day_transition")
             xalign 1.0
             yalign 0.0
@@ -10532,7 +10792,7 @@ screen daily_report():
                                             used_skill = report.get('used_skill', None)
                                             worker_for_skill = report.get('worker', None)
                                             if used_skill and used_skill != "N/A" and worker_for_skill:
-                                                skill_value = calculate_skill_with_traits(worker_for_skill, used_skill)
+                                                skill_value = calculate_skill_with_traits(worker_for_skill, used_skill, include_libido=False)
                                                 profession_display = f"{profession_name} ({skill_value})"
                                             else:
                                                 profession_display = profession_name
@@ -10966,7 +11226,7 @@ screen tavern():
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 21 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 25 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
@@ -10976,7 +11236,7 @@ screen tavern():
             action Show("manager_character_sheet")
             text_color _manager_name_color
             text_hover_color "#6b6528"
-            text_size 20
+            text_size 24
             text_italic True
             background None
             hover_background None
@@ -11015,7 +11275,7 @@ screen tutorial_dialogue_trigger():
 screen load_save_slot(number):
     $ file_text = "% s\n  %s" % (FileTime(number, empty="Empty Slot"), FileSaveName(number))
     add FileScreenshot(number) xpos -1 ypos 0
-    text file_text xpos 11 ypos -20 size font_size(15) color "#000000"
+    text file_text xpos 11 ypos -20 size font_size(16) color "#000000"
 
 ## Configure thumbnail size for save slots
 init python:

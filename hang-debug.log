@@ -1,0 +1,94 @@
+2026-04-08T00:39:52.673Z [DEBUG] MDM settings load completed in 3ms
+2026-04-08T00:39:52.689Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-04-08T00:39:52.690Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Users\Usuario\Desktop\SNS\FantasyManager\fantasy-manager\.claude\settings.json
+2026-04-08T00:39:52.692Z [DEBUG] CA certs: Config fallback - globalEnv keys: , settingsEnv keys: none
+2026-04-08T00:39:52.693Z [DEBUG] [init] configureGlobalMTLS starting
+2026-04-08T00:39:52.693Z [DEBUG] [init] configureGlobalMTLS complete
+2026-04-08T00:39:52.693Z [DEBUG] [init] configureGlobalAgents starting
+2026-04-08T00:39:52.694Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=undefined
+2026-04-08T00:39:52.694Z [DEBUG] [init] configureGlobalAgents complete
+2026-04-08T00:39:52.740Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-04-08T00:39:52.741Z [DEBUG] Error log sink initialized
+2026-04-08T00:39:52.757Z [DEBUG] Applying permission update: Adding 3 allow rule(s) to destination 'localSettings': ["Bash(python3 -c \":*)","Bash(python -c \":*)","Bash(python:*)"]
+2026-04-08T00:39:52.760Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-04-08T00:39:52.771Z [DEBUG] Git remote URL: https://github.com/Horologist1/fantasy-manager.git
+2026-04-08T00:39:52.771Z [DEBUG] Parsed repository: github.com/Horologist1/fantasy-manager from URL: https://github.com/Horologist1/fantasy-manager.git
+2026-04-08T00:39:52.908Z [DEBUG] Remote settings: No settings found (404)
+2026-04-08T00:39:52.908Z [DEBUG] Programmatic settings change notification for policySettings
+2026-04-08T00:39:52.940Z [DEBUG] Policy limits: Fetched successfully
+2026-04-08T00:39:52.941Z [DEBUG] Policy limits: Saved to C:\Users\Usuario\.claude\policy-limits.json
+2026-04-08T00:39:52.941Z [DEBUG] Policy limits: Applied new restrictions successfully
+2026-04-08T00:39:55.773Z [DEBUG] [STARTUP] Running setup()...
+2026-04-08T00:39:55.776Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Users\Usuario\Desktop\SNS\FantasyManager\fantasy-manager\.claude\settings.json
+2026-04-08T00:39:55.777Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-04-08T00:39:55.778Z [DEBUG] Error log sink initialized
+2026-04-08T00:39:55.779Z [DEBUG] Loading skills from: managed=C:\Program Files\ClaudeCode\.claude\skills, user=C:\Users\Usuario\.claude\skills, project=[]
+2026-04-08T00:39:55.779Z [DEBUG] [bare] Skipping skill dir discovery (no --add-dir)
+2026-04-08T00:39:55.780Z [DEBUG] [STARTUP] setup() completed in 6ms
+2026-04-08T00:39:55.780Z [DEBUG] Cleared CA certificates cache
+2026-04-08T00:39:55.781Z [DEBUG] Cleared mTLS configuration cache
+2026-04-08T00:39:55.781Z [DEBUG] Cleared proxy agent cache
+2026-04-08T00:39:55.781Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=undefined
+2026-04-08T00:39:55.782Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-04-08T00:39:55.838Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills, 8 bundled skills, 0 builtin plugin skills
+2026-04-08T00:39:55.841Z [DEBUG] [STARTUP] Commands and agents loaded in 59ms
+2026-04-08T00:39:55.841Z [DEBUG] Skipping startup prefetches, last ran 1775608796s ago
+2026-04-08T00:39:55.842Z [DEBUG] [STARTUP] MCP configs resolved in 1ms (awaited at +3082ms)
+2026-04-08T00:39:55.843Z [DEBUG] Cleared CA certificates cache
+2026-04-08T00:39:55.843Z [DEBUG] Cleared mTLS configuration cache
+2026-04-08T00:39:55.843Z [DEBUG] Cleared proxy agent cache
+2026-04-08T00:39:55.844Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=undefined
+2026-04-08T00:39:55.844Z [DEBUG] [3P telemetry] Waiting for remote managed settings before telemetry init
+2026-04-08T00:39:55.845Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-04-08T00:39:55.846Z [DEBUG] [3P telemetry] Remote managed settings loaded, initializing telemetry
+2026-04-08T00:39:55.847Z [DEBUG] Cleared CA certificates cache
+2026-04-08T00:39:55.847Z [DEBUG] Cleared mTLS configuration cache
+2026-04-08T00:39:55.847Z [DEBUG] Cleared proxy agent cache
+2026-04-08T00:39:55.848Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=undefined
+2026-04-08T00:39:55.855Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-04-08T00:39:55.855Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-04-08T00:39:55.858Z [DEBUG] [auto-mode] hasAutoModeOptIn=false skipAutoPermissionPrompt: user=undefined local=undefined flag=undefined policy=undefined
+2026-04-08T00:39:55.859Z [DEBUG] [auto-mode] verifyAutoModeGateAccess: enabledState=opt-in disabledBySettings=false model=claude-sonnet-4-6 modelSupported=true disableFastModeBreakerFires=false carouselAvailable=false canEnterAuto=true
+2026-04-08T00:39:55.869Z [DEBUG] [auto-mode] verifyAutoModeGateAccess setAvailable: true -> false
+2026-04-08T00:39:55.878Z [DEBUG] [ScheduledTasks] scheduler start() — enabled=false, hasTasks=false
+2026-04-08T00:40:56.489Z [ERROR] Error: Error: spawn EPERM
+    at ChildProcess.spawn (node:internal/child_process:421:11)
+    at spawn (node:child_process:796:9)
+    at file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:750:3382
+    at new Promise (<anonymous>)
+    at Am_ (file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:750:3356)
+    at async _ (file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:754:1272)
+    at async ViK (file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:8035:210)
+2026-04-08T00:40:56.493Z [WARN] [3P telemetry] Event dropped (no event logger initialized): user_prompt
+2026-04-08T00:40:56.529Z [DEBUG] Loaded 1 installed plugins from C:\Users\Usuario\.claude\plugins\installed_plugins.json
+2026-04-08T00:40:56.533Z [DEBUG] Loaded hooks from standard location for plugin superpowers: C:\Users\Usuario\.claude\plugins\cache\claude-plugins-official\superpowers\5.0.7\hooks\hooks.json
+2026-04-08T00:40:56.534Z [DEBUG] Found 1 plugins (0 enabled, 1 disabled)
+2026-04-08T00:40:56.534Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-04-08T00:40:56.537Z [DEBUG] autocompact: tokens=1 threshold=179000 effectiveWindow=192000
+2026-04-08T00:40:56.538Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-04-08T00:40:56.540Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=undefined, result=true
+2026-04-08T00:40:56.541Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.94.b66; cc_entrypoint=sdk-cli; cch=00000;
+2026-04-08T00:40:56.542Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-04-08T00:40:56.543Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-04-08T00:40:56.544Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-04-08T00:40:56.544Z [DEBUG] [API:auth] OAuth token check starting
+2026-04-08T00:40:56.545Z [DEBUG] [API:auth] OAuth token check complete
+2026-04-08T00:40:56.546Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-04-08T00:40:56.549Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=032fde9c-ea78-40f8-91eb-8d183be468bb source=sdk
+2026-04-08T00:40:56.691Z [ERROR] API error (attempt 1/11): 400 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CZqNe8GX81kNjWmMKePd8"}
+2026-04-08T00:40:56.692Z [ERROR] Error in API request: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CZqNe8GX81kNjWmMKePd8"}
+2026-04-08T00:40:56.693Z [ERROR] API error x-client-request-id=032fde9c-ea78-40f8-91eb-8d183be468bb (give this to the API team for server-log lookup)
+2026-04-08T00:40:56.693Z [ERROR] Error: Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CZqNe8GX81kNjWmMKePd8"}
+    at rq.generate (file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:8:51364)
+    at fL.makeStatusError (file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:47:1652)
+    at fL.makeRequest (file:///C:/Users/Usuario/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:47:4928)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-08T00:40:56.695Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-04-08T00:40:56.838Z [DEBUG] BigQuery metrics exported successfully
+2026-04-08T00:40:56.838Z [DEBUG] BigQuery API Response: {
+  "accepted_count": 1,
+  "rejected_count": 0
+}
+2026-04-08T00:40:56.839Z [DEBUG] BigQuery metrics exporter flush complete
+2026-04-08T00:40:56.839Z [DEBUG] BigQuery metrics exporter flush complete
+2026-04-08T00:40:56.839Z [DEBUG] BigQuery metrics exporter shutdown complete

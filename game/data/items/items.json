@@ -224,10 +224,11 @@
       "type": "armor",
       "effect": {
         "skill_modifiers": {
-          "Clever": 5
+          "Clever": 5,
+          "Combat": 5
         }
       },
-      "description": "A robe imbued with magical properties. (+5 Clever)",
+      "description": "A robe imbued with magical properties. (+5 Clever, +5 Combat)",
       "durability": 70,
       "price": 500,
       "weight": 4,
@@ -531,10 +532,11 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Clever": 4
+          "Clever": 4,
+          "Combat": 4
         }
       },
-      "description": "An orb crackling with electrical energy. (+4 Clever)",
+      "description": "An orb crackling with electrical energy. (+4 Clever, +4 Combat)",
       "price": 600,
       "weight": 3,
       "image": "potion_magical"
@@ -718,6 +720,32 @@
       "description": "A test item that grants +70 to all skills. For testing purposes only. (+70 Sex, +70 Anal, +70 BDSM, +70 Hand, +70 Oral, +70 Homo, +70 Special, +70 Group, +70 Extreme, +70 Striptease, +70 Combat, +70 Clever, +70 Charm, +70 Service, +70 Agility, +70 Craft, +70 Specialty 4, +70 Specialty 5, +70 Specialty 6, +70 Specialty 7, +70 Specialty 8, +70 Specialty 9, +70 Specialty 10, +70 Specialty 11, +70 Specialty 12)",
       "price": 50,
       "weight": 1
+    },
+    {
+      "id": "test_trait_ring",
+      "name": "Test Trait Ring",
+      "display_name": "Test Trait Ring",
+      "type": "accessory",
+      "effect": {
+        "add_trait": "Strong"
+      },
+      "description": "A test accessory that grants the Strong trait while equipped. For testing trait equip/unequip behavior only.",
+      "price": 1,
+      "weight": 1,
+      "image": "ring_fortitude"
+    },
+    {
+      "id": "test_race_trait_ring",
+      "name": "Test Race Trait Ring",
+      "display_name": "Test Race Trait Ring",
+      "type": "accessory",
+      "effect": {
+        "add_trait": "Human"
+      },
+      "description": "A test accessory that grants the Human trait while equipped. For testing race trait equip/unequip behavior only.",
+      "price": 1,
+      "weight": 1,
+      "image": "ring_fortitude"
     },
     {
       "id": "test_unlock_shop2",
@@ -953,10 +981,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 4,
-          "Charm": 3
+          "Charm": 3,
+          "Hand": 2,
+          "Oral": 2
         }
       },
-      "description": "An alluring dress designed to captivate and entice clients. (+4 Sex, +3 Charm)",
+      "description": "An alluring dress designed to captivate and entice clients. (+4 Sex, +3 Charm) Also improves technique versatility (+2 Hand, +2 Oral).",
       "durability": 80,
       "price": 400,
       "weight": 3,
@@ -970,10 +1000,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 7,
-          "Charm": 5
+          "Charm": 5,
+          "Hand": 3,
+          "Oral": 3
         }
       },
-      "description": "A luxurious dress that exudes elegance and sensuality, perfect for high-end clientele. (+7 Sex, +5 Charm)",
+      "description": "A luxurious dress that exudes elegance and sensuality, perfect for high-end clientele. (+7 Sex, +5 Charm) Also improves technique versatility (+3 Hand, +3 Oral).",
       "durability": 140,
       "price": 1520,
       "weight": 4,
@@ -987,10 +1019,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 5,
-          "Anal": 3
+          "Anal": 3,
+          "Hand": 2,
+          "Oral": 2
         }
       },
-      "description": "Intimate apparel that enhances allure and confidence in intimate encounters. (+5 Sex, +3 Anal)",
+      "description": "Intimate apparel that enhances allure and confidence in intimate encounters. (+5 Sex, +3 Anal) Also improves technique versatility (+2 Hand, +2 Oral).",
       "durability": 60,
       "price": 420,
       "weight": 1,
@@ -1005,10 +1039,12 @@
         "skill_modifiers": {
           "Sex": 8,
           "Anal": 5,
-          "Charm": 4
+          "Charm": 4,
+          "Hand": 4,
+          "Oral": 4
         }
       },
-      "description": "An exquisite set of fine lingerie that makes the wearer irresistible. (+8 Sex, +5 Anal, +4 Charm)",
+      "description": "An exquisite set of fine lingerie that makes the wearer irresistible. (+8 Sex, +5 Anal, +4 Charm) Also improves technique versatility (+4 Hand, +4 Oral).",
       "durability": 100,
       "price": 1680,
       "weight": 2,
@@ -1022,10 +1058,12 @@
       "effect": {
         "skill_modifiers": {
           "Charm": 4,
-          "Sex": 2
+          "Sex": 2,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "Beautiful earrings that catch the light and draw attention to the wearer's face. (+4 Charm, +2 Sex)",
+      "description": "Beautiful earrings that catch the light and draw attention to the wearer's face. (+4 Charm, +2 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
       "price": 325,
       "weight": 1,
       "image": "basic_earrings"
@@ -1038,10 +1076,12 @@
       "effect": {
         "skill_modifiers": {
           "Charm": 6,
-          "Sex": 4
+          "Sex": 4,
+          "Hand": 2,
+          "Oral": 2
         }
       },
-      "description": "Sparkling diamond earrings that add elegance and allure to any outfit. (+6 Charm, +4 Sex)",
+      "description": "Sparkling diamond earrings that add elegance and allure to any outfit. (+6 Charm, +4 Sex) Also improves technique versatility (+2 Hand, +2 Oral).",
       "price": 960,
       "weight": 1,
       "image": "silver_earrings"
@@ -1087,10 +1127,12 @@
       "effect": {
         "skill_modifiers": {
           "Striptease": 5,
-          "Sex": 2
+          "Sex": 2,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "High heels designed for performance, enhancing grace and stage presence. (+5 Striptease, +2 Sex)",
+      "description": "High heels designed for performance, enhancing grace and stage presence. (+5 Striptease, +2 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
       "price": 330,
       "weight": 3,
       "image": "stripper_heels"
@@ -1103,10 +1145,12 @@
       "effect": {
         "skill_modifiers": {
           "Striptease": 8,
-          "Sex": 4
+          "Sex": 4,
+          "Hand": 2,
+          "Oral": 2
         }
       },
-      "description": "Premium heels crafted for professional performers, maximizing stage appeal. (+8 Striptease, +4 Sex)",
+      "description": "Premium heels crafted for professional performers, maximizing stage appeal. (+8 Striptease, +4 Sex) Also improves technique versatility (+2 Hand, +2 Oral).",
       "price": 1080,
       "weight": 3,
       "image": "stripper_heels"
@@ -1375,10 +1419,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 2,
-          "Charm": 2
+          "Charm": 2,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "A simple but alluring dress that enhances basic appeal. (+2 Sex, +2 Charm)",
+      "description": "A simple but alluring dress that enhances basic appeal. (+2 Sex, +2 Charm) Also improves technique versatility (+1 Hand, +1 Oral).",
       "durability": 50,
       "price": 140,
       "weight": 3,
@@ -1392,10 +1438,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 5,
-          "Charm": 4
+          "Charm": 4,
+          "Hand": 2,
+          "Oral": 2
         }
       },
-      "description": "A well-designed dress that significantly enhances allure and charm. (+5 Sex, +4 Charm)",
+      "description": "A well-designed dress that significantly enhances allure and charm. (+5 Sex, +4 Charm) Also improves technique versatility (+2 Hand, +2 Oral).",
       "durability": 100,
       "price": 570,
       "weight": 3,
@@ -1409,10 +1457,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 9,
-          "Charm": 7
+          "Charm": 7,
+          "Hand": 4,
+          "Oral": 4
         }
       },
-      "description": "Legendary dress once worn by the most famous courtesan in history. It is said that kings have gone to war for a single night with its wearer. (+9 Sex, +7 Charm)",
+      "description": "Legendary dress once worn by the most famous courtesan in history. It is said that kings have gone to war for a single night with its wearer. (+9 Sex, +7 Charm) Also improves technique versatility (+4 Hand, +4 Oral).",
       "durability": 180,
       "price": 4250,
       "weight": 4,
@@ -1426,10 +1476,12 @@
       "effect": {
         "skill_modifiers": {
           "Sex": 3,
-          "Anal": 2
+          "Anal": 2,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "Simple intimate apparel that provides basic enhancement. (+3 Sex, +2 Anal)",
+      "description": "Simple intimate apparel that provides basic enhancement. (+3 Sex, +2 Anal) Also improves technique versatility (+1 Hand, +1 Oral).",
       "durability": 40,
       "price": 162,
       "weight": 1,
@@ -1444,10 +1496,12 @@
         "skill_modifiers": {
           "Sex": 6,
           "Anal": 4,
-          "Charm": 3
+          "Charm": 3,
+          "Hand": 3,
+          "Oral": 3
         }
       },
-      "description": "Well-crafted lingerie that significantly enhances appeal and confidence. (+6 Sex, +4 Anal, +3 Charm)",
+      "description": "Well-crafted lingerie that significantly enhances appeal and confidence. (+6 Sex, +4 Anal, +3 Charm) Also improves technique versatility (+3 Hand, +3 Oral).",
       "durability": 80,
       "price": 630,
       "weight": 1,
@@ -1462,10 +1516,12 @@
         "skill_modifiers": {
           "Sex": 10,
           "Anal": 7,
-          "Charm": 6
+          "Charm": 6,
+          "Hand": 5,
+          "Oral": 5
         }
       },
-      "description": "A legendary set once owned by an empress who seduced entire kingdoms. Each piece is woven with threads of pure desire. (+10 Sex, +7 Anal, +6 Charm)",
+      "description": "A legendary set once owned by an empress who seduced entire kingdoms. Each piece is woven with threads of pure desire. (+10 Sex, +7 Anal, +6 Charm) Also improves technique versatility (+5 Hand, +5 Oral).",
       "durability": 120,
       "price": 4750,
       "weight": 2,
@@ -1479,10 +1535,12 @@
       "effect": {
         "skill_modifiers": {
           "Charm": 2,
-          "Sex": 1
+          "Sex": 1,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "Simple earrings that add a touch of charm. (+2 Charm, +1 Sex)",
+      "description": "Simple earrings that add a touch of charm. (+2 Charm, +1 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
       "price": 110,
       "weight": 1,
       "image": "basic_earrings"
@@ -1495,10 +1553,12 @@
       "effect": {
         "skill_modifiers": {
           "Charm": 5,
-          "Sex": 3
+          "Sex": 3,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "Beautiful earrings that significantly enhance charm and appeal. (+5 Charm, +3 Sex)",
+      "description": "Beautiful earrings that significantly enhance charm and appeal. (+5 Charm, +3 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
       "price": 540,
       "weight": 1,
       "image": "silver_earrings"
@@ -1511,10 +1571,12 @@
       "effect": {
         "skill_modifiers": {
           "Charm": 8,
-          "Sex": 6
+          "Sex": 6,
+          "Hand": 3,
+          "Oral": 3
         }
       },
-      "description": "Legend says these diamonds were formed from the tears of stars who wept at the beauty of the first mortal to wear them. (+8 Charm, +6 Sex)",
+      "description": "Legend says these diamonds were formed from the tears of stars who wept at the beauty of the first mortal to wear them. (+8 Charm, +6 Sex) Also improves technique versatility (+3 Hand, +3 Oral).",
       "price": 3520,
       "weight": 1,
       "image": "silver_earrings"
@@ -1576,10 +1638,12 @@
       "effect": {
         "skill_modifiers": {
           "Striptease": 3,
-          "Sex": 1
+          "Sex": 1,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "Simple heels for basic stage performances. (+3 Striptease, +1 Sex)",
+      "description": "Simple heels for basic stage performances. (+3 Striptease, +1 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
       "price": 125,
       "weight": 3,
       "image": "stripper_heels"
@@ -1592,10 +1656,12 @@
       "effect": {
         "skill_modifiers": {
           "Striptease": 6,
-          "Sex": 3
+          "Sex": 3,
+          "Hand": 1,
+          "Oral": 1
         }
       },
-      "description": "Well-crafted heels that significantly enhance stage presence and appeal. (+6 Striptease, +3 Sex)",
+      "description": "Well-crafted heels that significantly enhance stage presence and appeal. (+6 Striptease, +3 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
       "price": 480,
       "weight": 3,
       "image": "stripper_heels"
@@ -1608,10 +1674,12 @@
       "effect": {
         "skill_modifiers": {
           "Striptease": 10,
-          "Sex": 6
+          "Sex": 6,
+          "Hand": 3,
+          "Oral": 3
         }
       },
-      "description": "Legendary heels said to have been worn by a performer so captivating that audiences would forget to breathe while watching her dance. (+10 Striptease, +6 Sex)",
+      "description": "Legendary heels said to have been worn by a performer so captivating that audiences would forget to breathe while watching her dance. (+10 Striptease, +6 Sex) Also improves technique versatility (+3 Hand, +3 Oral).",
       "price": 4600,
       "weight": 3,
       "image": "stripper_heels"
@@ -1623,10 +1691,10 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Clever": 2
+          "Service": 2
         }
       },
-      "description": "A simple apron for novice bartenders. (+2 Clever)",
+      "description": "A simple apron for novice bartenders. (+2 Service)",
       "durability": 50,
       "price": 80,
       "weight": 3,
@@ -1639,10 +1707,10 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Clever": 5
+          "Service": 5
         }
       },
-      "description": "A professional apron for experienced bartenders, enhancing mixology skills. (+5 Clever)",
+      "description": "A professional apron for experienced bartenders, enhancing mixology skills. (+5 Service)",
       "durability": 110,
       "price": 540,
       "weight": 3,
@@ -1655,10 +1723,10 @@
       "type": "clothing",
       "effect": {
         "skill_modifiers": {
-          "Clever": 9
+          "Service": 9
         }
       },
-      "description": "Rumored to have been enchanted by a master alchemist, this apron is said to make any drink mixed while wearing it taste like liquid perfection. (+9 Clever)",
+      "description": "Rumored to have been enchanted by a master alchemist, this apron is said to make any drink mixed while wearing it taste like liquid perfection. (+9 Service)",
       "durability": 180,
       "price": 3400,
       "weight": 4,
@@ -1671,10 +1739,11 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Clever": 2
+          "Service": 2,
+          "Craft": 2
         }
       },
-      "description": "Essential bar tools for basic drink mixing. (+2 Clever)",
+      "description": "Essential bar tools for basic drink mixing. (+2 Service, +2 Craft)",
       "price": 70,
       "weight": 3,
       "image": "bar_set_1"
@@ -1686,10 +1755,11 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Clever": 4
+          "Service": 4,
+          "Craft": 4
         }
       },
-      "description": "High-quality tools crafted specifically for professional bartenders. Each piece is perfectly balanced and designed for precision. (+4 Clever)",
+      "description": "High-quality tools crafted specifically for professional bartenders. Each piece is perfectly balanced and designed for precision. (+4 Service, +4 Craft)",
       "price": 350,
       "weight": 4,
       "image": "bar_set_2"
@@ -1701,10 +1771,11 @@
       "type": "accessory",
       "effect": {
         "skill_modifiers": {
-          "Clever": 8
+          "Service": 8,
+          "Craft": 8
         }
       },
-      "description": "These tools were once used by a legendary bartender who could mix drinks that could heal wounds, restore youth, or grant wishes. (+8 Clever)",
+      "description": "These tools were once used by a legendary bartender who could mix drinks that could heal wounds, restore youth, or grant wishes. (+8 Service, +8 Craft)",
       "price": 3280,
       "weight": 5,
       "image": "bar_set_3"
@@ -2151,11 +2222,13 @@
         "skill_modifiers": {
           "Sex": 15,
           "Charm": 10,
-          "Anal": 8
+          "Anal": 8,
+          "Hand": 7,
+          "Oral": 7
         },
         "add_trait": "High Libido"
       },
-      "description": "An enchanted collar that awakens insatiable desires in its wearer. Grants the High Libido trait. (+15 Sex, +10 Charm, +8 Anal)",
+      "description": "An enchanted collar that awakens insatiable desires in its wearer. Grants the High Libido trait. (+15 Sex, +10 Charm, +8 Anal) Also improves technique versatility (+7 Hand, +7 Oral).",
       "price": 3650,
       "weight": 1,
       "nsfw": true,
@@ -2265,7 +2338,9 @@
           "BDSM": 20,
           "Sex": 15,
           "Group": 12,
-          "Extreme": 10
+          "Extreme": 10,
+          "Hand": 7,
+          "Oral": 7
         },
         "add_trait": [
           "Obedient",
@@ -2273,7 +2348,7 @@
           "Dependant"
         ]
       },
-      "description": "Enchanted chains that bind the wearer's will, making them utterly submissive. Grants Obedient, Meek, and Dependant traits. (+20 BDSM, +15 Sex, +12 Group, +10 Extreme)",
+      "description": "Enchanted chains that bind the wearer's will, making them utterly submissive. Grants Obedient, Meek, and Dependant traits. (+20 BDSM, +15 Sex, +12 Group, +10 Extreme) Also improves technique versatility (+7 Hand, +7 Oral).",
       "price": 3650,
       "weight": 3,
       "nsfw": true,
@@ -2764,6 +2839,51 @@
       "shop_available": true,
       "shop_chance": 1.0,
       "shop_only": "shop3"
+    },
+    {
+      "id": "basic_strategist_notebook",
+      "name": "Strategist Notebook",
+      "display_name": "Strategist Notebook",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 3
+        }
+      },
+      "description": "A practical notebook full of plans, routines, and margin notes for better decision-making. (+3 Clever)",
+      "price": 140,
+      "weight": 2,
+      "image": "amulet"
+    },
+    {
+      "id": "advanced_tactician_monocle",
+      "name": "Tactician Monocle",
+      "display_name": "Tactician Monocle",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 6
+        }
+      },
+      "description": "A precision-cut monocle that helps read people, risks, and opportunities at a glance. (+6 Clever)",
+      "price": 620,
+      "weight": 2,
+      "image": "amulet"
+    },
+    {
+      "id": "elite_mastermind_diary",
+      "name": "Mastermind Diary",
+      "display_name": "Mastermind Diary",
+      "type": "accessory",
+      "effect": {
+        "skill_modifiers": {
+          "Clever": 9
+        }
+      },
+      "description": "A coded diary used by master planners to map leverage, timing, and perfect execution. (+9 Clever)",
+      "price": 2900,
+      "weight": 2,
+      "image": "amulet"
     }
   ],
   "excluded_from_shops": [

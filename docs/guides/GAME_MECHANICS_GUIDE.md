@@ -128,7 +128,7 @@ adjusted_skill = effective_skill + difficulty_modifier
 ### Earnings Calculation
 1. **Base Formula**: Evaluated from story (e.g., "80 + skill * 3")
 2. **Trait Bonuses**: Added before multipliers (reduced to 30% of calculated)
-3. **Trait Multipliers**: Applied with caps (per-trait ≤1.15, total ≤1.6)
+3. **Trait Multipliers**: Applied with caps (per-trait ≤1.2, total ≤1.5)
 4. **Outcome Scaling**: Final adjustment by result type
    - Critical Success: ×0.65
    - Success: ×0.75
@@ -136,8 +136,8 @@ adjusted_skill = effective_skill + difficulty_modifier
    - Failure: ×2 penalty (minimum -10 if originally 0)
 
 ### Story Volume
-- **Base Stories**: Defined per profession (reduced by 1 if originally ≥2)
-- **Reputation Bonus**: Formula-based (e.g., "reputation / 100"), then reduced to 50% of calculated value
+- **Base Stories**: Defined per profession in `daily_story_count.base`
+- **Reputation Bonus**: Formula-based in `daily_story_count.bonus_formula` (default `reputation / 400`)
 - **Per Worker**: Each assigned worker gets full story allocation (base_events + bonus_events)
 
 ---
@@ -153,7 +153,7 @@ adjusted_skill = effective_skill + difficulty_modifier
 
 ### Trait Effects
 - **Skill Modifiers**: Flat bonuses to specific skills
-- **Earnings Multipliers**: 1.05-1.15 range (capped at 1.15 per trait, 1.6 total)
+- **Earnings Multipliers**: Usually 0.95-1.20 range (capped at 1.2 per trait, 1.5 total)
 - **Attribute Modifiers**: Health, energy, libido, secondary stats
 - **Caps/Minimums**: Enforce attribute limits
 - **Conflicts**: Mutually exclusive traits
@@ -244,7 +244,7 @@ adjusted_skill = effective_skill + difficulty_modifier
 2. **Earnings Reduction**: 20-35% across all stories via outcome scaling
 3. **Trait Balance**: Multipliers capped, bonuses reduced
 4. **Cost Increases**: Comfort costs doubled, upkeep differentiated by source
-5. **Volume Reduction**: Fewer base stories, softer reputation bonus
+5. **Volume Tuning**: Story pacing is configured in data formulas (`building_types.json`)
 6. **Libido Rebalance**: floor(libido/2) bonus, dynamic maximums
 
 ### Design Goals
