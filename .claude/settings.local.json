@@ -15,7 +15,12 @@
       "Bash(mv violet/cook_story2.jpg violet/cook_story2_restaurant.jpg)",
       "Bash(mv florian/cook_story2_failure.jpg florian/cook_story2_restaurant_failure.jpg)",
       "Bash(winget upgrade:*)",
-      "Bash(awk *)"
+      "Bash(awk *)",
+      "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager log --oneline -20 -- game/scripts/script.rpy)",
+      "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager diff HEAD -- game/scripts/script.rpy)",
+      "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/ log --all --oneline -S \"Empty pool after load\" --)",
+      "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/ log --all --oneline -S \"_worker_json_files_cache\")",
+      "Bash(grep -viE \"/les[._ ]|/les$|/\\(futa|magical|pregnant|transformed\\)_les\")"
     ]
   }
 }

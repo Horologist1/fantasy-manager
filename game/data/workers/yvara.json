@@ -10,27 +10,33 @@
         "monster": false,
         "procedural": false,
         "skills": {
-            "Sex": 35,
-            "Anal": 20,
-            "BDSM": 30,
-            "Hand": 35,
-            "Oral": 38,
-            "Homo": 32,
-            "Special": 28,
-            "Group": 20,
-            "Extreme": 15,
-            "Striptease": 40,
-            "Combat": 15,
-            "Clever": 50,
-            "Charm": 51,
-            "Service": 41,
-            "Agility": 35,
-            "Craft": 30
+            "Sex": 58,
+            "Anal": 41,
+            "BDSM": 37,
+            "Hand": 56,
+            "Oral": 56,
+            "Homo": 58,
+            "Special": 45,
+            "Group": 50,
+            "Extreme": 33,
+            "Striptease": 52,
+            "Combat": 28,
+            "Clever": 62,
+            "Charm": 60,
+            "Service": 58,
+            "Agility": 30,
+            "Craft": 52
         },
         "names_list": "western_female",
-        "traits": ["Human"],
+        "traits": [
+            "Human",
+            "Teacher",
+            "Mature Body",
+            "Elegant",
+            "Wise"
+        ],
         "description": "The Academy Director. She runs an institution by day and serves your establishment by arrangement.",
         "gender": "female",
-        "comfort_desired": 4
+        "comfort_desired": 2
     }
 ]

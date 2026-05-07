@@ -5,18 +5,19 @@
         "modifiers": {
             "skill_modifiers": {
                 "Charm": 3,
-                "Clever": 3
-            },
-            "earnings_multiplier": 1.10
+                "Clever": 3,
+                "BDSM": 5
+            }
         },
-        "description": "Yvara serves your establishment because you own her debt. She has accepted it. Her competence is undeniable. [+10% Earnings, +3 Charm, +3 Clever]"
+        "description": "Yvara serves your establishment because you own her debt. She has accepted it. Her competence is undeniable. [+3 Charm, +3 Clever, +5 BDSM]"
     },
     {
         "name": "Yvara, Academy Duties",
         "only_assigned": true,
         "modifiers": {
-            "energy_regeneration": -2
+            "energy_regeneration": -1,
+            "earnings_multiplier": 1.10
         },
-        "description": "Yvara runs the Academy during the day and works for you in the evenings. The double life is exhausting. [-2 Energy Regen]"
+        "description": "Yvara runs the Academy during the day and works for you in the evenings. The double life wears on her, but the Academy's prestige follows her into your house. [-1 Energy Regen, +10% Earnings]"
     }
 ]

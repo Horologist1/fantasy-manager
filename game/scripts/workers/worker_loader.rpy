@@ -6,7 +6,9 @@ init python:
         Cache worker JSON file list to avoid repeated renpy.list_files() scans.
         """
         global _worker_json_files_cache
-        if refresh or _worker_json_files_cache is None:
+        # Truthy check: an empty list pickled from an older save is treated as
+        # stale and rebuilt, so workers don't go missing on legacy save loads.
+        if refresh or not _worker_json_files_cache:
             workers_folder_path = "data/workers"
             _gcfl = getattr(store, "get_cached_file_list", None)
             _all_files = _gcfl() if callable(_gcfl) else renpy.list_files()
@@ -14,6 +16,18 @@ init python:
                 f for f in _all_files
                 if f.startswith(workers_folder_path) and f.endswith(".json")
             ]
+            # Self-heal: if the cached file list also missed worker files,
+            # invalidate it and re-list directly from disk.
+            if not _worker_json_files_cache:
+                try:
+                    store._renpy_file_list_cache = None
+                except Exception:
+                    pass
+                _all_files = renpy.list_files()
+                _worker_json_files_cache = [
+                    f for f in _all_files
+                    if f.startswith(workers_folder_path) and f.endswith(".json")
+                ]
         return list(_worker_json_files_cache)
 
     def _ensure_worker_min_traits(worker):

@@ -33,8 +33,11 @@ init python:
     _renpy_file_list_cache = None
 
     def get_cached_file_list():
+        # Truthy check (not `is None`): an empty list pickled into an older save
+        # would otherwise pass forever. renpy.list_files() returning empty is
+        # never legitimate, so empty == stale → re-list from disk.
         global _renpy_file_list_cache
-        if _renpy_file_list_cache is None:
+        if not _renpy_file_list_cache:
             _renpy_file_list_cache = renpy.list_files()
         return _renpy_file_list_cache
 
@@ -573,25 +576,7 @@ init python:
         renpy.log(f"Resolved worker folder: {full_folder}")
         return full_folder
 
-    # Function removed - using the one in event_visuals.rpy instead
-
-    def get_skill_search_patterns(skill_name):
-        """
-        Get search patterns for a skill name. Some skills search for multiple patterns.
-        """
-        special_patterns = {
-            "homo": ["les", "gay"],           # Homosexual busca "les" o "gay"
-            "service": ["wait", "service", "maid"],      # Service busca "wait", "service" o "maid"
-            "special": ["special", "titty"],  # Special busca "special" o "titty"
-            "striptease": ["strip", "striptease"],  # Striptease busca "strip" o "striptease"
-            "extreme": ["extreme", "beast"]   # Extreme busca "extreme" o "beast"
-        }
-        
-        skill_lower = skill_name.lower() if skill_name else skill_name
-        if skill_lower in special_patterns:
-            return special_patterns[skill_lower]
-        else:
-            return [skill_name]
+    # get_skill_search_patterns lives in event_visuals.rpy.
 
     def get_worker_image(worker, skill_name=None, outcome=None):
         """
@@ -624,27 +609,7 @@ init python:
             renpy.log(f"Worker: {worker_name}, Folder: {worker_folder}")
             renpy.log(f"Looking in: {base_folder}")
         
-        def _worker_allows_profile_variant(local_worker, filepath):
-            basename = os.path.basename(filepath).lower()
-            if "profile" not in basename:
-                return True
-            prefix_part = basename.split("profile", 1)[0].rstrip("_")
-            if not prefix_part:
-                return True
-            token_to_trait = {
-                "pregnant": "Pregnant",
-                "futa": "Futa",
-                "transformed": "Transformed",
-                "magical": "Magical",
-            }
-            required = []
-            for token in prefix_part.split("_"):
-                if token in token_to_trait:
-                    required.append(token_to_trait[token])
-            if not required:
-                return True
-            traits = set((local_worker or {}).get("traits", []) or [])
-            return set(required).issubset(traits)
+        # _worker_allows_profile_variant lives in event_visuals.rpy.
 
         trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
 
@@ -7787,6 +7752,14 @@ label explore:
 
 # Academy laboratory: alchemist pass (one-time), then craft sessions with investment tiers and 2 rounds of choices.
 label academy_laboratory_dialogue:
+    # Yvara devotion ending: weekly potion gift if a week has passed.
+    if getattr(store, "yvara_lab_access", False) and getattr(store, "yvara_ending_route", "") == "devotion":
+        $ _total = calculate_total_days()
+        $ _last_gift = getattr(store, "yvara_lab_gift_last_day", None)
+        if _last_gift is None or (_total - _last_gift) >= 7:
+            jump yvara_lab_gift_scene
+
+label academy_laboratory_dialogue_post_gift:
     $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     scene expression _lab_bg
     if not alchemy_unlocked:
@@ -7818,29 +7791,36 @@ label academy_laboratory_pass_menu:
             jump tavern_screen
 
 label academy_laboratory_craft_menu:
-    lab_director "How much do you invest? Basic coin yields basic draughts in number. Deeper pockets open the way to quality—or something extraordinary."
+    $ _lab_disc = getattr(store, "yvara_academy_discount_active", False)
+    $ _cost_basic = ALCHEMY_COST_BASIC // 2 if _lab_disc else ALCHEMY_COST_BASIC
+    $ _cost_quality = ALCHEMY_COST_QUALITY // 2 if _lab_disc else ALCHEMY_COST_QUALITY
+    $ _cost_premium = ALCHEMY_COST_PREMIUM // 2 if _lab_disc else ALCHEMY_COST_PREMIUM
+    if _lab_disc:
+        lab_director "How much do you invest? Basic coin yields basic draughts in number. Deeper pockets open the way to quality—or something extraordinary. The director has standing instructions to honour your account at half rate."
+    else:
+        lab_director "How much do you invest? Basic coin yields basic draughts in number. Deeper pockets open the way to quality—or something extraordinary."
     menu:
         lab_director "What will you do?"
-        "Batch basic ([ALCHEMY_COST_BASIC] coins)." if money >= ALCHEMY_COST_BASIC:
+        "Batch basic ([_cost_basic] coins)." if money >= _cost_basic:
             $ _alchemy_investment_tier = "basic"
-            $ money -= ALCHEMY_COST_BASIC
+            $ money -= _cost_basic
             jump academy_alchemy_choose_worker
-        "Batch basic ([ALCHEMY_COST_BASIC] coins)." if money < ALCHEMY_COST_BASIC:
-            lab_director "You need at least [ALCHEMY_COST_BASIC] coins for a basic batch."
+        "Batch basic ([_cost_basic] coins)." if money < _cost_basic:
+            lab_director "You need at least [_cost_basic] coins for a basic batch."
             jump academy_laboratory_craft_menu
-        "Quality ([ALCHEMY_COST_QUALITY] coins)." if money >= ALCHEMY_COST_QUALITY:
+        "Quality ([_cost_quality] coins)." if money >= _cost_quality:
             $ _alchemy_investment_tier = "quality"
-            $ money -= ALCHEMY_COST_QUALITY
+            $ money -= _cost_quality
             jump academy_alchemy_choose_worker
-        "Quality ([ALCHEMY_COST_QUALITY] coins)." if money < ALCHEMY_COST_QUALITY:
-            lab_director "You need at least [ALCHEMY_COST_QUALITY] coins for a quality run."
+        "Quality ([_cost_quality] coins)." if money < _cost_quality:
+            lab_director "You need at least [_cost_quality] coins for a quality run."
             jump academy_laboratory_craft_menu
-        "Premium ([ALCHEMY_COST_PREMIUM] coins)." if money >= ALCHEMY_COST_PREMIUM:
+        "Premium ([_cost_premium] coins)." if money >= _cost_premium:
             $ _alchemy_investment_tier = "premium"
-            $ money -= ALCHEMY_COST_PREMIUM
+            $ money -= _cost_premium
             jump academy_alchemy_choose_worker
-        "Premium ([ALCHEMY_COST_PREMIUM] coins)." if money < ALCHEMY_COST_PREMIUM:
-            lab_director "You need at least [ALCHEMY_COST_PREMIUM] coins for a premium run."
+        "Premium ([_cost_premium] coins)." if money < _cost_premium:
+            lab_director "You need at least [_cost_premium] coins for a premium run."
             jump academy_laboratory_craft_menu
         "Leave.":
             $ renpy.show_screen("map_screen")
@@ -7862,7 +7842,12 @@ label academy_alchemy_choose_worker:
     $ _worker = _alchemy_chosen_worker
     $ _alchemy_chosen_worker = None
     if _worker is None or not hasattr(_worker, "get") or not _worker.get("name"):
-        $ money += ALCHEMY_COST_BASIC if _alchemy_investment_tier == "basic" else (ALCHEMY_COST_QUALITY if _alchemy_investment_tier == "quality" else ALCHEMY_COST_PREMIUM)
+        python:
+            _disc = getattr(store, "yvara_academy_discount_active", False)
+            _refund_basic = ALCHEMY_COST_BASIC // 2 if _disc else ALCHEMY_COST_BASIC
+            _refund_quality = ALCHEMY_COST_QUALITY // 2 if _disc else ALCHEMY_COST_QUALITY
+            _refund_premium = ALCHEMY_COST_PREMIUM // 2 if _disc else ALCHEMY_COST_PREMIUM
+            money += _refund_basic if _alchemy_investment_tier == "basic" else (_refund_quality if _alchemy_investment_tier == "quality" else _refund_premium)
         $ renpy.show_screen("map_screen")
         $ renpy.show_screen("academy_menu")
         jump tavern_screen

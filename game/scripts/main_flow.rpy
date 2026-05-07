@@ -274,7 +274,7 @@ init python:
             day_names_local = renpy.store.day_names
             month_names_local = renpy.store.month_names
             day_name = day_names_local[(renpy.store.current_day - 1) % 7]
-            month_name = month_names_local[renpy.store.current_month]
+            month_name = month_names_local[renpy.store.current_month - 1]
             date_text = f"{day_name}, {renpy.store.current_day} {month_name} {renpy.store.current_year}"
 
             # Dissolve to black
@@ -348,7 +348,7 @@ label day_transition:
                 pass
     # Show date text with fade in
     $ day_name = day_names[(store.current_day - 1) % 7]
-    $ month_name = month_names[store.current_month]
+    $ month_name = month_names[store.current_month - 1]
     $ date_text = f"{day_name}, {store.current_day} {month_name} {store.current_year}"
     show expression Text(date_text, size=42, color="#ffffff") as daytext at truecenter with dissolve
     # Auto-advance after a short time, but still skippable by click
@@ -540,7 +540,7 @@ label start:
     # Transition to black and show initial date (like day_transition)
     scene expression Solid('#000000') with dissolve
     $ day_name = day_names[(store.current_day - 1) % 7]
-    $ month_name = month_names[store.current_month]
+    $ month_name = month_names[store.current_month - 1]
     $ date_text = f"{day_name}, {store.current_day} {month_name} {store.current_year}"
     show expression Text(date_text, size=42, color="#ffffff") as daytext at truecenter
     # Auto-advance after a short time, but still skippable by click

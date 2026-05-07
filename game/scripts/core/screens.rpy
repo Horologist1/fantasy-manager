@@ -4359,7 +4359,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]
-            $ month_name = month_names[store.current_month]
+            $ month_name = month_names[store.current_month - 1]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 26 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
@@ -5948,7 +5948,7 @@ screen Manager(building_name):
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]
-            $ month_name = month_names[store.current_month]
+            $ month_name = month_names[store.current_month - 1]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 26 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
@@ -7092,12 +7092,21 @@ screen academy_menu():
                                 text_color "#7a4b2a"
                                 text_hover_color "#6b6528"
                                 action [Hide("academy_menu"), Hide("map_screen"), Call("academy_laboratory_dialogue")]
-                        textbutton "Visit director":
-                            xsize 500
-                            text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
-                            action [Hide("academy_menu"), Hide("map_screen"), Call("yvara_visit")]
+                        if getattr(store, "yvara_ending_route", "") != "dominion":
+                            if getattr(store, "yvara_ending_route", "") == "mixed" and (calculate_total_days() % 2 == 1):
+                                textbutton "Visit director":
+                                    xsize 500
+                                    text_size font_size(24)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action Function(renpy.notify, "Yvara is working in one of your buildings today, not at the Academy.")
+                            else:
+                                textbutton "Visit director":
+                                    xsize 500
+                                    text_size font_size(24)
+                                    text_color "#7a4b2a"
+                                    text_hover_color "#6b6528"
+                                    action [Hide("academy_menu"), Hide("map_screen"), Call("yvara_visit")]
                         textbutton "Visit the library":
                             xsize 500
                             text_size font_size(24)
@@ -8453,7 +8462,10 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
     python:
         # Keep one stable image through all clicks in this outcome sequence.
         bg_image = frozen_bg
-        if not bg_image:
+        # Only run worker-aware lookup when there is an actual skill check.
+        # Without it, get_event_image almost always returns a profile fallback,
+        # which would hide the event's success_image / failure_image overrides.
+        if not bg_image and event.get("condition"):
             # Recruitment outcomes must prioritize the recruitment candidate worker.
             # Using store.current_worker first can leak unrelated UI context (e.g. roster worker),
             # which causes wrong portraits/backgrounds during recruitment.
@@ -8476,10 +8488,10 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
         else:
             bg_name = event.get("background_image", "event_bg")
         
-        valid_exts = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4")
-
         def _resolve_media_from_name(name):
             """Resolve media name in events/root images allowing multiple extensions."""
+            valid_exts = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4")
+
             # If a full path was provided, trust it directly.
             if name and name.startswith("images/"):
                 return name if renpy.loadable(name) else None
@@ -10330,7 +10342,7 @@ screen map_screen():
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
-            $ month_name = month_names[store.current_month]
+            $ month_name = month_names[store.current_month - 1]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 25 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
@@ -10476,7 +10488,7 @@ screen daily_report():
             
             # Updated title with date
             $ day_name = day_names[(store.current_day - 1) % 7]
-            $ month_name = month_names[store.current_month]
+            $ month_name = month_names[store.current_month - 1]
             
             # Calculate totals with filters applied
             python:
@@ -11225,7 +11237,7 @@ screen tavern():
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
-            $ month_name = month_names[store.current_month]
+            $ month_name = month_names[store.current_month - 1]
             text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 25 yalign 0.5
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():

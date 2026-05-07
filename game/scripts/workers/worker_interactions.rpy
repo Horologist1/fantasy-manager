@@ -18,9 +18,11 @@ init python:
         """
         global _interactions_cache, _interactions_cache_nsfw
 
-        # Return cached result if available and NSFW mode hasn't changed
+        # Return cached result if available and NSFW mode hasn't changed.
+        # Truthy check (not `is not None`): an empty list is treated as invalid so
+        # a stale pickled empty cache from an older save self-heals on next call.
         current_nsfw = persistent.nsfw_enabled
-        if _interactions_cache is not None and _interactions_cache_nsfw == current_nsfw:
+        if _interactions_cache and _interactions_cache_nsfw == current_nsfw:
             return list(_interactions_cache)
 
         interactions = []
@@ -30,6 +32,20 @@ init python:
         _gcfl = getattr(store, "get_cached_file_list", None)
         all_files = _gcfl() if callable(_gcfl) else renpy.list_files()
         interaction_files = [f for f in all_files if f.startswith("data/interactions/") and f.endswith(".json")]
+
+        # Self-heal: a stale _renpy_file_list_cache pickled into a save from an
+        # older version may not list any data/interactions/ files. Invalidate it
+        # and fall back to a fresh listing so workers/traits/items/media that
+        # share the same cache also recover.
+        if not interaction_files:
+            try:
+                store._renpy_file_list_cache = None
+            except Exception:
+                pass
+            all_files = renpy.list_files()
+            interaction_files = [f for f in all_files if f.startswith("data/interactions/") and f.endswith(".json")]
+            if interaction_files:
+                renpy.log("INTERACTIONS: cached file list missed interaction files; recovered via fresh renpy.list_files()")
         renpy.log(f"Found interaction files: {interaction_files}")
 
         # Load all interaction files from the interactions folder

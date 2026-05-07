@@ -464,9 +464,11 @@ init -2 python:
                 "yvara_ending_route": _safe_getattr(store, "yvara_ending_route", ""),
                 "yvara_is_worker": _safe_getattr(store, "yvara_is_worker", False),
                 "yvara_ending_done": _safe_getattr(store, "yvara_ending_done", False),
-                "yvara_academy_discount": _safe_getattr(store, "yvara_academy_discount", 0.0),
+                "yvara_academy_discount_active": _safe_getattr(store, "yvara_academy_discount_active", False),
                 "yvara_lab_access": _safe_getattr(store, "yvara_lab_access", False),
-                "yvara_continuation_notice_shown": _safe_getattr(store, "yvara_continuation_notice_shown", False),
+                "yvara_lab_gift_last_day": _safe_getattr(store, "yvara_lab_gift_last_day", None),
+                "yvara_post_arc_talk_index": _safe_getattr(store, "yvara_post_arc_talk_index", 0),
+                "yvara_arrangement_change_count": _safe_getattr(store, "yvara_arrangement_change_count", 0),
                 "yvara_good_word_count": _safe_getattr(store, "yvara_good_word_count", 0),
                 "yvara_good_word_last_day": _safe_getattr(store, "yvara_good_word_last_day", None),
                 "yvara_good_word_peak": _safe_getattr(store, "yvara_good_word_peak", False),
@@ -1121,9 +1123,11 @@ init -2 python:
                 ("yvara_ending_route", ""),
                 ("yvara_is_worker", False),
                 ("yvara_ending_done", False),
-                ("yvara_academy_discount", 0.0),
+                ("yvara_academy_discount_active", False),
                 ("yvara_lab_access", False),
-                ("yvara_continuation_notice_shown", False),
+                ("yvara_lab_gift_last_day", None),
+                ("yvara_post_arc_talk_index", 0),
+                ("yvara_arrangement_change_count", 0),
                 ("yvara_good_word_count", 0),
                 ("yvara_good_word_last_day", None),
                 ("yvara_good_word_peak", False),
@@ -1924,6 +1928,38 @@ init -2 python:
         """Called by Ren'Py after loading. Apply snapshot to restore full game state.
         Strategy: Try complete load -> backup complete -> partial load -> backup partial -> defaults"""
         try:
+            # Init-python globals get pickled into saves, so caches that listed
+            # files at save time override the freshly-init'd None and hide any
+            # mod files (workers/events/items/images) added after that save.
+            # Reset before _apply_snapshot so migration and ensure_worker_defaults
+            # see current files.
+            try:
+                store._renpy_file_list_cache = None
+                store._worker_json_files_cache = None
+                if hasattr(store, "invalidate_interactions_cache"):
+                    store.invalidate_interactions_cache()
+                else:
+                    store._interactions_cache = None
+                    store._interactions_cache_nsfw = None
+                if hasattr(store, "_reset_media_file_caches"):
+                    store._reset_media_file_caches()
+                if hasattr(store, "image_selection_cache") and hasattr(store.image_selection_cache, "clear"):
+                    store.image_selection_cache.clear()
+                if hasattr(store, "_trait_def_cache") and hasattr(store._trait_def_cache, "clear"):
+                    store._trait_def_cache.clear()
+                if hasattr(store, "_trait_defs_cache") and hasattr(store._trait_defs_cache, "clear"):
+                    store._trait_defs_cache.clear()
+                if hasattr(store, "_item_defs_cache") and hasattr(store._item_defs_cache, "clear"):
+                    store._item_defs_cache.clear()
+                if hasattr(store, "refresh_traits_cache"):
+                    try:
+                        store.refresh_traits_cache(force=True)
+                    except Exception:
+                        pass
+                _snap_log("SNAPSHOT: Invalidated data-listing caches (mod-aware load)")
+            except Exception as _cache_e:
+                renpy.log(f"SNAPSHOT: cache invalidation error (non-fatal): {_cache_e}")
+
             # Get the slot that was marked for loading
             slot_name = getattr(persistent, "_loading_slot", None)
             if not slot_name:
@@ -2219,9 +2255,11 @@ label after_load:
                             "yvara_ending_route",
                             "yvara_is_worker",
                             "yvara_ending_done",
-                            "yvara_academy_discount",
+                            "yvara_academy_discount_active",
                             "yvara_lab_access",
-                            "yvara_continuation_notice_shown",
+                            "yvara_lab_gift_last_day",
+                            "yvara_post_arc_talk_index",
+                            "yvara_arrangement_change_count",
                             "yvara_good_word_count",
                             "yvara_good_word_last_day",
                             "yvara_good_word_peak",
