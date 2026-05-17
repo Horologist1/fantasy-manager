@@ -20,7 +20,26 @@
       "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager diff HEAD -- game/scripts/script.rpy)",
       "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/ log --all --oneline -S \"Empty pool after load\" --)",
       "Bash(git -C /c/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/ log --all --oneline -S \"_worker_json_files_cache\")",
-      "Bash(grep -viE \"/les[._ ]|/les$|/\\(futa|magical|pregnant|transformed\\)_les\")"
+      "Bash(grep -viE \"/les[._ ]|/les$|/\\(futa|magical|pregnant|transformed\\)_les\")",
+      "Bash(git log *)",
+      "Bash(grep -E '\\\\.rpy$|\\\\.json$|\\\\.md$')",
+      "Bash(grep -nA6 '\"effect\": {' \"C:/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/game/data/events/recruit/event_recruit_unique_workers.json\")",
+      "Bash(PYTHONIOENCODING=utf-8 python *)",
+      "Bash(git *)",
+      "Read(//c/Users/Usuario/Desktop/SNS/FantasyManager/Fantasy_Manager-0.9.5.4b-dists/**)",
+      "Bash([ -f \"$DIST_DIR/$f\" ])",
+      "Bash([ -f \"$CUR_DIR/$f\" ])",
+      "Bash(grep *)",
+      "Bash(chmod +x \"C:/Users/Usuario/Desktop/SNS/FantasyManager/fantasy-manager/.git/hooks/pre-commit\")",
+      "Bash(mkdir -p /tmp/precommit_test)",
+      "Bash(cat)",
+      "Bash(cp /tmp/precommit_test/fake_bad_screen.rpy game/scripts/__hook_test.rpy)",
+      "Bash(.git/hooks/pre-commit)",
+      "Bash(git reset *)",
+      "Bash(findstr /i readme)",
+      "Bash(Remove-Item \"game/data/events/events_workers_suzuka.json\" -Force)",
+      "Bash(Remove-Item \"game/data/buildings/daily_story_extensions/suzuka_velox.json\" -Force)",
+      "PowerShell(Get-ChildItem *)"
     ]
   }
 }

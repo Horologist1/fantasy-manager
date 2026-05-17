@@ -3874,7 +3874,7 @@
           "failure": {
             "money": -400,
             "reputation": -5,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -4314,7 +4314,7 @@
           "failure": {
             "money": -200,
             "reputation": -5,
-            "health": -8
+            "health": -3
           },
           "success_chance": 0,
           "recruit_worker": false,
@@ -4435,7 +4435,7 @@
           "failure": {
             "money": 200,
             "reputation": -5,
-            "health": -15
+            "health": -5
           },
           "success_chance": 0,
           "recruit_worker": false,
@@ -4496,7 +4496,7 @@
           "failure": {
             "money": -100,
             "reputation": -3,
-            "health": -10
+            "health": -5
           },
           "success_chance": 0,
           "recruit_worker": false,

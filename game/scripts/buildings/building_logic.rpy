@@ -28,15 +28,7 @@ init python:
 
     store._resolve_building_by_name = _resolve_building_by_name
 
-    def get_building_servants(building_name):
-        """Delegates to canonical implementation in script.rpy.
-        worker['assigned_building'] is the single source of truth."""
-        canonical_fn = getattr(store, "_canonical_get_building_servants", None)
-        if callable(canonical_fn):
-            return canonical_fn(building_name)
-        return []
-
-    store.get_building_servants = get_building_servants
+    # get_building_servants lives in script.rpy.
 
     def _norm_building_key(key):
         """Normalize for matching: Building 1 <-> Building_1."""
@@ -51,29 +43,8 @@ init python:
 
     store._norm_building_key = _norm_building_key
 
-    def sync_assigned_servants_for_building(building_name):
-        """Delegates to canonical implementation in script.rpy.
-        worker['assigned_building'] is the single source of truth."""
-        canonical_fn = getattr(store, "_canonical_sync_assigned_servants_for_building", None)
-        if callable(canonical_fn):
-            canonical_fn(building_name)
-
-    def validate_and_sync_buildings(include_worker_refs=True):
-        """Delegates to canonical implementation in script.rpy."""
-        canonical_fn = getattr(store, "_canonical_validate_and_sync_buildings", None)
-        if callable(canonical_fn):
-            canonical_fn(include_worker_refs=include_worker_refs)
-
-    def sync_building_assignments_from_workers():
-        """Syncs all buildings' assigned_servants from store.workers. Never overwrites worker data."""
-        canonical_fn = getattr(store, "_canonical_sync_building_assignments_from_workers", None)
-        if callable(canonical_fn):
-            canonical_fn()
-            return
-        try:
-            validate_and_sync_buildings()
-        except Exception as e:
-            renpy.log(f"sync_building_assignments_from_workers error: {e}")
+    # sync_assigned_servants_for_building, validate_and_sync_buildings,
+    # sync_building_assignments_from_workers all live in script.rpy.
 
     def resolve_profession_for_job(btype, job_id):
         """Match profession by id case-insensitively. Returns (display_name, profession_dict_or_None).
@@ -362,53 +333,7 @@ init python:
                                 jobs[name] = first_prof
                                 renpy.log(f"AUTOREST: {name} sin previous_profession -> restaurado a {first_prof} (Energía {energy}/{max_e})")
 
-    def clear_worker_autorest_state(worker):
-        canonical_fn = getattr(store, "_canonical_clear_worker_autorest_state", None)
-        if callable(canonical_fn):
-            canonical_fn(worker)
-            return
-        if worker:
-            worker["previous_profession"] = None
-
-    def set_worker_job(worker, building_name, job_id):
-        canonical_fn = getattr(store, "_canonical_set_worker_job", None)
-        if callable(canonical_fn):
-            canonical_fn(worker, building_name, job_id)
-            return
-        if not building_name or building_name not in available_buildings:
-            return
-        
-        # Check if worker has dict-like interface (works for dict, RevertableDict, etc.)
-        # Use hasattr instead of isinstance to handle Ren'Py's RevertableDict
-        if not hasattr(worker, 'get'):
-            return
-        
-        worker_name = worker.get("name")
-        if not worker_name:
-            return
-        
-        # CRITICAL: Ensure worker_name is always a string (hashable)
-        if not isinstance(worker_name, str):
-            worker_name = str(worker_name)
-        
-        building = available_buildings[building_name]
-        if "servant_jobs" not in building:
-            building["servant_jobs"] = {}
-        
-        job_id_norm = str(job_id).lower() if job_id else ""
-        is_rest = "rest" in job_id_norm
-        current_job = building["servant_jobs"].get(worker_name, "")
-        current_norm = str(current_job).lower() if current_job else ""
-        
-        # When player assigns Rest: save current job so process_manager_auto_rest(restore_only=True) can restore it later
-        if is_rest and current_job and "rest" not in current_norm:
-            worker["previous_profession"] = current_job
-        # When player assigns a non-Rest job: clear auto-rest state so we don't override their choice
-        if not is_rest:
-            clear_worker_autorest_state(worker)
-        
-        building["servant_jobs"][worker_name] = job_id
-        renpy.restart_interaction()
+    # clear_worker_autorest_state and set_worker_job live in script.rpy.
 
     def _fmt_staffing_mult(value):
         try:

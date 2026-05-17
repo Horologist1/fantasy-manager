@@ -486,7 +486,10 @@ label handle_random_event:
                 preview_info = get_event_worker_skill_check_info(final_worker, choice_option)
                 check_preview = preview_info.get("label", "") if preview_info.get("valid") else ""
             if check_preview and check_preview not in option_text:
-                option_text = option_text + " [" + check_preview + "]"
+                # Parentheses (not brackets) so Ren'Py never tries to interpolate
+                # the preview text — keeps modded events safe from accidental
+                # SyntaxErrors regardless of what the label contains.
+                option_text = option_text + " (" + check_preview + ")"
             new_choice["option"] = option_text
             # Prepare success/failure messages with placeholders resolved; avoid empty messages
             # When final_worker is None (e.g. worker_selection "choose" before pick), keep

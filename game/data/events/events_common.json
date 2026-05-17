@@ -28,7 +28,7 @@
           "failure": {
             "money": -600,
             "reputation": -5,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -2271,7 +2271,7 @@
           "failure": {
             "money": -850,
             "reputation": -6,
-            "health": -18
+            "health": -5
           },
           "success_chance": 0,
           "joy": 0,
@@ -2321,7 +2321,7 @@
           "failure": {
             "money": -400,
             "reputation": -5,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -2384,7 +2384,7 @@
           "failure": {
             "money": -500,
             "reputation": -8,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -2701,7 +2701,7 @@
           "failure": {
             "money": -400,
             "reputation": -5,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -2822,7 +2822,7 @@
           },
           "failure": {
             "reputation": 3,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -2967,7 +2967,7 @@
           "failure": {
             "money": -300,
             "reputation": -5,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,
@@ -3049,7 +3049,7 @@
           },
           "failure": {
             "money": -300,
-            "health": -10,
+            "health": -5,
             "joy": -5
           },
           "success_chance": 0,

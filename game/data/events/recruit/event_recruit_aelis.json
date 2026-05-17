@@ -47,6 +47,7 @@
             {
                 "option": "Politely decline.",
                 "message": "You tell [event_worker] there’s no position available at present. She gives a calm, unreadable smile. I see. Then I’ll trust our paths may cross again. With a graceful nod, she slips back into the evening, composed as ever.",
+                "outcome_override": "failure",
                 "effect": {}
             }
         ],

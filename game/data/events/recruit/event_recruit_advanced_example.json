@@ -29,6 +29,7 @@
       {
         "option": "Politely decline.",
         "message": "You thank [event_worker] for their interest but explain you're not hiring right now. They nod understandingly and leave.",
+        "outcome_override": "failure",
         "effect": {}
       }
     ],
@@ -100,6 +101,7 @@
       {
         "option": "Politely decline their services.",
         "message": "You thank [event_worker] for their interest but explain that you're not currently hiring. They nod respectfully. 'I understand. If you change your mind, you know where to find me.' They finish their drink and leave peacefully.",
+        "outcome_override": "failure",
         "effect": {}
       }
     ],
@@ -162,6 +164,7 @@
       {
         "option": "Respectfully decline their offer.",
         "message": "You politely explain that your establishment doesn't currently need someone with their particular skills. [event_worker] bows gracefully. 'I understand. Should your needs change, I shall be in the area for some time.' They depart with dignity intact.",
+        "outcome_override": "failure",
         "effect": {}
       }
     ],

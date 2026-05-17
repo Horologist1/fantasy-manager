@@ -230,7 +230,7 @@ init -2 python:
     def _sanitize_data_before_save():
         """Clean and validate data before saving to prevent corruption."""
         sanitized_count = 0
-        
+
         # Sanitize manager_inventory - ONLY convert RevertableList to normal list, don't validate/reject items
         manager_inv = getattr(store, "manager_inventory", [])
         manager_inv_list = _to_list(manager_inv)
@@ -1624,7 +1624,22 @@ init -2 python:
             # Write to temporary file
             file_obj = os.fdopen(temp_fd, 'w', encoding='utf-8')
             try:
-                json.dump(snap, file_obj, indent=2, ensure_ascii=False)
+                try:
+                    json.dump(snap, file_obj, indent=2, ensure_ascii=False)
+                except (TypeError, ValueError) as json_err:
+                    # Identify which top-level key(s) caused the failure so the next
+                    # offender is easy to find without touching the happy path.
+                    bad_keys = []
+                    if isinstance(snap, dict):
+                        for _k, _v in snap.items():
+                            try:
+                                json.dumps({_k: _v}, ensure_ascii=False)
+                            except Exception as _probe_err:
+                                bad_keys.append((_k, type(_v).__name__, str(_probe_err)[:120]))
+                    renpy.log(f"SNAPSHOT: ERROR - json.dump failed: {json_err}")
+                    if bad_keys:
+                        renpy.log(f"SNAPSHOT: ERROR - non-serializable snapshot keys: {bad_keys}")
+                    raise
                 file_obj.flush()  # Ensure all data is written to buffer
                 os.fsync(file_obj.fileno())  # Force write to disk
             finally:
@@ -1745,6 +1760,19 @@ init -2 python:
                     if expected_guid and existing_guid and existing_guid != expected_guid:
                         renpy.notify(f"Snapshot WARNING: GUID mismatch for {slot_name}; overwriting.")
             
+            # Update save_name so file slots show in-game date + money. FileSaveName(slot)
+            # reads whatever was assigned to store.save_name at the moment of saving.
+            try:
+                _day = int(getattr(store, "current_day", 1) or 1)
+                _month_idx = int(getattr(store, "current_month", 1) or 1) - 1
+                _year = int(getattr(store, "current_year", 1) or 1)
+                _money = int(getattr(store, "money", 0) or 0)
+                _months = getattr(store, "month_names", []) or []
+                _month_label = _months[_month_idx] if 0 <= _month_idx < len(_months) else f"M{_month_idx+1}"
+                store.save_name = "Day {} — {} Y{}\n\n${:,}".format(_day, _month_label, _year, _money)
+            except Exception as _sn_e:
+                renpy.log(f"SNAPSHOT: save_name update failed (non-fatal): {_sn_e}")
+
             # Ensure assignments are consistent before snapshot
             _sync_building_assignments_from_workers()
             # Build and save snapshot BEFORE Ren'Py saves (captures current state in memory)
@@ -1850,15 +1878,17 @@ init -2 python:
         def __init__(self, slot_num, confirm=False):
             self.slot_num = slot_num
             self.confirm = confirm
-        
+
         def __call__(self):
             try:
                 if snapshot_pre_save_slot(self.slot_num):
                     return renpy.store.FileSave(self.slot_num, confirm=self.confirm)()
-                renpy.notify(_("Snapshot save failed. Save cancelled."))
+                renpy.notify(_("Save cancelled: snapshot stage failed (see log.txt)."))
             except Exception as e:
+                import traceback
                 renpy.log(f"SNAPSHOT: ERROR - SnapshotFileSave failed: {e}")
-                renpy.notify(_("Snapshot save failed. Save cancelled."))
+                renpy.log(f"SNAPSHOT: traceback: {traceback.format_exc()}")
+                renpy.notify(_("Save cancelled: {} (see log.txt).").format(type(e).__name__))
         
         def get_sensitive(self):
             return renpy.store.FileSave(self.slot_num, confirm=self.confirm).get_sensitive()

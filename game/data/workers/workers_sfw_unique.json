@@ -385,5 +385,53 @@
         "description": "A vibrant and charismatic performer with exceptional charm and social grace.",
         "gender": "female",
         "comfort_desired": 4
+    },
+    {
+        "name": "Oak",
+        "folder": "oak",
+        "cost": 1400,
+        "nsfw": false,
+        "unique": true,
+        "encounter_only": true,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 38,
+            "Anal": 36,
+            "BDSM": 34,
+            "Hand": 38,
+            "Oral": 37,
+            "Homo": 36,
+            "Special": 40,
+            "Group": 35,
+            "Extreme": 32,
+            "Striptease": 36,
+            "Combat": 38,
+            "Clever": 55,
+            "Charm": 44,
+            "Service": 45,
+            "Agility": 44,
+            "Craft": 47,
+            "Specialty 4": 39,
+            "Specialty 5": 38,
+            "Specialty 6": 37,
+            "Specialty 7": 41,
+            "Specialty 8": 40,
+            "Specialty 9": 39,
+            "Specialty 10": 38,
+            "Specialty 11": 37,
+            "Specialty 12": 41
+        },
+        "names_list": "fantasy_male",
+        "traits": [
+            "Elf",
+            "Teacher",
+            "Clever",
+            "Wise",
+            "Confident"
+        ],
+        "description": "An elven scholar of measured words and patient curiosity, well-suited to roles where wit and tact matter more than brawn.",
+        "gender": "male",
+        "comfort_desired": 4
     }
 ]

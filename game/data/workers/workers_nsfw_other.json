@@ -747,5 +747,49 @@
         "description": "A confident male worker designed as a reliable fallback profile for masculine images.",
         "gender": "male",
         "comfort_desired": 1
+    },
+    {
+        "name": "Aelarin",
+        "folder": "oak",
+        "cost": 1300,
+        "nsfw": true,
+        "unique": false,
+        "encounter_only": true,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 26,
+            "Anal": 22,
+            "BDSM": 18,
+            "Hand": 28,
+            "Oral": 25,
+            "Homo": 21,
+            "Special": 30,
+            "Group": 25,
+            "Extreme": 18,
+            "Striptease": 24,
+            "Combat": 26,
+            "Clever": 38,
+            "Charm": 32,
+            "Service": 28,
+            "Agility": 32,
+            "Craft": 33,
+            "Specialty 4": 22,
+            "Specialty 5": 26,
+            "Specialty 6": 23,
+            "Specialty 7": 18,
+            "Specialty 8": 28,
+            "Specialty 9": 24,
+            "Specialty 10": 21,
+            "Specialty 11": 30,
+            "Specialty 12": 25
+        },
+        "names_list": "fantasy_male",
+        "traits": [
+            "Elf"
+        ],
+        "description": "A studious elven worker with the unhurried calm of a long-lived race, suited to roles that reward intellect and grace.",
+        "gender": "male",
+        "comfort_desired": 1
     }
 ]

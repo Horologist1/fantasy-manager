@@ -4,7 +4,7 @@
       "id": "academy",
       "name": "Academy",
       "skill_name": "Academy Training",
-      "skill_description": "The Academy offers structured courses: Academics (Clever + random skill), Amatory Arts (sex skills), and Hospitality Arts (Charm & Service). Assign workers to a course to gain experience daily.",
+      "skill_description": "The Academy offers structured courses: Academics (Clever + random skill), Amatory Arts (sex skills), Hospitality Arts (Charm & Service), and Artisan Studies (Craft + random skill). Assign workers to a course to gain experience daily.",
       "nsfw": false,
       "show_in_manage_buildings": false,
       "allowed_map_locations": [
@@ -337,6 +337,52 @@
           ]
         },
         {
+          "id": "academy_artisan",
+          "name": "Artisan Studies",
+          "description": "A teacher will train the student in practical crafts and apothecary work, with hands-on time in the laboratory. (Adds experience to Craft and one random skill)",
+          "nsfw": false,
+          "difficulty": "medium",
+          "skills": [
+            "Craft"
+          ],
+          "training_skills_distribution": {
+            "Craft": 5,
+            "random_one": 5
+          },
+          "max_daily_workers": 99,
+          "daily_story_count": {
+            "base": 1,
+            "bonus_formula": "0"
+          },
+          "daily_stories": [
+            {
+              "id": "academy_artisan",
+              "weight": 1,
+              "used_skill": "Craft",
+              "report": "Artisan Studies: Craft & Apothecary",
+              "description": "{worker_name} spent the day at the Academy's workbenches and laboratory tables—measuring, mixing, and shaping under the eye of a patient artisan. The tutors paired the craft drills with one other discipline at random, to keep the hands and the head working together.",
+              "story_image": "",
+              "failure_image": "",
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              },
+              "consequences": {
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 0,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 0,
+                  "libido": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "id": "rest",
           "name": "Rest",
           "description": "Student takes a day away from lectures and drills to sleep, eat, and recover. No classes today while strength returns.",
@@ -626,7 +672,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -5,
+                  "health": -2,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -700,7 +746,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -5,
+                  "health": -2,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -794,7 +840,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -8,
+                  "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -869,7 +915,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -8,
+                  "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,
@@ -944,7 +990,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -8,
+                  "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "romance": 0,

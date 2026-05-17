@@ -205,7 +205,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -2,
+                  "health": -1,
                   "joy": -3,
                   "rebelliousness": 2,
                   "reputation": -5,
@@ -1066,7 +1066,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -2,
+                  "health": -1,
                   "joy": -3,
                   "rebelliousness": 2,
                   "reputation": -5,
@@ -1131,7 +1131,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -3,
+                  "health": -1,
                   "joy": -4,
                   "rebelliousness": 3,
                   "reputation": -5,
@@ -1513,7 +1513,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -2,
+                  "health": -1,
                   "joy": -3,
                   "rebelliousness": 2,
                   "reputation": -5,
@@ -1637,7 +1637,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -2,
+                  "health": -1,
                   "joy": -4,
                   "rebelliousness": 3,
                   "reputation": -10,
@@ -2876,14 +2876,14 @@
               "consequences": {
                 "failure": {
                   "energy": -5,
-                  "health": -8,
+                  "health": -5,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -10
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -3,
+                  "health": -2,
                   "joy": -1,
                   "reputation": -5
                 },
@@ -3293,7 +3293,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -5,
+                  "health": -2,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
@@ -3368,7 +3368,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -5,
+                  "health": -2,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
@@ -3444,7 +3444,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -8,
+                  "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -3
@@ -4049,7 +4049,7 @@
               "consequences": {
                 "failure": {
                   "energy": -5,
-                  "health": -25,
+                  "health": -10,
                   "joy": -2,
                   "rebelliousness": 2,
                   "reputation": -10,
@@ -4062,19 +4062,19 @@
                 },
                 "success": {
                   "energy": -5,
-                  "health": -8,
+                  "health": -3,
                   "joy": 8,
                   "reputation": 15
                 },
                 "critical_success": {
                   "energy": -4,
-                  "health": -2,
+                  "health": -1,
                   "joy": 15,
                   "reputation": 25
                 },
                 "mediocre": {
                   "energy": -5,
-                  "health": -15,
+                  "health": -4,
                   "joy": -2,
                   "rebelliousness": 2,
                   "reputation": -10,
@@ -4187,7 +4187,7 @@
                 },
                 "mediocre": {
                   "energy": -3,
-                  "health": -4,
+                  "health": -2,
                   "joy": -1,
                   "reputation": -4
                 }
@@ -4256,7 +4256,7 @@
                 },
                 "mediocre": {
                   "energy": -6,
-                  "health": -4,
+                  "health": -3,
                   "joy": -1,
                   "reputation": -3,
                   "libido": -5
@@ -4270,7 +4270,7 @@
                 },
                 "critical_success": {
                   "energy": -5,
-                  "health": -2,
+                  "health": -1,
                   "joy": 3,
                   "reputation": 20,
                   "libido": -10
@@ -4336,7 +4336,7 @@
               "consequences": {
                 "failure": {
                   "energy": -4,
-                  "health": -10,
+                  "health": -8,
                   "joy": -1,
                   "rebelliousness": 1,
                   "libido": -2
@@ -4353,7 +4353,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -10,
+                  "health": -3,
                   "joy": -1,
                   "rebelliousness": 1,
                   "libido": -2
@@ -4427,7 +4427,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -5,
+                  "health": -2,
                   "joy": -3,
                   "rebelliousness": 2,
                   "reputation": -5,
@@ -6290,7 +6290,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -3,
+                  "health": -1,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
@@ -6348,7 +6348,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -3,
+                  "health": -1,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
@@ -6390,14 +6390,14 @@
               "consequences": {
                 "failure": {
                   "energy": -5,
-                  "health": -8,
+                  "health": -5,
                   "joy": -2,
                   "rebelliousness": 1,
                   "reputation": -12
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -3,
+                  "health": -2,
                   "joy": -1,
                   "reputation": -3
                 },
@@ -8047,7 +8047,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -2,
+                  "health": -1,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5
@@ -8115,7 +8115,7 @@
                 },
                 "mediocre": {
                   "energy": -4,
-                  "health": -3,
+                  "health": -1,
                   "joy": -1,
                   "rebelliousness": 1,
                   "reputation": -5

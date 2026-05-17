@@ -1,27 +1,19 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/scripts/events/recruitment_flow.rpy", line 161, in script call
-    call recruitment_event_flow(selected_event, selected_worker) from _call_recruitment_event_flow
-  File "game/scripts/events/recruitment_flow.rpy", line 296, in script call
-    return
   File "game/scripts/main_flow.rpy", line 1070, in script
     call screen tavern
   File "renpy/common/000statements.rpy", line 671, in execute_call_screen
     store._return = renpy.call_screen(name, *args, **kwargs)
   File "renpy/common/00action_other.rpy", line 619, in __call__
     rv = self.callable(*self.args, **self.kwargs)
-  File "game/scripts/core/screens.rpy", line 3759, in handle_inventory_row_click
-    transfer_to_right()
-NameError: name 'transfer_to_right' is not defined
+  File "game/scripts/core/screens.rpy", line 3808, in handle_inventory_row_click
+    buy_item_from_shop(item_id)
+NameError: name 'buy_item_from_shop' is not defined
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/scripts/events/recruitment_flow.rpy", line 161, in script call
-    call recruitment_event_flow(selected_event, selected_worker) from _call_recruitment_event_flow
-  File "game/scripts/events/recruitment_flow.rpy", line 296, in script call
-    return
   File "game/scripts/main_flow.rpy", line 1070, in script
     call screen tavern
   File "D:\renpy-8.3.4-sdk\renpy\ast.py", line 1987, in execute
@@ -78,11 +70,11 @@ Full traceback:
     return action(*args, **kwargs)
   File "renpy/common/00action_other.rpy", line 619, in __call__
     rv = self.callable(*self.args, **self.kwargs)
-  File "game/scripts/core/screens.rpy", line 3759, in handle_inventory_row_click
-    transfer_to_right()
-NameError: name 'transfer_to_right' is not defined
+  File "game/scripts/core/screens.rpy", line 3808, in handle_inventory_row_click
+    buy_item_from_shop(item_id)
+NameError: name 'buy_item_from_shop' is not defined
 
 Windows-10-10.0.26100 AMD64
 Ren'Py 8.3.7.25031702
-Fantasy Manager 0.9.5.4b
-Fri Apr 24 03:08:24 2026
+Fantasy Manager 0.9.5.5
+Sun May 17 05:31:26 2026

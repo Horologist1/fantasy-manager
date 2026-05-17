@@ -56,6 +56,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -124,6 +125,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -203,6 +205,7 @@
       {
         "option": "Politely decline, sensing something unusual.",
         "message": "You explain that you're not currently hiring, though something tells you this person is more than they appear. [event_worker] smiles enigmatically. 'A wise choice, perhaps. But remember - some opportunities only come once.' They fade into the shadows, leaving you with an odd feeling.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -275,6 +278,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring performers. [event_worker]'s smile falters slightly but remains charming. 'That's a shame. Well, if you change your mind, you know where to find me. I'll be the one making everyone else look ordinary.' They leave with a dramatic flourish.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -348,6 +352,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -420,6 +425,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s shoulders slump slightly, but she manages a small smile. 'I understand. Thank you for your time.' She gathers her things and leaves quietly, her dignified composure intact.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -492,6 +498,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'That's fine. If you change your mind, I'll be around. I have a feeling we might work together someday.' They leave with a confident smile.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -564,6 +571,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -631,6 +639,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -686,6 +695,7 @@
       {
         "option": "Politely decline, sensing something unusual.",
         "message": "You explain that you're not currently hiring, though something tells you this person is more than they appear. [event_worker] smiles enigmatically. 'A wise choice, perhaps. But remember - some opportunities only come once.' They fade into the shadows, leaving you with an odd feeling.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -757,6 +767,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring performers. [event_worker]'s smile falters slightly but remains charming. 'That's a shame. Well, if you change your mind, you know where to find me. I'll be the one making everyone else look ordinary.' They leave with a dramatic flourish.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -829,6 +840,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -900,6 +912,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'That's fine. If you change your mind, I'll be around. I have a feeling we might work together someday.' They leave with a confident smile.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -971,6 +984,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker]'s smile falters slightly but remains bright. 'Oh, that's okay! I understand. Well, if you ever need someone cheerful and hardworking, you know where to find me!' They leave with a wave and a smile, their positive energy lingering.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1043,6 +1057,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods gracefully, their charm undiminished. 'I understand. Should your needs change, I'll be in the area. Sometimes the best opportunities come when least expected.' They depart with the same radiant grace they arrived with.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1113,6 +1128,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'I see. Well, if you change your mind, I'll be around. Unique talents are always in demand, eventually.' They leave with quiet dignity.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1180,6 +1196,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods. 'I understand. Should your situation change, I'll be available. Special talents are worth waiting for.' They leave with quiet confidence.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1251,6 +1268,7 @@
       {
         "option": "Politely decline.",
         "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'I see. Well, should your needs change, I'll be available. Exceptional workers are always worth considering.' They depart with quiet dignity.",
+        "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
           "joy": 0,

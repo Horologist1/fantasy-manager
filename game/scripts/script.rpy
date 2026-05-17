@@ -3477,16 +3477,25 @@ init python:
         current_job = (building.get("servant_jobs") or {}).get(worker_name)
         job_id_str = str(job_id).strip().lower() if job_id else ""
         if job_id_str == "rest" and current_job and str(current_job).strip().lower() not in ("rest", "", "unassigned"):
-            canonical["previous_job"] = current_job
-            renpy.log(f"set_worker_job: {worker_name} -> Rest (stored previous_job={current_job})")
+            # Unified key with auto-rest in process_manager_auto_rest, so manual Rest
+            # also restores to the previous profession when energy/health recover.
+            canonical["previous_profession"] = current_job
+            renpy.log(f"set_worker_job: {worker_name} -> Rest (stored previous_profession={current_job})")
         canon_job = canonicalize_servant_job_id(building, job_id if job_id is not None else "unassigned")
         building["servant_jobs"][worker_name] = canon_job
+        try:
+            verify_assignment_integrity("set_worker_job")
+        except Exception:
+            pass
 
     def clear_worker_autorest_state(worker):
-        """Clear previous_job when player manually changes job (so auto-restore doesn't override)."""
+        """Clear previous_profession when player manually changes job (so auto-restore doesn't override).
+        Also cleans the legacy previous_job key for any save that wrote it before keys were unified."""
         if not worker or not hasattr(worker, "get"):
             return
         canonical = next((w for w in store.workers if hasattr(w, "get") and w.get("name") == worker.get("name")), worker)
+        if "previous_profession" in canonical:
+            del canonical["previous_profession"]
         if "previous_job" in canonical:
             del canonical["previous_job"]
 
@@ -7760,6 +7769,9 @@ label academy_laboratory_dialogue:
             jump yvara_lab_gift_scene
 
 label academy_laboratory_dialogue_post_gift:
+    # Defensive cleanup: any lingering Yvara bust/dim from a prior visit must not bleed into the lab director scene.
+    hide yvara_bust
+    hide yvara_bg_dim
     $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     scene expression _lab_bg
     if not alchemy_unlocked:
@@ -7854,6 +7866,9 @@ label academy_alchemy_choose_worker:
     jump academy_alchemy_craft_run
 
 label academy_alchemy_craft_run:
+    # Defensive cleanup: lab labels must not carry Yvara visuals.
+    hide yvara_bust
+    hide yvara_bg_dim
     $ _worker = _alchemy_chosen_worker
     $ _tier = _alchemy_investment_tier
     $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")

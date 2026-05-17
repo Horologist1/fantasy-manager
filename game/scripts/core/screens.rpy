@@ -1444,15 +1444,34 @@ screen file_slots(title):
                     button:
                         action [Function(snapshot_mark_load_slot, slot), FileAction(slot)]
 
-                        has vbox
+                        # Thumbnail fills the slot; date + save_name overlay at the bottom on a dark band.
+                        fixed:
+                            xsize gui.slot_button_width - 30
+                            ysize gui.slot_button_height - 30
 
-                        add FileScreenshot(slot) xalign 0.5
+                            add Solid("#1a1a1a")
+                            add FileScreenshot(slot) xalign 0.5 yalign 0.0
 
-                        text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
-                            style "slot_time_text"
+                            frame:
+                                xalign 0.5
+                                yalign 1.0
+                                xfill True
+                                background Solid("#000000c0")
+                                padding (8, 6)
 
-                        text FileSaveName(slot):
-                            style "slot_name_text"
+                                vbox:
+                                    xfill True
+                                    spacing 2
+
+                                    text FileTime(slot, format=_("{#file_time}%a %b %d %Y, %H:%M"), empty=_("empty slot")):
+                                        size 22
+                                        color "#ffffff"
+                                        xalign 0.5
+
+                                    text FileSaveName(slot):
+                                        size 24
+                                        color "#ffe680"
+                                        xalign 0.5
 
                         key "save_delete" action [Function(snapshot_pre_delete_slot, slot), FileDelete(slot)]
 
@@ -2960,13 +2979,13 @@ screen random_event_choice(event_choices):
                 $ reason = choice.get("_blocked_reason", "Locked") or ""
                 vbox:
                     spacing 2
-                    textbutton "[choice['option']] (Locked)":
+                    textbutton "[choice['option']!q] (Locked)":
                         action NullAction()
                         sensitive False
                     if reason.strip():
-                        text "[reason]" size font_size(18) color "#cc8888"
+                        text "[reason!q]" size font_size(18) color "#cc8888"
             else:
-                textbutton choice["option"] action Return(choice)
+                textbutton "[choice['option']!q]" action Return(choice)
 
 # --- NEW SCREEN START ---
 screen choose_event_worker_screen(eligible_workers):
@@ -3253,7 +3272,7 @@ screen recruitment_choice_screen(event_choices):
         
         # Main event choices with normal Ren'Py style
         for choice in event_choices:
-            textbutton choice["option"] action Return(choice)
+            textbutton "[choice['option']!q]" action Return(choice)
         
         # Separator
         null height 20
@@ -3713,97 +3732,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             renpy.set_screen_variable("selected_manager_index", None)
             renpy.set_screen_variable("selected_description", item_info.get("description", ""))
 
-        def handle_inventory_row_click(row_scope, row_idx, item, item_info, is_shop_mode=False, can_transfer_right=True, can_transfer_left=True):
-            def set_left_row_selection():
-                renpy.set_screen_variable("selected_manager_item", item)
-                renpy.set_screen_variable("selected_manager_index", row_idx)
-                renpy.set_screen_variable("selected_worker_item", None)
-                renpy.set_screen_variable("selected_worker_index", None)
-                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
-
-            def clear_row_selection():
-                renpy.set_screen_variable("selected_manager_item", None)
-                renpy.set_screen_variable("selected_manager_index", None)
-                renpy.set_screen_variable("selected_worker_item", None)
-                renpy.set_screen_variable("selected_worker_index", None)
-                renpy.set_screen_variable("selected_description", "")
-
-            def set_right_worker_row_selection():
-                renpy.set_screen_variable("selected_worker_item", item)
-                renpy.set_screen_variable("selected_worker_index", row_idx)
-                renpy.set_screen_variable("selected_manager_item", None)
-                renpy.set_screen_variable("selected_manager_index", None)
-                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
-
-            def set_right_shop_row_selection():
-                renpy.set_screen_variable("selected_worker_item", item)
-                renpy.set_screen_variable("selected_worker_index", None)
-                renpy.set_screen_variable("selected_manager_item", None)
-                renpy.set_screen_variable("selected_manager_index", None)
-                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
-
-            now = __import__("time").time()
-            item_id = item[0] if isinstance(item, (list, tuple)) and len(item) >= 1 else str(item)
-            row_key = "{}:{}:{}".format(row_scope, row_idx, item_id)
-            last_key = renpy.get_screen_variable("last_row_click_key")
-            last_ts = renpy.get_screen_variable("last_row_click_ts")
-            is_double = (last_key == row_key) and ((now - float(last_ts or 0.0)) <= 0.32)
-
-            if row_scope == "left":
-                current_idx = renpy.get_screen_variable("selected_manager_index")
-                if is_double:
-                    set_left_row_selection()
-                    if not renpy.get_screen_variable("is_transferring"):
-                        if is_shop_mode:
-                            _sell_fn = getattr(store, "_mi_sell_item", None)
-                            if _sell_fn:
-                                _sell_fn(item_id)
-                        elif can_transfer_right:
-                            _to_right_fn = getattr(store, "_mi_transfer_to_right", None)
-                            if _to_right_fn:
-                                _to_right_fn()
-                    renpy.set_screen_variable("last_row_click_key", None)
-                    renpy.set_screen_variable("last_row_click_ts", 0.0)
-                    return
-                if current_idx != row_idx:
-                    set_left_row_selection()
-                else:
-                    clear_row_selection()
-
-            elif row_scope == "right_worker":
-                current_idx = renpy.get_screen_variable("selected_worker_index")
-                if is_double:
-                    set_right_worker_row_selection()
-                    if can_transfer_left and (not renpy.get_screen_variable("is_transferring")):
-                        _to_left_fn = getattr(store, "_mi_transfer_to_left", None)
-                        if _to_left_fn:
-                            _to_left_fn()
-                    renpy.set_screen_variable("last_row_click_key", None)
-                    renpy.set_screen_variable("last_row_click_ts", 0.0)
-                    return
-                if current_idx != row_idx:
-                    set_right_worker_row_selection()
-                else:
-                    clear_row_selection()
-
-            elif row_scope == "right_shop":
-                current_item = renpy.get_screen_variable("selected_worker_item")
-                if is_double:
-                    set_right_shop_row_selection()
-                    if (not renpy.get_screen_variable("is_transferring")) and store.money >= item_info.get("price", 0):
-                        _buy_fn = getattr(store, "_mi_buy_item_from_shop", None)
-                        if _buy_fn:
-                            _buy_fn(item_id)
-                    renpy.set_screen_variable("last_row_click_key", None)
-                    renpy.set_screen_variable("last_row_click_ts", 0.0)
-                    return
-                if current_item != item:
-                    set_right_shop_row_selection()
-                else:
-                    clear_row_selection()
-
-            renpy.set_screen_variable("last_row_click_key", row_key)
-            renpy.set_screen_variable("last_row_click_ts", now)
+        # handle_inventory_row_click is defined AFTER sell_item / buy_item_from_shop /
+        # transfer_to_left / transfer_to_right so it can capture them via default
+        # arguments. Late-binding does NOT work here: defs inside a screen python:
+        # block get __globals__ = renpy.store, NOT the screen-local scope, so sibling
+        # names aren't visible at call time. Default args evaluate at def time and
+        # bake in the references. See BIBLIA §8 for why we must not bridge via store.X.
 
         def _get_item_info_by_id(item_id):
             return next((i for i in items_json["items"] if i["id"] == item_id), None)
@@ -4325,11 +4259,93 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         renpy.log(f"DEBUG: Tutorial - Purchase conditions not met: tutorial_active={hasattr(store, 'tutorial_active')}, current_objective={store.current_objective if hasattr(store, 'current_objective') else 'NOT_SET'}, item_name={item_info.get('name', 'Unknown')}")
                 renpy.restart_interaction()
 
-        # Expose local screen actions through store for callback-safe access.
-        store._mi_transfer_to_right = transfer_to_right
-        store._mi_transfer_to_left = transfer_to_left
-        store._mi_sell_item = sell_item
-        store._mi_buy_item_from_shop = buy_item_from_shop
+        def handle_inventory_row_click(row_scope, row_idx, item, item_info, is_shop_mode=False, can_transfer_right=True, can_transfer_left=True,
+                                       _sell=sell_item, _buy=buy_item_from_shop, _to_right=transfer_to_right, _to_left=transfer_to_left):
+            # Helpers (_sell/_buy/_to_right/_to_left) are captured via default args
+            # so they're bound at def time. See note above this def for why.
+            def set_left_row_selection():
+                renpy.set_screen_variable("selected_manager_item", item)
+                renpy.set_screen_variable("selected_manager_index", row_idx)
+                renpy.set_screen_variable("selected_worker_item", None)
+                renpy.set_screen_variable("selected_worker_index", None)
+                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+            def clear_row_selection():
+                renpy.set_screen_variable("selected_manager_item", None)
+                renpy.set_screen_variable("selected_manager_index", None)
+                renpy.set_screen_variable("selected_worker_item", None)
+                renpy.set_screen_variable("selected_worker_index", None)
+                renpy.set_screen_variable("selected_description", "")
+
+            def set_right_worker_row_selection():
+                renpy.set_screen_variable("selected_worker_item", item)
+                renpy.set_screen_variable("selected_worker_index", row_idx)
+                renpy.set_screen_variable("selected_manager_item", None)
+                renpy.set_screen_variable("selected_manager_index", None)
+                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+            def set_right_shop_row_selection():
+                renpy.set_screen_variable("selected_worker_item", item)
+                renpy.set_screen_variable("selected_worker_index", None)
+                renpy.set_screen_variable("selected_manager_item", None)
+                renpy.set_screen_variable("selected_manager_index", None)
+                renpy.set_screen_variable("selected_description", item_info.get("description", ""))
+
+            now = __import__("time").time()
+            item_id = item[0] if isinstance(item, (list, tuple)) and len(item) >= 1 else str(item)
+            row_key = "{}:{}:{}".format(row_scope, row_idx, item_id)
+            last_key = renpy.get_screen_variable("last_row_click_key")
+            last_ts = renpy.get_screen_variable("last_row_click_ts")
+            is_double = (last_key == row_key) and ((now - float(last_ts or 0.0)) <= 0.32)
+
+            if row_scope == "left":
+                current_idx = renpy.get_screen_variable("selected_manager_index")
+                if is_double:
+                    set_left_row_selection()
+                    if not renpy.get_screen_variable("is_transferring"):
+                        if is_shop_mode:
+                            _sell(item_id)
+                        elif can_transfer_right:
+                            _to_right()
+                    renpy.set_screen_variable("last_row_click_key", None)
+                    renpy.set_screen_variable("last_row_click_ts", 0.0)
+                    return
+                if current_idx != row_idx:
+                    set_left_row_selection()
+
+            elif row_scope == "right_worker":
+                current_idx = renpy.get_screen_variable("selected_worker_index")
+                if is_double:
+                    set_right_worker_row_selection()
+                    if can_transfer_left and (not renpy.get_screen_variable("is_transferring")):
+                        _to_left()
+                    renpy.set_screen_variable("last_row_click_key", None)
+                    renpy.set_screen_variable("last_row_click_ts", 0.0)
+                    return
+                if current_idx != row_idx:
+                    set_right_worker_row_selection()
+
+            elif row_scope == "right_shop":
+                current_item = renpy.get_screen_variable("selected_worker_item")
+                if is_double:
+                    set_right_shop_row_selection()
+                    if (not renpy.get_screen_variable("is_transferring")) and store.money >= item_info.get("price", 0):
+                        _buy(item_id)
+                    renpy.set_screen_variable("last_row_click_key", None)
+                    renpy.set_screen_variable("last_row_click_ts", 0.0)
+                    return
+                if current_item != item:
+                    set_right_shop_row_selection()
+
+            renpy.set_screen_variable("last_row_click_key", row_key)
+            renpy.set_screen_variable("last_row_click_ts", now)
+
+        # NOTE: do NOT add `store.foo = local_fn` lines here.
+        # That assignment poisons Ren'Py's rollback log permanently
+        # (the delta captures the local function, and pickle of the rollback
+        # log fails on save). See docs/LA_BIBLIA_DE_LO_QUE_NUNCA_SE_DEBE_HACER.md §8.
+        # Function(local_fn, ...) in screen Actions IS safe because the
+        # displayable tree is rebuilt on load, not pickled with rollback.
 
     modal True
     zorder 99
@@ -6959,7 +6975,7 @@ screen academy_first_dialogue():
             spacing 20
             text "Yvara" size font_size(24) color "#c9a227" bold True xalign 0.0
             null height 5
-            text "Welcome, traveller. I am Yvara. Our institution offers structured courses in Academics, Amatory Arts, and Hospitality. Your workers may attend and gain experience under our teachers." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
+            text "Welcome, traveller. I am Yvara. Our institution offers structured courses in Academics, Amatory Arts, Hospitality, and Artisan Studies. Your workers may attend and gain experience under our teachers." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
             text "\"To enroll your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here.\"" size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
             null height 15
             text "What will you do?" size font_size(22) color "#ffdd88" xalign 0.0 italic True
@@ -7115,7 +7131,7 @@ screen academy_menu():
                             action [Hide("academy_menu"), Hide("map_screen"), Call("academy_library_quest")]
 
 screen academy_training_menu():
-    ## Choose course: Academics / Amatory Arts / Hospitality Arts. Options also in Manage Workers.
+    ## Choose course: Academics / Amatory Arts / Hospitality Arts / Artisan Studies. Options also in Manage Workers.
     modal True
     zorder 102
     add Solid("#000000dd")
@@ -7179,6 +7195,14 @@ screen academy_training_menu():
                             text_hover_color "#6b6528"
                             action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Hospitality Arts as their lesson in Manage Workers.")]
                         text "Students learn to put guests at ease and tend to their needs. Training is split between Charm—presence and words—and Service—attentiveness and care—so they become reliable in both manner and deed." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
+                        null height 4
+                        textbutton "Artisan Studies":
+                            xsize 515
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Artisan Studies as their lesson in Manage Workers.")]
+                        text "Workshops in the Academy's craft wing teach hands-on practice—measuring, mixing, and shaping under an artisan's eye. Each lesson centres on Craft and touches one other discipline at random, to keep hands and head working together." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
 
 # Arena: choose a worker for the trial by combat (any worker, show Combat skill).
 screen choose_worker_for_arena_trial():
@@ -8457,114 +8481,32 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
                 )
     
     add Solid("#000000dd")
-    
+
     # Get background image based on outcome with proper fallback chain
     python:
         # Keep one stable image through all clicks in this outcome sequence.
         bg_image = frozen_bg
-        # Only run worker-aware lookup when there is an actual skill check.
-        # Without it, get_event_image almost always returns a profile fallback,
-        # which would hide the event's success_image / failure_image overrides.
-        if not bg_image and event.get("condition"):
-            # Recruitment outcomes must prioritize the recruitment candidate worker.
-            # Using store.current_worker first can leak unrelated UI context (e.g. roster worker),
-            # which causes wrong portraits/backgrounds during recruitment.
+
+        if not bg_image:
             candidate_worker = getattr(store, "current_recruitment_worker", None)
             if not (candidate_worker and hasattr(candidate_worker, "get")):
                 candidate_worker = getattr(store, "current_worker", None)
 
-            if candidate_worker and hasattr(candidate_worker, "get"):
+            # Skill-check recruitments use the rich trait-aware lookup; everything else
+            # delegates to get_recruitment_image (worker-folder convention + heuristics).
+            if event.get("condition") and candidate_worker and hasattr(candidate_worker, "get"):
                 outcome_key = "success" if outcome == "success" else ("failure" if outcome == "failure" else "default")
                 try:
                     bg_image = get_event_image(candidate_worker, event, outcome=outcome_key, skill_name=event.get("condition"))
                 except Exception as e:
-                    renpy.log(f"recruitment_outcome worker media lookup failed: {e}")
+                    renpy.log(f"recruitment_outcome get_event_image failed: {e}")
 
-        # Step 1: Determine which image name to use based on outcome
-        if outcome == "success":
-            bg_name = event.get("success_image") or event.get("background_image", "event_bg")
-        elif outcome == "failure":
-            bg_name = event.get("failure_image") or event.get("background_image", "event_bg")
-        else:
-            bg_name = event.get("background_image", "event_bg")
-        
-        def _resolve_media_from_name(name):
-            """Resolve media name in events/root images allowing multiple extensions."""
-            valid_exts = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4")
-
-            # If a full path was provided, trust it directly.
-            if name and name.startswith("images/"):
-                return name if renpy.loadable(name) else None
-
-            # If extension is already present in the name, try exact paths first.
-            has_known_ext = False
-            target_base = name
-            if name:
-                lower_name = name.lower()
-                for known_ext in valid_exts:
-                    if lower_name.endswith(known_ext):
-                        has_known_ext = True
-                        target_base = name[: -len(known_ext)]
-                        break
-
-            if has_known_ext:
-                event_candidate = f"images/events/{name}"
-                if renpy.loadable(event_candidate):
-                    return event_candidate
-                root_candidate = f"images/{name}"
-                if renpy.loadable(root_candidate):
-                    return root_candidate
-
-            # Otherwise, try all supported extensions.
-            for media_ext in valid_exts:
-                event_candidate = f"images/events/{target_base}{media_ext}"
-                if renpy.loadable(event_candidate):
-                    return event_candidate
-                root_candidate = f"images/{target_base}{media_ext}"
-                if renpy.loadable(root_candidate):
-                    return root_candidate
-            return None
-
-        # Step 2: Try to resolve the image with fallback chain
-        # Priority: specific image -> generic_success/failure -> event_bg
-        if bg_image and not renpy.loadable(bg_image):
-            bg_image = None
-
-        # First, try the specific image name
-        if not bg_image and bg_name and not bg_name.startswith("images/"):
-            if hasattr(store, bg_name):
-                potential_image = getattr(store, bg_name)
-                if renpy.loadable(potential_image):
-                    bg_image = potential_image
-            else:
-                bg_image = _resolve_media_from_name(bg_name)
-        elif not bg_image and bg_name:
-            bg_image = _resolve_media_from_name(bg_name)
-        
-        # Step 3: If specific image not found, try generic fallback based on outcome
-        if not bg_image:
-            if outcome == "success":
-                generic_name = "generic_success"
-            elif outcome == "failure":
-                generic_name = "generic_failure"
-            else:
-                generic_name = None
-            
-            if generic_name:
-                if hasattr(store, generic_name) and renpy.loadable(getattr(store, generic_name)):
-                    bg_image = getattr(store, generic_name)
-                else:
-                    bg_image = _resolve_media_from_name(generic_name)
-        
-        # Step 4: Final fallback to event_bg
-        if not bg_image:
-            if hasattr(store, 'event_bg') and renpy.loadable(store.event_bg):
-                bg_image = store.event_bg
-            elif renpy.loadable("images/event_bg.png"):
-                bg_image = "images/event_bg.png"
-            else:
-                bg_image = "images/event_bg.png"  # Last resort, may show error
-                renpy.log(f"Warning: Could not load any fallback image, using {bg_image}")
+            if not bg_image or not renpy.loadable(bg_image):
+                try:
+                    bg_image = get_recruitment_image(candidate_worker, outcome, event)
+                except Exception as e:
+                    renpy.log(f"recruitment_outcome get_recruitment_image failed: {e}")
+                    bg_image = "images/event_bg.png"
     python:
         # Keep image stable across click-driven re-renders of this same outcome sequence.
         if show_dialogue:
@@ -11285,9 +11227,19 @@ screen tutorial_dialogue_trigger():
 ## Load/Save slot screen ######################################################
 
 screen load_save_slot(number):
-    $ file_text = "% s\n  %s" % (FileTime(number, empty="Empty Slot"), FileSaveName(number))
+    $ file_text = "% s\n%s" % (FileTime(number, empty="Empty Slot"), FileSaveName(number))
     add FileScreenshot(number) xpos -1 ypos 0
-    text file_text xpos 11 ypos -20 size font_size(16) color "#000000"
+    frame:
+        xpos -1
+        ypos 0
+        xsize config.thumbnail_width
+        ysize config.thumbnail_height
+        background Solid("#00000099")
+        text file_text:
+            xalign 0.5
+            yalign 0.5
+            size font_size(24)
+            color "#ffffff"
 
 ## Configure thumbnail size for save slots
 init python:

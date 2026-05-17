@@ -1,51 +1,44 @@
-2026-05-01 23:27:38 UTC
+2026-05-17 03:44:07 UTC
 Windows-10-10.0.26100
 Ren'Py 8.3.7.25031702
 
-Early init took 0.10s
-Loading error handling took 0.05s
-Loading script took 0.66s
+Early init took 0.09s
+Loading error handling took 0.11s
+Loading script took 2.83s
 Loading save slot metadata took 0.03s
 Loading persistent took 0.00s
-Running init code took 0.05s
-Loading analysis data took 0.05s
+Running init code took 0.09s
+Loading analysis data took 0.00s
 Analyze and compile ATL took 0.01s
-Reloading save slot metadata took 0.02s
+Reloading save slot metadata took 0.03s
 Index archives took 0.00s
 Backing up script files to 'C:\\Users\\Usuario\\AppData\\Roaming/RenPy/backups\\fantasy-manager':
-Dump and make backups took 0.04s
+Dump and make backups took 0.03s
 Cleaning cache took 0.00s
 Making clean stores took 0.00s
-Initial gc took 0.04s
+Initial gc took 0.03s
 DPI scale factor: 1.000000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object took 0.16s
+Creating interface object took 0.14s
 Cleaning stores took 0.00s
 Init translation took 0.00s
 Build styles took 0.00s
 Load screen analysis took 0.00s
-Analyze screens took 0.05s
+Analyze screens took 0.15s
 Save screen analysis took 0.04s
-Prepare screens took 0.14s
-Save pyanalysis. took 0.00s
+Prepare screens took 0.34s
+Save pyanalysis. took 0.05s
 Save bytecode. took 0.05s
-Running _start took 0.00s
-Interface start took 0.52s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 1 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 4070 Ti SUPER/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 595.97'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1920, 1009) drawable=(1920, 1009)
-Maximum texture size: 4096x4096
-Screen sizes: virtual=(1920, 1080) physical=(1920, 1009) drawable=(1920, 1009)
-Maximum texture size: 4096x4096
-erformer_outfit', 'basic_chef_apron', 'advanced_chef_apron',
+ck_shop2',
+'test_unlock_shop3', 'fine_wine', 'rare_book', 'herbal_tea', 'test_money_50k',
+'chef_apron', 'master_chef_apron', 'service_uniform', 'elegant_service_dress',
+'kitchen_knife_set', 'master_chef_knife', 'cooking_utensils', 'sensual_dress',
+'elegant_courtesan_dress', 'seductive_lingerie', 'luxury_lingerie_set',
+'charming_earrings', 'diamond_earrings', 'sensual_necklace', 'pearl_choker',
+'stripper_heels', 'master_performer_heels', 'bartender_apron',
+'master_bartender_apron', 'bar_tools', 'master_mixology_set',
+'tavern_performer_outfit', 'basic_chef_apron', 'advanced_chef_apron',
 'elite_chef_apron', 'basic_service_uniform', 'premium_service_dress',
 'basic_kitchen_knife', 'advanced_kitchen_knife', 'elite_kitchen_knife',
 'basic_cooking_utensils', 'advanced_cooking_utensils',
@@ -76,332 +69,16 @@ erformer_outfit', 'basic_chef_apron', 'advanced_chef_apron',
 'handwritten_poem', 'botanical_pressing', 'spiked_tea', 'silk_ribbon',
 'cipher_lattice', 'basic_strategist_notebook', 'advanced_tactician_monocle',
 'elite_mastermind_diary', 'test_manager_level']
-Items excluded from shops: ['potion_robust', 'potion_tough', 'crown_machine',
-'potion_agile', 'cloak_shadows', 'potion_nympho', 'potion_large_breasts',
-'amulet_wanderer', 'potion_sensitive', 'potion_large_hips',
-'potion_large_penis', 'potion_great_figure', 'potion_beautiful',
-'collar_endless_desire', 'potion_firm_ass', 'staff_archmage',
-'blade_fallen_king', 'potion_deluxe_derriere', 'potion_exotic',
-'potion_strong', 'potion_high_libido', 'chains_submission', 'crown_dominion',
-'bronze_coin', 'potion_transformed', 'potion_soft_ass', 'potion_magical',
-'binding_gem', 'potion_cum_addict', 'potion_small_breasts',
-'potion_long_legs', 'potion_satyr', 'gold_coin', 'potion_energetic',
-'potion_tight', 'potion_troll_blood', 'silver_coin']
+Items excluded from shops: ['silver_coin', 'potion_transformed',
+'crown_machine', 'potion_agile', 'potion_great_figure', 'potion_high_libido',
+'potion_firm_ass', 'gold_coin', 'staff_archmage', 'potion_exotic',
+'potion_tight', 'potion_nympho', 'potion_troll_blood', 'potion_sensitive',
+'collar_endless_desire', 'potion_small_breasts', 'potion_beautiful',
+'potion_tough', 'cloak_shadows', 'potion_soft_ass', 'potion_large_penis',
+'potion_cum_addict', 'potion_magical', 'potion_large_breasts', 'bronze_coin',
+'potion_satyr', 'potion_strong', 'potion_robust', 'crown_dominion',
+'binding_gem', 'blade_fallen_king', 'amulet_wanderer', 'chains_submission',
+'potion_energetic', 'potion_long_legs', 'potion_large_hips',
+'potion_deluxe_derriere']
 Setting right_worker and current_worker...
 No workers loaded, setting right_worker and current_worker to None
---- Sat May  2 01:27:39 2026
-
-TRAITS: Discovered 6 trait files: ['data/traits/traits_aelis.json',
-'data/traits/traits_core.json', 'data/traits/traits_nsfw.json',
-'data/traits/traits_races.json', 'data/traits/traits_special.json',
-'data/traits/traits_yvara.json']
-TRAITS: Cache loaded with 165 traits (filtered), 165 raw
-TRAITS: Discovered 6 trait files: ['data/traits/traits_aelis.json',
-'data/traits/traits_core.json', 'data/traits/traits_nsfw.json',
-'data/traits/traits_races.json', 'data/traits/traits_special.json',
-'data/traits/traits_yvara.json']
-TRAITS: Cache loaded with 165 traits (filtered), 165 raw
-Adding 4 traits to Blanchefleur (current: 1, target: 5)
-Adding 3 traits to Elena (current: 1, target: 4)
-Adding 1 traits to Elena (current: 4, target: 5)
-Adding 3 traits to Ivy (current: 1, target: 4)
-Adding 3 traits to Delilah (current: 1, target: 4)
-Adding 2 traits to Zorak (current: 1, target: 3)
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Adding 2 traits to Kael (current: 1, target: 3)
-Adding 2 traits to Kael (current: 3, target: 5)
-Adding 2 traits to Lyria (current: 1, target: 3)
-Adding 1 traits to Lyria (current: 3, target: 4)
-Adding 4 traits to Draven (current: 1, target: 5)
-Adding 4 traits to Selene (current: 1, target: 5)
-Adding 3 traits to Ragnar (current: 1, target: 4)
-Adding 1 traits to Ragnar (current: 4, target: 5)
-Adding 4 traits to Talon (current: 1, target: 5)
-Adding 2 traits to Amanita (current: 1, target: 3)
-Adding 1 traits to Amanita (current: 3, target: 4)
-Adding 2 traits to Moss (current: 1, target: 3)
-Adding 3 traits to Lotus (current: 2, target: 5)
-Adding 4 traits to Sylvara (current: 1, target: 5)
-Adding 4 traits to Daisy (current: 1, target: 5)
-Adding 3 traits to Guy (current: 1, target: 4)
-Adding 4 traits to Asher (current: 1, target: 5)
-Adding 4 traits to Flynn (current: 1, target: 5)
-Adding 4 traits to Victoria (current: 1, target: 5)
-Adding 2 traits to Amanda (current: 1, target: 3)
-Adding 4 traits to Thane (current: 1, target: 5)
-Adding 2 traits to Elowen (current: 1, target: 3)
-Adding 3 traits to Bud (current: 1, target: 4)
-Adding 1 traits to Bud (current: 4, target: 5)
-Adding 2 traits to Yvara (current: 1, target: 3)
-Adding 2 traits to Yvara (current: 3, target: 5)
-MIGRATION v2: stamped template_id on 13 workers, fixed folder on 0, skipped 0
-ambiguous
-apply_item_effects: Processing effects for 'sensual_dress':
-['skill_modifiers']
-apply_item_effects: Processing effect_type='skill_modifiers'
-apply_item_effects: Processing effects for 'seductive_lingerie':
-['skill_modifiers']
-apply_item_effects: Processing effect_type='skill_modifiers'
-apply_item_effects: Processing effects for 'amulet_desire': ['libido_max',
-'libido_regeneration']
-apply_item_effects: Processing effect_type='libido_max'
-apply_item_effects: Processing effect_type='libido_regeneration'
-apply_item_effects: Processing effects for 'magic_robe': ['skill_modifiers']
-apply_item_effects: Processing effect_type='skill_modifiers'
-apply_item_effects: Processing effects for 'chef_apron': ['skill_modifiers']
-apply_item_effects: Processing effect_type='skill_modifiers'
-_canonicalize_building_keys: all keys already canonical
-sync_building_assignments_from_workers: done
-TRAITS: Discovered 6 trait files: ['data/traits/traits_aelis.json',
-'data/traits/traits_core.json', 'data/traits/traits_nsfw.json',
-'data/traits/traits_races.json', 'data/traits/traits_special.json',
-'data/traits/traits_yvara.json']
-TRAITS: Cache loaded with 165 traits (filtered), 165 raw
-AFTER_LOAD_CALLBACK: Starting flags restoration
-AFTER_LOAD_CALLBACK: slot_name = 1-1
-AFTER_LOAD_CALLBACK: Looking for snapshot at
-C:\Users\Usuario\Desktop\SNS\FantasyManager\fantasy-
-manager\game\saves\snapshot_1-1.json
-AFTER_LOAD_CALLBACK: Found 17 workers in snapshot
-AFTER_LOAD_CALLBACK: Restored flags for Violet: ['friendship_cooldown',
-'friendship_uses_level_1']
-AFTER_LOAD_CALLBACK: Restored flags for 1 workers
-Explore button clicked
-  Checking event index 0 from
-data/events/recruit/event_recruit_advanced_example.json:
-id='event_recruit_simple_test', desc_start='A person picks the sign from the
-door and approach...'
-  Checking event index 1 from
-data/events/recruit/event_recruit_advanced_example.json:
-id='event_recruit_tavern_brawler', desc_start='A muscular figure sits in the
-corner of your taver...'
-  Checking event index 2 from
-data/events/recruit/event_recruit_advanced_example.json:
-id='event_recruit_mysterious_scholar', desc_start='A hooded figure approaches
-your establishment as e...'
-  Checking event index 0 from data/events/recruit/event_recruit_aelis.json:
-id='event_recruit_aelis', desc_start='The door opens without fanfare, and a
-charming gir...'
-  Checking event index 0 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_aspen', desc_start='A sturdy figure approaches your
-establishment duri...'
-  Checking event index 1 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_florian', desc_start='A somewhat effeminate young man enters
-your establ...'
-  Checking event index 2 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_violet', desc_start='As twilight settles over your
-establishment, a mys...'
-  Checking event index 3 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_lily', desc_start='A captivating performer enters your
-establishment,...'
-  Checking event index 4 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_rose', desc_start='An elven figure approaches your
-establishment with...'
-  Checking event index 5 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_holly', desc_start='A woman with a mature, curvaceous figure
-enters yo...'
-  Checking event index 6 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_iris', desc_start='A graceful figure enters your
-establishment with q...'
-  Checking event index 7 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_cedar', desc_start='A sturdy figure approaches your
-establishment duri...'
-  Checking event index 8 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_laurel', desc_start='A somewhat effeminate young man enters
-your establ...'
-  Checking event index 9 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_sage', desc_start='As twilight settles over your
-establishment, a mys...'
-  Checking event index 10 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_lotus', desc_start='A captivating performer enters your
-establishment,...'
-  Checking event index 11 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_primrose', desc_start='An elven figure approaches your
-establishment with...'
-  Checking event index 12 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_jasmine', desc_start='A graceful figure enters your
-establishment with q...'
-  Checking event index 13 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_daisy', desc_start='A cheerful individual approaches your
-establishmen...'
-  Checking event index 14 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_poppy', desc_start='An elven figure approaches your
-establishment with...'
-  Checking event index 15 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_unique_generic_1', desc_start='A distinctive figure
-approaches your establishment...'
-  Checking event index 16 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_unique_generic_2', desc_start='An intriguing individual
-arrives at your establish...'
-  Checking event index 17 from
-data/events/recruit/event_recruit_unique_workers.json:
-id='event_recruit_unique_generic_3', desc_start='A remarkable individual
-enters your establishment,...'
-RECRUITMENT: Loaded 22 recruitment events
-TRAITS: Discovered 6 trait files: ['data/traits/traits_aelis.json',
-'data/traits/traits_core.json', 'data/traits/traits_nsfw.json',
-'data/traits/traits_races.json', 'data/traits/traits_special.json',
-'data/traits/traits_yvara.json']
-TRAITS: Cache loaded with 165 traits (filtered), 165 raw
-Adding 2 traits to Blanchefleur (current: 1, target: 3)
-Adding 1 traits to Blanchefleur (current: 3, target: 4)
-Adding 3 traits to Elena (current: 1, target: 4)
-Adding 2 traits to Ivy (current: 1, target: 3)
-Adding 3 traits to Delilah (current: 1, target: 4)
-Adding 2 traits to Zorak (current: 1, target: 3)
-Adding 1 traits to Zorak (current: 3, target: 4)
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Adding 3 traits to Kael (current: 1, target: 4)
-Adding 3 traits to Lyria (current: 1, target: 4)
-Adding 1 traits to Lyria (current: 4, target: 5)
-Adding 4 traits to Draven (current: 1, target: 5)
-Adding 2 traits to Selene (current: 1, target: 3)
-Adding 2 traits to Ragnar (current: 1, target: 3)
-Adding 3 traits to Talon (current: 1, target: 4)
-Adding 1 traits to Talon (current: 4, target: 5)
-Adding 3 traits to Amanita (current: 1, target: 4)
-Adding 1 traits to Amanita (current: 4, target: 5)
-Adding 2 traits to Moss (current: 1, target: 3)
-Adding 2 traits to Lotus (current: 2, target: 4)
-Adding 4 traits to Sylvara (current: 1, target: 5)
-Adding 2 traits to Daisy (current: 1, target: 3)
-Adding 1 traits to Daisy (current: 3, target: 4)
-Adding 4 traits to Guy (current: 1, target: 5)
-Adding 4 traits to Asher (current: 1, target: 5)
-Adding 4 traits to Flynn (current: 1, target: 5)
-Adding 3 traits to Victoria (current: 1, target: 4)
-Adding 2 traits to Amanda (current: 1, target: 3)
-Adding 2 traits to Amanda (current: 3, target: 5)
-Adding 2 traits to Thane (current: 1, target: 3)
-Adding 2 traits to Elowen (current: 1, target: 3)
-Adding 2 traits to Elowen (current: 3, target: 5)
-Adding 4 traits to Bud (current: 1, target: 5)
-Adding 4 traits to Yvara (current: 1, target: 5)
-LOAD RECRUIT WORKERS: NSFW mode enabled: True
-LOAD RECRUIT WORKERS: Worker names loaded: ['Aelis', 'Blanchefleur', 'Link',
-'Elena', 'Ivy', 'Delilah', 'Zorak', 'Seraphina', 'Kael', 'Lyria', 'Draven',
-'Selene', 'Ragnar', 'Talon', 'Amanita', 'Moss', 'Lotus', 'Sylvara', 'Daisy',
-'Guy']
-LOAD RECRUIT WORKERS: Total workers before NSFW filter: 9
-LOAD RECRUIT WORKERS: Recruited workers: ['Iris', 'Rose', 'Florian', 'Aelis',
-'Holly', 'Aspen', 'Violet', 'Lily', 'Colleen', 'Heidi', 'Opal']
-LOAD RECRUIT WORKERS: Available workers for recruitment: ['Link']
-LOAD RECRUIT WORKERS: NSFW status of available workers: [('Link', True)]
-RECRUITMENT: Loaded 1 recruit candidates: ['Link']
-Event event_recruit_mysterious_scholar filtered out - no matching candidate
-Event event_recruit_aelis filtered out - no matching candidate
-Event event_recruit_aspen filtered out - no matching candidate
-Event event_recruit_florian filtered out - no matching candidate
-Event event_recruit_violet filtered out - no matching candidate
-Event event_recruit_lily filtered out - no matching candidate
-Event event_recruit_rose filtered out - no matching candidate
-Event event_recruit_holly filtered out - no matching candidate
-Event event_recruit_iris filtered out - no matching candidate
-Event event_recruit_cedar filtered out - no matching candidate
-Event event_recruit_laurel filtered out - no matching candidate
-Event event_recruit_sage filtered out - no matching candidate
-Event event_recruit_lotus filtered out - no matching candidate
-Event event_recruit_primrose filtered out - no matching candidate
-Event event_recruit_jasmine filtered out - no matching candidate
-Event event_recruit_daisy filtered out - no matching candidate
-Event event_recruit_poppy filtered out - no matching candidate
-==========================================
-NEW CONVERSATION STARTED
-Start index: 47 -> 59
-Current history size: 59
-==========================================
-A remarkable individual enters your establishment, immediately standing out
-from the crowd.
-
-Whether it's their bearing, their confidence, or something indefinable, they
-clearly possess qualities that make them exceptional.
-
-They approach you with purpose and self-assurance.
-
-Link
-Hello.
-
-Link
-I'm Link.
-
-Link
-I've been told I have...
-
-Link
-particular talents.
-
-Link
-I'm looking for employment that recognizes and values what makes me different.
-
-Link
-I believe I could be an asset to your establishment.
-
-Link
-Are you interested in discussing the possibility?
-
-Updating displayed_workers. Starting population...
-Hired worker names: RevertableSet({'Iris', 'Heidi', 'Violet', 'Colleen',
-'Aelis', 'Lily', 'Florian', 'Rose', 'Link', 'Holly', 'Aspen', 'Opal'})
-Available workers before filtering: ['Elowen', 'Bud', 'Talon', 'Delilah',
-'Elena']
-TRAITS: Discovered 6 trait files: ['data/traits/traits_aelis.json',
-'data/traits/traits_core.json', 'data/traits/traits_nsfw.json',
-'data/traits/traits_races.json', 'data/traits/traits_special.json',
-'data/traits/traits_yvara.json']
-TRAITS: Cache loaded with 165 traits (filtered), 165 raw
-Adding 2 traits to Blanchefleur (current: 1, target: 3)
-Adding 2 traits to Blanchefleur (current: 3, target: 5)
-Adding 4 traits to Elena (current: 1, target: 5)
-Adding 2 traits to Ivy (current: 1, target: 3)
-Adding 2 traits to Ivy (current: 3, target: 5)
-Adding 4 traits to Delilah (current: 1, target: 5)
-Adding 4 traits to Zorak (current: 1, target: 5)
-Adding 3 traits to Seraphina (current: 1, target: 4)
-Adding 2 traits to Kael (current: 1, target: 3)
-Adding 2 traits to Kael (current: 3, target: 5)
-Adding 2 traits to Lyria (current: 1, target: 3)
-Adding 4 traits to Draven (current: 1, target: 5)
-Adding 3 traits to Selene (current: 1, target: 4)
-Adding 3 traits to Ragnar (current: 1, target: 4)
-Adding 1 traits to Ragnar (current: 4, target: 5)
-Adding 2 traits to Talon (current: 1, target: 3)
-Adding 1 traits to Talon (current: 3, target: 4)
-Adding 2 traits to Sylvara (current: 1, target: 3)
-Adding 2 traits to Sylvara (current: 3, target: 5)
-Adding 2 traits to Daisy (current: 1, target: 3)
-Adding 3 traits to Guy (current: 1, target: 4)
-Adding 4 traits to Thane (current: 1, target: 5)
-Adding 2 traits to Elowen (current: 1, target: 3)
-Adding 3 traits to Bud (current: 1, target: 4)
-Adding 4 traits to Yvara (current: 1, target: 5)
-JSON workers available: 22, All JSON exhausted: False
-Added existing worker 'Elowen' to displayed_workers
-Added existing worker 'Bud' to displayed_workers
-Added existing worker 'Talon' to displayed_workers
-Added existing worker 'Delilah' to displayed_workers
-Added existing worker 'Elena' to displayed_workers
-MAX_DAILY_SPAWNS: 5
-update_displayed_workers: Not spawning new workers, only displaying available
-workers (available: 5, displayed: 5)
-Final displayed_workers: ['Elowen', 'Bud', 'Talon', 'Delilah', 'Elena']
-Final available_workers after update: ['Elowen', 'Bud', 'Talon', 'Delilah',
-'Elena']
-Final daily_spawns: 0
-Worker recruited: Link at $100/day

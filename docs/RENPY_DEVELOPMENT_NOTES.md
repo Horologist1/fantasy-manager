@@ -3,6 +3,8 @@
 Este archivo contiene aprendizajes importantes para el desarrollo en Ren'Py.
 **Este archivo NO se compila en el juego** (solo archivos .rpy/.rpyc).
 
+> ⚠️ **Bug que rompe los saves de toda la sesión:** `store.foo = local_fn` dentro del `python:` block de un screen poisons el rollback log permanentemente. `Function(local_fn, ...)` en widget actions **sí** funciona (el árbol de displayables se reconstruye en load). Ver **`LA_BIBLIA_DE_LO_QUE_NUNCA_SE_DEBE_HACER.md` §8** para el detalle y el grep de verificación pre-commit.
+
 ---
 
 ## 1. Tipos de Datos en Ren'Py (CRÍTICO)

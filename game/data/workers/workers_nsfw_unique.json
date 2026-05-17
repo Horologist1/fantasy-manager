@@ -336,5 +336,53 @@
         "description": "A gentle performer of mature bearing whose demure nature and natural appeal excel in intimate settings.",
         "gender": "female",
         "comfort_desired": 4
+    },
+    {
+        "name": "Oak",
+        "folder": "oak",
+        "cost": 1400,
+        "nsfw": true,
+        "unique": true,
+        "encounter_only": true,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 42,
+            "Anal": 39,
+            "BDSM": 40,
+            "Hand": 43,
+            "Oral": 42,
+            "Homo": 38,
+            "Special": 42,
+            "Group": 36,
+            "Extreme": 34,
+            "Striptease": 38,
+            "Combat": 38,
+            "Clever": 55,
+            "Charm": 46,
+            "Service": 45,
+            "Agility": 44,
+            "Craft": 47,
+            "Specialty 4": 39,
+            "Specialty 5": 38,
+            "Specialty 6": 37,
+            "Specialty 7": 41,
+            "Specialty 8": 40,
+            "Specialty 9": 39,
+            "Specialty 10": 38,
+            "Specialty 11": 37,
+            "Specialty 12": 41
+        },
+        "names_list": "fantasy_male",
+        "traits": [
+            "Elf",
+            "Teacher",
+            "Clever",
+            "Wise",
+            "Sexy Air"
+        ],
+        "description": "An elven scholar whose careful intellect masks a slow-burning sensuality - the sort to recite poetry in your ear and mean every word of it.",
+        "gender": "male",
+        "comfort_desired": 4
     }
 ]

@@ -1,0 +1,63 @@
+[
+    {
+        "id": "event_recruit_oak",
+        "description": "An elven traveller drifts in at the quiet hour just before dusk, a leather satchel heavy with bound volumes slung at his hip. He is tall and slender, his movements unhurried, and a small inkstain darkens the cuff of his sleeve. He pauses inside the doorway to study the room with the patient attention one might give a difficult passage of text - noting the people, the materials, the rhythm of the place - before approaching you with a courteous nod.",
+        "dialogue": "\"Forgive the intrusion. I am [event_worker], a scholar lately of the Cordian academies and presently of nowhere in particular.\"\n\nHe inclines his head with quiet courtesy.\n\n\"My research has outpaced my patrons, and the road grows tiresome. I require a place where I might earn my keep without trading my mornings to tedium - somewhere alive enough to hold my interest, civilised enough to permit me a desk and a reading lamp. Your establishment came up more than once in conversation. I came to see it for myself.\"\n\nHe lets the silence settle for a moment, watching you with mild, unreadable curiosity.\n\n\"I am not strong, but I am useful. I read four languages, balance ledgers in my sleep, and rarely embarrass the people who employ me. What say you?\"",
+        "weight": 1,
+        "unlimited": true,
+        "max_occurrences": 1,
+        "random_worker": false,
+        "worker_name": "Oak",
+        "always_available": true,
+        "background_image": "event_bg",
+        "success_image": "generic_success",
+        "failure_image": "generic_failure",
+        "choices": [
+            {
+                "option": "Offer him a position for [COST] per day. (Potential: Reputation)",
+                "message": "You extend your hand and offer [COST] per day. [event_worker] considers the gesture for a long moment before accepting it with a careful, measured grip. 'A fair offer, fairly given. I shall begin in the morning.' He bows slightly - more habit than ceremony - and slips back into the dusk. Within a day, two regulars remark on the new face behind your counter and on the elegant precision with which he answers their questions. Word spreads that you welcome learned folk (+5 Reputation).",
+                "effect": {
+                    "recruit_worker": true,
+                    "reputation": 5
+                }
+            },
+            {
+                "option": "Offer access to your records and a writing desk in exchange for steadier wages. (Potential: Discount, Relationship, Scholar's Joy)",
+                "message": "You sweeten the arrangement with the use of your private records and a corner desk of his own, settling on [actual_cost] per day. [event_worker]'s composure thaws by a fraction. 'You understand what you are offering. That is rare.' He sets the satchel down by his foot, as though he has decided something. He works at a reduced daily cost ([actual_cost]) (20% discount), starts with a stronger bond to you (+18 Relationship), and gains the 'Scholar's Joy' trait for 90 days.",
+                "effect": {
+                    "recruit_worker": true,
+                    "cost_modifier": 0.8,
+                    "relationship_bonus": 18,
+                    "add_trait": {
+                        "name": "Scholar's Joy",
+                        "duration": 90,
+                        "target": "recruited_worker"
+                    }
+                }
+            },
+            {
+                "option": "Propose a trial month at reduced pay. (Potential: Discount, Trial Worker)",
+                "message": "You propose a trial month at [actual_cost] per day, with full terms thereafter if both of you remain content. [event_worker] tilts his head a fraction, as if turning the offer over in good light. 'A reasonable test of a reasonable offer. Agreed.' He works at a reduced daily cost ([actual_cost]) (25% discount) and gains the 'Trial Worker' trait for 30 days.",
+                "effect": {
+                    "recruit_worker": true,
+                    "cost_modifier": 0.75,
+                    "add_trait": {
+                        "name": "Trial Worker",
+                        "duration": 30,
+                        "target": "recruited_worker"
+                    }
+                }
+            },
+            {
+                "option": "Politely decline.",
+                "message": "You explain that you cannot offer him a place at present. [event_worker] receives the news with the same level composure with which he arrived. 'Of course. The town is large and my needs are modest. I shall manage.' He bows once more and lets himself out into the gathering night, leaving behind only the faint scent of old paper.",
+                "outcome_override": "failure",
+                "effect": {}
+            }
+        ],
+        "event_music": null,
+        "event_type": null,
+        "worker_filter": {},
+        "player_gender_requirement": null
+    }
+]

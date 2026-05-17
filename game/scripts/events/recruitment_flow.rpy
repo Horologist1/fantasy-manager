@@ -169,32 +169,17 @@ label start_recruitment_system:
 label recruitment_event_flow(event, worker):
     # Mark start of new conversation for history navigation
     $ start_new_conversation()
-    
-    # Set up the scene with background
+
+    # Set up the scene with background (worker-aware fallback chain)
     python:
-        bg_image = event.get("background_image", "event_bg")
-        # Ensure we have a valid background - default to event_bg if missing or invalid
-        if not bg_image:
-            bg_image = "event_bg"
-        
-        # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path
-        if bg_image and not bg_image.startswith("images/"):
-            # Try to get the variable from store first (for defined backgrounds like tavern_bg)
-            if hasattr(store, bg_image):
-                current_bg = getattr(store, bg_image)
-            else:
-                # If not a variable, treat as filename and convert to full path
-                current_bg = f"images/{bg_image}.png"
-        else:
-            current_bg = bg_image
-        
-        # Fallback to event_bg if the image doesn't exist
-        if not renpy.loadable(current_bg):
-            renpy.log(f"Background image {current_bg} not found, using event_bg")
-            current_bg = store.event_bg if hasattr(store, "event_bg") else "images/event_bg.png"
+        try:
+            current_bg = get_recruitment_image(worker, "background", event)
+        except Exception as e:
+            renpy.log(f"recruitment_event_flow get_recruitment_image failed: {e}")
+            current_bg = "images/event_bg.png"
     scene expression current_bg with dissolve
     show expression Solid("#00000080")  # Semi-transparent black overlay
-    
+
     # Calculate cost (uses current difficulty multiplier)
     python:
         comfort_level = get_effective_comfort_desired(worker)
@@ -299,28 +284,13 @@ label recruitment_event_flow(event, worker):
 label recruitment_event_simple(event, worker):
     # Mark start of new conversation for history navigation
     $ start_new_conversation()
-    
+
     python:
-        bg_image = event.get("background_image", "event_bg")
-        # Ensure we have a valid background - default to event_bg if missing or invalid
-        if not bg_image:
-            bg_image = "event_bg"
-        
-        # Check if it's a Ren'Py defined variable (like tavern_bg) or a file path
-        if bg_image and not bg_image.startswith("images/"):
-            # Try to get the variable from store first (for defined backgrounds like tavern_bg)
-            if hasattr(store, bg_image):
-                current_bg = getattr(store, bg_image)
-            else:
-                # If not a variable, treat as filename and convert to full path
-                current_bg = f"images/{bg_image}.png"
-        else:
-            current_bg = bg_image
-        
-        # Fallback to event_bg if the image doesn't exist
-        if not renpy.loadable(current_bg):
-            renpy.log(f"Background image {current_bg} not found, using event_bg")
-            current_bg = store.event_bg if hasattr(store, "event_bg") else "images/event_bg.png"
+        try:
+            current_bg = get_recruitment_image(worker, "background", event)
+        except Exception as e:
+            renpy.log(f"recruitment_event_simple get_recruitment_image failed: {e}")
+            current_bg = "images/event_bg.png"
     scene expression current_bg with dissolve
     show expression Solid("#00000080")  # Semi-transparent black overlay
     

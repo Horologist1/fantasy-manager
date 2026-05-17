@@ -255,15 +255,6 @@ transform yvara_bust_right:
     yanchor 1.0
     yoffset 40
 
-# Some imported busts are authored at 2x resolution.
-transform yvara_bust_right_half:
-    xpos 1.03
-    ypos 1.0
-    xanchor 1.0
-    yanchor 1.0
-    yoffset 40
-    zoom 0.5
-
 label yvara_restore_visit_scene:
     # Hard reset to prevent CG/say-window bleed into menus or external screens.
     hide yvara_bust
@@ -297,7 +288,7 @@ label academy_tuition_dialogue:
             xanchor 1.0
             yanchor 1.0
             yoffset 40
-    academy_director "Welcome, traveller. I am Yvara. I direct this Academy. Our institution offers structured courses in Academics, Amatory Arts, and Hospitality. Your workers may attend and gain experience under our teachers."
+    academy_director "Welcome, traveller. I am Yvara. I direct this Academy. Our institution offers structured courses in Academics, Amatory Arts, Hospitality, and Artisan Studies. Your workers may attend and gain experience under our teachers."
     $ yvara_known_name = True
     yvara "To enrol your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and your workers may study under our teachers whenever you send them."
     jump academy_tuition_menu
@@ -467,7 +458,7 @@ label yvara_visit_menu:
             jump yvara_s6_talk_router
         "Talk." if _talk_free_today and yvara_s6_gate_fired and yvara_ending_done and not _s1_talk_pending and not _s2_talk_pending and not _s3_talk_pending and not _s4_talk_pending and not _s5_talk_pending and not _s6_talk_pending:
             jump yvara_talk_post_arc
-        "Talk." if _talk_free_today and not _s1_talk_pending and not _s2_talk_pending and not _s3_talk_pending and not _s4_talk_pending and not _s5_talk_pending and not _s6_talk_pending:
+        "Talk." if _talk_free_today and not yvara_ending_done and not _s1_talk_pending and not _s2_talk_pending and not _s3_talk_pending and not _s4_talk_pending and not _s5_talk_pending and not _s6_talk_pending:
             jump yvara_talk_generic
         "Talk." if not _talk_free_today:
             yvara "I need to get back to work. If you need anything else, I might find some time tomorrow."
@@ -3740,10 +3731,7 @@ label yvara_support_tier_4:
     if yvara_is_devotion_route():
         $ _emote = "images/yvara/yvara_formal_vulnerable.png" if renpy.loadable("images/yvara/yvara_formal_vulnerable.png") else "images/yvara/yvara_formal_moved.png"
         if renpy.loadable(_emote):
-            if "yvara_formal_vulnerable.png" in _emote:
-                show expression _emote as yvara_bust at yvara_bust_right_half
-            else:
-                show expression _emote as yvara_bust at yvara_bust_right
+            show expression _emote as yvara_bust at yvara_bust_right
         narrator "You tell her you are covering the quarterly shortfall. All of it."
         narrator "She does not speak for a long time."
         yvara "The quarterly..."
@@ -3883,10 +3871,7 @@ label yvara_s5_talk_1:
         if not renpy.loadable(_emote):
             $ _emote = "images/yvara/yvara_formal_moved.png"
         if renpy.loadable(_emote):
-            if "yvara_formal_vulnerable.png" in _emote:
-                show expression _emote as yvara_bust at yvara_bust_right_half
-            else:
-                show expression _emote as yvara_bust at yvara_bust_right
+            show expression _emote as yvara_bust at yvara_bust_right
 
         narrator "She is waiting for you with a ledger open on the desk. Not the usual one."
         narrator "This one is thicker. The binding is cracked and the pages are soft with use."
@@ -4345,10 +4330,7 @@ label yvara_s5_gate_devotion:
     if not renpy.loadable(_emote):
         $ _emote = "images/yvara/yvara_formal_moved.png"
     if renpy.loadable(_emote):
-        if "yvara_formal_vulnerable.png" in _emote:
-            show expression _emote as yvara_bust at yvara_bust_right_half
-        else:
-            show expression _emote as yvara_bust at yvara_bust_right
+        show expression _emote as yvara_bust at yvara_bust_right
 
     narrator "Her glasses are on the desk. Her eyes are red-rimmed."
     narrator "She has been crying. The evidence is there in the damp at her lashes, the faint blotch on one cheek."
@@ -4377,14 +4359,13 @@ label yvara_s5_gate_devotion:
         show expression _emote3 as yvara_bust at yvara_bust_right
 
     narrator "Her fingers work at the buttons of her blouse. Quick, impatient. Not her usual precision."
-    narrator "You help her. Fabric parts. Skin beneath, warm and flushed."
 
     $ _cg_setup = "images/yvara/cg_s5_setup.png"
     if renpy.loadable(_cg_setup):
-        window hide
         scene expression _cg_setup at yvara_cg_fit
-        pause
-        window show
+
+    narrator "You help her. Fabric parts. Skin beneath, warm and flushed."
+    narrator "She lets the blouse slide from her shoulders. The lamplight finds every place she has kept hidden."
 
     if _title != "lady":
         # Lord variant
@@ -4495,14 +4476,13 @@ label yvara_s5_gate_dominion:
             yoffset 40
 
     narrator "Her blouse falls open. Pale skin beneath, rising and falling with steady breath."
-    narrator "She meets your eyes. She does not look away."
 
     $ _cg_setup = "images/yvara/cg_s5_setup.png"
     if renpy.loadable(_cg_setup):
-        window hide
         scene expression _cg_setup at yvara_cg_fit
-        pause
-        window show
+
+    narrator "She meets your eyes. She does not look away."
+    narrator "She lets you look. The director surrendered to the picture you are making of her."
 
     if _title != "lady":
         # Lord variant
@@ -4628,7 +4608,7 @@ label yvara_s6_talk_1:
                 yanchor 1.0
                 yoffset 40
 
-        narrator "You find her at the Academy as agreed, waiting at the gate in her formal grey."
+        narrator "You find her at the Academy as agreed, waiting at the gate in her crisp white blouse and brown skirt, the red ribbon at her throat."
         narrator "You walk back together through the evening streets without speaking much. By the time you reach your establishment, she stands in your foyer with her hands behind her back, eyes fixed on the middle distance."
         narrator "She has not changed out of her lecture clothes."
         yvara "I was told to present myself."
@@ -4717,7 +4697,7 @@ label yvara_s6_talk_1:
 
         narrator "She is waiting for you at the Academy exit without explanation. No ledger. No agenda."
         narrator "You walk back together in companionable silence, and she follows you in when you reach your door."
-        narrator "She is wearing something softer than Academy grey. You notice."
+        narrator "She has loosened the ribbon at her throat. Softer than her usual Academy precision. You notice."
         yvara "I finished early today. I thought I would see how you manage things here."
         narrator "She walks through the establishment slowly. Stops to examine the furnishings."
         narrator "She offers three observations about your layout, two about ventilation, and one compliment."
@@ -5052,6 +5032,19 @@ label yvara_s6_gate:
 label yvara_s6_gate_devotion:
     $ _title = player_title
 
+    # — Setup (establishing shot) —
+    $ _cg_setup = "images/yvara/cg_s6_devotion_setup.png"
+    if renpy.loadable(_cg_setup):
+        scene expression _cg_setup at yvara_cg_fit
+
+    narrator "The Academy at night. The halls are empty. Her office lamp is the only light."
+    narrator "She is not working. She is standing by the window, watching the night."
+
+    $ _night_bg = "images/buildings/bg_academy_night.png" if renpy.loadable("images/buildings/bg_academy_night.png") else ("images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else "images/event_bg.png")
+    scene expression _night_bg
+    show black as yvara_bg_dim:
+        alpha 0.15
+
     $ _emote = "images/yvara/yvara_formal_amused.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5061,8 +5054,6 @@ label yvara_s6_gate_devotion:
             yanchor 1.0
             yoffset 40
 
-    narrator "The Academy at night. The halls are empty. Her office lamp is the only light."
-    narrator "She is not working. She is standing by the window, watching the night."
     yvara "I left the door unlocked."
     narrator "She turns. There is no surprise in her face. She knew you would come."
     narrator "She crosses the room to you. No hesitation. No negotiation."
@@ -5088,14 +5079,29 @@ label yvara_s6_gate_devotion:
             yoffset 40
 
     narrator "Her fingers work at your clothing. Yours work at hers. The blouse opens. She does not flinch."
-    narrator "She is pale in the lamplight. Her breathing is steady. Her eyes do not leave yours."
 
-    $ _cg_setup = "images/yvara/cg_s6_devotion_setup.png"
-    if renpy.loadable(_cg_setup):
-        window hide
-        scene expression _cg_setup at yvara_cg_fit
-        pause
-        window show
+    $ _emote4 = "images/yvara/yvara_formal_lingerie.png"
+    if renpy.loadable(_emote4):
+        show expression _emote4 as yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+
+    narrator "The blouse slides from her shoulders. The ribbon at her throat falls away with it."
+
+    $ _emote5 = "images/yvara/yvara_formal_topless.png"
+    if renpy.loadable(_emote5):
+        show expression _emote5 as yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+
+    narrator "She is pale in the lamplight. Her breathing is steady. Her eyes do not leave yours."
+    narrator "Nothing of the Academy left between you. No titles. Only this."
 
     if _title != "lady":
         # Lord variant — devotion
@@ -5166,7 +5172,21 @@ label yvara_s6_gate_devotion:
 label yvara_s6_gate_dominion:
     $ _title = player_title
 
-    $ _emote = "images/yvara/yvara_formal_neutral.png"
+    # — Setup (establishing shot) —
+    $ _cg_setup = "images/yvara/cg_s6_dominion_setup.png"
+    if renpy.loadable(_cg_setup):
+        scene expression _cg_setup at yvara_cg_fit
+
+    narrator "One of your studies. Not the Academy. Your territory."
+    narrator "She arrives at the time you specified. She is wearing what you told her to wear."
+    narrator "A dark dress. Low neckline. None of her Academy whites tonight."
+
+    $ _study_bg = "images/buildings/study_night.png" if renpy.loadable("images/buildings/study_night.png") else "images/event_bg.png"
+    scene expression _study_bg
+    show black as yvara_bg_dim:
+        alpha 0.15
+
+    $ _emote = "images/yvara/yvara_black.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
             xpos 1.03
@@ -5175,14 +5195,11 @@ label yvara_s6_gate_dominion:
             yanchor 1.0
             yoffset 40
 
-    narrator "Your office. Not the Academy. Your territory."
-    narrator "She arrives at the time you specified. She is wearing what you told her to wear."
-    narrator "A dark dress. Low neckline. No Academy grey."
     yvara "I am here."
     narrator "She says it like a report. A woman presenting herself for inspection."
     narrator "You tell her to close the door. She does."
 
-    $ _emote2 = "images/yvara/yvara_formal_lingerie.png"
+    $ _emote2 = "images/yvara/yvara_formal_striptease.png"
     if renpy.loadable(_emote2):
         show expression _emote2 as yvara_bust:
             xpos 1.03
@@ -5195,7 +5212,7 @@ label yvara_s6_gate_dominion:
     narrator "She reaches behind. Unfastens it. The fabric falls. Beneath: black lace. A choker at her throat."
     narrator "She chose the choker herself. You did not ask for it."
 
-    $ _emote3 = "images/yvara/yvara_formal_striptease.png"
+    $ _emote3 = "images/yvara/yvara_nude.png"
     if renpy.loadable(_emote3):
         show expression _emote3 as yvara_bust:
             xpos 1.03
@@ -5206,13 +5223,7 @@ label yvara_s6_gate_dominion:
 
     narrator "You tell her to continue. She removes the lace. Folds it neatly on the chair."
     narrator "She stands naked except for the choker. Her chin is raised. She will not drop her eyes."
-
-    $ _cg_setup = "images/yvara/cg_s6_dominion_setup.png"
-    if renpy.loadable(_cg_setup):
-        window hide
-        scene expression _cg_setup at yvara_cg_fit
-        pause
-        window show
+    narrator "Her hands hang at her sides. Waiting for the next instruction. The Director, awaiting orders."
 
     if _title != "lady":
         # Lord variant — dominion
@@ -5232,7 +5243,7 @@ label yvara_s6_gate_dominion:
         narrator "She takes you in her mouth without being told. Deep. Immediate. A woman who has stopped pretending she does not want this."
         narrator "Her tongue works the underside, slow and thorough. She takes you deeper, her throat opening. Her hand grips your thigh."
         narrator "You grip her hair. She moans — low, guttural. The vibration travels through you."
-        narrator "Her cheeks hollow. Her rhythm is relentless. Wet sounds fill the quiet office."
+        narrator "Her cheeks hollow. Her rhythm is relentless. Wet sounds fill the quiet study."
         narrator "Your hand finds the choker. One finger hooked under the band, feeling her pulse hammer against your knuckle."
         narrator "She takes you all the way. Holds you there. Her eyes water but she does not break eye contact."
         narrator "You come in her mouth. She swallows — once, twice. Does not pull back until you are done."
@@ -5290,6 +5301,19 @@ label yvara_s6_gate_dominion:
 label yvara_s6_gate_mixed:
     $ _title = player_title
 
+    # — Setup (establishing shot — shared with devotion) —
+    $ _cg_setup = "images/yvara/cg_s6_devotion_setup.png"
+    if renpy.loadable(_cg_setup):
+        scene expression _cg_setup at yvara_cg_fit
+
+    narrator "The Academy at night. Her office. She is half-undressed already."
+    narrator "Director's coat on the chair. Blouse untucked. She has been working late and stopped caring about appearances."
+
+    $ _night_bg = "images/buildings/bg_academy_night.png" if renpy.loadable("images/buildings/bg_academy_night.png") else ("images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else "images/event_bg.png")
+    scene expression _night_bg
+    show black as yvara_bg_dim:
+        alpha 0.15
+
     $ _emote = "images/yvara/yvara_formal_warm.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5299,8 +5323,6 @@ label yvara_s6_gate_mixed:
             yanchor 1.0
             yoffset 40
 
-    narrator "The Academy at night. Her office. She is half-undressed already."
-    narrator "Director's coat on the chair. Blouse untucked. She has been working late and stopped caring about appearances."
     yvara "I was not expecting you."
     narrator "She was. The wine is already poured. Two glasses."
 
@@ -5465,6 +5487,11 @@ label yvara_ending_devotion:
 # ── Dominion Ending ────────────────────────────────────────────────────────
 label yvara_ending_dominion:
 
+    $ _study_bg = "images/buildings/study_day.png" if renpy.loadable("images/buildings/study_day.png") else "images/event_bg.png"
+    scene expression _study_bg
+    show black as yvara_bg_dim:
+        alpha 0.15
+
     $ _emote = "images/yvara/yvara_formal_yielding.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5474,7 +5501,7 @@ label yvara_ending_dominion:
             yanchor 1.0
             yoffset 40
 
-    narrator "She is waiting in your office. Standing. Hands folded."
+    narrator "She is waiting in one of your studies. Standing. Hands folded."
     narrator "She has already packed a small case. It sits by the door."
     yvara "The Academy will manage without me in the evenings."
     narrator "She does not say 'I am yours.' She does not need to. The case by the door says it."
@@ -5485,20 +5512,68 @@ label yvara_ending_dominion:
     narrator "You tell her. She nods once and begins."
 
     python:
-        import json
-        _yvara_path = "game/data/workers/yvara.json"
+        # Duck-typing per LA BIBLIA §1: never use isinstance(x, dict/list) in story-label
+        # python: blocks. `dict`/`list` in this scope refer to Ren'Py's Revertable variants
+        # and plain Python dicts/lists from json.loads fail the check.
+        _yw = None
         try:
-            _f = renpy.file(_yvara_path)
-            _yvara_data = json.loads(_f.read())
-            _f.close()
-            if isinstance(_yvara_data, list) and len(_yvara_data) > 0:
-                _yw = _yvara_data[0]
-                _yw["name"] = "Yvara"
-                if not any(w.get("name") == "Yvara" for w in store.workers):
-                    store.workers.append(_yw)
-                    add_trait_with_duration(_yw, "Yvara, Bound to Service", 0)
-        except Exception:
-            pass
+            import json as _json
+            with renpy.file("data/workers/yvara.json") as _f:
+                _raw = _f.read()
+            _text = _raw.decode("utf-8") if hasattr(_raw, "decode") else _raw
+            _data = _json.loads(_text)
+            if hasattr(_data, "get"):
+                _yw = _data
+            elif hasattr(_data, "__iter__"):
+                for _entry in _data:
+                    if hasattr(_entry, "get"):
+                        _yw = _entry
+                        break
+        except Exception as _e:
+            renpy.log("Yvara dominion: failed to load yvara.json - %s" % str(_e))
+
+        # Inline fallback if JSON load failed entirely (file missing/corrupt).
+        if not (_yw is not None and hasattr(_yw, "get") and hasattr(_yw, "__setitem__")):
+            renpy.log("Yvara dominion: using inline fallback dict")
+            _yw = {
+                "name": "Yvara",
+                "folder": "yvara",
+                "cost": 0,
+                "nsfw": True,
+                "unique": True,
+                "recruitment_locked": True,
+                "encounter_only": False,
+                "monster": False,
+                "procedural": False,
+                "skills": {
+                    "Sex": 58, "Anal": 41, "BDSM": 37, "Hand": 56, "Oral": 56,
+                    "Homo": 58, "Special": 45, "Group": 50, "Extreme": 33,
+                    "Striptease": 52, "Combat": 28, "Clever": 62, "Charm": 60,
+                    "Service": 58, "Agility": 30, "Craft": 52
+                },
+                "names_list": "western_female",
+                "traits": ["Human", "Teacher", "Mature Body", "Elegant", "Wise"],
+                "description": "The Academy Director. She runs an institution by day and serves your establishment by arrangement.",
+                "gender": "female",
+                "comfort_desired": 2
+            }
+
+        _yw["name"] = "Yvara"
+        if not any(w.get("name") == "Yvara" for w in store.workers):
+            try:
+                ensure_worker_defaults(_yw)
+                _emt = getattr(store, "_ensure_worker_min_traits", None)
+                if callable(_emt):
+                    _emt(_yw)
+                _stid = getattr(store, "_stamp_template_id_from_json", None)
+                if callable(_stid):
+                    _stid(_yw)
+                store.workers.append(_yw)
+                renpy.store.workers = store.workers
+                add_trait_with_duration(_yw, "Yvara, Bound to Service", 0)
+            except Exception as _e:
+                renpy.log("Yvara dominion: append failed - %s" % str(_e))
+
         store.yvara_is_worker = True
         store.yvara_ending_done = True
         store.yvara_academy_discount_active = True
@@ -5519,6 +5594,11 @@ label yvara_ending_dominion:
 # ── Mixed Ending ───────────────────────────────────────────────────────────
 label yvara_ending_mixed:
 
+    $ _study_bg = "images/buildings/study_day.png" if renpy.loadable("images/buildings/study_day.png") else "images/event_bg.png"
+    scene expression _study_bg
+    show black as yvara_bg_dim:
+        alpha 0.15
+
     $ _emote = "images/yvara/yvara_formal_amused.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5528,7 +5608,7 @@ label yvara_ending_mixed:
             yanchor 1.0
             yoffset 40
 
-    narrator "She arrives with a revised schedule. Third draft."
+    narrator "She arrives at one of your studies with a revised schedule. Third draft."
     yvara "Three evenings per week. Wednesdays, Fridays, and Saturdays."
     narrator "She sets it on your desk. Her handwriting is immaculate."
     yvara "I will not be available on Academy examination weeks. Non-negotiable."
@@ -5541,20 +5621,68 @@ label yvara_ending_mixed:
     narrator "From Yvara, that is a sonnet."
 
     python:
-        import json
-        _yvara_path = "game/data/workers/yvara.json"
+        # Duck-typing per LA BIBLIA §1: never use isinstance(x, dict/list) in story-label
+        # python: blocks. `dict`/`list` in this scope refer to Ren'Py's Revertable variants
+        # and plain Python dicts/lists from json.loads fail the check.
+        _yw = None
         try:
-            _f = renpy.file(_yvara_path)
-            _yvara_data = json.loads(_f.read())
-            _f.close()
-            if isinstance(_yvara_data, list) and len(_yvara_data) > 0:
-                _yw = _yvara_data[0]
-                _yw["name"] = "Yvara"
-                if not any(w.get("name") == "Yvara" for w in store.workers):
-                    store.workers.append(_yw)
-                    add_trait_with_duration(_yw, "Yvara, Academy Duties", 0)
-        except Exception:
-            pass
+            import json as _json
+            with renpy.file("data/workers/yvara.json") as _f:
+                _raw = _f.read()
+            _text = _raw.decode("utf-8") if hasattr(_raw, "decode") else _raw
+            _data = _json.loads(_text)
+            if hasattr(_data, "get"):
+                _yw = _data
+            elif hasattr(_data, "__iter__"):
+                for _entry in _data:
+                    if hasattr(_entry, "get"):
+                        _yw = _entry
+                        break
+        except Exception as _e:
+            renpy.log("Yvara mixed: failed to load yvara.json - %s" % str(_e))
+
+        # Inline fallback if JSON load failed entirely (file missing/corrupt).
+        if not (_yw is not None and hasattr(_yw, "get") and hasattr(_yw, "__setitem__")):
+            renpy.log("Yvara mixed: using inline fallback dict")
+            _yw = {
+                "name": "Yvara",
+                "folder": "yvara",
+                "cost": 0,
+                "nsfw": True,
+                "unique": True,
+                "recruitment_locked": True,
+                "encounter_only": False,
+                "monster": False,
+                "procedural": False,
+                "skills": {
+                    "Sex": 58, "Anal": 41, "BDSM": 37, "Hand": 56, "Oral": 56,
+                    "Homo": 58, "Special": 45, "Group": 50, "Extreme": 33,
+                    "Striptease": 52, "Combat": 28, "Clever": 62, "Charm": 60,
+                    "Service": 58, "Agility": 30, "Craft": 52
+                },
+                "names_list": "western_female",
+                "traits": ["Human", "Teacher", "Mature Body", "Elegant", "Wise"],
+                "description": "The Academy Director. She runs an institution by day and serves your establishment by arrangement.",
+                "gender": "female",
+                "comfort_desired": 2
+            }
+
+        _yw["name"] = "Yvara"
+        if not any(w.get("name") == "Yvara" for w in store.workers):
+            try:
+                ensure_worker_defaults(_yw)
+                _emt = getattr(store, "_ensure_worker_min_traits", None)
+                if callable(_emt):
+                    _emt(_yw)
+                _stid = getattr(store, "_stamp_template_id_from_json", None)
+                if callable(_stid):
+                    _stid(_yw)
+                store.workers.append(_yw)
+                renpy.store.workers = store.workers
+                add_trait_with_duration(_yw, "Yvara, Academy Duties", 0)
+            except Exception as _e:
+                renpy.log("Yvara mixed: append failed - %s" % str(_e))
+
         store.yvara_is_worker = True
         store.yvara_ending_done = True
         store.yvara_academy_discount_active = True

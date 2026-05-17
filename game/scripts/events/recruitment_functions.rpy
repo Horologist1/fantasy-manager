@@ -41,6 +41,160 @@ init python:
             renpy.jump("start_recruitment_system")
         except Exception as e:
             renpy.log(f"launch_recruitment_via_label error: {e}")
+
+    def get_recruitment_image(worker, outcome, event=None):
+        """
+        Resolve the best background / outcome image for a recruitment screen.
+
+        Priority chain (mirrors get_event_image's trait-aware order):
+          1. Event-level explicit override (full path, or shortname other than the
+             generic placeholders "generic_success" / "generic_failure" / "event_bg").
+          2a. Worker folder convention WITH trait prefix:
+              <folder>/<trait>_recruit_success / _recruit_failure / _recruit.
+          2b. Worker folder convention WITHOUT trait prefix.
+          3a. Worker folder heuristic WITH trait prefix:
+              <folder>/<trait>_charm / _charm_failure / _profile.
+          3b. Worker folder heuristic WITHOUT trait prefix
+              (excludes files that start with any trait prefix the worker doesn't have).
+          4. The event's placeholder value, if it was a known default.
+          5. Hardcoded generic placeholder for the outcome.
+          6. event_bg as last resort.
+
+        Trait prefixes are taken from get_trait_prefixes(worker) -- same priority
+        order as daily events (Transformed > Magical > Futa > Pregnant, plus
+        compound combinations).
+
+        `outcome` should be "success", "failure", or anything else (background).
+        Returns a renpy-loadable path (or "images/event_bg.png" if all fail).
+        """
+        event = event or {}
+        DEFAULT_PLACEHOLDERS = {"generic_success", "generic_failure", "event_bg", None, ""}
+        TRAIT_FILE_PREFIXES = ("pregnant_", "futa_", "transformed_", "magical_")
+
+        if outcome == "success":
+            event_key = event.get("success_image")
+            convention_name = "recruit_success"
+            heuristic_pattern = "charm"
+            heuristic_failure_only = False
+            generic_name = "generic_success"
+        elif outcome == "failure":
+            event_key = event.get("failure_image")
+            convention_name = "recruit_failure"
+            heuristic_pattern = "charm_failure"
+            heuristic_failure_only = True
+            generic_name = "generic_failure"
+        else:
+            event_key = event.get("background_image")
+            convention_name = "recruit"
+            heuristic_pattern = "profile"
+            heuristic_failure_only = False
+            generic_name = "event_bg"
+
+        valid_exts = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4")
+
+        def _resolve_shortname(name):
+            if not name:
+                return None
+            if name.startswith("images/"):
+                return name if renpy.loadable(name) else None
+            lower = name.lower()
+            has_ext = any(lower.endswith(e) for e in valid_exts)
+            if has_ext:
+                for prefix in ("images/events/", "images/"):
+                    c = prefix + name
+                    if renpy.loadable(c):
+                        return c
+                return None
+            for ext in valid_exts:
+                for prefix in ("images/events/", "images/"):
+                    c = f"{prefix}{name}{ext}"
+                    if renpy.loadable(c):
+                        return c
+            return None
+
+        def _try_worker_basename(folder, basename):
+            for ext in valid_exts:
+                c = f"images/workers/{folder}/{basename}{ext}"
+                if renpy.loadable(c):
+                    return c
+            return None
+
+        def _pattern_match(base_folder, pattern):
+            if heuristic_failure_only:
+                return get_pattern_matches_flexible(base_folder, pattern)
+            return get_pattern_matches_flexible(base_folder, pattern, exclude_failure=True)
+
+        worker_folder = None
+        if worker and hasattr(worker, "get"):
+            worker_folder = worker.get("folder")
+
+        worker_trait_prefixes = []
+        if worker and hasattr(worker, "get"):
+            try:
+                worker_trait_prefixes = get_trait_prefixes(worker) or []
+            except Exception as e:
+                renpy.log(f"get_recruitment_image get_trait_prefixes failed: {e}")
+                worker_trait_prefixes = []
+
+        # 1. Explicit event override
+        if event_key and event_key not in DEFAULT_PLACEHOLDERS:
+            resolved = _resolve_shortname(event_key)
+            if resolved:
+                return resolved
+
+        # 2a. Worker folder convention WITH trait prefix
+        if worker_folder:
+            for trait_prefix in worker_trait_prefixes:
+                resolved = _try_worker_basename(worker_folder, f"{trait_prefix}_{convention_name}")
+                if resolved:
+                    return resolved
+
+        # 2b. Worker folder convention WITHOUT trait prefix
+        if worker_folder:
+            resolved = _try_worker_basename(worker_folder, convention_name)
+            if resolved:
+                return resolved
+
+        # 3a. Worker folder heuristic WITH trait prefix
+        if worker_folder:
+            base_folder = f"images/workers/{worker_folder}/"
+            for trait_prefix in worker_trait_prefixes:
+                try:
+                    matches = _pattern_match(base_folder, f"{trait_prefix}_{heuristic_pattern}")
+                    if matches:
+                        return random.choice(matches)
+                except Exception as e:
+                    renpy.log(f"get_recruitment_image trait-prefixed heuristic failed: {e}")
+
+        # 3b. Worker folder heuristic WITHOUT trait prefix (filter trait-prefixed files)
+        if worker_folder:
+            base_folder = f"images/workers/{worker_folder}/"
+            try:
+                matches = _pattern_match(base_folder, heuristic_pattern)
+                if matches:
+                    matches = [f for f in matches if not should_exclude_trait_file(f, TRAIT_FILE_PREFIXES, None)]
+                if matches:
+                    return random.choice(matches)
+            except Exception as e:
+                renpy.log(f"get_recruitment_image heuristic lookup failed: {e}")
+
+        # 4. Event placeholder value (if it was a known default like generic_success)
+        if event_key in DEFAULT_PLACEHOLDERS and event_key:
+            resolved = _resolve_shortname(event_key)
+            if resolved:
+                return resolved
+
+        # 5. Hardcoded generic placeholder for the outcome
+        resolved = _resolve_shortname(generic_name)
+        if resolved:
+            return resolved
+
+        # 6. event_bg fallback
+        resolved = _resolve_shortname("event_bg")
+        if resolved:
+            return resolved
+
+        return "images/event_bg.png"
     def get_filtered_recruit_workers(event):
         """
         Get recruitment workers filtered by event requirements.
@@ -201,7 +355,13 @@ init python:
                 outcome_status = "success"
                 base_message = choice_data.get("message", "Done.")
                 applied_values = apply_recruitment_effects(effect, worker)
-        
+
+        # Per-choice outcome override: lets decline/rejection choices display the
+        # event's failure_image even though no skill check or probability ran.
+        override = choice_data.get("outcome_override")
+        if override in ("success", "failure"):
+            outcome_status = override
+
         # Replace placeholders in the message
         worker_name = worker.get("name", "Unknown") if worker else "Unknown"
         outcome_message = base_message.replace("[event_worker]", worker_name)
