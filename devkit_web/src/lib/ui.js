@@ -105,6 +105,7 @@ function renderBool(def, initial, onChange) {
   const input = el('input', { type: 'checkbox' });
   input.checked = !!initial;
   input.addEventListener('change', () => onChange(input.checked));
+  input.addEventListener('click', () => onChange(input.checked));
   const wrap = wrapField(def, input, errEl);
   return {
     element: wrap,
