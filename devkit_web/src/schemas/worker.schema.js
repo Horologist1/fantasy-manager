@@ -52,9 +52,9 @@ export const worker_schema = {
     },
     {
       id: 'skills_complete',
-      check: (e) => ALL_SKILLS.every((s) => s in (e.skills || {})),
-      severity: 'error',
-      message: `skills must include all 25 canonical keys (${ALL_SKILLS.join(', ')})`,
+      check: (e) => e.procedural || ALL_SKILLS.every((s) => s in (e.skills || {})),
+      severity: 'warning',
+      message: `skills should include all 25 canonical keys (${ALL_SKILLS.join(', ')}). Procedural workers are exempt. Scripted story workers (e.g. Yvara) may legitimately omit Specialty 4–12 slots — this is a warning, not a blocking error.`,
     },
     {
       id: 'cost_in_range',

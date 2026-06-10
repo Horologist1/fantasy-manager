@@ -55,10 +55,10 @@ test('procedural worker without names_list warns', () => {
   assert.ok(r.warnings.find((x) => x.rule === 'procedural_needs_names_list'));
 });
 
-test('skills missing required keys errors', () => {
+test('skills missing required keys warns', () => {
   const w = { ...aelis, skills: { Sex: 30 } };
   const r = validateEntry(w, worker_schema, ctx());
-  assert.ok(r.errors.find((x) => x.rule === 'skills_complete'));
+  assert.ok(r.warnings.find((x) => x.rule === 'skills_complete'));
 });
 
 test('cost out of sane range warns', () => {
