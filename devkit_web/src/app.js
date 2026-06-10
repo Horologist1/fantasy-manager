@@ -145,6 +145,7 @@ async function openExistingWorkers() {
     container: app,
     ctx: ctx(),
     defaultFilename: `workers/${choice}`,
+    validate: (e) => validateEntry(e, worker_schema, ctx()),
     onSave: async (updated, filename) => {
       await fs.mergeAndWrite(filename, updated, { key: 'name' });
       alert(`Saved to ${filename}`);

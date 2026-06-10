@@ -16,7 +16,10 @@ function el(tag, attrs = {}, ...children) {
   return node;
 }
 
-export function runEditor({ sections, entry, schema, container, ctx, onSave, defaultFilename }) {
+export function runEditor({
+  sections, entry, schema, container, ctx, onSave,
+  defaultFilename, validate,
+}) {
   const current = { ...entry };
   let activeId = sections[0].id;
 
@@ -80,6 +83,35 @@ export function runEditor({ sections, entry, schema, container, ctx, onSave, def
     fnameInput.value = defaultFilename || '';
     wrap.appendChild(fnameLabel);
     wrap.appendChild(fnameInput);
+
+    if (validate) {
+      const r = validate(current);
+      if (r.errors.length || r.warnings.length) {
+        const panel = el('div', { class: 'validation-panel' });
+        panel.appendChild(el('h3', {}, `Errors: ${r.errors.length} · Warnings: ${r.warnings.length}`));
+        for (const e of r.errors) {
+          panel.appendChild(el('div', { class: 'val-error' }, `❌ ${e.field || e.rule}: ${e.error || e.message}`));
+        }
+        for (const w of r.warnings) {
+          panel.appendChild(el('div', { class: 'val-warning' }, `⚠ ${w.rule}: ${w.message}`));
+        }
+        if (r.migrations.length) {
+          const mig = el('button', {
+            type: 'button',
+            'data-action': 'migrate',
+            onclick: async () => {
+              const { applyMigrations } = await import('../lib/validator.js');
+              const migrated = applyMigrations(current, schema);
+              Object.assign(current, migrated);
+              for (const m of r.migrations) delete current[m.from];
+              paint();
+            },
+          }, `Apply ${r.migrations.length} legacy migration(s)`);
+          panel.appendChild(mig);
+        }
+        wrap.appendChild(panel);
+      }
+    }
 
     const nav = el('div', { class: 'nav' });
     nav.appendChild(el('button', {

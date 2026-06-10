@@ -66,3 +66,35 @@ test('Save returns the edited entry', async () => {
   root.querySelector('[data-action="save"]').click();
   assert.equal(saved.name, 'B');
 });
+
+test('validation panel renders errors on Review', async () => {
+  const { runEditor } = await import('../src/editors/_engine.js');
+  const root = document.createElement('div');
+  const tinySchema = {
+    fields: { name: { type: 'string', required: true } },
+    rules: [], legacy: {},
+  };
+  runEditor({
+    sections: [{ id: 'b', label: 'B', fields: [{ id: 'name', type: 'string', label: 'Name' }] }],
+    entry: { name: null },
+    schema: tinySchema,
+    container: root,
+    ctx: {},
+    onSave: () => {},
+    validate: (e) => {
+      // Synchronous validation: build the result inline using imported validateEntry.
+      // We can't dynamically import inside this callback because runEditor calls it sync.
+      // Instead we return a hand-crafted result mimicking what validateEntry would produce
+      // for a missing required field. This test just asserts the panel renders.
+      return {
+        errors: [{ field: 'name', error: 'required', rule: null }],
+        warnings: [],
+        migrations: [],
+      };
+    },
+  });
+  root.querySelector('[data-tab="review"]').click();
+  // panel should render with at least one .val-error
+  assert.ok(root.querySelector('[data-section="review"]'));
+  assert.ok(root.querySelector('.val-error'));
+});
