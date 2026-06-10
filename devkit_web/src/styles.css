@@ -1,0 +1,76 @@
+:root {
+  --bg: #1b1b1f;
+  --bg-elev: #25252c;
+  --fg: #e8e8ee;
+  --muted: #999;
+  --accent: #7a5af8;
+  --accent-fg: #fff;
+  --error: #e25a5a;
+  --border: #3a3a45;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: system-ui, sans-serif;
+  background: var(--bg); color: var(--fg);
+}
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border);
+}
+header h1 { margin: 0; font-size: 1.2rem; }
+.header-actions { display: flex; gap: 0.5rem; align-items: center; }
+.muted { color: var(--muted); font-size: 0.85rem; }
+main { padding: 1.25rem; max-width: 960px; margin: 0 auto; }
+footer { padding: 1rem; text-align: center; color: var(--muted); }
+
+button {
+  background: var(--accent); color: var(--accent-fg);
+  border: 0; border-radius: 4px; padding: 0.4rem 0.9rem;
+  cursor: pointer; font-size: 0.95rem;
+}
+button:hover { filter: brightness(1.1); }
+button[data-action="back"] { background: var(--bg-elev); color: var(--fg); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+.tile {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
+  padding: 1rem; cursor: pointer; transition: border-color 0.15s;
+}
+.tile:hover { border-color: var(--accent); }
+.tile h3 { margin: 0 0 0.5rem 0; }
+.tile p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+.recipe-step, .editor-section {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
+  padding: 1.25rem; margin-top: 1rem;
+}
+.progress { color: var(--muted); margin-bottom: 0.75rem; }
+.field { display: grid; grid-template-columns: 200px 1fr; gap: 0.75rem; margin: 0.5rem 0; align-items: center; }
+.field label { color: var(--muted); }
+.field input, .field textarea, .field select {
+  background: var(--bg); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.4rem 0.6rem; font: inherit; width: 100%;
+}
+.field[aria-invalid="true"] input,
+.field[aria-invalid="true"] textarea,
+.field[aria-invalid="true"] select {
+  border-color: var(--error);
+}
+.field-error { grid-column: 2 / -1; color: var(--error); font-size: 0.85rem; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.chip { background: var(--bg); border: 1px solid var(--border); padding: 0.2rem 0.5rem; border-radius: 12px; }
+.chip-x { background: transparent; color: var(--muted); border: 0; padding: 0 0.2rem; cursor: pointer; }
+
+.dict { border-collapse: collapse; width: 100%; }
+.dict td { padding: 0.2rem 0.4rem; border-bottom: 1px solid var(--border); }
+
+.tabs { display: flex; gap: 0.25rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.tab { background: transparent; color: var(--fg); border: 0; padding: 0.5rem 0.75rem; cursor: pointer; }
+.tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+.nav { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.json-preview {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+  padding: 0.75rem; max-height: 400px; overflow: auto; font-size: 0.85rem;
+}
