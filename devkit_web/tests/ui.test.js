@@ -82,3 +82,78 @@ test('setError adds aria-invalid + error message', async () => {
   f.setError('required');
   assert.match(f.element.outerHTML, /required/);
 });
+
+test('list_of_strings with catalog renders a browsable picker', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const catalogs = { all_traits: new Set(['Human', 'Elf', 'Orc', 'Charming']) };
+  const f = renderField(
+    { id: 'traits', type: 'list_of_strings', catalog: 'all_traits', label: 'Traits' },
+    ['Human'],
+    () => {},
+    { catalogs },
+  );
+  assert.ok(f.element.querySelector('.catalog-picker'),
+    'should render catalog-picker container');
+  assert.ok(f.element.querySelector('[data-role="search"]'),
+    'should render a search input');
+  const items = f.element.querySelectorAll('[data-item]');
+  assert.equal(items.length, 4, 'should render one item per catalog entry');
+  const selectedItem = f.element.querySelector('[data-item="Human"]');
+  assert.match(selectedItem.className, /selected/, 'pre-selected items show selected state');
+});
+
+test('catalog picker click toggles selection', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const catalogs = { all_traits: new Set(['Human', 'Elf']) };
+  let captured = null;
+  const f = renderField(
+    { id: 'traits', type: 'list_of_strings', catalog: 'all_traits' },
+    [],
+    (v) => (captured = v),
+    { catalogs },
+  );
+  f.element.querySelector('[data-item="Elf"]').click();
+  assert.deepEqual(captured, ['Elf']);
+  assert.deepEqual(f.getValue(), ['Elf']);
+  f.element.querySelector('[data-item="Elf"]').click();
+  assert.deepEqual(f.getValue(), []);
+});
+
+test('catalog picker search filters the list', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const catalogs = { all_traits: new Set(['Charming', 'Charismatic', 'Elegant']) };
+  const f = renderField(
+    { id: 'traits', type: 'list_of_strings', catalog: 'all_traits' },
+    [],
+    () => {},
+    { catalogs },
+  );
+  const search = f.element.querySelector('[data-role="search"]');
+  search.value = 'char';
+  search.dispatchEvent(new window.Event('input'));
+  const items = f.element.querySelectorAll('[data-item]');
+  assert.equal(items.length, 2, 'only Charming and Charismatic should remain');
+});
+
+test('string field with catalog shows clickable suggestion chips', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const catalogs = { image_folders: new Set(['aelis', 'yvara', 'iris']) };
+  let captured = null;
+  const f = renderField(
+    { id: 'folder', type: 'string', catalog: 'image_folders', label: 'Folder' },
+    null,
+    (v) => (captured = v),
+    { catalogs },
+  );
+  const chips = f.element.querySelectorAll('[data-suggestion]');
+  assert.equal(chips.length, 3);
+  chips[0].click();
+  assert.equal(captured, 'aelis');
+  assert.equal(f.getValue(), 'aelis');
+});
+
+test('string field without catalog does not render suggestions', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const f = renderField({ id: 'name', type: 'string' }, '', () => {});
+  assert.equal(f.element.querySelector('[data-role="suggestions"]'), null);
+});
