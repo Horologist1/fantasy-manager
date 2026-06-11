@@ -19,24 +19,49 @@ function collectEventFlags(events, acc) {
 export function buildCatalogs(sources) {
   const all_traits = new Set();
   const race_traits = new Set(RACE_TRAITS);
+  const trait_meta = {};
   for (const file of sources.traits || []) {
     for (const t of file) {
-      if (t && t.name) all_traits.add(t.name);
+      if (t && t.name) {
+        all_traits.add(t.name);
+        trait_meta[t.name] = {
+          description: t.description || '',
+          nsfw: !!t.nsfw,
+        };
+      }
     }
   }
 
   const all_items = new Set();
+  const item_meta = {};
   for (const file of sources.items || []) {
     const items = file.items || file;
-    if (Array.isArray(items)) for (const i of items) if (i.id) all_items.add(i.id);
+    if (Array.isArray(items)) {
+      for (const i of items) {
+        if (!i || !i.id) continue;
+        all_items.add(i.id);
+        item_meta[i.id] = {
+          name: i.display_name || i.name || i.id,
+          description: i.description || '',
+          type: i.type || '',
+        };
+      }
+    }
   }
 
   const all_buildings = new Set();
   const all_professions = new Set();
+  const building_meta = {};
   for (const file of sources.buildings || []) {
     const list = Array.isArray(file) ? file : Object.values(file);
     for (const b of list) {
-      if (b && b.id) all_buildings.add(b.id);
+      if (!b || !b.id) continue;
+      all_buildings.add(b.id);
+      building_meta[b.id] = {
+        name: b.name || b.id,
+        skill_name: b.skill_name || '',
+        skill_description: b.skill_description || '',
+      };
       for (const p of b.professions || []) if (p.id) all_professions.add(p.id);
     }
   }
@@ -60,5 +85,6 @@ export function buildCatalogs(sources) {
     all_worker_names, all_worker_folders,
     all_event_flags,
     names_lists: new Set(),
+    meta: { trait_meta, item_meta, building_meta },
   };
 }

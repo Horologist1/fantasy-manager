@@ -151,12 +151,43 @@ function renderEnum(def, initial, onChange) {
   const sel = el('select');
   for (const opt of def.options || []) sel.appendChild(el('option', { value: opt }, opt));
   if (initial) sel.value = initial;
-  sel.addEventListener('change', () => onChange(sel.value));
+
+  const descs = def.option_descriptions || null;
+  const descEl = descs
+    ? el('div', { class: 'enum-option-description', 'data-role': 'option-description' })
+    : null;
+
+  function paintDesc() {
+    if (!descEl) return;
+    const v = sel.value;
+    const text = descs[v];
+    if (text) {
+      descEl.textContent = text;
+      descEl.classList.remove('muted-empty');
+    } else {
+      descEl.textContent = 'Pick an option to see what it does.';
+      descEl.classList.add('muted-empty');
+    }
+  }
+
+  sel.addEventListener('change', () => {
+    onChange(sel.value);
+    paintDesc();
+  });
+
   const wrap = wrapField(def, sel, errEl);
+  if (descEl) {
+    wrap.appendChild(descEl);
+    paintDesc();
+  }
+
   return {
     element: wrap,
     getValue: () => sel.value,
-    setValue: (v) => (sel.value = v == null ? '' : v),
+    setValue: (v) => {
+      sel.value = v == null ? '' : v;
+      paintDesc();
+    },
     setError: (m) => setErr(errEl, wrap, m),
   };
 }
@@ -166,7 +197,8 @@ function renderListOfStrings(def, initial, onChange, ctx) {
   // valid values instead of guessing them from memory. Without a catalog we
   // fall back to a free-text chip input.
   if (def.catalog && ctx?.catalogs?.[def.catalog]) {
-    return renderCatalogPicker(def, initial, ctx.catalogs[def.catalog], onChange);
+    const meta = ctx.meta?.[`${catalogToMetaKey(def.catalog)}`] || null;
+    return renderCatalogPicker(def, initial, ctx.catalogs[def.catalog], onChange, meta);
   }
 
   const errEl = makeError();
@@ -213,10 +245,31 @@ function renderListOfStrings(def, initial, onChange, ctx) {
   };
 }
 
-function renderCatalogPicker(def, initial, catalogSet, onChange) {
+function catalogToMetaKey(catalogName) {
+  // Maps e.g. "all_traits" → "trait_meta", "all_items" → "item_meta",
+  // "all_buildings" → "building_meta". Falls back to <name>_meta otherwise.
+  const known = {
+    all_traits: 'trait_meta',
+    race_traits: 'trait_meta',
+    all_items: 'item_meta',
+    all_buildings: 'building_meta',
+  };
+  return known[catalogName] || `${catalogName}_meta`;
+}
+
+function metaDescription(meta, item) {
+  if (!meta) return '';
+  const m = meta[item];
+  if (!m) return '';
+  if (typeof m === 'string') return m;
+  return m.description || m.name || '';
+}
+
+function renderCatalogPicker(def, initial, catalogSet, onChange, meta = null) {
   const errEl = makeError();
   let values = Array.isArray(initial) ? [...initial] : [];
   let filterText = '';
+  let focusedItem = null;
   const items = Array.from(catalogSet).sort();
 
   const root = el('div', { class: 'catalog-picker' });
@@ -228,6 +281,7 @@ function renderCatalogPicker(def, initial, catalogSet, onChange) {
     placeholder: `Search ${items.length} options…`,
   });
   const list = el('div', { class: 'catalog-picker-list', 'data-role': 'list' });
+  const info = el('div', { class: 'catalog-picker-info', 'data-role': 'info' });
 
   function paintSelected() {
     selectedRow.innerHTML = '';
@@ -237,11 +291,14 @@ function renderCatalogPicker(def, initial, catalogSet, onChange) {
     }
     for (const v of values) {
       const chip = el('span', { class: 'chip' }, v, ' ');
+      const desc = metaDescription(meta, v);
+      if (desc) chip.setAttribute('title', desc);
       const x = el('button', { type: 'button', class: 'chip-x' }, '×');
       x.addEventListener('click', () => {
         values = values.filter((y) => y !== v);
         paintSelected();
         paintList();
+        paintInfo();
         onChange(values);
       });
       chip.appendChild(x);
@@ -259,20 +316,55 @@ function renderCatalogPicker(def, initial, catalogSet, onChange) {
     }
     for (const item of filtered) {
       const isSelected = values.includes(item);
+      const desc = metaDescription(meta, item);
       const itemEl = el('button', {
         type: 'button',
         class: isSelected ? 'catalog-picker-item selected' : 'catalog-picker-item',
         'data-item': item,
         'aria-pressed': isSelected ? 'true' : 'false',
+        title: desc || undefined,
         onclick: () => {
           if (values.includes(item)) values = values.filter((x) => x !== item);
           else values = [...values, item];
+          focusedItem = item;
           paintSelected();
           paintList();
+          paintInfo();
           onChange(values);
         },
       }, item);
+      itemEl.addEventListener('mouseenter', () => {
+        focusedItem = item;
+        paintInfo();
+      });
+      itemEl.addEventListener('focus', () => {
+        focusedItem = item;
+        paintInfo();
+      });
       list.appendChild(itemEl);
+    }
+  }
+
+  function paintInfo() {
+    info.innerHTML = '';
+    if (!meta) {
+      info.style.display = 'none';
+      return;
+    }
+    info.style.display = '';
+    const subject = focusedItem || values[values.length - 1] || null;
+    if (!subject) {
+      info.appendChild(el('span', { class: 'muted' },
+        'Hover or click an item to see its description.'));
+      return;
+    }
+    const desc = metaDescription(meta, subject);
+    info.appendChild(el('strong', {}, subject));
+    if (desc) {
+      info.appendChild(el('span', { class: 'muted' }, ' — '));
+      info.appendChild(el('span', {}, desc));
+    } else {
+      info.appendChild(el('span', { class: 'muted' }, ' — no description available'));
     }
   }
 
@@ -284,8 +376,10 @@ function renderCatalogPicker(def, initial, catalogSet, onChange) {
   root.appendChild(selectedRow);
   root.appendChild(search);
   root.appendChild(list);
+  root.appendChild(info);
   paintSelected();
   paintList();
+  paintInfo();
 
   const wrap = wrapField(def, root, errEl);
   return {
@@ -295,6 +389,7 @@ function renderCatalogPicker(def, initial, catalogSet, onChange) {
       values = Array.isArray(v) ? [...v] : [];
       paintSelected();
       paintList();
+      paintInfo();
     },
     setError: (m) => setErr(errEl, wrap, m),
   };

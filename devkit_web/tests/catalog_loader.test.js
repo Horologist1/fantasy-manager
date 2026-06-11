@@ -43,6 +43,28 @@ test('buildCatalogs assembles traits, items, buildings, workers', async () => {
   assert.ok(catalogs.all_worker_folders.has('iris'));
 });
 
+test('buildCatalogs returns meta.trait_meta with descriptions', async () => {
+  const sources = {
+    traits: await loadFixturesFor('traits'),
+    items: [], buildings: [], workers: [], interactions: [], events: [],
+  };
+  const catalogs = buildCatalogs(sources);
+  assert.ok(catalogs.meta, 'meta object should be present');
+  assert.ok(catalogs.meta.trait_meta, 'trait_meta should be present');
+  assert.equal(catalogs.meta.trait_meta.Human.description, 'race');
+  assert.equal(catalogs.meta.trait_meta.Graceful.description, 'personality');
+});
+
+test('buildCatalogs returns meta.item_meta with display info', async () => {
+  const sources = {
+    traits: [], items: await loadFixturesFor('items'),
+    buildings: [], workers: [], interactions: [], events: [],
+  };
+  const catalogs = buildCatalogs(sources);
+  assert.equal(catalogs.meta.item_meta.potion_minor.name, 'Minor Potion');
+  assert.equal(catalogs.meta.item_meta.potion_minor.type, 'consumable');
+});
+
 test('buildCatalogs scans events for event_flags', () => {
   const events = [
     [

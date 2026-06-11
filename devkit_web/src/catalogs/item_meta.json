@@ -1,0 +1,877 @@
+{
+  "binding_gem": {
+    "name": "Binding Gem",
+    "description": "A rare gem said to bind djinn and break their pacts.",
+    "type": "quest_item"
+  },
+  "iron_sword": {
+    "name": "Iron Sword",
+    "description": "A sturdy sword made of iron. (+8 Combat)",
+    "type": "weapon"
+  },
+  "steel_sword": {
+    "name": "Steel Sword",
+    "description": "A well-forged steel sword that cuts through armor. (+8 Combat)",
+    "type": "weapon"
+  },
+  "wooden_staff": {
+    "name": "Wooden Staff",
+    "description": "A simple wooden staff favored by novices. (+2 Combat, +2 Clever)",
+    "type": "weapon"
+  },
+  "health_potion": {
+    "name": "Health Potion",
+    "description": "Restores 20 health points when consumed. (+20 Health)",
+    "type": "consumable"
+  },
+  "energy_potion": {
+    "name": "Energy Potion",
+    "description": "Restores 5 energy when consumed. (+5 Energy)",
+    "type": "consumable"
+  },
+  "antidote": {
+    "name": "Antidote",
+    "description": "A powerful remedy that neutralizes poisons and restores some health. (+5 Health, removes Poisoned)",
+    "type": "consumable"
+  },
+  "stamina_elixir": {
+    "name": "Stamina Elixir",
+    "description": "Boosts stamina and restores a little health. (+2 Health, +5 Energy)",
+    "type": "consumable"
+  },
+  "chocolates": {
+    "name": "Box of Chocolates",
+    "description": "A small gift that lifts the mood. (+1 Joy)",
+    "type": "consumable"
+  },
+  "bonbons_box": {
+    "name": "Luxury Bonbons",
+    "description": "Sugar-spun sweets with a faint arcane shimmer. (+2 Joy)",
+    "type": "consumable"
+  },
+  "flower_bouquet": {
+    "name": "Perfect Flower Bouquet",
+    "description": "Enchanted blooms that whisper sweet feelings. (+1 Joy, +1 Romance)",
+    "type": "consumable"
+  },
+  "calming_charm": {
+    "name": "Calming Charm",
+    "description": "A soothing charm that helps keep emotions in check. (Daily: -1 Rebelliousness)",
+    "type": "accessory"
+  },
+  "potion_vitality": {
+    "name": "Potion of Vitality",
+    "description": "A robust potion that increases vitality. (+15 Health)",
+    "type": "consumable"
+  },
+  "iron_shield": {
+    "name": "Iron Shield",
+    "description": "A sturdy shield that protects the bearer. (+10 Health)",
+    "type": "armor"
+  },
+  "leather_armor": {
+    "name": "Leather Armor",
+    "description": "Light armor offering basic protection. (+5 Health)",
+    "type": "armor"
+  },
+  "magic_robe": {
+    "name": "Magic Robe",
+    "description": "A robe imbued with magical properties. (+5 Clever, +5 Combat)",
+    "type": "armor"
+  },
+  "cloak_stealth": {
+    "name": "Cloak of Stealth",
+    "description": "A dark cloak that enhances stealth and charm. (+3 Charm)",
+    "type": "accessory"
+  },
+  "ring_fortitude": {
+    "name": "Ring of Fortitude",
+    "description": "A ring that increases the wearer's resilience. (+10 Health)",
+    "type": "accessory"
+  },
+  "amulet_power": {
+    "name": "Amulet of Power",
+    "description": "An amulet that boosts combat prowess. (+4 Combat)",
+    "type": "accessory"
+  },
+  "boots_speed": {
+    "name": "Boots of Speed",
+    "description": "Light boots that increase movement speed and agility. (+3 Agility)",
+    "type": "accessory"
+  },
+  "gold_coin": {
+    "name": "Gold Coin",
+    "description": "A coin made of pure gold.",
+    "type": "currency"
+  },
+  "silver_coin": {
+    "name": "Silver Coin",
+    "description": "A coin made of sterling silver.",
+    "type": "currency"
+  },
+  "bronze_coin": {
+    "name": "Bronze Coin",
+    "description": "A coin made of bronze.",
+    "type": "currency"
+  },
+  "diamond": {
+    "name": "Diamond",
+    "description": "A precious gemstone with high monetary value.",
+    "type": "misc"
+  },
+  "ruby": {
+    "name": "Ruby",
+    "description": "A deep red gemstone.",
+    "type": "misc"
+  },
+  "emerald": {
+    "name": "Emerald",
+    "description": "A bright green gemstone prized for its beauty.",
+    "type": "misc"
+  },
+  "sapphire": {
+    "name": "Sapphire",
+    "description": "A blue gemstone known for its clarity.",
+    "type": "misc"
+  },
+  "obsidian_blade": {
+    "name": "Obsidian Blade",
+    "description": "A razor-sharp blade crafted from volcanic glass. (+4 Combat)",
+    "type": "weapon"
+  },
+  "flame_dagger": {
+    "name": "Flame Dagger",
+    "description": "A small dagger imbued with the power of fire. (+6 Combat)",
+    "type": "weapon"
+  },
+  "ice_staff": {
+    "name": "Ice Staff",
+    "description": "A staff that channels the chill of winter. (+4 Combat, +3 Clever)",
+    "type": "weapon"
+  },
+  "wind_bow": {
+    "name": "Wind Bow",
+    "description": "A bow said to harness the speed of the wind. (+6 Combat, +3 Agility)",
+    "type": "weapon"
+  },
+  "earth_hammer": {
+    "name": "Earth Hammer",
+    "description": "A heavy hammer imbued with the power of the earth. (+9 Combat)",
+    "type": "weapon"
+  },
+  "lightning_orb": {
+    "name": "Lightning Orb",
+    "description": "An orb crackling with electrical energy. (+4 Clever, +4 Combat)",
+    "type": "accessory"
+  },
+  "wakeful_pill": {
+    "name": "Wakeful Powder",
+    "description": "Grants a burst of energy. Grants the Energetic trait and removes the Lazy trait. (+10 Energy)",
+    "type": "consumable"
+  },
+  "childless_hag_potion": {
+    "name": "Childless Hag Potion",
+    "description": "A bitter draught distilled from moonwort and widow's tears—a recipe passed down by secluded crones who wished to undo nature's course. Drinking it empties the womb and lifts the burden of pregnancy. Removes the Pregnant trait.",
+    "type": "consumable"
+  },
+  "enchanted_ring": {
+    "name": "Enchanted Ring",
+    "description": "Grants an enchanted allure. Grants the Charming trait. (+2 Striptease)",
+    "type": "accessory"
+  },
+  "shadow_cloak": {
+    "name": "Shadow Cloak",
+    "description": "A cloak that shrouds the wearer in darkness. (+5 Charm)",
+    "type": "accessory"
+  },
+  "healing_ring": {
+    "name": "Healing Ring",
+    "description": "A ring that slowly regenerates the wearer's health. (+8 Health)",
+    "type": "accessory"
+  },
+  "amulet_desire": {
+    "name": "Amulet of Desire",
+    "description": "An amulet that stirs deep passions. (+5 Libido Max, +2 Libido Regeneration)",
+    "type": "accessory"
+  },
+  "elixir_passion": {
+    "name": "Elixir of Passion",
+    "description": "A potent elixir that boosts libido and hastens its regeneration for a time. (+10 Libido, +3 Libido regeneration)",
+    "type": "consumable"
+  },
+  "incriminating_documents": {
+    "name": "Incriminating Documents",
+    "description": "Ledgers and letters proving Lord Malachar's conspiracy and dark dealings.",
+    "type": "quest_item"
+  },
+  "enchanted_blade_malachar": {
+    "name": "Enchanted Blade",
+    "description": "A blade forged with ancient magic, capable of cutting through sorcery and steel alike. (+12 Combat)",
+    "type": "weapon"
+  },
+  "siege_powder": {
+    "name": "Siege Powder",
+    "description": "Alchemical explosive powerful enough to breach fortress walls and shatter magical barriers.",
+    "type": "quest_item"
+  },
+  "test_skill_boost": {
+    "name": "Test Skill Booster",
+    "description": "A test item that grants +70 to all skills. For testing purposes only. (+70 Sex, +70 Anal, +70 BDSM, +70 Hand, +70 Oral, +70 Homo, +70 Special, +70 Group, +70 Extreme, +70 Striptease, +70 Combat, +70 Clever, +70 Charm, +70 Service, +70 Agility, +70 Craft, +70 Specialty 4, +70 Specialty 5, +70 Specialty 6, +70 Specialty 7, +70 Specialty 8, +70 Specialty 9, +70 Specialty 10, +70 Specialty 11, +70 Specialty 12)",
+    "type": "accessory"
+  },
+  "test_trait_ring": {
+    "name": "Test Trait Ring",
+    "description": "A test accessory that grants the Strong trait while equipped. For testing trait equip/unequip behavior only.",
+    "type": "accessory"
+  },
+  "test_race_trait_ring": {
+    "name": "Test Race Trait Ring",
+    "description": "A test accessory that grants the Human trait while equipped. For testing race trait equip/unequip behavior only.",
+    "type": "accessory"
+  },
+  "test_unlock_shop2": {
+    "name": "Test Shop 2 Unlock",
+    "description": "Test item to unlock Shop 2 (Adventurer's Market). Consumed on purchase. For testing purposes only.",
+    "type": "consumable"
+  },
+  "test_unlock_shop3": {
+    "name": "Test Shop 3 Unlock",
+    "description": "Test item to unlock Shop 3 (Elite Emporium). Consumed on purchase. For testing purposes only.",
+    "type": "consumable"
+  },
+  "fine_wine": {
+    "name": "Fine Wine",
+    "description": "A bottle of aged wine from the southern vineyards. A welcome gesture in cultured company. Yvara: +2 Devotion, +3 Affection. Worker gift effect: +2 Relationship, +1 Joy, +1 Romance.",
+    "type": "gift"
+  },
+  "rare_book": {
+    "name": "Rare Academic Text",
+    "description": "A well-preserved scholarly volume on philosophy and the discipline of learning. Rare outside major libraries. Yvara: +3 Devotion, +5 Affection. Worker gift effect: +2 Relationship, +1 Joy, +1 Romance.",
+    "type": "gift"
+  },
+  "herbal_tea": {
+    "name": "Premium Herbal Tea",
+    "description": "A blend of rare mountain herbs, brewed by apothecaries for clarity of mind. Yvara: +2 Devotion, +2 Affection. Worker gift effect: +1 Relationship, +1 Joy, -1 Rebelliousness.",
+    "type": "gift"
+  },
+  "test_money_50k": {
+    "name": "Test Money Pouch (50k)",
+    "description": "A test item that adds 50,000 money when bought. Consumed on purchase. For testing purposes only.",
+    "type": "consumable"
+  },
+  "chef_apron": {
+    "name": "Chef's Apron",
+    "description": "A professional chef's apron that enhances cooking skills and precision. (+4 Service)",
+    "type": "clothing"
+  },
+  "master_chef_apron": {
+    "name": "Master Chef's Apron",
+    "description": "An elegant apron worn by master chefs, signifying culinary excellence. (+7 Service)",
+    "type": "clothing"
+  },
+  "service_uniform": {
+    "name": "Service Uniform",
+    "description": "A clean and professional uniform that helps servers provide excellent customer service. (+4 Charm)",
+    "type": "clothing"
+  },
+  "elegant_service_dress": {
+    "name": "Elegant Service Dress",
+    "description": "A sophisticated dress that enhances the server's charm and professionalism. (+6 Charm)",
+    "type": "clothing"
+  },
+  "kitchen_knife_set": {
+    "name": "Kitchen Knife Set",
+    "description": "A set of sharp, well-balanced knives essential for any professional kitchen. (+5 Service)",
+    "type": "weapon"
+  },
+  "master_chef_knife": {
+    "name": "Master Chef's Knife",
+    "description": "A precision-forged knife used by master chefs, perfectly balanced for culinary artistry. (+8 Service)",
+    "type": "weapon"
+  },
+  "cooking_utensils": {
+    "name": "Professional Cooking Utensils",
+    "description": "High-quality cooking utensils that help chefs work more efficiently. (+3 Service)",
+    "type": "accessory"
+  },
+  "sensual_dress": {
+    "name": "Sensual Dress",
+    "description": "An alluring dress designed to captivate and entice clients. (+4 Sex, +3 Charm) Also improves technique versatility (+2 Hand, +2 Oral).",
+    "type": "clothing"
+  },
+  "elegant_courtesan_dress": {
+    "name": "Elegant Courtesan Dress",
+    "description": "A luxurious dress that exudes elegance and sensuality, perfect for high-end clientele. (+7 Sex, +5 Charm) Also improves technique versatility (+3 Hand, +3 Oral).",
+    "type": "clothing"
+  },
+  "seductive_lingerie": {
+    "name": "Seductive Lingerie",
+    "description": "Intimate apparel that enhances allure and confidence in intimate encounters. (+5 Sex, +3 Anal) Also improves technique versatility (+2 Hand, +2 Oral).",
+    "type": "clothing"
+  },
+  "luxury_lingerie_set": {
+    "name": "Luxury Lingerie Set",
+    "description": "An exquisite set of fine lingerie that makes the wearer irresistible. (+8 Sex, +5 Anal, +4 Charm) Also improves technique versatility (+4 Hand, +4 Oral).",
+    "type": "clothing"
+  },
+  "charming_earrings": {
+    "name": "Charming Earrings",
+    "description": "Beautiful earrings that catch the light and draw attention to the wearer's face. (+4 Charm, +2 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "accessory"
+  },
+  "diamond_earrings": {
+    "name": "Diamond Earrings",
+    "description": "Sparkling diamond earrings that add elegance and allure to any outfit. (+6 Charm, +4 Sex) Also improves technique versatility (+2 Hand, +2 Oral).",
+    "type": "accessory"
+  },
+  "sensual_necklace": {
+    "name": "Sensual Necklace",
+    "description": "An elegant necklace that draws attention to the neck and enhances oral skills. (+3 Charm, +3 Oral)",
+    "type": "accessory"
+  },
+  "pearl_choker": {
+    "name": "Pearl Choker",
+    "description": "A sophisticated pearl choker that combines elegance with a hint of dominance. (+5 Charm, +5 Oral, +2 BDSM)",
+    "type": "accessory"
+  },
+  "stripper_heels": {
+    "name": "Stripper Heels",
+    "description": "High heels designed for performance, enhancing grace and stage presence. (+5 Striptease, +2 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "accessory"
+  },
+  "master_performer_heels": {
+    "name": "Master Performer Heels",
+    "description": "Premium heels crafted for professional performers, maximizing stage appeal. (+8 Striptease, +4 Sex) Also improves technique versatility (+2 Hand, +2 Oral).",
+    "type": "accessory"
+  },
+  "bartender_apron": {
+    "name": "Bartender's Apron",
+    "description": "A practical apron that helps bartenders mix drinks with precision and charm. (+2 Charm, +2 Service)",
+    "type": "clothing"
+  },
+  "master_bartender_apron": {
+    "name": "Master Bartender's Apron",
+    "description": "An elegant apron worn by master mixologists, symbolizing expertise in service and charm. (+4 Charm, +3 Service)",
+    "type": "clothing"
+  },
+  "bar_tools": {
+    "name": "Professional Bar Tools",
+    "description": "Essential bar tools including shakers, strainers, and jiggers for perfect cocktails. (+1 Charm, +2 Service)",
+    "type": "accessory"
+  },
+  "master_mixology_set": {
+    "name": "Master Mixology Set",
+    "description": "A premium set of bar tools used by master mixologists to create legendary drinks. (+3 Charm, +3 Service)",
+    "type": "accessory"
+  },
+  "tavern_performer_outfit": {
+    "name": "Tavern Performer Outfit",
+    "description": "A vibrant outfit perfect for entertaining tavern patrons with music and dance. (+4 Striptease, +3 Charm)",
+    "type": "clothing"
+  },
+  "basic_chef_apron": {
+    "name": "Simple Chef Apron",
+    "description": "A simple apron for novice cooks, offering basic protection and modest skill enhancement. (+2 Service)",
+    "type": "clothing"
+  },
+  "advanced_chef_apron": {
+    "name": "Expert Chef Apron",
+    "description": "A well-crafted apron for experienced chefs, significantly improving culinary skills. (+5 Service)",
+    "type": "clothing"
+  },
+  "elite_chef_apron": {
+    "name": "The Grandmaster's Apron of Culinary Perfection",
+    "description": "Woven from silk blessed by the gods of harvest, this legendary apron is said to make any dish prepared while wearing it taste divine. (+9 Service)",
+    "type": "clothing"
+  },
+  "basic_service_uniform": {
+    "name": "Basic Service Uniform",
+    "description": "A simple uniform for entry-level servers, providing basic charm enhancement. (+2 Charm)",
+    "type": "clothing"
+  },
+  "premium_service_dress": {
+    "name": "Refined Service Dress",
+    "description": "An exquisite dress that makes servers appear more charming and professional than ever. (+8 Charm)",
+    "type": "clothing"
+  },
+  "basic_kitchen_knife": {
+    "name": "Kitchen Knife",
+    "description": "A standard kitchen knife, reliable for basic cooking tasks. (+3 Service)",
+    "type": "weapon"
+  },
+  "advanced_kitchen_knife": {
+    "name": "Chef's Knife",
+    "description": "A high-quality knife with excellent balance, favored by professional chefs. (+6 Service)",
+    "type": "weapon"
+  },
+  "elite_kitchen_knife": {
+    "name": "The Eternal Edge",
+    "description": "Legend says this Kitchen Knife was forged in dragon fire and quenched in the tears of a phoenix. It never dulls and cuts with impossible precision. (+10 Service)",
+    "type": "weapon"
+  },
+  "basic_cooking_utensils": {
+    "name": "Basic Cooking Set",
+    "description": "Essential cooking tools for everyday kitchen work. (+2 Service)",
+    "type": "accessory"
+  },
+  "advanced_cooking_utensils": {
+    "name": "Expert Cooking Set",
+    "description": "Professional-grade utensils that enhance cooking efficiency and precision. (+4 Service)",
+    "type": "accessory"
+  },
+  "elite_cooking_utensils": {
+    "name": "The Divine Culinary Instruments",
+    "description": "Rumored to have been blessed by the god of feasts, these utensils are said to make any cook's work effortless and perfect. (+6 Service)",
+    "type": "accessory"
+  },
+  "basic_sensual_dress": {
+    "name": "Alluring Dress",
+    "description": "A simple but alluring dress that enhances basic appeal. (+2 Sex, +2 Charm) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "clothing"
+  },
+  "advanced_sensual_dress": {
+    "name": "Courtesan Gown",
+    "description": "A well-designed dress that significantly enhances allure and charm. (+5 Sex, +4 Charm) Also improves technique versatility (+2 Hand, +2 Oral).",
+    "type": "clothing"
+  },
+  "elite_courtesan_dress": {
+    "name": "The Enchantress' Embrace",
+    "description": "Legendary dress once worn by the most famous courtesan in history. It is said that kings have gone to war for a single night with its wearer. (+9 Sex, +7 Charm) Also improves technique versatility (+4 Hand, +4 Oral).",
+    "type": "clothing"
+  },
+  "basic_lingerie": {
+    "name": "Plain Lingerie",
+    "description": "Simple intimate apparel that provides basic enhancement. (+3 Sex, +2 Anal) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "clothing"
+  },
+  "advanced_lingerie": {
+    "name": "Temptress' Secret",
+    "description": "Well-crafted lingerie that significantly enhances appeal and confidence. (+6 Sex, +4 Anal, +3 Charm) Also improves technique versatility (+3 Hand, +3 Oral).",
+    "type": "clothing"
+  },
+  "elite_lingerie_set": {
+    "name": "Empress Midnight Collection",
+    "description": "A legendary set once owned by an empress who seduced entire kingdoms. Each piece is woven with threads of pure desire. (+10 Sex, +7 Anal, +6 Charm) Also improves technique versatility (+5 Hand, +5 Oral).",
+    "type": "clothing"
+  },
+  "basic_earrings": {
+    "name": "Silver Earrings",
+    "description": "Simple earrings that add a touch of charm. (+2 Charm, +1 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "accessory"
+  },
+  "advanced_earrings": {
+    "name": "Gold Stars",
+    "description": "Beautiful earrings that significantly enhance charm and appeal. (+5 Charm, +3 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "accessory"
+  },
+  "elite_diamond_earrings": {
+    "name": "The Stars' Tears",
+    "description": "Legend says these diamonds were formed from the tears of stars who wept at the beauty of the first mortal to wear them. (+8 Charm, +6 Sex) Also improves technique versatility (+3 Hand, +3 Oral).",
+    "type": "accessory"
+  },
+  "basic_necklace": {
+    "name": "Silver Necklace",
+    "description": "A simple necklace that draws attention to the neck. (+2 Charm, +2 Oral)",
+    "type": "accessory"
+  },
+  "advanced_necklace": {
+    "name": "Pearl Necklace",
+    "description": "An elegant necklace that enhances both charm and oral skills. (+4 Charm, +4 Oral)",
+    "type": "accessory"
+  },
+  "elite_pearl_choker": {
+    "name": "The Queen's Collar",
+    "description": "Once worn by a queen who ruled through both beauty and power, this choker symbolizes the perfect union of elegance and control. (+7 Charm, +7 Oral, +4 BDSM)",
+    "type": "accessory"
+  },
+  "basic_heels": {
+    "name": "Performance Heels",
+    "description": "Simple heels for basic stage performances. (+3 Striptease, +1 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "accessory"
+  },
+  "advanced_heels": {
+    "name": "Dancer's Heels",
+    "description": "Well-crafted heels that significantly enhance stage presence and appeal. (+6 Striptease, +3 Sex) Also improves technique versatility (+1 Hand, +1 Oral).",
+    "type": "accessory"
+  },
+  "elite_performer_heels": {
+    "name": "The Siren's Stride",
+    "description": "Legendary heels said to have been worn by a performer so captivating that audiences would forget to breathe while watching her dance. (+10 Striptease, +6 Sex) Also improves technique versatility (+3 Hand, +3 Oral).",
+    "type": "accessory"
+  },
+  "basic_bartender_apron": {
+    "name": "Simple Bartender Apron",
+    "description": "A simple apron for novice bartenders. (+2 Service)",
+    "type": "clothing"
+  },
+  "advanced_bartender_apron": {
+    "name": "Expert Bartender Apron",
+    "description": "A professional apron for experienced bartenders, enhancing mixology skills. (+5 Service)",
+    "type": "clothing"
+  },
+  "elite_bartender_apron": {
+    "name": "The Alchemist's Apron",
+    "description": "Rumored to have been enchanted by a master alchemist, this apron is said to make any drink mixed while wearing it taste like liquid perfection. (+9 Service)",
+    "type": "clothing"
+  },
+  "basic_bar_tools": {
+    "name": "Basic Bar Set",
+    "description": "Essential bar tools for basic drink mixing. (+2 Service, +2 Craft)",
+    "type": "accessory"
+  },
+  "advanced_bar_tools": {
+    "name": "Expert Bar Set",
+    "description": "High-quality tools crafted specifically for professional bartenders. Each piece is perfectly balanced and designed for precision. (+4 Service, +4 Craft)",
+    "type": "accessory"
+  },
+  "elite_mixology_set": {
+    "name": "The Legendary Mixer's Tools",
+    "description": "These tools were once used by a legendary bartender who could mix drinks that could heal wounds, restore youth, or grant wishes. (+8 Service, +8 Craft)",
+    "type": "accessory"
+  },
+  "basic_performer_outfit": {
+    "name": "Performer Outfit",
+    "description": "A simple outfit for tavern performers. (+2 Striptease, +2 Charm)",
+    "type": "clothing"
+  },
+  "advanced_performer_outfit": {
+    "name": "Bard's Attire",
+    "description": "A well-designed outfit that significantly enhances performance appeal. (+5 Striptease, +4 Charm)",
+    "type": "clothing"
+  },
+  "elite_performer_costume": {
+    "name": "Elite Performer Costume",
+    "description": "Worn by the greatest bard in history, this costume is said to make any performance so captivating that audiences forget the world around them. (+9 Striptease, +7 Charm)",
+    "type": "clothing"
+  },
+  "training_sword": {
+    "name": "Training Sword",
+    "description": "A basic training sword for novice adventurers. (+3 Combat)",
+    "type": "weapon"
+  },
+  "bronze_sword": {
+    "name": "Bronze Sword",
+    "description": "A sturdy bronze sword, reliable for most combat situations. (+6 Combat)",
+    "type": "weapon"
+  },
+  "silver_sword": {
+    "name": "Silver Sword",
+    "description": "A well-forged silver sword, effective against many creatures. (+9 Combat)",
+    "type": "weapon"
+  },
+  "mithril_sword": {
+    "name": "Mithril Sword",
+    "description": "A legendary sword forged from mithril, incredibly light yet devastatingly sharp. (+12 Combat)",
+    "type": "weapon"
+  },
+  "training_staff": {
+    "name": "Training Staff",
+    "description": "A simple wooden staff for magical practice. (+2 Combat, +1 Clever)",
+    "type": "weapon"
+  },
+  "oak_staff": {
+    "name": "Oak Staff",
+    "description": "A staff carved from ancient oak, enhancing magical abilities. (+3 Combat, +3 Clever)",
+    "type": "weapon"
+  },
+  "enchanted_staff": {
+    "name": "Enchanted Staff",
+    "description": "A staff imbued with magical energy, significantly boosting spellcasting. (+5 Combat, +4 Clever)",
+    "type": "weapon"
+  },
+  "archmage_staff": {
+    "name": "Archmage Staff",
+    "description": "A legendary staff wielded by archmages, channeling immense magical power. (+9 Combat, +9 Clever)",
+    "type": "weapon"
+  },
+  "leather_vest": {
+    "name": "Leather Vest",
+    "description": "A basic leather vest offering minimal protection. (+8 Health, +2 Combat)",
+    "type": "armor"
+  },
+  "chainmail_shirt": {
+    "name": "Chainmail Shirt",
+    "description": "A chainmail shirt providing solid protection in combat. (+15 Health, +4 Combat)",
+    "type": "armor"
+  },
+  "iron_plate_armor": {
+    "name": "Iron Plate Armor",
+    "description": "Heavy plate armor forged from iron, offering solid protection for warriors. (+22 Health, +5 Combat)",
+    "type": "armor"
+  },
+  "steel_plate_armor": {
+    "name": "Steel Plate Armor",
+    "description": "Heavy plate armor made of well-forged steel, offering excellent protection for experienced warriors. (+25 Health, +6 Combat)",
+    "type": "armor"
+  },
+  "dragon_scale_armor": {
+    "name": "Dragon Scale Armor",
+    "description": "Legendary armor crafted from dragon scales, offering unparalleled protection and combat prowess. (+40 Health, +10 Combat)",
+    "type": "armor"
+  },
+  "simple_shield": {
+    "name": "Simple Shield",
+    "description": "A basic wooden shield for defense. (+5 Health)",
+    "type": "armor"
+  },
+  "steel_shield": {
+    "name": "Steel Shield",
+    "description": "A sturdy steel shield providing reliable protection. (+18 Health)",
+    "type": "armor"
+  },
+  "tower_shield": {
+    "name": "Tower Shield",
+    "description": "A massive tower shield offering exceptional defensive capabilities. (+30 Health)",
+    "type": "armor"
+  },
+  "magic_shield": {
+    "name": "Magic Shield",
+    "description": "An enchanted shield that provides both protection and magical enhancement. (+35 Health, +5 Craft)",
+    "type": "armor"
+  },
+  "adventurer_boots": {
+    "name": "Adventurer Boots",
+    "description": "Sturdy boots designed for adventurers, enhancing both combat and mobility. (+3 Combat, +2 Agility)",
+    "type": "accessory"
+  },
+  "ranger_boots": {
+    "name": "Ranger Boots",
+    "description": "Lightweight boots favored by rangers, offering excellent mobility and combat enhancement. (+5 Combat, +4 Agility)",
+    "type": "accessory"
+  },
+  "master_adventurer_boots": {
+    "name": "Master Adventurer Boots",
+    "description": "Legendary boots worn by master adventurers, combining superior protection with unmatched agility. (+8 Combat, +6 Agility)",
+    "type": "accessory"
+  },
+  "combat_gloves": {
+    "name": "Combat Gloves",
+    "description": "Basic gloves that improve grip and combat effectiveness. (+2 Combat)",
+    "type": "accessory"
+  },
+  "warrior_gauntlets": {
+    "name": "Warrior Gauntlets",
+    "description": "Heavy gauntlets that enhance combat prowess significantly. (+5 Combat)",
+    "type": "accessory"
+  },
+  "dragon_scale_gauntlets": {
+    "name": "Dragon Scale Gauntlets",
+    "description": "Legendary gauntlets crafted from dragon scales, maximizing combat effectiveness. (+9 Combat)",
+    "type": "accessory"
+  },
+  "amulet_wanderer": {
+    "name": "Amulet of the Wanderer",
+    "description": "A mystical amulet found in ancient ruins, imbued with the spirit of countless adventurers. Grants the Adventurer trait. (+10 Combat, +10 Clever, +5 Agility)",
+    "type": "accessory"
+  },
+  "collar_endless_desire": {
+    "name": "Collar of Endless Desire",
+    "description": "An enchanted collar that awakens insatiable desires in its wearer. Grants the High Libido trait. (+15 Sex, +10 Charm, +8 Anal) Also improves technique versatility (+7 Hand, +7 Oral).",
+    "type": "accessory"
+  },
+  "blade_fallen_king": {
+    "name": "Blade of the Fallen King",
+    "description": "The legendary sword of a king who fell in battle but never surrendered. Grants Strong, Brawler, and Tough traits. (+18 Combat, +50 Health)",
+    "type": "weapon"
+  },
+  "crown_dominion": {
+    "name": "Crown of Dominion",
+    "description": "A crown worn by ancient rulers who commanded absolute loyalty. Grants Charismatic, Smooth Talker, and Elegant traits. (+15 Charm, +10 Clever, +10 Service)",
+    "type": "accessory"
+  },
+  "cloak_shadows": {
+    "name": "Cloak of Shadows",
+    "description": "A cloak woven from pure darkness, allowing its wearer to move unseen. Grants Agile, Clever, and Graceful traits. (+12 Agility, +10 Combat, +30 Health)",
+    "type": "armor"
+  },
+  "staff_archmage": {
+    "name": "Staff of the Archmage",
+    "description": "The ultimate staff of magical mastery, wielded by the greatest archmages in history. Grants Magical, Powerful Magic, and Mystical traits. (+10 Combat, +10 Clever, +10 Craft)",
+    "type": "weapon"
+  },
+  "chains_submission": {
+    "name": "Chains of Submission",
+    "description": "Enchanted chains that bind the wearer's will, making them utterly submissive. Grants Obedient, Meek, and Dependant traits. (+20 BDSM, +15 Sex, +12 Group, +10 Extreme) Also improves technique versatility (+7 Hand, +7 Oral).",
+    "type": "accessory"
+  },
+  "crown_machine": {
+    "name": "Crown of the Machine",
+    "description": "An ancient mechanical crown forged by master artificers. Transforms the wearer into an artificial construct with triple health. Grants Construct and Tough traits. (+15 Craft, +12 Clever, +10 Combat, +60 Health)",
+    "type": "accessory"
+  },
+  "arena_champion_blade": {
+    "name": "Arena Champion's Blade",
+    "description": "A blade bestowed by the arena's master for a flawless trial. Favoured by gladiators. (+20 Combat)",
+    "type": "weapon"
+  },
+  "potion_strong": {
+    "name": "Elixir of Strength",
+    "description": "Grants the Strong trait permanently (+5 Health, +3 Combat). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_tough": {
+    "name": "Elixir of Toughness",
+    "description": "Grants the Tough trait permanently (+8 Health, +1 Combat). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_large_breasts": {
+    "name": "Potion of the Bust",
+    "description": "Grants the Large Breasts trait permanently. Craft-only. Female only.",
+    "type": "consumable"
+  },
+  "potion_transformed": {
+    "name": "Elixir of Transformation",
+    "description": "Grants the Transformed trait permanently (+40% $, +3 Extreme, +2 Charm). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_magical": {
+    "name": "Elixir of Magic",
+    "description": "Grants the Magical trait permanently (+10% $, +2 Craft, +1 Clever). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_troll_blood": {
+    "name": "Troll Blood",
+    "description": "A drop of troll essence. Grants the Troll Blood trait permanently (+10 Health Regen per day). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_robust": {
+    "name": "Elixir of Robustness",
+    "description": "Grants the Robust trait permanently (+10 Health, +2 Health Regen). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_energetic": {
+    "name": "Elixir of Vitality",
+    "description": "Grants the Energetic trait permanently (+10 Energy). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_agile": {
+    "name": "Elixir of Agility",
+    "description": "Grants the Agile trait permanently (+1 Agility, +1 Striptease). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_great_figure": {
+    "name": "Potion of the Great Figure",
+    "description": "Grants the Great Figure trait permanently (+20% $, +2 Charm, +1 Striptease). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_long_legs": {
+    "name": "Potion of Long Legs",
+    "description": "Grants the Long Legs trait permanently (+10% $, +2 Agility, +2 Striptease). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_exotic": {
+    "name": "Potion of Exotic Allure",
+    "description": "Grants the Exotic trait permanently (+25% $). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_beautiful": {
+    "name": "Potion of Beauty",
+    "description": "Grants the Beautiful trait permanently (+20% $). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_small_breasts": {
+    "name": "Potion of the Petite Bust",
+    "description": "Grants the Small Breasts trait permanently (+5% $, +1 Agility, +1 Charm). Craft-only. Female only.",
+    "type": "consumable"
+  },
+  "potion_firm_ass": {
+    "name": "Potion of the Firm Posterior",
+    "description": "Grants the Firm Ass trait permanently (+15% $, +2 Anal, +1 Striptease, +1 Agility). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_soft_ass": {
+    "name": "Potion of the Soft Posterior",
+    "description": "Grants the Soft Ass trait permanently (+10% $, +1 Anal, +1 Charm). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_large_hips": {
+    "name": "Potion of Wide Hips",
+    "description": "Grants the Large Hips trait permanently (+15% $, +2 Sex). Craft-only. Female only.",
+    "type": "consumable"
+  },
+  "potion_deluxe_derriere": {
+    "name": "Potion of the Deluxe Derriere",
+    "description": "Grants the Deluxe Derriere trait permanently (+20% $, +3 Anal, +1 Striptease). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_large_penis": {
+    "name": "Potion of the Large Member",
+    "description": "Grants the Large Penis trait permanently (+30% $, +3 Sex, +2 Anal, +2 Homo). Craft-only. Male only.",
+    "type": "consumable"
+  },
+  "potion_tight": {
+    "name": "Potion of Tightness",
+    "description": "Grants the Tight trait permanently (+20% $, +2 Sex, +2 Anal). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_sensitive": {
+    "name": "Potion of Sensitivity",
+    "description": "Grants the Sensitive trait permanently (+10% $, +1 Sex, +1 Oral, +1 BDSM). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_high_libido": {
+    "name": "Potion of High Libido",
+    "description": "Grants the High Libido trait permanently (+5 libido regen/day, +5 libido max). Craft-only.",
+    "type": "consumable"
+  },
+  "potion_nympho": {
+    "name": "Potion of Nymphomania",
+    "description": "Grants the Nympho trait permanently (libido min 10, +3 Sex, +2 Oral). Craft-only. Female only.",
+    "type": "consumable"
+  },
+  "potion_satyr": {
+    "name": "Potion of Satyr",
+    "description": "Grants the Satyr trait permanently (libido min 10, +3 Sex, +2 Group). Craft-only. Male only.",
+    "type": "consumable"
+  },
+  "potion_cum_addict": {
+    "name": "Potion of Cum Addiction",
+    "description": "Grants the Cum Addict trait permanently (+3 Oral, +3 libido regen/day). Craft-only.",
+    "type": "consumable"
+  },
+  "handwritten_poem": {
+    "name": "Handwritten Poem",
+    "description": "A poem written by hand on fine paper. A deeply personal gesture. Yvara: +4 Devotion, +4 Affection. Worker gift effect: +2 Relationship, +2 Joy, +2 Romance.",
+    "type": "gift"
+  },
+  "botanical_pressing": {
+    "name": "Botanical Pressing",
+    "description": "A collection of pressed and labelled plant specimens. Thoughtful and scholarly. Yvara: +3 Devotion, +3 Affection. Worker gift effect: +2 Relationship, +2 Joy, +1 Romance.",
+    "type": "gift"
+  },
+  "spiked_tea": {
+    "name": "Spiked Tea Blend",
+    "description": "A fine herbal tea with an unusual addition. The recipient may not notice. Yvara: +3 Dominion, +1 Affection. Worker gift effect: -1 Relationship, -1 Joy, -2 Rebelliousness.",
+    "type": "gift"
+  },
+  "silk_ribbon": {
+    "name": "Silk Ribbon",
+    "description": "A length of fine silk ribbon. The implication depends entirely on the giver. Yvara: +2 Dominion, +2 Affection. Worker gift effect: +1 Relationship, +1 Joy, +2 Romance, -1 Rebelliousness.",
+    "type": "gift"
+  },
+  "cipher_lattice": {
+    "name": "Cryptographer's Lattice",
+    "description": "A ruled transparency for aligning academy seal-glyphs. Sold mostly as a curiosity in the Elite Emporium at a price that could buy a year of patience. It will not read a codex for you—but it can force a stubborn ring-cipher open when you refuse to wrestle glyphs by hand.",
+    "type": "quest_item"
+  },
+  "basic_strategist_notebook": {
+    "name": "Strategist Notebook",
+    "description": "A practical notebook full of plans, routines, and margin notes for better decision-making. (+3 Clever)",
+    "type": "accessory"
+  },
+  "advanced_tactician_monocle": {
+    "name": "Tactician Monocle",
+    "description": "A precision-cut monocle that helps read people, risks, and opportunities at a glance. (+6 Clever)",
+    "type": "accessory"
+  },
+  "elite_mastermind_diary": {
+    "name": "Mastermind Diary",
+    "description": "A coded diary used by master planners to map leverage, timing, and perfect execution. (+9 Clever)",
+    "type": "accessory"
+  },
+  "test_manager_level": {
+    "name": "Test Manager Level",
+    "description": "Test item: consumed on purchase. Raises Manager level by 1 and grants 1 skill point to assign.",
+    "type": "consumable"
+  }
+}

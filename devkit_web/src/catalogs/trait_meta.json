@@ -1,0 +1,662 @@
+{
+  "Aelis, The Exquisite Dancer": {
+    "description": "Aelis' dancing is a miracle worth seeing at least once in life. [+10% $, +4 Charm, +1 Energy Regen]",
+    "nsfw": false
+  },
+  "Aelis, The Charming Waitress": {
+    "description": "Aelis' service is perfect and her smile keeps customers happy. [+10% $, +4 Service, +1 Energy Regen]",
+    "nsfw": false
+  },
+  "Beautiful": {
+    "description": "Clients love beauty. Increases earnings when clients are seeking attractive servants. [+10% $]",
+    "nsfw": false
+  },
+  "Charming": {
+    "description": "Charm enhances performance and attracts high-paying clients. [+8% $, +2 Charm]",
+    "nsfw": false
+  },
+  "Nice Tan": {
+    "description": "A nice tan makes a servant more appealing, increasing client tips. [+5% $]",
+    "nsfw": false
+  },
+  "Hardworking": {
+    "description": "A hardworking servant increases overall efficiency and regenerates health faster. [+1 Health Regen, +1 Sex, +1 Anal, +1 BDSM]",
+    "nsfw": false
+  },
+  "Lazy": {
+    "description": "A lazy servant loses energy faster and underperforms in client services. [-1 Energy, -1 Special]",
+    "nsfw": false
+  },
+  "Clever": {
+    "description": "A clever servant can make smart decisions, slightly boosting earnings. [+2% $, +3 Clever]",
+    "nsfw": false
+  },
+  "Agile": {
+    "description": "Agility improves performance in physical tasks and dance routines. [+1 Agility, +1 Striptease]",
+    "nsfw": false
+  },
+  "Mystical": {
+    "description": "A mystical servant possesses an otherworldly allure that clients find irresistible. [+10% $, +4 Craft]",
+    "nsfw": false
+  },
+  "Wise": {
+    "description": "Wisdom increases decision-making skills and helps recover health quickly. [+2 Health Regen, +2 Clever]",
+    "nsfw": false
+  },
+  "Graceful": {
+    "description": "Gracefulness enhances performance on stage and attracts premium clients. [+5% $, +2 Charm, +1 Clever]",
+    "nsfw": false
+  },
+  "Determined": {
+    "description": "Determination helps servants push through tough tasks, slightly boosting stamina. [+3 Health Regen, +1 Sex]",
+    "nsfw": false
+  },
+  "Charismatic": {
+    "description": "Charisma attracts clients and increases tips during high-demand events. [+8% $, +2 Charm]",
+    "nsfw": false
+  },
+  "Radiant": {
+    "description": "A radiant appearance not only boosts client satisfaction but also improves health regeneration. [+10% $, +1 Health Regen, +10 Joy]",
+    "nsfw": false
+  },
+  "Smooth Talker": {
+    "description": "Being a smooth talker means better negotiation with clients and increased earnings. [+12% $, +3 Charm]",
+    "nsfw": false
+  },
+  "Elegant": {
+    "description": "Elegance not only enhances the servant's presence but also entices premium clientele. [+8% $, +1 Striptease, +1 Charm]",
+    "nsfw": false
+  },
+  "Robust": {
+    "description": "A robust servant has extra health and recovers more quickly from injuries. [+10 Health, +2 Health Regen]",
+    "nsfw": false
+  },
+  "Troll Blood": {
+    "description": "A drop of troll essence grants powerful daily recovery. [+10 Health Regen per day]",
+    "nsfw": false
+  },
+  "Energetic": {
+    "description": "An energetic servant has an extra boost in energy, allowing for more client engagements per day. [+10 Energy]",
+    "nsfw": false
+  },
+  "Magnetic": {
+    "description": "Magnetic traits draw clients in and substantially increase the earnings per client. [+15% $, +10 Romance, +1 Charm]",
+    "nsfw": false
+  },
+  "Playful": {
+    "description": "A playful servant often lifts the mood, attracting clients who value light-hearted service. [+1 Special]",
+    "nsfw": false
+  },
+  "Elegant Eyes": {
+    "description": "Unique traits like elegant eyes are highly sought after by discerning clients. [+5% $]",
+    "nsfw": false
+  },
+  "Scarred": {
+    "description": "Permanent scarring that slightly reduces charm effectiveness. [-2 Striptease]",
+    "nsfw": false
+  },
+  "Arena Champion": {
+    "description": "Crowned by the sands after five special match victories. +5 Combat, +5 max Health, +1 Energy Regen. If defeated in a special match, this trait is lost instead of the fighter's life.",
+    "nsfw": false
+  },
+  "Shy": {
+    "description": "They struggle with social situations and group activities. [-2 Charm, -2 Group]",
+    "nsfw": false
+  },
+  "Conservative": {
+    "description": "They prefer traditional approaches and avoid extreme activities. Cannot have Open Minded. [-2 Extreme, -1 BDSM, Max Rebelliousness 80]",
+    "nsfw": false
+  },
+  "Nervous": {
+    "description": "They are easily startled and perform poorly under pressure. [-1 Charm, -1 Combat]",
+    "nsfw": false
+  },
+  "Confident": {
+    "description": "They exude self-assurance and perform excellently in social situations. [+2 Charm, +1 Striptease]",
+    "nsfw": false
+  },
+  "Optimist": {
+    "description": "They maintain a positive outlook that brightens everyone's day. [+20 Joy, +1 Charm]",
+    "nsfw": false
+  },
+  "Pessimist": {
+    "description": "They expect the worst and their negativity affects their performance. [-20 Joy, -1 Charm]",
+    "nsfw": false
+  },
+  "Quick Learner": {
+    "description": "They pick up new skills and techniques faster than others. [+2 Clever]",
+    "nsfw": false
+  },
+  "Slow Learner": {
+    "description": "They need more time to master new skills and concepts. [-2 Clever]",
+    "nsfw": false
+  },
+  "Rebellious": {
+    "description": "They resist authority and prefer to do things their own way. [+1 Combat, daily +0~2 Rebelliousness]",
+    "nsfw": false
+  },
+  "Dependant": {
+    "description": "They rely heavily on others and form strong emotional bonds. Cannot have Rebellious. [+15 Relationship, Max Rebelliousness 50]",
+    "nsfw": false
+  },
+  "Obedient": {
+    "description": "They follow orders without question and aim to please. Cannot have Rebellious or Aggressive. [Daily -1 Rebelliousness, +2 Service, +10 Relationship]",
+    "nsfw": false
+  },
+  "Tomboy": {
+    "description": "They prefer physical activities and have a tough, independent attitude. [+2 Combat, +1 Agility]",
+    "nsfw": false
+  },
+  "Strong": {
+    "description": "They possess exceptional physical strength and endurance. [+5 Health, +3 Combat]",
+    "nsfw": false
+  },
+  "Delicate": {
+    "description": "They have a fragile constitution but refined grace. [-10 Health, +2 Charm, +1 Striptease]",
+    "nsfw": false
+  },
+  "Tough": {
+    "description": "They can endure hardship and recover from injuries quickly. [+8 Health, +1 Combat]",
+    "nsfw": false
+  },
+  "Clumsy": {
+    "description": "They are prone to accidents and lack coordination. [-2 Agility, -1 Striptease]",
+    "nsfw": false
+  },
+  "Exotic": {
+    "description": "They have an unusual and captivating appearance that draws attention. [+12% $]",
+    "nsfw": false
+  },
+  "Tattooed": {
+    "description": "They have artistic tattoos that add to their rebellious appeal. [+5% $, +1 BDSM, +1 Extreme]",
+    "nsfw": false
+  },
+  "Cool Scars": {
+    "description": "They have attractive battle scars that tell stories of adventure. [+2% $, +1 Combat]",
+    "nsfw": false
+  },
+  "Beauty Mark": {
+    "description": "They have a distinctive mark that enhances their natural beauty. [+5% $, +1 Charm]",
+    "nsfw": false
+  },
+  "Cute": {
+    "description": "They have an adorable appearance that melts hearts. [+8% $, +2 Charm]",
+    "nsfw": false
+  },
+  "Smoker": {
+    "description": "They smoke regularly, which affects their health but adds to their mystique. [-5 Health, +1 Charm]",
+    "nsfw": false
+  },
+  "Brawler": {
+    "description": "They are experienced street fighters with excellent combat skills. [+4 Combat]",
+    "nsfw": false
+  },
+  "Maid": {
+    "description": "They are trained in domestic service and hospitality. [+3 Service, +1 Charm]",
+    "nsfw": false
+  },
+  "Singer": {
+    "description": "They have a beautiful voice that captivates audiences. [+4 Charm, +2 Striptease]",
+    "nsfw": false
+  },
+  "Tone Deaf": {
+    "description": "They cannot carry a tune and struggle with musical performances. [-2 Charm, -1 Striptease]",
+    "nsfw": false
+  },
+  "Teacher": {
+    "description": "They are skilled educators who build strong relationships through knowledge. [+3 Clever, +2 Charm, +1 Craft, +10 Relationship]",
+    "nsfw": false
+  },
+  "Adventurer": {
+    "description": "They have explored dangerous places and gained valuable experience. [+2 Combat, +2 Agility]",
+    "nsfw": false
+  },
+  "Waitress": {
+    "description": "They are experienced in customer service and hospitality work. [+4 Service, +1 Charm, +1 Agility]",
+    "nsfw": false
+  },
+  "Flexible": {
+    "description": "They have exceptional flexibility that opens up new possibilities. [+8% $, +2 Agility, +2 Striptease, +1 Sex]",
+    "nsfw": false
+  },
+  "Stiff": {
+    "description": "They lack flexibility but make up for it with other strengths. [-3% $, -2 Agility, -1 Striptease, +1 Combat]",
+    "nsfw": false
+  },
+  "Demanding": {
+    "description": "This worker has high standards and expects better accommodations. Increases desired comfort level by 5.",
+    "nsfw": false
+  },
+  "Magical": {
+    "description": "The worker uses magic, granting them mystical abilities and enhanced magical performance. [+8% $, +3 Craft]",
+    "nsfw": false
+  },
+  "Great Figure": {
+    "description": "They have an exceptional figure that captivates clients and enhances their appeal. [+10% $, +2 Charm, +1 Striptease]",
+    "nsfw": false
+  },
+  "Long Legs": {
+    "description": "Long legs enhance their grace and agility, making them excellent performers. [+5% $, +2 Agility, +2 Striptease]",
+    "nsfw": false
+  },
+  "Mature Body": {
+    "description": "A mature body exudes confidence and experience, attracting discerning clients. [+12% $, +2 Charm]",
+    "nsfw": false
+  },
+  "Tall": {
+    "description": "Their height gives them a commanding presence and combat advantage. [+5% $, +1 Charm, +2 Combat]",
+    "nsfw": false
+  },
+  "Fleet of Foot": {
+    "description": "They are exceptionally quick and agile on their feet. [+3 Agility]",
+    "nsfw": false
+  },
+  "Meek": {
+    "description": "They are submissive and obedient, reducing rebelliousness and improving service. [Daily 0~-2 Rebelliousness, +1 Service]",
+    "nsfw": false
+  },
+  "Nerd": {
+    "description": "They are highly intelligent but struggle with social interactions. [+3 Clever, -1 Charm]",
+    "nsfw": false
+  },
+  "Idol": {
+    "description": "They are a pop idol with exceptional charm and performance skills. [+20% $, +6 Charm, +3 Striptease]",
+    "nsfw": false
+  },
+  "Princess": {
+    "description": "They have a regal attitude that attracts premium clients but demands better accommodations. [+15% $, +4 Charm, +2 Comfort Desired]. Female only.",
+    "nsfw": false
+  },
+  "Tsundere": {
+    "description": "They act cold but are actually warm inside, creating an appealing contrast. [+12% $, +2 Charm, daily -1~+2 Rebelliousness]",
+    "nsfw": false
+  },
+  "Aggressive": {
+    "description": "They are aggressive and dominant, excelling in combat and BDSM activities. [+3 Combat, +2 BDSM, daily +0~1 Rebelliousness]",
+    "nsfw": false
+  },
+  "Audacity": {
+    "description": "They have bold confidence that attracts clients and increases earnings. [+10% $, +2 Charm]",
+    "nsfw": false
+  },
+  "Manly": {
+    "description": "They have a masculine appearance that enhances combat but reduces charm. [+3 Combat, -2 Charm]",
+    "nsfw": false
+  },
+  "Social Drinker": {
+    "description": "They enjoy social drinking, which enhances charm but slightly affects health. [-3 Health, +1 Charm]",
+    "nsfw": false
+  },
+  "Strong Magic": {
+    "description": "Requires Magical. They possess strong magical abilities, significantly enhancing craft and combat skills. [+5% $, +5 Craft, +5 Combat]",
+    "nsfw": false
+  },
+  "Powerful Magic": {
+    "description": "Requires Magical. Cannot have Strong Magic. They wield powerful magic, making them exceptional in craft and combat. [+15% $, +7 Craft, +6 Combat]",
+    "nsfw": false
+  },
+  "Psychic": {
+    "description": "Requires Magical. Psychic abilities that enhance magical, mental, and combat capabilities. [+8% $, +4 Craft, +3 Clever, +2 Combat]",
+    "nsfw": false
+  },
+  "Sharp-Eyed": {
+    "description": "They have keen eyesight that enhances their cleverness and combat accuracy. [+2 Clever, +2 Combat]",
+    "nsfw": false
+  },
+  "Actress": {
+    "description": "They are a skilled actress with exceptional charm and performance abilities. [+15% $, +5 Charm, +3 Striptease]",
+    "nsfw": false
+  },
+  "Assassin": {
+    "description": "They are a trained assassin with exceptional combat and agility skills. [+5 Combat, +4 Agility]",
+    "nsfw": false
+  },
+  "Merciless": {
+    "description": "They show no mercy, excelling in combat and BDSM activities. [+3 Combat, +3 BDSM]",
+    "nsfw": false
+  },
+  "Dumb": {
+    "description": "They struggle with intellectual tasks and learning new skills. [-3 Clever]",
+    "nsfw": false
+  },
+  "Crazy": {
+    "description": "They have unstable mental health, affecting their performance and behavior. [Daily -3~+3 Rebelliousness, -1 Charm, -1 Service]",
+    "nsfw": false
+  },
+  "Open Minded": {
+    "description": "They embrace new experiences and unconventional requests with enthusiasm. [+2 Extreme, +2 Group, +1 BDSM]",
+    "nsfw": true
+  },
+  "Sadistic": {
+    "description": "They derive pleasure from dominance and control over others. [+4 BDSM, +2 Extreme]",
+    "nsfw": true
+  },
+  "Pierced": {
+    "description": "They have strategic piercings that enhance certain activities. [+8% $, +1 Oral, +1 Sex]",
+    "nsfw": true
+  },
+  "Large Breasts": {
+    "description": "They have an impressive bust that attracts significant attention. [+10% $, +2 Sex, +2 Striptease, +1 Charm]",
+    "nsfw": true
+  },
+  "Small Breasts": {
+    "description": "They have a petite bust that some clients find particularly appealing. [+2% $, +1 Agility, +1 Charm]",
+    "nsfw": true
+  },
+  "Flat Chest": {
+    "description": "They have a flat chest that appeals to clients with specific preferences. [-3% $, +2 Agility, +1 Combat]",
+    "nsfw": true
+  },
+  "Firm Ass": {
+    "description": "They have a well-toned posterior that enhances their physical appeal. [+8% $, +2 Anal, +1 Striptease, +1 Agility]",
+    "nsfw": true
+  },
+  "Soft Ass": {
+    "description": "They have a soft, inviting posterior that clients love to touch. [+5% $, +1 Anal, +1 Charm]",
+    "nsfw": true
+  },
+  "Large Penis": {
+    "description": "They are exceptionally well-endowed, commanding premium rates. [+15% $, +4 Sex, +2 Anal, +2 Homo]",
+    "nsfw": true
+  },
+  "Small Penis": {
+    "description": "They compensate for their modest size with skill and charm. [-5% $, +1 Oral, +1 Charm]",
+    "nsfw": true
+  },
+  "Tight": {
+    "description": "They have exceptional muscle control that clients find irresistible. [+10% $, +2 Sex, +2 Anal]",
+    "nsfw": true
+  },
+  "Loose": {
+    "description": "They can accommodate larger groups and extreme activities with ease. [+5% $, +2 Group, +1 Extreme]",
+    "nsfw": true
+  },
+  "Sensitive": {
+    "description": "They are highly responsive to touch, enhancing the experience for clients. [+5% $, +1 Sex, +1 Oral, +1 BDSM]",
+    "nsfw": true
+  },
+  "Numb": {
+    "description": "They have reduced sensitivity, allowing them to endure more intense activities. [+2% $, +2 BDSM, +1 Extreme]",
+    "nsfw": true
+  },
+  "High Libido": {
+    "description": "An unusually high sex drive leads to faster libido regeneration and higher capacity. Cannot have Low Libido. [+5 Libido Regen/day, +5 Libido, +5 Libido Max]",
+    "nsfw": true
+  },
+  "Low Libido": {
+    "description": "A naturally low sex drive caps libido at 5 and reduces starting libido. Cannot have High Libido, Nympho or Satyr. [-5 Libido, Max Libido 5]",
+    "nsfw": true
+  },
+  "Nympho": {
+    "description": "Insatiable female sexuality keeps libido at minimum 10 and provides bonuses to sexual skills. [Min Libido 10, +3 Sex, +2 Oral]. Female only.",
+    "nsfw": true
+  },
+  "Satyr": {
+    "description": "Primal male sexuality keeps libido at minimum 10 and provides bonuses to sexual skills. [Min Libido 10, +3 Sex, +2 Group]. Male only.",
+    "nsfw": true
+  },
+  "Large Hips": {
+    "description": "They have wide hips that enhance their appeal and performance. [+8% $, +2 Sex]",
+    "nsfw": true
+  },
+  "Deluxe Derriere": {
+    "description": "They have an exceptional posterior that commands premium rates. [+10% $, +3 Anal, +1 Striptease]",
+    "nsfw": true
+  },
+  "Perky Nipples": {
+    "description": "Their perky nipples enhance their appeal and striptease performances. [+5% $, +1 Charm, +2 Striptease]",
+    "nsfw": true
+  },
+  "Good Kisser": {
+    "description": "They are skilled at kissing, enhancing their oral and charm abilities. [+5% $, +2 Oral, +1 Charm]",
+    "nsfw": true
+  },
+  "Sexy Air": {
+    "description": "They exude a sexy aura that captivates clients and increases earnings. [+10% $, +2 Charm]",
+    "nsfw": true
+  },
+  "Yandere": {
+    "description": "They are obsessively in love, which can be both appealing and dangerous. [+15% $, +2 Charm, +4 BDSM, -10 Relationship]. Female only.",
+    "nsfw": true
+  },
+  "Masochist": {
+    "description": "They derive pleasure from pain, excelling in BDSM and extreme activities. [+10% $, +5 BDSM, +3 Extreme]",
+    "nsfw": true
+  },
+  "Pierced Nipples": {
+    "description": "They have pierced nipples that enhance their appeal and earnings. [+8% $, +1 Charm]",
+    "nsfw": true
+  },
+  "Pierced Clit": {
+    "description": "They have a pierced clitoris that enhances sexual performance and earnings. [+10% $, +2 Sex]",
+    "nsfw": true
+  },
+  "Pierced Tongue": {
+    "description": "They have a pierced tongue that significantly enhances oral skills. [+8% $, +4 Oral]",
+    "nsfw": true
+  },
+  "No Gag Reflex": {
+    "description": "They lack a gag reflex, allowing them to excel in deep oral activities. [+8% $, +5 Oral]",
+    "nsfw": true
+  },
+  "Fertile": {
+    "description": "They are highly fertile, attracting clients seeking pregnancy. [+8% $]",
+    "nsfw": true
+  },
+  "Exhibitionist": {
+    "description": "They enjoy being watched, excelling in striptease and charm activities. [+8% $, +3 Striptease, +2 Charm]",
+    "nsfw": true
+  },
+  "Cum Addict": {
+    "description": "They are addicted to semen, enhancing oral skills and libido regeneration. [+3 Oral, +3 Libido Regen/day]",
+    "nsfw": true
+  },
+  "Porn Star": {
+    "description": "They are a professional porn star with exceptional sexual skills across all activities. [+20% $, +6 Sex, +3 Anal, +3 Oral, +3 Group]",
+    "nsfw": true
+  },
+  "Pregnant": {
+    "description": "The worker is pregnant, reducing energy and physical performance for an extended period. [-5 Energy, -10 Combat, -10 Agility, -3 Striptease, -3 Sex, -5 Extreme, -5 Group, +5 Special]",
+    "nsfw": true
+  },
+  "Transformed": {
+    "description": "They have undergone magical transformation, granting otherworldly appeal and enhanced abilities. [+20% $, +5 Extreme, +2 Charm]",
+    "nsfw": false
+  },
+  "Human": {
+    "description": "The most common race, adaptable and versatile in all situations. [+1 Clever, +2 Service, +2 Charm]",
+    "nsfw": false
+  },
+  "Elf": {
+    "description": "Graceful and magical beings with natural affinity for mystical arts and agility. [+10% $, +4 Craft, +2 Agility]",
+    "nsfw": false
+  },
+  "Dwarf": {
+    "description": "Sturdy and resilient folk known for their combat prowess and practical wisdom. [+10 Health, +3 Combat, +2 Clever]",
+    "nsfw": false
+  },
+  "Orc": {
+    "description": "Fierce warriors with natural combat instincts and dominant personalities. [+10 Rebel, +4 Combat, +2 BDSM]",
+    "nsfw": false
+  },
+  "Ogre": {
+    "description": "Large and powerful beings with impressive physical capabilities. [+15 Health, +8 Rebel, +3 Combat, +2 Sex]",
+    "nsfw": false
+  },
+  "Demon": {
+    "description": "Infernal beings with dark charisma and expertise in forbidden pleasures. [+15% $, +12 Rebel, +5 Extreme, +3 BDSM, +2 Craft]",
+    "nsfw": true
+  },
+  "Angel": {
+    "description": "Divine beings radiating purity and grace, naturally obedient and joyful. [+12% $, -15 Rebel, +20 Joy, +4 Charm, +3 Craft]",
+    "nsfw": false
+  },
+  "Goblin": {
+    "description": "Small, mischievous creatures with quick reflexes and cunning minds, perfect for agile tasks. [+5 Rebel, +15 Joy, +4 Agility, +3 Clever, +2 Extreme]",
+    "nsfw": false
+  },
+  "Half-Breed": {
+    "description": "They are of mixed heritage, making them exotic and highly sought after. [+15% $]",
+    "nsfw": false
+  },
+  "Badly Burnt": {
+    "description": "Severe burns requiring 7 days recovery. Suppresses vitality and regeneration. After recovery, gains Scarred trait. (Assigned by events only.)",
+    "nsfw": false
+  },
+  "Expecting Visit2": {
+    "description": "Expecting a visit from Lady Isabella, a noble worker with high charm skills.",
+    "nsfw": false
+  },
+  "Expecting Visit": {
+    "description": "Expecting a visit from a high-profile client, boosting skills and earnings.",
+    "nsfw": false
+  },
+  "Soul Wearied": {
+    "description": "The worker's spirit is drained after a haunting encounter, reducing their charm. [-2 Charm]",
+    "nsfw": false
+  },
+  "Cursed Vitality": {
+    "description": "A wraith's curse saps the worker's strength, leaving them frail. [-5 Health]",
+    "nsfw": false
+  },
+  "Blade's Whisper": {
+    "description": "A cursed blade's call lingers, distracting the worker from combat tasks. [-2 Combat]",
+    "nsfw": false
+  },
+  "Curse of Greed": {
+    "description": "A magical curse clouds the worker's judgment, impairing their service skills. [-2 Service]",
+    "nsfw": false
+  },
+  "Sick": {
+    "description": "The worker suffers from illness, weakening health and charm. [-5 Health, -2 Charm]",
+    "nsfw": true
+  },
+  "Poisoned": {
+    "description": "Suffering from poison. Reduced vitality until cured or the poison runs its course. [Health capped at 2, Energy capped at 2, -3 Combat, -3 Agility]",
+    "nsfw": false
+  },
+  "Shaken by the Governor": {
+    "description": "The governor's cruelty has left a mark. This worker lives in fear until the tyrant is dealt with. [-2 Charm]",
+    "nsfw": false
+  },
+  "Futa": {
+    "description": "They possess unique anatomy that attracts specialized clientele and commands premium rates. [+15% $, +3 Special]",
+    "nsfw": true
+  },
+  "Vampire": {
+    "description": "Undead beings with supernatural charm and mysterious allure. [+10% $, +3 Charm, +2 Extreme, +1 Craft]",
+    "nsfw": true
+  },
+  "Construct": {
+    "description": "They are an artificial construct with triple the health but reduced libido. [3x Health, -10 Libido]",
+    "nsfw": false
+  },
+  "Furry": {
+    "description": "Their appearance blends human and animal features, with some soft fur, pointed ears, and sometimes an expressive tail. Their exotic nature attracts clients with particular tastes, who value their feline agility and wild charm. [+2 Agility, +2 Charm]",
+    "nsfw": true
+  },
+  "Blademaster": {
+    "description": "Trained by a legendary warrior in the ancient arts of combat. Their blade becomes an extension of their will, striking with precision and power. [+5% $, +15 Health, +6 Combat]",
+    "nsfw": false
+  },
+  "Arcane Adept": {
+    "description": "Requires Magical. Initiated into the arcane mysteries by a true archmage. They channel magical energies with newfound mastery. [+6 Clever, +5 Craft, +3 Combat]",
+    "nsfw": false
+  },
+  "Shadowdancer": {
+    "description": "Trained in the arts of shadow and misdirection by the guild's masters. They move like smoke and strike like lightning. [+8% $, +5 Agility, +4 Striptease, +3 Charm]",
+    "nsfw": false
+  },
+  "Divine Touched": {
+    "description": "Blessed by divine powers through a high priest's ritual. Radiates warmth and serenity, bringing comfort to those around them. [+5 Health Regen, +10 Joy, +4 Charm, +3 Service]",
+    "nsfw": false
+  },
+  "Pathfinder": {
+    "description": "Trained in wilderness survival and precision combat by a master ranger. They read the land like a book and strike with unerring accuracy. [+5 Health, +4 Combat, +4 Agility, +4 Clever]",
+    "nsfw": false
+  },
+  "Barkeep's Wisdom": {
+    "description": "Trained by the legendary Old Morrow. Sees through facades and knows exactly what every patron needs. [+8% $, +2 Health Regen, +15 Joy, +8 Charm, +7 Service, +6 Clever, +4 Striptease]",
+    "nsfw": false
+  },
+  "People's Champion": {
+    "description": "Blessed by a legendary hero. Radiates confidence and inspiration that draws others to them. [+8% $, +25 Health, +10 Energy, +20 Joy, +8 Charm, +5 Service, +6 Combat, +4 Clever, +3 Striptease]",
+    "nsfw": false
+  },
+  "Tale Weaver": {
+    "description": "Trained by the Wandering Muse. Has mastered the ancient art of weaving words into magic. [+8% $, +3 Health Regen, +25 Joy, +10 Charm, +7 Clever, +5 Service, +5 Striptease]",
+    "nsfw": false
+  },
+  "Master Chef": {
+    "description": "Trained by Master Ambrose Laurent. Doesn't merely cook—creates edible memories that patrons will remember forever. [+8% $, +15 Health, +2 Health Regen, +20 Joy, +8 Service, +10 Craft, +5 Charm, +4 Clever]",
+    "nsfw": false
+  },
+  "Perfect Palate": {
+    "description": "Trained by Countess Vermillion Ashford. Possesses an almost magical sensitivity to flavors. [+8% $, +8 Energy, +2 Health Regen, +8 Clever, +7 Service, +6 Charm, +5 Craft]",
+    "nsfw": false
+  },
+  "Graceful Server": {
+    "description": "Trained by Sebastian Crane. Moves like flowing water, anticipating needs and making every patron feel like royalty. [+8% $, +12 Energy, +15 Joy, +10 Service, +7 Charm, +6 Agility, +4 Craft, +3 Clever]",
+    "nsfw": false
+  },
+  "Fortune's Favorite": {
+    "description": "Trained by 'Lucky' Mathias Cross. Possesses an uncanny intuition for timing and fortune. [+8% $, +10 Health, +3 Health Regen, +20 Joy, +9 Clever, +7 Charm, +5 Agility, +4 Hand]",
+    "nsfw": false
+  },
+  "Card Shark": {
+    "description": "Trained by the Phantom Dealer. Fingers move with impossible precision—cards dance and flow like living things. [+8% $, +10 Energy, +2 Health Regen, +10 Agility, +8 Clever, +8 Hand, +4 Charm]",
+    "nsfw": false
+  },
+  "High Roller's Eye": {
+    "description": "Trained by Victoria Sterling, the Casino Queen. Has developed a supernatural ability to identify valuable patrons. [+8% $, +10 Health, +8 Energy, +15 Joy, +10 Charm, +7 Clever, +4 Agility, +3 Hand]",
+    "nsfw": false
+  },
+  "Courtesan's Grace": {
+    "description": "Trained by Madame Celestine, whose grace enchanted emperors. Has mastered the art of refined seduction. [+8% $, +2 Health Regen, +25 Joy, +15 Libido, +10 Charm, +7 Sex, +6 Oral, +6 Striptease, +5 Service, +4 Special]",
+    "nsfw": true
+  },
+  "Sacred Touch": {
+    "description": "Trained in millennia-old techniques by a temple practitioner. Touch carries ancient wisdom, creating transformative experiences. [+8% $, +20 Health, +10 Energy, +4 Health Regen, +10 Special, +8 Hand, +7 Sex, +5 BDSM, +5 Service, +4 Oral]",
+    "nsfw": true
+  },
+  "Desire Whisperer": {
+    "description": "Trained by the legendary Desire Whisperer. Has mastered the art of intimate communication, sensing hidden desires. [+8% $, +2 Health Regen, +30 Joy, +20 Libido, +9 Charm, +8 Oral, +6 BDSM, +5 Sex, +5 Striptease, +4 Service]",
+    "nsfw": true
+  },
+  "Loves you": {
+    "description": "Deeply in love with the manager. Works with unwavering dedication, but has little desire to entertain clients. [+15% $, Max Libido 5, Max Rebelliousness 20]",
+    "nsfw": false
+  },
+  "Best Friends": {
+    "description": "A deep bond of trust and companionship. Brings steady happiness and helps them recover from the day's strain. [Daily: +1 Joy | +2 Energy/day, +5 Max Energy]",
+    "nsfw": false
+  },
+  "Trial Worker": {
+    "description": "On a probationary period, eager to prove their worth. Works with extra dedication to earn a permanent place. [+4% $, +10 Joy, +4 Service, +3 Charm, +2 Clever]",
+    "nsfw": false
+  },
+  "Scholar's Joy": {
+    "description": "Graduated from the Academy with honors. Knowledge and dedication shine through in every task. [+4% $, +1 Health Regen, +10 Joy, +4 Clever, +3 Charm, +3 Craft, +2 Service]",
+    "nsfw": false
+  },
+  "Nature's Blessing": {
+    "description": "Blessed by the natural world, their connection to flora and the elements brings comfort and serenity. [+4% $, +2 Charm, +2 Service, +2 Craft]",
+    "nsfw": false
+  },
+  "House Servant": {
+    "description": "A trained house servant: discreet, orderly, and reliable. Excels at housework and presentation, with low tolerance for disorder. [+10 Service, +5 Charm, +5 Clever, Max Rebelliousness 20, Comfort Desired 1]",
+    "nsfw": false
+  },
+  "Harem Member": {
+    "description": "A kept member of the manager's harem. Highly trained for intimate work, and kept under strict control. [+5 to all sexual skills, Max Rebelliousness 20]",
+    "nsfw": true
+  },
+  "Yvara, Bound to Service": {
+    "description": "Yvara serves your establishment because you own her debt. She has accepted it. Her competence is undeniable. [+3 Charm, +3 Clever, +5 BDSM]",
+    "nsfw": false
+  },
+  "Yvara, Academy Duties": {
+    "description": "Yvara runs the Academy during the day and works for you in the evenings. The double life wears on her, but the Academy's prestige follows her into your house. [-1 Energy Regen, +10% Earnings]",
+    "nsfw": false
+  }
+}

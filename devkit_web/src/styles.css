@@ -116,3 +116,18 @@ button[data-action="back"] { background: var(--bg-elev); color: var(--fg); }
   padding: 0.15rem 0.45rem; font-size: 0.8rem; cursor: pointer;
 }
 .suggestion-chip:hover { border-color: var(--accent); }
+
+.catalog-picker-info {
+  padding: 0.5rem 0.6rem; min-height: 1.8rem;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+  font-size: 0.88rem; line-height: 1.4;
+}
+.catalog-picker-info strong { color: var(--accent); }
+
+.enum-option-description {
+  grid-column: 2 / -1; margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 4px;
+  font-size: 0.85rem; color: var(--fg); line-height: 1.4;
+}
+.enum-option-description.muted-empty { color: var(--muted); }

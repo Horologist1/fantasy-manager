@@ -157,3 +157,46 @@ test('string field without catalog does not render suggestions', async () => {
   const f = renderField({ id: 'name', type: 'string' }, '', () => {});
   assert.equal(f.element.querySelector('[data-role="suggestions"]'), null);
 });
+
+test('catalog picker shows meta description in info panel', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const catalogs = { all_traits: new Set(['Magical', 'Charming']) };
+  const meta = {
+    trait_meta: {
+      Magical: { description: 'Worker can cast spells.', nsfw: false },
+      Charming: { description: 'Worker attracts customers.', nsfw: false },
+    },
+  };
+  const f = renderField(
+    { id: 'traits', type: 'list_of_strings', catalog: 'all_traits' },
+    ['Magical'],
+    () => {},
+    { catalogs, meta },
+  );
+  const info = f.element.querySelector('[data-role="info"]');
+  assert.ok(info, 'info panel should be present when meta is provided');
+  assert.match(info.textContent, /Magical/);
+  assert.match(info.textContent, /cast spells/);
+});
+
+test('enum with option_descriptions renders description below select', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const f = renderField(
+    {
+      id: 'skill_focus',
+      type: 'enum',
+      options: ['combat', 'magic'],
+      option_descriptions: {
+        combat: 'Combat 45, Agility 40.',
+        magic: 'Craft 45, Clever 40.',
+      },
+    },
+    'combat',
+    () => {},
+  );
+  const desc = f.element.querySelector('[data-role="option-description"]');
+  assert.ok(desc);
+  assert.match(desc.textContent, /Combat 45/);
+  f.setValue('magic');
+  assert.match(desc.textContent, /Craft 45/);
+});

@@ -55,6 +55,18 @@ async function main() {
 
   await fs.mkdir(OUT_DIR, { recursive: true });
   for (const [key, val] of Object.entries(catalogs)) {
+    if (key === 'meta') {
+      // meta is a nested object map (trait_meta, item_meta, building_meta) —
+      // serialise each as its own file so the bundled loader can fetch them
+      // individually.
+      for (const [metaKey, metaVal] of Object.entries(val)) {
+        await fs.writeFile(
+          path.join(OUT_DIR, `${metaKey}.json`),
+          JSON.stringify(metaVal, null, 2) + '\n',
+        );
+      }
+      continue;
+    }
     const arr = Array.from(val).sort();
     await fs.writeFile(
       path.join(OUT_DIR, `${key}.json`),
