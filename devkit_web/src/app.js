@@ -25,7 +25,7 @@ selectBtn.addEventListener('click', async () => {
   const gameHandle = await rootHandle.getDirectoryHandle('game').catch(() => rootHandle);
   const dataHandle = await gameHandle.getDirectoryHandle('data');
   fs = createFSAFS(dataHandle);
-  catalogs = await loadLiveCatalogs(dataHandle);
+  catalogs = await loadLiveCatalogs(dataHandle, gameHandle);
   folderStatus.textContent = `Folder: ${rootHandle.name}`;
   folderStatus.classList.remove('muted');
   renderLanding();
@@ -34,7 +34,7 @@ selectBtn.addEventListener('click', async () => {
 async function loadBundledCatalogs() {
   const names = ['all_traits', 'race_traits', 'all_items', 'all_buildings',
     'all_professions', 'all_worker_names', 'all_worker_folders',
-    'all_event_flags', 'names_lists'];
+    'all_event_flags', 'names_lists', 'image_folders'];
   const out = {};
   for (const n of names) {
     try {
@@ -47,7 +47,7 @@ async function loadBundledCatalogs() {
   return out;
 }
 
-async function loadLiveCatalogs(dataHandle) {
+async function loadLiveCatalogs(dataHandle, gameHandle) {
   const { buildCatalogs } = await import('./lib/catalog_loader.js');
   const folders = ['traits', 'items', 'buildings', 'workers', 'interactions', 'events'];
   const sources = {};
@@ -62,7 +62,29 @@ async function loadLiveCatalogs(dataHandle) {
       }
     } catch {}
   }
-  return buildCatalogs(sources);
+  const out = buildCatalogs(sources);
+
+  // image_folders is scanned directly from game/images/workers/ — it isn't a
+  // JSON data source so it lives outside buildCatalogs.
+  out.image_folders = new Set();
+  try {
+    const imagesHandle = await gameHandle.getDirectoryHandle('images');
+    const workersHandle = await imagesHandle.getDirectoryHandle('workers');
+    for await (const [name, entry] of workersHandle.entries()) {
+      if (entry.kind === 'directory') out.image_folders.add(name);
+    }
+  } catch {}
+
+  // names_lists is read from game/data/names.json — buildCatalogs doesn't know
+  // about it because it isn't one of the array-of-entries folders.
+  try {
+    const namesHandle = await dataHandle.getFileHandle('names.json');
+    const namesFile = await namesHandle.getFile();
+    const namesObj = JSON.parse(await namesFile.text());
+    out.names_lists = new Set(Object.keys(namesObj));
+  } catch {}
+
+  return out;
 }
 
 function ctx() {

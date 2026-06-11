@@ -5,6 +5,7 @@ import { buildCatalogs } from '../src/lib/catalog_loader.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const GAME_DATA = path.resolve(__dirname, '../../game/data');
+const IMAGES_WORKERS = path.resolve(__dirname, '../../game/images/workers');
 const OUT_DIR = path.resolve(__dirname, '../src/catalogs');
 const NAMES_PATH = path.resolve(GAME_DATA, 'names.json');
 
@@ -46,6 +47,12 @@ async function main() {
     names_lists = Object.keys(names);
   } catch {}
 
+  let image_folders = [];
+  try {
+    const entries = await fs.readdir(IMAGES_WORKERS, { withFileTypes: true });
+    image_folders = entries.filter((e) => e.isDirectory()).map((e) => e.name);
+  } catch {}
+
   await fs.mkdir(OUT_DIR, { recursive: true });
   for (const [key, val] of Object.entries(catalogs)) {
     const arr = Array.from(val).sort();
@@ -59,11 +66,15 @@ async function main() {
     JSON.stringify(names_lists.sort(), null, 2) + '\n',
   );
   await fs.writeFile(
+    path.join(OUT_DIR, 'image_folders.json'),
+    JSON.stringify(image_folders.sort(), null, 2) + '\n',
+  );
+  await fs.writeFile(
     path.join(OUT_DIR, '_meta.json'),
     JSON.stringify({ baked_at: new Date().toISOString() }, null, 2) + '\n',
   );
 
-  console.log(`Baked ${Object.keys(catalogs).length + 1} catalogs to ${OUT_DIR}`);
+  console.log(`Baked ${Object.keys(catalogs).length + 2} catalogs (+ meta) to ${OUT_DIR}`);
 }
 
 main().catch((e) => {
