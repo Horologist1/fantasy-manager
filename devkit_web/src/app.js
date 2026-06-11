@@ -44,6 +44,15 @@ async function loadBundledCatalogs() {
       out[n] = new Set(n === 'race_traits' ? RACE_TRAITS : []);
     }
   }
+  out.meta = {};
+  for (const m of ['trait_meta', 'item_meta', 'building_meta']) {
+    try {
+      const r = await fetch(`./catalogs/${m}.json`);
+      out.meta[m] = await r.json();
+    } catch {
+      out.meta[m] = {};
+    }
+  }
   return out;
 }
 
@@ -138,9 +147,38 @@ async function startRecipe(recipe) {
       return;
     }
   }
-  await fs.mergeAndWrite(out.filename, out.json, { key: 'name' });
-  alert(`Saved to ${out.filename}`);
+  if (!rootHandle) {
+    // No game folder selected: download the JSON as a file so the user can
+    // drop it into their game manually. (Memory FS writes would be silent.)
+    const basename = out.filename.split('/').pop();
+    downloadJSON(out.json, basename);
+    alert(
+      `Downloaded ${basename}.\n\n` +
+      `Drop it into your game's game/data/${out.filename.split('/').slice(0, -1).join('/')}/ folder, ` +
+      `or click "📂 Select game folder" first to save directly next time.`,
+    );
+  } else {
+    try {
+      await fs.mergeAndWrite(out.filename, out.json, { key: 'name' });
+      alert(`Saved to game/data/${out.filename}`);
+    } catch (err) {
+      alert(`Save failed: ${err.message}\n\nThe JSON will be downloaded instead.`);
+      downloadJSON(out.json, out.filename.split('/').pop());
+    }
+  }
   renderLanding();
+}
+
+function downloadJSON(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2) + '\n'], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 async function openExistingWorkers() {
