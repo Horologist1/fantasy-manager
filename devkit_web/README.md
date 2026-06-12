@@ -19,6 +19,18 @@ section editor for existing JSON:
 | Daily Stories | Basic, With Trait Roll (saved as daily_story_extensions) |
 | Buildings | New Building Type, Add Job to Existing Building |
 
+## Tools
+
+- **Whoremaster importer** — batch-imports `.girlsx` / `.rgirlsx` character
+  packs. Skills and traits are mapped to FM equivalents, unknown traits get a
+  per-trait resolution step (map to an existing trait, create a stub, or
+  skip — remembered for future imports), duplicates against your installed
+  game are flagged, and image folders are copied into
+  `game/images/workers/<folder>/` with WM→FM renaming (Portrait→profile…).
+- **GIF → WebM** — converts GIF animations (Ren'Py can't animate GIFs) right
+  in the browser via ffmpeg.wasm. Downloads the converter from a CDN on first
+  use (~31 MB, cached); works on the hosted page and the local server.
+
 With a game folder selected (Chrome/Edge/Brave), files save directly into
 `game/data/` using the same merge rules the game applies at load time.
 Without a folder, the finished JSON downloads as a ready-to-drop file.
