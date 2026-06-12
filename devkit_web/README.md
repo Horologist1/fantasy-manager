@@ -3,6 +3,26 @@
 Static HTML/JS modding tool for Fantasy Manager. Replaces the legacy
 `devkit/fantasy_manager_editor_v6.py`. No `.exe`, no antivirus friction.
 
+## What you can create
+
+Every moddable content type has guided wizards (recipes) plus a full
+section editor for existing JSON:
+
+| Type | Recipes |
+|---|---|
+| Workers | Unique Worker, Procedural Worker Template, Monster Worker |
+| Traits | Permanent Trait, Temporary Trait |
+| Items | Consumable, Equipment, Quest Item |
+| Interactions | Simple, Trait-Granting, Worker-Specific |
+| Events | Worker-Specific, Event Chain (2 steps), Building Skill Check |
+| Recruitment | Recruitment Event |
+| Daily Stories | Basic, With Trait Roll (saved as daily_story_extensions) |
+| Buildings | New Building Type, Add Job to Existing Building |
+
+With a game folder selected (Chrome/Edge/Brave), files save directly into
+`game/data/` using the same merge rules the game applies at load time.
+Without a folder, the finished JSON downloads as a ready-to-drop file.
+
 ## Run it (Windows)
 
 Double-click `start.cmd`. A console window opens, a local server starts,
