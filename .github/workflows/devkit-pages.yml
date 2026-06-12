@@ -5,9 +5,11 @@
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
 name: Deploy devkit to GitHub Pages
 
+# feature/devkit-web deploys too while the devkit lives on that branch;
+# drop it from the list once merged to main.
 on:
   push:
-    branches: [main]
+    branches: [main, feature/devkit-web]
     paths:
       - 'devkit_web/**'
       - 'game/data/**'
