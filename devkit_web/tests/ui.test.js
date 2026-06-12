@@ -281,3 +281,49 @@ test('dict_of_bools toggles and removes flags', async () => {
   addBtn.dispatchEvent(new window.Event('click'));
   assert.deepEqual(f.getValue(), { quest_done: true, other_flag: true });
 });
+
+// ---- human-readable summary (review screens) ----
+
+test('renderSummary shows non-neutral fields and hides neutral ones', async () => {
+  const { renderSummary } = await import('../src/lib/ui.js');
+  const elx = renderSummary({
+    name: 'Battle-Hardened',
+    description: null,
+    conflicts: [],
+    nsfw: false,
+    duration: 3,
+    modifiers: { skill_modifiers: { Combat: 5 }, earnings_multiplier: 0 },
+  });
+  const text = elx.textContent;
+  assert.match(text, /name/);
+  assert.match(text, /Battle-Hardened/);
+  assert.match(text, /duration/);
+  assert.match(text, /Combat/);
+  assert.match(text, /5/);
+  // neutral fields hidden
+  assert.doesNotMatch(text, /description/);
+  assert.doesNotMatch(text, /conflicts/);
+  assert.doesNotMatch(text, /nsfw/);
+  assert.doesNotMatch(text, /earnings_multiplier/);
+});
+
+test('renderSummary renders arrays of objects as numbered blocks', async () => {
+  const { renderSummary } = await import('../src/lib/ui.js');
+  const elx = renderSummary({
+    choices: [
+      { option: 'Step in', threshold: 40 },
+      { option: 'Walk away' },
+    ],
+  });
+  const text = elx.textContent;
+  assert.match(text, /choices/);
+  assert.match(text, /Step in/);
+  assert.match(text, /Walk away/);
+  assert.match(text, /40/);
+});
+
+test('renderSummary on all-neutral object shows a friendly note', async () => {
+  const { renderSummary } = await import('../src/lib/ui.js');
+  const elx = renderSummary({ a: null, b: [], c: 0, d: false, e: {} });
+  assert.match(elx.textContent, /neutral/i);
+});

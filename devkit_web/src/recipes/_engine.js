@@ -1,5 +1,5 @@
 // devkit_web/src/recipes/_engine.js
-import { renderField } from '../lib/ui.js';
+import { renderField, renderSummary } from '../lib/ui.js';
 
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
@@ -92,8 +92,13 @@ export function runRecipe(recipe, container, opts = {}) {
       const wrap = el('div', { 'data-step': 'review', class: 'recipe-step' });
       wrap.appendChild(el('h2', {}, 'Review & save'));
 
-      const pre = el('pre', { class: 'json-preview' }, JSON.stringify(json, null, 2));
-      wrap.appendChild(pre);
+      // Human-readable summary of what the user configured; the raw JSON is
+      // still available, collapsed, for the curious.
+      wrap.appendChild(renderSummary(json));
+      const details = el('details', { class: 'raw-json' });
+      details.appendChild(el('summary', {}, 'Show raw JSON'));
+      details.appendChild(el('pre', { class: 'json-preview' }, JSON.stringify(json, null, 2)));
+      wrap.appendChild(details);
 
       const fnameLabel = el('label', {}, 'Filename');
       const fnameInput = el('input', { type: 'text', 'data-action': 'filename' });
@@ -114,6 +119,17 @@ export function runRecipe(recipe, container, opts = {}) {
           resolve({ json, filename: fnameInput.value || filename });
         },
       }, 'Save'));
+      // Array outputs (e.g. event chains) can't be handed to the single-entry
+      // editor; they stay save-only and are editable later via "Edit existing".
+      if (!Array.isArray(json) && opts.allowEdit !== false) {
+        nav.appendChild(el('button', {
+          type: 'button',
+          'data-action': 'edit',
+          onclick: () => {
+            resolve({ json, filename: fnameInput.value || filename, edit: true });
+          },
+        }, 'Fine-tune in editor'));
+      }
       wrap.appendChild(nav);
 
       container.appendChild(wrap);

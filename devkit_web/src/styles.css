@@ -183,3 +183,23 @@ button[data-action="back"] { background: var(--bg-elev); color: var(--fg); }
   border-radius: 4px; padding: 0.3rem 0.5rem; font: inherit;
 }
 .dict-editor .suggestion-row { margin-top: 0.4rem; }
+
+/* ---- review summary ---- */
+.summary-root { margin-bottom: 0.75rem; }
+dl.summary {
+  display: grid; grid-template-columns: minmax(140px, max-content) 1fr;
+  gap: 0.3rem 1rem; margin: 0;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.75rem 0.9rem;
+}
+dl.summary dt { color: var(--muted); text-transform: capitalize; }
+dl.summary dd { margin: 0; }
+dl.summary.summary-nested { border: 0; padding: 0.1rem 0 0.1rem 0.4rem; border-left: 2px solid var(--border); border-radius: 0; }
+.summary-chips { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; }
+.summary-item {
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 0.4rem 0.6rem; margin-bottom: 0.35rem;
+}
+.summary-item-head { color: var(--accent); font-size: 0.8rem; margin-bottom: 0.2rem; }
+details.raw-json { margin: 0.5rem 0 0.75rem 0; }
+details.raw-json summary { color: var(--muted); cursor: pointer; font-size: 0.85rem; }

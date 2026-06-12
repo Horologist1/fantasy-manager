@@ -439,6 +439,72 @@ function renderCatalogPicker(def, initial, catalogSet, onChange, meta = null) {
   };
 }
 
+// ---- human-readable summary for review screens ----
+
+function isNeutral(v) {
+  if (v === null || v === undefined || v === false) return true;
+  if (v === 0 || v === '') return true;
+  if (Array.isArray(v)) return v.length === 0;
+  if (typeof v === 'object') return Object.values(v).every(isNeutral);
+  return false;
+}
+
+function summaryValue(v) {
+  if (typeof v === 'boolean') return el('span', { class: 'summary-bool' }, v ? 'yes' : 'no');
+  if (typeof v === 'string' || typeof v === 'number') {
+    return el('span', { class: 'summary-scalar' }, String(v));
+  }
+  if (Array.isArray(v)) {
+    if (v.every((x) => typeof x !== 'object' || x === null)) {
+      const row = el('span', { class: 'summary-chips' });
+      for (const x of v) row.appendChild(el('span', { class: 'chip' }, String(x)));
+      return row;
+    }
+    const wrap = el('div', { class: 'summary-items' });
+    v.forEach((item, i) => {
+      const block = el('div', { class: 'summary-item' });
+      block.appendChild(el('div', { class: 'summary-item-head' }, `#${i + 1}`));
+      block.appendChild(summaryValue(item));
+      wrap.appendChild(block);
+    });
+    return wrap;
+  }
+  if (typeof v === 'object' && v !== null) {
+    const dl = el('dl', { class: 'summary summary-nested' });
+    appendSummaryEntries(dl, v);
+    return dl;
+  }
+  return el('span', {}, String(v));
+}
+
+function appendSummaryEntries(dl, obj) {
+  for (const [k, v] of Object.entries(obj)) {
+    if (isNeutral(v)) continue;
+    dl.appendChild(el('dt', {}, k.replace(/_/g, ' ')));
+    const dd = el('dd');
+    dd.appendChild(summaryValue(v));
+    dl.appendChild(dd);
+  }
+}
+
+/**
+ * renderSummary(json) → readable element for review screens. Neutral values
+ * (null / [] / {} / 0 / false / "") are hidden — they are still saved, but the
+ * summary shows only what the user actually configured.
+ */
+export function renderSummary(json) {
+  const root = el('div', { class: 'summary-root', 'data-role': 'summary' });
+  const dl = el('dl', { class: 'summary' });
+  appendSummaryEntries(dl, json || {});
+  if (dl.children.length === 0) {
+    root.appendChild(el('p', { class: 'muted' },
+      'All fields use neutral defaults — nothing extra configured.'));
+    return root;
+  }
+  root.appendChild(dl);
+  return root;
+}
+
 function renderDictOfNumbers(def, initial, onChange, ctx = null) {
   const errEl = makeError();
   let map = { ...(initial || {}) };

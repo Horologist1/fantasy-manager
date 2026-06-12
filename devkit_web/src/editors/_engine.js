@@ -1,5 +1,5 @@
 // devkit_web/src/editors/_engine.js
-import { renderField } from '../lib/ui.js';
+import { renderField, renderSummary } from '../lib/ui.js';
 
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
@@ -75,8 +75,11 @@ export function runEditor({
 
   function paintReview() {
     const wrap = el('div', { 'data-section': 'review', class: 'editor-section' });
-    const pre = el('pre', { class: 'json-preview' }, JSON.stringify(current, null, 2));
-    wrap.appendChild(pre);
+    wrap.appendChild(renderSummary(current));
+    const details = el('details', { class: 'raw-json' });
+    details.appendChild(el('summary', {}, 'Show raw JSON'));
+    details.appendChild(el('pre', { class: 'json-preview' }, JSON.stringify(current, null, 2)));
+    wrap.appendChild(details);
 
     const fnameLabel = el('label', {}, 'Filename');
     const fnameInput = el('input', { type: 'text', 'data-action': 'filename' });

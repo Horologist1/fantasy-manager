@@ -267,6 +267,10 @@ function renderLanding() {
 async function startRecipe(type, recipe) {
   app.innerHTML = '';
   const out = await runRecipe(recipe, app, { modname, ctx: ctx() });
+  if (out.edit) {
+    openRecipeOutputInEditor(type, out);
+    return;
+  }
   const entries = entriesOf(type, out.json);
   let errorCount = 0;
   for (const e of entries) {
@@ -276,8 +280,30 @@ async function startRecipe(type, recipe) {
     renderLanding();
     return;
   }
-  await saveRecipeOutput(type, recipe, out);
+  await saveRecipeOutput(type, out);
   renderLanding();
+}
+
+/** "Fine-tune in editor" from a recipe review: load the built entry into the
+ * type's section editor, then save through the same per-type dispatch. */
+function openRecipeOutputInEditor(type, out) {
+  const isExtension = type.id === 'daily_stories';
+  const entry = isExtension ? out.json.story : out.json;
+  app.innerHTML = '';
+  runEditor({
+    sections: type.sections,
+    entry,
+    schema: type.schema,
+    container: app,
+    ctx: ctx(),
+    defaultFilename: out.filename,
+    validate: (e) => validateEntry(e, type.schema, ctx()),
+    onSave: async (updated, filename) => {
+      const json = isExtension ? { ...out.json, story: updated } : updated;
+      await saveRecipeOutput(type, { json, filename: filename || out.filename });
+      renderLanding();
+    },
+  });
 }
 
 /** Entries to validate for a recipe/editor payload (handles arrays + extensions). */
@@ -286,7 +312,7 @@ function entriesOf(type, json) {
   return Array.isArray(json) ? json : [json];
 }
 
-async function saveRecipeOutput(type, recipe, out) {
+async function saveRecipeOutput(type, out) {
   const filename = out.filename;
   if (!rootHandle) {
     downloadJSON(standaloneFile(type, out.json), filename.split('/').pop());

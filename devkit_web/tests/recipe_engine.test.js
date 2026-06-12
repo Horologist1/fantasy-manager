@@ -91,3 +91,41 @@ test('step options can be a function of (ctx, answers)', async () => {
   const out = await p;
   assert.equal(out.json.building, 'tavern');
 });
+
+test('review shows summary, collapsed JSON, and edit handoff', async () => {
+  const { runRecipe } = await import('../src/recipes/_engine.js');
+  const recipe = {
+    id: 'r2', title: 'R2', default_output: 'traits/traits_<modname>.json',
+    steps: [{ id: 'name', type: 'string', label: 'Name' }],
+    build: (a) => ({ name: a.name, nsfw: false }),
+  };
+  const container = document.createElement('div');
+  const p = runRecipe(recipe, container, { modname: 'm', ctx: {} });
+  const input = container.querySelector('input[type="text"]');
+  input.value = 'Brave';
+  input.dispatchEvent(new Event('input'));
+  container.querySelector('[data-action="next"]').dispatchEvent(new Event('click'));
+
+  assert.ok(container.querySelector('[data-role="summary"]'), 'summary shown');
+  assert.ok(container.querySelector('details .json-preview'), 'raw JSON collapsed in details');
+  const editBtn = container.querySelector('[data-action="edit"]');
+  assert.ok(editBtn, 'edit button present for object output');
+  editBtn.dispatchEvent(new Event('click'));
+  const out = await p;
+  assert.equal(out.edit, true);
+  assert.equal(out.json.name, 'Brave');
+});
+
+test('review hides edit button for array outputs', async () => {
+  const { runRecipe } = await import('../src/recipes/_engine.js');
+  const recipe = {
+    id: 'r3', title: 'R3', default_output: 'events/e_<modname>.json',
+    steps: [{ id: 'x', type: 'string', label: 'X' }],
+    build: () => [{ id: 'a' }, { id: 'b' }],
+  };
+  const container = document.createElement('div');
+  runRecipe(recipe, container, { modname: 'm', ctx: {} });
+  container.querySelector('[data-action="next"]').dispatchEvent(new Event('click'));
+  assert.equal(container.querySelector('[data-action="edit"]'), null);
+  assert.ok(container.querySelector('[data-action="save"]'));
+});
