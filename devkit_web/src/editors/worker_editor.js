@@ -41,7 +41,7 @@ export const worker_editor_sections = [
     id: 'skills',
     label: 'Skills',
     fields: [
-      copyField('skills', { label: 'Skills (0–100)' }),
+      copyField('skills', { label: 'Skills (0–100)', key_catalog: 'all_skills' }),
     ],
   },
 ];

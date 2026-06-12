@@ -131,3 +131,55 @@ button[data-action="back"] { background: var(--bg-elev); color: var(--fg); }
   font-size: 0.85rem; color: var(--fg); line-height: 1.4;
 }
 .enum-option-description.muted-empty { color: var(--muted); }
+
+/* ---- plan 2: landing groups, pickers, nested editors ---- */
+
+.modname-row { margin-bottom: 1rem; }
+.modname-row input {
+  background: var(--bg-elev); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.35rem 0.6rem; font: inherit; margin-left: 0.4rem;
+}
+
+.banner {
+  background: #3d3520; border: 1px solid #6b5d2e; color: #e8d48b;
+  border-radius: 6px; padding: 0.6rem 0.9rem; margin-bottom: 1rem; font-size: 0.9rem;
+}
+
+.type-group {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.9rem 1.1rem; margin-bottom: 0.9rem;
+}
+.type-group h2 { margin: 0 0 0.15rem 0; font-size: 1.05rem; }
+.type-group p { margin: 0 0 0.6rem 0; }
+.type-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.recipe-btn { font-size: 0.85rem; }
+.edit-btn {
+  background: var(--bg); color: var(--fg);
+  border: 1px solid var(--border); font-size: 0.85rem;
+}
+
+.picker-list { display: flex; flex-direction: column; gap: 0.3rem; max-height: 60vh; overflow-y: auto; }
+.picker-item {
+  background: var(--bg-elev); color: var(--fg); text-align: left;
+  border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 0.75rem;
+}
+.picker-item:hover { border-color: var(--accent); }
+
+.object-fields {
+  border-left: 2px solid var(--border); padding-left: 0.75rem;
+  display: flex; flex-direction: column;
+}
+.object-item {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.6rem 0.8rem; margin-bottom: 0.5rem;
+}
+.object-item-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.4rem;
+}
+.add-key-row { display: flex; gap: 0.4rem; margin-top: 0.4rem; }
+.add-key-row input {
+  background: var(--bg); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.3rem 0.5rem; font: inherit;
+}
+.dict-editor .suggestion-row { margin-top: 0.4rem; }

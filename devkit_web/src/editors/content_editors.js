@@ -133,7 +133,9 @@ function eventSections(schema, extraBasic = []) {
       id: 'targeting',
       label: 'Targeting',
       fields: [
-        field(schema, 'worker_name', { label: 'Worker name(s)', type: 'list_of_strings', catalog: 'all_worker_names' }),
+        // worker_name may be a string or a list in shipped data; render as text
+        // (with name suggestions) so string values round-trip unchanged.
+        field(schema, 'worker_name', { label: 'Worker name', type: 'string', catalog: 'all_worker_names' }),
         field(schema, 'specific_worker_images', { label: 'Worker image folders' }),
         field(schema, 'worker_selection', { label: 'Worker selection (none/choose/player/random)' }),
         field(schema, 'building_type', { label: 'Building types', type: 'list_of_strings', catalog: 'all_buildings' }),
