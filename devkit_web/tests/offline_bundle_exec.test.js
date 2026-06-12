@@ -36,6 +36,8 @@ test('offline bundle boots and renders the landing page', async () => {
     await fs.unlink(tmp).catch(() => {});
   }
 
-  assert.equal(w.document.querySelectorAll('.type-group').length, 8, 'all 8 type groups render');
-  assert.equal(w.document.querySelectorAll('.recipe-btn').length, 19, 'all 19 recipes render');
+  assert.equal(w.document.querySelectorAll('.type-group').length, 9,
+    '8 content groups + WM importer render');
+  assert.equal(w.document.querySelectorAll('.recipe-btn').length, 20,
+    '19 recipes + WM importer launcher render');
 });

@@ -203,3 +203,6 @@ dl.summary.summary-nested { border: 0; padding: 0.1rem 0 0.1rem 0.4rem; border-l
 .summary-item-head { color: var(--accent); font-size: 0.8rem; margin-bottom: 0.2rem; }
 details.raw-json { margin: 0.5rem 0 0.75rem 0; }
 details.raw-json summary { color: var(--muted); cursor: pointer; font-size: 0.85rem; }
+
+/* ---- WM importer ---- */
+.chip-warn { background: #4a3a1a; border-color: #8a6d2e; color: #e8d48b; cursor: pointer; }

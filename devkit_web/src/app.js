@@ -34,6 +34,7 @@ import {
   building_event_with_skill_check_recipe, recruitment_event_recipe,
 } from './recipes/events.js';
 import { simple_building_type_recipe, add_profession_to_building_recipe } from './recipes/buildings.js';
+import { runWMImporter } from './converters/wm_import_ui.js';
 
 const app = document.getElementById('app');
 const folderStatus = document.getElementById('folder-status');
@@ -41,6 +42,7 @@ const selectBtn = document.getElementById('select-game-folder');
 
 let fs = createMemoryFS();
 let rootHandle = null;
+let gameDirHandle = null;
 let catalogs = await loadBundledCatalogs();
 let modname = localStorage.getItem('fm_devkit_modname') || 'mymod';
 
@@ -120,6 +122,7 @@ selectBtn.addEventListener('click', async () => {
   }
   rootHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
   const gameHandle = await rootHandle.getDirectoryHandle('game').catch(() => rootHandle);
+  gameDirHandle = gameHandle;
   const dataHandle = await gameHandle.getDirectoryHandle('data');
   fs = createFSAFS(dataHandle);
   catalogs = await loadLiveCatalogs(dataHandle, gameHandle);
@@ -272,6 +275,29 @@ function renderLanding() {
     group.appendChild(row);
     app.appendChild(group);
   }
+
+  const wmGroup = el('div', { class: 'type-group', 'data-type': 'wm_import' });
+  wmGroup.appendChild(el('h2', {}, '🧳 Whoremaster Import'));
+  wmGroup.appendChild(el('p', { class: 'muted' },
+    'Batch-import .girlsx / .rgirlsx character packs: skills and traits are mapped, ',
+    'unknown traits get a resolution step, and image folders are copied and renamed.'));
+  const wmRow = el('div', { class: 'type-actions' });
+  wmRow.appendChild(el('button', {
+    type: 'button', class: 'recipe-btn', 'data-action': 'wm-import',
+    onclick: () => {
+      app.innerHTML = '';
+      runWMImporter(app, {
+        ctx,
+        fs,
+        hasGameFolder: () => !!rootHandle,
+        getGameHandle: () => gameDirHandle,
+        modname,
+        onDone: () => renderLanding(),
+      });
+    },
+  }, '🧳 Open importer'));
+  wmGroup.appendChild(wmRow);
+  app.appendChild(wmGroup);
 }
 
 // ---------- create with recipe ----------
