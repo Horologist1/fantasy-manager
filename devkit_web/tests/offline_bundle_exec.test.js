@@ -37,7 +37,7 @@ test('offline bundle boots and renders the landing page', async () => {
   }
 
   assert.equal(w.document.querySelectorAll('.type-group').length, 9,
-    '8 content groups + WM importer render');
-  assert.equal(w.document.querySelectorAll('.recipe-btn').length, 20,
-    '19 recipes + WM importer launcher render');
+    '8 content groups + tools group render');
+  assert.equal(w.document.querySelectorAll('.recipe-btn').length, 21,
+    '19 recipes + WM importer + GIF tool render');
 });

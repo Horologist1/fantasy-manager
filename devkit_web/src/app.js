@@ -35,6 +35,7 @@ import {
 } from './recipes/events.js';
 import { simple_building_type_recipe, add_profession_to_building_recipe } from './recipes/buildings.js';
 import { runWMImporter } from './converters/wm_import_ui.js';
+import { runGifToWebmTool } from './tools/gif_to_webm.js';
 
 const app = document.getElementById('app');
 const folderStatus = document.getElementById('folder-status');
@@ -276,13 +277,13 @@ function renderLanding() {
     app.appendChild(group);
   }
 
-  const wmGroup = el('div', { class: 'type-group', 'data-type': 'wm_import' });
-  wmGroup.appendChild(el('h2', {}, '🧳 Whoremaster Import'));
-  wmGroup.appendChild(el('p', { class: 'muted' },
-    'Batch-import .girlsx / .rgirlsx character packs: skills and traits are mapped, ',
-    'unknown traits get a resolution step, and image folders are copied and renamed.'));
-  const wmRow = el('div', { class: 'type-actions' });
-  wmRow.appendChild(el('button', {
+  const toolsGroup = el('div', { class: 'type-group', 'data-type': 'tools' });
+  toolsGroup.appendChild(el('h2', {}, '🛠 Tools'));
+  toolsGroup.appendChild(el('p', { class: 'muted' },
+    'Import Whoremaster character packs (skills/traits mapped, unknown traits get a ',
+    'resolution step, images copied and renamed) and convert GIF animations to WebM.'));
+  const toolsRow = el('div', { class: 'type-actions' });
+  toolsRow.appendChild(el('button', {
     type: 'button', class: 'recipe-btn', 'data-action': 'wm-import',
     onclick: () => {
       app.innerHTML = '';
@@ -295,9 +296,16 @@ function renderLanding() {
         onDone: () => renderLanding(),
       });
     },
-  }, '🧳 Open importer'));
-  wmGroup.appendChild(wmRow);
-  app.appendChild(wmGroup);
+  }, '🧳 Whoremaster importer'));
+  toolsRow.appendChild(el('button', {
+    type: 'button', class: 'recipe-btn', 'data-action': 'gif-to-webm',
+    onclick: () => {
+      app.innerHTML = '';
+      runGifToWebmTool(app, { onDone: () => renderLanding() });
+    },
+  }, '🎞 GIF → WebM'));
+  toolsGroup.appendChild(toolsRow);
+  app.appendChild(toolsGroup);
 }
 
 // ---------- create with recipe ----------
