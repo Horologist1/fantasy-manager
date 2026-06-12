@@ -63,3 +63,75 @@ test('neutralDefault returns the right neutral per type', () => {
   assert.deepEqual(neutralDefault({ type: 'list_of_strings' }), []);
   assert.deepEqual(neutralDefault({ type: 'dict_of_numbers' }), {});
 });
+
+// ---- nested types (plan 2) ----
+
+test('object type validates subfields recursively', () => {
+  const def = {
+    type: 'object',
+    fields: {
+      start_when: { type: ['string', 'null'] },
+      stop_when: { type: ['string', 'null'] },
+    },
+  };
+  assert.equal(validateField(def, { start_when: null, stop_when: 'day>3' }).valid, true);
+  assert.equal(validateField(def, { start_when: 42 }).valid, false);
+  assert.equal(validateField(def, 'not an object').valid, false);
+});
+
+test('object type reports missing required subfields', () => {
+  const def = { type: 'object', fields: { id: { type: 'string', required: true } } };
+  const r = validateField(def, {});
+  assert.equal(r.valid, false);
+  assert.match(r.error, /id/);
+});
+
+test('list_of_objects validates each item against item_fields', () => {
+  const def = {
+    type: 'list_of_objects',
+    item_fields: {
+      trait: { type: 'string', required: true },
+      chance_percent: { type: 'int', min: 1, max: 100 },
+    },
+  };
+  assert.equal(validateField(def, [{ trait: 'Strong', chance_percent: 50 }]).valid, true);
+  assert.equal(validateField(def, [{ chance_percent: 50 }]).valid, false);
+  assert.equal(validateField(def, [{ trait: 'Strong', chance_percent: 500 }]).valid, false);
+});
+
+test('list_of_objects without item_fields only checks object shape', () => {
+  const def = { type: 'list_of_objects' };
+  assert.equal(validateField(def, [{ anything: 1 }]).valid, true);
+  assert.equal(validateField(def, ['nope']).valid, false);
+});
+
+test('dict_of_bools accepts {string: bool} only', () => {
+  assert.equal(validateField({ type: 'dict_of_bools' }, { flag_a: true }).valid, true);
+  assert.equal(validateField({ type: 'dict_of_bools' }, { flag_a: 'yes' }).valid, false);
+  assert.equal(validateField({ type: 'dict_of_bools' }, []).valid, false);
+});
+
+test('dict_of_objects validates each value against item_fields', () => {
+  const def = {
+    type: 'dict_of_objects',
+    item_fields: {
+      value: { type: 'bool' },
+      duration: { type: 'int' },
+    },
+  };
+  assert.equal(validateField(def, { cooldown: { value: true, duration: 3 } }).valid, true);
+  assert.equal(validateField(def, { cooldown: { value: 'yes' } }).valid, false);
+  assert.equal(validateField(def, { cooldown: 'nope' }).valid, false);
+});
+
+test('neutralDefault for nested types', () => {
+  assert.deepEqual(neutralDefault({ type: 'dict_of_bools' }), {});
+  assert.deepEqual(neutralDefault({ type: 'dict_of_objects' }), {});
+  assert.deepEqual(
+    neutralDefault({
+      type: 'object',
+      fields: { a: { type: 'int' }, b: { type: 'list_of_strings' } },
+    }),
+    { a: 0, b: [] },
+  );
+});
