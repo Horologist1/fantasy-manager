@@ -4,8 +4,58 @@
  *   - readJSON(relPath)           → parsed JSON or null
  *   - writeJSON(relPath, data)
  *   - listDir(relDir)             → [filename, ...]
- *   - mergeAndWrite(relPath, entry, { key }) → append-or-replace into array file
+ *   - mergeAndWrite(relPath, entry, { key, wrapper }) → append-or-replace by key.
+ *     Without wrapper the file root is an array. With wrapper (e.g. "items",
+ *     "building_types") the root is an object whose <wrapper> key holds the
+ *     array; sibling root keys are preserved.
  */
+
+async function mergeIntoFile(fsLike, p, entry, { key, wrapper }) {
+  if (wrapper) {
+    const root = (await fsLike.readJSON(p)) || { [wrapper]: [] };
+    if (Array.isArray(root) || typeof root !== 'object' || root === null) {
+      throw new Error(`mergeAndWrite expects object root with "${wrapper}" at ${p}`);
+    }
+    const arr = Array.isArray(root[wrapper]) ? [...root[wrapper]] : [];
+    const idx = arr.findIndex((e) => e && e[key] === entry[key]);
+    if (idx >= 0) arr[idx] = entry;
+    else arr.push(entry);
+    await fsLike.writeJSON(p, { ...root, [wrapper]: arr });
+    return;
+  }
+  let arr = (await fsLike.readJSON(p)) || [];
+  if (!Array.isArray(arr)) throw new Error(`mergeAndWrite expects array root at ${p}`);
+  const idx = arr.findIndex((e) => e && e[key] === entry[key]);
+  if (idx >= 0) arr[idx] = entry;
+  else arr = [...arr, entry];
+  await fsLike.writeJSON(p, arr);
+}
+
+/**
+ * Daily story extensions: { daily_story_extensions: [ { building_id,
+ * profession_id, merge_mode, daily_stories: [...] } ] }. Stories are upserted
+ * by id inside the entry matching building_id+profession_id (the same merge
+ * the game performs at load time).
+ */
+export async function mergeDailyStoryExtension(fsLike, p, { building_id, profession_id, story }) {
+  const root = (await fsLike.readJSON(p)) || { daily_story_extensions: [] };
+  const entries = Array.isArray(root.daily_story_extensions)
+    ? [...root.daily_story_extensions]
+    : [];
+  let entry = entries.find(
+    (e) => e && e.building_id === building_id && e.profession_id === profession_id,
+  );
+  if (!entry) {
+    entry = { building_id, profession_id, merge_mode: 'upsert', daily_stories: [] };
+    entries.push(entry);
+  }
+  const stories = Array.isArray(entry.daily_stories) ? [...entry.daily_stories] : [];
+  const idx = stories.findIndex((s) => s && s.id === story.id);
+  if (idx >= 0) stories[idx] = story;
+  else stories.push(story);
+  entry.daily_stories = stories;
+  await fsLike.writeJSON(p, { ...root, daily_story_extensions: entries });
+}
 
 export function createMemoryFS(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -26,15 +76,8 @@ export function createMemoryFS(initial = {}) {
       }
       return out;
     },
-    async mergeAndWrite(p, entry, { key }) {
-      let arr = (await this.readJSON(p)) || [];
-      if (!Array.isArray(arr)) {
-        throw new Error(`mergeAndWrite expects array root at ${p}`);
-      }
-      const idx = arr.findIndex((e) => e && e[key] === entry[key]);
-      if (idx >= 0) arr[idx] = entry;
-      else arr = [...arr, entry];
-      await this.writeJSON(p, arr);
+    async mergeAndWrite(p, entry, opts) {
+      await mergeIntoFile(this, p, entry, opts);
     },
   };
 }
@@ -81,13 +124,8 @@ export function createFSAFS(rootHandle) {
       }
       return out;
     },
-    async mergeAndWrite(p, entry, { key }) {
-      let arr = (await this.readJSON(p)) || [];
-      if (!Array.isArray(arr)) throw new Error(`mergeAndWrite expects array root at ${p}`);
-      const idx = arr.findIndex((e) => e && e[key] === entry[key]);
-      if (idx >= 0) arr[idx] = entry;
-      else arr = [...arr, entry];
-      await this.writeJSON(p, arr);
+    async mergeAndWrite(p, entry, opts) {
+      await mergeIntoFile(this, p, entry, opts);
     },
   };
 }
