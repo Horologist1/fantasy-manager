@@ -1,4 +1,4 @@
-import { RACE_TRAITS } from '../schemas/worker.schema.js';
+import { RACE_TRAITS, ALL_SKILLS } from '../schemas/worker.schema.js';
 
 function collectEventFlags(events, acc) {
   if (events == null) return;
@@ -51,18 +51,29 @@ export function buildCatalogs(sources) {
 
   const all_buildings = new Set();
   const all_professions = new Set();
+  const all_skills = new Set(ALL_SKILLS);
   const building_meta = {};
+  const building_professions = {};
   for (const file of sources.buildings || []) {
-    const list = Array.isArray(file) ? file : Object.values(file);
+    // Game files wrap the array as { building_types: [...] }; raw arrays are
+    // accepted too for fixtures/legacy.
+    const list = Array.isArray(file) ? file : (file && file.building_types) || [];
     for (const b of list) {
       if (!b || !b.id) continue;
       all_buildings.add(b.id);
+      if (b.skill_name) all_skills.add(b.skill_name);
       building_meta[b.id] = {
         name: b.name || b.id,
         skill_name: b.skill_name || '',
         skill_description: b.skill_description || '',
       };
-      for (const p of b.professions || []) if (p.id) all_professions.add(p.id);
+      const profs = [];
+      for (const p of b.professions || []) {
+        if (!p || !p.id) continue;
+        all_professions.add(p.id);
+        profs.push({ id: p.id, name: p.name || p.id, description: p.description || '' });
+      }
+      building_professions[b.id] = { name: b.name || b.id, professions: profs };
     }
   }
 
@@ -81,10 +92,10 @@ export function buildCatalogs(sources) {
 
   return {
     all_traits, race_traits, all_items,
-    all_buildings, all_professions,
+    all_buildings, all_professions, all_skills,
     all_worker_names, all_worker_folders,
     all_event_flags,
     names_lists: new Set(),
-    meta: { trait_meta, item_meta, building_meta },
+    meta: { trait_meta, item_meta, building_meta, building_professions },
   };
 }

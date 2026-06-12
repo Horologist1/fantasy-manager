@@ -1,0 +1,267 @@
+{
+  "brothel": {
+    "name": "Brothel",
+    "professions": [
+      {
+        "id": "prostitute",
+        "name": "Prostitute",
+        "description": "Provides standard intimate services to clients. Oral, hands-on, sex, anal, and same-sex bookings. Steady income; specialty and extreme requests belong to expert attendants."
+      },
+      {
+        "id": "masseuse",
+        "name": "Masseuse",
+        "description": "Offers scented oils, steam, and slow bodywork that sometimes stays tender—or slips into paid release. Charm matters as much as technique when clients want to feel cared for, not just used."
+      },
+      {
+        "id": "expert_attendant",
+        "name": "Expert attendant",
+        "description": "Handles the brothel's full menu of intimate services, including specialty and extreme bookings. Higher expectations: each booking is harder to ace than standard floor work."
+      },
+      {
+        "id": "stripper",
+        "name": "Stripper",
+        "description": "Performs strip shows and lap dances for clients. Generates money through entertainment. Can attract VIP clients for higher earnings."
+      },
+      {
+        "id": "service",
+        "name": "Service",
+        "description": "Attends to clients with basic services. Generates moderate income through customer service. Lower risk, steady earnings."
+      },
+      {
+        "id": "manager",
+        "name": "Manager",
+        "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings."
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk."
+      }
+    ]
+  },
+  "restaurant": {
+    "name": "Restaurant",
+    "professions": [
+      {
+        "id": "service",
+        "name": "Restaurant server",
+        "description": "Serves tables and keeps service smooth. Generates income through hospitality. Steady, low-risk work."
+      },
+      {
+        "id": "cook",
+        "name": "Cook",
+        "description": "Prepares meals for restaurant customers. Generates money through food service. Can cook for VIP tables for higher earnings."
+      },
+      {
+        "id": "manager",
+        "name": "Manager",
+        "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings."
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk."
+      }
+    ]
+  },
+  "adventurers_guild": {
+    "name": "Adventurer's Guild",
+    "professions": [
+      {
+        "id": "adventurer",
+        "name": "Adventurer",
+        "description": "Hunts monsters and explores dungeons. High risk, high reward profession. Can find valuable loot but faces dangerous encounters."
+      },
+      {
+        "id": "treasure_hunter",
+        "name": "Treasure Hunter",
+        "description": "Explores abandoned tombs and temples in search of valuable treasures. Relies on agility and careful movement to navigate traps and slip past danger. Lower risk than adventuring but still rewarding."
+      },
+      {
+        "id": "boss_hunting",
+        "name": "Boss Hunting",
+        "description": "Hunts legendary mythical beasts. Extreme risk with the highest rewards. Can obtain rare loot and legendary materials. Very dangerous."
+      },
+      {
+        "id": "monster_taming",
+        "name": "Monster Taming",
+        "description": "Captures and tames wild monsters to recruit them as workers. Can use combat prowess to subdue creatures through force, or seductive charm to lure them through primal attraction. High risk profession that expands your workforce with unique monster servants."
+      },
+      {
+        "id": "manager",
+        "name": "Manager",
+        "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings."
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk."
+      }
+    ]
+  },
+  "tavern": {
+    "name": "Tavern",
+    "professions": [
+      {
+        "id": "bartender",
+        "name": "Bartender",
+        "description": "Serves drinks and tends the bar. Generates steady income through beverage service. Keeps customers happy and coming back."
+      },
+      {
+        "id": "entertainer",
+        "name": "Entertainer",
+        "description": "Entertains tavern guests through conversation, dance, music, storytelling, or other talents. Generates money by captivating audiences. Can entertain VIP guests for higher earnings."
+      },
+      {
+        "id": "manager",
+        "name": "Manager",
+        "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings."
+      },
+      {
+        "id": "tavern_server",
+        "name": "Tavern server",
+        "description": "Serves patrons on the tavern floor. Generates income through quick, attentive hospitality. Steady, low-risk work."
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk."
+      }
+    ]
+  },
+  "casino": {
+    "name": "Casino",
+    "professions": [
+      {
+        "id": "dealer",
+        "name": "Dealer",
+        "description": "Works as a croupier at casino tables. Generates money through gambling operations. Manages games and ensures fair play."
+      },
+      {
+        "id": "guard",
+        "name": "Guard",
+        "description": "Protects the casino from disruptive patrons and cheaters. Generates money through security services. Prevents losses from troublemakers."
+      },
+      {
+        "id": "manager",
+        "name": "Manager",
+        "description": "Helps manage the business operations. Each manager reduces the chance of daily events by 10%, stacking across all your buildings."
+      },
+      {
+        "id": "casino_server",
+        "name": "Casino server",
+        "description": "Serves patrons on the casino floor. Generates income through quick, attentive hospitality. Steady, low-risk work."
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk."
+      }
+    ]
+  },
+  "governor_castle": {
+    "name": "Castle",
+    "professions": [
+      {
+        "id": "ambassador",
+        "name": "Ambassador",
+        "description": "Conducts diplomatic missions and negotiates agreements. Generates reputation and money through political work. Builds alliances and resolves conflicts."
+      },
+      {
+        "id": "courtesan",
+        "name": "Courtesan",
+        "description": "Provides high-class entertainment to noble guests. Generates significant money and reputation through elite services. Requires exceptional charm and sophistication."
+      },
+      {
+        "id": "servant",
+        "name": "Servant",
+        "description": "Serves aristocratic guests in the castle. Generates money through high-class service. Maintains the prestige of the establishment."
+      },
+      {
+        "id": "pleasure_servant",
+        "name": "Pleasure Servant",
+        "description": ""
+      },
+      {
+        "id": "prisoner",
+        "name": "Prisoner",
+        "description": ""
+      },
+      {
+        "id": "guards",
+        "name": "Guards",
+        "description": ""
+      },
+      {
+        "id": "chamberlain",
+        "name": "Chamberlain",
+        "description": ""
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No daily events occur, allowing recovery without risk."
+      }
+    ]
+  },
+  "academy": {
+    "name": "Academy",
+    "professions": [
+      {
+        "id": "academy_academics",
+        "name": "Academics",
+        "description": "A teacher will sharpen the student's mind and broaden their knowledge in a random discipline. (Adds experience to Clever and one random skill)"
+      },
+      {
+        "id": "academy_amatory",
+        "name": "Amatory Arts",
+        "description": "A teacher will show the student the ways of amatory arts, teaching sexual techniques and ways to satisfy partners in bed. (Adds experience split across sex skills)"
+      },
+      {
+        "id": "academy_hospitality",
+        "name": "Hospitality Arts",
+        "description": "A teacher will show the student how to greet clients and offer them what they need. (Adds experience split across Charm & Service)"
+      },
+      {
+        "id": "academy_artisan",
+        "name": "Artisan Studies",
+        "description": "A teacher will train the student in practical crafts and apothecary work, with hands-on time in the laboratory. (Adds experience to Craft and one random skill)"
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Student takes a day away from lectures and drills to sleep, eat, and recover. No classes today while strength returns."
+      }
+    ]
+  },
+  "arena": {
+    "name": "Arena",
+    "professions": [
+      {
+        "id": "arena_exhibition",
+        "name": "Exhibition fighter",
+        "description": "Controlled bouts with blunted or wooden weapons before a crowd. Low risk, small purse. Proves form and showmanship."
+      },
+      {
+        "id": "arena_proving",
+        "name": "Proving fighter",
+        "description": "Real steel and veteran opponents. Higher stakes, real risk of injury. Proves worth before the Lanista and the crowd."
+      },
+      {
+        "id": "arena_championship",
+        "name": "Championship fighter",
+        "description": "Face champions and beasts of the arena. Highest stakes and real danger—minotaurs, mythical creatures, or the Lanista's own champions."
+      },
+      {
+        "id": "arena_pinup_barbarian",
+        "name": "Pin up Barbarians",
+        "description": "Risqué spectacle: fierce poses, minimal armour, and crowd appeal. Less risk than combat, more skin than glory. Earns coin and reputation from admirers."
+      },
+      {
+        "id": "rest",
+        "name": "Rest",
+        "description": "Worker takes a break to regenerate health and energy. No arena bouts today."
+      }
+    ]
+  }
+}

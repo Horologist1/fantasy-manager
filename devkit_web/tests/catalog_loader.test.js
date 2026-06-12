@@ -84,3 +84,37 @@ test('buildCatalogs scans events for event_flags', () => {
   });
   assert.ok(catalogs.all_event_flags.has('aelis_quest_done'));
 });
+
+test('buildCatalogs exposes all_skills (canonical + building skill_name)', () => {
+  const buildings = [{
+    building_types: [{
+      id: 'tavern', name: 'Tavern', skill_name: 'Hospitality',
+      professions: [{ id: 'waitress', name: 'Waitress' }],
+    }],
+  }];
+  const catalogs = buildCatalogs({
+    traits: [], items: [], buildings, workers: [], interactions: [], events: [],
+  });
+  assert.ok(catalogs.all_skills.has('Combat'));
+  assert.ok(catalogs.all_skills.has('Charm'));
+  assert.ok(catalogs.all_skills.has('Hospitality'));
+});
+
+test('buildCatalogs exposes building_professions meta', () => {
+  const buildings = [{
+    building_types: [{
+      id: 'tavern', name: 'Tavern', skill_name: 'Service',
+      professions: [
+        { id: 'waitress', name: 'Waitress', description: 'Serves drinks.' },
+        { id: 'bartender', name: 'Bartender' },
+      ],
+    }],
+  }];
+  const catalogs = buildCatalogs({
+    traits: [], items: [], buildings, workers: [], interactions: [], events: [],
+  });
+  const bp = catalogs.meta.building_professions;
+  assert.deepEqual(bp.tavern.name, 'Tavern');
+  assert.deepEqual(bp.tavern.professions.map((p) => p.id), ['waitress', 'bartender']);
+  assert.equal(bp.tavern.professions[0].description, 'Serves drinks.');
+});
