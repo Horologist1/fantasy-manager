@@ -50,9 +50,18 @@ jobs:
         working-directory: devkit_web
       - name: Assemble site
         run: |
-          mkdir -p _site
-          cp -r devkit_web/src/* _site/
-          cp devkit_web/dist/FantasyManagerDevkit.html _site/
+          # The app lives under /devkit/ ; a root index just redirects there so
+          # the bare repo Pages URL does not 404.
+          mkdir -p _site/devkit
+          cp -r devkit_web/src/* _site/devkit/
+          cp devkit_web/dist/FantasyManagerDevkit.html _site/devkit/
+          cat > _site/index.html <<'HTML'
+          <!DOCTYPE html>
+          <meta charset="utf-8">
+          <title>Fantasy Manager Devkit</title>
+          <meta http-equiv="refresh" content="0; url=./devkit/">
+          <a href="./devkit/">Fantasy Manager Devkit →</a>
+          HTML
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -35,6 +35,12 @@ With a game folder selected (Chrome/Edge/Brave), files save directly into
 `game/data/` using the same merge rules the game applies at load time.
 Without a folder, the finished JSON downloads as a ready-to-drop file.
 
+## Run it (easiest): the hosted page
+
+<https://horologist1.github.io/fantasy-manager/devkit/> — nothing to
+download, always up to date. Republished automatically on every push that
+touches the devkit or the game data. The GIF→WebM tool works best here.
+
 ## Run it (recommended): double-click the HTML
 
 Open `dist/FantasyManagerDevkit.html` by double-clicking it. It is a single
