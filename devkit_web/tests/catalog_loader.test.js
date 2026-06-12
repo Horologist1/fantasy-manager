@@ -118,3 +118,19 @@ test('buildCatalogs exposes building_professions meta', () => {
   assert.deepEqual(bp.tavern.professions.map((p) => p.id), ['waitress', 'bartender']);
   assert.equal(bp.tavern.professions[0].description, 'Serves drinks.');
 });
+
+test('buildCatalogs exposes all_map_locations and building_full meta', () => {
+  const buildings = [{
+    building_types: [{
+      id: 'tavern', name: 'Tavern', skill_name: 'Service',
+      allowed_map_locations: ['tavern', 'bluehouse'],
+      professions: [{ id: 'waitress', name: 'Waitress' }],
+    }],
+  }];
+  const catalogs = buildCatalogs({
+    traits: [], items: [], buildings, workers: [], interactions: [], events: [],
+  });
+  assert.ok(catalogs.all_map_locations.has('bluehouse'));
+  assert.equal(catalogs.meta.building_full.tavern.skill_name, 'Service');
+  assert.equal(catalogs.meta.building_full.tavern.professions[0].id, 'waitress');
+});

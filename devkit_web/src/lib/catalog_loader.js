@@ -52,8 +52,10 @@ export function buildCatalogs(sources) {
   const all_buildings = new Set();
   const all_professions = new Set();
   const all_skills = new Set(ALL_SKILLS);
+  const all_map_locations = new Set();
   const building_meta = {};
   const building_professions = {};
+  const building_full = {};
   for (const file of sources.buildings || []) {
     // Game files wrap the array as { building_types: [...] }; raw arrays are
     // accepted too for fixtures/legacy.
@@ -61,6 +63,8 @@ export function buildCatalogs(sources) {
     for (const b of list) {
       if (!b || !b.id) continue;
       all_buildings.add(b.id);
+      building_full[b.id] = JSON.parse(JSON.stringify(b));
+      for (const loc of b.allowed_map_locations || []) all_map_locations.add(loc);
       if (b.skill_name) all_skills.add(b.skill_name);
       building_meta[b.id] = {
         name: b.name || b.id,
@@ -92,10 +96,10 @@ export function buildCatalogs(sources) {
 
   return {
     all_traits, race_traits, all_items,
-    all_buildings, all_professions, all_skills,
+    all_buildings, all_professions, all_skills, all_map_locations,
     all_worker_names, all_worker_folders,
     all_event_flags,
     names_lists: new Set(),
-    meta: { trait_meta, item_meta, building_meta, building_professions },
+    meta: { trait_meta, item_meta, building_meta, building_professions, building_full },
   };
 }
