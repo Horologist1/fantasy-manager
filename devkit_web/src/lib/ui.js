@@ -59,10 +59,54 @@ export function renderField(def, initial, onChange, ctx = null) {
     case 'list_of_strings':
       return renderListOfStrings(def, initial, onChange, ctx);
     case 'dict_of_numbers':
-      return renderDictOfNumbers(def, initial, onChange);
+      return renderDictOfNumbers(def, initial, onChange, ctx);
+    case 'dict_of_bools':
+      return renderDictOfBools(def, initial, onChange, ctx);
+    case 'object':
+      return renderObject(def, initial, onChange, ctx);
+    case 'list_of_objects':
+      return renderListOfObjects(def, initial, onChange, ctx);
+    case 'dict_of_objects':
+      return renderDictOfObjects(def, initial, onChange, ctx);
     default:
       return renderText(def, initial == null ? '' : String(initial), onChange, ctx);
   }
+}
+
+// Shared "add key" row: text input + button, with optional clickable
+// suggestions from ctx.catalogs[def.key_catalog].
+function makeAddKeyRow(def, ctx, existing, onAdd) {
+  const row = el('div', { class: 'add-key-row' });
+  const input = el('input', { type: 'text', 'data-role': 'add-key', placeholder: 'Add key…' });
+  const btn = el('button', { type: 'button', 'data-action': 'add-key' }, '+ Add');
+  const commit = () => {
+    const k = input.value.trim();
+    if (!k || existing().includes(k)) return;
+    input.value = '';
+    onAdd(k);
+  };
+  btn.addEventListener('click', commit);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); commit(); }
+  });
+  row.appendChild(input);
+  row.appendChild(btn);
+
+  const wrap = el('div');
+  wrap.appendChild(row);
+  if (def.key_catalog && ctx?.catalogs?.[def.key_catalog]) {
+    const sugg = el('div', { class: 'suggestion-row' });
+    for (const item of Array.from(ctx.catalogs[def.key_catalog]).sort()) {
+      sugg.appendChild(el('button', {
+        type: 'button',
+        class: 'suggestion-chip',
+        'data-suggestion': item,
+        onclick: () => { if (!existing().includes(item)) onAdd(item); },
+      }, item));
+    }
+    wrap.appendChild(sugg);
+  }
+  return wrap;
 }
 
 function renderText(def, initial, onChange, ctx = null) {
@@ -395,9 +439,10 @@ function renderCatalogPicker(def, initial, catalogSet, onChange, meta = null) {
   };
 }
 
-function renderDictOfNumbers(def, initial, onChange) {
+function renderDictOfNumbers(def, initial, onChange, ctx = null) {
   const errEl = makeError();
   let map = { ...(initial || {}) };
+  const root = el('div', { class: 'dict-editor' });
   const table = el('table', { class: 'dict' });
 
   function paint() {
@@ -414,16 +459,270 @@ function renderDictOfNumbers(def, initial, onChange) {
       const td = el('td');
       td.appendChild(ni);
       row.appendChild(td);
+      const rmTd = el('td');
+      rmTd.appendChild(el('button', {
+        type: 'button', class: 'chip-x',
+        'data-action': 'remove-key', 'data-key': k,
+        onclick: () => {
+          delete map[k];
+          paint();
+          onChange({ ...map });
+        },
+      }, '×'));
+      row.appendChild(rmTd);
       table.appendChild(row);
     }
   }
   paint();
-  const wrap = wrapField(def, table, errEl);
+  root.appendChild(table);
+  root.appendChild(makeAddKeyRow(def, ctx, () => Object.keys(map), (k) => {
+    map[k] = 0;
+    paint();
+    onChange({ ...map });
+  }));
+  const wrap = wrapField(def, root, errEl);
   return {
     element: wrap,
     getValue: () => ({ ...map }),
     setValue: (v) => {
       map = { ...(v || {}) };
+      paint();
+    },
+    setError: (m) => setErr(errEl, wrap, m),
+  };
+}
+
+function renderDictOfBools(def, initial, onChange, ctx = null) {
+  const errEl = makeError();
+  let map = { ...(initial || {}) };
+  const root = el('div', { class: 'dict-editor' });
+  const table = el('table', { class: 'dict' });
+
+  function paint() {
+    table.innerHTML = '';
+    for (const [k, v] of Object.entries(map)) {
+      const row = el('tr');
+      row.appendChild(el('td', {}, k));
+      const cb = el('input', { type: 'checkbox' });
+      cb.checked = !!v;
+      cb.addEventListener('change', () => {
+        map[k] = cb.checked;
+        onChange({ ...map });
+      });
+      const td = el('td');
+      td.appendChild(cb);
+      row.appendChild(td);
+      const rmTd = el('td');
+      rmTd.appendChild(el('button', {
+        type: 'button', class: 'chip-x',
+        'data-action': 'remove-key', 'data-key': k,
+        onclick: () => {
+          delete map[k];
+          paint();
+          onChange({ ...map });
+        },
+      }, '×'));
+      row.appendChild(rmTd);
+      table.appendChild(row);
+    }
+  }
+  paint();
+  root.appendChild(table);
+  root.appendChild(makeAddKeyRow(def, ctx, () => Object.keys(map), (k) => {
+    map[k] = true;
+    paint();
+    onChange({ ...map });
+  }));
+  const wrap = wrapField(def, root, errEl);
+  return {
+    element: wrap,
+    getValue: () => ({ ...map }),
+    setValue: (v) => {
+      map = { ...(v || {}) };
+      paint();
+    },
+    setError: (m) => setErr(errEl, wrap, m),
+  };
+}
+
+function renderObject(def, initial, onChange, ctx = null) {
+  const errEl = makeError();
+  const value = { ...(initial || {}) };
+  const box = el('div', { class: 'object-fields' });
+  const subFields = {};
+  for (const [name, subDef] of Object.entries(def.fields || {})) {
+    const sub = renderField(
+      { id: name, label: subDef.label || name, ...subDef },
+      value[name] ?? null,
+      (v) => {
+        value[name] = v;
+        onChange({ ...value });
+      },
+      ctx,
+    );
+    subFields[name] = sub;
+    box.appendChild(sub.element);
+  }
+  const wrap = wrapField(def, box, errEl);
+  return {
+    element: wrap,
+    getValue: () => ({ ...value }),
+    setValue: (v) => {
+      const next = v || {};
+      for (const [name, sub] of Object.entries(subFields)) {
+        value[name] = next[name] ?? null;
+        sub.setValue(next[name] ?? null);
+      }
+    },
+    setError: (m) => setErr(errEl, wrap, m),
+  };
+}
+
+function renderListOfObjects(def, initial, onChange, ctx = null) {
+  const errEl = makeError();
+  let items = Array.isArray(initial) ? initial.map((x) => ({ ...x })) : [];
+  const root = el('div', { class: 'list-of-objects' });
+
+  function neutralItem() {
+    const out = {};
+    for (const [name, subDef] of Object.entries(def.item_fields || {})) {
+      out[name] = subNeutral(subDef);
+    }
+    return out;
+  }
+
+  function subNeutral(subDef) {
+    const t = Array.isArray(subDef.type) ? subDef.type[0] : subDef.type;
+    switch (t) {
+      case 'int': case 'float': return 0;
+      case 'bool': return false;
+      case 'list_of_strings': case 'list_of_objects': return [];
+      case 'dict_of_numbers': case 'dict_of_bools': case 'dict_of_objects': case 'object': return {};
+      default: return null;
+    }
+  }
+
+  function paint() {
+    root.innerHTML = '';
+    items.forEach((item, i) => {
+      const card = el('div', { class: 'object-item', 'data-index': String(i) });
+      const head = el('div', { class: 'object-item-head' },
+        el('strong', {}, `${def.item_label || 'Item'} ${i + 1}`));
+      head.appendChild(el('button', {
+        type: 'button', class: 'chip-x',
+        'data-action': 'remove-item', 'data-index': String(i),
+        onclick: () => {
+          items.splice(i, 1);
+          paint();
+          onChange(items.map((x) => ({ ...x })));
+        },
+      }, '×'));
+      card.appendChild(head);
+      for (const [name, subDef] of Object.entries(def.item_fields || {})) {
+        const sub = renderField(
+          { id: name, label: subDef.label || name, ...subDef },
+          item[name] ?? null,
+          (v) => {
+            item[name] = v;
+            onChange(items.map((x) => ({ ...x })));
+          },
+          ctx,
+        );
+        card.appendChild(sub.element);
+      }
+      root.appendChild(card);
+    });
+    root.appendChild(el('button', {
+      type: 'button', 'data-action': 'add-item',
+      onclick: () => {
+        items.push(neutralItem());
+        paint();
+        onChange(items.map((x) => ({ ...x })));
+      },
+    }, `+ Add ${def.item_label || 'item'}`));
+  }
+  paint();
+  const wrap = wrapField(def, root, errEl);
+  return {
+    element: wrap,
+    getValue: () => items.map((x) => ({ ...x })),
+    setValue: (v) => {
+      items = Array.isArray(v) ? v.map((x) => ({ ...x })) : [];
+      paint();
+    },
+    setError: (m) => setErr(errEl, wrap, m),
+  };
+}
+
+function renderDictOfObjects(def, initial, onChange, ctx = null) {
+  const errEl = makeError();
+  let map = {};
+  for (const [k, v] of Object.entries(initial || {})) map[k] = { ...v };
+  const root = el('div', { class: 'dict-editor' });
+  const body = el('div');
+
+  function neutralItem() {
+    const out = {};
+    for (const [name, subDef] of Object.entries(def.item_fields || {})) {
+      const t = Array.isArray(subDef.type) ? subDef.type[0] : subDef.type;
+      out[name] = t === 'int' || t === 'float' ? 0 : t === 'bool' ? false : null;
+    }
+    return out;
+  }
+
+  function paint() {
+    body.innerHTML = '';
+    for (const [k, item] of Object.entries(map)) {
+      const card = el('div', { class: 'object-item', 'data-key': k });
+      const head = el('div', { class: 'object-item-head' }, el('strong', {}, k));
+      head.appendChild(el('button', {
+        type: 'button', class: 'chip-x',
+        'data-action': 'remove-key', 'data-key': k,
+        onclick: () => {
+          delete map[k];
+          paint();
+          emit();
+        },
+      }, '×'));
+      card.appendChild(head);
+      for (const [name, subDef] of Object.entries(def.item_fields || {})) {
+        const sub = renderField(
+          { id: name, label: subDef.label || name, ...subDef },
+          item[name] ?? null,
+          (v) => {
+            item[name] = v;
+            emit();
+          },
+          ctx,
+        );
+        card.appendChild(sub.element);
+      }
+      body.appendChild(card);
+    }
+  }
+  function emit() {
+    const out = {};
+    for (const [k, v] of Object.entries(map)) out[k] = { ...v };
+    onChange(out);
+  }
+  paint();
+  root.appendChild(body);
+  root.appendChild(makeAddKeyRow(def, ctx, () => Object.keys(map), (k) => {
+    map[k] = neutralItem();
+    paint();
+    emit();
+  }));
+  const wrap = wrapField(def, root, errEl);
+  return {
+    element: wrap,
+    getValue: () => {
+      const out = {};
+      for (const [k, v] of Object.entries(map)) out[k] = { ...v };
+      return out;
+    },
+    setValue: (v) => {
+      map = {};
+      for (const [k, item] of Object.entries(v || {})) map[k] = { ...item };
       paint();
     },
     setError: (m) => setErr(errEl, wrap, m),

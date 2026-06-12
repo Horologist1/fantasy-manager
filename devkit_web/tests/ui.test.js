@@ -200,3 +200,84 @@ test('enum with option_descriptions renders description below select', async () 
   f.setValue('magic');
   assert.match(desc.textContent, /Craft 45/);
 });
+
+// ---- plan 2 renderers ----
+
+test('dict_of_numbers supports adding and removing keys', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const f = renderField({ id: 'skills', type: 'dict_of_numbers' }, { Sex: 25 }, () => {});
+  const addInput = f.element.querySelector('[data-role="add-key"]');
+  const addBtn = f.element.querySelector('[data-action="add-key"]');
+  assert.ok(addInput, 'has an add-key input');
+  addInput.value = 'Combat';
+  addBtn.dispatchEvent(new window.Event('click'));
+  assert.deepEqual(f.getValue(), { Sex: 25, Combat: 0 });
+  const rm = f.element.querySelector('[data-action="remove-key"][data-key="Sex"]');
+  rm.dispatchEvent(new window.Event('click'));
+  assert.deepEqual(f.getValue(), { Combat: 0 });
+});
+
+test('dict_of_numbers shows key suggestions from key_catalog', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const ctx = { catalogs: { all_skills: new Set(['Charm', 'Combat']) } };
+  const f = renderField(
+    { id: 'skill_modifiers', type: 'dict_of_numbers', key_catalog: 'all_skills' },
+    {}, () => {}, ctx,
+  );
+  const chip = f.element.querySelector('[data-suggestion="Charm"]');
+  assert.ok(chip, 'renders suggestion chips for catalog keys');
+  chip.dispatchEvent(new window.Event('click'));
+  assert.deepEqual(f.getValue(), { Charm: 0 });
+});
+
+test('object renders subfields and round-trips values', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const def = {
+    id: 'conditions',
+    type: 'object',
+    fields: {
+      start_when: { type: 'string', label: 'Start when' },
+      stop_when: { type: 'string', label: 'Stop when' },
+    },
+  };
+  let captured = null;
+  const f = renderField(def, { start_when: 'day>3', stop_when: null }, (v) => (captured = v));
+  assert.deepEqual(f.getValue(), { start_when: 'day>3', stop_when: null });
+  const inputs = f.element.querySelectorAll('input');
+  inputs[1].value = 'day>9';
+  inputs[1].dispatchEvent(new window.Event('input'));
+  assert.equal(captured.stop_when, 'day>9');
+  assert.equal(f.getValue().stop_when, 'day>9');
+});
+
+test('list_of_objects adds and removes items', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const def = {
+    id: 'trait_chance',
+    type: 'list_of_objects',
+    item_fields: {
+      trait: { type: 'string', label: 'Trait' },
+      chance_percent: { type: 'int', label: 'Chance %' },
+    },
+  };
+  const f = renderField(def, [{ trait: 'Strong', chance_percent: 10 }], () => {});
+  assert.deepEqual(f.getValue(), [{ trait: 'Strong', chance_percent: 10 }]);
+  const addBtn = f.element.querySelector('[data-action="add-item"]');
+  addBtn.dispatchEvent(new window.Event('click'));
+  assert.equal(f.getValue().length, 2);
+  assert.deepEqual(f.getValue()[1], { trait: null, chance_percent: 0 });
+  const rm = f.element.querySelector('[data-action="remove-item"][data-index="0"]');
+  rm.dispatchEvent(new window.Event('click'));
+  assert.equal(f.getValue().length, 1);
+});
+
+test('dict_of_bools toggles and removes flags', async () => {
+  const { renderField } = await import('../src/lib/ui.js');
+  const f = renderField({ id: 'required_flags', type: 'dict_of_bools' }, { quest_done: true }, () => {});
+  assert.deepEqual(f.getValue(), { quest_done: true });
+  const addInput = f.element.querySelector('[data-role="add-key"]');
+  const addBtn = f.element.querySelector('[data-action="add-key"]');
+  addInput.value = 'other_flag';
+  addBtn.dispatchEvent(new window.Event('click'));
+  assert.deepEqual(f.getValue(), { quest_done: true, other_flag: true });
+});
