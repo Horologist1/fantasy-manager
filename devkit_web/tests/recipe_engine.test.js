@@ -60,3 +60,34 @@ test('required field blocks Next until filled', async () => {
   // still on step 1
   assert.ok(root.querySelector('[data-field="name"][aria-invalid="true"]'));
 });
+
+test('step options can be a function of (ctx, answers)', async () => {
+  const { runRecipe } = await import('../src/recipes/_engine.js');
+  const recipe = {
+    id: 'r',
+    title: 'R',
+    default_output: 'x/<modname>.json',
+    steps: [
+      { id: 'building', type: 'enum', options: ['tavern', 'farm'], default: 'tavern' },
+      {
+        id: 'profession',
+        type: 'enum',
+        options: (ctx, answers) => (answers.building === 'tavern' ? ['waitress'] : ['farmhand']),
+      },
+    ],
+    build: (a) => a,
+  };
+  const container = document.createElement('div');
+  const p = runRecipe(recipe, container, { modname: 'm', ctx: {} });
+
+  // step 1: building (default tavern) → next
+  container.querySelector('[data-action="next"]').dispatchEvent(new Event('click'));
+  // step 2: profession options resolved from answers.building
+  const sel = container.querySelector('select');
+  const opts = [...sel.options].map((o) => o.value);
+  assert.deepEqual(opts, ['waitress']);
+  container.querySelector('[data-action="next"]').dispatchEvent(new Event('click'));
+  container.querySelector('[data-action="save"]').dispatchEvent(new Event('click'));
+  const out = await p;
+  assert.equal(out.json.building, 'tavern');
+});

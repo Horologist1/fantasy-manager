@@ -43,7 +43,18 @@ export function runRecipe(recipe, container, opts = {}) {
       wrap.appendChild(el('div', { class: 'progress' },
         `Step ${index + 1} of ${recipe.steps.length}: ${step.label || step.id}`));
 
-      const field = renderField(step, answers[step.id] ?? null, (v) => {
+      // options / option_descriptions may depend on earlier answers
+      // (e.g. profession list depends on the chosen building).
+      const def = { ...step };
+      if (typeof def.options === 'function') def.options = def.options(ctx, answers);
+      if (typeof def.option_descriptions === 'function') {
+        def.option_descriptions = def.option_descriptions(ctx, answers);
+      }
+      if (def.type === 'enum' && answers[def.id] == null && def.options?.length) {
+        answers[def.id] = def.options[0];
+      }
+
+      const field = renderField(def, answers[step.id] ?? null, (v) => {
         answers[step.id] = v;
         field.setError('');
       }, ctx);
