@@ -129,12 +129,20 @@ selectBtn.addEventListener('click', async () => {
 });
 
 async function loadBundledCatalogs() {
+  // The single-file offline build (dist/FantasyManagerDevkit.html) inlines all
+  // catalog JSONs as window.__FM_BUNDLED_CATALOGS because fetch() does not
+  // work over file://. The served version fetches them as usual.
+  const inline = typeof window !== 'undefined' ? window.__FM_BUNDLED_CATALOGS : null;
   const names = ['all_traits', 'race_traits', 'all_items', 'all_buildings',
     'all_professions', 'all_skills', 'all_map_locations',
     'all_worker_names', 'all_worker_folders',
     'all_event_flags', 'names_lists', 'image_folders'];
   const out = {};
   for (const n of names) {
+    if (inline) {
+      out[n] = new Set(inline[n] || (n === 'race_traits' ? RACE_TRAITS : []));
+      continue;
+    }
     try {
       const r = await fetch(`./catalogs/${n}.json`);
       out[n] = new Set(await r.json());
@@ -145,6 +153,10 @@ async function loadBundledCatalogs() {
   out.meta = {};
   for (const m of ['trait_meta', 'item_meta', 'building_meta',
     'building_professions', 'building_full']) {
+    if (inline) {
+      out.meta[m] = inline[m] || {};
+      continue;
+    }
     try {
       const r = await fetch(`./catalogs/${m}.json`);
       out.meta[m] = await r.json();
