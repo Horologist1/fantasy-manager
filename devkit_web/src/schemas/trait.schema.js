@@ -24,6 +24,8 @@ export const trait_schema = {
     only_assigned: { type: 'bool' },
     gender_restriction: { type: ['string', 'null'] },
     on_expire: { type: 'object' },
+    reform_on_death: { type: 'bool' },
+    skill_caps: { type: 'dict_of_numbers', key_catalog: 'all_skills' },
     // Some shipped traits carry these at top level (legacy placement);
     // daily_effects values may be numbers or {min, max} ranges.
     attribute_caps: { type: 'dict_of_numbers' },
@@ -57,6 +59,12 @@ export const trait_schema = {
         allIn(ctx.catalogs.all_skills, Object.keys(e.modifiers?.skill_modifiers || {})),
       severity: 'warning',
       message: 'modifiers.skill_modifiers uses an unknown skill name',
+    },
+    {
+      id: 'skill_cap_keys_exist',
+      check: (e, ctx) => allIn(ctx.catalogs.all_skills, Object.keys(e.skill_caps || {})),
+      severity: 'warning',
+      message: 'skill_caps uses an unknown skill name',
     },
   ],
   legacy: {},

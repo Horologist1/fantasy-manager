@@ -55,6 +55,17 @@ test('trait with unknown conflict warns', () => {
   assert.ok(r.warnings.find((w) => w.rule === 'conflicts_exist'));
 });
 
+test('trait with reform_on_death and skill_caps validates', () => {
+  const t = { name: 'Blob', reform_on_death: true, skill_caps: { Combat: 50 } };
+  assert.deepEqual(validateEntry(t, trait_schema, ctx()).errors, []);
+});
+
+test('trait skill_caps with unknown skill warns', () => {
+  const t = { name: 'Blob', skill_caps: { Nope: 50 } };
+  const r = validateEntry(t, trait_schema, ctx());
+  assert.ok(r.warnings.find((w) => w.rule === 'skill_cap_keys_exist'));
+});
+
 // ---- item ----
 
 test('valid item has no errors', () => {

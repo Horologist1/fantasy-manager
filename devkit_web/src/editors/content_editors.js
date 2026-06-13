@@ -22,12 +22,22 @@ export const trait_editor_sections = [
       field(trait_schema, 'nsfw', { label: 'NSFW' }),
       field(trait_schema, 'duration', { label: 'Duration (days, 0 = permanent)' }),
       field(trait_schema, 'gender_restriction', { label: 'Gender restriction' }),
+      field(trait_schema, 'reform_on_death', {
+        label: 'Reforms on death',
+        hint: 'If true, the worker revives (gaining the Reforming debuff) instead of dying when health hits 0.',
+      }),
     ],
   },
   {
     id: 'modifiers',
     label: 'Modifiers',
-    fields: [field(trait_schema, 'modifiers', { label: 'Modifiers' })],
+    fields: [
+      field(trait_schema, 'modifiers', { label: 'Modifiers' }),
+      field(trait_schema, 'skill_caps', {
+        label: 'Skill caps',
+        hint: 'Per-skill hard ceiling (e.g. Clever 50). The skill can never be trained above this.',
+      }),
+    ],
   },
   {
     id: 'relations',
