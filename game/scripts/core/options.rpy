@@ -206,6 +206,9 @@ init python:
     ## This ensures the entire devkit folder is excluded from builds
     build.classify('devkit/**', None)
     build.classify('devkit/', None)
+    ## Exclude the browser devkit (devkit_web), including node_modules and the built bundle.
+    build.classify('devkit_web/**', None)
+    build.classify('devkit_web/', None)
 
     ## Exclude local AI/tooling metadata and debug artifacts from releases.
     build.classify('AGENTS.md', None)
