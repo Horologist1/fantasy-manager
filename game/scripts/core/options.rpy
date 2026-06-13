@@ -209,6 +209,10 @@ init python:
     ## Exclude the browser devkit (devkit_web), including node_modules and the built bundle.
     build.classify('devkit_web/**', None)
     build.classify('devkit_web/', None)
+    ## Exclude developer maintenance scripts + their compiled bytecode (offline JSON tooling,
+    ## never used at runtime; .py patchers + .pyc blobs can trip download-scanner heuristics).
+    build.classify('tools/**', None)
+    build.classify('tools/', None)
 
     ## Exclude local AI/tooling metadata and debug artifacts from releases.
     build.classify('AGENTS.md', None)
