@@ -1884,7 +1884,7 @@ init python:
                                 modify_base_skill(worker, skill_name, int(delta))
                             except Exception:
                                 current = int(worker.get("skills", {}).get(skill_name, 0))
-                                worker.setdefault("skills", {})[skill_name] = max(0, min(SKILL_MAX, current + int(delta)))
+                                worker.setdefault("skills", {})[skill_name] = max(0, min(get_skill_cap(worker, skill_name), current + int(delta)))
                     else:
                         renpy.log(f"WARNING: use_item skill_modifiers for '{item_id}' is not a dict: {type(effect_value)}")
                 except Exception:
@@ -2896,13 +2896,17 @@ init python:
             skill_names_list = list(worker.get("skills", {}).keys())
             if skill_names_list:
                 exclude = [s for s in dist.keys() if s != "random_one"]
-                candidates = [s for s in skill_names_list if s not in exclude]
+                # random_one must never land on a placeholder/hidden skill (e.g. "Specialty N").
+                # is_skill_visible filters those out and also keeps the pick inside the current
+                # SFW/NSFW skill set. Fallback re-filters so placeholders can't sneak back in.
+                candidates = [s for s in skill_names_list if s not in exclude and is_skill_visible(s)]
                 if not candidates:
-                    candidates = skill_names_list
-                chosen = random.choice(candidates)
-                worker["skill_uses"][chosen] = worker["skill_uses"].get(chosen, 0) + uses_random
-                applied[chosen] = applied.get(chosen, 0) + uses_random
-                renpy.log(f"Academy training: {worker.get('name','Unknown')} +{uses_random} uses to {chosen} (random_one)")
+                    candidates = [s for s in skill_names_list if is_skill_visible(s)]
+                if candidates:
+                    chosen = random.choice(candidates)
+                    worker["skill_uses"][chosen] = worker["skill_uses"].get(chosen, 0) + uses_random
+                    applied[chosen] = applied.get(chosen, 0) + uses_random
+                    renpy.log(f"Academy training: {worker.get('name','Unknown')} +{uses_random} uses to {chosen} (random_one)")
         for skill_name, uses in dist.items():
             if skill_name == "random_one":
                 continue
@@ -4088,6 +4092,14 @@ init python:
         dead_names = []
         for worker in workers:
             if worker["health"] <= 0:
+                # Slimes reform from a puddle instead of dying - but only if not already mid-reform.
+                already_reforming = "Reforming" in (worker.get("traits") or [])
+                if worker_can_reform(worker) and not already_reforming:
+                    worker["health"] = max(1, calculate_max_health(worker) // 4)
+                    add_trait_with_duration(worker, "Reforming", 3)
+                    renpy.notify(f"{worker['name']} reformed from a puddle!")
+                    renpy.log(f"{worker['name']} reformed instead of dying (health -> {worker['health']})")
+                    continue
                 unassign_worker(worker)
                 to_remove.append(worker)
                 dead_names.append(worker["name"])

@@ -102,7 +102,8 @@
   {
     "name": "Clever",
     "conflicts": [
-      "Dumb"
+      "Dumb",
+      "Slime"
     ],
     "modifiers": {
       "skill_modifiers": {
@@ -162,7 +163,8 @@
   {
     "name": "Wise",
     "conflicts": [
-      "Dumb"
+      "Dumb",
+      "Slime"
     ],
     "modifiers": {
       "skill_modifiers": {
@@ -412,6 +414,27 @@
     "requires_traits": [],
     "attribute_minimums": {},
     "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
+  },
+  {
+    "name": "Reforming",
+    "conflicts": [],
+    "modifiers": {
+      "earnings_multiplier": 0.5,
+      "skill_modifiers": {
+        "Sex": -20, "Anal": -20, "BDSM": -20, "Hand": -20, "Oral": -20, "Homo": -20,
+        "Special": -20, "Group": -20, "Extreme": -20, "Striptease": -20,
+        "Combat": -20, "Clever": -20, "Charm": -20, "Service": -20, "Agility": -20, "Craft": -20
+      }
+    },
+    "description": "Still pulling herself back together after being undone. Sluggish, soft and barely functional until she sets again. [-50% $, -20 to all skills]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 3,
     "on_expire": {},
     "only_assigned": false
   },
@@ -1219,6 +1242,9 @@
   },
   {
     "name": "Nerd",
+    "conflicts": [
+      "Slime"
+    ],
     "modifiers": {
       "skill_modifiers": {
         "Clever": 3,

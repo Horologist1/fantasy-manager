@@ -45,6 +45,7 @@ export const daily_story_schema = {
     nsfw_only: { type: 'bool' },
     skill_options: { type: 'list_of_strings', catalog: 'all_skills' },
     event_image_skill_exclude: { type: 'list_of_strings' },
+    image_fallback_patterns: { type: 'list_of_strings' },
     relevant_traits: { type: 'list_of_strings', catalog: 'all_traits' },
     positive_traits: { type: 'dict_of_numbers', key_catalog: 'all_traits' },
     negative_traits: { type: 'dict_of_numbers', key_catalog: 'all_traits' },

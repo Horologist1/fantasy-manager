@@ -257,6 +257,11 @@ test('daily story with unknown required trait errors', () => {
   assert.ok(r.errors.find((x) => x.rule === 'traits_exist'));
 });
 
+test('daily story with image_fallback_patterns validates', () => {
+  const s = { ...validStory(), image_fallback_patterns: ['beast', 'extreme'] };
+  assert.deepEqual(validateEntry(s, daily_story_schema, ctx()).errors, []);
+});
+
 // ---- building ----
 
 test('valid building has no errors', () => {

@@ -356,6 +356,11 @@ init python:
         success_image = event.get("success_image")
         failure_image = event.get("failure_image")
         renpy.log(f"Story image: {story_image}, Success image: {success_image}, Failure image: {failure_image}")
+
+        # Optional per-event image fallback: when set (e.g. ["beast", "extreme"]), skill-based image
+        # search uses these patterns IN ORDER instead of the rolled skill's patterns. Lets monster
+        # capture stories fall back JSON image -> beast -> extreme. Events without the field are unchanged.
+        event_image_fallback_patterns = event.get("image_fallback_patterns") if hasattr(event, "get") else None
         
         # Debug the actual outcome value - matching outcome_key format from event_daily_exec.rpy
         is_success = outcome in ["success", "critical_success"]
@@ -525,7 +530,7 @@ init python:
         if trait_prefixes and skill_name is not None:
             renpy.log(f"Worker has relevant traits, trying skill-based images with traits: {trait_prefixes}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
-            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
             
             for skill_pattern_name in skill_patterns:
                 for prefix in trait_prefixes:
@@ -580,7 +585,7 @@ init python:
         if skill_name is not None:
             renpy.log(f"No trait-specific images found, trying worker folder without traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
-            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
             trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
             
             for skill_pattern_name in skill_patterns:
@@ -781,7 +786,7 @@ init python:
         if trait_prefixes and skill_name is not None:
             renpy.log(f"No worker folder images found, trying default folder with traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
-            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
             
             for skill_pattern_name in skill_patterns:
                 for prefix in trait_prefixes:
@@ -832,7 +837,7 @@ init python:
         if skill_name is not None:
             renpy.log(f"No worker folder images found, trying default folder without traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
-            skill_patterns = get_skill_search_patterns(skill_name_for_search)
+            skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
             trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
             
             for skill_pattern_name in skill_patterns:

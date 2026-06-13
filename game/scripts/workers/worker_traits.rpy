@@ -553,6 +553,23 @@ init python:
             cap = max(0, (cap or 100) - 10 * mgmt.get("servant_training", 0))
         return cap
 
+    def get_skill_cap(worker, skill_name):
+        """Return the max for a base skill given the worker's traits. Defaults to SKILL_MAX.
+        A trait may declare {"skill_caps": {"Clever": 50}}. Most restrictive cap wins."""
+        cap = None
+        for trait_name in (worker.get("traits") or []):
+            trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
+            if not trait_def:
+                trait_def = get_trait_definition(trait_name)  # NSFW/event-assigned traits live in the raw cache
+            if not trait_def:
+                continue
+            caps = trait_def.get("skill_caps", {})
+            if hasattr(caps, "get") and skill_name in caps:
+                trait_cap = caps[skill_name]
+                if cap is None or trait_cap < cap:
+                    cap = trait_cap
+        return SKILL_MAX if cap is None else min(SKILL_MAX, cap)
+
     def get_attribute_minimum(worker, attribute):
         """Get the minimum for an attribute based on worker's traits."""
         minimum = None

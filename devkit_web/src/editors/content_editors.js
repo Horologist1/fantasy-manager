@@ -236,6 +236,14 @@ export const daily_story_editor_sections = [
     fields: [
       field(daily_story_schema, 'story_image', { label: 'Story image' }),
       field(daily_story_schema, 'failure_image', { label: 'Failure image' }),
+      field(daily_story_schema, 'image_fallback_patterns', {
+        label: 'Image fallback patterns',
+        hint: 'If set (e.g. beast, extreme), the daily-report image falls back to these IN ORDER instead of the rolled skill. Story/success image still goes first. Empty = use the rolled skill.',
+      }),
+      field(daily_story_schema, 'event_image_skill_exclude', {
+        label: 'Image skill exclude',
+        hint: 'Skills to skip when picking the skill-based image; the first non-excluded skill_option is used instead. Leave empty to use the rolled skill.',
+      }),
       field(daily_story_schema, 'loot', { label: 'Loot' }),
     ],
   },

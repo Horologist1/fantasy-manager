@@ -4327,11 +4327,15 @@
             "descriptions": {
               "failure": "{worker_name} attempts to capture a monster but the creature proves too wild and dangerous. The failed expedition sets back the guild's monster acquisition efforts and leaves the team wounded and discouraged.",
               "mediocre": "{worker_name} makes some progress in monster capture operations. While no new creatures are successfully brought back, valuable intelligence is gathered and preparations are made for future capture attempts.",
-              "success": "{worker_name} advances the guild's monster servant program significantly. Either captures a new creature or makes extraordinary progress in taming and training existing monsters, bringing the guild closer to its goals.",
-              "critical_success": "{worker_name} achieves a breakthrough in monster capture operations. Successfully brings back a powerful new servant creature or completes the training of multiple monsters, dramatically expanding the guild's supernatural workforce."
+              "success": "{worker_name} runs a clean, disciplined hunt, wearing down a wild creature with skill and nerve. A strong day's work that pushes the guild's monster program forward and leaves the team poised to haul something home when the chance comes.",
+              "critical_success": "{worker_name} pulls off a textbook operation - reading the beast, springing the rig, and pinning it without a scratch on the team. The kind of flawless hunt tamers retell for years, and exactly the sort of day a fearsome catch could be dragged back in chains."
             },
             "story_image": "monster_taming_combat",
             "failure_image": "monster_taming_combat_failure",
+            "image_fallback_patterns": [
+              "beast",
+              "extreme"
+            ],
             "consequences": {
               "failure": {
                 "energy": -4,
@@ -4397,11 +4401,15 @@
             "descriptions": {
               "failure": "{worker_name} ventures into the wilderness to lure a wild creature with seductive displays. But the seduction works too well - instead of becoming docile, the beast's lust turns aggressive. {worker_name} loses control as the creature mounts them roughly, taking what it wants before disappearing into the forest. No servant gained, only bruises and shame.",
               "mediocre": "{worker_name} finds a suitable monster and begins an enticing display - slow movements, exposed skin, alluring scents. The creature approaches, sniffing curiously, clearly attracted but ultimately too wild to be tamed. It circles {worker_name} with obvious desire before wandering off, leaving the seduction incomplete.",
-              "success": "{worker_name} locates a territorial werewolf and begins an irresistible seduction dance. The beast's rage transforms into fascination as {worker_name} moves sensually, teasing with glimpses of bare flesh. The creature becomes entranced, following every movement with hungry eyes. By maintaining the tension of unfulfilled desire, {worker_name} leads the captivated beast back - a new devoted servant, forever chasing the promise of pleasure.",
-              "critical_success": "{worker_name} achieves legendary status among monster tamers. A fearsome dragon-kin discovers {worker_name} performing an ancient fertility dance in its lair. The creature is utterly mesmerized, its predatory instincts overwritten by overwhelming attraction. {worker_name} teases the beast to the edge of madness with promises of intimacy, binding it through desperate unfulfilled desire. The creature now follows with obsessive devotion, forever addicted to {worker_name}'s presence."
+              "success": "{worker_name} locates a territorial werewolf and begins an irresistible seduction dance. The beast's rage transforms into fascination as {worker_name} moves sensually, teasing with glimpses of bare flesh. The creature becomes entranced, following every movement with hungry eyes. By maintaining the tension of unfulfilled desire, {worker_name} keeps the captivated beast circling close, hungry and pliant, chasing the promise of pleasure.",
+              "critical_success": "{worker_name} achieves legendary status among monster tamers. A fearsome dragon-kin discovers {worker_name} performing an ancient fertility dance in its lair. The creature is utterly mesmerized, its predatory instincts overwritten by overwhelming attraction. {worker_name} teases the beast to the edge of madness with promises of intimacy, leaving it trembling with desperate, unfulfilled need - utterly pliable to anyone who can keep that craving alive."
             },
             "story_image": "monster_taming_seduction",
             "failure_image": "monster_taming_seduction_failure",
+            "image_fallback_patterns": [
+              "beast",
+              "extreme"
+            ],
             "consequences": {
               "failure": {
                 "energy": -4,
@@ -4478,6 +4486,10 @@
             },
             "story_image": "monster_taming_capture_rig_prep",
             "failure_image": "monster_taming_capture_rig_prep_failure",
+            "image_fallback_patterns": [
+              "beast",
+              "extreme"
+            ],
             "consequences": {
               "failure": {
                 "energy": -4,
@@ -4532,8 +4544,8 @@
             "descriptions": {
               "failure": "{worker_name}'s pheromone-drenched approach confuses a territorial drake into a mating display that ends with {worker_name} pinned under three hundred pounds of amorous scales. The handlers have to pry them apart, and the creature is more agitated than before. No taming today.",
               "mediocre": "{worker_name} gets close enough to a wild beast to begin the bonding ritual, but the restless energy makes the movements too jerky, too unpredictable. The creature circles warily, occasionally nuzzling before snapping and retreating. Half-tamed at best — it'll need another session.",
-              "success": "{worker_name}'s primal energy resonates with the creature on an instinctive level. The beast approaches without fear, drawn by something it recognises in {worker_name}'s scent and body language. The bonding clicks into place faster than anyone expected. A clean capture with minimal sedative.",
-              "critical_success": "{worker_name} walks into the wild den radiating such raw, animalistic authority that the target creature simply... submits. No fight, no chase, no sedative. It follows {worker_name} home like it's been waiting its whole life for someone who speaks its language. The handlers watch in stunned silence. A perfect bond."
+              "success": "{worker_name}'s primal energy resonates with the creature on an instinctive level. The beast approaches without fear, drawn by something it recognises in {worker_name}'s scent and body language. The bonding clicks into place faster than anyone expected, and the beast works through the full handling routine without panic. A flawless taming session that brings a future capture much closer.",
+              "critical_success": "{worker_name} walks into the wild den radiating such raw, animalistic authority that the target creature simply... submits. No fight, no chase, no sedative. It trails {worker_name} around the den like it has waited its whole life for someone who speaks its language, calm and pliant through every drill. The handlers watch in stunned silence. The pens have never been this close to a real bond."
             },
             "earnings": {
               "success": "50 + skill * 2",
@@ -4573,6 +4585,10 @@
             },
             "story_image": "monster_taming_libido20_wild_bond",
             "failure_image": "monster_taming_libido20_wild_bond_failure",
+            "image_fallback_patterns": [
+              "beast",
+              "extreme"
+            ],
             "positive_traits": {
               "Nympho": 3,
               "High Libido": 3,

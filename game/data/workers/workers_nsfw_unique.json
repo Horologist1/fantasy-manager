@@ -384,5 +384,52 @@
         "description": "An elven scholar whose careful intellect masks a slow-burning sensuality - the sort to recite poetry in your ear and mean every word of it.",
         "gender": "male",
         "comfort_desired": 4
+    },
+    {
+        "name": "Nuphar",
+        "folder": "nuphar",
+        "cost": 1500,
+        "nsfw": true,
+        "unique": true,
+        "encounter_only": true,
+        "monster": true,
+        "procedural": false,
+        "skills": {
+            "Sex": 45,
+            "Anal": 38,
+            "BDSM": 25,
+            "Hand": 44,
+            "Oral": 42,
+            "Homo": 30,
+            "Special": 40,
+            "Group": 40,
+            "Extreme": 43,
+            "Striptease": 33,
+            "Combat": 32,
+            "Clever": 16,
+            "Charm": 28,
+            "Service": 16,
+            "Agility": 48,
+            "Craft": 10,
+            "Specialty 4": 24,
+            "Specialty 5": 22,
+            "Specialty 6": 26,
+            "Specialty 7": 20,
+            "Specialty 8": 24,
+            "Specialty 9": 28,
+            "Specialty 10": 22,
+            "Specialty 11": 20,
+            "Specialty 12": 24
+        },
+        "traits": [
+            "Slime",
+            "Dumb",
+            "Flexible",
+            "Obedient",
+            "Open Minded"
+        ],
+        "description": "A translucent slime girl with a simple mind. What she lacks in wits she more than makes up in resilience - no matter how badly she is broken apart, she always pulls herself back together.",
+        "gender": "female",
+        "comfort_desired": 1
     }
 ]

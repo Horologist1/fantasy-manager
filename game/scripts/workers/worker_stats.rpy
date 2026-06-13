@@ -515,17 +515,19 @@ init python:
         worker["daily_sexual_work"] = 0
 
     def modify_base_skill(worker, skill_name, change):
-        """Modify a base skill while ensuring it doesn't exceed SKILL_MAX (100)."""
+        """Modify a base skill, clamped to the worker's per-trait cap (default SKILL_MAX)."""
         current = worker["skills"].get(skill_name, 0)
-        new_value = max(0, min(SKILL_MAX, current + change))  # Cap between 0 and 100
+        cap = get_skill_cap(worker, skill_name)
+        new_value = max(0, min(cap, current + change))  # Clamp between 0 and the per-trait cap
         worker["skills"][skill_name] = new_value
-        renpy.log(f"Modified {skill_name} for {worker.get('name', 'Unknown')}: {current} -> {new_value} (change: {change})")
+        renpy.log(f"Modified {skill_name} for {worker.get('name', 'Unknown')}: {current} -> {new_value} (change: {change}, cap: {cap})")
         return new_value
 
     def set_base_skill(worker, skill_name, value):
-        """Set a base skill while ensuring it doesn't exceed SKILL_MAX (100)."""
-        capped_value = max(0, min(SKILL_MAX, value))  # Cap between 0 and 100
+        """Set a base skill, clamped to the worker's per-trait cap (default SKILL_MAX)."""
+        cap = get_skill_cap(worker, skill_name)
+        capped_value = max(0, min(cap, value))  # Clamp between 0 and the per-trait cap
         worker["skills"][skill_name] = capped_value
-        renpy.log(f"Set {skill_name} for {worker.get('name', 'Unknown')} to {capped_value} (requested: {value})")
+        renpy.log(f"Set {skill_name} for {worker.get('name', 'Unknown')} to {capped_value} (requested: {value}, cap: {cap})")
         return capped_value
 

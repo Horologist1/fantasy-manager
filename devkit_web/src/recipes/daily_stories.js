@@ -37,6 +37,8 @@ function storySteps() {
       hint: 'Failure pays 0, mediocre pays half, critical pays +50%.' },
     { id: 'weight', type: 'int', label: 'Story weight', default: 5, min: 1,
       hint: 'Higher weight = picked more often vs other stories of this job.' },
+    { id: 'image_fallback_patterns', type: 'list_of_strings', label: 'Image fallback patterns (optional)', default: [],
+      hint: 'If set (e.g. beast, extreme), the daily-report image falls back to these IN ORDER instead of the rolled skill. Leave empty to use the rolled skill.' },
     ...requirementSteps(),
   ];
 }
@@ -76,6 +78,7 @@ export function buildStory(a) {
     consequences: neutralConsequences(),
     story_image: null,
     failure_image: null,
+    image_fallback_patterns: a.image_fallback_patterns || [],
     loot: { rolls: 0, bonus_items: [] },
   };
   return story;

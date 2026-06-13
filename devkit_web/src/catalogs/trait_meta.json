@@ -95,6 +95,10 @@
     "description": "Permanent scarring that slightly reduces charm effectiveness. [-2 Striptease]",
     "nsfw": false
   },
+  "Reforming": {
+    "description": "Still pulling herself back together after being undone. Sluggish, soft and barely functional until she sets again. [-50% $, -20 to all skills]",
+    "nsfw": false
+  },
   "Arena Champion": {
     "description": "Crowned by the sands after five special match victories. +5 Combat, +5 max Health, +1 Energy Regen. If defeated in a special match, this trait is lost instead of the fighter's life.",
     "nsfw": false
@@ -498,6 +502,10 @@
   "Half-Breed": {
     "description": "They are of mixed heritage, making them exotic and highly sought after. [+15% $]",
     "nsfw": false
+  },
+  "Slime": {
+    "description": "A gelatinous creature: her fluid body molds to any shape, but her mind never quite sets. Almost impossible to truly destroy - cut her apart and she just pools back together. [+1 Health Regen, +15 Joy, +3 Extreme; reforms instead of dying; Clever capped at 50]",
+    "nsfw": true
   },
   "Badly Burnt": {
     "description": "Severe burns requiring 7 days recovery. Suppresses vitality and regeneration. After recovery, gains Scarred trait. (Assigned by events only.)",

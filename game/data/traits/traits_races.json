@@ -283,5 +283,26 @@
     "duration": 0,
     "on_expire": {},
     "only_assigned": false
+  },
+  {
+    "name": "Slime",
+    "conflicts": ["Human", "Elf", "Dwarf", "Orc", "Ogre", "Demon", "Angel", "Goblin", "Furry", "Transformed", "Clever", "Wise", "Nerd"],
+    "modifiers": {
+      "skill_modifiers": { "Extreme": 3 },
+      "health_regeneration": 1,
+      "joy": 15
+    },
+    "reform_on_death": true,
+    "skill_caps": { "Clever": 50 },
+    "nsfw": true,
+    "description": "A gelatinous creature: her fluid body molds to any shape, but her mind never quite sets. Almost impossible to truly destroy - cut her apart and she just pools back together. [+1 Health Regen, +15 Joy, +3 Extreme; reforms instead of dying; Clever capped at 50]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
   }
 ]

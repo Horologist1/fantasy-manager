@@ -791,5 +791,49 @@
         "description": "A studious elven worker with the unhurried calm of a long-lived race, suited to roles that reward intellect and grace.",
         "gender": "male",
         "comfort_desired": 1
+    },
+    {
+        "name": "Slime",
+        "folder": "nuphar",
+        "cost": 1100,
+        "nsfw": true,
+        "unique": false,
+        "encounter_only": true,
+        "monster": true,
+        "procedural": false,
+        "skills": {
+            "Sex": 37,
+            "Anal": 30,
+            "BDSM": 17,
+            "Hand": 36,
+            "Oral": 34,
+            "Homo": 22,
+            "Special": 32,
+            "Group": 32,
+            "Extreme": 35,
+            "Striptease": 25,
+            "Combat": 24,
+            "Clever": 14,
+            "Charm": 20,
+            "Service": 12,
+            "Agility": 40,
+            "Craft": 8,
+            "Specialty 4": 16,
+            "Specialty 5": 14,
+            "Specialty 6": 18,
+            "Specialty 7": 12,
+            "Specialty 8": 16,
+            "Specialty 9": 20,
+            "Specialty 10": 14,
+            "Specialty 11": 12,
+            "Specialty 12": 16
+        },
+        "names_list": "fantasy_female",
+        "traits": [
+            "Slime"
+        ],
+        "description": "A wild slime captured from the marshes - docile, simple-minded and all but indestructible.",
+        "gender": "female",
+        "comfort_desired": 1
     }
 ]
