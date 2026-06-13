@@ -1,3 +1,9 @@
 # Ignore worker images
 game/images/workers/
 
+# Android signing keys / build config — regenerate locally, never commit (contain secrets)
+*.keystore
+*.jks
+android.json
+keystore.properties
+local.properties
