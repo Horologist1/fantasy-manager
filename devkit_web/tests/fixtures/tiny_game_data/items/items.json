@@ -1,0 +1,7 @@
+{
+  "items": [
+    { "id": "potion_minor", "name": "Minor Potion", "type": "consumable", "price": 50 },
+    { "id": "sword_basic", "name": "Basic Sword", "type": "weapon", "price": 200 }
+  ],
+  "excluded_from_shops": []
+}
