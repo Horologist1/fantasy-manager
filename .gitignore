@@ -7,3 +7,13 @@ game/images/workers/
 android.json
 keystore.properties
 local.properties
+
+# IDE / AI tooling — not needed in the public repo
+.claude/
+.cursor/
+
+# Developer maintenance scripts — offline JSON tooling, not needed at runtime
+tools/
+
+# Browser devkit — modding tool, distributed separately
+devkit_web/

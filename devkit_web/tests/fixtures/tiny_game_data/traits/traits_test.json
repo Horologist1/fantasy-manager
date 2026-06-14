@@ -1,5 +1,0 @@
-[
-  { "name": "Human", "description": "race", "modifiers": {}, "nsfw": false },
-  { "name": "Elf", "description": "race", "modifiers": {}, "nsfw": false },
-  { "name": "Graceful", "description": "personality", "modifiers": {}, "nsfw": false }
-]
