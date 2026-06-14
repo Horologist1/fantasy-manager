@@ -230,6 +230,9 @@ init python:
     build.classify('errors.txt', None)
     build.classify('log.txt', None)
     build.classify('traceback.txt', None)
+    build.classify('**.tab', None)
+    build.classify('_fix.py', None)
+    build.classify('temp_original.rpy', None)
 
     ## Exclude Android signing/config files from PC distributions.
     build.classify('android.json', None)
