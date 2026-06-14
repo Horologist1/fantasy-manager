@@ -1,5 +1,6 @@
-# Ignore worker images
+# Ignore explicit images — not hosted on public repos
 game/images/workers/
+game/images/yvara/
 
 # Android signing keys / build config — regenerate locally, never commit (contain secrets)
 *.keystore
