@@ -17,3 +17,11 @@ tools/
 
 # Desktop devkit (compiled editor exe) — distributed separately
 devkit/
+
+# Stray dev scripts and runtime logs
+AGENTS.md
+_fix.py
+errors.txt
+log.txt
+claude-*.log
+*.log
