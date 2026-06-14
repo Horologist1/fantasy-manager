@@ -431,5 +431,52 @@
         "description": "A translucent slime girl with a simple mind. What she lacks in wits she more than makes up in resilience - no matter how badly she is broken apart, she always pulls herself back together.",
         "gender": "female",
         "comfort_desired": 1
+    },
+    {
+        "name": "Sage",
+        "folder": "sage",
+        "cost": 1400,
+        "nsfw": true,
+        "unique": true,
+        "encounter_only": true,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 44,
+            "Anal": 35,
+            "BDSM": 28,
+            "Hand": 40,
+            "Oral": 38,
+            "Homo": 30,
+            "Special": 32,
+            "Group": 30,
+            "Extreme": 24,
+            "Striptease": 48,
+            "Combat": 36,
+            "Clever": 50,
+            "Charm": 55,
+            "Service": 46,
+            "Agility": 40,
+            "Craft": 38,
+            "Specialty 4": 32,
+            "Specialty 5": 30,
+            "Specialty 6": 28,
+            "Specialty 7": 32,
+            "Specialty 8": 30,
+            "Specialty 9": 28,
+            "Specialty 10": 32,
+            "Specialty 11": 30,
+            "Specialty 12": 28
+        },
+        "traits": [
+            "Human",
+            "Charismatic",
+            "Charming",
+            "Clever",
+            "Idol"
+        ],
+        "description": "A wandering bard whose silver tongue and irresistible charm have earned him fame — and a reputation in private chambers across the realm.",
+        "gender": "male",
+        "comfort_desired": 3
     }
 ]

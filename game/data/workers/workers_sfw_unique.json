@@ -98,7 +98,7 @@
         "comfort_desired": 4
     },
     {
-        "name": "Sage",
+        "name": "Fern",
         "folder": "violet",
         "cost": 1300,
         "nsfw": false,
@@ -433,5 +433,52 @@
         "description": "An elven scholar of measured words and patient curiosity, well-suited to roles where wit and tact matter more than brawn.",
         "gender": "male",
         "comfort_desired": 4
+    },
+    {
+        "name": "Sage",
+        "folder": "sage",
+        "cost": 1400,
+        "nsfw": false,
+        "unique": true,
+        "encounter_only": true,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 30,
+            "Anal": 24,
+            "BDSM": 22,
+            "Hand": 28,
+            "Oral": 26,
+            "Homo": 24,
+            "Special": 26,
+            "Group": 24,
+            "Extreme": 20,
+            "Striptease": 44,
+            "Combat": 35,
+            "Clever": 48,
+            "Charm": 52,
+            "Service": 46,
+            "Agility": 38,
+            "Craft": 36,
+            "Specialty 4": 28,
+            "Specialty 5": 26,
+            "Specialty 6": 24,
+            "Specialty 7": 28,
+            "Specialty 8": 26,
+            "Specialty 9": 24,
+            "Specialty 10": 28,
+            "Specialty 11": 26,
+            "Specialty 12": 24
+        },
+        "traits": [
+            "Human",
+            "Charismatic",
+            "Charming",
+            "Clever",
+            "Idol"
+        ],
+        "description": "A wandering bard whose silver tongue and quick wit have earned him fame across the land.",
+        "gender": "male",
+        "comfort_desired": 3
     }
 ]

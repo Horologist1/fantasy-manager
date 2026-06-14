@@ -835,5 +835,50 @@
         "description": "A wild slime captured from the marshes - docile, simple-minded and all but indestructible.",
         "gender": "female",
         "comfort_desired": 1
+    },
+    {
+        "name": "Dorian",
+        "folder": "sage",
+        "cost": 1200,
+        "nsfw": true,
+        "unique": false,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 30,
+            "Anal": 24,
+            "BDSM": 20,
+            "Hand": 30,
+            "Oral": 28,
+            "Homo": 22,
+            "Special": 24,
+            "Group": 22,
+            "Extreme": 16,
+            "Striptease": 34,
+            "Combat": 24,
+            "Clever": 34,
+            "Charm": 36,
+            "Service": 34,
+            "Agility": 26,
+            "Craft": 24,
+            "Specialty 4": 24,
+            "Specialty 5": 22,
+            "Specialty 6": 20,
+            "Specialty 7": 24,
+            "Specialty 8": 22,
+            "Specialty 9": 20,
+            "Specialty 10": 24,
+            "Specialty 11": 22,
+            "Specialty 12": 20
+        },
+        "names_list": "western_male",
+        "traits": [
+            "Human",
+            "Charismatic"
+        ],
+        "description": "A charming bard who knows how to read a room — and leave a lasting impression in it.",
+        "gender": "male",
+        "comfort_desired": 2
     }
 ]

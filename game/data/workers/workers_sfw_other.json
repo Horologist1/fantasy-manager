@@ -395,5 +395,50 @@
         "description": "A studious elven worker with an eye for detail, useful in roles that reward patience and intellect.",
         "gender": "male",
         "comfort_desired": 1
+    },
+    {
+        "name": "Aldric",
+        "folder": "sage",
+        "cost": 1000,
+        "nsfw": false,
+        "unique": false,
+        "encounter_only": true,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 14,
+            "Anal": 12,
+            "BDSM": 10,
+            "Hand": 14,
+            "Oral": 12,
+            "Homo": 10,
+            "Special": 12,
+            "Group": 10,
+            "Extreme": 8,
+            "Striptease": 24,
+            "Combat": 20,
+            "Clever": 28,
+            "Charm": 30,
+            "Service": 28,
+            "Agility": 22,
+            "Craft": 20,
+            "Specialty 4": 16,
+            "Specialty 5": 14,
+            "Specialty 6": 12,
+            "Specialty 7": 16,
+            "Specialty 8": 14,
+            "Specialty 9": 12,
+            "Specialty 10": 16,
+            "Specialty 11": 14,
+            "Specialty 12": 12
+        },
+        "names_list": "western_male",
+        "traits": [
+            "Human",
+            "Charismatic"
+        ],
+        "description": "A traveling bard who makes a living entertaining taverns and noble courts with song and story.",
+        "gender": "male",
+        "comfort_desired": 2
     }
 ]

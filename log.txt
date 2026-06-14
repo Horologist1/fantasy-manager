@@ -1,19 +1,19 @@
-2026-05-17 03:44:07 UTC
+2026-06-13 18:16:32 UTC
 Windows-10-10.0.26100
 Ren'Py 8.3.7.25031702
 
-Early init took 0.09s
-Loading error handling took 0.11s
-Loading script took 2.83s
+Early init took 0.11s
+Loading error handling took 0.10s
+Loading script took 3.03s
 Loading save slot metadata took 0.03s
 Loading persistent took 0.00s
-Running init code took 0.09s
+Running init code took 0.10s
 Loading analysis data took 0.00s
 Analyze and compile ATL took 0.01s
 Reloading save slot metadata took 0.03s
 Index archives took 0.00s
 Backing up script files to 'C:\\Users\\Usuario\\AppData\\Roaming/RenPy/backups\\fantasy-manager':
-Dump and make backups took 0.03s
+Dump and make backups took 0.04s
 Cleaning cache took 0.00s
 Making clean stores took 0.00s
 Initial gc took 0.03s
@@ -29,7 +29,7 @@ Analyze screens took 0.15s
 Save screen analysis took 0.04s
 Prepare screens took 0.34s
 Save pyanalysis. took 0.05s
-Save bytecode. took 0.05s
+Save bytecode. took 0.06s
 ck_shop2',
 'test_unlock_shop3', 'fine_wine', 'rare_book', 'herbal_tea', 'test_money_50k',
 'chef_apron', 'master_chef_apron', 'service_uniform', 'elegant_service_dress',
@@ -69,16 +69,15 @@ ck_shop2',
 'handwritten_poem', 'botanical_pressing', 'spiked_tea', 'silk_ribbon',
 'cipher_lattice', 'basic_strategist_notebook', 'advanced_tactician_monocle',
 'elite_mastermind_diary', 'test_manager_level']
-Items excluded from shops: ['silver_coin', 'potion_transformed',
-'crown_machine', 'potion_agile', 'potion_great_figure', 'potion_high_libido',
-'potion_firm_ass', 'gold_coin', 'staff_archmage', 'potion_exotic',
-'potion_tight', 'potion_nympho', 'potion_troll_blood', 'potion_sensitive',
-'collar_endless_desire', 'potion_small_breasts', 'potion_beautiful',
-'potion_tough', 'cloak_shadows', 'potion_soft_ass', 'potion_large_penis',
-'potion_cum_addict', 'potion_magical', 'potion_large_breasts', 'bronze_coin',
-'potion_satyr', 'potion_strong', 'potion_robust', 'crown_dominion',
-'binding_gem', 'blade_fallen_king', 'amulet_wanderer', 'chains_submission',
-'potion_energetic', 'potion_long_legs', 'potion_large_hips',
-'potion_deluxe_derriere']
+Items excluded from shops: ['potion_tight', 'potion_sensitive', 'gold_coin',
+'potion_large_hips', 'potion_exotic', 'amulet_wanderer', 'potion_tough',
+'blade_fallen_king', 'crown_dominion', 'bronze_coin', 'potion_beautiful',
+'potion_strong', 'potion_agile', 'potion_transformed', 'staff_archmage',
+'potion_magical', 'potion_energetic', 'cloak_shadows', 'crown_machine',
+'potion_troll_blood', 'chains_submission', 'binding_gem', 'potion_cum_addict',
+'collar_endless_desire', 'potion_large_penis', 'potion_great_figure',
+'potion_robust', 'potion_small_breasts', 'potion_nympho', 'potion_firm_ass',
+'potion_soft_ass', 'potion_satyr', 'potion_long_legs', 'potion_large_breasts',
+'silver_coin', 'potion_high_libido', 'potion_deluxe_derriere']
 Setting right_worker and current_worker...
 No workers loaded, setting right_worker and current_worker to None
