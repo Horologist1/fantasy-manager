@@ -8,9 +8,10 @@ android.json
 keystore.properties
 local.properties
 
-# IDE / AI tooling — not needed in the public repo
+# IDE / AI tooling and internal dev docs — not needed in the public repo
 .claude/
 .cursor/
+/docs/
 
 # Developer maintenance scripts — offline JSON tooling, not needed at runtime
 /tools/
