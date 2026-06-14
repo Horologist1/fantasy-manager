@@ -15,5 +15,5 @@ local.properties
 # Developer maintenance scripts — offline JSON tooling, not needed at runtime
 tools/
 
-# Browser devkit — modding tool, distributed separately
-devkit_web/
+# Desktop devkit (compiled editor exe) — distributed separately
+devkit/
