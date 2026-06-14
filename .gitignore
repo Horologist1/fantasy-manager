@@ -23,5 +23,9 @@ AGENTS.md
 _fix.py
 errors.txt
 log.txt
+traceback.txt
+hang-debug.log
+temp_original.rpy
+dialogue.tab
 claude-*.log
 *.log
