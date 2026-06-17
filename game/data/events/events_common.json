@@ -737,6 +737,7 @@
     "description": "A contact pulls you aside and speaks in low tones. The governor's real protection isn't soldiers or gold—it's a bound djinn, sealed with blood and starlight. Only one thing can break that bond: a Binding Gem of purest crystal, rare and ruinously expensive.",
     "weight": 10,
     "limited": true,
+    "guaranteed": true,
     "event_probability": 80,
     "max_occurrences": 1,
     "cooldown_days": 7,
@@ -785,6 +786,8 @@
     "event_type": "story",
     "description": "A hooded contact steps out of the crowd and opens their palm. A crystal pulses with faint inner light—unmistakably a Binding Gem. They won't sell it outright. They want proof you're worth dealing with first.",
     "weight": 10,
+    "limited": false,
+    "guaranteed": true,
     "event_probability": 25,
     "max_occurrences": 1,
     "cooldown_days": 7,
@@ -818,7 +821,10 @@
         "effect": {
           "success": {
             "custom": "give_item",
-            "item_id": "binding_gem"
+            "item_id": "binding_gem",
+            "event_flags": {
+              "objective12_binding_gem_collected": true
+            }
           },
           "success_chance": 0,
           "joy": 0,
@@ -835,7 +841,10 @@
         "effect": {
           "success": {
             "custom": "give_item",
-            "item_id": "binding_gem"
+            "item_id": "binding_gem",
+            "event_flags": {
+              "objective12_binding_gem_collected": true
+            }
           },
           "success_chance": 0,
           "joy": 0,

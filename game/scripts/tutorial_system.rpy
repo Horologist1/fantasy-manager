@@ -258,15 +258,67 @@ init python:
         for item_id in required_items:
             if has_item_anywhere(item_id):
                 mark_objective_12_item_collected(item_id)
-    
+
+    # Safety valve: if the player is stuck on objective 12 (which needs the Binding Gem)
+    # for this many days, the Journal offers a manual button to obtain the gem. This guards
+    # against the (rare) case where the binding_gem_lead_2 event never resolves into a gem.
+    OBJECTIVE_12_FALLBACK_DAYS = 14
+
+    def record_objective_12_entry():
+        """Stamp the day the player entered objective 12 (used by the stuck-player safety valve)."""
+        if not hasattr(store, "event_flags") or store.event_flags is None:
+            store.event_flags = {}
+        if "objective_12_entered_day" not in store.event_flags:
+            store.event_flags["objective_12_entered_day"] = calculate_total_days()
+
+    def days_stuck_on_objective_12():
+        """Days since entering objective 12 (0 if not tracked or not currently on objective 12)."""
+        if getattr(store, "current_objective", 0) != 12:
+            return 0
+        ef = getattr(store, "event_flags", {}) or {}
+        entered = ef.get("objective_12_entered_day") if hasattr(ef, "get") else None
+        if not isinstance(entered, (int, float)):
+            return 0
+        return max(0, calculate_total_days() - entered)
+
+    def journal_show_binding_gem_fallback():
+        """True when the Journal should offer the manual Binding Gem fallback button."""
+        if getattr(store, "current_objective", 0) != 12:
+            return False
+        if getattr(store, "objective_12_complete", False):
+            return False
+        if has_objective_12_item_flag("binding_gem") or has_item_anywhere("binding_gem"):
+            return False
+        return days_stuck_on_objective_12() >= OBJECTIVE_12_FALLBACK_DAYS
+
+    def journal_grant_binding_gem_fallback():
+        """Hand the player the Binding Gem when they have been stuck on objective 12 too long."""
+        if not journal_show_binding_gem_fallback():
+            return
+        if not hasattr(store, "manager_inventory") or store.manager_inventory is None:
+            store.manager_inventory = []
+        add_item_to_inventory(store.manager_inventory, "binding_gem")
+        mark_objective_12_item_collected("binding_gem")
+        renpy.log("FALLBACK: Granted binding_gem via Journal 14-day safety valve")
+        renpy.notify("A weary merchant finally tracks you down — the Binding Gem is yours.")
+
+    store.record_objective_12_entry = record_objective_12_entry
+    store.days_stuck_on_objective_12 = days_stuck_on_objective_12
+    store.journal_show_binding_gem_fallback = journal_show_binding_gem_fallback
+    store.journal_grant_binding_gem_fallback = journal_grant_binding_gem_fallback
+
     def validate_objective_12_items():
         """
         Validate and fix items for objective 12 (binding gem quest).
         This function checks if the required items exist and logs detailed information.
         It's called when the player is on objective 12 to ensure items are properly tracked.
         """
+        # Stamp objective-12 entry day (covers legacy saves that predate this tracking).
+        if getattr(store, "current_objective", 0) == 12:
+            record_objective_12_entry()
+
         required_items = ["binding_gem", "obsidian_blade", "enchanted_ring"]
-        
+
         renpy.log("=== OBJECTIVE 12 ITEM VALIDATION ===")
         
         # Ensure manager_inventory exists
@@ -1297,6 +1349,7 @@ screen journal_panel():
                                 action [
                                     SetVariable("objective_11_complete", True),
                                     SetVariable("current_objective", 12),
+                                    Function(record_objective_12_entry),
                                     Hide("journal_panel"),
                                     Jump("show_objective_11_dialogue")
                                 ]
@@ -1328,7 +1381,22 @@ screen journal_panel():
                                 xsize 580
                                 size font_size(22)
                                 color "#7a4b2a"
-                    
+                            if journal_show_binding_gem_fallback():
+                                null height 18
+                                textbutton "Send word through your contacts (secure the Binding Gem)":
+                                    xsize 580
+                                    text_size font_size(22)
+                                    text_color "#2a5a7a"
+                                    text_hover_color "#1a3a5a"
+                                    action [
+                                        Function(journal_grant_binding_gem_fallback),
+                                        Hide("journal_panel")
+                                    ]
+                                text "Your hunt for the Binding Gem has dragged on. Call in a favor to secure it.":
+                                    xsize 580
+                                    size font_size(18)
+                                    color "#5a6a7a"
+
                     elif current_objective == 13:
                         $ can_complete_13 = can_complete_objective_13()
                         if can_complete_13:
