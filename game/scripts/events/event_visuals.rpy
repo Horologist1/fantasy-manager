@@ -286,7 +286,7 @@ init python:
         Get search patterns for a skill name. Some skills search for multiple patterns.
         """
         special_patterns = {
-            "homo": ["les", "gay"],           # Homosexual busca "les" o "gay"
+            "homo": ["les", "gay", "homo"],   # Homosexual busca "les", "gay" o "homo"
             "service": ["wait", "service", "maid"],      # Service busca "wait", "service" o "maid"
             "special": ["special", "titty"],  # Special busca "special" o "titty"
             "striptease": ["strip", "striptease"],  # Striptease busca "strip" o "striptease"
