@@ -174,13 +174,13 @@ label lanista_first_meeting:
     scene expression _arena_bg at lanista_bg_blur
     show black as lanista_bg_dim:
         alpha 0.35
-    narrator "You find the Master of the Sands in the practice yard, watching two recruits drill in the dust."
-    narrator "The Lanista does not look up — but the question hangs all the same: who runs this Arena?"
+    narrator "The practice yard is all iron and chalk dust. At its center a figure stands over two sparring recruits, correcting a guard with a single clipped word, unbothered by your arrival."
+    narrator "The Master of the Sands — the Lanista who holds this Arena in one scarred fist."
+    narrator "They turn, and for the first time you see them plainly."
     menu:
-        narrator "Who is the Master of the Sands?"
-        "A man.":
+        "A man: broad, close-cropped, still as a drawn blade.":
             $ lanista_gender = "male"
-        "A woman.":
+        "A woman: broad, close-cropped, still as a drawn blade.":
             $ lanista_gender = "female"
     $ lanista_known_name = False
     return
