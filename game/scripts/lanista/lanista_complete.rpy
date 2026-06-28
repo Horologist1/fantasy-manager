@@ -1057,7 +1057,34 @@ label lanista_card_tier_4:
     jump lanista_visit_menu
 
 label lanista_wager_menu:
-    lanista_npc "Pick your fighter. Sand doesn't lie."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _corrupt_on_win = 0
+    menu:
+        lanista_npc "Put coin on the sand. Back your read — if it holds, you walk out twice what you brought."
+        "Bankroll an exhibition comeback. (Stake 500)":
+            $ _won, _delta = lanista_wager(500, 0.6)
+            jump lanista_wager_resolve
+        "Wager on a grudge match. (Stake 1500)":
+            $ _won, _delta = lanista_wager(1500, 0.5)
+            jump lanista_wager_resolve
+        "Sponsor a beast-fight spectacle. (Stake 3000)" if lanista_card_tier >= 2:
+            $ _corrupt_on_win = 3
+            $ _won, _delta = lanista_wager(3000, 0.4)
+            jump lanista_wager_resolve
+        "Back out.":
+            jump lanista_visit_menu
+
+label lanista_wager_resolve:
+    $ lanista_wager_last_day = calculate_total_days()
+    if _won:
+        $ lanista_affection += 2
+        $ lanista_corruption = min(100, lanista_corruption + int(getattr(store, "_corrupt_on_win", 0) or 0))
+        narrator "The crowd finds its throat. Your fighter earns the sand and your stake comes back twice over — the Lanista's eye cuts to you, measuring, as if the result has said something about you worth recording."
+        lanista_npc "Your eye held, [_ttl]. The sand said so, and the sand doesn't flatter. Come back when the luck's still on you."
+    else:
+        $ lanista_dominion += 1
+        narrator "The sand drinks the bout and takes your coin with it. The Lanista watches you absorb the loss from across the yard — no pity in it, and no contempt either. Just the flat attention of someone who has stood on the losing side of the count and knows there's nothing to say about it."
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_aftercrowd:
