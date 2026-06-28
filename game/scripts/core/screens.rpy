@@ -7524,6 +7524,12 @@ screen arena_menu():
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
                             action [Hide("arena_menu"), Show("in_development")]
+                        textbutton "Visit the Lanista":
+                            xsize 500
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("arena_menu"), Hide("map_screen"), Call("lanista_visit")]
 
 screen arena_training_menu():
     modal True

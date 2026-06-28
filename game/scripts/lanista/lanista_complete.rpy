@@ -164,3 +164,23 @@ init python:
         winnings = int(stake * 2) if won else 0
         store.money = int(getattr(store, "money", 0)) + winnings
         return (won, winnings - stake)
+
+################################################################################
+### LANISTA — FIRST MEETING (gender choice)
+################################################################################
+
+label lanista_first_meeting:
+    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else "images/event_bg.png"
+    scene expression _arena_bg at lanista_bg_blur
+    show black as lanista_bg_dim:
+        alpha 0.35
+    narrator "You find the Master of the Sands in the practice yard, watching two recruits drill in the dust."
+    narrator "The Lanista does not look up — but the question hangs all the same: who runs this Arena?"
+    menu:
+        narrator "Who is the Master of the Sands?"
+        "A man.":
+            $ lanista_gender = "male"
+        "A woman.":
+            $ lanista_gender = "female"
+    $ lanista_known_name = False
+    return
