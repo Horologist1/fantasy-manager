@@ -580,7 +580,89 @@ label lanista_s3_talk_3:
     jump lanista_visit_menu
 
 label lanista_s4_talk_router:
-    lanista_npc "Nothing new under this sun, coin-counter."
+    if "s4_t1" not in lanista_s4_talks_done:
+        jump lanista_s4_talk_1
+    elif "s4_t2" not in lanista_s4_talks_done:
+        jump lanista_s4_talk_2
+    elif "s4_t3" not in lanista_s4_talks_done:
+        jump lanista_s4_talk_3
+    else:
+        jump lanista_talk_generic
+
+label lanista_s4_talk_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The Lanista is alone in the armory when you find them, a slip of paper in one hand, the night's card already chalked on the slate behind. One name on that card shouldn't be there, and you both know it — a young fighter with a knee that never set right since the spring, matched against a Nordmark bruiser who will find that knee inside three passes."
+    lanista_npc "Don't. Whatever you came to say. I can read a card better than you, and I'm the one who wrote this one."
+    narrator "The Lanista sets the slip down with a care that plainly costs something. There is a taste in the room like a blade left out in salt air — and it is on the Lanista's face, not yours."
+    lanista_npc "The lenders want bodies the crowd will pay to watch bleed. The boy draws a house. A sound fighter who'd win clean doesn't fill a bench. So I put the lame one on the sand and I call it a card."
+    lanista_npc "Eleven seasons I never sold a bout I knew the end of. Tonight I priced one. ...That's the first cut that's gone all the way through. I wanted you to hear it from me, before you heard it from the cheering."
+    menu:
+        "\"Then I'll carry the weight of it with you. No judgment — just here.\"":
+            $ lanista_devotion += 4
+            $ lanista_affection += 3
+            narrator "You don't tell the Lanista it was wrong. They already know. You only step in close and take a measure of that weight onto your own shoulders, where they can see you hold it. The breath that goes out of them is ragged at the edge."
+            lanista_npc "No sermon. ...I braced for a sermon and you handed me a shoulder instead. I don't rightly know what to do with that."
+            lanista_npc "Stay near tonight, [_ttl]. When the boy goes down, I'd sooner not be standing in it alone."
+        "\"It was necessary. The gate stays open. And there will be more like it — that's the trade now.\"":
+            $ lanista_dominion += 4
+            $ lanista_affection += 2
+            $ lanista_corruption += 3
+            narrator "You name the thing without softening it, and the Lanista hears the truth of it land like a verdict already passed. The slip lies on the bench between you. You do not pick it up. You don't have to. You let them see that you would have written the same name."
+            lanista_npc "More like it. You say it plain — the way I couldn't. ...The way I'll have to learn to."
+            lanista_npc "You're right, and I hate that you're right, and I'll do it again come next month, and you'll be standing there when I do. That's the shape of us now, [_ttl]. I'm done pretending otherwise."
+    $ lanista_s4_talks_done = list(lanista_s4_talks_done) + ["s4_t1"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s4_talk_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "You find the Lanista with a cup gone cold and a tally of the last season spread across the bench — not coin this time, but bouts. A scarred finger moves down the column, stopping here and there, the way one counts old wounds to learn which ones still ache."
+    lanista_npc "I kept a code once. Plain things. No fixed bouts. No fighter on the sand who can't be carried off it again. No spectacle I'd be ashamed to name to the dead."
+    narrator "The finger stops on a line near the bottom. The Lanista doesn't read it aloud. They don't need to. You were there for that one."
+    lanista_npc "I told myself the line was the lame boy. That I'd cross that and go no further. I crossed it a month ago, and there's a new line drawn now, further down, and I can already feel the season pushing me toward it."
+    lanista_npc "That's how a code dies, [_ttl]. Not in one clean blow. In small honest steps, each one swearing the next is the last. I'm taking stock of how far I've walked. The country out here isn't one I know."
+    menu:
+        "\"You're still you. A code that bends to keep your people fed isn't a code that broke.\"":
+            $ lanista_devotion += 4
+            $ lanista_affection += 3
+            narrator "You set a hand flat over the tally, covering the worst of the lines, and make the Lanista look at you instead of the column. There is a long quiet while they weigh whether to let themselves believe you."
+            lanista_npc "Bends, not breaks. ...You make it sound like a thing a body survives. Like I might still be standing at the end of it, and still be someone I'd shake hands with."
+            lanista_npc "I needed that said, and meant. You meant it — I could tell. I'll hold to it on the nights I can't find my own face in the glass, [_ttl]."
+        "\"The code was always a luxury you couldn't afford. Let it go — I'm freeing you of it.\"":
+            $ lanista_dominion += 4
+            $ lanista_affection += 2
+            $ lanista_corruption += 3
+            narrator "You sweep the tally aside — bouts, lines, the whole accounting of a conscience — and the Lanista watches the gesture the way a drowning fighter watches a thrown rope land just within reach. Lighter and more dangerous, both in the same breath."
+            lanista_npc "A luxury. ...Eleven years I wore it like armor, and you call it a thing I couldn't afford. Damn you for it. You might be right."
+            lanista_npc "It is lighter without it. I'll grant you that, and I'll loathe myself for granting it, and I'll keep walking the way you're pointing all the same. You've the weight now, [_ttl]. Mind you carry it better than I did."
+    $ lanista_s4_talks_done = list(lanista_s4_talks_done) + ["s4_t2"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s4_talk_3:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "Tomorrow the Arena opens its gates to a spectacle it has never dared before — oiled bodies and thin pretense, more flesh than fight, the card that fills benches and empties the last of the old pride. The slate is chalked. The new banners are sewn. There is nothing left to ready tonight, and so there is only the two of you, the lamp, and a silence stretched to the strain of breaking."
+    narrator "The Lanista stands close — closer than the bench requires — and for once makes no pretense that it's about the debt, or the card, or anything but the charge that has built between you across a whole season and has, tonight, nowhere left to go."
+    lanista_npc "After tomorrow this house is something else. So am I. Whatever I was holding back for the sake of the fighter I used to be — there's no sense left in holding it."
+    menu:
+        "\"Then whatever tomorrow makes of this place, we face it together. Starting now.\"":
+            $ lanista_devotion += 5
+            $ lanista_affection += 4
+            narrator "You close the last of the distance and the Lanista lets you — the scarred hands, that have only ever known how to stand and how to strike, learning a third thing now, slow and unsure, which is how to hold. There is no crowd. There is no count. There is only this, and it is enough, and it is theirs to give and yours to keep."
+            lanista_npc "Together. ...Eleven seasons I stood in that bowl alone and called it strength. This is better. I'm not too proud tonight to say it's better."
+            lanista_npc "Whatever the morning brings, [_ttl], it finds us already standing in it. Shoulder to shoulder. That's the one thing I'll let no lender lay a hand on."
+        "\"After tonight, the Arena is mine. And so are you — in every way that matters.\"":
+            $ lanista_dominion += 5
+            $ lanista_affection += 4
+            $ lanista_corruption += 2
+            narrator "You say it without a tremor, the way a deal is closed, and the Lanista — who has spent a season being claimed inch by inch — meets the words without flinching, with something near to relief at no longer having to pretend otherwise. The hand that takes yours is a champion's hand, and it yields the grip to you knowing exactly what it yields."
+            lanista_npc "Yours. The house, the sand, the name over the gate. ...And the one who built it. You leave nothing unclaimed, do you, [_ttl]."
+            lanista_npc "Take it, then. All of it. After tonight there's no line left between the Arena and me, and you'll hold both. I find I'd sooner be held by you than free of you. So be it."
+    $ lanista_s4_talks_done = list(lanista_s4_talks_done) + ["s4_t3"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s5_talk_router:
@@ -706,7 +788,36 @@ label lanista_s3_remark_2:
     jump lanista_visit_menu
 
 label lanista_s4_remark_router:
-    lanista_npc "You have sharp eyes. I'll grant you that."
+    if "s4_r1" not in lanista_s4_remarks_done:
+        jump lanista_s4_remark_1
+    elif "s4_r2" not in lanista_s4_remarks_done:
+        jump lanista_s4_remark_2
+    else:
+        jump lanista_talk_generic
+
+label lanista_s4_remark_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The champion's belt is off its peg for the first time you've seen it. The Lanista works oil into the old leather with slow circles of a rag, coaxing the dark suppleness back into it, thumbing the bronze plate until it answers the lamplight. Tended like a thing that matters. And when it's done, set down on the bench — not buckled on."
+    narrator "\"You've brought it back to life,\" you say, \"and you still won't wear it.\""
+    lanista_npc "Oiling it I can do. It's earned that much, whatever I've let myself become. Wearing it is another matter — that's a claim, and I'm not the fighter who could make it now. Maybe I'm only keeping it ready. For whoever can."
+    $ lanista_affection += 1
+    $ lanista_devotion += 1
+    $ lanista_s4_remarks_done = list(lanista_s4_remarks_done) + ["s4_r1"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s4_remark_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "Workers haul new banners up the gate-poles — vast painted things, all bright dye and bared skin, a far cry from the plain crossed-swords sigil that flew there eleven years. They sell a promise of flesh, not steel, and the crowd already gathering below points up at them and grins. The old sigil lies folded in the dust by the wall, where someone set it down and no one thought to lift it."
+    narrator "\"New colors over the gate,\" you observe."
+    lanista_npc "They draw a bigger house. The crossed swords drew respect, and respect doesn't satisfy a lender. ...Don't look for me to like it. Look for me to count the take after. That's the trade I made, and I'll keep my eyes on the only part of it that's still mine to keep."
+    $ lanista_affection += 1
+    $ lanista_dominion += 1
+    $ lanista_corruption += 1
+    $ lanista_s4_remarks_done = list(lanista_s4_remarks_done) + ["s4_r2"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s5_remark_router:
