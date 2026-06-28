@@ -928,7 +928,132 @@ label lanista_debt_favor:
     jump lanista_visit_menu
 
 label lanista_program_card:
-    lanista_npc "The card changes things. You understand that."
+    if lanista_card_tier >= 4:
+        lanista_npc "There's nothing left of the old card to change, [player_title]. The sand is yours. It's already forgotten what it used to be."
+        jump lanista_visit_menu
+    jump expression "lanista_card_tier_{}".format(lanista_card_tier + 1)
+
+label lanista_card_tier_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    narrator "You find the Lanista at the slate, chalking the night's pairings — clean matches, fighter against fighter, the way the craft says they should be. You lay your idea over the top of it. Call them Crowd Pleasers. Bouts built like stories: the slow start, the near-loss, the turn at the end the benches will come to their feet for. Not lies. Shaped truths. A fight that knows where it's going."
+    lanista_npc "Shaped truths. You've a coin-counter's gift for naming a thing so it stops smelling like what it is."
+    lanista_npc "A bout isn't a tale you tell, [_ttl]. It's two people and the sand and whatever's true between them. You start writing the turn at the end, you're not a Master of the Sands anymore. You're a puppeteer."
+    narrator "But [_their] eye drifts to the benches as [_they] says it — half of them bare wood, no body to warm them — and the rest of the sentence dies in [_their] throat."
+    menu:
+        "\"You're not writing the ending. You're framing the fight so the crowd feels what you already feel watching it.\"":
+            $ lanista_devotion += 3
+            $ lanista_affection += 2
+            narrator "You don't argue the code. You tell the Lanista the truth — that [_they] has stood in that bowl eleven seasons because a good bout is the finest story there is, and a Crowd Pleaser only hands the benches the eyes to see it. Something shifts behind the scarred face. Reluctant. Real."
+            lanista_npc "The slow start. The turn at the end. I've felt every one of those without ever once arranging them."
+            lanista_npc "And now you've put it in my head that arranging them might be a kindness more than a sin. Damn you, [_ttl]. I want to try it. That's the part that worries me."
+        "\"The benches are bare. Crowd Pleasers fill them. That's the whole of the arithmetic, and you've already done it.\"":
+            $ lanista_dominion += 3
+            $ lanista_corruption += 2
+            narrator "You don't dress it up. You set the empty benches and the lenders' number side by side and let the Lanista count, because [_they] is the only one who can. The jaw works. The sum comes out the way it always does when you hold the chalk."
+            lanista_npc "Bare benches don't pay the iron-smith. I know the column, [_ttl]. I knew it before you said it."
+            lanista_npc "So we shape the bouts. We give them their Crowd Pleasers. And I'll name the price out loud so neither of us pretends it was free — tonight's the last night I stand here and call every fight honest. Mark it. I do."
+    $ lanista_card_tier = max(lanista_card_tier, 1)
+    $ lanista_corruption = min(100, lanista_corruption + 5)
+    $ lanista_card_last_day = calculate_total_days()
+    # tier 1: the first scratch on the code — no profession unlock
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_card_tier_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    narrator "You come back with the next rung already drawn. Pin-up Barbarians. The fighters stripped to half their armor and less — furs cut for the eye, skin oiled to catch the torchlight, the bout dressed up as much for wanting as for winning. You've seen how the front rows lean when a champion's shoulder comes bare. You propose the Arena lean back."
+    lanista_npc "Half their armor. ...You know what armor is for, [_ttl]. It's the difference between a scar and a grave."
+    lanista_npc "And now you'd have me cut it away so the front row can ogle the dying. That's a different country than rigging a turn at the end. That's selling the flesh, not the fight."
+    narrator "Yet [_they] doesn't say no. [_They] turns it over the way [_they] reads a map of country [_they] already suspects [_they] will have to cross."
+    menu:
+        "\"Half-clothed isn't half-skilled. Let them be beautiful and lethal both — and own that you'd watch too.\"":
+            $ lanista_devotion += 4
+            $ lanista_affection += 3
+            narrator "You make the Lanista admit the thing under the code — that a body which has fought eleven seasons is worth looking at, and there's no shame in a crowd that knows it. The flush that climbs the scarred neck isn't all anger. [_They] catches you seeing it, and for once doesn't look away."
+            lanista_npc "Beautiful and lethal. ...You'd dress my fighters like that and dare the benches to forget they can kill."
+            lanista_npc "I'd watch. There — the quiet part, the way you're always pulling it out of me. Pin-up Barbarians. Gods help me, I can already see how I'd light it, [_ttl]."
+        "\"The body sells what the bout can't. You need the purse, and the purse wants skin. Name it and bank it.\"":
+            $ lanista_dominion += 4
+            $ lanista_corruption += 3
+            narrator "You put it to the Lanista as a transaction, because that's what it is, and [_they] respects the lack of perfume on it even as it costs [_them]. [_They] does the sum — the skin against the silver, the dignity against the debt — and the answer is the answer."
+            lanista_npc "Skin sells. I'd be a fool to pretend the books say otherwise. They don't."
+            lanista_npc "So we oil them and strip them and call it Pin-up Barbarians. And here's the price, named plain — a year ago I'd have broken the jaw of anyone who asked it. Now I draw the costume myself. You bought that, [_ttl]. Don't think I've forgotten the coin it came on."
+    $ lanista_card_tier = max(lanista_card_tier, 2)
+    $ lanista_corruption = min(100, lanista_corruption + 8)
+    $ lanista_card_last_day = calculate_total_days()
+    $ lanista_pinup_unlocked = True
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_card_tier_3:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    narrator "The next format you bring has teeth. Oil & Chains. The bouts fought to the submission and held there — the pin drawn out, the yield made into the show, irons and oil and the slow theater of one body bending another for the benches to feast on. Not a fight that ends in a winner. A fight that ends in a surrender, and lingers on it."
+    lanista_npc "Hold the pin. Draw out the yield. ...You're not describing a bout anymore, [_ttl]. You're describing the one thing I've spent my life teaching fighters never to do — hand the crowd the surrender as the prize."
+    narrator "[_They] turns a length of chain over in [_their] hands as [_they] speaks — testing the weight of it, the link of it, the way [_they] tests everything before [_they] decides whether [_they] can live with it."
+    menu:
+        "\"A surrender given on purpose, beautifully, is the bravest thing in that bowl. Make it art — with me.\"":
+            $ lanista_devotion += 4
+            $ lanista_affection += 3
+            narrator "You don't let the Lanista call it degradation. You call it choreography — a yield offered with the whole body, harder to perform than any clean kill — and you tell [_them] no one alive could stage it like [_they] could. The chain stills in [_their] hands. [_They] believes you. Worse — [_they] wants to be right about it."
+            lanista_npc "Art. You'd call Oil & Chains art and make me half believe it, standing here."
+            lanista_npc "A surrender, given. Performed. ...I know how to make a body yield, [_ttl] — I've just never made it beautiful on purpose. With you behind it, I think I could. That should frighten me more than it does."
+        "\"You know how to make a body yield. The crowd will pay to watch it. Do the math and put the irons on.\"":
+            $ lanista_dominion += 4
+            $ lanista_corruption += 3
+            narrator "You set the ledger against the Lanista's pride one more time, and this time there's barely a contest left in it. [_They] has been doing this arithmetic for a whole season now, and [_they] knows the carry by heart. The chains, the oil, the held surrender — it all comes out in coin, and the coin is what keeps the gate."
+            lanista_npc "Make a body yield for silver. I've sold a great many things to keep this sand. Now I sell the yielding itself."
+            lanista_npc "Oil & Chains, then. And your price, spoke plain — there used to be a line I'd not cross for any purse, and you've just watched me chalk over the last of it. I yield the bout, [_ttl]. I always tell you which part I'm yielding. That's the dignity I've got left, and I keep it."
+    $ lanista_card_tier = max(lanista_card_tier, 3)
+    $ lanista_corruption = min(100, lanista_corruption + 10)
+    $ lanista_card_last_day = calculate_total_days()
+    $ lanista_oilchains_unlocked = True
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_card_tier_4:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    narrator "There's one rung left and you both know its name before you say it. The Spectacle. Not a bout dressed as wanting, not a yield held for the eye — the whole thing given over, combat and flesh fused into one show with no pretense of sport left standing in it. The last card. The one the old Lanista would have burned the Arena down before allowing."
+    lanista_npc "The Spectacle. You needn't pitch it, [_ttl]. I've watched it coming since the night I chalked a lame boy's name on this slate and called it a card."
+    lanista_npc "There's no code left to scrape against. We sanded it away a rung at a time, you and I. What you're asking for now isn't a compromise. It's the place all the compromises were always walking toward."
+    narrator "[_They] looks at the slate — clean, waiting — and then at you, and there's no fight left in it. Only the question of how [_they] gives the last of it away."
+    menu:
+        "\"Then we build something new on the bones of the old code. The Spectacle, made by us, believed in by us.\"":
+            $ lanista_devotion += 5
+            $ lanista_affection += 4
+            narrator "You don't mourn the code with the Lanista. You hand [_them] a new thing to stand for — a house that worships the body and the bout as one, made beautiful on purpose, made together. The grief goes out of the scarred face and something fierce and converted comes up behind it. [_They] doesn't yield to The Spectacle. [_They] takes up its banner."
+            lanista_npc "Believed in. ...Eleven seasons I served a code, and you've gone and handed me a faith instead."
+            lanista_npc "The Spectacle. Ours. I'll build it so fine the dead I swore my old oath to would forgive me for it — because there's nothing shameful in worship, [_ttl], and that's what this will be. I see it now. I see all of it. Lead on."
+        "\"The code's gone. The Arena's mine, and The Spectacle is what it stages now. Say the price and we're done.\"":
+            $ lanista_dominion += 5
+            $ lanista_corruption += 3
+            narrator "You don't pretend it's a partnership. You state it like a deed of sale, because the Lanista has earned a creditor who won't lie to [_them]. [_They] hears the whole of it — the house, the sand, the last of the code — pass over the bench into your column, and [_they] receives it standing, the way a champion takes the count [_they] can't beat."
+            lanista_npc "The Arena stages what its owner says it stages. And its owner is you. I'll not insult either of us by arguing the obvious."
+            lanista_npc "The Spectacle, then, and the final price named out loud — there's nothing left of the old card to defend, because there's nothing left of the old code to defend it with. You've the whole column, [_ttl]. The sand. The show. The one who runs it. I yielded it clear-eyed, every inch. Remember that I named each one."
+    $ lanista_card_tier = max(lanista_card_tier, 4)
+    $ lanista_corruption = min(100, lanista_corruption + 12)
+    $ lanista_card_last_day = calculate_total_days()
+    $ lanista_spectacle_unlocked = True
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_wager_menu:
