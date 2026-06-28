@@ -205,8 +205,29 @@ label lanista_visit:
         narrator "The Lanista measures you with the flat attention of someone deciding whether you are worth the breath."
         lanista_npc "Coin-counter. Say your piece."
         $ lanista_known_name = True
+    elif lanista_visit_count <= 2:
+        narrator "The Lanista does not set down the blade being honed. The attention you get is the kind spared for weather."
+        lanista_npc "Back again. The sand's where I left it. Say what you came to say."
+    elif lanista_stage >= 3 and lanista_is_devotion_route():
+        $ _emotion = "amused"
+        $ _g = getattr(store, "lanista_gender", "male") or "male"
+        $ _bust = "images/lanista/lanista_{}_{}.png".format(_g, _emotion)
+        if renpy.loadable(_bust):
+            show expression _bust as lanista_bust at lanista_bust_right
+        narrator "The blade goes down when you cross the threshold. From someone who sets nothing down carelessly, that is its own kind of welcome."
+        lanista_npc "[player_title]. Good — the day was getting honest and dull. Sit."
+    elif lanista_stage >= 3:
+        narrator "The Lanista marks your arrival with a short nod, the way one veteran grants another the room to cross the yard."
+        lanista_npc "[player_title]. You've a habit of turning up. I've stopped minding it."
+    elif lanista_stage >= 2 and lanista_is_devotion_route():
+        narrator "The hard line of the Lanista's mouth eases by a hair — no more than that, but you have learned to read the small ground."
+        lanista_npc "You. Still watching the craft and not the purse. Stay a while, [player_title]."
+    elif lanista_stage >= 2:
+        narrator "The Lanista looks up from the recruits, taking your measure again and finding it unchanged."
+        lanista_npc "Coin-counter. You're persistent. I'll allow you that much."
     else:
-        lanista_npc "..."
+        narrator "The Lanista's gaze flicks to you and away, back to the recruits where it prefers to rest."
+        lanista_npc "Coin-counter. Say your piece, [player_title]."
     jump lanista_visit_menu
 
 ################################################################################
@@ -303,7 +324,86 @@ label lanista_visit_menu:
 ################################################################################
 
 label lanista_s1_talk_router:
-    lanista_npc "Nothing new under this sun, coin-counter."
+    if "s1_t1" not in lanista_s1_talks_done:
+        jump lanista_s1_talk_1
+    elif "s1_t2" not in lanista_s1_talks_done:
+        jump lanista_s1_talk_2
+    elif "s1_t3" not in lanista_s1_talks_done:
+        jump lanista_s1_talk_3
+    else:
+        jump lanista_talk_generic
+
+label lanista_s1_talk_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The recruits break for water. The Lanista cleans a practice blade with a rag, in no hurry, not looking at you."
+    lanista_npc "You're not here to fight. You don't stand like someone who's been hit."
+    lanista_npc "So you're here to buy something. They always are."
+    menu:
+        "\"I came to watch a craft done well.\"":
+            $ lanista_devotion += 2
+            $ lanista_affection += 2
+            narrator "Something shifts at the corner of the Lanista's mouth. Not a smile. The place a smile would go."
+            lanista_npc "Craft. Most call it blood and call it a day."
+            lanista_npc "Watch, then, [_ttl]. The sand doesn't lie, even when everyone standing on it does."
+        "\"Empty seats don't pay for sand.\"":
+            $ lanista_dominion += 2
+            $ lanista_affection += 2
+            $ lanista_corruption += 1
+            narrator "The rag stops moving. For the first time the Lanista looks at you directly — flat, measuring, unimpressed and unsurprised at once."
+            lanista_npc "A coin-counter who's done the counting. Of course."
+            lanista_npc "The seats are my concern, [_ttl]. Keep your arithmetic to your own ledger."
+    $ lanista_s1_talks_done = list(lanista_s1_talks_done) + ["s1_t1"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s1_talk_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "Below, an honest bout runs its course — two journeymen, evenly matched, trading nothing pretty, only true. In the stands whole rows sit empty. The good seats fill for the maimings, not for this."
+    lanista_npc "Look at that. Two of the finest blades in the province, and the benches are bare."
+    lanista_npc "They'd be packed shoulder to shoulder if I'd promised a cripple by sundown."
+    menu:
+        "\"A full house forgets you by morning. Honor outlasts it.\"":
+            $ lanista_devotion += 2
+            $ lanista_affection += 2
+            narrator "The Lanista watches the bout a moment longer before answering, as if checking your words against the men on the sand."
+            lanista_npc "Outlasts it. Aye. I've buried fighters the crowd cheered, and the crowd forgot them inside a week."
+            lanista_npc "You've sat in cheaper seats than your purse suggests, [_ttl]. I'll grant you that."
+        "\"The crowd pays for blood, not virtue. Sell them blood.\"":
+            $ lanista_dominion += 2
+            $ lanista_affection += 2
+            $ lanista_corruption += 2
+            narrator "The Lanista turns from the fight to you. No anger in it — something colder. The look of a fighter who has heard the truth and dislikes the mouth it came from."
+            lanista_npc "Spoken like someone who's never had to wash the sand after."
+            lanista_npc "You're not wrong, [_ttl]. That's the trouble with you. You're not wrong."
+    $ lanista_s1_talks_done = list(lanista_s1_talks_done) + ["s1_t2"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s1_talk_3:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "A clerk leaves a stack of papers on the bench by the weapons rack and hurries off at a barked order. The top sheet has slid loose. You catch the press of a seal in the wax — a moneylender's mark, the kind that does not send its letters twice."
+    lanista_npc "..."
+    narrator "The Lanista follows your eyes to the page, and for half a breath the stillness becomes a different stillness. Then a broad hand turns the sheet face-down without hurry."
+    lanista_npc "The Arena's accounts are the Arena's. You saw a seal. You saw nothing."
+    menu:
+        "\"Let me help. Quietly. No strings, no ledger.\"":
+            $ lanista_devotion += 3
+            $ lanista_affection += 2
+            narrator "The hand stays flat on the paper. The Lanista studies you the way one studies an unfamiliar guard — hunting the feint inside the open stance."
+            lanista_npc "No strings. Everyone says no strings. Then the bill comes due in something that isn't coin."
+            lanista_npc "...I'll remember the offer, [_ttl]. That is not the same as taking it. But I'll remember."
+        "\"A debt like that is worth knowing. I'll file it away.\"":
+            $ lanista_dominion += 3
+            $ lanista_affection += 1
+            narrator "The Lanista's expression does not change, and that is the answer. You have shown a card. The Lanista has shown one too."
+            lanista_npc "There it is. The counting eyes. I wondered when they'd open."
+            lanista_npc "File it where you like, [_ttl]. Just know the sands remember who reaches for a throat — and who reaches for an open hand."
+    $ lanista_debt_finance_unlocked = True
+    $ lanista_s1_talks_done = list(lanista_s1_talks_done) + ["s1_t3"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s2_talk_router:
@@ -331,7 +431,49 @@ label lanista_talk_generic:
     jump lanista_visit_menu
 
 label lanista_s1_remark_router:
-    lanista_npc "You have sharp eyes. I'll grant you that."
+    if "s1_r1" not in lanista_s1_remarks_done:
+        jump lanista_s1_remark_1
+    elif "s1_r2" not in lanista_s1_remarks_done:
+        jump lanista_s1_remark_2
+    elif "s1_r3" not in lanista_s1_remarks_done:
+        jump lanista_s1_remark_3
+    else:
+        jump lanista_talk_generic
+
+label lanista_s1_remark_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "You let your gaze travel the old wounds the Lanista wears like a second armor — the seam across one forearm, the notch missing from an ear, the pale rope of scar that vanishes under the collar."
+    narrator "\"You kept count of those the hard way,\" you say."
+    lanista_npc "Every one's a lesson I was slow to learn. The slow ones leave the deepest marks."
+    $ lanista_affection += 1
+    $ lanista_devotion += 1
+    $ lanista_s1_remarks_done = list(lanista_s1_remarks_done) + ["s1_r1"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s1_remark_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "A recruit fumbles the haft of a practice spear. The Lanista crosses the yard, closes a scarred hand over the recruit's, and resets each finger without a word — patient, exact, the way one might tune an instrument."
+    narrator "\"You could just shout at the lad,\" you observe."
+    lanista_npc "Shouting teaches him to flinch. The hand teaches the hand. He'll keep this long after he's forgotten my voice."
+    $ lanista_affection += 1
+    $ lanista_devotion += 1
+    $ lanista_s1_remarks_done = list(lanista_s1_remarks_done) + ["s1_r2"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s1_remark_3:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "Along a high shelf behind the rack sits a row of victor's wreaths and bronze tokens, grey under a skin of chalk dust. Trophies of fighters who mattered, on days the crowd has long since spent."
+    narrator "\"Nobody dusts those,\" you note."
+    lanista_npc "Glory's cheap to win and cheaper to keep. The names matter to me. The shine never did."
+    $ lanista_affection += 1
+    $ lanista_dominion += 1
+    $ lanista_s1_remarks_done = list(lanista_s1_remarks_done) + ["s1_r3"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s2_remark_router:
