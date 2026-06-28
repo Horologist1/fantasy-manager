@@ -495,7 +495,88 @@ label lanista_s2_talk_3:
     jump lanista_visit_menu
 
 label lanista_s3_talk_router:
-    lanista_npc "Nothing new under this sun, coin-counter."
+    if "s3_t1" not in lanista_s3_talks_done:
+        jump lanista_s3_talk_1
+    elif "s3_t2" not in lanista_s3_talks_done:
+        jump lanista_s3_talk_2
+    elif "s3_t3" not in lanista_s3_talks_done:
+        jump lanista_s3_talk_3
+    else:
+        jump lanista_talk_generic
+
+label lanista_s3_talk_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The last torch-bearers have gone. The Arena sits empty under a low moon, the sand raked smooth, the benches a pale ring of nothing. The night's gate-count was thin — you watched the Lanista's jaw set tighter with every bare row, and tonight there were many."
+    narrator "You expect to be waved off with the rest. Instead the Lanista says nothing, and the silence is permission to stay."
+    lanista_npc "Eleven seasons I've stood in this bowl. Heard it roar. Heard it like this."
+    lanista_npc "There's a number the lenders want by the turn of the season. Tonight's take didn't move it. Neither did last night's."
+    narrator "The Lanista looks out across the empty tiers — and for the space of a breath, the stillness isn't control. It's a fighter on a ledge, measuring the drop."
+    lanista_npc "I have buried fighters and not flinched. The thought of locking that gate for the last time — that one I flinch at. I'll say it once, here, where no one's counting but you."
+    menu:
+        "\"Then I'll stand here with you. No pitch, no terms. Just here.\"":
+            $ lanista_devotion += 3
+            $ lanista_affection += 3
+            narrator "You say nothing else. You only stay — shoulder to the same cold air, watching the same empty seats. The Lanista doesn't thank you. The shoulders ease a fraction, and that is louder than thanks."
+            lanista_npc "...No agenda. You came all this way to a dying house and brought no agenda."
+            lanista_npc "Stay, then, [_ttl]. The company's better than the arithmetic."
+        "\"This place doesn't have to fall. I can move that number — and you'll know who moved it.\"":
+            $ lanista_dominion += 3
+            $ lanista_affection += 2
+            narrator "The Lanista turns from the empty tiers to you, and the ledge-look folds back into something harder. You have offered a rope, and let them see the hand that holds the far end of it."
+            lanista_npc "You'd move it. And every season after, I'd hear the sound of your coin under the cheering."
+            lanista_npc "...The gate stays open either way. That's the part I can't argue with. I hear you, [_ttl]. I hear exactly what you're offering."
+    $ lanista_s3_talks_done = list(lanista_s3_talks_done) + ["s3_t1"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s3_talk_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The whetstone goes quiet. The Lanista works a knot in one shoulder, winces, and then — deciding something — pulls the collar aside to show you the pale rope of scar that runs down from it, thick as a finger, old as the crown that came with it."
+    lanista_npc "The Nordmark gave me this one. Third turn of the glass. Had me against the boards, and the blade went in here —"
+    narrator "A scarred hand takes yours before you think to offer it, and lays your fingers along the seam of it. The skin is warm, the ridge of it strange under your touch. Neither of you moves for a breath too long to be an accident."
+    lanista_npc "— and I kept my feet. Bled half the sand red and kept my feet. That's the whole secret of this craft. You stay standing when the body's begging you to fall."
+    menu:
+        "\"You've carried enough alone. You don't have to stand for me.\"":
+            $ lanista_devotion += 3
+            $ lanista_affection += 2
+            narrator "You don't pull your hand back. You let it rest, gentle, over the worst of the scar — not measuring it now, only holding it. The Lanista goes very still, the way one does at the edge of something that can't be taken back."
+            lanista_npc "...That's a dangerous thing to offer a fighter, [_ttl]. We don't know how to be carried. We only know how to stand."
+            lanista_npc "But I felt that. I'll not pretend I didn't."
+        "\"And you're still standing. Let's see if the strength's still in it.\"":
+            $ lanista_dominion += 3
+            $ lanista_affection += 2
+            narrator "You close your hand on the scarred shoulder and press — testing, challenging, the way one fighter sizes another. The Lanista meets it, muscle going hard under your palm, jaw set, refusing the inch. The air between you draws tight as a bowstring."
+            lanista_npc "Still here. Push all you like. This shoulder's outlasted better hands than yours."
+            lanista_npc "...Though you've nerve, laying hands on me like that. Most don't dare. I find I don't mind that you did, [_ttl]."
+    $ lanista_s3_talks_done = list(lanista_s3_talks_done) + ["s3_t2"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s3_talk_3:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "You've come too many evenings now for it to be business. The Lanista sets the rag down — folds it, even, which is not a thing done idly — and faces you square across the bench."
+    lanista_npc "I'm going to name a thing, and you're going to tell me which it is. I've earned plain dealing, even if I've forgotten how to ask for it."
+    lanista_npc "You keep turning up. A purse like yours doesn't haunt a failing Arena for the sport. So which is it, [_ttl] — charity, appetite, or leverage?"
+    narrator "The question hangs in the lamplight. The Lanista's gaze doesn't waver, and for once there's no armor in it — only the want to know, and the readiness to take any of the three answers like a blow already braced for."
+    menu:
+        "\"I want you. Not the Arena. You.\"":
+            $ lanista_devotion += 4
+            $ lanista_affection += 3
+            narrator "The word lands and the Lanista takes it standing, the way every blow on that sand was taken — but the breath goes out slow, and something behind the eyes that has been clenched for eleven seasons unclenches by a fraction."
+            lanista_npc "Me. Not the sand, not the craft, not the crown I used to wear. ...You picked the one answer I had no guard against."
+            lanista_npc "Say it again sometime, when I've the nerve to hear it. I'll not forget you said it first, [_ttl]."
+        "\"I want both. The Arena and the one who holds it. And I can have both.\"":
+            $ lanista_dominion += 4
+            $ lanista_affection += 3
+            $ lanista_corruption += 1
+            narrator "No flinch. The Lanista weighs the answer the way a fighter weighs an opponent who's just shown they fight to win — wary, and not entirely displeased to have found a worthy one."
+            lanista_npc "Both. The honest answer and the dangerous one. You want the house and the one standing in it, and you don't see a line between."
+            lanista_npc "...Most would dress that up softer. You didn't. I'll give you this — I'd rather a clean blade than a kind lie. Come closer, then, [_ttl]. Let's see what you can hold."
+    $ lanista_s3_talks_done = list(lanista_s3_talks_done) + ["s3_t3"]
+    $ lanista_last_talk_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s4_talk_router:
@@ -593,7 +674,35 @@ label lanista_s2_remark_2:
     jump lanista_visit_menu
 
 label lanista_s3_remark_router:
-    lanista_npc "You have sharp eyes. I'll grant you that."
+    if "s3_r1" not in lanista_s3_remarks_done:
+        jump lanista_s3_remark_1
+    elif "s3_r2" not in lanista_s3_remarks_done:
+        jump lanista_s3_remark_2
+    else:
+        jump lanista_talk_generic
+
+label lanista_s3_remark_1:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "Between bouts the Lanista sits and winds a strip of linen around one fist — over the knuckles, between the fingers, the wrap of a fighter readying for the sand. There's no fight tonight. The hands haven't thrown a real blow in years. They wind the tape anyway, slow and exact, eyes somewhere far off."
+    narrator "\"Old habit dies hard,\" you say quietly."
+    lanista_npc "The hands remember before the head does. I wrap them and for a moment I'm twenty and unbeaten. ...Then I look down and I'm not. But the moment's worth the linen."
+    $ lanista_affection += 1
+    $ lanista_devotion += 1
+    $ lanista_s3_remarks_done = list(lanista_s3_remarks_done) + ["s3_r1"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
+    jump lanista_visit_menu
+
+label lanista_s3_remark_2:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The night's coin comes up from the gate in a strapped wooden box. The Lanista doesn't open it, doesn't count it aloud — only sets a hand flat on the lid and reads its weight the way a fighter reads an opponent's stance, knowing the answer before the latch is ever thrown. The jaw tells you the number. The mouth says nothing."
+    narrator "\"You already know what's in it,\" you observe."
+    lanista_npc "To the copper. I've felt a winning house and a losing one through that lid for eleven years. Tonight's light. ...No sense saying so. The box doesn't argue back, and neither do I."
+    $ lanista_affection += 1
+    $ lanista_dominion += 1
+    $ lanista_s3_remarks_done = list(lanista_s3_remarks_done) + ["s3_r2"]
+    $ lanista_last_question_total_days = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s4_remark_router:
@@ -633,8 +742,126 @@ label lanista_assess:
     jump lanista_visit_menu
 
 label lanista_s3_gate:
-    lanista_npc "You've earned a different kind of conversation."
+    if lanista_is_dominion_route():
+        jump lanista_s3_gate_dominion
+    else:
+        jump lanista_s3_gate_devotion
+
+label lanista_s3_gate_devotion:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The gates are barred for the night. The lamps burn low along the tunnel mouth, and the two of you are the only living things left in the great stone bowl. You came to talk numbers. The numbers have run out, and what's left in the quiet is something neither of you has dared to name in daylight."
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _bust = "images/lanista/lanista_{}_warm.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    lanista_npc "Eleven seasons I've kept everyone the length of a blade away. It's how you stay standing. You let no one close enough to land the killing one."
+    lanista_npc "And here you are. Inside my guard. I let you walk in, and I haven't the will to put you back out."
+    narrator "The Lanista steps in — close, closer than the craft allows, close enough that you feel the warmth coming off skin that's known nothing but distance for years. A scarred hand rises and stops, hovering at your jaw, asking the question it won't say."
+    $ _bust = "images/lanista/lanista_{}_vulnerable.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "You answer it. You close the last of the distance yourself, and the kiss is nothing like the iron the Lanista wears all day — it's tentative, almost startled, a fighter discovering a thing no amount of training ever taught."
+    narrator "Hands find your back, your shoulders, careful and unsteady at once. Breath catches between you. For a long moment the great empty Arena holds nothing but this — the two of you, and the dark, and the warmth neither of you fled."
+    $ _scene = "s3_gate"
+    $ _route = "devotion"
+    python:
+        _g = getattr(store, "lanista_gender", "male") or "male"
+        _t = (getattr(store, "player_title", "") or "").strip().lower()
+        _t = "lady" if _t == "lady" else "lord"
+        _candidates = [
+            "images/lanista/cg_{}_{}_{}_{}.png".format(_scene, _route, _g, _t),
+            "images/lanista/cg_{}_{}_{}.png".format(_scene, _route, _g),
+            "images/lanista/cg_{}_{}.png".format(_scene, _route),
+        ]
+        _cg = next((c for c in _candidates if renpy.loadable(c)), None)
+    if _cg:
+        window hide
+        scene expression _cg at lanista_cg_fit
+        pause
+        window show
+    narrator "Then the Lanista breaks it — a hand flat on your chest, gentle, setting a hand's breadth of cold air back between you. The breath that follows is ragged in a way you've never heard from that iron throat."
+    lanista_npc "Not like this, [_ttl]. Not tonight."
+    lanista_npc "Not with the lenders' number hanging over us both and me half able to tell what's want and what's drowning. When I take you — if I take you — it'll be clear-eyed. You're worth a clear head. I'll not give you less."
+    call lanista_restore_visit_scene from _lanista_restore_s3_gate_dev
+    menu:
+        "\"Clear-eyed, then. I'll wait as long as it takes.\"":
+            $ lanista_devotion += 3
+            $ lanista_affection += 3
+            narrator "The Lanista lets out a slow breath, and for the first time you've seen, something like ease settles over the hard features."
+            lanista_npc "You'll wait. ...Nobody waits, [_ttl]. They take, or they leave. You stand there and tell me you'll wait."
+            lanista_npc "Go on, before I change my mind about tonight. But come back. That's not a thing I ask twice — so hear it."
+        "\"Then let me clear the number first. One less thing standing between us.\"":
+            $ lanista_affection += 3
+            $ lanista_devotion += 2
+            narrator "The Lanista studies you a long moment, and the want in it is plain now, no longer armored over."
+            lanista_npc "Clear the number. You'd do that, and call it making room — not buying a thing."
+            lanista_npc "...I believe you mean it that way. That's the part that undoes me. Go, [_ttl]. Come back soon."
+    jump lanista_s3_gate_end
+
+label lanista_s3_gate_dominion:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The gates are barred. The night's count came up short again, and you both know whose coin stands between this Arena and the dark. You've spent weeks letting that truth settle over the bench like dust. Tonight you stop letting it settle. You step in close, and you let the Lanista feel the full weight of what's owed."
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _bust = "images/lanista/lanista_{}_angry.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    lanista_npc "So that's the way of it. The purse comes to collect, and what it wants isn't coin."
+    lanista_npc "I've put down bigger than you on that sand, [_ttl]. Don't mistake the debt for a leash."
+    narrator "But the jaw is set too hard, and you both know the books don't lie. You hold the Lanista's eye and don't look away, and the silence does the arguing for you. Slowly — every inch of it a fighter's surrender, ceded and not given — the distance closes."
+    $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "You take the Lanista's jaw in your hand and turn that proud face to yours. The kiss is yours to take, and you take it — and the Lanista yields to it with a cold, furious dignity, mouth answering yours, hands fisted at sides that will not, will not reach for you first."
+    narrator "No begging. Not a sound of it. Only the hard breath, the iron control bending one degree at a time, the spectacle of a champion who has decided to lose this bout on terms of their own choosing."
+    $ _scene = "s3_gate"
+    $ _route = "dominion"
+    python:
+        _g = getattr(store, "lanista_gender", "male") or "male"
+        _t = (getattr(store, "player_title", "") or "").strip().lower()
+        _t = "lady" if _t == "lady" else "lord"
+        _candidates = [
+            "images/lanista/cg_{}_{}_{}_{}.png".format(_scene, _route, _g, _t),
+            "images/lanista/cg_{}_{}_{}.png".format(_scene, _route, _g),
+            "images/lanista/cg_{}_{}.png".format(_scene, _route),
+        ]
+        _cg = next((c for c in _candidates if renpy.loadable(c)), None)
+    if _cg:
+        window hide
+        scene expression _cg at lanista_cg_fit
+        pause
+        window show
+    narrator "Then you're the one who steps back — because taking it all tonight would be too easy, and easy isn't the same as owned. You leave the Lanista standing there, breath uneven, the proud line of the shoulders the only thing still holding."
+    lanista_npc "...That's enough. You've made your point, [_ttl]."
+    lanista_npc "You'll have the rest when I decide it, not when the ledger does. I yielded the bout. I didn't hand you the whole sand. Remember the difference."
+    call lanista_restore_visit_scene from _lanista_restore_s3_gate_dom
+    menu:
+        "\"You yielded because you wanted to. We both felt that.\"":
+            $ lanista_dominion += 3
+            $ lanista_affection += 2
+            narrator "The Lanista's eyes flash, and the denial dies behind them unspoken — because it would be a lie, and a fighter does not bother with lies that won't hold."
+            lanista_npc "Wanted to. ...Careful, [_ttl]. You start naming what I want, and you'll have a leash on more than the debt."
+            lanista_npc "Go. Before I decide whether that frightens me. Come back when the count comes in."
+        "\"The rest, when you decide it. I can be patient with what I already own.\"":
+            $ lanista_affection += 2
+            $ lanista_dominion += 2
+            narrator "Something in the Lanista's face goes very still — you've matched the cold dignity with patience of your own, and it lands harder than any grab could have."
+            lanista_npc "Patient. The worst kind of creditor. The one who knows the debt isn't going anywhere."
+            lanista_npc "...You've a fighter's timing, [_ttl]. Go. The sand will keep. So, it seems, will I."
+    jump lanista_s3_gate_end
+
+label lanista_s3_gate_end:
     $ lanista_s3_gate_fired = True
+    $ lanista_debt_finance_unlocked = True
+    $ lanista_affection = max(lanista_affection, 50)
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_s4_gate:
