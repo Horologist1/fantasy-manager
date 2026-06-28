@@ -165,6 +165,11 @@ init python:
         store.money = int(getattr(store, "money", 0)) + winnings
         return (won, winnings - stake)
 
+    def lanista_finance_track_complete():
+        if lanista_is_dominion_route():
+            return int(getattr(store, "lanista_favor_highest_tier", 0) or 0) >= 4
+        return int(getattr(store, "lanista_donation_highest_tier", 0) or 0) >= 4
+
 ################################################################################
 ### LANISTA — FIRST MEETING (gender choice)
 ################################################################################
@@ -239,7 +244,7 @@ label lanista_visit_menu:
     $ _total_days = calculate_total_days()
     if not lanista_s3_gate_fired and lanista_stage >= 3 and len(lanista_s3_talks_done) >= 3 and lanista_affection >= 50:
         jump lanista_s3_gate
-    if not lanista_s4_gate_fired and lanista_stage >= 4 and len(lanista_s4_talks_done) >= 3 and lanista_affection >= 80 and lanista_debt_finance_unlocked:
+    if not lanista_s4_gate_fired and lanista_stage >= 4 and len(lanista_s4_talks_done) >= 3 and lanista_affection >= 80 and lanista_debt_finance_unlocked and lanista_finance_track_complete():
         jump lanista_s4_gate
     if lanista_s4_gate_fired and not lanista_morning_after_done:
         $ lanista_morning_after_done = True
@@ -825,11 +830,91 @@ label lanista_s5_remark_router:
     jump lanista_visit_menu
 
 label lanista_debt_donate:
-    lanista_npc "Generosity. I'll remember which purse it came from."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    menu:
+        lanista_npc "You came to cover what I can't. I won't pretend that sits well."
+        "Cover a creditor's note. (800 coins)" if money >= 800:
+            $ money -= 800
+            $ lanista_devotion += 2
+            $ lanista_affection += 3
+            $ lanista_donation_total += 1
+            $ lanista_donation_highest_tier = max(lanista_donation_highest_tier, 1)
+            narrator "A creditor's note, paid. No ceremony."
+            lanista_npc "One less paper on my desk. Don't make it a thing."
+        "Clear the month's interest. (1600 coins)" if money >= 1600:
+            $ money -= 1600
+            $ lanista_devotion += 3
+            $ lanista_affection += 4
+            $ lanista_donation_total += 1
+            $ lanista_donation_highest_tier = max(lanista_donation_highest_tier, 2)
+            narrator "The month's bleeding slows by a measure."
+            lanista_npc "Interest cleared. This buys the sand another month. That's all."
+        "Buy back a lien. (2800 coins)" if money >= 2800:
+            $ money -= 2800
+            $ lanista_devotion += 4
+            $ lanista_affection += 5
+            $ lanista_donation_total += 1
+            $ lanista_donation_highest_tier = max(lanista_donation_highest_tier, 3)
+            narrator "A lien, lifted. One hand off the Arena's throat."
+            lanista_npc "You bought back the lien. I counted the papers. Don't expect me to say more."
+        "Settle the principal. (4000 coins)" if money >= 4000:
+            $ money -= 4000
+            $ lanista_devotion += 5
+            $ lanista_affection += 6
+            $ lanista_donation_total += 1
+            $ lanista_donation_highest_tier = max(lanista_donation_highest_tier, 4)
+            narrator "Principal settled. The columns run clean for the first time in years."
+            lanista_npc "The books are clear. ...I'll remember who did that, and I'll never say it plainly. Consider it said now."
+        "Not today.":
+            jump lanista_visit_menu
+    $ lanista_debt_finance_last_day = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_debt_favor:
-    lanista_npc "Bold of you to collect. I don't forget debts either."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    menu:
+        lanista_npc "You're here to call the markers. I know the ledger as well as you do."
+        "Call in a marker. (800 coins)" if money >= 800:
+            $ money -= 800
+            $ lanista_dominion += 2
+            $ lanista_affection += 2
+            $ lanista_favors_total += 1
+            $ lanista_favor_highest_tier = max(lanista_favor_highest_tier, 1)
+            $ lanista_corruption = min(100, lanista_corruption + 1)
+            narrator "A marker called, the Lanista's name off a note — yours on instead."
+            lanista_npc "One marker. You're counting. So am I."
+        "Put your name on the note. (1600 coins)" if money >= 1600:
+            $ money -= 1600
+            $ lanista_dominion += 3
+            $ lanista_affection += 3
+            $ lanista_favors_total += 1
+            $ lanista_favor_highest_tier = max(lanista_favor_highest_tier, 2)
+            $ lanista_corruption = min(100, lanista_corruption + 1)
+            narrator "Your name goes on the paper. The Lanista sets the pen down without looking at it."
+            lanista_npc "My debt, your name. I know the shape of what that means."
+        "Buy the lien yourself. (2800 coins)" if money >= 2800:
+            $ money -= 2800
+            $ lanista_dominion += 4
+            $ lanista_affection += 4
+            $ lanista_favors_total += 1
+            $ lanista_favor_highest_tier = max(lanista_favor_highest_tier, 3)
+            $ lanista_corruption = min(100, lanista_corruption + 1)
+            narrator "The lien transfers. The Arena owes you something it won't forget."
+            lanista_npc "You own the lien. Say it plainly — I'm listening."
+        "Own the debt outright. (4000 coins)" if money >= 4000:
+            $ money -= 4000
+            $ lanista_dominion += 5
+            $ lanista_affection += 5
+            $ lanista_favors_total += 1
+            $ lanista_favor_highest_tier = max(lanista_favor_highest_tier, 4)
+            $ lanista_corruption = min(100, lanista_corruption + 1)
+            narrator "The debt is yours. The Arena, to the last nail, answers to your ledger now."
+            lanista_npc "Outright. ...You've the whole column. I'll not pretend you didn't earn the right to hold it."
+        "Not today.":
+            jump lanista_visit_menu
+    $ lanista_debt_finance_last_day = calculate_total_days()
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_program_card:
