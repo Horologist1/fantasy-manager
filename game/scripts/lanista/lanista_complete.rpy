@@ -1061,12 +1061,176 @@ label lanista_s3_gate_end:
     jump lanista_visit_menu
 
 label lanista_s4_gate:
-    lanista_npc "Things shift between us. You feel it too."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    narrator "The first spectacle is spent. The benches the old card never filled were packed tonight, rim to rim, for oiled bodies and the thinnest pretense of a fight — and the night's take is the richest this house has counted in eleven seasons. The crowd has bled away into the dark. The torches gutter low along the tunnel mouth. The coin is locked in the box, and the box, now, no longer matters."
+    narrator "Whatever the Arena sold tonight, it sold for the both of you. And now the gates are barred, the great stone bowl stands empty, and the charge that has been building between you across a whole season has, at last, nowhere left to go but here."
+    if lanista_is_dominion_route():
+        jump lanista_s4_gate_dominion
+    else:
+        jump lanista_s4_gate_devotion
+
+label lanista_s4_gate_devotion:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _bust = "images/lanista/lanista_{}_warm.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    lanista_npc "I held this back for the fighter I used to be. That one took the night's count and walked out the gate with the crowd. Whatever's left standing in this bowl with you isn't him — isn't armored, isn't careful. I'm done being careful with you, [_ttl]."
+    narrator "The Lanista crosses the last of the distance and does not stop this time — no scarred hand that halts at your jaw to ask the question it won't say. [_Their] hands find the fastenings of your clothes with the same sure economy [_they] brings to a blade, and under the iron of it there is a tremor [_they] cannot quite still."
+    $ _bust = "images/lanista/lanista_{}_vulnerable.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "You undo the worn leather and linen in turn, and the Lanista lets you — lets you bare the body that has stood armored against the whole world for eleven seasons. [_They] holds very still while you do it, jaw tight, eyes never once leaving your face, as if bracing for a blow that has always, until now, come."
+    $ _bust = "images/lanista/lanista_{}_undress.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_vulnerable.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "What comes instead is your mouth, your hands — gentleness where [_they] braced for the strike. Something in [_them] breaks open at that, quiet and enormous, and the breath [_they] lets go is the sound of a guard wholly, finally lowered."
+    menu:
+        "\"Let me see all of you. I'm not going anywhere.\"":
+            $ lanista_devotion += 4
+            $ lanista_affection += 3
+            narrator "You hold [_their] gaze while you say it, and the want in [_their] face is unarmored now, plain as a wound left open on purpose."
+            lanista_npc "Not going anywhere. ...You keep saying impossible things to me as if they cost you nothing. Here, then. All of it. I've nothing left worth keeping back."
+        "\"Tonight you're not made of iron. Just here. With me.\"":
+            $ lanista_affection += 4
+            $ lanista_devotion += 2
+            narrator "The hard line of [_their] shoulders eases at that, by a degree no one else has ever been let close enough to see."
+            lanista_npc "Just here. ...Eleven years I've been iron, because iron is the thing that stays standing. You make me want to learn what's under it. A dangerous thing to want, [_ttl]. I find I want it anyway."
+    $ _scene = "s4_gate"
+    $ _route = "devotion"
+    python:
+        _g = getattr(store, "lanista_gender", "male") or "male"
+        _t = (getattr(store, "player_title", "") or "").strip().lower()
+        _t = "lady" if _t == "lady" else "lord"
+        _candidates = [
+            "images/lanista/cg_{}_{}_{}_{}.png".format(_scene, _route, _g, _t),
+            "images/lanista/cg_{}_{}_{}.png".format(_scene, _route, _g),
+            "images/lanista/cg_{}_{}.png".format(_scene, _route),
+        ]
+        _cg = next((c for c in _candidates if renpy.loadable(c)), None)
+    if _cg:
+        window hide
+        scene expression _cg at lanista_cg_fit
+        pause
+        window show
+    $ _pt = (getattr(store, "player_title", "") or "").strip().lower()
+    if lanista_gender == "male" and _pt == "lord":
+        narrator "His body, bared, is a map of the sand — old scars, banked heat, hard muscle gone tender under your hands for the first time in its life. He gathers you against the broad warmth of him, and when he finally works his way into you it is slow, watchful, a man who has only ever known how to strike learning, breath by careful breath, how to give instead. Every sound he spends against your throat is one he has never let another living soul hear."
+    elif lanista_gender == "male":
+        narrator "His body is all old war — scarred, heavy with banked heat, hands that have known only the grip of a weapon learning the far gentler grip of you. When he settles over you and at last moves, sinking deep and slow, it is certain and disbelieving in the same breath, and the low broken sound he gives against your hair is one no crowd in eleven seasons ever drew out of him."
+    elif _pt == "lord":
+        narrator "She comes apart by degrees beneath your hands — the iron set of her loosening, the scarred strength of her going warm and pliant and willing. When you move into her she takes you with a low, broken sound, arms locking hard across your back, holding on the way a fighter holds the one thing in the world worth not letting fall."
+    else:
+        narrator "She lets you bare her, lets you learn the hard and beautiful country of her with hands and mouth, and the proud body that has kept the whole world a blade's length away for eleven seasons arches up into you instead of away. Mouth to mouth, breath to breath, you take each other apart by slow degrees, and every sound she gives you is one she has never once surrendered to the dark."
+    narrator "After, the two of you lie tangled in the cooling dark of the empty bowl, and for a long while the Lanista will not let go of you — as though [_they] has only just understood that [_they] is allowed to hold a thing without it being torn away."
+    lanista_npc "...I didn't know it could be that. Eleven seasons, and I didn't know. Stay till the lamp burns out, [_ttl]. That's the whole of what I'll ask. Just till then."
+    jump lanista_s4_gate_end
+
+label lanista_s4_gate_dominion:
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _bust = "images/lanista/lanista_{}_angry.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    lanista_npc "The house made its best count in eleven seasons tonight — on flesh and pretense, because you willed it so. Don't think I've missed the shape of it. You've remade the Arena. And now you've come to collect the last thing standing in it that still dares call itself mine."
+    narrator "You take the proud face in your hand the way you did at the first gate — but tonight you do not stop at the kiss. [_Their] jaw is iron under your fingers, [_their] eyes level and cold, and beneath that flawless composure [_they] is already answering: a fighter who has chosen the ground on which to lose."
+    $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "You strip the worn leather from [_them] slow, and [_they] lets you — every fastening a fortress ceded and never once surrendered. The cold dignity does not leave [_their] face for an instant. But the body under your hands has made its own decision, and it has not thought to consult the pride."
+    $ _bust = "images/lanista/lanista_{}_undress.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "Bared, [_they] holds the champion's stillness — chin high, gaze steady, not a single sound surrendered. And the want comes off [_them] in waves [_they] will not name. [_They] will make you take it. [_They] will not, to the last, be caught in the act of giving it."
+    menu:
+        "\"Keep your face as still as you like. I'll have what the rest of you is already offering.\"":
+            $ lanista_dominion += 4
+            $ lanista_affection += 2
+            narrator "Something flickers behind the cold eyes — caught, and refusing to own it — and the proud jaw sets all the harder, which tells you everything the mouth will not."
+            lanista_npc "Have it, then. ...You read a body the way you read a ledger, [_ttl]. Damn you for it. Take your collection. I'll keep my silence, you'll keep your prize, and we'll both call that a fair exchange."
+        "\"Yield it on your terms. I'll take it on mine. We both win that bargain.\"":
+            $ lanista_affection += 3
+            $ lanista_dominion += 2
+            narrator "The cold composure holds, but something behind it eases — you have left the pride its footing even as you claim the rest, and a fighter knows the worth of being allowed to lose standing up."
+            lanista_npc "My terms, your taking. ...You'd grant me that much, with the whole of me already in your hand. The one creditor who lets the debtor keep their feet. Small wonder I can't be rid of you."
+    $ _scene = "s4_gate"
+    $ _route = "dominion"
+    python:
+        _g = getattr(store, "lanista_gender", "male") or "male"
+        _t = (getattr(store, "player_title", "") or "").strip().lower()
+        _t = "lady" if _t == "lady" else "lord"
+        _candidates = [
+            "images/lanista/cg_{}_{}_{}_{}.png".format(_scene, _route, _g, _t),
+            "images/lanista/cg_{}_{}_{}.png".format(_scene, _route, _g),
+            "images/lanista/cg_{}_{}.png".format(_scene, _route),
+        ]
+        _cg = next((c for c in _candidates if renpy.loadable(c)), None)
+    if _cg:
+        window hide
+        scene expression _cg at lanista_cg_fit
+        pause
+        window show
+    $ _pt = (getattr(store, "player_title", "") or "").strip().lower()
+    if lanista_gender == "male" and _pt == "lord":
+        narrator "He holds his pride like a shield to the very last — jaw set, stare level, not a sound conceded. His body keeps no such discipline. He is hard against you before you have half undressed him, and when you draw him into you and set the pace yourself, the iron in his face never breaks while everything beneath it does — the breath torn ragged, the scarred hands fisting in the bench, the whole proud frame yielding the bout and refusing, to the end, to say so."
+    elif lanista_gender == "male":
+        narrator "He keeps the cold dignity to the last — the level stare, the proud jaw that will not bend a degree. His body betrays every line of it. He is hard and wanting long before he will own to it, and when you take him into you and set the rhythm yourself, riding the composure clean out of him, the only confession he makes is the breath that tears loose and the hands that grip and ungrip the bench and never, ever reach to beg."
+    elif _pt == "lord":
+        narrator "She holds the champion's composure like a final stance — chin high, gaze steady, conceding exactly as much as she has decided to concede and not a hair more. Her body argues otherwise. She is slick and ready well before the proud mouth will allow it, and when you move into her and make her take the pace you set, the carved stone of her face never alters while the rest of her clenches and shudders and gives, and not one word of surrender ever crosses her lips."
+    else:
+        narrator "She gives you the cold stare to the very end — every inch the champion who chose to lose this on terms of her own choosing. Her body holds no such line. Slick and wanting under your hands, she arches into your mouth, your fingers, the rhythm you set, and the proud throat lets slip everything but the words — the catch of breath, the helpless shudder, the surrender she would bite through her own tongue before naming. You take what the pride will not give, and the pride lets you, and stays silent, and breaks."
+    narrator "After, [_they] lies back in the dark with [_their] breathing slow to even out, the composure reassembling itself piece by piece — but slower than [_they] would wish, and you both know precisely why."
+    lanista_npc "...You'll not hear me say it. Not tonight, not ever. But you were there. You felt the thing the words would only cheapen. Let that be enough, [_ttl] — it's more than I've handed anyone living."
+    jump lanista_s4_gate_end
+
+label lanista_s4_gate_end:
     $ lanista_s4_gate_fired = True
+    $ lanista_corruption = min(100, lanista_corruption + 5)
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_morning_after:
-    lanista_npc "Don't read too much into last night."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _Their = _their.capitalize()
+    narrator "Morning comes in low and gold through the tunnel mouth, laying a long bar of light across the cooling sand and across the two of you. For a while neither of you moves. The great bowl is silent in a way it never is by day — no crowd, no count, no craft to keep. Only the light, and the warmth, and the slow rise and fall of breath."
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "Then the Lanista rises and sits at the bench's edge, back half-turned to you, and reaches for the long strips of linen. [_They] begins to wrap [_their] hands — the same ritual that comes before every bout, knuckle and wrist, the old habit of a body readying itself to be hit."
+    narrator "But slower than you have ever seen it done. No snap to the linen, no economy in it. [_They] does not look at you while [_their] hands find the familiar work, and the not-looking says all the thing the wrapping is meant to hide — that the iron has somewhere been breached, and the body is reaching, by old reflex, for the only armor it has ever owned."
+    lanista_npc "...Don't say anything yet, [_ttl]. Let me get my hands wrapped first."
+    narrator "When the last strip is tucked and tied, [_they] finally turns and looks at you — and the look, for all the linen, is not armored at all."
     jump lanista_visit_menu
 
 label lanista_s5_gate:
