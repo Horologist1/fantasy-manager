@@ -96,6 +96,16 @@ label lanista_restore_visit_scene:
 ################################################################################
 
 init python:
+    def profession_is_unlocked(prof):
+        """A profession with no 'required_flag' is always shown. Otherwise the named
+        store flag must be truthy. Safe for ALL buildings (default: unlocked)."""
+        if not hasattr(prof, "get"):
+            return True
+        flag = prof.get("required_flag")
+        if not flag:
+            return True
+        return bool(getattr(store, str(flag), False))
+
     def lanista_recalculate_stage():
         aff = int(getattr(store, "lanista_affection", 0) or 0)
         g3 = bool(getattr(store, "lanista_s3_gate_fired", False))

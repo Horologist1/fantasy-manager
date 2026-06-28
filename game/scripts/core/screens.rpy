@@ -3564,8 +3564,9 @@ screen job_selection(worker):
                     if building is not None and building.get("type") is not None:
                         $ btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == building["type"]), None)
                         if btype is not None:
-                            # Filter professions based on NSFW toggle
-                            for profession in [p for p in btype.get("professions", []) if persistent.nsfw_enabled or not p.get("nsfw", False)]:
+                            # Filter professions based on NSFW toggle and required_flag gating
+                            # (a profession with no required_flag is always shown — safe for all buildings)
+                            for profession in [p for p in btype.get("professions", []) if (persistent.nsfw_enabled or not p.get("nsfw", False)) and profession_is_unlocked(p)]:
                                 $ prof_name = profession.get("name", "Unnamed Profession")
                                 $ prof_description = profession.get("description", "No description available.")
                                 $ skills_used = profession.get("skills", [])
