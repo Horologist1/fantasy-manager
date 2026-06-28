@@ -1031,6 +1031,7 @@
           "name": "Pin up Barbarians",
           "description": "Risqué spectacle: fierce poses, minimal armour, and crowd appeal. Less risk than combat, more skin than glory. Earns coin and reputation from admirers.",
           "nsfw": true,
+          "required_flag": "lanista_pinup_unlocked",
           "difficulty": "easy",
           "skills": [
             "Charm",
@@ -1190,6 +1191,202 @@
                   "relationship": 0,
                   "reputation": 10,
                   "libido": 0
+                }
+              },
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
+            }
+          ]
+        },
+        {
+          "id": "arena_oil_chains",
+          "name": "Oil & Chains",
+          "description": "Eroticised combat spectacle: oiled bodies glisten under torchlight, submission holds and jangling chains played for the crowd's hungers. Where the pin-up tempts, Oil & Chains delivers.",
+          "nsfw": true,
+          "required_flag": "lanista_oilchains_unlocked",
+          "difficulty": "medium",
+          "skills": [
+            "Striptease",
+            "BDSM"
+          ],
+          "training_skills_distribution": {
+            "Striptease": 3,
+            "BDSM": 3
+          },
+          "max_daily_workers": 6,
+          "daily_story_count": {
+            "base": 1
+          },
+          "daily_stories": [
+            {
+              "id": "arena_oil_chains_show",
+              "weight": 1,
+              "report": "Arena: Oil & Chains show",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Striptease",
+                "BDSM"
+              ],
+              "relevant_traits": [
+                "Beautiful",
+                "Masochist",
+                "Exhibitionist"
+              ],
+              "trait_success": "{worker_name}'s {trait} set the Oil & Chains crowd alight.",
+              "earnings": {
+                "success": "70 + skill",
+                "critical_success": "70 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} steps onto the sand slick with oil, chains in hand. The act stumbles—the crowd wanted hunger, they got hesitation. Boos and a thin purse; the Lanista is unimpressed.",
+                "mediocre": "{worker_name} goes through the Oil & Chains routine competently enough—glistening skin and taut chain-work—but the crowd expected fire and got embers. Polite applause, modest coin.",
+                "success": "{worker_name} commands the arena floor in oil-sheen and chains, working the crowd's appetite with every hold and pose. Coins fly from the stands and the Lanista nods approval.",
+                "critical_success": "{worker_name} turns the Oil & Chains show into something the crowd will talk about for weeks. Every submission, every flash of oiled skin lands perfectly; the purse overflows and reputation soars."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -4,
+                  "health": 0,
+                  "joy": 1,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 5,
+                  "libido": 1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "health": 0,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 10,
+                  "libido": 2
+                }
+              },
+              "loot": {
+                "rolls": 0,
+                "loot_yield_scale": 0.73
+              }
+            }
+          ]
+        },
+        {
+          "id": "arena_spectacle",
+          "name": "The Spectacle",
+          "description": "The Arena's fully erotic main event—sex and combat fused into one relentless show. The highest purse, the loudest crowd, and the furthest a fighter can fall from honour. Only the boldest step onto this sand.",
+          "nsfw": true,
+          "required_flag": "lanista_spectacle_unlocked",
+          "difficulty": "hard",
+          "skills": [
+            "Striptease",
+            "Sex"
+          ],
+          "training_skills_distribution": {
+            "Striptease": 3,
+            "Sex": 3
+          },
+          "max_daily_workers": 6,
+          "daily_story_count": {
+            "base": 1
+          },
+          "daily_stories": [
+            {
+              "id": "arena_spectacle_show",
+              "weight": 1,
+              "report": "Arena: The Spectacle",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Striptease",
+                "Sex"
+              ],
+              "relevant_traits": [
+                "Nympho",
+                "Porn Star",
+                "Exhibitionist"
+              ],
+              "trait_success": "{worker_name}'s {trait} made The Spectacle an event no one in the arena will forget.",
+              "earnings": {
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "",
+              "failure_image": "",
+              "descriptions": {
+                "failure": "{worker_name} takes the main sand for The Spectacle—combat stripped bare, pleasure made performance. They falter before the crowd; the act collapses into embarrassment. The purse is barely worth the shame.",
+                "mediocre": "{worker_name} endures The Spectacle without disaster: bodies, sweat, and the crowd's roar, but no real spark. The performance satisfies the contract without igniting anything. Modest pay for a passable show.",
+                "success": "{worker_name} delivers The Spectacle in full—combat and desire wound together, every moment played to the crowd's hunger. The audience is on its feet; coin pours from the stands and the Lanista is very pleased.",
+                "critical_success": "{worker_name} becomes legend in The Spectacle. The crowd screams, throws coin and flowers, and chants their name as the show reaches its peak. The highest purse the Arena pays; the Lanista calls it the greatest event of the season."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -5,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -8,
+                  "libido": -2
+                },
+                "mediocre": {
+                  "energy": -5,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": -3,
+                  "libido": 0
+                },
+                "success": {
+                  "energy": -5,
+                  "health": -1,
+                  "joy": 2,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 8,
+                  "libido": 2
+                },
+                "critical_success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": 3,
+                  "rebelliousness": 0,
+                  "romance": 0,
+                  "relationship": 0,
+                  "reputation": 15,
+                  "libido": 3
                 }
               },
               "loot": {
