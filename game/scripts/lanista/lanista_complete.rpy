@@ -2097,10 +2097,12 @@ label lanista_s5_gate_end:
     jump lanista_visit_menu
 
 label lanista_s6_gate:
-    $ _route = lanista_determine_ending()
-    if _route == "dominion":
+    # Lock the route at scene entry so the gate shown == the ending recorded
+    # (mid-scene menu nudges can't flip a borderline player between scene and gate_end).
+    $ lanista_ending_route = lanista_determine_ending()
+    if lanista_ending_route == "dominion":
         jump lanista_s6_gate_dominion
-    elif _route == "mixed":
+    elif lanista_ending_route == "mixed":
         jump lanista_s6_gate_mixed
     else:
         jump lanista_s6_gate_devotion
@@ -2322,7 +2324,8 @@ label lanista_s6_gate_mixed:
 
 label lanista_s6_gate_end:
     $ lanista_s6_gate_fired = True
-    $ lanista_ending_route = lanista_determine_ending()
+    # Preserve the route locked at scene entry; fall back only if somehow unset.
+    $ lanista_ending_route = lanista_ending_route or lanista_determine_ending()
     $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
