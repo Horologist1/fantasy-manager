@@ -184,3 +184,228 @@ label lanista_first_meeting:
             $ lanista_gender = "female"
     $ lanista_known_name = False
     return
+
+################################################################################
+### LANISTA — CHARACTER DEFINE
+################################################################################
+
+define lanista_npc = Character("The Lanista", color="#c98a3a")
+
+################################################################################
+### LANISTA — VISIT ENTRY
+################################################################################
+
+label lanista_visit:
+    if not getattr(store, "lanista_gender", ""):
+        call lanista_first_meeting from _lanista_first_meeting_call
+    $ lanista_visit_count += 1
+    $ lanista_recalculate_stage()
+    call lanista_restore_visit_scene from _lanista_restore_on_visit
+    if not lanista_known_name:
+        narrator "The Lanista measures you with the flat attention of someone deciding whether you are worth the breath."
+        lanista_npc "Coin-counter. Say your piece."
+        $ lanista_known_name = True
+    else:
+        lanista_npc "..."
+    jump lanista_visit_menu
+
+################################################################################
+### LANISTA — GATED VISIT MENU
+################################################################################
+
+label lanista_visit_menu:
+    call lanista_restore_visit_scene from _lanista_restore_menu
+    $ _total_days = calculate_total_days()
+    if not lanista_s3_gate_fired and lanista_stage >= 3 and len(lanista_s3_talks_done) >= 3 and lanista_affection >= 50:
+        jump lanista_s3_gate
+    if not lanista_s4_gate_fired and lanista_stage >= 4 and len(lanista_s4_talks_done) >= 3 and lanista_affection >= 80 and lanista_debt_finance_unlocked:
+        jump lanista_s4_gate
+    if lanista_s4_gate_fired and not lanista_morning_after_done:
+        $ lanista_morning_after_done = True
+        jump lanista_morning_after
+    if not lanista_s5_gate_fired and lanista_stage >= 5 and len(lanista_s5_talks_done) >= 3 and lanista_affection >= 100:
+        jump lanista_s5_gate
+    if not lanista_s6_gate_fired and lanista_s5_gate_fired and lanista_stage >= 6 and len(lanista_s6_talks_done) >= 3 and lanista_affection >= 110:
+        jump lanista_s6_gate
+    if lanista_s6_gate_fired and not lanista_ending_done:
+        jump lanista_ending_resolution
+    $ _talk_free = lanista_last_talk_total_days != _total_days
+    $ _remark_free = lanista_last_question_total_days != _total_days
+    $ _s1_talk = lanista_stage == 1 and len(lanista_s1_talks_done) < 3
+    $ _s2_talk = lanista_stage == 2 and len(lanista_s2_talks_done) < 3
+    $ _s3_talk = not lanista_s3_gate_fired and lanista_stage >= 3 and len(lanista_s3_talks_done) < 3
+    $ _s4_talk = not lanista_s4_gate_fired and lanista_stage >= 4 and len(lanista_s4_talks_done) < 3
+    $ _s5_talk = not lanista_s5_gate_fired and lanista_stage >= 5 and len(lanista_s5_talks_done) < 3
+    $ _s6_talk = not lanista_s6_gate_fired and lanista_stage >= 6 and len(lanista_s6_talks_done) < 3
+    $ _s1_rem = lanista_stage == 1 and len(lanista_s1_remarks_done) < 3
+    $ _s2_rem = lanista_stage == 2 and len(lanista_s2_remarks_done) < 2
+    $ _s3_rem = not lanista_s3_gate_fired and lanista_stage >= 3 and len(lanista_s3_remarks_done) < 2
+    $ _s4_rem = not lanista_s4_gate_fired and lanista_stage >= 4 and len(lanista_s4_remarks_done) < 2
+    $ _s5_rem = not lanista_s5_gate_fired and lanista_stage >= 5 and len(lanista_s5_remarks_done) < 2
+    $ _finance_avail = lanista_stage >= 4 and not lanista_s4_gate_fired and lanista_debt_finance_unlocked and lanista_debt_finance_last_day != _total_days
+    $ _finance_dom = lanista_is_dominion_route()
+    $ _card_avail = lanista_s3_gate_fired and lanista_card_tier < 4 and lanista_card_last_day != _total_days
+    $ _wager_avail = lanista_stage >= 2 and lanista_wager_last_day != _total_days
+    $ _aftercrowd_avail = lanista_s4_gate_fired and (_total_days - (lanista_aftercrowd_last_day or 0)) >= 3
+    menu:
+        lanista_npc "..."
+        "Talk." if _talk_free and _s1_talk:
+            jump lanista_s1_talk_router
+        "Talk." if _talk_free and _s2_talk:
+            jump lanista_s2_talk_router
+        "Talk." if _talk_free and _s3_talk:
+            jump lanista_s3_talk_router
+        "Talk." if _talk_free and _s4_talk:
+            jump lanista_s4_talk_router
+        "Talk." if _talk_free and _s5_talk:
+            jump lanista_s5_talk_router
+        "Talk." if _talk_free and _s6_talk:
+            jump lanista_s6_talk_router
+        "Talk." if _talk_free and not (_s1_talk or _s2_talk or _s3_talk or _s4_talk or _s5_talk or _s6_talk):
+            jump lanista_talk_generic
+        "Talk." if not _talk_free:
+            lanista_npc "I've given you words enough today. Come back when the sun's moved."
+            jump lanista_visit_menu
+        "Make a remark." if _remark_free and _s1_rem:
+            jump lanista_s1_remark_router
+        "Make a remark." if _remark_free and _s2_rem:
+            jump lanista_s2_remark_router
+        "Make a remark." if _remark_free and _s3_rem:
+            jump lanista_s3_remark_router
+        "Make a remark." if _remark_free and _s4_rem:
+            jump lanista_s4_remark_router
+        "Make a remark." if _remark_free and _s5_rem:
+            jump lanista_s5_remark_router
+        "Cover the Arena's debts." if _finance_avail and not _finance_dom:
+            jump lanista_debt_donate
+        "Call in what they owe you." if _finance_avail and _finance_dom:
+            jump lanista_debt_favor
+        "Program the card." if _card_avail:
+            jump lanista_program_card
+        "Back a fighter. (Wager)" if _wager_avail:
+            jump lanista_wager_menu
+        "After the crowd." if _aftercrowd_avail:
+            jump lanista_aftercrowd
+        "Bring a gift." if lanista_last_gift_total_days != _total_days:
+            jump lanista_gift
+        "Take their measure.":
+            jump lanista_assess
+        "Leave.":
+            hide lanista_bust
+            hide lanista_bg_dim
+            window hide
+            $ renpy.show_screen("map_screen")
+            $ renpy.show_screen("arena_menu")
+            jump tavern_screen
+
+################################################################################
+### LANISTA — STUB LABELS (replaced by later tasks)
+################################################################################
+
+label lanista_s1_talk_router:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_s2_talk_router:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_s3_talk_router:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_s4_talk_router:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_s5_talk_router:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_s6_talk_router:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_talk_generic:
+    lanista_npc "Nothing new under this sun, coin-counter."
+    jump lanista_visit_menu
+
+label lanista_s1_remark_router:
+    lanista_npc "You have sharp eyes. I'll grant you that."
+    jump lanista_visit_menu
+
+label lanista_s2_remark_router:
+    lanista_npc "You have sharp eyes. I'll grant you that."
+    jump lanista_visit_menu
+
+label lanista_s3_remark_router:
+    lanista_npc "You have sharp eyes. I'll grant you that."
+    jump lanista_visit_menu
+
+label lanista_s4_remark_router:
+    lanista_npc "You have sharp eyes. I'll grant you that."
+    jump lanista_visit_menu
+
+label lanista_s5_remark_router:
+    lanista_npc "You have sharp eyes. I'll grant you that."
+    jump lanista_visit_menu
+
+label lanista_debt_donate:
+    lanista_npc "Generosity. I'll remember which purse it came from."
+    jump lanista_visit_menu
+
+label lanista_debt_favor:
+    lanista_npc "Bold of you to collect. I don't forget debts either."
+    jump lanista_visit_menu
+
+label lanista_program_card:
+    lanista_npc "The card changes things. You understand that."
+    jump lanista_visit_menu
+
+label lanista_wager_menu:
+    lanista_npc "Pick your fighter. Sand doesn't lie."
+    jump lanista_visit_menu
+
+label lanista_aftercrowd:
+    lanista_npc "The crowd is gone. It's quieter now."
+    jump lanista_visit_menu
+
+label lanista_gift:
+    lanista_npc "A gift. I won't ask what you want for it."
+    jump lanista_visit_menu
+
+label lanista_assess:
+    lanista_npc "Measuring me, are you? Go ahead."
+    jump lanista_visit_menu
+
+label lanista_s3_gate:
+    lanista_npc "You've earned a different kind of conversation."
+    $ lanista_s3_gate_fired = True
+    jump lanista_visit_menu
+
+label lanista_s4_gate:
+    lanista_npc "Things shift between us. You feel it too."
+    $ lanista_s4_gate_fired = True
+    jump lanista_visit_menu
+
+label lanista_morning_after:
+    lanista_npc "Don't read too much into last night."
+    jump lanista_visit_menu
+
+label lanista_s5_gate:
+    lanista_npc "We are past the point of pretending this is business."
+    $ lanista_s5_gate_fired = True
+    jump lanista_visit_menu
+
+label lanista_s6_gate:
+    lanista_npc "Whatever comes next — you chose it."
+    $ lanista_s6_gate_fired = True
+    jump lanista_visit_menu
+
+label lanista_ending_resolution:
+    lanista_npc "Every arrangement finds its end. This one is ours."
+    $ lanista_ending_done = True
+    jump tavern_screen
+
+label lanista_check_stage_advance:
+    return
