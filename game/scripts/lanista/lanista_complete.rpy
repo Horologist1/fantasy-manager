@@ -180,6 +180,117 @@ init python:
             return int(getattr(store, "lanista_favor_highest_tier", 0) or 0) >= 4
         return int(getattr(store, "lanista_donation_highest_tier", 0) or 0) >= 4
 
+    # Gift table: item_id -> (devotion_gain, dominion_gain, affection_gain).
+    # A fighter measures a gift by its use. Blades and the care of the body
+    # earn devotion; a chemical command of desire earns dominion and a sting.
+    LANISTA_GIFTS = {
+        # Strong drink — shared comfort
+        "fine_wine":                (2, 0, 3),
+        # A blade for the craft — the rare ones land hardest
+        "training_sword":           (1, 0, 1),
+        "iron_sword":               (2, 0, 2),
+        "bronze_sword":             (2, 0, 2),
+        "steel_sword":              (3, 0, 3),
+        "silver_sword":             (3, 0, 3),
+        "mithril_sword":            (4, 0, 4),
+        "obsidian_blade":           (4, 0, 4),
+        "flame_dagger":             (3, 0, 3),
+        "enchanted_blade_malachar": (4, 0, 4),
+        # A salve for old wounds — care for the body behind the armor
+        "health_potion":            (3, 0, 3),
+        "potion_vitality":          (3, 0, 3),
+        "stamina_elixir":           (2, 0, 2),
+        # A draught to command desire — taken as the insult it is
+        "elixir_passion":           (0, 2, -2),
+    }
+
+    # Item groups for the gift reaction lines (no per-item labels needed).
+    LANISTA_GIFT_BLADES = {
+        "training_sword", "iron_sword", "bronze_sword", "steel_sword",
+        "silver_sword", "mithril_sword", "obsidian_blade", "flame_dagger",
+        "enchanted_blade_malachar",
+    }
+    LANISTA_GIFT_SALVES = {"health_potion", "potion_vitality", "stamina_elixir"}
+
+    def lanista_get_giftable_items():
+        """Return [(item_id, display_name, qty)] from manager inventory the Lanista accepts.
+        Mirrors yvara_get_giftable_items' store/global-inventory read."""
+        inv_store = getattr(store, "manager_inventory", [])
+        inv_global = manager_inventory if "manager_inventory" in globals() else []
+        item_defs = items_json.get("items", []) if "items_json" in globals() and hasattr(items_json, "get") else []
+        allowed = set(getattr(store, "LANISTA_GIFTS", LANISTA_GIFTS).keys())
+
+        qty_by_id = {}
+        inv = list(inv_store or [])
+        if inv_global is not inv_store:
+            inv += list(inv_global or [])
+        for entry in inv:
+            if not isinstance(entry, (list, tuple)) or len(entry) < 2:
+                continue
+            iid = str(entry[0])
+            try:
+                qty = int(entry[1])
+            except Exception:
+                qty = 1
+            if iid in allowed and qty > 0:
+                qty_by_id[iid] = qty_by_id.get(iid, 0) + qty
+
+        result = []
+        for iid, qty in qty_by_id.items():
+            item_data = next((i for i in item_defs if i.get("id") == iid), None)
+            name = item_data["name"] if item_data and item_data.get("name") else iid
+            result.append((iid, name, qty))
+        return result
+
+    def lanista_remove_gift_item(item_id, quantity=1):
+        """Remove a gift item from the manager inventory (store/global safe).
+        Mirrors yvara_remove_gift_item; leans on the global remove_item_from_inventory."""
+        try:
+            _qty = max(1, int(quantity))
+        except Exception:
+            _qty = 1
+
+        def _count_item(inv, target_id):
+            total = 0
+            try:
+                for entry in list(inv or []):
+                    if not isinstance(entry, (list, tuple)) or len(entry) < 2:
+                        continue
+                    if str(entry[0]) != str(target_id):
+                        continue
+                    try:
+                        total += max(0, int(entry[1]))
+                    except Exception:
+                        total += 1
+            except Exception:
+                return 0
+            return total
+
+        _store_inv = getattr(store, "manager_inventory", None)
+        _global_inv = manager_inventory if "manager_inventory" in globals() else None
+
+        if _store_inv is not None:
+            try:
+                _before = _count_item(_store_inv, item_id)
+                if _before > 0:
+                    remove_item_from_inventory(_store_inv, item_id, min(_qty, _before))
+                    if _count_item(getattr(store, "manager_inventory", _store_inv), item_id) < _before:
+                        return True
+            except Exception:
+                pass
+
+        if _global_inv is not None and _global_inv is not _store_inv:
+            try:
+                _before = _count_item(_global_inv, item_id)
+                if _before > 0:
+                    remove_item_from_inventory(_global_inv, item_id, min(_qty, _before))
+                    if _count_item(_global_inv, item_id) < _before:
+                        return True
+            except Exception:
+                pass
+
+        return False
+
 ################################################################################
 ### LANISTA — FIRST MEETING (gender choice)
 ################################################################################
@@ -851,7 +962,34 @@ label lanista_s6_talk_3:
     jump lanista_visit_menu
 
 label lanista_talk_generic:
-    lanista_npc "Nothing new under this sun, coin-counter."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    if not lanista_ending_done:
+        lanista_npc "Nothing new under this sun, [_ttl]. The sand keeps. So do I. Come back when one of us has a reason."
+        jump lanista_visit_menu
+    $ _route = getattr(store, "lanista_ending_route", "") or lanista_determine_ending()
+    $ _idx = int(getattr(store, "lanista_post_arc_talk_index", 0) or 0) % 3
+    if _route == "devotion":
+        if _idx == 0:
+            lanista_npc "The pits ran clean today — two good bouts, a house full enough, and an evening with nowhere it has to be but here. A year ago I'd not have called that a life, [_ttl]. It's the best one I've had."
+        elif _idx == 1:
+            lanista_npc "A recruit asked me why the Master of the Sands keeps crossing the city most nights. I told him a fighter who finds the one thing worth going to doesn't waste it on a cold cot. He didn't take my meaning. You do."
+        else:
+            lanista_npc "I chose this. That's the part I keep turning over. No debt drove me to your door tonight, no lender, no card — the gate swung your way and I let it. Don't look so pleased, [_ttl]. ...Aye, all right. Be pleased."
+    elif _route == "dominion":
+        if _idx == 0:
+            lanista_npc "The pits are run, the books are squared, and I'm here as you keep me, [_ttl]. I'll not pretend I'm free of you. I'll only say you've never made me feel the collar where the neighbours could see it. A fighter remembers that kind of keeping."
+        elif _idx == 1:
+            lanista_npc "Eleven seasons I answered to no one. Now I answer to you, and the strange part is the bearing held. You took the freedom and left me the spine. Most owners haven't the wit to know the difference. Tell me where you want me."
+        else:
+            lanista_npc "They still call me Master of the Sands at the gate. Inside these walls we both know whose hand I work under. It's an honest arrangement, [_ttl], and you keep your end with care. I've worn worse than a fair owner — far worse, and for less."
+    else:
+        if _idx == 0:
+            lanista_npc "Half my day on the sand, half my evening in your halls, and I'm damned if I can tell you which I'd give up first. So I don't. I keep both and let them grind against each other. It's a crooked life, [_ttl]. It's mine."
+        elif _idx == 1:
+            lanista_npc "Some mornings the pits have me and some nights your house does, and a body learns to be two things at once or be torn between them. I chose the first. The days I can't manage it, I come find you. That's the arrangement."
+        else:
+            lanista_npc "Master by day, kept by evening, unwilling to sever either — you knew what you were taking on, [_ttl], and you took it anyway. So did I. We're neither of us tidy. The crowd never once paid for tidy."
+    $ store.lanista_post_arc_talk_index = (_idx + 1) % 3
     jump lanista_visit_menu
 
 label lanista_s1_remark_router:
@@ -1637,11 +1775,74 @@ label lanista_aftercrowd_dom_t4:
     jump lanista_visit_menu
 
 label lanista_gift:
-    lanista_npc "A gift. I won't ask what you want for it."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _total_days = calculate_total_days()
+    $ _items = lanista_get_giftable_items()
+    if not _items:
+        narrator "You take stock of what you have on hand to offer, and come up short — nothing in your stores a fighter who measures everything by its use would thank you for."
+        lanista_npc "Empty hands, [_ttl]? No shame in it. Come back when you've a thing worth the carrying. I'm not going anywhere."
+        jump lanista_visit_menu
+    python:
+        # NOTE: renpy.display_menu treats a None value as a non-selectable
+        # caption, so the cancel option uses an explicit sentinel string.
+        _choices = []
+        for _iid, _name, _qty in _items:
+            _choices.append(("{} (x{})".format(_name, _qty), _iid))
+        _choices.append(("Never mind — keep what I have.", "__cancel__"))
+        _picked = renpy.display_menu(_choices)
+    if _picked is None or _picked == "__cancel__":
+        jump lanista_visit_menu
+    $ _removed = lanista_remove_gift_item(_picked, 1)
+    if not _removed:
+        narrator "You reach for it and find it already gone from your stores."
+        jump lanista_visit_menu
+    $ store.manager_inventory = list(getattr(store, "manager_inventory", manager_inventory))
+    $ _gdata = LANISTA_GIFTS.get(_picked, (1, 0, 1))
+    $ lanista_devotion += _gdata[0]
+    $ lanista_dominion += _gdata[1]
+    $ lanista_affection += _gdata[2]
+    $ lanista_last_gift_total_days = _total_days
+    $ lanista_gifts_given += 1
+    if _picked == "elixir_passion":
+        narrator "The Lanista turns the little bottle to the lamplight, reads what it is, and sets it down on the bench very precisely — the way one sets down a thing one would rather throw."
+        lanista_npc "A draught to make a body want. ...You've had every want I've got, [_ttl], and not one drop of it came from a bottle. Don't bring me this again. We'll say no more on it."
+    elif _picked == "fine_wine":
+        narrator "The Lanista works the cork loose with a thumb, sniffs once, and grants it the grunt that passes for approval."
+        lanista_npc "Strong, and honest about being so. Eleven seasons I drank what the cot provided and called it luck when it didn't blind me. This is better, [_ttl]. Sit. We'll halve it."
+    elif _picked in LANISTA_GIFT_SALVES:
+        narrator "The Lanista weighs the vial, understanding at once what it's for — and that you chose it knowing exactly where the old wounds sit."
+        lanista_npc "A salve for the knee. ...You watched me cross the yard and you counted the hitch. Most don't. Fewer still do anything about it. My thanks, [_ttl]. I'll not waste it on pride."
+    elif _picked in LANISTA_GIFT_BLADES:
+        narrator "The Lanista takes the blade across both palms, sights down the edge, and tests the balance with a slow turn of the wrist — reading it the way another would read a letter from home."
+        lanista_npc "Now this is a thing chosen by someone who knows what I am. Good steel, balanced true. You could have brought me silk and scent. You brought me a blade. You see me clear, [_ttl]. That's the rarer gift of the two."
+    else:
+        narrator "The Lanista accepts it with a short nod, turning it over once before setting it aside."
+        lanista_npc "Thoughtful of you, [_ttl]. I'll find a use for it. I find a use for most things."
+    $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
 label lanista_assess:
-    lanista_npc "Measuring me, are you? Go ahead."
+    $ lanista_recalculate_stage()
+    $ _route = getattr(store, "lanista_ending_route", "") or lanista_determine_ending()
+    $ _corr = int(getattr(store, "lanista_corruption", 0) or 0)
+    $ _card = max(0, min(4, int(getattr(store, "lanista_card_tier", 0) or 0)))
+    $ _card_name = ["honest card, nothing shaped", "Crowd Pleasers", "Pin-up Barbarians", "Oil & Chains", "The Spectacle"][_card]
+    $ _route_pretty = {"devotion": "Master of the Sands — Your Partner", "dominion": "Broken Champion", "mixed": "Reluctant Gladiator"}.get(_route, _route or "undecided")
+    narrator "You take the measure of the Master of the Sands the way the Lanista taught you to read a fighter — not the stance shown, but the ground underneath it."
+    if lanista_is_devotion_route():
+        narrator "The lean is toward devotion: this is a fighter being met, not mastered. What grows here grows from being seen — and chosen back."
+    else:
+        narrator "The lean is toward dominion: ground given inch by inch, a proud thing learning the shape of an owner's hand — and not, you note, entirely sorry to."
+    if lanista_ending_done:
+        if _route == "devotion":
+            narrator "The arc is settled. The Lanista is your partner — free, the Arena still theirs, the evenings more often yours than not."
+        elif _route == "dominion":
+            narrator "The arc is settled. The Lanista answers to your hand now: the Broken Champion, running your pits by day and reporting to your house by the schedule you set."
+        else:
+            narrator "The arc is settled into something crooked and lived-in: the Reluctant Gladiator, half master of the sands, half kept thing, unwilling to sever either."
+        narrator "Measure: Ending — [_route_pretty] | Devotion [lanista_devotion] | Dominion [lanista_dominion] | Affection [lanista_affection] | Corruption [_corr]% | Card: tier [_card]/4 ([_card_name])"
+    else:
+        narrator "Measure: Stage [lanista_stage] | Devotion [lanista_devotion] | Dominion [lanista_dominion] | Affection [lanista_affection] | Corruption [_corr]% | Card: tier [_card]/4 ([_card_name]) | Likely ending: [_route_pretty]"
     jump lanista_visit_menu
 
 label lanista_s3_gate:
