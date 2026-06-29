@@ -2329,10 +2329,241 @@ label lanista_s6_gate_end:
     $ lanista_recalculate_stage()
     jump lanista_visit_menu
 
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║  ENDING RESOLUTION                                                          ║
+# ║                                                                            ║
+# ║  Called on next visit after the S6 gate fires (lanista_visit_menu).         ║
+# ║  Final state: NPC partner (devotion), full worker (dominion),               ║
+# ║  or part-time worker (mixed). Mirrors yvara_ending_resolution.              ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
 label lanista_ending_resolution:
-    lanista_npc "Every arrangement finds its end. This one is ours."
+    $ _ttl = getattr(store, "player_title", "") or "stranger"
+    $ _route = getattr(store, "lanista_ending_route", "") or lanista_determine_ending()
+    $ store.lanista_ending_route = _route
+    if _route == "dominion":
+        jump lanista_ending_dominion
+    elif _route == "mixed":
+        jump lanista_ending_mixed
+    else:
+        jump lanista_ending_devotion
+
+# ── Devotion Ending: free partner, keeps the Arena, NPC (no roster add) ──────
+label lanista_ending_devotion:
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _bust = "images/lanista/lanista_{}_warm.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "The Arena keeps the Lanista's name on its gate, and that is how it stays."
+    lanista_npc "I'll not be kept, [_ttl], and you'll not ask me to be. But I'll come when the gate swings — and it swings your way more nights than not."
+    narrator "[_They] holds the whole of [_their] own keeping and offers you the better part of it freely. No debt. No collar. Only the choosing, made fresh each evening [_they] crosses the city to find you."
+    narrator "The Master of the Sands runs the sands. And loves you on the side of it no ledger ever reached."
+
+    $ lanista_ending_devotion = True
     $ lanista_ending_done = True
-    jump tavern_screen
+    python:
+        if not hasattr(store, "event_flags") or not hasattr(store.event_flags, "__setitem__"):
+            store.event_flags = {}
+        store.event_flags["lanista_ending_devotion"] = True
+
+    narrator "{b}Ending: Master of the Sands — Your Partner{/b}"
+    narrator "The Lanista remains free and runs the Arena independently. [_They] is your partner, not your worker — and will turn up across your buildings when it suits [_them], which is often."
+    jump lanista_visit_menu
+
+# ── Dominion Ending: owned worker, runs the Arena by day, Broken Champion ────
+label lanista_ending_dominion:
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "The Arena answers to your name now, and the Lanista answers to your hand. [_They] keeps the pits running by day — and reports to your house by night, on whatever schedule you set."
+    lanista_npc "You own the sand and the one who keeps it, [_ttl]. I'll run your pits and I'll work your halls, and I'll do both well, because doing things badly was never in me. Tell me where to stand."
+    narrator "The champion who answered to no one now answers to you. The bearing is intact. The freedom is not."
+
+    python:
+        # Mirror yvara_ending_dominion's worker-add mechanism exactly.
+        # LA BIBLIA §1: duck-type (hasattr 'get'/'__setitem__'); never isinstance(x, dict/list)
+        # in story-label python blocks — json.loads values fail against Ren'Py Revertable types.
+        _lw = None
+        try:
+            import json as _json
+            with renpy.file("data/workers/lanista.json") as _f:
+                _raw = _f.read()
+            _text = _raw.decode("utf-8") if hasattr(_raw, "decode") else _raw
+            _data = _json.loads(_text)
+            if hasattr(_data, "get"):
+                _lw = _data
+            elif hasattr(_data, "__iter__"):
+                for _entry in _data:
+                    if hasattr(_entry, "get"):
+                        _lw = _entry
+                        break
+        except Exception as _e:
+            renpy.log("Lanista dominion: failed to load lanista.json - %s" % str(_e))
+
+        # Inline fallback if JSON load failed entirely (file missing/corrupt).
+        if not (_lw is not None and hasattr(_lw, "get") and hasattr(_lw, "__setitem__")):
+            renpy.log("Lanista dominion: using inline fallback dict")
+            _lw = {
+                "name": "The Lanista",
+                "folder": "lanista",
+                "cost": 0,
+                "nsfw": True,
+                "unique": True,
+                "recruitment_locked": True,
+                "encounter_only": False,
+                "monster": False,
+                "procedural": False,
+                "skills": {
+                    "Sex": 60, "Anal": 38, "BDSM": 48, "Hand": 46, "Oral": 46,
+                    "Homo": 40, "Special": 35, "Group": 42, "Extreme": 40,
+                    "Striptease": 62, "Combat": 68, "Clever": 38, "Charm": 50,
+                    "Service": 30, "Agility": 55, "Craft": 25
+                },
+                "names_list": "western_male",
+                "traits": ["Human"],
+                "description": "The Master of the Sands. A scarred Arena champion who runs the fighting pits by day and answers to your house by arrangement.",
+                "gender": "male",
+                "comfort_desired": 2
+            }
+
+        _lw["name"] = "The Lanista"
+        # Resolve gender (placeholder in JSON) from the player's first-meeting choice.
+        _gen = getattr(store, "lanista_gender", "male") or "male"
+        _gen = "female" if _gen == "female" else "male"
+        _lw["gender"] = _gen
+        _lw["names_list"] = "western_female" if _gen == "female" else "western_male"
+        if not any(w.get("name") == "The Lanista" for w in store.workers):
+            try:
+                ensure_worker_defaults(_lw)
+                # Mirror Yvara's call, but skip random-trait backfill for this UNIQUE
+                # worker (worker_defaults §"Unique workers should not get random traits").
+                # Yvara's call is a no-op only because she ships 5 traits; the Lanista ships 1.
+                _emt = getattr(store, "_ensure_worker_min_traits", None)
+                if callable(_emt) and not _lw.get("unique", False):
+                    _emt(_lw)
+                _stid = getattr(store, "_stamp_template_id_from_json", None)
+                if callable(_stid):
+                    _stid(_lw)
+                store.workers.append(_lw)
+                renpy.store.workers = store.workers
+                add_trait_with_duration(_lw, "Broken Champion", 0)
+            except Exception as _e:
+                renpy.log("Lanista dominion: append failed - %s" % str(_e))
+
+        store.lanista_ending_dominion = True
+        store.lanista_is_worker = True
+        store.lanista_ending_done = True
+        if not hasattr(store, "event_flags") or not hasattr(store.event_flags, "__setitem__"):
+            store.event_flags = {}
+        store.event_flags["lanista_ending_dominion"] = True
+
+    narrator "{b}Ending: Broken Champion{/b}"
+    narrator "The Lanista is now a worker at your establishment. Assign [_them] where you wish; [_they] keeps the Arena running on the side."
+    jump lanista_visit_menu
+
+# ── Mixed Ending: part-time worker, Arena keeps some days, Reluctant Gladiator
+label lanista_ending_mixed:
+    $ _g = getattr(store, "lanista_gender", "male") or "male"
+    $ _they = lanista_pronoun("subj")
+    $ _them = lanista_pronoun("obj")
+    $ _their = lanista_pronoun("poss")
+    $ _They = _they.capitalize()
+    $ _bust = "images/lanista/lanista_{}_warm.png".format(_g)
+    if not renpy.loadable(_bust):
+        $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
+    if renpy.loadable(_bust):
+        show expression _bust as lanista_bust at lanista_bust_right
+    narrator "The Arena stays the Lanista's by day. The evenings, more often than not, are yours."
+    lanista_npc "I keep the sands and you get the rest, [_ttl] — the nights I can spare and the parts of me the pits don't claim. It's a crooked arrangement. I've made peace with crooked."
+    narrator "Half master, half kept thing, and unwilling to sever the two. [_They] works your halls when the Arena lets [_them] go, and goes back to the pits when it calls [_them] home."
+
+    python:
+        # Mirror yvara_ending_mixed's worker-add mechanism exactly (see dominion note above).
+        _lw = None
+        try:
+            import json as _json
+            with renpy.file("data/workers/lanista.json") as _f:
+                _raw = _f.read()
+            _text = _raw.decode("utf-8") if hasattr(_raw, "decode") else _raw
+            _data = _json.loads(_text)
+            if hasattr(_data, "get"):
+                _lw = _data
+            elif hasattr(_data, "__iter__"):
+                for _entry in _data:
+                    if hasattr(_entry, "get"):
+                        _lw = _entry
+                        break
+        except Exception as _e:
+            renpy.log("Lanista mixed: failed to load lanista.json - %s" % str(_e))
+
+        if not (_lw is not None and hasattr(_lw, "get") and hasattr(_lw, "__setitem__")):
+            renpy.log("Lanista mixed: using inline fallback dict")
+            _lw = {
+                "name": "The Lanista",
+                "folder": "lanista",
+                "cost": 0,
+                "nsfw": True,
+                "unique": True,
+                "recruitment_locked": True,
+                "encounter_only": False,
+                "monster": False,
+                "procedural": False,
+                "skills": {
+                    "Sex": 60, "Anal": 38, "BDSM": 48, "Hand": 46, "Oral": 46,
+                    "Homo": 40, "Special": 35, "Group": 42, "Extreme": 40,
+                    "Striptease": 62, "Combat": 68, "Clever": 38, "Charm": 50,
+                    "Service": 30, "Agility": 55, "Craft": 25
+                },
+                "names_list": "western_male",
+                "traits": ["Human"],
+                "description": "The Master of the Sands. A scarred Arena champion who runs the fighting pits by day and answers to your house by arrangement.",
+                "gender": "male",
+                "comfort_desired": 2
+            }
+
+        _lw["name"] = "The Lanista"
+        _gen = getattr(store, "lanista_gender", "male") or "male"
+        _gen = "female" if _gen == "female" else "male"
+        _lw["gender"] = _gen
+        _lw["names_list"] = "western_female" if _gen == "female" else "western_male"
+        if not any(w.get("name") == "The Lanista" for w in store.workers):
+            try:
+                ensure_worker_defaults(_lw)
+                _emt = getattr(store, "_ensure_worker_min_traits", None)
+                if callable(_emt) and not _lw.get("unique", False):
+                    _emt(_lw)
+                _stid = getattr(store, "_stamp_template_id_from_json", None)
+                if callable(_stid):
+                    _stid(_lw)
+                store.workers.append(_lw)
+                renpy.store.workers = store.workers
+                add_trait_with_duration(_lw, "Reluctant Gladiator", 0)
+            except Exception as _e:
+                renpy.log("Lanista mixed: append failed - %s" % str(_e))
+
+        store.lanista_ending_mixed = True
+        store.lanista_is_worker = True
+        store.lanista_ending_done = True
+        if not hasattr(store, "event_flags") or not hasattr(store.event_flags, "__setitem__"):
+            store.event_flags = {}
+        store.event_flags["lanista_ending_mixed"] = True
+
+    narrator "{b}Ending: Reluctant Gladiator{/b}"
+    narrator "The Lanista works for you of [_their] own choosing, but the Arena still claims [_their] days. Assign [_them] as any worker; on Arena days you will find [_them] at the pits instead."
+    jump lanista_visit_menu
 
 label lanista_check_stage_advance:
     return

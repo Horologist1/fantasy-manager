@@ -1,0 +1,38 @@
+[
+    {
+        "name": "The Lanista",
+        "folder": "lanista",
+        "cost": 0,
+        "nsfw": true,
+        "unique": true,
+        "recruitment_locked": true,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 60,
+            "Anal": 38,
+            "BDSM": 48,
+            "Hand": 46,
+            "Oral": 46,
+            "Homo": 40,
+            "Special": 35,
+            "Group": 42,
+            "Extreme": 40,
+            "Striptease": 62,
+            "Combat": 68,
+            "Clever": 38,
+            "Charm": 50,
+            "Service": 30,
+            "Agility": 55,
+            "Craft": 25
+        },
+        "names_list": "western_male",
+        "traits": [
+            "Human"
+        ],
+        "description": "The Master of the Sands. A scarred Arena champion who runs the fighting pits by day and answers to your house by arrangement.",
+        "gender": "male",
+        "comfort_desired": 2
+    }
+]

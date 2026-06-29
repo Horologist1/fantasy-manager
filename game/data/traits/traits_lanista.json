@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Broken Champion",
+        "only_assigned": true,
+        "modifiers": {
+            "energy_regeneration": -2,
+            "joy": -5,
+            "rebelliousness": 5
+        },
+        "description": "The Lanista serves your house because they owe you everything — the Arena, their freedom, the breath still in their body. They run the fighting pits by day and answer to you by night. The owing has hollowed something out of them. [-2 Energy Regen, -5 Joy, +5 Rebelliousness]"
+    },
+    {
+        "name": "Reluctant Gladiator",
+        "only_assigned": true,
+        "modifiers": {
+            "energy_regeneration": -2,
+            "joy": -2
+        },
+        "description": "The Lanista works for your house by choice, but the Arena still claims their days. They give you the evenings they can spare; the double life of master and servant wears at the edges. [-2 Energy Regen, -2 Joy]"
+    },
+    {
+        "name": "Master of the Sands — Your Partner",
+        "only_assigned": true,
+        "modifiers": {},
+        "description": "The Lanista loves you and runs the Arena on their own terms — free, equal, and yours by choice rather than debt. They turn up across your buildings when it suits them, which is often."
+    }
+]
