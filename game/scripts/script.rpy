@@ -2158,6 +2158,18 @@ init python:
                 renpy.log(f"evaluate_condition: not_has_worker:{target}? Result: {result}")
                 return result
 
+            if condition_str.startswith("has_folder_worker:"):
+                target_folder = condition_str.split(":", 1)[1].strip()
+                result = any(w.get("folder") == target_folder for w in store.workers)
+                renpy.log(f"evaluate_condition: has_folder_worker:{target_folder}? Result: {result}")
+                return result
+
+            if condition_str.startswith("not_has_folder_worker:"):
+                target_folder = condition_str.split(":", 1)[1].strip()
+                result = not any(w.get("folder") == target_folder for w in store.workers)
+                renpy.log(f"evaluate_condition: not_has_folder_worker:{target_folder}? Result: {result}")
+                return result
+
             if condition_str.startswith("after_date:"):
                 # Format: after_date:day,month,year (month is 1-based in JSON)
                 date_parts = condition_str.split(":", 1)[1].strip().split(",")
