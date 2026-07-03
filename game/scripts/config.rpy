@@ -217,7 +217,6 @@ init python:
             "worker_details": Hide("worker_details"),
             
             # Sub-screens that return to workers
-            "Building_select": [Hide("Building_select"), Show("workers")],
             "job_selection": Hide("job_selection"),
             "building_selection": [Hide("building_selection"), Show("workers")],
             
@@ -242,9 +241,7 @@ init python:
             "random_event_choice": Return(),
             "choose_event_worker_screen": Return(None),
             "recruitment_choice_screen": Return(),
-            "recruitment_result_screen": Return(),
             "recruitment_event_screen": Return(),
-            "advanced_recruitment_event_screen": Return(),
             
             # Confirmation dialogs
             "skip_tutorial_confirm": Hide("skip_tutorial_confirm"),
@@ -252,22 +249,17 @@ init python:
             "confirm_upgrade": Return(),
             "confirm_change_type": Return(),
             "confirm_buy_worker": Return(),
-            "confirm_sell_worker": Return(),
-            "file_save_dialog": Hide("file_save_dialog"),
-            "file_load_dialog": Hide("file_load_dialog"),
-            "export_name_input": Hide("export_name_input"),
-            "file_browser_simple": Hide("file_browser_simple")
+            "confirm_sell_worker": Return()
         }
         
         # Check screens in priority order (confirmations first, then main screens)
         priority_order = [
             # High priority - confirmations and dialogs
             "skip_tutorial_confirm", "error_popup", "confirm_upgrade", "confirm_change_type", "confirm_buy_worker", "confirm_sell_worker",
-            "file_save_dialog", "file_load_dialog", "export_name_input", "file_browser_simple",
-            
+
             # Event screens (with immediate music fade-out)
             "random_event_choice", "choose_event_worker_screen", "recruitment_choice_screen",
-            "recruitment_result_screen", "recruitment_event_screen", "advanced_recruitment_event_screen",
+            "recruitment_event_screen",
             
             # Configuration popups
             "journal_panel", "worker_selection_popup", "building_type_selection", "adjust_skill_bonus",
@@ -279,7 +271,7 @@ init python:
             "shop_selection", "buy_buildings", "buy_servants_table",
             
             # Sub-screens
-            "Building_select", "job_selection", "building_selection",
+            "job_selection", "building_selection",
             
             # Main screens and daily report (LOWER priority than shop screens)
             "daily_report", "Building_select_global", "workers"
@@ -294,7 +286,7 @@ init python:
                 # Check if it's an event screen and trigger immediate music fade-out
                 event_screens = [
                     "random_event_choice", "choose_event_worker_screen", "recruitment_choice_screen",
-                    "recruitment_result_screen", "recruitment_event_screen", "advanced_recruitment_event_screen"
+                    "recruitment_event_screen"
                 ]
                 if screen_name in event_screens:
                     # Ren'Py .rpy files are not Python-importable modules; call through store.
@@ -333,27 +325,6 @@ init python:
         renpy.call_in_new_context("_game_menu")
     
     # We'll use a screen-based approach instead of modifying keymap directly
-    
-    # Money formatting utility to prevent double $ symbols
-    def format_money(amount):
-        """
-        Format money amount ensuring only one $ symbol.
-        Handles both numeric values and strings that might already contain $.
-        """
-        if isinstance(amount, str):
-            # If it's already a string, check if it contains $
-            if '$' in amount:
-                return amount  # Already formatted
-            else:
-                try:
-                    # Try to convert to number and format
-                    num = float(amount)
-                    return f"${num:g}"
-                except:
-                    return f"${amount}"
-        else:
-            # It's a number, format it
-            return f"${amount:g}"
 
     # Function to mark start of new conversation (can be called from labels)
     def start_new_conversation():
@@ -386,5 +357,5 @@ screen esc_key_handler():
     modal False
     key "game_menu" action Function(custom_escape_action)
     key "K_ESCAPE" action Function(custom_escape_action)
-    # Emergency music stop with Ctrl+M
-    key "K_m" action Function(emergency_stop_all_music)
+    # Emergency music stop with Ctrl+M (plain "m" used to kill BGM while typing)
+    key "ctrl_K_m" action Function(emergency_stop_all_music)

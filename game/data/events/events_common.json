@@ -547,7 +547,7 @@
     "limited": true,
     "max_occurrences": 1,
     "cooldown_days": 7,
-    "worker_selection": "random",
+    "worker_selection": "none",
     "building_type": [
       "restaurant",
       "brothel",
@@ -558,10 +558,10 @@
     "failure_image": "generic_failure",
     "choices": [
       {
-        "option": "Pay a local healer to publicly examine the worker. (Cost: Money; Risk: Reputation)",
-        "condition": "none",
-        "message_success": "The healer checks [acting_worker] in front of the whole room—pulse, eyes, throat—and announces a clean bill of health. The crowd exhales. A few patrons order another round. Your quick response earns respect across the district ({actual_money}, {actual_reputation} reputation, +5 Joy).",
-        "message_failure": "The healer clears [acting_worker], but the damage is done. Some patrons nod and stay. Others mutter that healers can be bought and slip out anyway. The rumor fades slowly, but tonight's empty tables tell their own story ({actual_money}, {actual_reputation} reputation, -5 Joy).",
+        "option": "Pay a local healer to publicly examine your workers. (Cost: Money; Risk: Reputation)",
+        "condition": "building_skill",
+        "message_success": "The healer moves down the line, checking your workers in front of the whole room—pulse, eyes, throat. Your stores held up, and every examination comes back clean. The crowd exhales. A few patrons order another round, and your quick response earns respect across the district ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "message_failure": "The healer examines your workers one by one, but your supplies have been running thin, and it shows—one of them looks worn enough to keep the whispers alive. No plague is found, yet the doubt lingers. Some patrons nod and stay; others slip out anyway, and tonight's empty tables tell their own story ({actual_money}, {actual_reputation} reputation, -5 Joy).",
         "effect": {
           "success": {
             "money": -300,
@@ -1058,6 +1058,7 @@
     "description": "A scarred warrior enters and the room goes quiet. They move with the controlled ease of someone who has survived more fights than most people have had meals. Their gaze locks onto one of your workers. 'I seek someone worthy to inherit my art. The blade demands everything—those who endure gain power few can match.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1128,6 +1129,7 @@
     "description": "An elderly figure appears in your establishment without using the door. Glowing runes orbit their robes and wine glasses hum faintly. 'I have traveled far seeking one touched by magic,' the archmage says. 'True potential is rare—rarer still is someone worthy of what I carry. Is there such a soul among you?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1202,6 +1204,7 @@
     "description": "You don't see them arrive. One moment the corner booth is empty; the next, a hooded figure sits there. Their face stays hidden despite bright lamps. 'The Shadow Guild has been watching,' they say. 'We need new blood—someone quick and sharp who understands darkness is a tool, not a threat.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1272,6 +1275,7 @@
     "description": "Golden light fills the doorway before the visitor steps inside. Patrons straighten as a figure in white robes enters—where they walk, aches ease and moods lift. 'I am guided by divine providence,' the high priest says. 'One among you carries a pure heart worthy of celestial blessing.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1342,6 +1346,7 @@
     "description": "The door opens and the smell of pine fills the room. A lean figure enters—leather and fur, hawk-sharp eyes that catalog every exit in a single sweep. An ancient bow across their back. 'I seek a student. Someone who can read the wind, track prey across stone, and strike true when it matters.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1409,9 +1414,10 @@
   },
   {
     "id": "legendary_barkeep",
-    "description": "An old figure shuffles in on a gnarled walking stick—easy to dismiss as just another tired traveler. Then the regulars go quiet. This is Old Morrow, the legendary barkeep who once served drinks at the capital’s finest houses, said to read people well enough to prevent wars. They settle onto a stool and rasp: ‘I’d share what I know with someone who truly sees people. Is there such a soul here?’",
+    "description": "An old figure shuffles in on a gnarled walking stick—easy to dismiss as just another tired traveler. Then the regulars go quiet. This is Old Morrow, the legendary barkeep who once served drinks at the capital's finest houses, said to read people well enough to prevent wars. They settle onto a stool and rasp: 'I'd share what I know with someone who truly sees people. Is there such a soul here?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1428,8 +1434,8 @@
         "option": "Present a promising worker to Old Morrow. (Requires Service 65+)",
         "condition": "Service",
         "threshold": 65,
-        "message_success": "Old Morrow’s eyes sharpen as [acting_worker] approaches. ‘You have it. The gift of seeing.’ Long nights of quiet conversation follow—not how to pour drinks, but how to read the tension in a patron’s shoulders, the meaning behind their order, the story in the calluses on their hands. When Morrow vanishes one morning without farewell, [acting_worker] discovers they possess Barkeep’s Wisdom. They see people in ways they never imagined.",
-        "message_failure": "Old Morrow studies [acting_worker], then shakes their head. ‘The seed is there, but it hasn’t sprouted. You watch people, but you don’t see them—not yet.’ They press a worn copper coin into [acting_worker]’s palm. ‘Hold this when you meet someone new. Ask yourself what they’re really saying. Come back when you know.’",
+        "message_success": "Old Morrow's eyes sharpen as [acting_worker] approaches. 'You have it. The gift of seeing.' Long nights of quiet conversation follow—not how to pour drinks, but how to read the tension in a patron's shoulders, the meaning behind their order, the story in the calluses on their hands. When Morrow vanishes one morning without farewell, [acting_worker] discovers they possess Barkeep's Wisdom. They see people in ways they never imagined.",
+        "message_failure": "Old Morrow studies [acting_worker], then shakes their head. 'The seed is there, but it hasn't sprouted. You watch people, but you don't see them—not yet.' They press a worn copper coin into [acting_worker]'s palm. 'Hold this when you meet someone new. Ask yourself what they're really saying. Come back when you know.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -1453,7 +1459,7 @@
       },
       {
         "option": "Thank them but explain you cannot spare anyone.",
-        "message": "You respectfully decline, citing the demands of running your place. Old Morrow chuckles. ‘Running a tavern well is its own wisdom.’ They finish a drink you never poured and shuffle out into the night.",
+        "message": "You respectfully decline, citing the demands of running your place. Old Morrow chuckles. 'Running a tavern well is its own wisdom.' They finish a drink you never poured and shuffle out into the night.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1478,9 +1484,10 @@
   },
   {
     "id": "peoples_hero_visit",
-    "description": "The door slams open and the figure standing there needs no introduction—their face is on tavern signs and storybooks across the realm. A hero of the Shadow Wars, still wearing the battered armor that once held the front line. They survey the room and break into a grin. ‘Finally, a proper drinking house. But I’m not just here for ale—I’m looking for someone with the spark. Someone who could become what I once was.’",
+    "description": "The door slams open and the figure standing there needs no introduction—their face is on tavern signs and storybooks across the realm. A hero of the Shadow Wars, still wearing the battered armor that once held the front line. They survey the room and break into a grin. 'Finally, a proper drinking house. But I'm not just here for ale—I'm looking for someone with the spark. Someone who could become what I once was.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1497,8 +1504,8 @@
         "option": "Introduce your most battle-ready worker. (Requires Combat 65+)",
         "condition": "Combat",
         "threshold": 65,
-        "message_success": "The hero’s eyes sharpen as [acting_worker] steps forward—weight balanced, gaze steady, hands loose. ‘There it is. Steel under the skin.’ Training follows: stance and spacing, timing a blow, and—rarer still—how to hold a shaken line with nothing but voice and example. When the hero departs after many drinks and stories, [acting_worker] stands differently. They have become a People’s Champion—someone others instinctively trust to stand between them and harm.",
-        "message_failure": "The hero asks [acting_worker] to mirror a simple guard stance and exhales through their teeth. ‘Brave heart. Slow hands.’ They clap [acting_worker] on the shoulder hard enough to stagger them. ‘Come back when your reflexes match your nerve—people don’t follow hesitation into the dark.’",
+        "message_success": "The hero's eyes sharpen as [acting_worker] steps forward—weight balanced, gaze steady, hands loose. 'There it is. Steel under the skin.' Training follows: stance and spacing, timing a blow, and—rarer still—how to hold a shaken line with nothing but voice and example. When the hero departs after many drinks and stories, [acting_worker] stands differently. They have become a People's Champion—someone others instinctively trust to stand between them and harm.",
+        "message_failure": "The hero asks [acting_worker] to mirror a simple guard stance and exhales through their teeth. 'Brave heart. Slow hands.' They clap [acting_worker] on the shoulder hard enough to stagger them. 'Come back when your reflexes match your nerve—people don't follow hesitation into the dark.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -1522,7 +1529,7 @@
       },
       {
         "option": "Simply offer them drinks and conversation.",
-        "message": "You serve the hero as a guest rather than disturb your staff. They tell stories until dawn, leave an enormous tip, and promise to return. ‘A good establishment, this. Run by someone who knows their priorities.’ Sometimes that’s worth more than training.",
+        "message": "You serve the hero as a guest rather than disturb your staff. They tell stories until dawn, leave an enormous tip, and promise to return. 'A good establishment, this. Run by someone who knows their priorities.' Sometimes that's worth more than training.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1547,9 +1554,10 @@
   },
   {
     "id": "wandering_bard_master",
-    "description": "A haunting melody fills the room before its source appears—an unassuming figure with a lute older than most kingdoms. This is the Wandering Muse, whose songs have toppled tyrants and, some say, moved the gods to tears. They settle in a corner and play softly. ‘I’ve sung in a thousand taverns. But I grow old, and my stories need new voices. Is there one here who understands the best tales are lived, not told?’",
+    "description": "A haunting melody fills the room before its source appears—an unassuming figure with a lute older than most kingdoms. This is the Wandering Muse, whose songs have toppled tyrants and, some say, moved the gods to tears. They settle in a corner and play softly. 'I've sung in a thousand taverns. But I grow old, and my stories need new voices. Is there one here who understands the best tales are lived, not told?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1569,8 +1577,8 @@
         "option": "Recommend your most eloquent worker. (Requires Charm 65+)",
         "condition": "Charm",
         "threshold": 65,
-        "message_success": "The Muse’s music shifts to warm approval as [acting_worker] approaches. ‘You understand already.’ The training is unlike anything else—not technique, but truth. How to find the tale in any moment, how to weave words that touch hearts directly, how to make listeners forget they’re listening. When the Muse moves on, [acting_worker] discovers they have become a Tale Weaver. Their words now carry power beyond mere entertainment.",
-        "message_failure": "The Muse plays a melancholic note and studies [acting_worker]. ‘You have words, but not yet the wisdom to wield them. You tell stories at people, not for them.’ A final lingering chord. ‘Listen more. Speak less. When you can hear the story someone needs before they know it themselves, find me.’",
+        "message_success": "The Muse's music shifts to warm approval as [acting_worker] approaches. 'You understand already.' The training is unlike anything else—not technique, but truth. How to find the tale in any moment, how to weave words that touch hearts directly, how to make listeners forget they're listening. When the Muse moves on, [acting_worker] discovers they have become a Tale Weaver. Their words now carry power beyond mere entertainment.",
+        "message_failure": "The Muse plays a melancholic note and studies [acting_worker]. 'You have words, but not yet the wisdom to wield them. You tell stories at people, not for them.' A final lingering chord. 'Listen more. Speak less. When you can hear the story someone needs before they know it themselves, find me.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -1594,7 +1602,7 @@
       },
       {
         "option": "Ask them to simply perform for your patrons.",
-        "message": "You request only a performance. The Muse obliges with a concert your patrons will talk about for years. ‘Art freely given is never wasted,’ they say before departing. Your reputation climbs, and somehow everyone who attended seems a little wiser.",
+        "message": "You request only a performance. The Muse obliges with a concert your patrons will talk about for years. 'Art freely given is never wasted,' they say before departing. Your reputation climbs, and somehow everyone who attended seems a little wiser.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1616,9 +1624,10 @@
   },
   {
     "id": "royal_chef_discovery",
-    "description": "A carriage bearing the royal crest stops outside. From it emerges Master Ambrose Laurent, former head chef of the royal kitchens, whose dishes were served at the coronation of three monarchs. He surveys your restaurant with a critical eye. ‘I have eaten at every notable establishment in the realm and found them adequate.’ His gaze softens. ‘But I sense potential here. Raw talent that could be refined. Is there someone in your kitchen with true fire?’",
+    "description": "A carriage bearing the royal crest stops outside. From it emerges Master Ambrose Laurent, former head chef of the royal kitchens, whose dishes were served at the coronation of three monarchs. He surveys your restaurant with a critical eye. 'I have eaten at every notable establishment in the realm and found them adequate.' His gaze softens. 'But I sense potential here. Raw talent that could be refined. Is there someone in your kitchen with true fire?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1635,8 +1644,8 @@
         "option": "Present your most dedicated kitchen worker. (Requires Service 65+)",
         "condition": "Service",
         "threshold": 65,
-        "message_success": "Master Laurent watches [acting_worker] prepare a simple dish with focus, then nods—almost imperceptibly. ‘You. Come.’ Months of brutal training follow: coaxing impossible flavors from humble ingredients, presenting dishes as art, understanding that cooking touches the soul. When Laurent finally pronounces them ‘acceptable’—unprecedented praise—[acting_worker] has become a Master Chef. Their dishes now evoke memories, heal heartaches, and create moments of pure transcendence.",
-        "message_failure": "Master Laurent tastes [acting_worker]’s preparation and sets down the fork precisely. ‘Competent. But competence is the enemy of greatness.’ He produces a jar of rare saffron. ‘When you can tell me—without tasting—what memory this spice will evoke in the person who eats it, you’ll be ready.’ He leaves without another word.",
+        "message_success": "Master Laurent watches [acting_worker] prepare a simple dish with focus, then nods—almost imperceptibly. 'You. Come.' Months of brutal training follow: coaxing impossible flavors from humble ingredients, presenting dishes as art, understanding that cooking touches the soul. When Laurent finally pronounces them 'acceptable'—unprecedented praise—[acting_worker] has become a Master Chef. Their dishes now evoke memories, heal heartaches, and create moments of pure transcendence.",
+        "message_failure": "Master Laurent tastes [acting_worker]'s preparation and sets down the fork precisely. 'Competent. But competence is the enemy of greatness.' He produces a jar of rare saffron. 'When you can tell me—without tasting—what memory this spice will evoke in the person who eats it, you'll be ready.' He leaves without another word.",
         "effect": {
           "success": {
             "servant_energy": -3,
@@ -1660,7 +1669,7 @@
       },
       {
         "option": "Simply prepare your finest meal for them.",
-        "message": "You focus on serving Master Laurent as a guest. He dines in contemplative silence and offers a single nod at the end. ‘You understand hospitality. That is rarer than you think.’ He leaves an enormous tip and a notebook of solid recipes. Sometimes being taken seriously is the greatest compliment.",
+        "message": "You focus on serving Master Laurent as a guest. He dines in contemplative silence and offers a single nod at the end. 'You understand hospitality. That is rarer than you think.' He leaves an enormous tip and a notebook of solid recipes. Sometimes being taken seriously is the greatest compliment.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1685,9 +1694,10 @@
   },
   {
     "id": "noble_sommelier_visit",
-    "description": "An elegant figure enters with the bearing of royalty, though she wears the simple uniform of service. This is Countess Vermillion Ashford, who renounced her title to pursue wine. Her palate is legendary—she once identified not just a wine’s vineyard and vintage but the mood of the vintner who made it. ‘I travel seeking those with the gift of taste,’ she says, sniffing the air. ‘True taste is not learned but awakened.’",
+    "description": "An elegant figure enters with the bearing of royalty, though she wears the simple uniform of service. This is Countess Vermillion Ashford, who renounced her title to pursue wine. Her palate is legendary—she once identified not just a wine's vineyard and vintage but the mood of the vintner who made it. 'I travel seeking those with the gift of taste,' she says, sniffing the air. 'True taste is not learned but awakened.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1704,8 +1714,8 @@
         "option": "Bring forward a worker with refined sensibilities. (Requires Clever 65+)",
         "condition": "Clever",
         "threshold": 65,
-        "message_success": "The Countess puts [acting_worker] through a series of increasingly complex tastings. Their eyes widen with each revelation as dormant abilities awaken. ‘Yes. You have it—the Perfect Palate.’ Intensive training follows: how flavors interact, how presentation shapes perception, how to pair experiences as much as ingredients. When the Countess departs, pressing a rare vintage into [acting_worker]’s hands, they possess an almost supernatural sensitivity. Every meal becomes a journey.",
-        "message_failure": "The Countess watches [acting_worker]’s attempts at wine identification with gentle patience. ‘Your mind is willing, but your palate still speaks in simple words. It must learn poetry.’ She leaves a small bottle of herb-infused water. ‘Drink this each morning for a month. It will clarify things.’",
+        "message_success": "The Countess puts [acting_worker] through a series of increasingly complex tastings. Their eyes widen with each revelation as dormant abilities awaken. 'Yes. You have it—the Perfect Palate.' Intensive training follows: how flavors interact, how presentation shapes perception, how to pair experiences as much as ingredients. When the Countess departs, pressing a rare vintage into [acting_worker]'s hands, they possess an almost supernatural sensitivity. Every meal becomes a journey.",
+        "message_failure": "The Countess watches [acting_worker]'s attempts at wine identification with gentle patience. 'Your mind is willing, but your palate still speaks in simple words. It must learn poetry.' She leaves a small bottle of herb-infused water. 'Drink this each morning for a month. It will clarify things.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -1754,9 +1764,10 @@
   },
   {
     "id": "royal_butler_inspection",
-    "description": "The restaurant falls silent as Sebastian Crane enters—former head butler of the Imperial Household. His posture alone defines the concept of uprightness. He moves through your space with an eye that misses nothing: a water spot on a glass, a setting one degree off-true, a server’s tie slightly askew. ‘I have trained servants who now serve kings,’ he says. ‘I seek raw talent—someone who can learn to anticipate, to become invisible yet indispensable.’",
+    "description": "The restaurant falls silent as Sebastian Crane enters—former head butler of the Imperial Household. His posture alone defines the concept of uprightness. He moves through your space with an eye that misses nothing: a water spot on a glass, a setting one degree off-true, a server's tie slightly askew. 'I have trained servants who now serve kings,' he says. 'I seek raw talent—someone who can learn to anticipate, to become invisible yet indispensable.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1773,8 +1784,8 @@
         "option": "Recommend your most attentive server. (Requires Service 65+)",
         "condition": "Service",
         "threshold": 65,
-        "message_success": "Crane observes [acting_worker] through several service cycles, expression blank. Then, almost imperceptibly, he nods. ‘You may have potential.’ Rigorous training follows—reading body language, anticipating needs before they’re expressed, moving through spaces without disturbing the air. When Crane finally pronounces them ‘adequate’—his highest praise—[acting_worker] has become a Graceful Server. Their service now feels like magic: needs met before they’re known, comfort provided before it’s sought.",
-        "message_failure": "Crane watches [acting_worker]’s service with analytical precision. ‘Your technical skills are acceptable. Your presence is not.’ He produces a small bell. ‘Ring this and approach me. I should not hear you coming nor see you until you wish to be seen. Practice until you can surprise me.’ He departs without a sound.",
+        "message_success": "Crane observes [acting_worker] through several service cycles, expression blank. Then, almost imperceptibly, he nods. 'You may have potential.' Rigorous training follows—reading body language, anticipating needs before they're expressed, moving through spaces without disturbing the air. When Crane finally pronounces them 'adequate'—his highest praise—[acting_worker] has become a Graceful Server. Their service now feels like magic: needs met before they're known, comfort provided before it's sought.",
+        "message_failure": "Crane watches [acting_worker]'s service with analytical precision. 'Your technical skills are acceptable. Your presence is not.' He produces a small bell. 'Ring this and approach me. I should not hear you coming nor see you until you wish to be seen. Practice until you can surprise me.' He departs without a sound.",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -1798,7 +1809,7 @@
       },
       {
         "option": "Request only his feedback on your service standards.",
-        "message": "You ask for professional consultation. Crane spends an evening observing and then delivers devastatingly accurate feedback on every aspect of your service. His suggestions, once implemented, dramatically improve customer satisfaction. ‘A good establishment knows when to seek expertise,’ he says before departing.",
+        "message": "You ask for professional consultation. Crane spends an evening observing and then delivers devastatingly accurate feedback on every aspect of your service. His suggestions, once implemented, dramatically improve customer satisfaction. 'A good establishment knows when to seek expertise,' he says before departing.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1823,9 +1834,10 @@
   },
   {
     "id": "legendary_gambler_arrives",
-    "description": "The whole casino holds its breath as a figure enters wearing a smile that has won and lost fortunes. This is ‘Lucky’ Mathias Cross, the gambler who once won a duchy in a single hand—then gave it back because ‘owning things is boring.’ His presence causes other gamblers to flee or crowd close. He settles at a table. ‘Fortune is not random. It’s a conversation. I can teach someone to speak its language.’",
+    "description": "The whole casino holds its breath as a figure enters wearing a smile that has won and lost fortunes. This is 'Lucky' Mathias Cross, the gambler who once won a duchy in a single hand—then gave it back because 'owning things is boring.' His presence causes other gamblers to flee or crowd close. He settles at a table. 'Fortune is not random. It's a conversation. I can teach someone to speak its language.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1842,8 +1854,8 @@
         "option": "Introduce a perceptive worker to Lucky. (Requires Clever 65+)",
         "condition": "Clever",
         "threshold": 65,
-        "message_success": "‘Lucky’ Mathias studies [acting_worker] across a series of hands, missing nothing. Then he laughs—genuine delight. ‘You see it, don’t you? The patterns in the chaos.’ Lessons follow in perception: reading shifts in probability, sensing when luck is about to turn, knowing when to push and when to fold. When Mathias moves on, [acting_worker] has become Fortune’s Favorite—possessing an uncanny sense for timing and probability in all aspects of life.",
-        "message_failure": "Mathias studies [acting_worker]’s play and shakes his head. ‘You think too much. Fortune speaks in whispers, not logic.’ He flips a coin—it lands on its edge. ‘When you understand why this coin chose neither side, you’ll be ready.’ He vanishes into the crowd.",
+        "message_success": "'Lucky' Mathias studies [acting_worker] across a series of hands, missing nothing. Then he laughs—genuine delight. 'You see it, don't you? The patterns in the chaos.' Lessons follow in perception: reading shifts in probability, sensing when luck is about to turn, knowing when to push and when to fold. When Mathias moves on, [acting_worker] has become Fortune's Favorite—possessing an uncanny sense for timing and probability in all aspects of life.",
+        "message_failure": "Mathias studies [acting_worker]'s play and shakes his head. 'You think too much. Fortune speaks in whispers, not logic.' He flips a coin—it lands on its edge. 'When you understand why this coin chose neither side, you'll be ready.' He vanishes into the crowd.",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -1867,7 +1879,7 @@
       },
       {
         "option": "Challenge him to a friendly game yourself.",
-        "message": "You play against the legend yourself. You lose, of course, but Mathias plays to teach rather than humiliate. ‘You play to win. Try playing to understand.’ He leaves insights about your regular gamblers that prove extremely profitable in the weeks ahead.",
+        "message": "You play against the legend yourself. You lose, of course, but Mathias plays to teach rather than humiliate. 'You play to win. Try playing to understand.' He leaves insights about your regular gamblers that prove extremely profitable in the weeks ahead.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1892,9 +1904,10 @@
   },
   {
     "id": "master_card_dealer",
-    "description": "A hush falls over the card tables as an elderly figure sits down, hands moving with impossible fluidity. This is the Phantom Dealer—identity unknown, reputation immense. They’ve dealt in every major casino in the realm. Cards blur between their fingers. ‘Sixty years of shuffling,’ they say without looking up. ‘Before I retire, I’d pass on what I know. Not to cheat—to master. Anyone here with hands that could learn to sing?’",
+    "description": "A hush falls over the card tables as an elderly figure sits down, hands moving with impossible fluidity. This is the Phantom Dealer—identity unknown, reputation immense. They've dealt in every major casino in the realm. Cards blur between their fingers. 'Sixty years of shuffling,' they say without looking up. 'Before I retire, I'd pass on what I know. Not to cheat—to master. Anyone here with hands that could learn to sing?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1911,8 +1924,8 @@
         "option": "Present a worker with nimble fingers. (Requires Agility 65+)",
         "condition": "Agility",
         "threshold": 65,
-        "message_success": "The Phantom examines [acting_worker]’s hands with a surgeon’s intensity, then nods. ‘Good bones.’ Months of grueling practice follow—shuffles and cuts repeated thousands of times until they become instinct, card manipulation so precise it borders on art. [acting_worker] learns to feel the cards, know their positions without looking. When the Phantom departs with a final perfect cascade, [acting_worker] has become a Card Shark. Their hands are instruments of impossible precision.",
-        "message_failure": "The Phantom watches [acting_worker] attempt a basic shuffle and sighs. ‘Your hands want to rush. Cards demand patience.’ They produce the ace of spades. ‘Flip this between your fingers until you can do it without thinking, without looking, without disturbing your breathing. Then find me.’",
+        "message_success": "The Phantom examines [acting_worker]'s hands with a surgeon's intensity, then nods. 'Good bones.' Months of grueling practice follow—shuffles and cuts repeated thousands of times until they become instinct, card manipulation so precise it borders on art. [acting_worker] learns to feel the cards, know their positions without looking. When the Phantom departs with a final perfect cascade, [acting_worker] has become a Card Shark. Their hands are instruments of impossible precision.",
+        "message_failure": "The Phantom watches [acting_worker] attempt a basic shuffle and sighs. 'Your hands want to rush. Cards demand patience.' They produce the ace of spades. 'Flip this between your fingers until you can do it without thinking, without looking, without disturbing your breathing. Then find me.'",
         "effect": {
           "success": {
             "servant_energy": -3,
@@ -1936,7 +1949,7 @@
       },
       {
         "option": "Ask them to demonstrate their skills for entertainment.",
-        "message": "You request only a performance. The Phantom obliges with a display that draws gasps from even the most jaded gamblers—cards appearing, disappearing, predicting thoughts. The show draws new customers for weeks. ‘Entertainment is its own reward,’ the Phantom says, ‘especially when it pays well.’",
+        "message": "You request only a performance. The Phantom obliges with a display that draws gasps from even the most jaded gamblers—cards appearing, disappearing, predicting thoughts. The show draws new customers for weeks. 'Entertainment is its own reward,' the Phantom says, 'especially when it pays well.'",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -1961,9 +1974,10 @@
   },
   {
     "id": "casino_magnate_survey",
-    "description": "A figure enters wearing wealth so casually it might be common clothes—but you recognize the cut, the watch worth more than your building. This is Victoria Sterling, the Casino Queen, who built a gambling empire through sheer will and an uncanny eye for valuable patrons. She surveys your operation with calculating eyes. ‘Not all gold glitters equally,’ she says. ‘Some patrons are worth cultivating. I can teach someone to see what I see—if they have the charm to learn.’",
+    "description": "A figure enters wearing wealth so casually it might be common clothes—but you recognize the cut, the watch worth more than your building. This is Victoria Sterling, the Casino Queen, who built a gambling empire through sheer will and an uncanny eye for valuable patrons. She surveys your operation with calculating eyes. 'Not all gold glitters equally,' she says. 'Some patrons are worth cultivating. I can teach someone to see what I see—if they have the charm to learn.'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "worker_selection": "choose",
@@ -1980,8 +1994,8 @@
         "option": "Introduce your most charismatic worker. (Requires Charm 65+)",
         "condition": "Charm",
         "threshold": 65,
-        "message_success": "Victoria studies [acting_worker] interacting with patrons, then unexpectedly smiles. ‘You have it. The gift of making people feel special.’ An education in high-stakes hospitality follows—reading wealth through subtle signs, understanding what keeps high rollers returning, making every patron feel like the most important person in the room. When Sterling departs, [acting_worker] has developed the High Roller’s Eye—instinctively identifying valuable patrons and knowing exactly how to earn their loyalty.",
-        "message_failure": "Victoria observes [acting_worker]’s customer interactions with precision. ‘You’re charming to everyone equally. That’s inefficient.’ She produces a small notebook. ‘Watch the next hundred patrons. Note who spends freely, who hoards, who seeks attention, who seeks escape. Then you’ll begin to understand.’",
+        "message_success": "Victoria studies [acting_worker] interacting with patrons, then unexpectedly smiles. 'You have it. The gift of making people feel special.' An education in high-stakes hospitality follows—reading wealth through subtle signs, understanding what keeps high rollers returning, making every patron feel like the most important person in the room. When Sterling departs, [acting_worker] has developed the High Roller's Eye—instinctively identifying valuable patrons and knowing exactly how to earn their loyalty.",
+        "message_failure": "Victoria observes [acting_worker]'s customer interactions with precision. 'You're charming to everyone equally. That's inefficient.' She produces a small notebook. 'Watch the next hundred patrons. Note who spends freely, who hoards, who seeks attention, who seeks escape. Then you'll begin to understand.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -2005,7 +2019,7 @@
       },
       {
         "option": "Simply seek her business advice.",
-        "message": "You ask for consultation rather than training. Victoria spends several hours analyzing your operation and provides pointed recommendations for patron retention and high-value identification. Her advice significantly increases your profits. ‘A wise proprietor invests in wisdom,’ she says before departing.",
+        "message": "You ask for consultation rather than training. Victoria spends several hours analyzing your operation and provides pointed recommendations for patron retention and high-value identification. Her advice significantly increases your profits. 'A wise proprietor invests in wisdom,' she says before departing.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -2030,9 +2044,10 @@
   },
   {
     "id": "legendary_courtesan_visit",
-    "description": "She arrives without fanfare, yet every eye turns. No obvious reason for the magnetism—her dress is elegant but not ostentatious. Yet something about her presence commands the room. This is Madame Celestine, the legendary courtesan whose clients have included emperors and archdukes. ‘I did not build my reputation on beauty alone,’ she says. ‘I built it on understanding. On anticipation.’ Her gaze sweeps your workers. ‘Is there one here who can truly understand another person?’",
+    "description": "She arrives without fanfare, yet every eye turns. No obvious reason for the magnetism—her dress is elegant but not ostentatious. Yet something about her presence commands the room. This is Madame Celestine, the legendary courtesan whose clients have included emperors and archdukes. 'I did not build my reputation on beauty alone,' she says. 'I built it on understanding. On anticipation.' Her gaze sweeps your workers. 'Is there one here who can truly understand another person?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "nsfw": true,
@@ -2050,8 +2065,8 @@
         "option": "Present your most promising worker. (Requires Sex 65+)",
         "condition": "Sex",
         "threshold": 65,
-        "message_success": "Celestine observes [acting_worker] with clients over several evenings, then nods. ‘You have the foundation. Now we build the palace.’ An education follows in true companionship—reading desires clients don’t know they have, mastering conversation as foreplay, understanding that seduction happens in the mind first. When Celestine departs, [acting_worker] has achieved Courtesan’s Grace—moving through intimacy with an elegance that transforms physical pleasure into something transcendent.",
-        "message_failure": "Celestine studies [acting_worker]’s interactions and sighs softly. ‘You see the body but not the soul within it. True intimacy requires seeing both.’ She produces a vial of perfume. ‘Wear this when you work. Let it remind you that every client carries secret gardens. Learn to find the gates.’",
+        "message_success": "Celestine observes [acting_worker] with clients over several evenings, then nods. 'You have the foundation. Now we build the palace.' An education follows in true companionship—reading desires clients don't know they have, mastering conversation as foreplay, understanding that seduction happens in the mind first. When Celestine departs, [acting_worker] has achieved Courtesan's Grace—moving through intimacy with an elegance that transforms physical pleasure into something transcendent.",
+        "message_failure": "Celestine studies [acting_worker]'s interactions and sighs softly. 'You see the body but not the soul within it. True intimacy requires seeing both.' She produces a vial of perfume. 'Wear this when you work. Let it remind you that every client carries secret gardens. Learn to find the gates.'",
         "effect": {
           "success": {
             "servant_energy": -3,
@@ -2075,7 +2090,7 @@
       },
       {
         "option": "Simply ask for advice on improving your establishment.",
-        "message": "You request consultation, and Celestine obliges with insights that transform how you view your business—ambiance, anticipation, the thousand small details separating adequate from extraordinary. Her suggestions dramatically elevate quality. ‘Excellence is in the details,’ she says. ‘And you now know where to look.’",
+        "message": "You request consultation, and Celestine obliges with insights that transform how you view your business—ambiance, anticipation, the thousand small details separating adequate from extraordinary. Her suggestions dramatically elevate quality. 'Excellence is in the details,' she says. 'And you now know where to look.'",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -2100,9 +2115,10 @@
   },
   {
     "id": "sacred_pleasure_teacher",
-    "description": "Simple robes mark the visitor as a temple initiate, yet their presence fills the room with tangible warmth. A practitioner of the Sacred Touch—an ancient tradition treating physical pleasure as prayer. Their order is nearly extinct. ‘In the old days, we taught that the body is a temple and pleasure the offering. This knowledge must not be lost.’ Their eyes scan your workers. ‘Is there one here ready to learn that touch can be sacred?’",
+    "description": "Simple robes mark the visitor as a temple initiate, yet their presence fills the room with tangible warmth. A practitioner of the Sacred Touch—an ancient tradition treating physical pleasure as prayer. Their order is nearly extinct. 'In the old days, we taught that the body is a temple and pleasure the offering. This knowledge must not be lost.' Their eyes scan your workers. 'Is there one here ready to learn that touch can be sacred?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "nsfw": true,
@@ -2120,8 +2136,8 @@
         "option": "Offer your most spiritually inclined worker. (Requires Hand 65+)",
         "condition": "Hand",
         "threshold": 65,
-        "message_success": "The practitioner places their hands over [acting_worker]’s and closes their eyes. Something passes between them—warmth, recognition. ‘Yes. You can feel it.’ Training follows in sensing energy flow through the body, pressure points that unlock deeper pleasure, techniques refined over millennia. When the practitioner departs to their hidden temple, [acting_worker] has received the Sacred Touch. Their hands carry ancient knowledge, and their ministrations transcend mere physical sensation.",
-        "message_failure": "The practitioner examines [acting_worker]’s hands, then their eyes. ‘Your body knows the movements, but your spirit is not yet aligned.’ They press a smooth stone into [acting_worker]’s palm. ‘Meditate with this each night. When you can feel its warmth without your hands, you will be ready.’",
+        "message_success": "The practitioner places their hands over [acting_worker]'s and closes their eyes. Something passes between them—warmth, recognition. 'Yes. You can feel it.' Training follows in sensing energy flow through the body, pressure points that unlock deeper pleasure, techniques refined over millennia. When the practitioner departs to their hidden temple, [acting_worker] has received the Sacred Touch. Their hands carry ancient knowledge, and their ministrations transcend mere physical sensation.",
+        "message_failure": "The practitioner examines [acting_worker]'s hands, then their eyes. 'Your body knows the movements, but your spirit is not yet aligned.' They press a smooth stone into [acting_worker]'s palm. 'Meditate with this each night. When you can feel its warmth without your hands, you will be ready.'",
         "effect": {
           "success": {
             "servant_energy": -3,
@@ -2145,7 +2161,7 @@
       },
       {
         "option": "Request they simply bless your establishment.",
-        "message": "You ask only for a blessing. The practitioner performs a quiet ritual that makes the air warmer and more welcoming. Patrons report feeling inexplicably comforted within your walls. ‘Sacred space creates sacred experiences,’ they say before departing. Business improves noticeably.",
+        "message": "You ask only for a blessing. The practitioner performs a quiet ritual that makes the air warmer and more welcoming. Patrons report feeling inexplicably comforted within your walls. 'Sacred space creates sacred experiences,' they say before departing. Business improves noticeably.",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -2170,9 +2186,10 @@
   },
   {
     "id": "desire_whisperer_arrives",
-    "description": "They appear between one moment and the next—a figure whose presence makes hearts beat faster. This is the Desire Whisperer, a legendary companion who draws out desires clients don’t know they possess. ‘True intimacy is not about the body,’ they say. ‘It is about the words before, the anticipation, the trust that transforms strangers into more.’ Their smile seems meant for everyone at once. ‘Can someone here learn to speak the language of desire?’",
+    "description": "They appear between one moment and the next—a figure whose presence makes hearts beat faster. This is the Desire Whisperer, a legendary companion who draws out desires clients don't know they possess. 'True intimacy is not about the body,' they say. 'It is about the words before, the anticipation, the trust that transforms strangers into more.' Their smile seems meant for everyone at once. 'Can someone here learn to speak the language of desire?'",
     "weight": 1,
     "event_probability": 5,
+    "limited": true,
     "max_occurrences": 3,
     "cooldown_days": 180,
     "excluded_flags": {
@@ -2193,8 +2210,8 @@
         "option": "Present your worker best suited to intimate persuasion. (Requires Oral 65+)",
         "condition": "Oral",
         "threshold": 65,
-        "message_success": "The Whisperer converses with [acting_worker] for hours—intimate conversations that reveal nothing yet communicate everything. Then they nod. ‘You understand that the most powerful intimacy happens in words.’ Training follows in the art of intimate conversation: questions that unlock hidden desires, the dance of revelation and mystery, anticipation as power. When the Whisperer departs, [acting_worker] has become a fellow Desire Whisperer—able to draw out and fulfill desires clients didn’t know they had.",
-        "message_failure": "The Whisperer listens to [acting_worker] and smiles gently. ‘You talk to fill silence. You must learn to talk to create hunger.’ They lean close and whisper something that makes [acting_worker] shiver. ‘Remember this feeling. When you can create it with words alone, find me.’",
+        "message_success": "The Whisperer converses with [acting_worker] for hours—intimate conversations that reveal nothing yet communicate everything. Then they nod. 'You understand that the most powerful intimacy happens in words.' Training follows in the art of intimate conversation: questions that unlock hidden desires, the dance of revelation and mystery, anticipation as power. When the Whisperer departs, [acting_worker] has become a fellow Desire Whisperer—able to draw out and fulfill desires clients didn't know they had.",
+        "message_failure": "The Whisperer listens to [acting_worker] and smiles gently. 'You talk to fill silence. You must learn to talk to create hunger.' They lean close and whisper something that makes [acting_worker] shiver. 'Remember this feeling. When you can create it with words alone, find me.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -2218,7 +2235,7 @@
       },
       {
         "option": "Simply enjoy their company as a patron.",
-        "message": "You engage the Whisperer as a patron. Through conversation alone, they help you understand things about yourself and your business you never consciously recognized. You part feeling more complete, with insights that improve both management and your personal life. ‘Understanding ourselves is the first step to understanding others.’",
+        "message": "You engage the Whisperer as a patron. Through conversation alone, they help you understand things about yourself and your business you never consciously recognized. You part feeling more complete, with insights that improve both management and your personal life. 'Understanding ourselves is the first step to understanding others.'",
         "effect": {
           "success_chance": 0,
           "joy": 0,
@@ -2240,7 +2257,7 @@
   },
   {
     "id": "casino_bandits_no_guards",
-    "description": "Masked figures shoulder through the side door—too many, too fast, too organized to be drunks. One jams a cudgel under the cashier’s chin while another sweeps chips into a sack. Patrons freeze mid-bet. The leader finds you behind the rail. ‘No guards tonight. That makes this easy. Pay up, or someone learns what happens when a casino forgets steel.’",
+    "description": "Masked figures shoulder through the side door—too many, too fast, too organized to be drunks. One jams a cudgel under the cashier's chin while another sweeps chips into a sack. Patrons freeze mid-bet. The leader finds you behind the rail. 'No guards tonight. That makes this easy. Pay up, or someone learns what happens when a casino forgets steel.'",
     "weight": 4,
     "cooldown_days": 14,
     "worker_selection": "choose",
@@ -2271,7 +2288,7 @@
         "option": "Send a worker to stand up to them. (Risk: Health; Potential: Money, Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] steps into the aisle with nothing but nerve—topples a table into the lead robber, scatters the rest before they regroup. A brief, ugly scramble ends with the bandits fleeing into the alley, leaving sacks behind. You still lose some takings to chaos and spooked patrons, but far less than surrender—and word spreads that your house is not undefended ({actual_money}, {actual_reputation} reputation).",
-        "message_failure": "[acting_worker] throws the first punch and takes the second twice as hard—a weighted club catches them across the ribs. The robbers grab what they can and run laughing. Medics, apologies, and shaken high-rollers cost you dearly. [acting_worker] leaves leaning on someone’s shoulder, pale and bleeding ({actual_money}, {actual_reputation} reputation, -18 Health).",
+        "message_failure": "[acting_worker] throws the first punch and takes the second twice as hard—a weighted club catches them across the ribs. The robbers grab what they can and run laughing. Medics, apologies, and shaken high-rollers cost you dearly. [acting_worker] leaves leaning on someone's shoulder, pale and bleeding ({actual_money}, {actual_reputation} reputation, -18 Health).",
         "effect": {
           "success": {
             "money": -220,

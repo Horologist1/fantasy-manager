@@ -1224,17 +1224,6 @@ init -2 python:
                 ("lanista_ending_mixed", False),
                 ("lanista_post_arc_talk_index", 0),
                 ("lanista_arrangement_change_count", 0),
-                ("lanista_s1_talks_done", []),
-                ("lanista_s1_remarks_done", []),
-                ("lanista_s2_talks_done", []),
-                ("lanista_s2_remarks_done", []),
-                ("lanista_s3_talks_done", []),
-                ("lanista_s3_remarks_done", []),
-                ("lanista_s4_talks_done", []),
-                ("lanista_s4_remarks_done", []),
-                ("lanista_s5_talks_done", []),
-                ("lanista_s5_remarks_done", []),
-                ("lanista_s6_talks_done", []),
                 # Arena / Laboratory progression and cooldowns
                 ("arena_unlocked", False),
                 ("arena_lanista_paid", False),
@@ -1259,7 +1248,8 @@ init -2 python:
                     failed_fields.append(field_name)
                     renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")
 
-            # Apply Yvara list fields separately (must stay lists)
+            # Apply arc list fields separately (must stay lists; deepcopy so the
+            # store never aliases the transient snapshot dict)
             for field_name, default_val in [
                 ("yvara_s1_talks_done", []),
                 ("yvara_s1_remarks_done", []),
@@ -1271,7 +1261,18 @@ init -2 python:
                 ("yvara_s4_remarks_done", []),
                 ("yvara_s5_talks_done", []),
                 ("yvara_s5_remarks_done", []),
-                ("yvara_s6_talks_done", [])
+                ("yvara_s6_talks_done", []),
+                ("lanista_s1_talks_done", []),
+                ("lanista_s1_remarks_done", []),
+                ("lanista_s2_talks_done", []),
+                ("lanista_s2_remarks_done", []),
+                ("lanista_s3_talks_done", []),
+                ("lanista_s3_remarks_done", []),
+                ("lanista_s4_talks_done", []),
+                ("lanista_s4_remarks_done", []),
+                ("lanista_s5_talks_done", []),
+                ("lanista_s5_remarks_done", []),
+                ("lanista_s6_talks_done", [])
             ]:
                 try:
                     if field_name in snap:
@@ -1949,15 +1950,9 @@ init -2 python:
         except Exception as e:
             renpy.log(f"SNAPSHOT: Error marking load slot: {e}")
     
-    def snapshot_pre_save(slot_number):
-        pass
-    
     def snapshot_mark_load(slot_number):
         snapshot_mark_load_slot(slot_number)
-    
-    def snapshot_pre_save_name(slot_name):
-        pass
-    
+
     def snapshot_mark_load_name(slot_name):
         try:
             if slot_name:
@@ -1966,17 +1961,6 @@ init -2 python:
         except Exception as e:
             renpy.log(f"SNAPSHOT: Error marking load slot by name: {e}")
     
-    class PageAwareFileAction(renpy.store.Action):
-        """Compatibility wrapper that defers to FileAction."""
-        def __init__(self, slot_num):
-            self.slot_num = slot_num
-        
-        def __call__(self):
-            return renpy.store.FileAction(self.slot_num)()
-        
-        def get_sensitive(self):
-            return renpy.store.FileAction(self.slot_num).get_sensitive()
-
     class SnapshotFileSave(renpy.store.Action):
         """Save snapshot first; only save if snapshot succeeds."""
         def __init__(self, slot_num, confirm=False):
@@ -2244,7 +2228,9 @@ label after_load:
             if not slot_name:
                 slot_name = getattr(persistent, "_last_loaded_snapshot_slot", None)
             if slot_name:
-                filepath = _get_snapshot_file_path(slot_name)
+                # Use the _for_reading variant so saves still living in the
+                # legacy location get the re-apply pass too.
+                filepath = _get_snapshot_file_path_for_reading(slot_name)
                 if os.path.exists(filepath):
                     snap = _read_snapshot_file(filepath)
                     if snap is not None and _snapshot_matches_slot(snap, slot_name):
@@ -2557,6 +2543,16 @@ label after_load:
     # Clean up load state
     python:
         persistent._last_loaded_snapshot_slot = None
-    
+
+    # Resume the ambient BGM on load explicitly, so it does not depend on the
+    # tavern_screen routing below (belt-and-suspenders per audit note #1).
+    python:
+        try:
+            _ebp = getattr(store, "ensure_bgm_playing", None)
+            if callable(_ebp):
+                _ebp()
+        except Exception as e:
+            renpy.log(f"AFTER_LOAD: ensure_bgm_playing error: {e}")
+
     show screen esc_key_handler
     jump tavern_screen

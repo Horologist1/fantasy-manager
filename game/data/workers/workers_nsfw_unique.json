@@ -478,5 +478,53 @@
         "description": "A wandering bard whose silver tongue and irresistible charm have earned him fame — and a reputation in private chambers across the realm.",
         "gender": "male",
         "comfort_desired": 3
+    },
+    {
+        "name": "Chestnut",
+        "folder": "chestnut",
+        "cost": 1300,
+        "nsfw": true,
+        "unique": true,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 46,
+            "Anal": 37,
+            "BDSM": 29,
+            "Hand": 41,
+            "Oral": 45,
+            "Homo": 36,
+            "Special": 35,
+            "Group": 37,
+            "Extreme": 27,
+            "Striptease": 43,
+            "Combat": 25,
+            "Clever": 34,
+            "Charm": 48,
+            "Service": 56,
+            "Agility": 54,
+            "Craft": 39,
+            "Specialty 4": 36,
+            "Specialty 5": 34,
+            "Specialty 6": 37,
+            "Specialty 7": 35,
+            "Specialty 8": 33,
+            "Specialty 9": 36,
+            "Specialty 10": 34,
+            "Specialty 11": 35,
+            "Specialty 12": 38
+        },
+        "names_list": "western_female",
+        "traits": [
+            "Centauride",
+            "Obedient",
+            "Fleet of Foot",
+            "Large Breasts",
+            "Large Hips"
+        ],
+        "description": "A spirited woman with horse-like features whose tireless energy is matched only by her eager, obedient nature.",
+        "gender": "female",
+        "comfort_desired": 4
     }
 ]

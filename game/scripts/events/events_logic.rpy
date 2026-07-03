@@ -369,8 +369,21 @@ init python:
                     if exclude_prefix and event.get("id", "").startswith(exclude_prefix):
                         # renpy.log(f"Skipping event with excluded prefix: {event.get('id')}") # Optional log
                         continue
+                    # An authored max_occurrences implies a capped event. Authors kept
+                    # shipping one-shots with "max_occurrences" but no "limited": true,
+                    # which the occurrence-cap check requires — infer it. An explicit
+                    # "limited": false still wins (e.g. binding_gem_lead_2).
+                    if "max_occurrences" in event and "limited" not in event:
+                        event["limited"] = True
                     event.setdefault("limited", False)
                     event.setdefault("max_occurrences", 1)
+                    # Normalize unknown worker_selection values (e.g. "player" shipped in
+                    # 10 building events): unknown modes broke choice resolution outright.
+                    # "choose" preserves the evident intent (the player picks a worker).
+                    _ws = event.get("worker_selection")
+                    if _ws is not None and _ws not in ("none", "random", "choose"):
+                        renpy.log(f"WARNING: event {event.get('id')} has unknown worker_selection '{_ws}'; treating as 'choose'.")
+                        event["worker_selection"] = "choose"
                     event.setdefault("choices", [{"option": "Continue", "message": "Nothing significant happens."}])
                     all_events.append(event)
                     # renpy.log(f"Added event to pool: {event.get('id')} from {file}") # Optional log

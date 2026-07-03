@@ -495,8 +495,6 @@ label handle_random_event:
             # When final_worker is None (e.g. worker_selection "choose" before pick), keep
             # [acting_worker]/[event_worker] as-is so process_choice can replace them after
             # the player selects a worker. Otherwise we'd show "a worker" instead of the name.
-            ms = choice_option.get("message_success")
-            mf = choice_option.get("message_failure")
             for key in ("message_success", "message_failure"):
                 val = choice_option.get(key, None)
                 if isinstance(val, str):
@@ -534,6 +532,15 @@ label handle_random_event:
         $ outcome_message = "No valid option selected."
         narrator "[outcome_message]"
         window hide
+        # Declined events reappear after a cooldown: select_possible_events reads
+        # {id}_passed / {id}_pass_timestamp (that logic was dead until now because
+        # nothing ever set the flags).
+        python:
+            _declined_id = event.get("id") if event and hasattr(event, "get") else None
+            if _declined_id:
+                store.event_flags[f"{_declined_id}_passed"] = True
+                store.event_flags[f"{_declined_id}_pass_timestamp"] = calculate_total_days()
+                renpy.log(f"Event {_declined_id} declined; will reappear after its pass cooldown.")
         $ store.clear_random_event_context("no_choice_selected")
         return
 
@@ -720,9 +727,12 @@ label handle_random_event:
                 # Re-process the outcome message with the chosen worker's name
                 python:
                     if final_worker:
+                        import re as _re
                         acting_worker_name = final_worker.get("name", "the worker")
-                        # Update the outcome message for when it's displayed later
-                        store.temp_narrator_text = store.temp_narrator_text.replace("the worker", acting_worker_name)
+                        # Update the outcome message for when it's displayed later.
+                        # Word-boundary replace: a blanket .replace() also mangled
+                        # "the workers" into e.g. "Aeliss".
+                        store.temp_narrator_text = _re.sub(r"\bthe worker\b", acting_worker_name, store.temp_narrator_text)
                         store.temp_narrator_text = store.temp_narrator_text.replace("[event_worker]", acting_worker_name)
                         store.temp_narrator_text = store.temp_narrator_text.replace("[acting_worker]", acting_worker_name)
                         
@@ -732,7 +742,7 @@ label handle_random_event:
                 $ store.current_worker = None
                 $ event_status = "cancelled"
 
-    if worker_needed and final_worker is None and event_status != "cancelled" and event_status != "no_worker_available":
+    if worker_needed and final_worker is None and event_status not in ("cancelled", "no_worker_available", "no_suitable_worker"):
         $ renpy.log(f"Worker required, but none selected/available after checks. Status: {event_status}")
         $ event_status = "error_no_worker"
 
@@ -749,6 +759,13 @@ label handle_random_event:
         $ event_outcome_for_bg = "failure"
     elif event_status == "cancelled":
         $ outcome_message = "You weigh the options and decide not to commit anyone. The situation resolves itself—for better or worse—without your intervention."
+        # Cancelling worker selection counts as declining: schedule the reappear cooldown.
+        python:
+            _declined_id = event.get("id") if event and hasattr(event, "get") else None
+            if _declined_id:
+                store.event_flags[f"{_declined_id}_passed"] = True
+                store.event_flags[f"{_declined_id}_pass_timestamp"] = calculate_total_days()
+                renpy.log(f"Event {_declined_id} cancelled at worker selection; will reappear after its pass cooldown.")
     elif event_status == "no_suitable_worker":
         $ outcome_message = "You run through your roster in your head, but no one fits the bill. Without the right person for the job, all you can do is watch the opportunity slip by."
         $ event_outcome_for_bg = "failure"
@@ -760,6 +777,12 @@ label handle_random_event:
     # Pass choice condition as skill hint so worker-folder skill media can be used
     # when success/failure-specific event media is not present.
     $ skill_for_event_media = chosen_choice_data.get("condition") if chosen_choice_data else None
+    # Quiet audio stinger for the resolved outcome
+    python:
+        if event_outcome_for_bg == "success":
+            play_ui_sound("success")
+        elif event_outcome_for_bg == "failure":
+            play_ui_sound("failure")
     $ new_bg = get_event_background(event, event_outcome_for_bg, final_worker, skill_name=skill_for_event_media, choice=chosen_choice_data)
     if new_bg != current_bg:
         call _random_event_show_bg(new_bg) from _call__random_event_show_bg_1

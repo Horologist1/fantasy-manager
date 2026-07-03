@@ -273,7 +273,7 @@ label yvara_restore_visit_scene:
 label yvara_prologue:
     jump academy_tuition_dialogue
 
-# Academy tuition: Ren'Py say (dialogue box + name) + menu (same style as recruitment). After pay â†’ map + academy_menu overlay.
+# Academy tuition: Ren'Py say (dialogue box + name) + menu (same style as recruitment). After pay -> map + academy_menu overlay.
 label academy_tuition_dialogue:
     $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     $ _yvara_bust = "images/yvara/yvara_formal_neutral.png" if renpy.loadable("images/yvara/yvara_formal_neutral.png") else None
@@ -441,6 +441,13 @@ label yvara_visit_menu:
     $ _s4_finance_track_complete = yvara_s4_finance_track_complete()
     $ _support_available = yvara_s4_gate_fired and not yvara_s5_gate_fired and yvara_academy_investment_tier < 5
     $ _evening_available = yvara_s4_gate_fired and (_total_days - (yvara_evening_academy_last_day or 0)) >= 3
+    # Off-camera mechanics (devotion/dominion engines; also the third tie-break
+    # in yvara_is_dominion_route). Gates: stage 2+ (she has to already regard you
+    # as a fixture for the prose to read right), at least one worker on the roster
+    # (both mechanics send/involve one), once per day each, and hidden once the
+    # S6 gate locks the route (devotion/dominion no longer move the outcome).
+    $ _good_word_available = yvara_stage >= 2 and not yvara_s6_gate_fired and yvara_good_word_last_day != _total_days and len(getattr(store, "workers", [])) > 0
+    $ _observed_lesson_available = yvara_stage >= 2 and not yvara_s6_gate_fired and yvara_observed_last_day != _total_days and len(getattr(store, "workers", [])) > 0
     menu:
         yvara "..."
 
@@ -510,6 +517,11 @@ label yvara_visit_menu:
         "Evening at the Academy." if yvara_s4_gate_fired and not _evening_available:
             narrator "It has not been long enough since the last time. A few more days."
             jump yvara_visit_menu
+
+        "Send a worker for tutoring." if _good_word_available:
+            jump yvara_good_word
+        "Ask her to observe a session. (200 coins)" if _observed_lesson_available:
+            jump yvara_observed_lesson
 
         "Bring a gift." if yvara_last_gift_total_days != _total_days:
             jump yvara_gift
@@ -610,7 +622,7 @@ label yvara_assess_feelings:
         narrator "Assess: Devotion [yvara_devotion] | Dominion [yvara_dominion] | Affection [yvara_affection] | Stage [yvara_stage]"
     jump yvara_visit_menu
 
-# â”€â”€ Stage 1 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 talk router ------------------------------------------------------
 label yvara_s1_talk_router:
     if "s1_t1" not in yvara_s1_talks_done:
         jump yvara_s1_talk_1
@@ -621,7 +633,7 @@ label yvara_s1_talk_router:
     else:
         jump yvara_talk_generic
 
-# â”€â”€ Stage 1 Talk 1: The Academy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 Talk 1: The Academy ----------------------------------------------
 label yvara_s1_talk_1:
     $ _total_days = calculate_total_days()
     yvara "This institution has been standing for longer than most of the buildings on this street."
@@ -663,7 +675,7 @@ label yvara_s1_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance
     jump yvara_visit_menu
 
-# â”€â”€ Stage 1 Talk 2: The Students â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 Talk 2: The Students ---------------------------------------------
 label yvara_s1_talk_2:
     $ _total_days = calculate_total_days()
     yvara "A student asked me yesterday why we practice the same exercise every morning."
@@ -708,7 +720,7 @@ label yvara_s1_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_1
     jump yvara_visit_menu
 
-# â”€â”€ Stage 1 Talk 3: The Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 Talk 3: The Methods ----------------------------------------------
 label yvara_s1_talk_3:
     $ _total_days = calculate_total_days()
     yvara "I learned to teach from a woman I hated for six years."
@@ -757,7 +769,7 @@ label yvara_s1_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_2
     jump yvara_visit_menu
 
-# â”€â”€ Generic talk (after all S1 conversations done or S2+) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Generic talk (after all S1 conversations done or S2+) --------------------
 label yvara_talk_generic:
     $ _total_days = calculate_total_days()
     if yvara_stage == 1:
@@ -866,7 +878,7 @@ label yvara_talk_generic:
     $ yvara_last_talk_total_days = _total_days
     jump yvara_visit_menu
 
-# â”€â”€ Stage 2 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 talk router -------------------------------------------------------
 label yvara_s2_talk_router:
     if "s2_t1" not in yvara_s2_talks_done:
         jump yvara_s2_talk_1
@@ -877,7 +889,7 @@ label yvara_s2_talk_router:
     else:
         jump yvara_talk_generic
 
-# â”€â”€ Stage 2 Talk 1: The Question She Asks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 Talk 1: The Question She Asks ------------------------------------
 label yvara_s2_talk_1:
     $ _total_days = calculate_total_days()
     narrator "She does not look up when you come in, which is normal. What is not normal is that she speaks first."
@@ -945,7 +957,7 @@ label yvara_s2_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_3
     jump yvara_visit_menu
 
-# â”€â”€ Stage 2 Talk 2: The Correction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 Talk 2: The Correction -------------------------------------------
 label yvara_s2_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She does not greet you. She waits until you have settled, and then she says:"
@@ -1012,7 +1024,7 @@ label yvara_s2_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_4
     jump yvara_visit_menu
 
-# â”€â”€ Stage 2 Talk 3: The Evening â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 Talk 3: The Evening -----------------------------------------------
 label yvara_s2_talk_3:
     $ _total_days = calculate_total_days()
     narrator "The light through the east window has gone from gold to grey. You have been here longer than usual."
@@ -1080,7 +1092,7 @@ label yvara_s2_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_5
     jump yvara_visit_menu
 
-# â”€â”€ Stage 2 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 remark router -----------------------------------------------------
 label yvara_s2_remark_router:
     $ _total_days = calculate_total_days()
     if "s2_r1" not in yvara_s2_remarks_done:
@@ -1091,7 +1103,7 @@ label yvara_s2_remark_router:
         yvara "You have said everything worth saying for now."
         jump yvara_visit_menu
 
-# â”€â”€ Stage 2 Remark 1: What No One Notices â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 Remark 1: What No One Notices ------------------------------------
 label yvara_s2_remark_1:
     narrator "You have been watching her long enough to notice things. You say one of them."
     menu:
@@ -1136,7 +1148,7 @@ label yvara_s2_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_6
     jump yvara_visit_menu
 
-# â”€â”€ Stage 2 Remark 2: An Admission â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 2 Remark 2: An Admission -------------------------------------------
 label yvara_s2_remark_2:
     narrator "You say something you do not usually say."
     menu:
@@ -1179,7 +1191,7 @@ label yvara_s2_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_7
     jump yvara_visit_menu
 
-# â”€â”€ Stage 3 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 talk router -------------------------------------------------------
 label yvara_s3_talk_router:
     if "s3_t1" not in yvara_s3_talks_done:
         jump yvara_s3_talk_1
@@ -1190,7 +1202,7 @@ label yvara_s3_talk_router:
     else:
         jump yvara_talk_generic
 
-# â”€â”€ Stage 3 Talk 1: The Garden â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 Talk 1: The Garden -----------------------------------------------
 label yvara_s3_talk_1:
     $ _total_days = calculate_total_days()
     narrator "She is outside during a break, sitting on the low bench beside the east wall with a book open in her lap."
@@ -1259,7 +1271,7 @@ label yvara_s3_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_8
     jump yvara_visit_menu
 
-# â”€â”€ Stage 3 Talk 2: The Favor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 Talk 2: The Favor ------------------------------------------------
 label yvara_s3_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She has left the ledger open on the side of the desk rather than putting it away before you arrived. The numbers are visible."
@@ -1329,7 +1341,7 @@ label yvara_s3_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_9
     jump yvara_visit_menu
 
-# â”€â”€ Stage 3 Talk 3: The Incident â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 Talk 3: The Incident ---------------------------------------------
 label yvara_s3_talk_3:
     $ _total_days = calculate_total_days()
     narrator "You are present when it happens — a student stumbles during a practical demonstration, catches a shelf edge badly, goes down hard."
@@ -1398,7 +1410,7 @@ label yvara_s3_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_10
     jump yvara_visit_menu
 
-# â”€â”€ Stage 3 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 remark router -----------------------------------------------------
 label yvara_s3_remark_router:
     $ _total_days = calculate_total_days()
     if "s3_r1" not in yvara_s3_remarks_done:
@@ -1409,7 +1421,7 @@ label yvara_s3_remark_router:
         yvara "You have said everything worth saying for now."
         jump yvara_visit_menu
 
-# â”€â”€ Stage 3 Remark 1: Different â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 Remark 1: Different ----------------------------------------------
 label yvara_s3_remark_1:
     menu:
         "You seem less guarded than when I first came here.":
@@ -1451,7 +1463,7 @@ label yvara_s3_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_11
     jump yvara_visit_menu
 
-# â”€â”€ Stage 3 Remark 2: How Long â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 Remark 2: How Long -----------------------------------------------
 label yvara_s3_remark_2:
     narrator "She says it in the middle of something else entirely, without looking up."
     menu:
@@ -1495,7 +1507,7 @@ label yvara_s3_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_12
     jump yvara_visit_menu
 
-# â”€â”€ Stage 3 Gate Scene: After the Tour â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 3 Gate Scene: After the Tour ---------------------------------------
 label yvara_s3_gate_scene:
     $ yvara_s3_gate_ready = False
     $ yvara_affection = max(yvara_affection, 51)
@@ -1639,7 +1651,7 @@ label yvara_visit_after_hours:
     narrator "She knew you would understand what after hours meant."
     jump yvara_s3_gate_scene
 
-# â”€â”€ Off-Camera Mechanic A: The Good Word â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Off-Camera Mechanic A: The Good Word -------------------------------------
 label yvara_good_word:
     $ _total_days = calculate_total_days()
     narrator "You arrange for a worker to spend the day at the Academy — extra tutoring, on your recommendation."
@@ -1668,7 +1680,7 @@ label yvara_good_word:
         narrator "She does not mention it at the next visit. But something is slightly different when she looks at you."
     jump yvara_visit_menu
 
-# â”€â”€ Off-Camera Mechanic B: The Observed Lesson â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Off-Camera Mechanic B: The Observed Lesson -------------------------------
 label yvara_observed_lesson:
     $ _total_days = calculate_total_days()
     if money < 200:
@@ -1700,7 +1712,7 @@ label yvara_observed_lesson:
         narrator "The pause before the last word is long."
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 talk router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 talk router -------------------------------------------------------
 label yvara_s4_talk_router:
     if "s4_t1" not in yvara_s4_talks_done:
         jump yvara_s4_talk_1
@@ -1720,7 +1732,7 @@ label yvara_s4_talk_router:
     else:
         jump yvara_talk_generic
 
-# â”€â”€ Stage 4 Talk 1: The Frame â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Talk 1: The Frame ------------------------------------------------
 label yvara_s4_talk_1:
     $ _total_days = calculate_total_days()
     narrator "She is working when you arrive — or performing the act of working. The distinction has become readable."
@@ -1794,7 +1806,7 @@ label yvara_s4_talk_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_13
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Talk 2: The Limit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Talk 2: The Limit ------------------------------------------------
 label yvara_s4_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She is standing at the window when you arrive — facing it, not looking out of it."
@@ -1869,7 +1881,7 @@ label yvara_s4_talk_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_14
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Talk 3: Before the Rain â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Talk 3: Before the Rain -----------------------------------------
 label yvara_s4_talk_3:
     $ _total_days = calculate_total_days()
     narrator "The sky outside the office windows has the particular quality of a sky that has made up its mind."
@@ -1942,7 +1954,7 @@ label yvara_s4_talk_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_15
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 remark router -----------------------------------------------------
 label yvara_s4_remark_router:
     $ _total_days = calculate_total_days()
     if "s4_r1" not in yvara_s4_remarks_done:
@@ -1953,7 +1965,7 @@ label yvara_s4_remark_router:
         yvara "You have already said everything worth saying for now."
         jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Remark 1: The Tell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Remark 1: The Tell ------------------------------------------------
 label yvara_s4_remark_1:
     $ _total_days = calculate_total_days()
     narrator "You notice something she does — a small thing. The way she keeps her pen in her hand when she has stopped writing. The way her expression holds an extra half-second before it reassembles."
@@ -2000,7 +2012,7 @@ label yvara_s4_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_16
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Remark 2: The Implication â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Remark 2: The Implication ----------------------------------------
 label yvara_s4_remark_2:
     $ _total_days = calculate_total_days()
     narrator "The conversation has been ordinary. Then it isn't."
@@ -2052,7 +2064,7 @@ label yvara_s4_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_17
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Finance: Donate money â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Finance: Donate money ---------------------------------------------
 label yvara_s4_donate_money:
     $ _tier_two_unlocked = yvara_s4_donation_highest_tier >= 1 or yvara_s4_donation_total >= 1
     $ _tier_three_unlocked = yvara_s4_donation_highest_tier >= 2 or yvara_s4_donation_total >= 2
@@ -2213,7 +2225,7 @@ label yvara_s4_donate_tier_4:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_21
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Finance: Buy favors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Finance: Buy favors -----------------------------------------------
 label yvara_s4_buy_favors:
     $ _tier_two_unlocked = yvara_s4_favor_highest_tier >= 1 or yvara_s4_favors_total >= 1
     $ _tier_three_unlocked = yvara_s4_favor_highest_tier >= 2 or yvara_s4_favors_total >= 2
@@ -2373,7 +2385,7 @@ label yvara_s4_favor_striptease:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_25
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4 Gate Scene: The Storm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4 Gate Scene: The Storm ---------------------------------------------
 label yvara_s4_gate_scene:
     $ yvara_affection = max(yvara_affection, 80)
     $ _title = (getattr(store, "player_title", "") or "").strip().lower()
@@ -2587,7 +2599,7 @@ label yvara_s4_gate_end:
             yoffset 40
     jump yvara_visit_menu
 
-# â”€â”€ Stage 4: The Morning After â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 4: The Morning After ------------------------------------------------
 label yvara_s4_morning_after:
     narrator "She is already at her desk when you wake."
     narrator "Professional posture. Papers arranged. Tea made — there are two cups."
@@ -3220,7 +3232,7 @@ label yvara_evening_dom_t4:
     call yvara_check_stage_advance from _call_yvara_evening_dom_t4
     jump yvara_visit_menu
 
-# â”€â”€ Stage 1 remark router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 remark router -----------------------------------------------------
 label yvara_s1_remark_router:
     $ _total_days = calculate_total_days()
     if "s1_r1" not in yvara_s1_remarks_done:
@@ -3233,7 +3245,7 @@ label yvara_s1_remark_router:
         yvara "You have made your point."
         jump yvara_visit_menu
 
-# â”€â”€ Stage 1 Remark 1 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 Remark 1 ----------------------------------------------------------
 label yvara_s1_remark_1:
     narrator "You look around the room before speaking."
     menu:
@@ -3271,7 +3283,7 @@ label yvara_s1_remark_1:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_27
     jump yvara_visit_menu
 
-# â”€â”€ Stage 1 Remark 2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 Remark 2 ----------------------------------------------------------
 label yvara_s1_remark_2:
     menu:
         "Your students seem to respect you. Not just obey you.":
@@ -3308,7 +3320,7 @@ label yvara_s1_remark_2:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_28
     jump yvara_visit_menu
 
-# â”€â”€ Stage 1 Remark 3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage 1 Remark 3 ----------------------------------------------------------
 label yvara_s1_remark_3:
     menu:
         "Ask if she ever gets tired of it.":
@@ -3343,7 +3355,7 @@ label yvara_s1_remark_3:
     call yvara_check_stage_advance from _call_yvara_check_stage_advance_29
     jump yvara_visit_menu
 
-# â”€â”€ Stage gate check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- Stage gate check ----------------------------------------------------------
 label yvara_check_stage_advance:
     if yvara_stage == 1 and len(yvara_s1_talks_done) >= 3 and yvara_affection >= 20:
         $ yvara_recalculate_stage()
@@ -3366,8 +3378,13 @@ label yvara_check_stage_advance:
         yvara "Come after hours."
         narrator "It is not phrased like an invitation. It lands like one anyway."
     elif not yvara_s4_gate_fired and len(yvara_s4_talks_done) >= 3 and yvara_affection >= 80 and yvara_s4_finance_track_complete():
-        $ yvara_s4_gate_fired = True
-        jump yvara_s4_gate_scene
+        # Flavor only. The actual gate jump (and the yvara_s4_gate_fired stamp)
+        # lives in yvara_visit_menu, which re-checks this same condition —
+        # jumping from inside this label would abandon the call frame (this
+        # label is call-ed from dozens of sites). Mirrors the S5/S6 branches below.
+        narrator "The ledgers are settled, the conversations spent. Whatever comes next between you, it will not be about money."
+        yvara "Come find me before you leave tonight."
+        narrator "She says it quietly, without looking up — as though the words cost more than any sum you have handed her."
     elif not yvara_s5_gate_fired and len(yvara_s5_talks_done) >= 3 and yvara_affection >= 100:
         narrator "The weight of what is unresolved between you has become impossible to carry separately."
         yvara "We need to talk about what happens next."

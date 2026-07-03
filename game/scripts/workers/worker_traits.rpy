@@ -518,10 +518,6 @@ init python:
         worker["_secondary_attributes_initialized"] = True
         renpy.log(f"Secondary attributes initialized for {worker.get('name', 'Unknown')}")
 
-    def apply_trait_secondary_modifiers(worker):
-        """Apply secondary attribute modifiers from traits (joy, rebelliousness, etc.)."""
-        apply_trait_secondary_modifiers_once(worker)
-
     def recalculate_trait_modifiers(worker):
         """
         Recalculate trait modifiers when traits are added or removed.
@@ -681,6 +677,11 @@ init python:
 
     def ensure_minimum_traits(worker, min_traits=3, max_traits=5):
         """Ensure worker has minimum number of traits, adding random ones if needed."""
+        # Unique story workers (Yvara, the Lanista, Aelis...) must keep exactly their
+        # authored traits: random backfill contradicted the design (the Lanista ships
+        # with a single trait on purpose).
+        if worker.get("unique", False):
+            return
         if not worker.get("traits"):
             worker["traits"] = []
         
@@ -722,6 +723,8 @@ init python:
         
         while added_count < traits_to_add and attempts < max_attempts:
             attempts += 1
+            if not possible_traits:
+                break  # Pool exhausted (all added/filtered out) - avoid random.choice IndexError
             trait = random.choice(possible_traits)
             trait_name = trait["name"]
             

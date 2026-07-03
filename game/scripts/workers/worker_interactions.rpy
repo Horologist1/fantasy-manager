@@ -9,6 +9,14 @@ init python:
         global _interactions_cache, _interactions_cache_nsfw
         _interactions_cache = None
         _interactions_cache_nsfw = None
+        # Also drop the cached training UI copy row (worker_training.rpy caches the
+        # TRAINING_FLOW_COPY_ID entry from load_interactions); a stale copy pickled
+        # into a save would otherwise survive loads.
+        if hasattr(store, "_training_meta_flow_entry"):
+            try:
+                del store._training_meta_flow_entry
+            except Exception:
+                pass
 
     def load_interactions():
         """
@@ -148,6 +156,15 @@ init python:
         
         return filtered
 
+    def _unwrap_flag_value(value):
+        """Worker flags (and some JSON flag conditions) are stored as dicts
+        {"value": bool, "duration": N}; compare on the inner "value".
+        Plain values pass through unchanged.
+        Use hasattr instead of isinstance to handle RevertableDict."""
+        if hasattr(value, 'get') and "value" in value:
+            return value.get("value")
+        return value
+
     def filter_interactions_by_flags(interactions, worker):
         """Filter interactions based on required and excluded flags."""
         filtered = []
@@ -155,20 +172,20 @@ init python:
             # Check required flags
             required_flags = interaction.get("required_flags", {})
             meets_requirements = True
-            
+
             for flag_name, required_value in required_flags.items():
-                current_value = worker.get("flags", {}).get(flag_name)
-                if current_value != required_value:
+                current_value = _unwrap_flag_value(worker.get("flags", {}).get(flag_name))
+                if current_value != _unwrap_flag_value(required_value):
                     meets_requirements = False
                     break
-            
+
             # Check excluded flags
             excluded_flags = interaction.get("excluded_flags", {})
             excluded = False
-            
+
             for flag_name, excluded_value in excluded_flags.items():
-                current_value = worker.get("flags", {}).get(flag_name)
-                if current_value == excluded_value:
+                current_value = _unwrap_flag_value(worker.get("flags", {}).get(flag_name))
+                if current_value == _unwrap_flag_value(excluded_value):
                     excluded = True
                     break
             
@@ -678,10 +695,21 @@ init python:
         
         # Track stat changes for display
         stat_changes = {}
-        
+
         # Increment manager's daily interaction count (unless skipping limit, e.g. Take a Walk)
         if not skip_daily_limit:
             increment_manager_interaction_count()
+            # QoL "Repeat last interaction": record the player-launched interaction.
+            # renpy.session is session-only (not saved, not rolled back) on purpose.
+            try:
+                renpy.session["last_interaction_info"] = {
+                    "worker_name": worker.get("name") if hasattr(worker, "get") else None,
+                    "category": (interaction.get("categories") or [None])[0] if hasattr(interaction, "get") else None,
+                    "interaction_id": interaction.get("id") if hasattr(interaction, "get") else None,
+                    "interaction_name": interaction.get("name", "") if hasattr(interaction, "get") else "",
+                }
+            except Exception:
+                pass
         # Apply stat changes
         effects = interaction.get("effect", {})
         for stat, change in effects.items():
@@ -692,7 +720,20 @@ init python:
                     store.apply_attribute_change(worker, stat, change)
                 else:
                     current_value = worker.get(stat, 0)
-                    new_value = max(0, min(100, current_value + change))
+                    # Max health/energy can exceed 100 (levels/traits): clamp against the real max
+                    if stat == "health":
+                        try:
+                            stat_cap = int(calculate_max_health(worker))
+                        except Exception:
+                            stat_cap = 100
+                    elif stat == "energy":
+                        try:
+                            stat_cap = int(calculate_max_energy(worker))
+                        except Exception:
+                            stat_cap = 100
+                    else:
+                        stat_cap = 100
+                    new_value = max(0, min(stat_cap, current_value + change))
                     worker[stat] = new_value
                 stat_changes[stat] = change
 
@@ -859,6 +900,45 @@ init python:
         # Tutorial: Friendly Lunch completion is now handled when closing the interaction_result screen
         
         return stat_changes
+
+    def expire_worker_flags():
+        """Expire timed worker flags. Called once per day from process_daily_events.
+
+        Interaction flags are stored as dicts {"value": x, "duration": N}.
+        Duration semantics (matches the shipped data/interactions/*.json):
+          - duration > 0: temporary; counts down one per day, flag is deleted when it
+            runs out (e.g. violet_special_moment: 5, enchanted_by_beauty: 4).
+          - duration <= 0 or missing: permanent. JSON uses -1 for permanent flags
+            (discipline_final_done, level-usage counters) and 0 only on the *_cooldown
+            convention meaning "no cooldown" - those flags are never written at all
+            (see the *_cooldown special case in apply_interaction_effects).
+        Plain (non-dict) flag values are always permanent.
+        """
+        for worker in getattr(store, "workers", []):
+            if not hasattr(worker, "get"):
+                continue
+            flags = worker.get("flags")
+            if not flags or not hasattr(flags, "get"):
+                continue
+            for flag_name in list(flags.keys()):
+                flag_value = flags.get(flag_name)
+                # Use hasattr instead of isinstance to handle RevertableDict
+                if not (hasattr(flag_value, 'get') and "value" in flag_value):
+                    continue
+                try:
+                    duration = int(flag_value.get("duration", -1))
+                except (TypeError, ValueError):
+                    continue
+                if duration <= 0:
+                    continue  # Permanent flag
+                if duration <= 1:
+                    del flags[flag_name]
+                    renpy.log(f"FLAGS: Timed flag '{flag_name}' expired on {worker.get('name', 'Unknown')}")
+                else:
+                    # Replace instead of decrementing in place: the stored dict can be
+                    # the same object as the cached interaction JSON (and shared
+                    # between workers), so in-place mutation would corrupt it.
+                    flags[flag_name] = {"value": flag_value.get("value"), "duration": duration - 1}
 
     def get_interaction_image(worker, interaction):
         """

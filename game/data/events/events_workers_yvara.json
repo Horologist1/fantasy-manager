@@ -285,5 +285,100 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_dominion_evening_report",
+    "description": "The side door opens at the hour it always opens now. Yvara enters with the day's ledger under one arm and the Academy's evening figures copied out in her own hand — you never asked for the copy; she concluded that your ownership extended to the information and has not revisited the question since.\n\nYvara: 'Receipts, expenditures, and the enrollment numbers that bear on the discount you enjoy. I have flagged three entries for your attention. I will wait while you read.'\n\nShe stands while you sit. She has never once taken the chair without being told. It is the precision of the arrangement that unsettles your staff — nothing in her manner asks for pity, and nothing in it invites conversation.",
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": ["tavern", "restaurant", "casino", "brothel"],
+    "background_image": "images/yvara/cg_yvara_post_arc_dominion_report.png",
+    "nsfw": false,
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Keep her at the desk until the books balance. (Gain: Money, Reputation)",
+        "message": "You point at the chair. She sits. For two hours she works your accounts the way she once worked doctoral examinations — without haste, without error, without a single wasted word. She finds the vendor you have been double-paying, a delivery signed for and never received, and an arithmetic slip that has been compounding quietly since spring. The books have not been this clean in a year.\n\nWhen it is done she squares the pages, sets your pen back in its stand at the exact angle she found it, and rises. 'Will there be anything else?' She means every word of it, and that is precisely the trouble. You dismiss her, and the room is somehow colder for the next hour than the fire can account for. ({actual_money}, {actual_reputation} reputation, -1 Joy).",
+        "effect": {
+          "money": 100,
+          "reputation": 4,
+          "joy": -1,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Take the report and dismiss her for the night.",
+        "message": "You take the pages from her hand and tell her the rest of the evening is her own. She inclines her head — the exact, economical nod she gives to any instruction — and gathers her coat.\n\nAt the door she pauses. A heartbeat, no more. 'Thank you.' The words are as precise as everything else she gives you, and as unreadable. You listen to her footsteps fade down the lane toward the Academy and find you cannot say whether you have been kind, or merely efficient with an asset. The flagged entries, when you read them, are of course correct. ({actual_reputation} reputation, +1 Joy).",
+        "effect": {
+          "reputation": 2,
+          "joy": 1,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_dominion_ninth_bell",
+    "description": "A note arrives from the Academy in the afternoon, in Yvara's hand — formal as a summons, though the summons only runs in one direction between you now: 'My last lecture concludes at the ninth bell. My evening, as ever, is yours to allocate. Instructions may be left with your doorman.'\n\nShe arrives at the ninth bell exactly. She stands in your office with her coat folded over one arm and her hair still pinned for the lecture hall, composed and unhurried and entirely without expectation, waiting for you to decide what she is for tonight.\n\nYvara: 'Well, [player_title]?'",
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": ["tavern", "restaurant", "casino", "brothel"],
+    "background_image": "images/yvara/cg_yvara_post_arc_dominion_ninth_bell.png",
+    "nsfw": false,
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Keep her for yourself — wine, quiet, her hair down because you prefer it. (Cost: Money; Gain: Joy)",
+        "message": "You tell her the evening is spent here, with you. She hangs the coat herself, pours the wine you indicate — the better of the two bottles, identified at a glance — and, at a word, unpins her hair, because you prefer it down and she has never once made you say so twice.\n\nShe reads to you from the treatise on your desk, her voice low and exact in the lamplight, pausing where you tell her to pause. It is a beautiful hour and an obedient one, and she gives you every minute of it with the same flawless competence she gives your ledgers. Whatever she keeps behind the compliance, she keeps it; you own her evenings, and she has decided that is all the question you are owed. ({actual_money}, {actual_reputation} reputation, +4 Joy).",
+        "effect": {
+          "money": -80,
+          "reputation": 2,
+          "joy": 4,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Send her to the floor — the Director waits tables tonight. (Gain: Money, Reputation)",
+        "message": "You send her out front. The room goes quiet by degrees as the patrons recognise her — the Director of the Academy, sleeves pinned back, carrying a tray through your common room with the same unbending correctness she carries into a lecture hall. She is faultless. She remembers every order, corrects a merchant's arithmetic on his own bar tab, and thanks no one for staring.\n\nThe takings run high and the story runs further: there is nothing, the district concludes, that your house does not command. Yvara reports the night's totals to you at close, to the copper, and asks whether her service was satisfactory. You are not entirely sure either of you wants to hear the honest answer. ({actual_money}, {actual_reputation} reputation, -2 Joy).",
+        "effect": {
+          "money": 120,
+          "reputation": 6,
+          "joy": -2,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
   }
 ]

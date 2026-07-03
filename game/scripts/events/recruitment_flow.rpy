@@ -25,7 +25,19 @@ label start_recruitment_system:
             
             # Filter events: only include events where the specific worker is available (if event requires specific worker)
             available_events = []
+            _pg_check = getattr(store, "event_passes_player_gender_requirement", None)
+            _occurrences = getattr(store, "event_occurrences", {})
             for event in recruitment_events:
+                # Respect player_gender_requirement (same gate the daily engine applies)
+                if callable(_pg_check) and not _pg_check(event):
+                    renpy.log(f"Event {event.get('id')} filtered out - player gender requirement not met")
+                    continue
+                # Respect occurrence caps for authored one-shots (unlimited defaults True)
+                if not event.get("unlimited", True):
+                    _occ = _occurrences.get(event.get("id"), 0)
+                    if _occ >= event.get("max_occurrences", 1):
+                        renpy.log(f"Event {event.get('id')} filtered out - occurrence cap reached ({_occ})")
+                        continue
                 if event.get("random_worker", True):
                     # Random worker events are always available
                     available_events.append(event)
@@ -107,6 +119,15 @@ label start_recruitment_system:
             else:
                 # No specific event - use a generic random worker event
                 generic_events = [e for e in available_events if e.get("random_worker", True)]
+                # Skip generic events whose worker_filter matches no current candidate
+                _filter_ok_events = []
+                for event in generic_events:
+                    if event.get("worker_filter"):
+                        if not get_filtered_recruit_workers(event, recruit_candidates):
+                            renpy.log(f"Event {event.get('id')} skipped today - no candidate passes its worker_filter")
+                            continue
+                    _filter_ok_events.append(event)
+                generic_events = _filter_ok_events
                 if not generic_events:
                     renpy.log("No generic recruitment events available")
                     store._recruitment_abort = True
@@ -124,16 +145,20 @@ label start_recruitment_system:
                             selected_event = event
                             break
                     
-                    # Filter worker by gender requirement if specified
+                    # Constrain the candidate to the event's worker_filter and/or gender requirement
+                    candidate_pool = recruit_candidates
+                    if selected_event.get("worker_filter"):
+                        candidate_pool = get_filtered_recruit_workers(selected_event, candidate_pool)
                     worker_gender_requirement = selected_event.get("worker_gender_requirement", None)
                     if worker_gender_requirement:
-                        filtered_candidates = [w for w in recruit_candidates if w.get("gender", "") == worker_gender_requirement]
-                        if filtered_candidates:
-                            selected_worker = random.choice(filtered_candidates)
-                        else:
-                            renpy.log(f"No workers available matching gender requirement: {worker_gender_requirement}")
-                            store._recruitment_abort = True
-                            store._recruitment_abort_message = "No suitable workers available for this event"
+                        candidate_pool = [w for w in candidate_pool if w.get("gender", "") == worker_gender_requirement]
+                    if not candidate_pool:
+                        renpy.log(f"No workers available matching requirements for event {selected_event.get('id')} (gender requirement: {worker_gender_requirement})")
+                        store._recruitment_abort = True
+                        store._recruitment_abort_message = "No suitable workers available for this event"
+                    elif selected_worker not in candidate_pool:
+                        selected_worker = random.choice(candidate_pool)
+                        renpy.log(f"Re-selected worker {selected_worker.get('name')} to satisfy requirements of event {selected_event.get('id')}")
             
             # Store globally (only when recruitment succeeded)
             if not store._recruitment_abort:
@@ -192,13 +217,17 @@ label recruitment_event_flow(event, worker):
         dialogue_text = event.get("dialogue", "").replace("[event_worker]", worker_name)
         description = description.replace("[COST]", f"${daily_cost}")
         dialogue_text = dialogue_text.replace("[COST]", f"${daily_cost}")
-        
+        # Substitute player placeholders (parity with the main event engine)
+        description = description.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
+        dialogue_text = dialogue_text.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
+
         # Prepare choices with cost replacement
         choices = event.get("choices", [])
         processed_choices = []
         for choice in choices:
             choice_text = choice.get("option", "Choice")
             choice_text = choice_text.replace("[COST]", f"${daily_cost}")
+            choice_text = choice_text.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
             choice_copy = choice.copy()
             choice_copy["option"] = choice_text
             processed_choices.append(choice_copy)
@@ -302,14 +331,25 @@ label recruitment_event_simple(event, worker):
         worker_name = worker.get("name", "Unknown")
         description = event["description"].replace("[event_worker]", worker_name)
         description = description.replace("[COST]", f"${daily_cost}")
-    
+        # Substitute player placeholders (parity with the main event engine)
+        description = description.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
+
     window show
     narrator "[description]"
     window hide
-    
-    call screen recruitment_event_screen(event=event, worker=worker)
-    $ choice = _return
-    
+
+    # Loop so examining doesn't end the event (mirrors recruitment_choice_loop
+    # in the advanced flow) - it must not consume the day's recruitment attempt.
+    label recruitment_simple_choice_loop:
+        call screen recruitment_event_screen(event=event, worker=worker)
+        $ choice = _return
+
+        if choice == "examine":
+            window show
+            narrator "You examine [worker_name] carefully. They seem capable."
+            window hide
+            jump recruitment_simple_choice_loop
+
     if choice == "recruit":
         python:
             # Add worker to the game using recruit_worker for proper tutorial tracking
@@ -318,8 +358,6 @@ label recruitment_event_simple(event, worker):
                 outcome_msg = f"You successfully recruited {worker_name} for ${daily_cost} per day."
             else:
                 outcome_msg = f"{worker_name} is already working for you."
-    elif choice == "examine":
-        $ outcome_msg = f"You examine {worker_name} carefully. They seem capable."
     else:
         $ outcome_msg = "You politely decline their offer."
     

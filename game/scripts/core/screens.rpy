@@ -34,6 +34,69 @@ init python:
     
     store._is_equipped = _is_equipped
 
+    def _is_inv_entry(x):
+        """Duck-typed sequence check for inventory entries (tuples/lists).
+
+        Inside screen/label python, `list` is RevertableList, so
+        isinstance(x, (list, tuple)) silently fails for PLAIN lists coming from
+        fresh json.loads. This accepts tuple/list/RevertableList and rejects
+        str and dict-likes.
+        """
+        return hasattr(x, "__getitem__") and not isinstance(x, str) and not hasattr(x, "get")
+
+    def get_worker_portrait_cached(worker):
+        """
+        Small portrait path for roster-row thumbnails, cached per worker.
+        get_worker_image() scans the worker's image folder, which is far too
+        costly to run per row per render. Only static image formats qualify
+        (a webm/mp4 profile would be wasteful at 48px); None means "no art"
+        and callers should show a placeholder.
+        """
+        if not worker or not hasattr(worker, "get"):
+            return None
+        key = (str(worker.get("name", "")), str(worker.get("folder", "")))
+        cache = getattr(store, "_worker_portrait_cache", None)
+        if cache is None:
+            cache = {}
+            store._worker_portrait_cache = cache
+        if key not in cache:
+            path = None
+            try:
+                cand = get_worker_image(worker)
+                if (cand and isinstance(cand, str)
+                        and cand.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+                        and renpy.loadable(cand)):
+                    path = cand
+            except Exception:
+                path = None
+            cache[key] = path
+        return cache[key]
+
+    def _building_select_global_sync():
+        """Sync buildings once when Building_select_global is shown (moved out of the render path)."""
+        if renpy.predicting():
+            return
+        try:
+            validate_and_sync_buildings(include_worker_refs=False)
+        except Exception as e:
+            renpy.log(f"Building_select_global: validate_and_sync_buildings error: {str(e)}")
+
+    def _map_screen_autorefill():
+        """Auto-refill map worker offers once when map_screen is shown (moved out of the render path).
+
+        Auto-refill does NOT count as a manual refresh - it's just initial population.
+        """
+        if renpy.predicting():
+            return
+        # Check if it's a new day - reset counter if so
+        if store.last_map_refill_day != store.current_day:
+            store.map_worker_refill_count = 0
+            store.last_map_refill_day = store.current_day
+        # Only auto-refill if available_workers is empty
+        if not getattr(store, "available_workers", None):
+            load_buy_workers()
+            update_displayed_workers()
+
     def rebuild_assigned_servants():
         """Rebuild assigned_servants from current runtime state (no snapshot restore in UI flow)."""
         canonical_fn = getattr(store, "_canonical_rebuild_assigned_servants", None)
@@ -343,7 +406,7 @@ style inv_trade_action_button:
     hover_background None
 style inv_trade_action_button_text:
     color "#ffffff"
-    hover_color "#6b6528"
+    hover_color gui.journal_hover_color
     bold False
     size 24
 
@@ -353,6 +416,29 @@ style header_style:
     size 28
     xalign 0.5
     bold True
+
+# Interaction screen styles (moved here from the deleted file_save_system.rpy;
+# used by the interaction_menu / interaction category screens below)
+style interaction_frame is frame:
+    background "#d4a574"  # Color beige
+    padding (20, 20)
+
+style interaction_text is text:
+    color "#5d4037"
+    hover_color "#314311"  # Verde oscuro
+
+style interaction_button is button:
+    background "images/tablebutton.png"
+    hover_background "#d4a574"
+    xalign 0.5
+    yalign 0.5
+
+style interaction_button_text is button_text:
+    xalign 0.5
+    yalign 0.5
+    text_align 0.5
+    color "#5d4037"
+    hover_color "#314311"  # Verde oscuro
 
 style confirm_button:
     background "#1a1a1acc"
@@ -872,10 +958,10 @@ screen main_menu():
     imagebutton auto "gui/main_menu/buttons/start_%s.png" xpos 761 ypos 345 focus_mask True action [Function(mark_new_game_start), Start()]
     imagebutton auto "gui/main_menu/buttons/load_%s.png" xalign 0.5 ypos 456 focus_mask True action ShowMenu("load")
     imagebutton auto "gui/main_menu/buttons/options_%s.png" xalign 0.5 ypos 516 focus_mask True action ShowMenu("preferences")
-    imagebutton auto "gui/main_menu/buttons/gallery_%s.png" xalign 0.5 ypos 569 focus_mask True action ShowMenu("gallery")
+    # Gallery button removed while the gallery screen is a "Coming Soon" stub (screen kept below for later)
     imagebutton auto "gui/main_menu/buttons/about_%s.png" xalign 0.5 ypos 622 focus_mask True action ShowMenu("about")
     imagebutton auto "gui/main_menu/buttons/help_%s.png" xalign 0.5 ypos 675 focus_mask True action ShowMenu("help")
-    imagebutton auto "gui/main_menu/buttons/quit_%s.png" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=False)
+    imagebutton auto "gui/main_menu/buttons/quit_%s.png" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=True)
 
     if gui.show_name:
 
@@ -895,8 +981,7 @@ style main_menu_version is main_menu_text
 style main_menu_frame:
     xsize 420
     yfill True
-
-    background "gui/overlay/main_menu.png"
+    # (background "gui/overlay/main_menu.png" removed: asset does not exist)
 
 style main_menu_vbox:
     xalign 1.0
@@ -1136,33 +1221,33 @@ screen about():
 
 style about_title:
     size 48
-    color "#3c1f14"
+    color gui.journal_dark_color
     xalign 0.5
 
 style about_version:
     size 32
-    color "#6b6528"
+    color gui.journal_hover_color
     xalign 0.5
 
 style about_description:
     size 24
-    color "#3c1f14"
+    color gui.journal_dark_color
     xalign 0.5
 
 style about_credits:
     size 20
-    color "#6b6528"
+    color gui.journal_hover_color
     xalign 0.5
 
 style about_section_header:
     size 22
-    color "#3c1f14"
+    color gui.journal_dark_color
     xalign 0.5
     underline True
 
 style about_section_text:
     size 20
-    color "#3c1f14"
+    color gui.journal_dark_color
     xalign 0.5
 
 style about_instruction:
@@ -1176,7 +1261,7 @@ screen gender_filter_after_load_warning():
     modal True
     zorder 200
     $ _filter_label = "Only Male" if persistent.worker_gender_filter == "male" else "Only Female"
-    add Solid("#000000cc")
+    add Solid(gui.surface_dark)
     frame:
         xalign 0.5
         yalign 0.5
@@ -1198,8 +1283,8 @@ screen gender_filter_after_load_warning():
                 textbutton "Go to Main Menu":
                     action [SetVariable("_pending_gender_filter_load_warning", False), Hide("gender_filter_after_load_warning"), MainMenu()]
                     text_size 24
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                 textbutton "Continue playing":
                     action [
                         Function(remove_workers_of_other_gender_for_filter),
@@ -1207,8 +1292,8 @@ screen gender_filter_after_load_warning():
                         Hide("gender_filter_after_load_warning")
                     ]
                     text_size 24
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
 
 
 ## Load and Save screens #######################################################
@@ -1602,8 +1687,8 @@ screen preferences():
         xoffset -410
         yoffset -150
         text_size 28
-        text_color "#3c1f14"
-        text_hover_color "#6b6528"
+        text_color gui.journal_dark_color
+        text_hover_color gui.journal_hover_color
         action ShowMenu("more_options")
     ## NSFW toggle removed from Preferences (moved to About screen)
 
@@ -1640,20 +1725,21 @@ screen more_options():
             hbox:
                 spacing 20
                 $ _nsfw_on = persistent.nsfw_enabled
-                $ _c_en = "#6b6528" if _nsfw_on else "#3c1f14"
-                $ _c_off = "#6b6528" if not _nsfw_on else "#3c1f14"
+                $ _c_en = gui.journal_hover_color if _nsfw_on else gui.journal_dark_color
+                $ _c_off = gui.journal_hover_color if not _nsfw_on else gui.journal_dark_color
                 textbutton "Enabled":
                     text_color _c_en
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
-                    action SetField(persistent, "nsfw_enabled", True)
+                    # Refresh trait/interaction caches so the toggle applies without a restart
+                    action [SetField(persistent, "nsfw_enabled", True), Function(refresh_traits_cache, force=True), Function(invalidate_interactions_cache)]
                 textbutton "Disabled":
                     text_color _c_off
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
-                    action SetField(persistent, "nsfw_enabled", False)
+                    action [SetField(persistent, "nsfw_enabled", False), Function(refresh_traits_cache, force=True), Function(invalidate_interactions_cache)]
 
         ## Worker Gender: Both / Only Female / Only Male
         vbox:
@@ -1663,18 +1749,18 @@ screen more_options():
             hbox:
                 spacing 18
                 $ _wg = persistent.worker_gender_filter
-                $ _cb = "#6b6528" if _wg == "both" else "#3c1f14"
-                $ _cf = "#6b6528" if _wg == "female" else "#3c1f14"
-                $ _cm = "#6b6528" if _wg == "male" else "#3c1f14"
+                $ _cb = gui.journal_hover_color if _wg == "both" else gui.journal_dark_color
+                $ _cf = gui.journal_hover_color if _wg == "female" else gui.journal_dark_color
+                $ _cm = gui.journal_hover_color if _wg == "male" else gui.journal_dark_color
                 textbutton "Both":
                     text_color _cb
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "worker_gender_filter", "both")
                 textbutton "Only Female":
                     text_color _cf
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action If(main_menu,
@@ -1684,7 +1770,7 @@ screen more_options():
                             SetField(persistent, "worker_gender_filter", "female")))
                 textbutton "Only Male":
                     text_color _cm
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action If(main_menu,
@@ -1701,11 +1787,11 @@ screen more_options():
             $ _diff = getattr(persistent, "difficulty", "normal")
             $ _hovered = getattr(store, "_about_hovered_difficulty", None)
             $ _display_diff = _hovered if _hovered else _diff
-            $ _cs = "#6b6528" if _diff == "story" else "#3c1f14"
-            $ _ce = "#6b6528" if _diff == "easy" else "#3c1f14"
-            $ _cn = "#6b6528" if _diff == "normal" else "#3c1f14"
-            $ _ch = "#6b6528" if _diff == "hard" else "#3c1f14"
-            $ _cnm = "#6b6528" if _diff == "nightmare" else "#3c1f14"
+            $ _cs = gui.journal_hover_color if _diff == "story" else gui.journal_dark_color
+            $ _ce = gui.journal_hover_color if _diff == "easy" else gui.journal_dark_color
+            $ _cn = gui.journal_hover_color if _diff == "normal" else gui.journal_dark_color
+            $ _ch = gui.journal_hover_color if _diff == "hard" else gui.journal_dark_color
+            $ _cnm = gui.journal_hover_color if _diff == "nightmare" else gui.journal_dark_color
             $ _diff_descriptions = {
                 "story": "Relaxed. +30 worker bonus, 75% min success, no money loss on failure, earnings x1.3, comfort $15/pt, normal maintenance.",
                 "easy": "Forgiving. +20 worker bonus, 60% min success, failure losses capped at -$25, earnings x1.15, comfort $18/pt, normal maintenance.",
@@ -1718,7 +1804,7 @@ screen more_options():
                 textbutton "Story":
                     text_size font_size(28)
                     text_color _cs
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "difficulty", "story")
@@ -1727,7 +1813,7 @@ screen more_options():
                 textbutton "Easy":
                     text_size font_size(28)
                     text_color _ce
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "difficulty", "easy")
@@ -1736,7 +1822,7 @@ screen more_options():
                 textbutton "Normal":
                     text_size font_size(28)
                     text_color _cn
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "difficulty", "normal")
@@ -1745,7 +1831,7 @@ screen more_options():
                 textbutton "Hard":
                     text_size font_size(28)
                     text_color _ch
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "difficulty", "hard")
@@ -1754,7 +1840,7 @@ screen more_options():
                 textbutton "Nightmare":
                     text_size font_size(28)
                     text_color _cnm
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "difficulty", "nightmare")
@@ -1773,25 +1859,25 @@ screen more_options():
             ypos 275
             spacing 14
             $ _te = getattr(persistent, "intro_popups_enabled", True)
-            $ _tc = "#6b6528" if _te else "#3c1f14"
-            $ _td = "#6b6528" if not _te else "#3c1f14"
+            $ _tc = gui.journal_hover_color if _te else gui.journal_dark_color
+            $ _td = gui.journal_hover_color if not _te else gui.journal_dark_color
             hbox:
                 spacing 20
                 textbutton "Enabled":
                     text_color _tc
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "intro_popups_enabled", True)
                 textbutton "Disabled":
                     text_color _td
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action SetField(persistent, "intro_popups_enabled", False)
                 textbutton "Reset":
-                    text_color "#6b6528"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_hover_color
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action [
@@ -1808,23 +1894,31 @@ screen more_options():
             vbox:
                 spacing 8
                 textbutton "Stock Potions: [default_auto_supply_compact_label()]":
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_dark_color
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action Function(cycle_persistent_default_auto_supply_compact)
                 textbutton "Auto-rest: [default_auto_rest_compact_label()]":
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_dark_color
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action Function(cycle_persistent_default_auto_rest_compact)
                 textbutton "Auto Equip: [getattr(persistent, 'default_auto_equip', False) and 'On' or 'Off']":
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_dark_color
+                    text_hover_color gui.journal_hover_color
                     background None
                     hover_background None
                     action Function(toggle_persistent_default_auto_equip)
+                # Note: label reads "confirm: On" when the dialog IS shown
+                # (i.e. skip_potion_buy_confirm is False).
+                textbutton "Potion buy confirm: [not getattr(persistent, 'skip_potion_buy_confirm', False) and 'On' or 'Off']":
+                    text_color gui.journal_dark_color
+                    text_hover_color gui.journal_hover_color
+                    background None
+                    hover_background None
+                    action ToggleField(persistent, "skip_potion_buy_confirm")
             text "Applies to all current workers. Auto-stock/Auto-equip try to apply immediately; Auto-rest is evaluated during the daily cycle (Next Day).":
                 size 20
                 color "#5D2E1A"
@@ -1838,8 +1932,8 @@ screen more_options():
         xoffset -410
         yoffset -150
         text_size 28
-        text_color "#3c1f14"
-        text_hover_color "#6b6528"
+        text_color gui.journal_dark_color
+        text_hover_color gui.journal_hover_color
         action ShowMenu("preferences")
 
 
@@ -1875,7 +1969,7 @@ style pref_label:
 
 style pref_label_text:
     yalign 1.0
-    color "#3c1f14"
+    color gui.journal_dark_color
 
 style pref_vbox:
     xsize 338
@@ -1889,7 +1983,7 @@ style radio_button:
 
 style radio_button_text:
     properties gui.text_properties("radio_button")
-    color "#3c1f14"
+    color gui.journal_dark_color
 
 style check_vbox:
     spacing gui.pref_button_spacing
@@ -2134,14 +2228,14 @@ screen help():
             xoffset 220
             textbutton _("Keyboard") action SetScreenVariable("device", "keyboard"):
                 text_size font_size(26)
-                text_color "#7a4b2a"
-                text_hover_color "#6b6528"
+                text_color gui.journal_text_color
+                text_hover_color gui.journal_hover_color
                 background None
                 hover_background None
             textbutton _("Mouse") action SetScreenVariable("device", "mouse"):
                 text_size font_size(26)
-                text_color "#7a4b2a"
-                text_hover_color "#6b6528"
+                text_color gui.journal_text_color
+                text_hover_color gui.journal_hover_color
                 background None
                 hover_background None
 
@@ -2158,6 +2252,9 @@ screen keyboard_help():
         (_("Space"), _("Advances dialogue without selecting choices.")),
         (_("Arrow Keys"), _("Navigate the interface.")),
         (_("Escape"), _("Accesses the game menu.")),
+        (_("BackSpace"), _("Closes most game screens (Close, Back, and Return buttons).")),
+        (_("Ctrl+Left Arrow"), _("Triggers the Previous button where available.")),
+        (_("Ctrl+Right Arrow"), _("Triggers the Next button where available.")),
         (_("Ctrl"), _("Skips dialogue while held down.")),
         (_("Tab"), _("Toggles dialogue skipping.")),
         (_("Page Up"), _("Rolls back to earlier dialogue.")),
@@ -2180,7 +2277,7 @@ screen keyboard_help():
                     spacing 24
                     label k
                     text d:
-                        size 19
+                        size 20
         vbox:
             spacing 8
             xoffset -110
@@ -2189,7 +2286,7 @@ screen keyboard_help():
                     spacing 24
                     label k
                     text d:
-                        size 19
+                        size 20
 
 
 screen mouse_help():
@@ -2214,7 +2311,7 @@ screen mouse_help():
                     spacing 24
                     label k
                     text d:
-                        size 19
+                        size 20
         vbox:
             spacing 8
             xoffset -110
@@ -2223,7 +2320,7 @@ screen mouse_help():
                     spacing 24
                     label k
                     text d:
-                        size 19
+                        size 20
 
 
 ## gamepad_help removed intentionally
@@ -2298,6 +2395,7 @@ screen confirm(message, yes_action, no_action):
 
     ## Right-click and escape answer "no".
     key "game_menu" action no_action
+    key "K_BACKSPACE" action no_action
 
 
 style confirm_frame is gui_frame
@@ -2323,7 +2421,7 @@ style confirm_button:
 style confirm_button_text:
     properties gui.text_properties("confirm_button")
     size 38
-    color "#3c1f14"
+    color gui.journal_dark_color
     hover_color "#ffffff"  # Blanco en hover
 
 
@@ -2718,7 +2816,7 @@ screen tooltip(message, xpos=None, ypos=None, screen_name=None):
             ypos ypos
             xpadding 0
             ypadding 0
-            background Solid("#3c1f14")  # Dark brown border
+            background Solid(gui.journal_dark_color)  # Dark brown border
             xsize None
             ysize None
             
@@ -2735,7 +2833,7 @@ screen tooltip(message, xpos=None, ypos=None, screen_name=None):
                 # Set maximum width for tooltip to allow text wrapping
                 text message:
                     size 20
-                    color "#3c1f14"
+                    color gui.journal_dark_color
                     text_align 0.0
                     xalign 0.0
                     yalign 0.0
@@ -2765,7 +2863,7 @@ screen quick_menu():
             yoffset -8
             spacing 10
 
-            textbutton _("Back") action Rollback()
+            # (Back/Rollback button removed: rollback is disabled game-wide in options.rpy)
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
             textbutton _("Menu") action ShowMenu()
@@ -2790,10 +2888,6 @@ style check_button:
 style nvl_window:
     variant "small"
     background "gui/nvl.png"
-
-style main_menu_frame:
-    variant "small"
-    background "gui/overlay/main_menu.png"
 
 style game_menu_outer_frame:
     variant "small"
@@ -2883,10 +2977,12 @@ screen error_popup(message):
                 
                 textbutton _("Ok") action Hide("error_popup")
 
+    key "K_BACKSPACE" action Hide("error_popup")
+
 screen screen_intro_popup(screen_id):
     modal True
     zorder 190
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
 
     $ intro_entry = get_intro_popup_entry(screen_id)
@@ -2940,7 +3036,7 @@ screen screen_intro_popup(screen_id):
                         text "[INTRO_POPUP_COMMON_TIP]" size font_size(17) color "#5a3a1a" yalign 0.5 text_align 0.0
                     null height 8
                     for paragraph in intro_body:
-                        text "[paragraph]" size font_size(22) color "#7a4b2a" text_align 0.0 xfill True justify True
+                        text "[paragraph]" size font_size(22) color gui.journal_text_color text_align 0.0 xfill True justify True
             null height 4
 
             textbutton "Stop showing these messages":
@@ -2948,7 +3044,7 @@ screen screen_intro_popup(screen_id):
                 xoffset -25
                 yoffset 10
                 text_size font_size(20)
-                text_color "#6b6528"
+                text_color gui.journal_hover_color
                 text_hover_color "#ffffff"
                 action Confirm(
                     _("Stop showing tutorial messages from now on? (You can turn them back on in options; more options)"),
@@ -2957,6 +3053,7 @@ screen screen_intro_popup(screen_id):
                 )
 
     key "game_menu" action Function(close_intro_popup, screen_id)
+    key "K_BACKSPACE" action Function(close_intro_popup, screen_id)
 
 screen random_event_choice(event_choices):
     modal True
@@ -2983,7 +3080,7 @@ screen random_event_choice(event_choices):
                         action NullAction()
                         sensitive False
                     if reason.strip():
-                        text "[reason!q]" size font_size(18) color "#cc8888"
+                        text "[reason!q]" size font_size(20) color "#cc8888"
             else:
                 textbutton "[choice['option']!q]" action Return(choice)
 
@@ -3042,7 +3139,7 @@ screen choose_event_worker_screen(eligible_workers):
                     break
     
     # Background overlay
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     
     # Main frame in the middle for worker selection
     frame:
@@ -3072,8 +3169,8 @@ screen choose_event_worker_screen(eligible_workers):
                         xalign 0.5
                         xsize 200
                         text_size font_size(20)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         action Return(None)
                 else:
                     viewport:
@@ -3089,19 +3186,19 @@ screen choose_event_worker_screen(eligible_workers):
                                 if condition_skill:
                                     $ check_info = get_event_worker_skill_check_info(worker, store.chosen_choice_data)
                                     $ skill_label = check_info.get("label") or (str(skill_names.get(condition_skill, condition_skill)) + ": " + str(check_info.get("roll_skill", 0)))
-                                    textbutton "[worker['name']] - [skill_label]":
+                                    textbutton "[worker['name']!q] - [skill_label!q]":
                                         xsize 640  # Wider buttons for longer text
                                         text_size font_size(25)  # Increased by 5 points
-                                        text_color "#7a4b2a"
-                                        text_hover_color "#6b6528"
+                                        text_color gui.journal_text_color
+                                        text_hover_color gui.journal_hover_color
                                         action Return(worker)
                                 else:
                                     # Fallback if no condition skill found
-                                    textbutton "[worker['name']]":
+                                    textbutton "[worker['name']!q]":
                                         xsize 640  # Wider buttons for longer text
                                         text_size font_size(25)  # Increased by 5 points
-                                        text_color "#7a4b2a"
-                                        text_hover_color "#6b6528"
+                                        text_color gui.journal_text_color
+                                        text_hover_color gui.journal_hover_color
                                         action Return(worker)
         
         # Return button (top-right)
@@ -3114,104 +3211,7 @@ screen choose_event_worker_screen(eligible_workers):
             xoffset -15
             yoffset 5
 
-screen choose_worker_for_event(skill_name, threshold):
-    python:
-        # All Python logic in a single block to avoid linter errors
-        skill_name = str(skill_name)  # Ensure skill_name is a string
-        threshold = int(threshold)  # Ensure threshold is an integer
-        eligible_workers = []
-        # Use gender-filtered roster (Worker Gender preference)
-        roster = workers_filtered_by_gender(store.workers)
-        
-        # Find workers with the required skill level
-        for worker in roster:
-            # Check if worker has an assigned job and is available
-            if worker.get("assigned_job") is not None:
-                # If we have a specific affected building, only include workers from that building
-                if hasattr(store, "current_affected_building") and store.current_affected_building:
-                    if worker.get("assigned_building") != store.current_affected_building:
-                        continue
-                        
-                worker_skill = get_event_worker_skill_check_info(worker, {"condition": skill_name, "threshold": threshold}).get("roll_skill", 0)
-                
-                # Log for debugging
-                renpy.log(f"Worker: {worker['name']}, Skill: {skill_name}, Value: {worker_skill}, Threshold: {threshold}")
-                
-                # Only include workers whose skill meets or exceeds the threshold
-                if worker_skill >= threshold:
-                    eligible_workers.append(worker)
-                    renpy.log(f"Added eligible worker: {worker['name']} with skill {worker_skill}")
-        
-        # Get building info for title
-        building_name = ""
-        if hasattr(store, "current_affected_building") and store.current_affected_building:
-            bld_name = store.current_affected_building
-            bld = available_buildings.get(bld_name, {})
-            btype_id = bld.get("type")
-            if btype_id:
-                building_type = next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), "")
-                display_name = store.custom_names.get(bld_name, bld_name)
-                building_name = f"{building_type}: {display_name}"
-    
-    modal True
-    zorder 99
-    
-    # Background overlay
-    add Solid("#000000dd")
-    
-    # Main selection frame in the middle
-    frame:
-        xalign 0.5  # Centered for wider panel
-        yalign 0.5
-        background Transform("gui/Journalback.png", align=(0.5, 0.5))  # Journal background
-        padding (40, 40)
-        xsize 800  # Wider than journal to accommodate longer text
-        ysize 720
-        
-        vbox:
-            spacing 15
-            null height 15  # Push title down like journal
-            label (f"Choose a Worker from {building_name}" if building_name else "Choose a Worker") xalign 0.5 style "header_style"
-            null height 10  # Less space after title like journal
-            
-            vbox:
-                xsize 720  # Wider content area
-                spacing 10
-                xoffset 50  # Moved 10px to the right
-                yoffset 25
-                
-                # Display message if no workers are eligible
-                if not eligible_workers:
-                    text "No eligible workers found. Make sure you have workers with [skill_name] assigned to the right building type." color "#ff0000" xalign 0.5 text_align 0.5 size 20
-                else:
-                    # List all eligible workers
-                    viewport:
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
-                        ysize 480  # Adjusted for journal layout
-                        xsize 650  # Reduced to move scrollbar left
-                        vbox:
-                            spacing 10
-                            for worker in eligible_workers:
-                                $ check_info = get_event_worker_skill_check_info(worker, {"condition": skill_name, "threshold": threshold})
-                                $ skill_label = check_info.get("label") or (str(skill_name) + ": " + str(check_info.get("roll_skill", 0)))
-                                textbutton "[worker['name']] ([skill_label])":
-                                    xsize 640  # Wider buttons for longer text
-                                    text_size font_size(25)  # Increased by 5 points
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
-                                    action Return(worker)
-        
-        # Return button (top-right)
-        imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            action Return(None)
-            xalign 1.0
-            yalign 0.0
-            xoffset -15
-            yoffset 5
+    key "K_BACKSPACE" action Return(None)
 
 screen recruitment_event_screen(event, worker):
     modal True
@@ -3246,7 +3246,8 @@ screen recruitment_event_screen(event, worker):
         padding (20, 20)
         vbox:
             spacing 15
-            text description size font_size(24) xalign 0.5 color "#ffffff"
+            # !q so stray [..]/{..} in JSON event text can't crash interpolation (BIBLIA §9)
+            text "[description!q]" size font_size(24) xalign 0.5 color "#ffffff"
             null height 20
             hbox:
                 spacing 40
@@ -3280,116 +3281,14 @@ screen recruitment_choice_screen(event_choices):
         # Additional recruitment actions with normal choice style
         textbutton "*Examine Worker*" action [SetVariable("in_recruit_examine", True), Show("worker_details", worker=store.current_recruitment_worker, in_roster=False, from_recruitment=True)] sensitive (store.current_recruitment_worker is not None)
 
-screen advanced_recruitment_event_screen(event, worker, description, dialogue, choices):
-    modal True
-    zorder 99
-    
-
-    
-    # Background
-    $ background_image = event.get("background_image", "event_bg")
-    add background_image
-    add Solid("#000000dd")
-    
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background Solid("#1a1a1acc")
-        padding (30, 30)
-        xsize 800
-        
-        vbox:
-            xfill True
-            spacing 20
-            
-            # Description
-            text description size font_size(24) xalign 0.5 color "#ffffff" text_align 0.5
-            
-            null height 10
-            
-            # Dialogue
-            if dialogue:
-                text dialogue size font_size(22) xalign 0.5 color "#ffdd88" text_align 0.5 italic True
-            
-            null height 20
-            
-            # Choices
-            vbox:
-                spacing 15
-                for choice in choices:
-                    textbutton choice.get("option", "Choice"):
-                        xsize 700
-                        text_size font_size(20)
-                        action Function(process_advanced_recruitment_choice, choice, event, worker)
-            
-            null height 20
-            
-            # Examine worker option
-            hbox:
-                spacing 20
-                xalign 0.5
-                textbutton "Examine Worker":
-                    xsize 200
-                    text_size font_size(18)
-                    action Show("worker_details", worker=worker, in_roster=False, from_recruitment=True)
-                textbutton "Cancel":
-                    xsize 200
-                    text_size font_size(18)
-                    action Hide("advanced_recruitment_event_screen")
-
-screen recruitment_result_screen(message, outcome, event):
-    modal True
-    zorder 100
-    
-
-    
-    # Background based on outcome
-    if outcome == "success":
-        $ bg_image = event.get("success_image", "generic_success")
-    else:
-        $ bg_image = event.get("failure_image", "generic_failure")
-    
-    add bg_image
-    add Solid("#000000dd")
-    
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background Solid("#1a1a1acc")
-        padding (30, 30)
-        xsize 700
-        
-        vbox:
-            spacing 20
-            
-            # No title - just show what happened
-            
-            null height 10
-            
-            text message size font_size(24) xalign 0.5 color "#ffffff" text_align 0.5 substitute False
-            
-            null height 30
-            
-            hbox:
-                xfill True
-                textbutton "Continue":
-                    xalign 0.5
-                    text_xalign 0.5
-                    text_size font_size(22)
-                    action Return(True)
-
 screen Building_select_global():
     zorder 3
     modal True
-    add Solid("#000000dd")
-    
-    # Ensure buildings are synced when opening this screen
-    python:
-        try:
-            validate_and_sync_buildings(include_worker_refs=False)
-        except Exception as e:
-            renpy.log(f"Building_select_global: validate_and_sync_buildings error: {str(e)}")
-    
+    add Solid(gui.surface_dark)
+
+    # Ensure buildings are synced when opening this screen (once per show, not per render)
+    on "show" action Function(_building_select_global_sync)
+
     frame:
         xalign 0.35  # Match journal positioning
         yalign 0.5
@@ -3429,8 +3328,8 @@ screen Building_select_global():
                                 textbutton "[type_name]: [display_name]":
                                     xsize 580  # Keep button width same
                                     text_size font_size(26)  # Larger font like journal
-                                    text_color "#7a4b2a"  # Brown text like journal
-                                    text_hover_color "#6b6528"  # Unified dark green hover
+                                    text_color gui.journal_text_color  # Brown text like journal
+                                    text_hover_color gui.journal_hover_color  # Unified dark green hover
                                     action [Hide("tavern"), Hide("Building_select_global"), Show("Manager", building_name=building)]
         
         # Close button positioned like journal (outside vbox)
@@ -3442,48 +3341,14 @@ screen Building_select_global():
             yalign 0.0
             xoffset -15
             yoffset 5
-         
-screen Building_select(worker):
-    modal True
-    zorder 99
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background Solid("#000000ee")
-        padding (20, 20)
-        vbox:
-            spacing 10
-            label "Select Building" style "header_style" xalign 0.5
-            $ bnames = sorted(available_buildings.keys())
-            for building_name in bnames:
-                if available_buildings[building_name]["owned"]:
-                    textbutton "[custom_names.get(building_name, building_name)]":
-                        action [
-                            # Remove the worker from any current building.
-                            Function(remove_worker_from_building, worker),
-                            # Add the worker to this building (with dedup protection).
-                            Function(add_worker_to_building, worker, building_name),
-                            Hide("Building_select"),
-                            Show("workers")
-                        ]
-                else:
-                    textbutton "[custom_names.get(building_name, building_name)] (Not Available)":
-                        style "nav_button_text"
-                        text_size font_size(24)
-                        xalign 0.0
-                        sensitive False
-            textbutton "Close":
-                style "nav_button_text"
-                xalign 0.5
-                action [Hide("Building_select"), Show("workers")]
 
-# Alias so workers screen can call Show("building_selection", worker=worker)
-screen building_selection(worker, return_to_workers=True):
-    use Building_select(worker)
+    key "K_BACKSPACE" action [Hide("Building_select_global"), Show("tavern")]
 
 screen job_selection(worker):
     zorder 99
     modal True
+    # Hover preview target (skills / bonus / estimated success of the hovered profession)
+    default _job_tt_text = ""
     frame:
         xalign 0.5
         yalign 0.5
@@ -3523,11 +3388,13 @@ screen job_selection(worker):
                         for b_name in store.owned_buildings:
                             $ b = available_buildings.get(b_name, {})
                             if b:
-                                textbutton f"{b.get('display_name', b_name)}":
+                                # !q: building display names are user-renamable (BIBLIA §9)
+                                $ b_disp = b.get('display_name', b_name)
+                                textbutton "[b_disp!q]":
                                     xsize 500
                                     text_size font_size(28)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     sensitive True
                                     action [
                                         Function(add_worker_to_building, worker, b_name),
@@ -3546,8 +3413,8 @@ screen job_selection(worker):
                             textbutton "Unassign (No Role)":
                                 xsize 500
                                 text_size font_size(28)
-                                text_color "#7a4b2a"
-                                text_hover_color "#6b6528"
+                                text_color gui.journal_text_color
+                                text_hover_color gui.journal_hover_color
                                 sensitive True
                                 action [
                                     # CRITICAL: Use function to set job, ensuring we modify the real dict
@@ -3571,17 +3438,35 @@ screen job_selection(worker):
                                 $ prof_description = profession.get("description", "No description available.")
                                 $ skills_used = profession.get("skills", [])
                                 $ required_skills = ", ".join([skill_names.get(str(s), str(s)) for s in skills_used]) if skills_used else "None"  # Check for empty skills
-                                $ total = 0
-                                $ count = 0
-                                for s in skills_used:
-                                    $ total += calculate_skill_with_traits(worker, str(s), include_libido=False)
-                                    $ count += 1
-                                if count > 0:
-                                    $ avg_skill = total // count
-                                else:
-                                    $ avg_skill = 0
+                                python:
+                                    total = 0
+                                    count = 0
+                                    _tt_skill_lines = []
+                                    for s in skills_used:
+                                        _sk_key = str(s)
+                                        _sk_val = calculate_skill_with_traits(worker, _sk_key, include_libido=False)
+                                        total += _sk_val
+                                        count += 1
+                                        # Skill display names are JSON-derived: escape text-tag/interp chars (BIBLIA §9)
+                                        _sk_disp = str(skill_names.get(_sk_key, _sk_key)).replace("[", "[[").replace("{", "{{")
+                                        _tt_skill_lines.append("{}: {}".format(_sk_disp, _sk_val))
+                                    avg_skill = (total // count) if count > 0 else 0
+                                    _is_rest_prof = str(profession.get("id", "")).strip().lower() == "rest"
+                                    # Hover tooltip: per-skill values + building bonus + estimated daily success.
+                                    # Mirrors the daily roll (event_daily_exec: d100 <= adjusted skill + building bonus),
+                                    # labelled as an estimate (traits/story modifiers/synergy vary per day).
+                                    _prof_success_tt = None
+                                    if not _is_rest_prof:
+                                        _b_skill_bonus = int(building.get("skill_bonus", 0) or 0) if building else 0
+                                        _est_success = max(5, min(100, avg_skill + _b_skill_bonus))
+                                        # Compact labels: rendered in the narrow fixed panel at top-right
+                                        _tt_parts = list(_tt_skill_lines)
+                                        if _b_skill_bonus:
+                                            _tt_parts.append("Bonus: +{}".format(_b_skill_bonus))
+                                        _tt_parts.append("Success: ~{}%".format(_est_success))
+                                        _prof_success_tt = "\n".join(_tt_parts)
                                 # For rest job, show "-" instead of skill value
-                                $ avg_skill_display = "-" if str(profession.get("id", "")).strip().lower() == "rest" else f"{avg_skill}/100"
+                                $ avg_skill_display = "-" if _is_rest_prof else f"{avg_skill}/100"
                                 # Count workers with this specific job - use servant_jobs as source of truth
                                 # Only count if the worker actually exists and is assigned to this building
                                 python:
@@ -3604,9 +3489,11 @@ screen job_selection(worker):
                                         textbutton "[prof_name]":
                                             xsize 500  # Match shop_selection button width
                                             text_size font_size(28)
-                                            text_color "#7a4b2a"
-                                            text_hover_color "#6b6528"
+                                            text_color gui.journal_text_color
+                                            text_hover_color gui.journal_hover_color
                                             sensitive True
+                                            hovered SetScreenVariable("_job_tt_text", _prof_success_tt or "")
+                                            unhovered SetScreenVariable("_job_tt_text", "")
                                             action [
                                                 # Add worker to building with dedup protection
                                                 Function(add_worker_to_building, worker, building_name),
@@ -3625,28 +3512,28 @@ screen job_selection(worker):
                                             xsize 500
                                             xalign 0.0
                                             xoffset 5
-                                            text "{size=19}{color=#7a4b2a}[_prof_blurb]{/color}{/size}":
+                                            text "{size=20}{color=#7a4b2a}[_prof_blurb]{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
-                                            text "{color=#5a3a1a}{size=19}Skills Used: [required_skills]{/size}{/color}\n{size=17}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}":
+                                            text "{color=#5a3a1a}{size=20}Skills Used: [required_skills]{/size}{/color}\n{size=17}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
                                     else:
                                         textbutton "[prof_name]":
                                             xsize 500  # Match shop_selection button width
                                             text_size font_size(28)
-                                            text_color "#7a4b2a"
-                                            text_hover_color "#6b6528"
+                                            text_color gui.journal_text_color
+                                            text_hover_color gui.journal_hover_color
                                             sensitive False
                                         vbox:
                                             spacing 8
                                             xsize 500
                                             xalign 0.0
                                             xoffset 5
-                                            text "{size=19}{color=#7a4b2a}[_prof_blurb]{/color}{/size}":
+                                            text "{size=20}{color=#7a4b2a}[_prof_blurb]{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
-                                            text "{color=#5a3a1a}{size=19}Skills Used: [required_skills]{/size}{/color}\n{size=17}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}\n{size=17}{color=#ff0000}Role Full{/color}{/size}":
+                                            text "{color=#5a3a1a}{size=20}Skills Used: [required_skills]{/size}{/color}\n{size=17}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}\n{size=17}{color=#ff0000}Role Full{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
                         else:
@@ -3664,6 +3551,36 @@ screen job_selection(worker):
             yalign 0.0
             xoffset -15
             yoffset 5
+
+    # Hover panel: profession preview (skills, bonus, estimated success).
+    # X is fixed (left of the scrollbar, user-placed); Y follows the mouse,
+    # clamped so the panel stays inside the journal frame. Styling mirrors the
+    # generic tooltip screen exactly: dark 2px border, beige fill, size-20 text.
+    if _job_tt_text:
+        python:
+            _job_tt_y = renpy.get_mouse_pos()[1]
+            _job_tt_y = max(300, min(860, _job_tt_y))
+        frame:
+            xanchor 1.0
+            yanchor 0.5
+            xpos 1245
+            ypos _job_tt_y
+            xpadding 0
+            ypadding 0
+            background Solid(gui.journal_dark_color)  # Dark brown border
+            frame:
+                xmargin 2
+                ymargin 2
+                background Solid("#d4a574")  # Beige background (tooltip standard)
+                xpadding 6
+                ypadding 4
+                text _job_tt_text:
+                    size 20
+                    color gui.journal_dark_color
+                    text_align 0.0
+                    xmaximum 185
+
+    key "K_BACKSPACE" action Hide("job_selection")
 
 
 screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_roster=True, return_to_from_buy_workers=False, return_to_from_recruitment=False, return_to_tavern=False):
@@ -3902,7 +3819,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 
                 # CRITICAL: Create a fresh copy of smi to break any reference sharing
                 # This ensures we're working with the actual item data, not a shared reference
-                if isinstance(smi, (list, tuple)) and len(smi) >= 2:
+                if _is_inv_entry(smi) and len(smi) >= 2:
                     smi = (str(smi[0]), int(smi[1]), bool(smi[2] if len(smi) > 2 else False))
                     renpy.log(f"transfer_to_right: Normalized smi to {smi}")
                 
@@ -3956,7 +3873,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     if smi_index is not None and smi_index < len(source_inventory):
                         try:
                             inv_item = source_inventory[smi_index]
-                            if isinstance(inv_item, (list, tuple)) and len(inv_item) >= 3 and str(inv_item[0]) == str(smi[0]):
+                            if _is_inv_entry(inv_item) and len(inv_item) >= 3 and str(inv_item[0]) == str(smi[0]):
                                 source_inventory[smi_index] = (inv_item[0], inv_item[1], False)
                                 if source_worker or left_worker:
                                     remove_item_effects(source_worker if source_worker else left_worker, inv_item[0])
@@ -4003,7 +3920,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 # Verify the removal worked
                 if left_worker is None:
                     # Double-check that the item was actually removed
-                    remaining_count = sum(item[1] for item in store.manager_inventory if isinstance(item, (list, tuple)) and len(item) >= 2 and item[0] == smi[0])
+                    remaining_count = sum(item[1] for item in store.manager_inventory if _is_inv_entry(item) and len(item) >= 2 and item[0] == smi[0])
                     renpy.log(f"transfer_to_right: After removal, {smi[0]} remaining in manager_inventory: {remaining_count}")
                 renpy.log(f"Source after removal: {source_inventory}")
                 renpy.log(f"Adding {smi[0]} (quantity: {transfer_qty}) to target: {target_inventory}")
@@ -4022,7 +3939,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     # Also recreate target inventory to break references
                     new_inv = []
                     for item in store.manager_inventory:
-                        if isinstance(item, (list, tuple)) and len(item) >= 2:
+                        if _is_inv_entry(item) and len(item) >= 2:
                             new_inv.append((str(item[0]), int(item[1]), bool(item[2] if len(item) > 2 else False)))
                         else:
                             new_inv.append(item)
@@ -4109,7 +4026,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     if swi_index is not None and swi_index < len(source_inventory):
                         try:
                             inv_item = source_inventory[swi_index]
-                            if isinstance(inv_item, (list, tuple)) and len(inv_item) >= 3 and str(inv_item[0]) == str(swi[0]):
+                            if _is_inv_entry(inv_item) and len(inv_item) >= 3 and str(inv_item[0]) == str(swi[0]):
                                 source_inventory[swi_index] = (inv_item[0], inv_item[1], False)
                                 if source_worker or right_worker:
                                     remove_item_effects(source_worker if source_worker else right_worker, inv_item[0])
@@ -4156,7 +4073,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 # Verify the removal worked
                 if right_worker is None:
                     # Double-check that the item was actually removed
-                    remaining_count = sum(item[1] for item in store.manager_inventory if isinstance(item, (list, tuple)) and len(item) >= 2 and item[0] == swi[0])
+                    remaining_count = sum(item[1] for item in store.manager_inventory if _is_inv_entry(item) and len(item) >= 2 and item[0] == swi[0])
                     renpy.log(f"transfer_to_left: After removal, {swi[0]} remaining in manager_inventory: {remaining_count}")
                 renpy.log(f"Source after removal: {source_inventory}")
                 renpy.log(f"Adding {swi[0]} (quantity: {transfer_qty}) to target: {target_inventory}")
@@ -4175,7 +4092,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     # Also recreate target inventory to break references
                     new_inv = []
                     for item in store.manager_inventory:
-                        if isinstance(item, (list, tuple)) and len(item) >= 2:
+                        if _is_inv_entry(item) and len(item) >= 2:
                             new_inv.append((str(item[0]), int(item[1]), bool(item[2] if len(item) > 2 else False)))
                         else:
                             new_inv.append(item)
@@ -4195,11 +4112,18 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 renpy.restart_interaction()
                 renpy.set_screen_variable("is_transferring", False)
 
-        def sell_item(item_id, quantity=None):
+        def get_item_sell_price(item_info):
+            """Single source for shop sell pricing: 50% of buy price (shared by
+            sell_item and the mass-sell plan builders below)."""
+            return int((item_info or {}).get("price", 0) * 0.5)
+
+        def sell_item(item_id, quantity=None, _price=get_item_sell_price):
+            # _price captured via default arg: screen-local defs can't see sibling
+            # screen locals at call time (BIBLIA §10 / note above handle_inventory_row_click).
             multiplier = renpy.get_screen_variable("trade_multiplier")
             item_info = next((i for i in items_json["items"] if i["id"] == item_id), None)
             if item_info:
-                sell_price = int(item_info.get("price", 0) * 0.5)  # 50% of buy price
+                sell_price = _price(item_info)  # 50% of buy price
                 source_inventory = manager_inventory if left_worker is None else left_worker.get("inventory", [])
                 # Find item in inventory to check available quantity
                 item_entry = next((item for item in source_inventory if item[0] == item_id), None)
@@ -4293,7 +4217,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 renpy.set_screen_variable("selected_description", item_info.get("description", ""))
 
             now = __import__("time").time()
-            item_id = item[0] if isinstance(item, (list, tuple)) and len(item) >= 1 else str(item)
+            item_id = item[0] if _is_inv_entry(item) and len(item) >= 1 else str(item)
             row_key = "{}:{}:{}".format(row_scope, row_idx, item_id)
             last_key = renpy.get_screen_variable("last_row_click_key")
             last_ts = renpy.get_screen_variable("last_row_click_ts")
@@ -4369,24 +4293,29 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
         # Money display with icon-style $ symbol
         hbox:
             spacing 5
-            text "$" color "#3c1f14" size 24 bold True yalign 0.5
-            text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
+            text "$" color gui.journal_dark_color size 24 bold True yalign 0.5
+            text "[format(int(money), ',')]" color gui.journal_dark_color size 28 yalign 0.5
         # Calendar display with icon
         hbox:
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month - 1]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 26 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color gui.journal_dark_color size 26 yalign 0.5
+        # Compact status strip: roster size and owned holdings (read-only)
+        python:
+            _tv_worker_count = len(store.workers)
+            _tv_building_count = len(getattr(store, "owned_buildings", []) or [])
+        text "Workers: [_tv_worker_count]      Buildings: [_tv_building_count]" color gui.journal_dark_color size 20
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
         python:
-            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+            _manager_name_color = gui.journal_hover_color if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else gui.journal_dark_color
         textbutton "[player_title] [player_name]":
             action Show("manager_character_sheet")
             text_color _manager_name_color
-            text_hover_color "#6b6528"
+            text_hover_color gui.journal_hover_color
             text_size 26
             text_italic True
             background None
@@ -4438,7 +4367,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                 vbox:
                     spacing 5
                     button:
-                        background "tablebutton.png"
+                        background "images/tablebutton.png"
                         xsize 500
                         ysize 50
                         hbox:
@@ -4475,11 +4404,11 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         text_size 30
                         text_color "#d8bf9a"
                         text_hover_color "#ffffff"
-                        background "tablebutton.png"
+                        background "images/tablebutton.png"
                     hbox:
                         spacing 0
                         button:
-                            background "tablebutton.png"
+                            background "images/tablebutton.png"
                             xsize 200
                             ysize 40
                             action If(
@@ -4492,11 +4421,11 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             hbox:
                                 spacing 3
                                 yalign 0.5
-                                text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color "#6b6528"
+                                text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color gui.journal_hover_color
                                 if left_sort_by_name:
                                     add "gui/arrowdown.png" zoom 0.1 yalign 0.5
                         button:
-                            background "tablebutton.png"
+                            background "images/tablebutton.png"
                             xsize 90
                             ysize 40
                             action If(
@@ -4509,11 +4438,11 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             hbox:
                                 spacing 3
                                 yalign 0.5
-                                text "Price" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff" hover_color "#6b6528"
+                                text "Price" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff" hover_color gui.journal_hover_color
                                 if left_sort_by_price:
                                     add "gui/arrowdown.png" zoom 0.1 yalign 0.5
                         button:
-                            background "tablebutton.png"
+                            background "images/tablebutton.png"
                             xsize 90
                             ysize 40
                             text "Qty" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff"
@@ -4622,7 +4551,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             style "inv_trade_action_button"
                                             xsize 140
                                             background None
-                                            text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
+                                            text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) hover_color gui.journal_hover_color xalign 0.0 yalign 0.5 yoffset 3
                                             action [SetScreenVariable("selected_manager_item", item), SetScreenVariable("selected_manager_index", idx), SetScreenVariable("selected_worker_item", None), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)]
                                             sensitive ((right_worker is not False or shop_mode) and not is_transferring)
                                             hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message=("Sell selected item to shop. Double-click row for quick sell." if shop_mode else "Move selected item to the right panel target. Double-click row for quick transfer."), screen_name="manager_inventory"), NullAction())
@@ -4659,7 +4588,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             style "inv_trade_action_button"
                                             xsize 140
                                             background None
-                                            text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
+                                            text ("{u}Sell{/u}" if shop_mode else "{u}Right{/u}") size font_size(24) hover_color gui.journal_hover_color xalign 0.0 yalign 0.5 yoffset 3
                                             action [SetScreenVariable("selected_manager_item", item), SetScreenVariable("selected_manager_index", idx), SetScreenVariable("selected_worker_item", None), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(sell_item, item[0]) if shop_mode else Function(transfer_to_right)]
                                             sensitive ((right_worker is not False or shop_mode) and not is_transferring)
                                             hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message=("Sell selected item to shop. Double-click row for quick sell." if shop_mode else "Move selected item to the right panel target. Double-click row for quick transfer."), screen_name="manager_inventory"), NullAction())
@@ -4689,7 +4618,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             action NullAction()
                             hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Search items by name across visible panel lists.", screen_name="manager_inventory"), NullAction())
                             unhovered Hide("tooltip")
-                            text "Search" color "#3c1f14" size font_size(20) xalign 0.0 yalign 0.5
+                            text "Search" color gui.journal_dark_color size font_size(20) xalign 0.0 yalign 0.5
                         frame:
                             xsize 274
                             ysize 30
@@ -4699,12 +4628,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                 value ScreenVariableInputValue("item_search_text")
                                 pixel_width 254
                                 size font_size(20)
-                                color "#3c1f14"
+                                color gui.journal_dark_color
                                 allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
                     null height 5
                     # Multiplier button (x1 / x10 / x100)
                     button:
-                        background Solid("#3c1f14")
+                        background Solid(gui.journal_dark_color)
                         hover_background Solid("#5a3a2a")
                         xsize 360
                         ysize 40
@@ -4716,18 +4645,111 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             spacing 10
                             text "Quantity:" size font_size(22) color "#ffffff" yalign 0.5
                             text "x[trade_multiplier]" size font_size(24) color "#ffffff" yalign 0.5
-                            text "(click to cycle)" size font_size(18) color "#aaaaaa" yalign 0.5
+                            text "(click to cycle)" size font_size(20) color "#aaaaaa" yalign 0.5
+                    if shop_mode:
+                        # Mass-sell tools (Sell stack / Sell shown / Sell duplicates).
+                        # GEOMETRY: middle panel is 380x540, padding (10,5,10,10) -> 525px of
+                        # content. Base layout used exactly 525 (5+30+5+40+5+200+5+235), so this
+                        # 35px row (null 5 + hbox 30) is paid for by shrinking the description
+                        # frame 200->165 (viewport 180->145) in shop mode only.
+                        #
+                        # Plans are computed at render time from the same filtered lists the left
+                        # panel just rendered (equipped entries never enter unequipped_list); any
+                        # inventory change restarts the interaction, so plans match the screen.
+                        python:
+                            _bulk_items_by_id = {it.get("id"): it for it in items_json.get("items", [])}
+
+                            def _bulk_sellable(_item_id, _info):
+                                if (_info or {}).get("type") == "quest_item":
+                                    return False
+                                _idl = str(_item_id).lower()
+                                if "test" in _idl or "debug" in _idl:
+                                    return False
+                                return True
+
+                            _bulk_worker_name = left_worker.get("name") if (left_worker and left_worker is not False) else None
+
+                            # Sell stack: every unequipped copy of the selected item (whole inventory).
+                            _stack_plan = []
+                            _stk_name_esc = "item"
+                            if selected_manager_item is not None:
+                                _stk_id = str(selected_manager_item[0])
+                                _stk_info = _bulk_items_by_id.get(selected_manager_item[0], {})
+                                if _bulk_sellable(_stk_id, _stk_info):
+                                    _stk_qty = 0
+                                    for _bit in left_inventory:
+                                        if _is_inv_entry(_bit) and len(_bit) >= 2 and str(_bit[0]) == _stk_id and not store._is_equipped(_bit):
+                                            _stk_qty += int(_bit[1] or 0)
+                                    if _stk_qty > 0:
+                                        _stack_plan = [(_stk_id, _stk_qty, get_item_sell_price(_stk_info))]
+                                # Item names are JSON-derived: escape text-tag/interp chars (BIBLIA §9)
+                                _stk_name_esc = str(_stk_info.get("name", "item")).replace("[", "[[").replace("{", "{{")
+
+                            # Sell shown: everything passing the active filter+search (unequipped only).
+                            _shown_qty_by_id = {}
+                            for _sidx, _sitem in unequipped_list:
+                                if not (_is_inv_entry(_sitem) and len(_sitem) >= 2):
+                                    continue
+                                _sid = str(_sitem[0])
+                                if not _bulk_sellable(_sid, _bulk_items_by_id.get(_sitem[0], {})):
+                                    continue
+                                _shown_qty_by_id[_sid] = _shown_qty_by_id.get(_sid, 0) + int(_sitem[1] or 0)
+                            _shown_plan = [(_sid, _q, get_item_sell_price(_bulk_items_by_id.get(_sid, {}))) for _sid, _q in _shown_qty_by_id.items() if _q > 0]
+
+                            # Sell duplicates: keep 1 copy of each distinct shown item, sell the rest.
+                            _dupes_plan = [(_sid, _q - 1, get_item_sell_price(_bulk_items_by_id.get(_sid, {}))) for _sid, _q in _shown_qty_by_id.items() if _q > 1]
+
+                            def _bulk_totals(_plan):
+                                return (sum(_p[1] for _p in _plan), sum(_p[1] * _p[2] for _p in _plan))
+
+                            _stack_n, _stack_gold = _bulk_totals(_stack_plan)
+                            _shown_n, _shown_gold = _bulk_totals(_shown_plan)
+                            _dupes_n, _dupes_gold = _bulk_totals(_dupes_plan)
+                        null height 5
+                        hbox:
+                            xsize 360
+                            spacing 6
+                            button:
+                                xsize 116
+                                ysize 30
+                                background Solid(gui.journal_dark_color)
+                                hover_background Solid("#5a3a2a")
+                                sensitive (bool(_stack_plan) and not is_transferring)
+                                action Confirm("Sell all {}x {} for ${}?".format(_stack_n, _stk_name_esc, _stack_gold), Function(mass_sell_inventory_items, _stack_plan, _bulk_worker_name), NullAction())
+                                hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Sell every unequipped copy of the selected item (quest and test items are never sold).", screen_name="manager_inventory"), NullAction())
+                                unhovered Hide("tooltip")
+                                text "Sell stack" size font_size(18) color ("#ffffff" if _stack_plan else "#aaaaaa") xalign 0.5 yalign 0.5
+                            button:
+                                xsize 116
+                                ysize 30
+                                background Solid(gui.journal_dark_color)
+                                hover_background Solid("#5a3a2a")
+                                sensitive (bool(_shown_plan) and not is_transferring)
+                                action Confirm("Sell all {} shown items ({} kinds) for ${}?".format(_shown_n, len(_shown_plan), _shown_gold), Function(mass_sell_inventory_items, _shown_plan, _bulk_worker_name), NullAction())
+                                hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Sell every item currently passing the filter and search (equipped, quest and test items are never sold).", screen_name="manager_inventory"), NullAction())
+                                unhovered Hide("tooltip")
+                                text "Sell shown" size font_size(18) color ("#ffffff" if _shown_plan else "#aaaaaa") xalign 0.5 yalign 0.5
+                            button:
+                                xsize 116
+                                ysize 30
+                                background Solid(gui.journal_dark_color)
+                                hover_background Solid("#5a3a2a")
+                                sensitive (bool(_dupes_plan) and not is_transferring)
+                                action Confirm("Keep 1 of each shown item and sell {} duplicates for ${}?".format(_dupes_n, _dupes_gold), Function(mass_sell_inventory_items, _dupes_plan, _bulk_worker_name), NullAction())
+                                hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="For each distinct shown item keep one copy and sell the rest (equipped, quest and test items are never sold).", screen_name="manager_inventory"), NullAction())
+                                unhovered Hide("tooltip")
+                                text "Sell dupes" size font_size(18) color ("#ffffff" if _dupes_plan else "#aaaaaa") xalign 0.5 yalign 0.5
                     null height 5
                     frame:
                         background Solid("#1a1a1a")
                         xsize 360
-                        ysize 200
+                        ysize (165 if shop_mode else 200)
                         padding (10, 10)
                         viewport:
                             scrollbars "vertical"
                             mousewheel True
                             draggable True
-                            ysize 180
+                            ysize (145 if shop_mode else 180)
                             # Get selected item name for header
                             python:
                                 _sel_item = selected_worker_item if selected_worker_item is not None else selected_manager_item
@@ -4785,7 +4807,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                     spacing 5
                     $ shop_name = "Basic Shop" if shop_mode == "shop1" else "Adventurer's Market" if shop_mode == "shop2" else "Elite Emporium" if shop_mode == "shop3" else (right_worker['name'] if right_worker and right_worker is not False else ('Storage' if right_worker is None else 'No Worker Selected'))
                     button:
-                        background "tablebutton.png"
+                        background "images/tablebutton.png"
                         xsize 500
                         ysize 50
                         hbox:
@@ -4822,7 +4844,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         text_size 30
                         text_color "#d8bf9a"
                         text_hover_color "#ffffff"
-                        background "tablebutton.png"
+                        background "images/tablebutton.png"
                     if right_worker is False and shop_mode is None:
                         text "No worker selected." size font_size(26) xalign 0.5 yalign 0.5
                     else:
@@ -4832,7 +4854,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         hbox:
                             spacing 0
                             button:
-                                background "tablebutton.png"
+                                background "images/tablebutton.png"
                                 xsize 200
                                 ysize 40
                                 action right_name_action
@@ -4841,12 +4863,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                 hbox:
                                     spacing 3
                                     yalign 0.5
-                                    text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color ("#ffffff" if shop_mode else "#6b6528")
+                                    text "Name" size font_size(22) yalign 0.5 yoffset 3 color "#ffffff" hover_color ("#ffffff" if shop_mode else gui.journal_hover_color)
                                     if right_show_arrow:
                                         add "gui/arrowdown.png" zoom 0.1 yalign 0.5
                             if shop_mode:
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 90
                                     ysize 40
                                     action ToggleScreenVariable("right_shop_sort_by_price")
@@ -4855,19 +4877,19 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     hbox:
                                         spacing 3
                                         yalign 0.5
-                                        text "Price" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff" hover_color "#6b6528"
+                                        text "Price" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff" hover_color gui.journal_hover_color
                                         if right_shop_sort_by_price:
                                             add "gui/arrowdown.png" zoom 0.1 yalign 0.5
                             else:
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 90
                                     ysize 40
                                     text "Qty" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff"
                                     action None
                             if shop_mode is None:
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 90
                                     ysize 40
                                     text "Action" size font_size(22) xalign 0.0 yalign 0.5 yoffset 3 color "#ffffff"
@@ -4948,7 +4970,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                     style "inv_trade_action_button"
                                                     xsize 140
                                                     background None
-                                                    text "{u}Buy{/u}" size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
+                                                    text "{u}Buy{/u}" size font_size(24) hover_color gui.journal_hover_color xalign 0.0 yalign 0.5 yoffset 3
                                                     action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", None), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(buy_item_from_shop, item[0])]
                                                     sensitive (not is_transferring and store.money >= item_info.get("price", 0))
                                                     hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Buy selected item. Double-click row for quick buy.", screen_name="manager_inventory"), NullAction())
@@ -5024,7 +5046,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                     style "inv_trade_action_button"
                                                     xsize 140
                                                     background None
-                                                    text "{u}Left{/u}" size font_size(24) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
+                                                    text "{u}Left{/u}" size font_size(24) hover_color gui.journal_hover_color xalign 0.0 yalign 0.5 yoffset 3
                                                     action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", idx), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(transfer_to_left)]
                                                     sensitive ((left_worker is not False) and not is_transferring)
                                                     hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Move selected item to the left panel target. Double-click row for quick transfer.", screen_name="manager_inventory"), NullAction())
@@ -5057,14 +5079,14 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                 button:
                                                     xsize 100
                                                     background None
-                                                    text "[label]" size font_size(18) xalign 0.0 yalign 0.5 yoffset 3
+                                                    text "[label]" size font_size(20) xalign 0.0 yalign 0.5 yoffset 3
                                                     action the_action
                                                     sensitive is_sens
                                                 button:
                                                     style "inv_trade_action_button"
                                                     xsize 150
                                                     background None
-                                                    text "{u}Left{/u}" size font_size(22) hover_color "#6b6528" xalign 0.0 yalign 0.5 yoffset 3
+                                                    text "{u}Left{/u}" size font_size(22) hover_color gui.journal_hover_color xalign 0.0 yalign 0.5 yoffset 3
                                                     action [SetScreenVariable("selected_worker_item", item), SetScreenVariable("selected_worker_index", idx), SetScreenVariable("selected_manager_item", None), SetScreenVariable("selected_manager_index", None), SetScreenVariable("selected_description", item_info.get("description", "")), Function(transfer_to_left)]
                                                     sensitive ((left_worker is not False) and not is_transferring)
                                                     hovered If(get_tooltips_state_for_screen("manager_inventory"), ShowTransient("tooltip", message="Move selected item to the left panel target. Double-click row for quick transfer.", screen_name="manager_inventory"), NullAction())
@@ -5122,15 +5144,24 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                 textbutton "[summary_worker['name']]":
                                     action Show("worker_details", worker=summary_worker, in_roster=True)
                                     text_size font_size(28)
-                                    text_color "#3c1f14"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_dark_color
+                                    text_hover_color gui.journal_hover_color
                                     background None
                                     yalign 0.5
                                     hovered If(get_tooltips_state_for_screen(screen_name), ShowTransient("tooltip", message="Open this worker's full details screen.", screen_name=screen_name), NullAction())
                                     unhovered Hide("tooltip")
-                                text "(click for details)" size font_size(20) color "#3c1f14" yalign 0.5
+                                text "(click for details)" size font_size(20) color gui.journal_dark_color yalign 0.5
                             null height 0
                             # Energy / Health mini bars
+                            # E/H color coherence: same rule as the workers roster
+                            # (numbers turn gui.danger_color below 30% of the calculated max).
+                            python:
+                                _sum_max_e = calculate_max_energy(summary_worker)
+                                _sum_max_h = calculate_max_health(summary_worker)
+                                _sum_cur_e = int(summary_worker.get("energy", 0) or 0)
+                                _sum_cur_h = int(summary_worker.get("health", 0) or 0)
+                                _sum_e_col = gui.danger_color if (_sum_max_e and _sum_cur_e < 0.3 * _sum_max_e) else "#ffffff"
+                                _sum_h_col = gui.danger_color if (_sum_max_h and _sum_cur_h < 0.3 * _sum_max_h) else "#ffffff"
                             hbox:
                                 spacing 4
                                 xalign 0.5
@@ -5151,9 +5182,9 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             range calculate_max_energy(summary_worker)
                                             xsize 136
                                             ysize 24
-                                            left_bar "#4a6fa5"
+                                            left_bar gui.energy_bar_color
                                             right_bar "#444444"
-                                        text "E [summary_worker.get('energy',0)]/[calculate_max_energy(summary_worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                                        text "E [_sum_cur_e]/[_sum_max_e]" size font_size(18) color _sum_e_col xalign 0.5 yalign 0.5
                                 button:
                                     background None
                                     xsize 136
@@ -5170,14 +5201,14 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             range calculate_max_health(summary_worker)
                                             xsize 136
                                             ysize 24
-                                            left_bar "#a54a4a"
+                                            left_bar gui.health_bar_color
                                             right_bar "#444444"
-                                        text "H [summary_worker.get('health',0)]/[calculate_max_health(summary_worker)]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                                        text "H [_sum_cur_h]/[_sum_max_h]" size font_size(18) color _sum_h_col xalign 0.5 yalign 0.5
 
                             textbutton "Switch to [quick_panel_mode == 'skills' and 'Stats' or 'Skills']":
                                 text_size font_size(20)
                                 text_color "#ffffff"
-                                text_hover_color "#6b6528"
+                                text_hover_color gui.journal_hover_color
                                 background None
                                 xalign 0.0
                                 action SetScreenVariable("quick_panel_mode", quick_panel_mode == "skills" and "stats" or "skills")
@@ -5221,7 +5252,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                             range max(1, stat_max)
                                                             xsize 128
                                                             ysize 24
-                                                            left_bar "#6b6528"
+                                                            left_bar gui.journal_hover_color
                                                             right_bar "#444444"
                                                         text "[stat_name]: [stat_value]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 124
                                         vbox:
@@ -5242,7 +5273,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                             range max(1, stat_max)
                                                             xsize 128
                                                             ysize 24
-                                                            left_bar "#6b6528"
+                                                            left_bar gui.journal_hover_color
                                                             right_bar "#444444"
                                                         text "[stat_name]: [stat_value]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5 xmaximum 124
                                     null height 6
@@ -5293,12 +5324,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                             xsize 92
                                                             ysize 26
                                                             if _left_skill:
-                                                                text " [_left_skill[0]]:" size font_size(20) color "#3c1f14" yalign 0.5 xmaximum 90
+                                                                text " [_left_skill[0]]:" size font_size(20) color gui.journal_dark_color yalign 0.5 xmaximum 90
                                                         fixed:
                                                             xsize 44
                                                             ysize 26
                                                             if _left_value is not None:
-                                                                text "[_left_value]" size font_size(20) color "#3c1f14" yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 39 xoffset -4
+                                                                text "[_left_value]" size font_size(20) color gui.journal_dark_color yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 39 xoffset -4
                                                 null width 4
                                                 frame:
                                                     background _row_bg
@@ -5313,12 +5344,12 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                             xsize 92
                                                             ysize 26
                                                             if _right_skill:
-                                                                text " [_right_skill[0]]:" size font_size(20) color "#3c1f14" yalign 0.5 xmaximum 90
+                                                                text " [_right_skill[0]]:" size font_size(20) color gui.journal_dark_color yalign 0.5 xmaximum 90
                                                         fixed:
                                                             xsize 44
                                                             ysize 26
                                                             if _right_value is not None:
-                                                                text "[_right_value]" size font_size(20) color "#3c1f14" yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 39 xoffset -4
+                                                                text "[_right_value]" size font_size(20) color gui.journal_dark_color yalign 0.5 xalign 1.0 text_align 1.0 xmaximum 39 xoffset -4
                                         null height 28
                             null height 0
                     frame:
@@ -5329,7 +5360,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         vbox:
                             spacing 6
                             xsize 280
-                            text "Equipment" size font_size(24) color "#3c1f14" xalign 0.0
+                            text "Equipment" size font_size(24) color gui.journal_dark_color xalign 0.0
                             null height 2
                             $ _eq_pairs = [(i, next((x for x in items_json["items"] if x["id"] == i[0]), None)) for i in summary_worker.get("inventory", []) if store._is_equipped(i)]
                             $ _eq_weapon_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "weapon"), "Empty")
@@ -5381,8 +5412,8 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             xsize 300
             ysize 50
             text_size 42
-            text_color "#3c1f14"
-            text_hover_color "#6b6528"
+            text_color gui.journal_dark_color
+            text_hover_color gui.journal_hover_color
             xalign 0.5
             yalign 1.0
             yoffset -30
@@ -5421,8 +5452,8 @@ screen worker_selection_popup(panel, current_left, current_right, shop_mode=None
                         ]
                         xsize 580
                         text_size font_size(28)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                     
                     null height 8
                     
@@ -5447,12 +5478,12 @@ screen worker_selection_popup(panel, current_left, current_right, shop_mode=None
                                     ]
                                     xsize 580
                                     text_size font_size(28)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     sensitive (panel == "left" and worker != current_right) or (panel == "right" and worker != current_left)
                 else:
                     # Display message in shop mode
-                    text "Worker selection is disabled in shop mode." size font_size(24) xalign 0.5 color "#7a4b2a"
+                    text "Worker selection is disabled in shop mode." size font_size(24) xalign 0.5 color gui.journal_text_color
         
         # Return button (top-right)
         imagebutton:
@@ -5463,6 +5494,8 @@ screen worker_selection_popup(panel, current_left, current_right, shop_mode=None
             yalign 0.0
             xoffset -15
             yoffset 5
+
+    key "K_BACKSPACE" action Hide("worker_selection_popup")
 
 screen inventory_filter_popup(target_var="left_panel_filter_category", current_cat=None, popup_title="FILTER ITEMS"):
     modal True
@@ -5536,8 +5569,10 @@ screen inventory_filter_popup(target_var="left_panel_filter_category", current_c
                             hbox:
                                 spacing 0
                                 null width 20
-                                text "[lbl]" size font_size(28) color ("#6b6528" if cid == current_cat else "#7a4b2a") hover_color "#6b6528"
-            
+                                text "[lbl]" size font_size(28) color (gui.journal_hover_color if cid == current_cat else gui.journal_text_color) hover_color gui.journal_hover_color
+
+    key "K_BACKSPACE" action Hide("inventory_filter_popup")
+
 screen confirm_upgrade(building_name):
     modal True
     zorder 200
@@ -5571,6 +5606,7 @@ screen confirm_upgrade(building_name):
                 textbutton "No" action Hide("confirm_upgrade")
 
     key "game_menu" action Hide("confirm_upgrade")
+    key "K_BACKSPACE" action Hide("confirm_upgrade")
 
 screen building_type_selection(building_name):
     zorder 101
@@ -5614,8 +5650,8 @@ screen building_type_selection(building_name):
                                 textbutton "[btype['name']]":
                                     xsize 580
                                     text_size font_size(28)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     action [
                                         SetDict(available_buildings[building_name], "type", btype["id"]),
                                         Function(lambda: setattr(store, 'building_1_type_set', True) if hasattr(store, 'tutorial_active') and store.tutorial_active else None),
@@ -5632,6 +5668,8 @@ screen building_type_selection(building_name):
             yalign 0.0
             xoffset -15
             yoffset 5
+
+    key "K_BACKSPACE" action Hide("building_type_selection")
 
 screen confirm_change_type(building_name):
     modal True
@@ -5661,6 +5699,7 @@ screen confirm_change_type(building_name):
                 textbutton "No" action Hide("confirm_change_type")
 
     key "game_menu" action Hide("confirm_change_type")
+    key "K_BACKSPACE" action Hide("confirm_change_type")
 
 screen confirm_buy_potion(worker, potion_id):
     modal True
@@ -5689,9 +5728,20 @@ screen confirm_buy_potion(worker, potion_id):
                 xalign 0.5
                 yalign 0.5
                 size 38
-                color "#3c1f14"
+                color gui.journal_dark_color
                 text_align 0.5
                 xsize 600
+
+            # QoL: skip this dialog next time (Yes-path runs directly).
+            # Can be re-enabled in Options > More Options ("Potion buy confirm").
+            textbutton "Don't ask again: [getattr(persistent, 'skip_potion_buy_confirm', False) and 'On' or 'Off']":
+                xalign 0.5
+                text_size font_size(22)
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
+                background None
+                hover_background None
+                action ToggleField(persistent, "skip_potion_buy_confirm")
 
             hbox:
                 xalign 0.5
@@ -5712,6 +5762,7 @@ screen confirm_buy_potion(worker, potion_id):
                 textbutton "No" action Hide("confirm_buy_potion")
 
     key "game_menu" action Hide("confirm_buy_potion")
+    key "K_BACKSPACE" action Hide("confirm_buy_potion")
 
 screen confirm_buy_worker(worker, return_screen=None):
     modal True
@@ -5743,6 +5794,11 @@ screen confirm_buy_worker(worker, return_screen=None):
                     Hide("confirm_buy_worker")
                 )
 
+    key "K_BACKSPACE" action If(return_screen,
+        [Hide("confirm_buy_worker"), Show(return_screen, worker=worker)],
+        Hide("confirm_buy_worker")
+    )
+
 screen confirm_refresh_workers():
     modal True
     zorder 200
@@ -5771,6 +5827,7 @@ screen confirm_refresh_workers():
                 textbutton "No" action Hide("confirm_refresh_workers")
 
     key "game_menu" action Hide("confirm_refresh_workers")
+    key "K_BACKSPACE" action Hide("confirm_refresh_workers")
 
 screen confirm_sell_worker(worker, return_screen=None):
     modal True
@@ -5820,6 +5877,10 @@ screen confirm_sell_worker(worker, return_screen=None):
         [Hide("confirm_sell_worker"), Show(return_screen, worker=worker)],
         Hide("confirm_sell_worker")
     )
+    key "K_BACKSPACE" action If(return_screen,
+        [Hide("confirm_sell_worker"), Show(return_screen, worker=worker)],
+        Hide("confirm_sell_worker")
+    )
 
 screen adjust_skill_bonus(building_name):
     modal True
@@ -5851,7 +5912,7 @@ screen adjust_skill_bonus(building_name):
                 yoffset 25
                 
                 # Skill description
-                text "[skill_description]" size font_size(24) color "#7a4b2a" text_align 0.0 xalign 0.0
+                text "[skill_description]" size font_size(24) color gui.journal_text_color text_align 0.0 xalign 0.0
                 
                 null height 20
                 
@@ -5871,15 +5932,15 @@ screen adjust_skill_bonus(building_name):
                 hbox:
                     xalign 0.0
                     spacing 10
-                    text "Base: [building['skill']], Bonus: [building['skill_bonus']]" size font_size(24) color "#7a4b2a"
+                    text "Base: [building['skill']], Bonus: [building['skill_bonus']]" size font_size(24) color gui.journal_text_color
                     hbox:
                         spacing 0
                         textbutton "+" style "game_menu_button":
                             action [SetDict(available_buildings[building_name], "skill_bonus", min(50, building["skill_bonus"] + 10)), Function(lambda: setattr(store, 'building_skill_bonus_increased_tutorial', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective in [6] else None)]
                             xsize 25
                             text_size font_size(28)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             text_bold True
                             text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                             sensitive building["skill_bonus"] < 50
@@ -5887,8 +5948,8 @@ screen adjust_skill_bonus(building_name):
                             action SetDict(available_buildings[building_name], "skill_bonus", max(0, building["skill_bonus"] - 10))
                             xsize 25
                             text_size font_size(28)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             text_bold True
                             text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                             sensitive building["skill_bonus"] > 0
@@ -5915,6 +5976,8 @@ screen adjust_skill_bonus(building_name):
             yalign 0.0
             xoffset -15
             yoffset 5
+
+    key "K_BACKSPACE" action Hide("adjust_skill_bonus")
 
 screen Manager(building_name):
     on "show" action [Function(sync_assigned_servants_for_building, building_name), Function(maybe_show_intro_popup, "manager_buildings")]
@@ -5959,23 +6022,28 @@ screen Manager(building_name):
         spacing 8
         hbox:
             spacing 5
-            text "$" color "#3c1f14" size 24 bold True yalign 0.5
-            text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
+            text "$" color gui.journal_dark_color size 24 bold True yalign 0.5
+            text "[format(int(money), ',')]" color gui.journal_dark_color size 28 yalign 0.5
         hbox:
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month - 1]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 26 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color gui.journal_dark_color size 26 yalign 0.5
+        # Compact status strip: roster size and owned holdings (read-only)
+        python:
+            _tv_worker_count = len(store.workers)
+            _tv_building_count = len(getattr(store, "owned_buildings", []) or [])
+        text "Workers: [_tv_worker_count]      Buildings: [_tv_building_count]" color gui.journal_dark_color size 20
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
         python:
-            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+            _manager_name_color = gui.journal_hover_color if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else gui.journal_dark_color
         textbutton "[player_title] [player_name]":
             action Show("manager_character_sheet")
             text_color _manager_name_color
-            text_hover_color "#6b6528"
+            text_hover_color gui.journal_hover_color
             text_size 26
             text_italic True
             background None
@@ -6012,7 +6080,7 @@ screen Manager(building_name):
                 $ typical_bonus_stories = get_reputation_bonus_stories(_erep_for_stories, "reputation / 400")
                 hbox:
                     spacing 10
-                    text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color "#7a4b2a"
+                    text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color gui.journal_text_color
                 $ fixed_cost = get_building_base_maintenance_cost(building_name, building)
                 $ worker_costs = compute_worker_portion_daily_costs(manager_servants, building.get("base_level", 1))[0]
                 $ bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
@@ -6059,8 +6127,8 @@ screen Manager(building_name):
                     $ current_text = limit_texts[event_limit] if event_limit < len(limit_texts) else limit_texts[0]
                     textbutton "[current_text]":
                         text_size font_size(26)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         action SetDict(building, "event_limit", (event_limit + 1) % 4)
             viewport:
                 scrollbars "vertical"
@@ -6078,7 +6146,7 @@ screen Manager(building_name):
                             for profession in building_type_entry.get("professions", []):
                                 $ current_count = len([s for s in _displayed_servants if _building_jobs_use.get(s["name"], "") == profession["id"]])
                                 $ max_limit = get_max_daily_workers(building, profession)
-                                text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color "#7a4b2a"
+                                text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color gui.journal_text_color
                                 $ _prof_mech = profession_mechanics_summary(profession)
                                 if _prof_mech:
                                     text "[_prof_mech]" size font_size(26) xalign 0.0 color "#9a8a6a"
@@ -6098,28 +6166,28 @@ screen Manager(building_name):
                                                 spacing 5
                                                 xsize 1440
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Name (Level)" size font_size(26) color "#7a4b2a"
+                                                    text "Name (Level)" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Average / Best skill" size font_size(26) color "#7a4b2a"
+                                                    text "Average / Best skill" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Energy - Health" size font_size(26) color "#7a4b2a"
+                                                    text "Energy - Health" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Actions" size font_size(26) color "#7a4b2a"
+                                                    text "Actions" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                             python:
                                                 _workers_in_prof = [
@@ -6141,6 +6209,11 @@ screen Manager(building_name):
                                                 _workers_in_prof = sorted(_workers_in_prof, key=_prof_sort_key)
                                             for worker in _workers_in_prof:
                                                 $ worker_level = worker.get('level', 1)
+                                                # E/H color coherence: danger color below 30% of max (roster rule).
+                                                $ _mgr_max_e = calculate_max_energy(worker)
+                                                $ _mgr_max_h = calculate_max_health(worker)
+                                                $ _mgr_e_col = gui.danger_color if (_mgr_max_e and int(worker.get("energy", 0) or 0) < 0.3 * _mgr_max_e) else "#ffffff"
+                                                $ _mgr_h_col = gui.danger_color if (_mgr_max_h and int(worker.get("health", 0) or 0) < 0.3 * _mgr_max_h) else "#ffffff"
                                                 hbox:
                                                     spacing 5
                                                     xsize 1440
@@ -6148,7 +6221,7 @@ screen Manager(building_name):
                                                         xsize 275
                                                         text_size font_size(24)
                                                         text_color "#ffffff"
-                                                        text_hover_color "#6b6528"
+                                                        text_hover_color gui.journal_hover_color
                                                         action Show("worker_details", worker=worker, in_roster=True)
                                                     $ avg_skill = 0
                                                     $ best_skill_name = "N/A"
@@ -6173,35 +6246,35 @@ screen Manager(building_name):
                                                         xsize 275
                                                         text_size font_size(24)
                                                         text_color "#ffffff"
-                                                        text_hover_color "#6b6528"
+                                                        text_hover_color gui.journal_hover_color
                                                     hbox:
                                                         spacing 2
                                                         xsize 275
-                                                        textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
+                                                        textbutton "E: [worker['energy']]/[_mgr_max_e]":
                                                             xsize 136
                                                             text_size font_size(24)
-                                                            text_color "#ffffff"
+                                                            text_color _mgr_e_col
                                                             text_hover_color "#2c4aa6"
                                                             action use_or_buy_potion_action(worker, "energy_potion")
-                                                            sensitive worker["energy"] < calculate_max_energy(worker)
-                                                        textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
+                                                            sensitive worker["energy"] < _mgr_max_e
+                                                        textbutton "H: [worker['health']]/[_mgr_max_h]":
                                                             xsize 137
                                                             text_size font_size(24)
-                                                            text_color "#ffffff"
+                                                            text_color _mgr_h_col
                                                             text_hover_color "#a63c3c"
                                                             action use_or_buy_potion_action(worker, "health_potion")
-                                                            sensitive worker["health"] < calculate_max_health(worker)
+                                                            sensitive worker["health"] < _mgr_max_h
                                                     textbutton "Change / View skills":
                                                         xsize 275
                                                         text_size font_size(24)
                                                         text_color "#ffffff"
-                                                        text_hover_color "#6b6528"
+                                                        text_hover_color gui.journal_hover_color
                                                         action Show("job_selection", worker=worker)
                             # Unassigned: workers in building but with no profession or "unassigned"
                             $ _unassigned = [w for w in _displayed_servants if str(_building_jobs_use.get(w["name"], "unassigned") or "").strip().lower() in ("", "unassigned")]
                             $ _unassigned = sorted(_unassigned, key=lambda _w: str(_w.get("name", "")).strip().lower())
                             if _unassigned:
-                                text "Unassigned ([len(_unassigned)])" size font_size(26) xalign 0.0 color "#7a4b2a"
+                                text "Unassigned ([len(_unassigned)])" size font_size(26) xalign 0.0 color gui.journal_text_color
                                 frame:
                                     background Solid("#1a1a1a99")
                                     padding (10, 10)
@@ -6218,31 +6291,36 @@ screen Manager(building_name):
                                                 spacing 5
                                                 xsize 1440
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Name (Level)" size font_size(26) color "#7a4b2a"
+                                                    text "Name (Level)" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Assign a role to participate" size font_size(26) color "#7a4b2a"
+                                                    text "Assign a role to participate" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Energy - Health" size font_size(26) color "#7a4b2a"
+                                                    text "Energy - Health" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                                 button:
-                                                    background "tablebutton2.png"
+                                                    background "images/tablebutton2.png"
                                                     xsize 275
                                                     ysize 50
-                                                    text "Actions" size font_size(26) color "#7a4b2a"
+                                                    text "Actions" size font_size(26) color gui.journal_text_color
                                                     sensitive False
                                             for worker in _unassigned:
                                                 $ worker_level = worker.get('level', 1)
+                                                # E/H color coherence: danger color below 30% of max (roster rule).
+                                                $ _mgr_max_e = calculate_max_energy(worker)
+                                                $ _mgr_max_h = calculate_max_health(worker)
+                                                $ _mgr_e_col = gui.danger_color if (_mgr_max_e and int(worker.get("energy", 0) or 0) < 0.3 * _mgr_max_e) else "#ffffff"
+                                                $ _mgr_h_col = gui.danger_color if (_mgr_max_h and int(worker.get("health", 0) or 0) < 0.3 * _mgr_max_h) else "#ffffff"
                                                 hbox:
                                                     spacing 5
                                                     xsize 1440
@@ -6250,7 +6328,7 @@ screen Manager(building_name):
                                                         xsize 275
                                                         text_size font_size(24)
                                                         text_color "#ffffff"
-                                                        text_hover_color "#6b6528"
+                                                        text_hover_color gui.journal_hover_color
                                                         action Show("worker_details", worker=worker, in_roster=True)
                                                     textbutton "—":
                                                         xsize 275
@@ -6260,25 +6338,25 @@ screen Manager(building_name):
                                                     hbox:
                                                         spacing 2
                                                         xsize 275
-                                                        textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
+                                                        textbutton "E: [worker['energy']]/[_mgr_max_e]":
                                                             xsize 136
                                                             text_size font_size(24)
-                                                            text_color "#ffffff"
+                                                            text_color _mgr_e_col
                                                             text_hover_color "#2c4aa6"
                                                             action use_or_buy_potion_action(worker, "energy_potion")
-                                                            sensitive worker["energy"] < calculate_max_energy(worker)
-                                                        textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
+                                                            sensitive worker["energy"] < _mgr_max_e
+                                                        textbutton "H: [worker['health']]/[_mgr_max_h]":
                                                             xsize 137
                                                             text_size font_size(24)
-                                                            text_color "#ffffff"
+                                                            text_color _mgr_h_col
                                                             text_hover_color "#a63c3c"
                                                             action use_or_buy_potion_action(worker, "health_potion")
-                                                            sensitive worker["health"] < calculate_max_health(worker)
+                                                            sensitive worker["health"] < _mgr_max_h
                                                     textbutton "Assign role":
                                                         xsize 275
                                                         text_size font_size(24)
                                                         text_color "#ffffff"
-                                                        text_hover_color "#6b6528"
+                                                        text_hover_color gui.journal_hover_color
                                                         action Show("job_selection", worker=worker)
     
     # Right panel: building management buttons and global context menu
@@ -6322,8 +6400,8 @@ screen Manager(building_name):
                     action [Function(ensure_custom_name_for_building, building_name), Show("rename_building", building_name=building_name)]
                     xsize 300
                     text_size 42
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_dark_color
+                    text_hover_color gui.journal_hover_color
                     ysize 50
                     align (0.5, 0.5)
                     hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Change the display name of this building", screen_name="Manager"), NullAction())
@@ -6355,8 +6433,8 @@ screen Manager(building_name):
                             action Show("confirm_upgrade", building_name=building_name)
                             xsize 300
                             text_size 42
-                            text_color "#3c1f14"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_dark_color
+                            text_hover_color gui.journal_hover_color
                             ysize 50
                             align (0.5, 0.5)
                             hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message=upgrade_tooltip, screen_name="Manager"), NullAction())
@@ -6369,8 +6447,8 @@ screen Manager(building_name):
                         action Show("adjust_skill_bonus", building_name=building_name)
                         xsize 300
                         text_size 42
-                        text_color "#3c1f14"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_dark_color
+                        text_hover_color gui.journal_hover_color
                         ysize 50
                         align (0.5, 0.5)
                         hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message=skill_tooltip, screen_name="Manager"), NullAction())
@@ -6382,8 +6460,8 @@ screen Manager(building_name):
                         action Show("building_type_selection", building_name=building_name)
                         xsize 300
                         text_size 42
-                        text_color "#3c1f14"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_dark_color
+                        text_hover_color gui.journal_hover_color
                         ysize 50
                         align (0.5, 0.5)
                         hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Select a business type for this building. Each type has unique professions and skills.", screen_name="Manager"), NullAction())
@@ -6393,8 +6471,8 @@ screen Manager(building_name):
                         action Show("confirm_change_type", building_name=building_name)
                         xsize 300
                         text_size 42
-                        text_color "#3c1f14"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_dark_color
+                        text_hover_color gui.journal_hover_color
                         ysize 50
                         align (0.5, 0.5)
                         hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Change the business type of this building. Warning: This will reset the building to level 1 and unassign all workers.", screen_name="Manager"), NullAction())
@@ -6412,8 +6490,8 @@ screen Manager(building_name):
                         )
                         xsize 300
                         text_size 42
-                        text_color "#3c1f14"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_dark_color
+                        text_hover_color gui.journal_hover_color
                         ysize 50
                         align (0.5, 0.5)
                         hovered If(get_tooltips_state_for_screen("Manager"), ShowTransient("tooltip", message="Sell this numbered slot (Building 2+). You receive purchase price minus $5,000; workers are unassigned.", screen_name="Manager"), NullAction())
@@ -6423,7 +6501,7 @@ screen Manager(building_name):
                     action [SetVariable("current_bg", tavern_bg), Hide("Manager"), Show("tavern")]
                     xsize 300
                     text_size 42
-                    text_color "#6b6528"
+                    text_color gui.journal_hover_color
                     text_hover_color "#ffffff"
                     ysize 50
                     align (0.5, 0.5)
@@ -6434,10 +6512,12 @@ screen Manager(building_name):
 
     # (Removed duplicate foreground left panel)
 
+    key "K_BACKSPACE" action [SetVariable("current_bg", tavern_bg), Hide("Manager"), Show("tavern")]
+
 screen building_selection(worker, return_to_workers=True):
     modal True
     zorder 99
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     frame:
         xalign 0.5
         yalign 0.5
@@ -6465,8 +6545,8 @@ screen building_selection(worker, return_to_workers=True):
                     textbutton "Unassigned: No Building":
                         xsize 500
                         text_size font_size(28)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         action [
                             Function(unassign_worker, worker),
                             Hide("building_selection"),
@@ -6486,8 +6566,8 @@ screen building_selection(worker, return_to_workers=True):
                             textbutton "[type_name]: [display_name]":
                                 xsize 500
                                 text_size font_size(28)
-                                text_color "#7a4b2a"
-                                text_hover_color "#6b6528"
+                                text_color gui.journal_text_color
+                                text_hover_color gui.journal_hover_color
                                 action [
                                     Function(remove_worker_from_building, worker),
                                     # Add worker to building with dedup protection
@@ -6500,8 +6580,8 @@ screen building_selection(worker, return_to_workers=True):
                             textbutton "[type_name]: [display_name] (Not Available)":
                                 xsize 500
                                 text_size font_size(28)
-                                text_color "#7a4b2a"
-                                text_hover_color "#6b6528"
+                                text_color gui.journal_text_color
+                                text_hover_color gui.journal_hover_color
                                 sensitive False
         
         imagebutton:
@@ -6513,11 +6593,13 @@ screen building_selection(worker, return_to_workers=True):
             xoffset -15
             yoffset 5
 
+    key "K_BACKSPACE" action [Hide("building_selection"), If(return_to_workers, Show("workers"), NullAction())]
+
 screen rename_building(building_name):
     modal True
     zorder 99
     default new_name = custom_names.get(building_name, building_name)
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -6550,13 +6632,15 @@ screen rename_building(building_name):
                 yoffset 25
                 
                 # Input field
-                text "New Name:" size font_size(34) color "#7a4b2a" xalign 0.0
+                text "New Name:" size font_size(34) color gui.journal_text_color xalign 0.0
                 null height 10
                 input:
                     id "new_name"
                     value ScreenVariableInputValue("new_name")
                     length 20
-                    color "#7a4b2a"
+                    # Keep interpolation-sensitive characters out of custom names (BIBLIA §9)
+                    exclude "{}[]"
+                    color gui.journal_text_color
                 null height 60
                 
                 # Confirm button centered
@@ -6565,8 +6649,8 @@ screen rename_building(building_name):
                     xsize 200
                     text_size font_size(34)
                     yoffset 10
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action If(
                         new_name.strip() != "",
                         [
@@ -6596,7 +6680,7 @@ screen manager_character_sheet():
         ("gang_leader", "Gang Leader", "You run a tight crew. Your people move faster, last longer, and follow your lead without question.", "Each point adds +5 to Agility and +10 to max Energy for all workers."),
     ]
     $ _skills_data = [s for s in _skills_data_raw if s[0] != "whore_mastery" or getattr(persistent, "nsfw_enabled", False)]
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     fixed:
         xfill True
         yfill True
@@ -6653,11 +6737,11 @@ screen manager_character_sheet():
                     hbox:
                         spacing 12
                         xalign 0.0
-                        text "Level [manager_level]" size font_size(26) color "#6b6528" bold True yalign 0.5
+                        text "Level [manager_level]" size font_size(26) color gui.journal_hover_color bold True yalign 0.5
                         textbutton "Benefits":
                             text_size font_size(20)
                             text_color "#5a4a2a"
-                            text_hover_color "#6b6528"
+                            text_hover_color gui.journal_hover_color
                             action ToggleScreenVariable("show_manager_benefits")
                             yalign 0.5
                             background None
@@ -6700,9 +6784,9 @@ screen manager_character_sheet():
                     yalign 0.0
                     hbox:
                         spacing 12
-                        text "Management Skills" size font_size(30) color "#7a4b2a" bold True xalign 0.0
+                        text "Management Skills" size font_size(30) color gui.journal_text_color bold True xalign 0.0
                         if manager_level - _spent > 0:
-                            text "(Please assign remaining skill points: [manager_level - _spent][_total_pending > 0 and ' (' + str(_total_pending) + ' pending)' or ''])" size font_size(24) color "#6b6528" italic True yalign 0.5
+                            text "(Please assign remaining skill points: [manager_level - _spent][_total_pending > 0 and ' (' + str(_total_pending) + ' pending)' or ''])" size font_size(24) color gui.journal_hover_color italic True yalign 0.5
                     null height 6
                     viewport:
                         scrollbars "vertical"
@@ -6728,16 +6812,16 @@ screen manager_character_sheet():
                                             xfill True
                                             hbox:
                                                 spacing 8
-                                                text "[skill_name]" size font_size(26) color "#7a4b2a"
-                                                text " [show_val]" size font_size(26) color "#6b6528"
+                                                text "[skill_name]" size font_size(26) color gui.journal_text_color
+                                                text " [show_val]" size font_size(26) color gui.journal_hover_color
                                             text "[flavor]" size font_size(22) color "#5a4a2a" xalign 0.0 italic True
                                             text "[mechanics]" size font_size(20) color "#4a3a1a" xalign 0.0
                                         if _manager_remaining > 0:
                                             textbutton "+":
                                                 text_size font_size(64)
                                                 text_color "#3c2a1a"
-                                                text_hover_color "#6b6528"
-                                                text_selected_color "#6b6528"
+                                                text_hover_color gui.journal_hover_color
+                                                text_selected_color gui.journal_hover_color
                                                 action Function(add_pending_management_skill, skill_id)
                                                 xalign 1.0
                                                 yalign 0.5
@@ -6752,7 +6836,7 @@ screen manager_character_sheet():
                 textbutton "Confirm":
                     text_size font_size(28)
                     text_color "#3c2a1a"
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     action Function(confirm_all_management_skill_points)
                     xalign 1.0
                     yalign 1.0
@@ -6761,6 +6845,8 @@ screen manager_character_sheet():
                     background None
                     hover_background None
                     padding (8, 4)
+
+    key "K_BACKSPACE" action If(_total_pending > 0, Confirm("Your changes have not been saved. Do you want to continue?", [SetVariable("manager_pending_skills", {}), Hide("manager_character_sheet")], NullAction()), Hide("manager_character_sheet"))
 
 screen manager_levelup_benefit():
     modal True
@@ -6777,13 +6863,15 @@ screen manager_levelup_benefit():
         vbox:
             spacing 20
             label "Manager Level Up" xalign 0.5 style "header_style"
-            text "You have 1 additional skill point to assign." size font_size(22) xalign 0.5 color "#7a4b2a" text_align 0.5
+            text "You have 1 additional skill point to assign." size font_size(22) xalign 0.5 color gui.journal_text_color text_align 0.5
             textbutton "Continue":
                 xalign 0.5
                 text_size font_size(24)
-                text_color "#7a4b2a"
-                text_hover_color "#6b6528"
+                text_color gui.journal_text_color
+                text_hover_color gui.journal_hover_color
                 action Return()
+
+    key "K_BACKSPACE" action Return()
 
 screen buy_buildings():
     modal True
@@ -6830,8 +6918,8 @@ screen buy_buildings():
                         textbutton "[building_name] - $[price]":
                             xsize 500
                             text_size font_size(28)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action If(money >= price,
                                 [
                                     Function(add_new_building, building_name, price),
@@ -6843,14 +6931,14 @@ screen buy_buildings():
                                 ])
                             sensitive (money >= price)
                     else:
-                        text "No more building slots available to purchase." size font_size(24) xalign 0.0 color "#7a4b2a"
+                        text "No more building slots available to purchase." size font_size(24) xalign 0.0 color gui.journal_text_color
 
                     null height 18
                     text "Sell (Building 2+)" xalign 0.0 size font_size(26) color "#5a3a1a"
-                    text "You receive purchase price minus $5,000. Workers are unassigned." size font_size(18) xalign 0.0 color "#6a5a4a"
+                    text "You receive purchase price minus $5,000. Workers are unassigned." size font_size(20) xalign 0.0 color "#6a5a4a"
                     $ _sellable = store.sellable_generic_building_names() if callable(getattr(store, "sellable_generic_building_names", None)) else []
                     if not _sellable:
-                        text "No extra buildings to sell." size font_size(24) xalign 0.0 color "#7a4b2a"
+                        text "No extra buildings to sell." size font_size(24) xalign 0.0 color gui.journal_text_color
                     for bn in _sellable:
                         $ sale, paid = store.building_sale_preview(bn)
                         $ disp = store.custom_names.get(bn, bn)
@@ -6858,69 +6946,15 @@ screen buy_buildings():
                         textbutton "Sell [disp] — receive $[sale] (paid $[paid])":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action Confirm(
                                 _sell_confirm,
                                 Function(store.sell_building, bn),
                                 NullAction()
                             )
 
-screen recruitment_menu():
-    modal True
-    zorder 99
-    python:
-        recruitment_menu_bg = "gui/Journalback.png"
-        if not renpy.loadable(recruitment_menu_bg):
-            recruitment_menu_bg = "images/parchment.png"
-    add Transform(recruitment_menu_bg, align=(0.5, 0.5))
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background None
-        xsize 720
-        ysize 720
-        padding (40, 40)
-        # Close button in the top-right inside the panel
-        imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            xalign 1.0
-            yalign 0.0
-            xoffset -15
-            yoffset 5
-            action Hide("recruitment_menu")
-
-        vbox:
-            spacing 15
-            null height 15
-            label "Take a walk" xalign 0.5 style "header_style"
-            null height 10
-            viewport:
-                scrollbars "vertical"
-                mousewheel True
-                draggable True
-                ysize 480
-                xsize 605
-                xoffset 25
-                yoffset -20
-                vbox:
-                    spacing 10
-                    xsize 580
-                    yoffset 25
-                    textbutton "Recruit Workers":
-                        xsize 500
-                        text_size font_size(28)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
-                        action If(can_recruit_today,
-                            [
-                                Hide("recruitment_menu"),
-                                Jump("start_recruitment_system")
-                            ],
-                            Show("error_popup", message="You can only recruit once per day"))
-                        sensitive can_recruit_today
-            
+    key "K_BACKSPACE" action Hide("buy_buildings")
 
 screen in_development():
     modal True
@@ -6937,13 +6971,15 @@ screen in_development():
         vbox:
             spacing 20
             label "In development" xalign 0.5 style "header_style"
-            text "This location is not available yet. Come back in a future update!" size font_size(22) xalign 0.5 color "#7a4b2a" text_align 0.5
+            text "This location is not available yet. Come back in a future update!" size font_size(22) xalign 0.5 color gui.journal_text_color text_align 0.5
             textbutton "Close":
                 xalign 0.5
                 text_size font_size(24)
-                text_color "#7a4b2a"
-                text_hover_color "#6b6528"
+                text_color gui.journal_text_color
+                text_hover_color gui.journal_hover_color
                 action Hide("in_development")
+
+    key "K_BACKSPACE" action Hide("in_development")
 
 # Yvara (Academy director): reserved screen kept for potential future dialogue overlays.
 default academy_director_intro_done = False
@@ -6977,7 +7013,7 @@ screen academy_first_dialogue():
             text "Yvara" size font_size(24) color "#c9a227" bold True xalign 0.0
             null height 5
             text "Welcome, traveller. I am Yvara. Our institution offers structured courses in Academics, Amatory Arts, Hospitality, and Artisan Studies. Your workers may attend and gain experience under our teachers." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
-            text "\"To enroll your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here.\"" size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
+            text "\"To enroll your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and you may assign workers to our courses from the Manage Workers screen or from here.\"" size font_size(20) color "#c4b896" xalign 0.0 text_align 0.0 italic True
             null height 15
             text "What will you do?" size font_size(22) color "#ffdd88" xalign 0.0 italic True
             null height 10
@@ -6986,8 +7022,8 @@ screen academy_first_dialogue():
                 textbutton "Pay the tuition ($15,000)":
                     xsize 700
                     text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action If(store.money >= 15000,
                         [Function(store.add_academy_building), SetVariable("money", store.money - 15000), SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("academy_menu")],
                         Show("error_popup", message="You need $15,000 to pay the tuition.")
@@ -6996,9 +7032,9 @@ screen academy_first_dialogue():
                 if store.academy_haggle_available:
                     textbutton "Try to haggle (50% chance; if it fails, locked until tomorrow)":
                         xsize 700
-                        text_size font_size(19)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_size font_size(20)
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         action If(store.money >= 7500,
                             [Function(academy_try_haggle_and_continue)],
                             Show("error_popup", message="You need at least $7,500 to try haggling.")
@@ -7007,16 +7043,18 @@ screen academy_first_dialogue():
                 textbutton "Leave":
                     xsize 700
                     text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action [SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("map_screen")]
+
+    key "K_BACKSPACE" action [SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("map_screen")]
 
 screen yvara_gift_picker():
     ## Gift picker for Yvara: journal-style, lists giftable items in manager_inventory.
     modal True
     zorder 120
     $ _gift_items = yvara_get_giftable_items()
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -7042,7 +7080,7 @@ screen yvara_gift_picker():
                 null width 28
                 vbox:
                     spacing 14
-                    text "Choose something from your pack." size font_size(22) color "#7a4b2a" text_align 0.0 xmaximum 520
+                    text "Choose something from your pack." size font_size(22) color gui.journal_text_color text_align 0.0 xmaximum 520
                     null height 6
                     if _gift_items:
                         viewport:
@@ -7056,17 +7094,19 @@ screen yvara_gift_picker():
                                     textbutton "[_gname] (x[_gqty])":
                                         xsize 520
                                         text_size font_size(24)
-                                        text_color "#7a4b2a"
-                                        text_hover_color "#6b6528"
+                                        text_color gui.journal_text_color
+                                        text_hover_color gui.journal_hover_color
                                         action Return(("gift", _gid))
                     else:
-                        text "You carry nothing she would value right now." size font_size(21) color "#7a4b2a" xalign 0.0 text_align 0.0 italic True
+                        text "You carry nothing she would value right now." size font_size(21) color gui.journal_text_color xalign 0.0 text_align 0.0 italic True
+
+    key "K_BACKSPACE" action Return(("close", None))
 
 screen academy_menu():
     ## Academy main menu (after enrolled): Send workers / Visit director / Attend class.
     modal True
     zorder 101
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -7092,50 +7132,52 @@ screen academy_menu():
                 null width 28
                 vbox:
                     spacing 20
-                    text "Scholars and tutors await within—whether you wish to assign workers to a course, speak with the director, or lose yourself in the library." size font_size(22) xalign 0.0 color "#7a4b2a" text_align 0.0 xmaximum 520
+                    text "Scholars and tutors await within—whether you wish to assign workers to a course, speak with the director, or lose yourself in the library." size font_size(22) xalign 0.0 color gui.journal_text_color text_align 0.0 xmaximum 520
                     null height 15
                     vbox:
                         spacing 12
                         textbutton "Train workers":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("academy_menu"), Show("academy_training_menu")]
                         if getattr(store, "academy_enrolled", False):
                             textbutton "Rent the Laboratory":
                                 xsize 500
                                 text_size font_size(24)
-                                text_color "#7a4b2a"
-                                text_hover_color "#6b6528"
-                                action [Hide("academy_menu"), Hide("map_screen"), Call("academy_laboratory_dialogue")]
+                                text_color gui.journal_text_color
+                                text_hover_color gui.journal_hover_color
+                                action [Hide("academy_menu"), Hide("map_screen"), Jump("academy_laboratory_dialogue")]
                         if getattr(store, "yvara_ending_route", "") != "dominion":
                             if getattr(store, "yvara_ending_route", "") == "mixed" and (calculate_total_days() % 2 == 1):
                                 textbutton "Visit director":
                                     xsize 500
                                     text_size font_size(24)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     action Function(renpy.notify, "Yvara is working in one of your buildings today, not at the Academy.")
                             else:
                                 textbutton "Visit director":
                                     xsize 500
                                     text_size font_size(24)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
-                                    action [Hide("academy_menu"), Hide("map_screen"), Call("yvara_visit")]
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
+                                    action [Hide("academy_menu"), Hide("map_screen"), Jump("yvara_visit")]
                         textbutton "Visit the library":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
-                            action [Hide("academy_menu"), Hide("map_screen"), Call("academy_library_quest")]
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
+                            action [Hide("academy_menu"), Hide("map_screen"), Jump("academy_library_quest")]
+
+    key "K_BACKSPACE" action [Hide("academy_menu"), Show("map_screen")]
 
 screen academy_training_menu():
     ## Choose course: Academics / Amatory Arts / Hospitality Arts / Artisan Studies. Options also in Manage Workers.
     modal True
     zorder 102
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -7176,34 +7218,36 @@ screen academy_training_menu():
                         textbutton "Academics":
                             xsize 515
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Academics as their lesson in Manage Workers.")]
                         text "Scholars and tutors here focus on wit and logic. Each day, the curriculum emphasises Clever and one other discipline chosen at random—so the mind stays sharp and versatile." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
                         null height 4
                         textbutton "Amatory Arts":
                             xsize 515
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Amatory Arts as their lesson in Manage Workers.")]
                         text "The arts of intimacy are taught in discrete modules. Each lesson centres on one discipline—from core intimacy to dance and seduction—and touches one other at the tutors' choice, so progress stays focused but varied." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
                         null height 4
                         textbutton "Hospitality Arts":
                             xsize 515
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Hospitality Arts as their lesson in Manage Workers.")]
                         text "Students learn to put guests at ease and tend to their needs. Training is split between Charm—presence and words—and Service—attentiveness and care—so they become reliable in both manner and deed." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
                         null height 4
                         textbutton "Artisan Studies":
                             xsize 515
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("academy_training_menu"), Hide("academy_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to Academy and choose Artisan Studies as their lesson in Manage Workers.")]
                         text "Workshops in the Academy's craft wing teach hands-on practice—measuring, mixing, and shaping under an artisan's eye. Each lesson centres on Craft and touches one other discipline at random, to keep hands and head working together." size font_size(20) xalign 0.0 color "#5a4a2a" xoffset 0 text_align 0.0
+
+    key "K_BACKSPACE" action [Hide("academy_training_menu"), Hide("academy_menu"), Show("map_screen")]
 
 # Arena: choose a worker for the trial by combat (any worker, show Combat skill).
 screen choose_worker_for_arena_trial():
@@ -7211,7 +7255,7 @@ screen choose_worker_for_arena_trial():
     zorder 100
     python:
         eligible_workers = workers_filtered_by_gender(list(store.workers))
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     frame:
         xalign 0.5
         yalign 0.5
@@ -7223,7 +7267,7 @@ screen choose_worker_for_arena_trial():
             spacing 15
             null height 15
             label "Choose a combatant for the arena trial" xalign 0.5 style "header_style"
-            text "The trial may be to the death. Choose a worker to send into the sands." size font_size(20) color "#7a4b2a" xalign 0.5 text_align 0.5 xmaximum 700
+            text "The trial may be to the death. Choose a worker to send into the sands." size font_size(20) color gui.journal_text_color xalign 0.5 text_align 0.5 xmaximum 700
             null height 10
             if not eligible_workers:
                 text "You have no workers to send." color "#a63c3c" xalign 0.5 text_align 0.5 size 20
@@ -7231,8 +7275,8 @@ screen choose_worker_for_arena_trial():
                     xalign 0.5
                     xsize 200
                     text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action [SetVariable("_arena_chosen_worker", None), Return(False)]
             else:
                 vbox:
@@ -7251,8 +7295,8 @@ screen choose_worker_for_arena_trial():
                                 textbutton "[worker['name']] (Combat: [worker_combat])":
                                     xsize 620
                                     text_size font_size(25)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     action [Hide("choose_worker_for_arena_trial"), Function(renpy.call_in_new_context, "arena_run_trial_and_result", worker["name"])]
         # Close button: top-right inside the frame (drawn on top)
         imagebutton:
@@ -7264,13 +7308,15 @@ screen choose_worker_for_arena_trial():
             xoffset -45
             yoffset 5
 
+    key "K_BACKSPACE" action [SetVariable("_arena_chosen_worker", None), Return(False)]
+
 # Arena: choose a worker for the special match (5000 entry, 2 rounds + combat roll).
 screen choose_worker_for_arena_special_match():
     modal True
     zorder 100
     python:
         eligible_workers = workers_filtered_by_gender(list(store.workers))
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     frame:
         xalign 0.5
         yalign 0.5
@@ -7282,7 +7328,7 @@ screen choose_worker_for_arena_special_match():
             spacing 15
             null height 15
             label "Choose a fighter for the special match" xalign 0.5 style "header_style" xoffset 5
-            text "Entry paid. Choose who enters the sands. Two rounds of choices, then skill decides. Defeat may mean death—or mercy and scars." size font_size(20) color "#7a4b2a" xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
+            text "Entry paid. Choose who enters the sands. Two rounds of choices, then skill decides. Defeat may mean death—or mercy and scars." size font_size(20) color gui.journal_text_color xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
             null height 10
             if not eligible_workers:
                 text "You have no workers to send." color "#a63c3c" xalign 0.5 text_align 0.5 size 20
@@ -7290,8 +7336,8 @@ screen choose_worker_for_arena_special_match():
                     xalign 0.5
                     xsize 200
                     text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action [SetVariable("_arena_special_chosen_worker", None), Return()]
             else:
                 vbox:
@@ -7313,8 +7359,8 @@ screen choose_worker_for_arena_special_match():
                                 textbutton "[btn_text]":
                                     xsize 620
                                     text_size font_size(25)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     action [Hide("choose_worker_for_arena_special_match"), SetVariable("_arena_special_chosen_worker", worker), Function(renpy.call_in_new_context, "arena_special_match_run", worker["name"])]
         imagebutton:
             idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
@@ -7325,12 +7371,14 @@ screen choose_worker_for_arena_special_match():
             xoffset -45
             yoffset 5
 
+    key "K_BACKSPACE" action [SetVariable("_arena_special_chosen_worker", None), Return()]
+
 screen choose_worker_for_alchemy_craft():
     modal True
     zorder 100
     python:
         eligible_workers = workers_filtered_by_gender(list(store.workers))
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     frame:
         xalign 0.5
         yalign 0.5
@@ -7342,7 +7390,7 @@ screen choose_worker_for_alchemy_craft():
             spacing 15
             null height 15
             label "Choose a worker for the craft" xalign 0.5 style "header_style" xoffset 5
-            text "Investment paid. Choose who directs the brew. Two rounds of choices, then Craft decides the outcome." size font_size(20) color "#7a4b2a" xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
+            text "Investment paid. Choose who directs the brew. Two rounds of choices, then Craft decides the outcome." size font_size(20) color gui.journal_text_color xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
             null height 10
             if not eligible_workers:
                 text "You have no workers to send." color "#a63c3c" xalign 0.5 text_align 0.5 size 20
@@ -7350,8 +7398,8 @@ screen choose_worker_for_alchemy_craft():
                     xalign 0.5
                     xsize 200
                     text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action [SetVariable("_alchemy_chosen_worker", None), Return()]
             else:
                 vbox:
@@ -7372,8 +7420,8 @@ screen choose_worker_for_alchemy_craft():
                                 textbutton "[btn_text]":
                                     xsize 620
                                     text_size font_size(25)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     action [SetVariable("_alchemy_chosen_worker", worker), Hide("choose_worker_for_alchemy_craft"), Function(renpy.call_in_new_context, "academy_alchemy_craft_run")]
         imagebutton:
             idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
@@ -7384,94 +7432,12 @@ screen choose_worker_for_alchemy_craft():
             xoffset -45
             yoffset 5
 
-# Arena: result dialogue (two lines + Continue). Called from arena_run_trial_and_result so dialogue always shows.
-screen arena_trial_result(line1, line2):
-    modal True
-    zorder 102
-    $ _arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else "images/event_bg.png")
-    add _arena_bg
-    add Solid("#00000099")
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background Transform("gui/Journalback.png", align=(0.5, 0.5))
-        padding (50, 50)
-        xsize 750
-        ysize 400
-        vbox:
-            spacing 25
-            text line1 size font_size(22) color "#7a4b2a" text_align 0.5 xalign 0.5 xmaximum 650
-            text line2 size font_size(22) color "#7a4b2a" text_align 0.5 xalign 0.5 xmaximum 650
-            null height 20
-            textbutton "Continue":
-                xalign 0.5
-                xsize 220
-                text_size font_size(24)
-                text_color "#7a4b2a"
-                text_hover_color "#6b6528"
-                action Return()
-
-# Arena: first dialogue screen (optional overlay; main flow uses label arena_first_dialogue).
-# Matches the label flow: Lanista permit, pay, then combatant choice via Call.
-default arena_intro_done = False
-
-screen arena_first_dialogue():
-    modal True
-    zorder 101
-    $ arena_bg = "images/buildings/arena.png" if renpy.loadable("images/buildings/arena.png") else ("images/events/arena_promoter.png" if renpy.loadable("images/events/arena_promoter.png") else getattr(store, "event_bg", "images/event_bg.png"))
-    add arena_bg
-    add Solid("#000000dd")
-    imagebutton:
-        idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-        hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-        xalign 1.0
-        yalign 0.0
-        xoffset -15
-        yoffset 5
-        action [SetVariable("arena_intro_done", False), Hide("arena_first_dialogue"), Show("map_screen")]
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background Solid("#1a1a1acc")
-        padding (30, 30)
-        xsize 800
-        vbox:
-            xfill True
-            spacing 20
-            text "Arena Promoter" size font_size(24) color "#c9a227" bold True xalign 0.0
-            null height 5
-            text "Welcome to the coliseum. To operate gladiators here you need a Lanista permit." size font_size(20) color "#e8e8e8" xalign 0.0 text_align 0.0
-            text "The permit costs [LANISTA_PERMIT_COST] coins. Pay once and we can discuss proof of worth—a trial by combat." size font_size(19) color "#c4b896" xalign 0.0 text_align 0.0 italic True
-            null height 15
-            text "What will you do?" size font_size(22) color "#ffdd88" xalign 0.0 italic True
-            null height 10
-            vbox:
-                spacing 12
-                if store.money >= LANISTA_PERMIT_COST:
-                    textbutton "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins).":
-                        xsize 700
-                        text_size font_size(20)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
-                        action [SetVariable("money", store.money - LANISTA_PERMIT_COST), SetVariable("arena_lanista_paid", True), Hide("arena_first_dialogue"), Call("arena_combatant_menu")]
-                else:
-                    textbutton "Pay the Lanista permit ([LANISTA_PERMIT_COST] coins).":
-                        xsize 700
-                        text_size font_size(20)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
-                        action Show("error_popup", message="You do not have enough coins.")
-                textbutton "Leave":
-                    xsize 700
-                    text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
-                    action [SetVariable("arena_intro_done", False), Hide("arena_first_dialogue"), Show("map_screen")]
+    key "K_BACKSPACE" action [SetVariable("_alchemy_chosen_worker", None), Return()]
 
 screen arena_menu():
     modal True
     zorder 101
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -7497,45 +7463,47 @@ screen arena_menu():
                 null width 28
                 vbox:
                     spacing 20
-                    text "Combat and spectacle await. Send gladiators to fight in exhibitions, proving bouts, or championship matches—or put on a Pin up Barbarians show." size font_size(22) xalign 0.0 color "#7a4b2a" text_align 0.0 xmaximum 520
+                    text "Combat and spectacle await. Send gladiators to fight in exhibitions, proving bouts, or championship matches—or put on a Pin up Barbarians show." size font_size(22) xalign 0.0 color gui.journal_text_color text_align 0.0 xmaximum 520
                     null height 15
                     vbox:
                         spacing 12
                         textbutton "Send gladiators to fight":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("arena_menu"), Show("arena_training_menu")]
                         textbutton "Buy special match ([SPECIAL_MATCH_COST] coins)":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
-                            action [Hide("arena_menu"), Hide("map_screen"), Call("arena_special_match_dialogue")]
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
+                            action [Hide("arena_menu"), Hide("map_screen"), Jump("arena_special_match_dialogue")]
                         textbutton "Visit promoter":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("arena_menu"), Show("in_development")]
                         textbutton "Watch the fights":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("arena_menu"), Show("in_development")]
                         textbutton "Visit the Lanista":
                             xsize 500
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
-                            action [Hide("arena_menu"), Hide("map_screen"), Call("lanista_visit")]
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
+                            action [Hide("arena_menu"), Hide("map_screen"), Jump("lanista_visit")]
+
+    key "K_BACKSPACE" action [Hide("arena_menu"), Show("map_screen")]
 
 screen arena_training_menu():
     modal True
     zorder 102
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -7576,9 +7544,11 @@ screen arena_training_menu():
                         textbutton "Assign workers to Arena":
                             xsize 515
                             text_size font_size(24)
-                            text_color "#7a4b2a"
-                            text_hover_color "#6b6528"
+                            text_color gui.journal_text_color
+                            text_hover_color gui.journal_hover_color
                             action [Hide("arena_training_menu"), Hide("arena_menu"), Hide("map_screen"), Show("workers"), Function(renpy.notify, "Assign workers to the Arena, then choose their role (Exhibition, Proving, Championship, or Pin up) in Manage Workers.")]
+
+    key "K_BACKSPACE" action [Hide("arena_training_menu"), Hide("arena_menu"), Show("map_screen")]
 
 screen buy_map_building(map_button_id):
     modal True
@@ -7605,7 +7575,7 @@ screen buy_map_building(map_button_id):
             spacing 15
             null height 15
             label "Purchase Building" xalign 0.5 style "header_style"
-            text "Would you like to purchase this building? You could convert it into one of the following businesses:" size font_size(24) xalign 0.5 color "#7a4b2a" text_align 0.5
+            text "Would you like to purchase this building? You could convert it into one of the following businesses:" size font_size(24) xalign 0.5 color gui.journal_text_color text_align 0.5
             null height 10
             viewport:
                 scrollbars "vertical"
@@ -7640,8 +7610,8 @@ screen buy_map_building(map_button_id):
                                 textbutton "[btype['name']] - $[price]":
                                     xsize 500
                                     text_size font_size(28)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     action If(money >= price,
                                         [
                                             Function(add_new_building, building_name, price),
@@ -7659,9 +7629,11 @@ screen buy_map_building(map_button_id):
                                     )
                                     sensitive (money >= price)
                         else:
-                            text "No businesses available for this location." size font_size(28) xalign 0.5 color "#7a4b2a"
+                            text "No businesses available for this location." size font_size(28) xalign 0.5 color gui.journal_text_color
                     else:
-                        text "No more buildings available to purchase." size font_size(28) xalign 0.5 color "#7a4b2a"
+                        text "No more buildings available to purchase." size font_size(28) xalign 0.5 color gui.journal_text_color
+
+    key "K_BACKSPACE" action Hide("buy_map_building")
 
 screen buy_servants_table():
     zorder 90
@@ -7728,9 +7700,9 @@ screen buy_servants_table():
                     xalign 1.0
                     yalign 0.5
                     style "game_menu_button"
-                    text_size font_size(20)
-                    text_color "#7a4b2a"
-                    text_hover_color "#6b6528"
+                    text_size font_size(24)
+                    text_color gui.journal_text_color
+                    text_hover_color gui.journal_hover_color
                     action If(
                         store.map_worker_refill_count == 0,
                         Function(store.refresh_buy_workers),
@@ -7747,67 +7719,73 @@ screen buy_servants_table():
             if getattr(persistent, "worker_gender_filter", "both") == "both":
                 python:
                     _gf = getattr(store, "buy_servants_filter_gender", None)
-                    _color_all = "#6b6528" if _gf is None else "#7a4b2a"
-                    _color_male = "#6b6528" if _gf == "male" else "#7a4b2a"
-                    _color_female = "#6b6528" if _gf == "female" else "#7a4b2a"
+                    _color_all = gui.journal_hover_color if _gf is None else gui.journal_text_color
+                    _color_male = gui.journal_hover_color if _gf == "male" else gui.journal_text_color
+                    _color_female = gui.journal_hover_color if _gf == "female" else gui.journal_text_color
                 hbox:
                     xalign 0.5
                     spacing 15
-                    text "Filter: " size font_size(22) color "#7a4b2a" yalign 0.5
+                    text "Filter: " size font_size(24) color gui.journal_text_color yalign 0.5
                     textbutton "All":
                         style "game_menu_button"
-                        text_size font_size(20)
+                        text_size font_size(24)
                         text_color _color_all
-                        text_hover_color "#6b6528"
+                        text_hover_color gui.journal_hover_color
                         action [SetVariable("buy_servants_filter_gender", None), Function(renpy.restart_interaction)]
                     textbutton "Male":
                         style "game_menu_button"
-                        text_size font_size(20)
+                        text_size font_size(24)
                         text_color _color_male
-                        text_hover_color "#6b6528"
+                        text_hover_color gui.journal_hover_color
                         action [SetVariable("buy_servants_filter_gender", "male"), Function(renpy.restart_interaction)]
                     textbutton "Female":
                         style "game_menu_button"
-                        text_size font_size(20)
+                        text_size font_size(24)
                         text_color _color_female
-                        text_hover_color "#6b6528"
+                        text_hover_color gui.journal_hover_color
                         action [SetVariable("buy_servants_filter_gender", "female"), Function(renpy.restart_interaction)]
                 null height 5
             
-            # Header row (outside the viewport)
-            fixed:
+            # Header: plain labels over ONE hairline (the unified table-header
+            # system shared with the workers roster and the daily report).
+            # GEOMETRY: row content is 52 (framed portrait) + 4x200 (columns) + 4x30 (gaps) = 972.
+            # Container budget: frame 1344 - padding 2x20 - parchment art border ~2x25 = ~1254,
+            # so the extra 82px fits without shrinking any text column.
+            vbox:
+                spacing 6
                 xalign 0.5
-                xoffset -5  # shift headers 5px left
-                ysize 50
-                xsize 870
                 hbox:
                     spacing 30
-                    xsize 870
+                    xsize 972
                     yalign 0.5
+                    # Spacer over the portrait column so headers stay aligned with rows
+                    # (same null-width technique as the workers roster header).
+                    null width 52
                     button:
-                        background "tablebutton4.png"
+                        background None
                         xsize 200
-                        ysize 50
-                        text "Name" size 28 color "#7a4b2a" text_align 0.0
+                        ysize 30
+                        text "Name" size 28 color gui.journal_text_color text_align 0.0
                         sensitive False
                     button:
-                        background "tablebutton4.png"
+                        background None
                         xsize 200
-                        ysize 50
-                        text "Price" size 28 color "#7a4b2a" text_align 0.0
+                        ysize 30
+                        text "Price" size 28 color gui.journal_text_color text_align 0.0
                         sensitive False
                     button:
-                        background "tablebutton4.png"
+                        background None
                         xsize 200
-                        ysize 50
-                        text "Trait" size 28 color "#7a4b2a" text_align 0.0
+                        ysize 30
+                        text "Trait" size 28 color gui.journal_text_color text_align 0.0
                         sensitive False
                     button:
-                        background "tablebutton4.png"
+                        background None
                         xsize 200
-                        ysize 50
-                        text "Actions" size 28 color "#7a4b2a" text_align 0.0
+                        ysize 30
+                        text "Actions" size 28 color gui.journal_text_color text_align 0.0
                         sensitive False
+                use table_rule(972, rule_xalign=0.5)
                 
             
             # Main content area: when global Worker Gender is Only Male/Female, list is already filtered; else use local filter
@@ -7819,45 +7797,50 @@ screen buy_servants_table():
                     _gender_filter = getattr(store, "buy_servants_filter_gender", None)
                     filtered_displayed_workers = [w for w in displayed_workers if (_gender_filter is None or w.get("gender") == _gender_filter)]
             if not filtered_displayed_workers and displayed_workers:
-                text "No workers match the selected filter." size font_size(22) color "#7a4b2a" xalign 0.5
+                text "No workers match the selected filter." size font_size(22) color gui.journal_text_color xalign 0.5
             else:
                 vbox:
                     xalign 0.5
-                    spacing 8
+                    spacing 12
                     for worker in filtered_displayed_workers:
                         $ _buy_nav_names = [w.get("name") for w in filtered_displayed_workers if hasattr(w, "get") and w.get("name")]
                         $ _buy_nav_index = next((idx for idx, n in enumerate(_buy_nav_names) if n == worker.get("name")), 0)
+                        $ _row_portrait = get_worker_portrait_cached(worker)
+                        $ _row_initial = (str(worker.get("name", "")).strip() or "?")[:1]
                         hbox:
                             xalign 0.5
                             spacing 30
                             xoffset 0
-                            xsize 870
+                            xsize 972
                             yalign 0.5
+                            # Framed portrait miniature (cached lookup; letter placeholder without art)
+                            use worker_portrait_thumb(_row_portrait, _row_initial)
                             button:
-                                background "tablebutton1b.png"
+                                background "images/tablebutton1b.png"
                                 xsize 200
                                 ysize 50
-                                text "[worker['name']] [('(M)' if worker.get('gender', '') == 'male' else '(F)' if worker.get('gender', '') == 'female' else '(?)')]" size 26 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
+                                text "[worker['name']] [('(M)' if worker.get('gender', '') == 'male' else '(F)' if worker.get('gender', '') == 'female' else '(?)')]" size 26 color gui.journal_text_color hover_color gui.journal_hover_color text_align 0.0
                                 action Show("worker_details", worker=worker, in_roster=False, from_buy_workers=True, nav_worker_names=_buy_nav_names, nav_worker_index=_buy_nav_index, nav_worker_pool=filtered_displayed_workers)
                             button:
-                                background "tablebutton1b.png"
+                                background "images/tablebutton1b.png"
                                 xsize 200
                                 ysize 50
-                                text "$[worker['cost']]" size 26 color "#7a4b2a" text_align 0.0
+                                text "$[worker['cost']]" size 26 color gui.journal_text_color text_align 0.0
                             button:
-                                background "tablebutton1b.png"
+                                background "images/tablebutton1b.png"
                                 xsize 200
                                 ysize 50
                                 $ trait_text = ", ".join(worker.get("traits", [])[:2]) if worker.get("traits") else "No Traits"
-                                text "[trait_text]" size 20 color "#7a4b2a" text_align 0.0
+                                text "[trait_text]" size 20 color gui.journal_text_color text_align 0.0
                             button:
-                                background "tablebutton1b.png"
+                                background "images/tablebutton1b.png"
                                 xsize 200
                                 ysize 50
-                                text "Buy" size 26 color "#7a4b2a" hover_color "#6b6528" text_align 0.0
+                                text "Buy" size 26 color gui.journal_text_color hover_color gui.journal_hover_color text_align 0.0
                                 action Show("confirm_buy_worker", worker=worker)
                                 sensitive (money >= worker["cost"])
 
+    key "K_BACKSPACE" action Hide("buy_servants_table")
 
 
 screen shop_selection():
@@ -7904,31 +7887,32 @@ screen shop_selection():
                         action [SetVariable("left_worker", None), SetVariable("right_worker", None), Show("manager_inventory", shop_mode="shop1"), Hide("shop_selection")]
                         xsize 500
                         text_size font_size(28)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         sensitive "shop1" in unlocked_shops and unlocked_shops["shop1"]
                     $ shop2_name = "Adventurer's Market" if unlocked_shops.get("shop2", False) else "Adventurer's Market (Closed)"
                     textbutton "[shop2_name]":
                         action [SetVariable("left_worker", None), SetVariable("right_worker", None), Show("manager_inventory", shop_mode="shop2"), Hide("shop_selection")]
                         xsize 500
                         text_size font_size(28)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         sensitive "shop2" in unlocked_shops and unlocked_shops["shop2"]
                     $ shop3_name = "Elite Emporium (Closed)" if not unlocked_shops.get("shop3", False) else "Elite Emporium"
                     textbutton "[shop3_name]":
                         action [SetVariable("left_worker", None), SetVariable("right_worker", None), Show("manager_inventory", shop_mode="shop3"), Hide("shop_selection")]
                         xsize 500
                         text_size font_size(28)
-                        text_color "#7a4b2a"
-                        text_hover_color "#6b6528"
+                        text_color gui.journal_text_color
+                        text_hover_color gui.journal_hover_color
                         sensitive "shop3" in unlocked_shops and unlocked_shops["shop3"]
-            
+
+    key "K_BACKSPACE" action Hide("shop_selection")
 
 screen more_details_screen(worker):
     modal True
     zorder 99
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
         xalign 0.5
@@ -7960,19 +7944,21 @@ screen more_details_screen(worker):
                 xoffset 30  # Match journal content offset
                 yoffset 25
                 
-                text "Description:" size font_size(20) color "#7a4b2a" xalign 0.0
-                text "[worker.get('description', 'No description available')]" size font_size(18) color "#7a4b2a" xalign 0.0 text_align 0.0
+                text "Description:" size font_size(20) color gui.journal_text_color xalign 0.0
+                text "[worker.get('description', 'No description available')]" size font_size(20) color gui.journal_text_color xalign 0.0 text_align 0.0
 
                 null height 10
 
-                text "Folder: [worker.get('folder', 'default')]" size font_size(18) color "#7a4b2a" xalign 0.0
+                text "Folder: [worker.get('folder', 'default')]" size font_size(20) color gui.journal_text_color xalign 0.0
                 
                 null height 10
                 
                 if worker.get('procedural', False):
-                    text "Type: Procedural Worker" size font_size(18) color "#7a4b2a" xalign 0.0
+                    text "Type: Procedural Worker" size font_size(20) color gui.journal_text_color xalign 0.0
                 else:
-                    text "Type: Predefined Character" size font_size(18) color "#7a4b2a" xalign 0.0
+                    text "Type: Predefined Character" size font_size(20) color gui.journal_text_color xalign 0.0
+
+    key "K_BACKSPACE" action Hide("more_details_screen")
 
 init python:
     def _apply_discipline_final_and_close(worker, trait_name, close_actions):
@@ -8009,6 +7995,9 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
             _ir_res = training_resolved_training_description(worker, interaction)
             if _ir_res:
                 _ir_desc = _ir_res
+        # Pre-escape stray [..]/{..} from JSON text BEFORE the legit {color=} stat tag is
+        # appended below, so display_message can't hit interpolation twice (BIBLIA §9).
+        _ir_desc = str(_ir_desc).replace("{", "{{").replace("[", "[[")
         interaction_messages = split_text_for_dialogue(_ir_desc)
         total_messages = len(interaction_messages)
         is_last_message = (total_messages > 0 and ir_idx >= total_messages - 1)
@@ -8128,7 +8117,61 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
                 click_action = SetScreenVariable("ir_idx", ir_idx + 1)
             else:
                 click_action = SetScreenVariable("ir_img_only", True)
-    
+
+        # Shared close action: used by BOTH the top-right Return button and the
+        # K_BACKSPACE key at the bottom of this screen, so the two can never drift.
+        _ir_close_action = If(
+            is_romance_confess or is_friendship_final or is_discipline_final or is_discipline_sell,
+            NullAction(),
+            If(
+                return_to_map,
+                If(
+                    _ir_training_flow,
+                    [
+                        Function(lambda: setattr(store, '_last_interaction_changes', {})),
+                        Return(0),
+                    ],
+                    If(
+                        from_call_screen,
+                        [
+                            Function(lambda: setattr(store, '_last_interaction_changes', {})),
+                            Return(),
+                        ],
+                        [
+                            Hide("interaction_result"),
+                            Hide("interaction_menu"),
+                            Show("map_screen"),
+                            Function(lambda: setattr(store, '_last_interaction_changes', {}))
+                        ],
+                    ),
+                ),
+                If(
+                    _ir_training_flow,
+                    [
+                        Function(lambda: setattr(store, '_last_interaction_changes', {})),
+                        Return(0),
+                    ],
+                    If(
+                        from_call_screen,
+                        [
+                            Function(lambda: setattr(store, '_last_interaction_changes', {})),
+                            Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
+                            Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
+                            Return(),
+                        ],
+                        [
+                            Hide("interaction_result"),
+                            Hide("interaction_menu"),
+                            Show("worker_details", worker=worker, in_roster=True),
+                            Function(lambda: setattr(store, '_last_interaction_changes', {})),
+                            Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
+                            Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
+                        ],
+                    ),
+                )
+            )
+        )
+
     $ _ir_sw, _ir_sh = config.screen_width, config.screen_height
     $ media_file = ir_resolved_media
     fixed:
@@ -8273,65 +8316,18 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
             textbutton "Cancel.":
                 action close_action
     
-    # Return button (top-right corner) - always available, on top of everything
+    # Return button (top-right corner) - always available, on top of everything.
+    # Action is the shared _ir_close_action computed in the python block above.
     imagebutton:
         idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
         hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-        action If(
-            is_romance_confess or is_friendship_final or is_discipline_final or is_discipline_sell,
-            NullAction(),
-            If(
-                return_to_map,
-                If(
-                    _ir_training_flow,
-                    [
-                        Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                        Return(0),
-                    ],
-                    If(
-                        from_call_screen,
-                        [
-                            Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                            Return(),
-                        ],
-                        [
-                            Hide("interaction_result"),
-                            Hide("interaction_menu"),
-                            Show("map_screen"),
-                            Function(lambda: setattr(store, '_last_interaction_changes', {}))
-                        ],
-                    ),
-                ),
-                If(
-                    _ir_training_flow,
-                    [
-                        Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                        Return(0),
-                    ],
-                    If(
-                        from_call_screen,
-                        [
-                            Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                            Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
-                            Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
-                            Return(),
-                        ],
-                        [
-                            Hide("interaction_result"),
-                            Hide("interaction_menu"),
-                            Show("worker_details", worker=worker, in_roster=True),
-                            Function(lambda: setattr(store, '_last_interaction_changes', {})),
-                            Function(lambda i=interaction: setattr(store, 'tutorial_friendly_chat_done', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None),
-                            Function(lambda i=interaction: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 7 and (i.get('name', '').strip() in ("Friendly Chat", "Friendly Lunch") or i.get('id') in ("friendship_chat_female", "friendship_chat_male", "friendship_level1", "friendship_level1_lord_female", "friendship_level1_lord_male_platonic", "friendship_level1_lady_female_platonic", "friendship_level1_lady_male")) else None)
-                        ],
-                    ),
-                )
-            )
-        )
+        action _ir_close_action
         xalign 1.0
         yalign 0.0
         xoffset -15
         yoffset 5
+
+    key "K_BACKSPACE" action _ir_close_action
 
 screen take_a_walk_result(stage=0):
     # Screen to handle Take a Walk feature without nested call screen.
@@ -8386,7 +8382,11 @@ screen take_a_walk_result(stage=0):
                 display_message = interaction_messages[message_index]
                 next_action = Return("next")
                 bg_image = _walk_bg
-    
+
+        # Escape stray [..]/{..} from JSON/worker-name text (per-render local; BIBLIA §9)
+        if display_message:
+            display_message = str(display_message).replace("{", "{{").replace("[", "[[")
+
     # Background
     if stage < 3:
         # Black background for intro text
@@ -8450,13 +8450,17 @@ screen take_a_walk_result(stage=0):
         xoffset -15
         yoffset 5
 
+    key "K_BACKSPACE" action Return("done")
+
 # Screens shown with call screen / renpy.call_screen: do not Hide(this_screen) before Return —
 # that drops the call context and Return() can send the player to the main menu.
 screen recruitment_outcome(message, event, outcome, message_index=0, show_image_only=False, frozen_bg=None):
     modal True
     zorder 99
     python:
-        outcome_messages = split_text_for_dialogue(message)
+        # Escape stray [..]/{..} from JSON text on a display copy only — the raw `message`
+        # is re-passed through Show() on each click, so escaping it in place would stack (BIBLIA §9).
+        outcome_messages = split_text_for_dialogue(str(message).replace("{", "{{").replace("[", "[["))
         current_message_index = message_index
         total_messages = len(outcome_messages)
         if show_image_only:
@@ -8586,6 +8590,8 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
         xoffset -15
         yoffset 5
 
+    key "K_BACKSPACE" action Return(True)
+
 screen adjust_comfort(worker):
     modal True
     zorder 100
@@ -8621,25 +8627,25 @@ screen adjust_comfort(worker):
                 spacing 15
                 null height 15
                 label "Worker Comfort" xalign 0.5 style "header_style"
-                null height 5
                 vbox:
                     xsize 580
                     spacing 10
                     xoffset 30
-                    null height 12
-                    
+                    # Tightened vertical rhythm so the Adjust Comfort row fits inside
+                    # the 640px viewport without scrolling (user request).
+
                     # Comfort description
-                    text "Comfort determines the quality of life and accommodations provided to your worker. Higher comfort levels improve worker satisfaction and relationship. Comfort level 1 is the minimum; each level above 1 adds +1 to daily energy regeneration at day start, but increases daily maintenance costs. Desired Comfort is the worker's personal baseline set by recruitment/template data and can be affected by traits. Changing worker JSON affects new recruits, not already-hired workers in your current save." size font_size(24) color "#7a4b2a" text_align 0.0 xalign 0.0
-                    
-                    null height 20
-                    
+                    text "Comfort determines the quality of life and accommodations provided to your worker. Higher comfort levels improve worker satisfaction and relationship. Comfort level 1 is the minimum; each level above 1 adds +1 to daily energy regeneration at day start, but increases daily maintenance costs. Desired Comfort is the worker's personal baseline set by recruitment/template data and can be affected by traits. Changing worker JSON affects new recruits, not already-hired workers in your current save." size font_size(24) color gui.journal_text_color text_align 0.0 xalign 0.0
+
+                    null height 8
+
                     # Current status section
                     vbox:
-                        spacing 10
+                        spacing 8
                         
-                        text "Current Status:" size font_size(26) color "#7a4b2a" bold True
-                        text "• Comfort Level: [current_comfort]" size font_size(24) color "#7a4b2a"
-                        text "• Desired Comfort: [current_comfort_desired]" size font_size(24) color "#7a4b2a"
+                        text "Current Status:" size font_size(26) color gui.journal_text_color bold True
+                        text "• Comfort Level: [current_comfort]" size font_size(24) color gui.journal_text_color
+                        text "• Desired Comfort: [current_comfort_desired]" size font_size(24) color gui.journal_text_color
                         button:
                             background None
                             padding (0, 0)
@@ -8647,16 +8653,16 @@ screen adjust_comfort(worker):
                             action NullAction()
                             hovered If(get_tooltips_state_for_screen("adjust_comfort"), ShowTransient("tooltip", message=get_building_comfort_line_tooltip(), screen_name="adjust_comfort"), NullAction())
                             unhovered Hide("tooltip")
-                            text "• Daily Cost: $[current_daily_cost]" size font_size(24) color "#7a4b2a"
-                        text "• Relationship: [current_relationship]" size font_size(24) color "#7a4b2a"
-                        
-                        null height 20
-                        
+                            text "• Daily Cost: $[current_daily_cost]" size font_size(24) color gui.journal_text_color
+                        text "• Relationship: [current_relationship]" size font_size(24) color gui.journal_text_color
+
+                        null height 10
+
                         # Comfort adjustment with buttons
                         hbox:
                             xalign 0.0
                             spacing 10
-                            text "Adjust Comfort:" size font_size(24) color "#7a4b2a"
+                            text "Adjust Comfort:" size font_size(24) color gui.journal_text_color
                             hbox:
                                 spacing 0
                                 textbutton "+" style "game_menu_button":
@@ -8665,8 +8671,8 @@ screen adjust_comfort(worker):
                                     ]
                                     xsize 25
                                     text_size font_size(28)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     text_bold True
                                     text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                                     sensitive current_comfort < 20
@@ -8676,8 +8682,8 @@ screen adjust_comfort(worker):
                                     ]
                                     xsize 25
                                     text_size font_size(28)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#6b6528"
+                                    text_color gui.journal_text_color
+                                    text_hover_color gui.journal_hover_color
                                     text_bold True
                                     text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                                     sensitive current_comfort > 1
@@ -8692,8 +8698,7 @@ screen adjust_comfort(worker):
                                     text "Next Level Cost: $[next_daily_cost]/day" size font_size(24) color "#444444"
                             else:
                                 text "Maximum Comfort Reached" size font_size(24) color "#1b5e20" xalign 0.0
-                        null height 20
-                    
+
 
         
         # Return button (top-right)
@@ -8705,6 +8710,8 @@ screen adjust_comfort(worker):
             yalign 0.0
             xoffset -15
             yoffset 5
+
+    key "K_BACKSPACE" action Hide("adjust_comfort")
 
 screen interaction_menu(worker):
     modal True
@@ -8750,6 +8757,8 @@ screen interaction_menu(worker):
                 xalign 0.5
                 action Hide("interaction_menu")
 
+    key "K_BACKSPACE" action Hide("interaction_menu")
+
 # New screen to display interactions in a specific category
 screen interaction_category(worker, category_name, interactions_list):
     modal True
@@ -8776,7 +8785,7 @@ screen interaction_category(worker, category_name, interactions_list):
             if remaining_interactions <= 0:
                 text "Manager interaction limit reached ([interaction_count]/[_max_interactions]). Interactions disabled until next day." style "interaction_text" size font_size(24) color "#a63c3c" xalign 0.0
             else:
-                text "Manager interactions remaining today: [remaining_interactions]/[_max_interactions]" style "interaction_text" size font_size(24) color "#7a4b2a" xalign 0.0
+                text "Manager interactions remaining today: [remaining_interactions]/[_max_interactions]" style "interaction_text" size font_size(24) color gui.journal_text_color xalign 0.0
             
             null height 5  # Small spacing between message and interactions list
             
@@ -8831,7 +8840,7 @@ screen interaction_category(worker, category_name, interactions_list):
 
                                     if is_training_interaction(interaction):
                                         if training_primary_art_missing(worker, interaction):
-                                            text "Image not found, fallback will be used" style "interaction_text" size font_size(18) color "#5a3a1a" xalign 0.0 xoffset 18 yoffset -10
+                                            text "Image not found, fallback will be used" style "interaction_text" size font_size(20) color "#5a3a1a" xalign 0.0 xoffset 18 yoffset -10
 
                                 if is_training_interaction(interaction) and training_primary_art_missing(worker, interaction):
                                     null height 14
@@ -8878,7 +8887,7 @@ screen interaction_category(worker, category_name, interactions_list):
                                         $ joy_val = effects.get("joy", 0)
                                         if joy_val != 0:
                                             $ joy_text = f"Joy: {joy_val:+d}"
-                                            text "[joy_text]" style "interaction_text" size font_size(20) color "#7a4b2a"
+                                            text "[joy_text]" style "interaction_text" size font_size(20) color gui.journal_text_color
                 
             hbox:
                 spacing 20
@@ -8891,6 +8900,9 @@ screen interaction_category(worker, category_name, interactions_list):
                     style "interaction_button"
                     text_style "interaction_button_text"
                     action [Hide("interaction_category"), Hide("interaction_menu")]
+
+    # Backspace mirrors the "Back" button (one level up), not the full "Close".
+    key "K_BACKSPACE" action Hide("interaction_category")
 
 # Persist worker details panel tab (main vs traits) when switching workers
 default worker_details_panel_view = "main"
@@ -8910,7 +8922,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
 
     zorder 99
     modal True
-    add Solid("#000000dd")
+    add Solid(gui.surface_dark)
 
     fixed:
         xfill True
@@ -8993,7 +9005,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 background None
                                 text_size font_size(37)
                                 text_color "#2a150d"
-                                text_hover_color "#6b6528"
+                                text_hover_color gui.journal_hover_color
                                 action If(len(_nav_names) > 0, [
                                     SetVariable("current_worker_index", _prev_store_idx),
                                     SetScreenVariable("current_image", get_worker_image(_prev_worker)),
@@ -9005,7 +9017,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 background None
                                 text_size font_size(37)
                                 text_color "#2a150d"
-                                text_hover_color "#6b6528"
+                                text_hover_color gui.journal_hover_color
                                 action If(len(_nav_names) > 0, [
                                     SetVariable("current_worker_index", _next_store_idx),
                                     SetScreenVariable("current_image", get_worker_image(_next_worker)),
@@ -9034,8 +9046,8 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                             textbutton "[worker['name']]":
                                 background None
                                 text_size font_size(34)
-                                text_color "#7a4b2a"
-                                text_hover_color "#6b6528"
+                                text_color gui.journal_text_color
+                                text_hover_color gui.journal_hover_color
                                 action SetScreenVariable("current_image", get_pattern_matches_flexible(worker.get('folder', ''), "Profile", ["png", "jpg", "jpeg", "webp", "webm", "mp4"]) or get_worker_image(worker))
                                 hovered ShowTransient("tooltip", message="Click to view worker's profile image.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
@@ -9066,8 +9078,8 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                     textbutton "Comfort: [comfort_level] - $[daily_cost]":
                                         background None
                                         text_size font_size(22)
-                                        text_color "#7a4b2a"
-                                        text_hover_color "#6b6528"
+                                        text_color gui.journal_text_color
+                                        text_hover_color gui.journal_hover_color
                                         action Show("adjust_comfort", worker=worker)
                                         hovered ShowTransient("tooltip", message="Adjust worker comfort level. Daily worker cost is comfort x " + str(get_difficulty_comfort_mult()) + ". Building-level comfort scaling is applied in building totals (hover Costs on Manager for formulas).", screen_name="WorkerDetails")
                                         unhovered Hide("tooltip")
@@ -9085,6 +9097,14 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         hovered ShowTransient("tooltip", message="Tooltips: {color=#ffffff}On{/color}/Off", screen_name=screen_name)
                                         unhovered Hide("tooltip")
                         # Health and Energy Bars
+                        # E/H color coherence: same rule as the workers roster (numbers turn
+                        # gui.danger_color below 30% of calculated max). Full-size bars already
+                        # exist here, so no extra 64x7 bars are added.
+                        python:
+                            _wd_max_e = calculate_max_energy(worker)
+                            _wd_max_h = calculate_max_health(worker)
+                            _wd_e_col = gui.danger_color if (_wd_max_e and int(worker.get("energy", 0) or 0) < 0.3 * _wd_max_e) else "#ffffff"
+                            _wd_h_col = gui.danger_color if (_wd_max_h and int(worker.get("health", 0) or 0) < 0.3 * _wd_max_h) else "#ffffff"
                         hbox:
                             spacing 5
                             button:
@@ -9105,9 +9125,9 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         range calculate_max_energy(worker)
                                         xsize 192
                                         ysize 32
-                                        left_bar "#4a6fa5"  # Azul desaturado
+                                        left_bar gui.energy_bar_color  # token: same amber as the roster bars
                                         right_bar "#444444"
-                                    text "Energy [worker['energy']]/[calculate_max_energy(worker)]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
+                                    text "Energy [worker['energy']]/[_wd_max_e]" size font_size(22) color _wd_e_col xalign 0.5 yalign 0.5
                             button:
                                 background "#00000044"
                                 xsize 200
@@ -9126,9 +9146,9 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         range calculate_max_health(worker)
                                         xsize 192
                                         ysize 32
-                                        left_bar "#a54a4a"  # Rojo desaturado
+                                        left_bar gui.health_bar_color  # token: same red as the roster bars
                                         right_bar "#444444"
-                                    text "Health [worker['health']]/[calculate_max_health(worker)]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
+                                    text "Health [worker['health']]/[_wd_max_h]" size font_size(22) color _wd_h_col xalign 0.5 yalign 0.5
                 
                     # Auto-supply / Auto-equip
                     hbox:
@@ -9137,7 +9157,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                         textbutton "[details_view == 'main' and 'Switch to Traits' or 'Switch to Stats']":
                             text_size font_size(22)
                             yoffset -2
-                            text_hover_color "#6b6528"
+                            text_hover_color gui.journal_hover_color
                             action [
                                 SetVariable("worker_details_panel_view", details_view == "main" and "traits" or "main"),
                                 SetScreenVariable("details_view", details_view == "main" and "traits" or "main")
@@ -9147,21 +9167,21 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                         textbutton "Stock Potions: [worker_auto_supply_compact_label(worker)]":
                             text_size font_size(22)
                             text_color "#3c2a1a"
-                            text_hover_color "#6b6528"
+                            text_hover_color gui.journal_hover_color
                             action Function(cycle_worker_auto_supply_compact, worker)
                             hovered ShowTransient("tooltip", message="Click to cycle: Off, then x3/x4/x5/x1/x2. When not Off, each day take that many health and energy potions from manager stock (up to limit per type).", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
                         textbutton "Auto-rest: [worker_auto_rest_compact_label(worker)]":
                             text_size font_size(22)
                             text_color "#3c2a1a"
-                            text_hover_color "#6b6528"
+                            text_hover_color gui.journal_hover_color
                             action Function(cycle_worker_auto_rest_compact, worker)
                             hovered ShowTransient("tooltip", message="Click to cycle: Off, 15%, 25%, 35%, 45%. When not Off, manager assigns Rest if energy OR health is below that % of max; return at 95% energy and health. When Off, leaving Rest only needs 95% energy.", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
                         textbutton "Auto Equip: [worker.get('auto_equip', False) and 'On' or 'Off']":
                             text_size font_size(22)
                             text_color "#3c2a1a"
-                            text_hover_color "#6b6528"
+                            text_hover_color gui.journal_hover_color
                             action Function(toggle_worker_auto_equip, worker)
                             hovered ShowTransient("tooltip", message="Equip best items for this worker's profession from manager inventory. Updates when job changes. Rest does not unequip.", screen_name="WorkerDetails")
                             unhovered Hide("tooltip")
@@ -9198,7 +9218,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         background None
                                         text_size font_size(24)
                                         text_color "#3d2914"
-                                        text_hover_color "#6b6528"
+                                        text_hover_color gui.journal_hover_color
                                         action Show("job_selection", worker=worker)
                                         hovered ShowTransient("tooltip", message="Change this worker's role (profession), including Unassigned/Rest, using the same rules as Manage Workers.", screen_name="WorkerDetails")
                                         unhovered Hide("tooltip")
@@ -9207,7 +9227,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                         background None
                                         text_size font_size(24)
                                         text_color "#3d2914"
-                                        text_hover_color "#6b6528"
+                                        text_hover_color gui.journal_hover_color
                                         action Show("building_selection", worker=worker, return_to_workers=False)
                                         hovered ShowTransient("tooltip", message="Move this worker to another building or set No Building, with the same synchronization as Manage Workers.", screen_name="WorkerDetails")
                                         unhovered Hide("tooltip")
@@ -9252,7 +9272,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                         range stat_bar_range
                                                         xsize 267
                                                         ysize 30
-                                                        left_bar "#6b6528"
+                                                        left_bar gui.journal_hover_color
                                                         right_bar "#444444"
                                                     text "[stat_name]: [stat_value]/[stat_max_display]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
                                     vbox:
@@ -9277,7 +9297,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                         range stat_bar_range
                                                         xsize 267
                                                         ysize 30
-                                                        left_bar "#6b6528"
+                                                        left_bar gui.journal_hover_color
                                                         right_bar "#444444"
                                                     text "[stat_name]: [stat_value]/[stat_max_display]" size font_size(22) color "#ffffff" xalign 0.5 yalign 0.5
 
@@ -9369,11 +9389,11 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                     fixed:
                                         xsize 150
                                         ysize 32
-                                        text "Trait" size font_size(23) text_align 0.0 xalign 0.0 yalign 0.0 color "#3c1f14"
+                                        text "Trait" size font_size(23) text_align 0.0 xalign 0.0 yalign 0.0 color gui.journal_dark_color
                                     fixed:
                                         xsize 320
                                         ysize 32
-                                        text "Description" size font_size(23) text_align 0.0 xalign 0.0 xoffset 32 yalign 0.0 color "#3c1f14"
+                                        text "Description" size font_size(23) text_align 0.0 xalign 0.0 xoffset 32 yalign 0.0 color gui.journal_dark_color
                                 if _filtered_traits:
                                     viewport:
                                         scrollbars "vertical"
@@ -9385,7 +9405,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                             spacing 8
                                             for trait_idx, trait in enumerate(_filtered_traits):
                                                 $ desc = get_trait_desc(trait)
-                                                $ row_bg = "#00000033" if trait_idx % 2 == 0 else "tablebutton.png"
+                                                $ row_bg = "#00000033" if trait_idx % 2 == 0 else "images/tablebutton.png"
                                                 frame:
                                                     background row_bg
                                                     xfill True
@@ -9397,13 +9417,13 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                                         fixed:
                                                             xsize 150
                                                             yfit True
-                                                            text "[trait]" size font_size(22) text_align 0.0 xalign 0.0 yalign 0.0 xsize 150 color "#3c1f14"
+                                                            text "[trait]" size font_size(22) text_align 0.0 xalign 0.0 yalign 0.0 xsize 150 color gui.journal_dark_color
                                                         fixed:
                                                             xsize 320
                                                             yfit True
-                                                            text "[desc]" size font_size(22) text_align 0.0 xalign 0.0 xsize 320 color "#3c1f14"
+                                                            text "[desc]" size font_size(22) text_align 0.0 xalign 0.0 xsize 320 color gui.journal_dark_color
                                 else:
-                                    text "No traits" size font_size(22) color "#3c1f14" xalign 0.0 yalign 0.5
+                                    text "No traits" size font_size(22) color gui.journal_dark_color xalign 0.0 yalign 0.5
 
                     # Action Buttons Section
                     vbox:
@@ -9414,16 +9434,16 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                             hbox:
                                 spacing 1
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 250
                                     ysize 50
-                                    text "Description" size font_size(23) xalign 0.5 hover_color "#6b6528"
+                                    text "Description" size font_size(23) xalign 0.5 hover_color gui.journal_hover_color
                                     action Show("more_details_screen", worker=worker)
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 250
                                     ysize 50
-                                    text "Inventory" size font_size(23) xalign 0.5 hover_color "#6b6528"
+                                    text "Inventory" size font_size(23) xalign 0.5 hover_color gui.journal_hover_color
                                     action [
                                         SetVariable("left_worker", None),
                                         SetVariable("right_worker", worker),
@@ -9445,21 +9465,68 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                         xalign 0.5
                         yoffset -20
                         if in_roster:
+                            # QoL: repeat the last interaction launched this session, on THE
+                            # CURRENTLY VIEWED worker. Only shown when that interaction id is
+                            # currently available for this worker (same filter chain as the
+                            # interaction menu) and re-launched through the exact same action
+                            # path as the menu button, so all gating still applies.
+                            python:
+                                _rep_info = getattr(renpy, "session", {}).get("last_interaction_info")
+                                _rep_interaction = None
+                                _rep_can = False
+                                _rep_tt = ""
+                                if _rep_info and _rep_info.get("interaction_id"):
+                                    _rep_interaction = next(
+                                        (i for i in get_available_interactions_for_worker(worker)
+                                         if hasattr(i, "get") and i.get("id") == _rep_info.get("interaction_id")),
+                                        None,
+                                    )
+                                    # Training launches are not recorded (they run a cancelable
+                                    # sub-flow in a fresh context); guard anyway.
+                                    if _rep_interaction is not None and is_training_interaction(_rep_interaction):
+                                        _rep_interaction = None
+                                if _rep_interaction is not None:
+                                    _rep_name = str(_rep_interaction.get("name", "interaction"))
+                                    _rep_tt = ("Repeat '" + _rep_name.replace("[", "[[").replace("{", "{{")
+                                               + "' - same costs, daily limit and requirements as the Interact menu.")
+                                    # Same sensitivity rules as the interaction_category button.
+                                    _rep_can = (can_interact_with_worker(worker)
+                                                and worker["energy"] >= _rep_interaction.get("cost_energy", 0)
+                                                and worker["health"] >= _rep_interaction.get("cost_health", 0)
+                                                and (_rep_interaction.get("cost_money", 0) <= 0 or store.money >= _rep_interaction.get("cost_money", 0)))
+                            # Full-width "Repeat: <name>" row BETWEEN the two button rows:
+                            # says which interaction it repeats, keeps the 2x2 grid columns
+                            # aligned (250/250), and stays away from the frame's bottom edge.
+                            if _rep_interaction is not None:
+                                button:
+                                    background "images/tablebutton.png"
+                                    xsize 501
+                                    ysize 40
+                                    sensitive _rep_can
+                                    text "Repeat: [_rep_name!q]" size font_size(20) xalign 0.5 hover_color gui.journal_hover_color
+                                    # Exact same launch path as the interaction_category button
+                                    # (non-training branch); no Hide needed since no menu is open.
+                                    action [
+                                        Function(lambda w=worker, i=_rep_interaction: setattr(store, '_last_interaction_changes', apply_interaction_effects(w, i))),
+                                        Show("interaction_result", worker=worker, interaction=_rep_interaction),
+                                    ]
+                                    hovered ShowTransient("tooltip", message=_rep_tt, screen_name="WorkerDetails")
+                                    unhovered Hide("tooltip")
                             hbox:
                                 spacing 1
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 250
                                     ysize 50
-                                    text "Interact" size font_size(23) xalign 0.5 hover_color "#6b6528"
+                                    text "Interact" size font_size(23) xalign 0.5 hover_color gui.journal_hover_color
                                     action Show("interaction_menu", worker=worker)
                                     hovered ShowTransient("tooltip", message="Interact with this worker. Choose from available interactions based on worker stats, traits, and relationship level.", screen_name="WorkerDetails")
                                     unhovered Hide("tooltip")
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 250
                                     ysize 50
-                                    text "[sell_text]" size font_size(23) xalign 0.5 hover_color "#6b6528"
+                                    text "[sell_text]" size font_size(23) xalign 0.5 hover_color gui.journal_hover_color
                                     action Show("confirm_sell_worker", worker=worker, return_screen="worker_details")
                                     hovered ShowTransient("tooltip", message="Sell this worker. You'll receive money based on their level and skills, but lose them permanently.", screen_name="WorkerDetails")
                                     unhovered Hide("tooltip")
@@ -9468,29 +9535,91 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 spacing 1
                                 yoffset 15
                                 button:
-                                    background "tablebutton.png"
+                                    background "images/tablebutton.png"
                                     xsize 250
                                     ysize 50
-                                    text "Description" size font_size(23) xalign 0.5 hover_color "#6b6528"
+                                    text "Description" size font_size(23) xalign 0.5 hover_color gui.journal_hover_color
                                     action Show("more_details_screen", worker=worker)
                                     hovered ShowTransient("tooltip", message="View detailed information about this worker, including full stats, history, and background.", screen_name="WorkerDetails")
                                     unhovered Hide("tooltip")
                                 if from_buy_workers:
                                     button:
-                                        background "tablebutton.png"
+                                        background "images/tablebutton.png"
                                         xsize 250
                                         ysize 50
                                         text "Buy ($[worker['cost']])" size font_size(23) xalign 0.5
                                         action Show("confirm_buy_worker", worker=worker, return_screen="worker_details")
 
+    # Keyboard QoL: Backspace mirrors the top-right Return button exactly.
+    if from_recruitment:
+        key "K_BACKSPACE" action [SetVariable("temp_recruitment_worker", worker), SetVariable("in_recruit_examine", False), Hide("worker_details"), Function(return_to_recruitment)]
+    else:
+        key "K_BACKSPACE" action Hide("worker_details")
+
+    # Ctrl+Left/Right mirror the Previous/Next buttons (same guards; the _nav_*
+    # variables are computed in the navigation block above, which runs under
+    # this same in_roster/from_buy_workers condition earlier in the screen).
+    if in_roster or from_buy_workers:
+        key "ctrl_K_LEFT" action If(len(_nav_names) > 0, [
+            SetVariable("current_worker_index", _prev_store_idx),
+            SetScreenVariable("current_image", get_worker_image(_prev_worker)),
+            Show("worker_details", worker=_prev_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx - 1) % len(_nav_names), nav_worker_pool=_context_pool)
+        ])
+        key "ctrl_K_RIGHT" action If(len(_nav_names) > 0, [
+            SetVariable("current_worker_index", _next_store_idx),
+            SetScreenVariable("current_image", get_worker_image(_next_worker)),
+            Show("worker_details", worker=_next_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx + 1) % len(_nav_names), nav_worker_pool=_context_pool)
+        ])
 
 
+# Phase-proof table header rule shared by roster/report headers. A hard 2-3px
+# Solid rasterizes as 1px on one screen and 2-3px on another after window
+# downscaling (subpixel phase lottery - measured on captures). Soft 1px
+# shoulders around the 2px core make bilinear filtering read the same visual
+# weight at any phase.
+screen table_rule(rule_width, rule_xalign=0.0, rule_xoffset=0):
+    vbox:
+        spacing 0
+        xalign rule_xalign
+        xoffset rule_xoffset
+        add Solid("#8f7a5640") xsize rule_width ysize 1
+        add Solid(gui.divider_color) xsize rule_width ysize 2
+        add Solid("#8f7a5640") xsize rule_width ysize 1
 
+# 52x52 framed portrait miniature shared by roster/buy-servants rows.
+# The viewport is what CROPS: Transform with fit="cover" scales to cover the
+# box but does NOT clip, so wide art would otherwise spill into the next
+# column. xinitial/yinitial bias the crop toward the upper-center (faces).
+screen worker_portrait_thumb(portrait_path, initial):
+    frame:
+        xsize 52
+        ysize 52
+        yalign 0.5
+        padding (2, 2)
+        background Solid(gui.journal_dark_color)
+        viewport:
+            xsize 48
+            ysize 48
+            xinitial 0.5
+            yinitial 0.25
+            if portrait_path:
+                add Transform(portrait_path, xysize=(48, 48), fit="cover")
+            else:
+                frame:
+                    xsize 48
+                    ysize 48
+                    padding (0, 0)
+                    background Solid("#00000022")
+                    text "[initial!q]" size 26 color gui.parchment_muted_color xalign 0.5 yalign 0.5
 
 screen workers():
     zorder 10
     modal True
-    on "show" action [Function(process_manager_auto_rest), Function(ensure_manager_inventory_synced_for_potions), Function(maybe_show_intro_popup, "workers"), renpy.restart_interaction]
+    # NOTE: no renpy.restart_interaction here. on-show actions already run
+    # before the first paint; the extra restart re-created the list viewport's
+    # scroll adjustment mid-reflow and the roster opened scrolled ~1.5 rows
+    # down (first row half-hidden under the header). Verified by screenshot.
+    on "show" action [Function(process_manager_auto_rest), Function(ensure_manager_inventory_synced_for_potions), Function(maybe_show_intro_popup, "workers")]
     add workers_bg
     add Solid("#00000099")
     
@@ -9527,7 +9656,8 @@ screen workers():
             spacing 15
             null height 80  # Push content further down into the lighter beige area
             label "Manage Workers" xalign 0.5 style "header_style"
-            null height 5
+            # (was null 5: removed to lift the list 5px off the bottom border art
+            # without shortening the 420px viewport - user request)
             
             hbox:
                 spacing 20
@@ -9536,7 +9666,7 @@ screen workers():
                 
                 hbox:
                     spacing 10
-                    text "Filter by Building:" size font_size(20) color "#7a4b2a" yalign 0.5
+                    text "Filter by Building:" size font_size(20) color gui.journal_text_color yalign 0.5
                     
                     python:
                         # Ensure worker_building_filter is set to default if not defined
@@ -9572,7 +9702,7 @@ screen workers():
                 
                 hbox:
                     spacing 10
-                    text "Filter by Job:" size font_size(20) color "#7a4b2a" yalign 0.5
+                    text "Filter by Job:" size font_size(20) color gui.journal_text_color yalign 0.5
                     
                     python:
                         # Ensure worker_job_filter is set to default if not defined
@@ -9639,58 +9769,84 @@ screen workers():
             
             null height 0
             
-            # Header row (outside the viewport so the scrollbar starts below it)
-            hbox:
+            # Header: plain labels over ONE full-width hairline (daily-report
+            # style). The old per-column underline art (tablebutton4) plus a
+            # separate divider read as two redundant line systems.
+            # NOTE: no yoffset here or on the viewport below — negative draw
+            # offsets made the drawn position diverge from the layout position,
+            # which is how every height budget on this screen went wrong.
+            # WIDTH: box = actual content (52 portrait + 5x180 columns + 5x14
+            # gaps = 1022) so xalign 0.5 truly centers it; the old 1200 box
+            # left-aligned its content and the whole table sat left of center.
+            vbox:
+                spacing 6
                 xalign 0.5
-                xoffset -45  # Shift headers 5px further left
-                yoffset -15  # Move headers up closer to filter
-                spacing 14  # Much tighter gaps between columns
-                xsize 1200
-                yalign 0.5
-                button:
-                    background "tablebutton4.png"
-                    xsize 180
-                    ysize 50
-                    text "Name (Level)" size font_size(22) color "#7a4b2a"
-                    sensitive False
-                button:
-                    background "tablebutton4.png"
-                    xsize 180
-                    ysize 50
-                    text "Building" size font_size(22) color "#7a4b2a"
-                    sensitive False
-                button:
-                    background "tablebutton4.png"
-                    xsize 180
-                    ysize 50
-                    text "Job (Skill)" size font_size(22) color "#7a4b2a"
-                    sensitive False
-                button:
-                    background "tablebutton4.png"
-                    xsize 180
-                    ysize 50
-                    text "Energy - Health" size font_size(22) color "#7a4b2a"
-                    sensitive False
-                button:
-                    background "tablebutton4.png"
-                    xsize 180
-                    ysize 50
-                    text "Type / Action" size font_size(22) color "#7a4b2a"
-                    sensitive False
-            
+                hbox:
+                    xalign 0.5
+                    spacing 14  # Much tighter gaps between columns
+                    xsize 1022
+                    yalign 0.5
+                    # Spacer over the portrait column so headers stay aligned with rows
+                    null width 52
+                    button:
+                        background None
+                        xsize 180
+                        ysize 30
+                        text "Name (Level)" size font_size(22) color gui.journal_text_color
+                        sensitive False
+                    button:
+                        background None
+                        xsize 180
+                        ysize 30
+                        text "Building" size font_size(22) color gui.journal_text_color
+                        sensitive False
+                    button:
+                        background None
+                        xsize 180
+                        ysize 30
+                        text "Job (Skill)" size font_size(22) color gui.journal_text_color
+                        sensitive False
+                    button:
+                        background None
+                        xsize 180
+                        ysize 30
+                        text "Energy - Health" size font_size(22) color gui.journal_text_color
+                        sensitive False
+                    button:
+                        background None
+                        xsize 180
+                        ysize 30
+                        text "Type / Action" size font_size(22) color gui.journal_text_color
+                        sensitive False
+                # The single separator: also keeps partially-scrolled rows from
+                # kissing the header labels.
+                use table_rule(1022, rule_xalign=0.5)
+
             # Main content area (viewport)
             viewport:
                 xalign 0.5  # Center the viewport horizontally
-                yalign 0.5  # Center the viewport vertically (if needed, but vbox alignment handles this)
-                yoffset -20  # Move viewport up closer to headers
                 scrollbars "vertical"
                 mousewheel True
                 draggable True
-                ysize 400  # Reduced viewport height to 400px
-                xsize 1305  # Move scrollbar 5px further left
+                # Height budget (verified against real screenshots): frame top 108
+                # + padding 20 + null 80 + title ~45 + null 5 + filters 50 + header 50
+                # + 6 vbox gaps of 15 = viewport starts ~433 (1080-space). The
+                # gallery.png art's inner bottom edge sits ~900; 430 still let the
+                # scrollbar graze the crosshatch border lines, so 420 it is.
+                ysize 420
+                # 1267: near the full panel width so the scrollbar sits at the right
+                # edge UNDER the close X (conventional), not floating mid-panel. Rows
+                # are centered inside this viewport (below), which is centered in the
+                # frame -> rows land on the header's axis while the bar stays at the
+                # edge. Width tuned by measurement so the bar's center sits under the
+                # X's center (content center unchanged - both edges come in equally).
+                xsize 1283
                 vbox:
-                    xalign 0.5  # Center the vbox inside the viewport horizontally
-                    spacing 8
+                    # Explicit width = viewport width: without it the vbox collapsed
+                    # to content width and landed LEFT-anchored (screenshot-verified),
+                    # so the rows' xalign 0.5 had nothing to center against.
+                    xsize 1283
+                    spacing 10
                     
                     # Aplicar filtros (building y job)
                     python:
@@ -9744,7 +9900,37 @@ screen workers():
                         # Rest job always goes last within each building
                         _norm_building_key = getattr(store, "_norm_building_key", lambda k: str(k or "").strip())
 
-                        def get_worker_sort_key(w):
+                        # Per-worker profession skill totals, computed ONCE per render.
+                        # (Previously calculate_skill_with_traits ran per skill per worker in
+                        # BOTH the sort key and the row display.)
+                        _ws_skill_cache = {}
+                        for _w in filtered_workers:
+                            _entry = {"sum": 0, "avg": 0}
+                            _b_name = _w.get('assigned_building', 'Unassigned')
+                            if _b_name != "Unassigned" and _b_name in available_buildings:
+                                _b_data = available_buildings[_b_name]
+                                _j_id = _b_data.get("servant_jobs", {}).get(_w["name"], "Unassigned")
+                                _j_id_lc = str(_j_id).strip().lower()
+                                _b_type_def = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == _b_data.get("type")), None)
+                                if _j_id_lc != "unassigned" and _b_type_def:
+                                    _rpjc = getattr(store, "resolve_profession_for_job", None)
+                                    _jd = _rpjc(_b_type_def, _j_id)[1] if callable(_rpjc) else None
+                                    if not _jd:
+                                        _jd = next((p for p in _b_type_def.get("professions", []) if str(p.get("id", "")).strip().lower() == _j_id_lc), None)
+                                    if _jd and hasattr(_jd, "get"):
+                                        _sks = [str(_sk) for _sk in (_jd.get("skills", []) or [])]
+                                        _tot = 0
+                                        for _sk in _sks:
+                                            _tot += calculate_skill_with_traits(_w, _sk, include_libido=False)
+                                        _entry["sum"] = int(_tot)
+                                        _entry["avg"] = (_tot // len(_sks)) if _sks else 0
+                            _ws_skill_cache[str(_w.get("name", ""))] = _entry
+
+                        # NOTE: defs inside a screen `python:` block do NOT see the
+                        # screen's locals at call time (the block runs exec-style, so
+                        # the function's globals are the store). Screen-local values
+                        # must be bound as default arguments at def time.
+                        def get_worker_sort_key(w, _ws_skill_cache=_ws_skill_cache):
                             b_name = w.get('assigned_building', 'Unassigned')
                             skill_metric = 0
                             if b_name != "Unassigned" and b_name in available_buildings:
@@ -9756,16 +9942,12 @@ screen workers():
                                 if j_id_lc != "unassigned" and b_type_def:
                                     _rpj2 = getattr(store, "resolve_profession_for_job", None)
                                     if callable(_rpj2):
-                                        j_name, j_def = _rpj2(b_type_def, j_id)
+                                        j_name = _rpj2(b_type_def, j_id)[0]
                                     else:
                                         j_def = next((p for p in b_type_def.get("professions", []) if str(p.get("id", "")).strip().lower() == j_id_lc), None)
                                         j_name = j_def.get("name", "ZZZ") if j_def else ("Rest" if j_id_lc == "rest" else "ZZZ")
-                                    # Preserve skill-priority ordering inside each role.
-                                    if j_def and hasattr(j_def, "get"):
-                                        ssum = 0
-                                        for sk in j_def.get("skills", []) or []:
-                                            ssum += calculate_skill_with_traits(w, str(sk), include_libido=False)
-                                        skill_metric = int(ssum)
+                                    # Preserve skill-priority ordering inside each role (cached totals).
+                                    skill_metric = _ws_skill_cache.get(str(w.get("name", "")), {}).get("sum", 0)
                                     j_sort_name = "zzz_rest" if j_name.lower() == "rest" else j_name.lower()
                                 else:
                                     j_sort_name = "zzz"
@@ -9775,140 +9957,163 @@ screen workers():
                             b_sort = _norm_building_key(b_name)
                             w_name = str(w.get("name", "")).strip().lower()
                             return (b_sort, j_sort_name, -skill_metric, w_name)
-                        
+
                         filtered_workers = sorted(filtered_workers, key=get_worker_sort_key)
-                    
+
+                        # Loop-invariant nav list (was rebuilt inside the per-worker row loop)
+                        _workers_nav_names = [w.get("name") for w in filtered_workers if hasattr(w, "get") and w.get("name")]
+
                     for worker in filtered_workers:
-                        $ _workers_nav_names = [w.get("name") for w in filtered_workers if hasattr(w, "get") and w.get("name")]
                         $ _workers_nav_index = next((idx for idx, n in enumerate(_workers_nav_names) if n == worker.get("name")), 0)
                         $ worker_level = worker.get('level', 1)
-                        hbox:
+                        $ _row_portrait = get_worker_portrait_cached(worker)
+                        $ _row_initial = (str(worker.get("name", "")).strip() or "?")[:1]
+                        frame:
                             xalign 0.5  # Center each worker row horizontally
-                            spacing 14
-                            xoffset 5  # Shift row contents slightly to the right
-                            xsize 1200
-                            yalign 0.5
-                            button:
-                                background "tablebutton1b.png"
-                                xsize 180
-                                ysize 50
-                                text "[worker['name']] ([worker_level])" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
-                                action Show("worker_details", worker=worker, in_roster=True, nav_worker_names=_workers_nav_names, nav_worker_index=_workers_nav_index)
-                            $ assigned_building = worker.get("assigned_building", "Unassigned")
-                            $ building_display_name = custom_names.get(assigned_building, assigned_building)
-                            button:
-                                background "tablebutton1b.png"
-                                xsize 180
-                                ysize 50
-                                text "[building_display_name]" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
-                                action Show("building_selection", worker=worker)
-                            if worker.get("assigned_building", "Unassigned") != "Unassigned":
-                                $ building_name = worker["assigned_building"]
-                                if building_name in available_buildings:
-                                    $ job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
-                                    $ btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
-                                else:
-                                    $ job_id = "Unassigned"
-                                    $ btype = None
-                                $ _rpj3 = getattr(store, "resolve_profession_for_job", None)
-                                $ job_name = "Unassigned" if job_id.lower() == "unassigned" else ((_rpj3(btype, job_id)[0] if callable(_rpj3) and btype else next((p["name"] for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == str(job_id).strip().lower()), job_id)) if btype else job_id)
-                                $ avg_skill = 0
-                                if job_id.lower() != "unassigned" and btype is not None:
-                                    $ _rpj4 = getattr(store, "resolve_profession_for_job", None)
-                                    $ profession = ((_rpj4(btype, job_id)[1] if callable(_rpj4) else None) or next((p for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == str(job_id).strip().lower()), None)) if btype else None
-                                    if profession is not None:
-                                        $ skills_used = profession.get("skills", [])
-                                        $ total = 0
-                                        $ count = 0
-                                        for s in skills_used:
-                                            $ total += calculate_skill_with_traits(worker, str(s), include_libido=False)
-                                            $ count += 1
-                                        if count > 0:
-                                            $ avg_skill = total // count
-                                # For rest job, don't show skill value
-                                $ job_name_with_skill = job_name if avg_skill == 0 or job_id.lower() == "unassigned" or job_id.lower() == "rest" else f"{job_name} ({avg_skill})"
-                                button:
-                                    background "tablebutton1b.png"
-                                    xsize 180
-                                    ysize 50
-                                    text "[job_name_with_skill]" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
-                                    action Show("job_selection", worker=worker)
-                            else:
-                                button:
-                                    background "tablebutton1b.png"
-                                    xsize 180
-                                    ysize 50
-                                    text "Unassigned" size font_size(22) color "#7a4b2a" hover_color "#6b6528"
-                                    action Show("job_selection", worker=worker)
-                            # Energy - Health column (split into two buttons)
+                            # The vertical scrollbar shifts the viewport half a bar left
+                            # of the frame's axis; nudge rows back so they share the
+                            # header's (frame-centered) axis.
+                            xoffset (gui.scrollbar_size // 2)
+                            padding (0, 2)
+                            # Zebra striping so long rosters stay scannable
+                            background (Solid(gui.row_alt_color) if _workers_nav_index % 2 else None)
+                            # WIDTH: content-sized (see header note) so the zebra band
+                            # ends at the last column instead of trailing empty space.
                             hbox:
-                                spacing 2
-                                xsize 180
-                                ysize 50
-                                textbutton "E: [worker['energy']]/[calculate_max_energy(worker)]":
-                                    background "tablebutton1b.png"
-                                    xsize 89
+                                spacing 14
+                                xsize 1022
+                                yalign 0.5
+                                # Framed portrait miniature (cached lookup; letter placeholder without art)
+                                use worker_portrait_thumb(_row_portrait, _row_initial)
+                                button:
+                                    background "images/tablebutton1b.png"
+                                    xsize 180
                                     ysize 50
-                                    text_size font_size(20)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#2c4aa6"
-                                    action use_or_buy_potion_action(worker, "energy_potion")
-                                    sensitive worker["energy"] < calculate_max_energy(worker)
-                                textbutton "H: [worker['health']]/[calculate_max_health(worker)]":
-                                    background "tablebutton1b.png"
-                                    xsize 89
+                                    text "[worker['name']!q] ([worker_level])" size font_size(22) color gui.journal_text_color hover_color gui.journal_hover_color
+                                    action Show("worker_details", worker=worker, in_roster=True, nav_worker_names=_workers_nav_names, nav_worker_index=_workers_nav_index)
+                                $ assigned_building = worker.get("assigned_building", "Unassigned")
+                                $ building_display_name = custom_names.get(assigned_building, assigned_building)
+                                button:
+                                    background "images/tablebutton1b.png"
+                                    xsize 180
                                     ysize 50
-                                    text_size font_size(20)
-                                    text_color "#7a4b2a"
-                                    text_hover_color "#a63c3c"
-                                    action use_or_buy_potion_action(worker, "health_potion")
-                                    sensitive worker["health"] < calculate_max_health(worker)
-                            # Type / Action column (fused)
-                            frame:
-                                background "tablebutton1b.png"
-                                xsize 180
-                                ysize 50
-                                padding (0, 0)
-                                $ worker_type = 'Servant' if worker.get('is_servant', False) else 'Worker'
-                                $ action_text = get_sell_text(worker)
+                                    text "[building_display_name!q]" size font_size(22) color gui.journal_text_color hover_color gui.journal_hover_color
+                                    action Show("building_selection", worker=worker)
+                                if worker.get("assigned_building", "Unassigned") != "Unassigned":
+                                    $ building_name = worker["assigned_building"]
+                                    if building_name in available_buildings:
+                                        $ job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
+                                        $ btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
+                                    else:
+                                        $ job_id = "Unassigned"
+                                        $ btype = None
+                                    $ _rpj3 = getattr(store, "resolve_profession_for_job", None)
+                                    $ job_name = "Unassigned" if job_id.lower() == "unassigned" else ((_rpj3(btype, job_id)[0] if callable(_rpj3) and btype else next((p["name"] for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == str(job_id).strip().lower()), job_id)) if btype else job_id)
+                                    $ avg_skill = 0
+                                    if job_id.lower() != "unassigned" and btype is not None:
+                                        # Cached per render in _ws_skill_cache (computed above, before the loop)
+                                        $ avg_skill = _ws_skill_cache.get(str(worker.get("name", "")), {}).get("avg", 0)
+                                    # For rest job, don't show skill value
+                                    $ job_name_with_skill = job_name if avg_skill == 0 or job_id.lower() == "unassigned" or job_id.lower() == "rest" else f"{job_name} ({avg_skill})"
+                                    button:
+                                        background "images/tablebutton1b.png"
+                                        xsize 180
+                                        ysize 50
+                                        text "[job_name_with_skill!q]" size font_size(22) color gui.journal_text_color hover_color gui.journal_hover_color
+                                        action Show("job_selection", worker=worker)
+                                else:
+                                    button:
+                                        background "images/tablebutton1b.png"
+                                        xsize 180
+                                        ysize 50
+                                        text "Unassigned" size font_size(22) color gui.journal_text_color hover_color gui.journal_hover_color
+                                        action Show("job_selection", worker=worker)
+                                # Energy - Health column: numbers + thin stat bars.
+                                # Buttons keep their use/buy-potion actions and sensitivity.
+                                $ _max_e = calculate_max_energy(worker)
+                                $ _max_h = calculate_max_health(worker)
+                                $ _cur_e = int(worker.get('energy', 0) or 0)
+                                $ _cur_h = int(worker.get('health', 0) or 0)
+                                $ _e_frac = min(1.0, (_cur_e / float(_max_e)) if _max_e else 0.0)
+                                $ _h_frac = min(1.0, (_cur_h / float(_max_h)) if _max_h else 0.0)
+                                $ _e_col = gui.danger_color if _e_frac < 0.3 else gui.journal_text_color
+                                $ _h_col = gui.danger_color if _h_frac < 0.3 else gui.journal_text_color
                                 hbox:
-                                    xalign 0.0
-                                    yalign 0.5
-                                    spacing 0
-                                    text "[worker_type] / " size font_size(22) color "#7a4b2a" yalign 0.5
-                                    textbutton "[action_text]":
-                                        text_size font_size(22)
-                                        text_color "#7a4b2a"
-                                        text_hover_color "#6b6528"
-                                        action Show("confirm_sell_worker", worker=worker)
+                                    spacing 2
+                                    xsize 180
+                                    ysize 50
+                                    button:
+                                        background "images/tablebutton1b.png"
+                                        hover_foreground Solid("#6b652820")
+                                        xsize 89
+                                        ysize 50
+                                        action use_or_buy_potion_action(worker, "energy_potion")
+                                        sensitive _cur_e < _max_e
+                                        vbox:
+                                            xalign 0.5
+                                            yalign 0.5
+                                            spacing 4
+                                            text "E [_cur_e]/[_max_e]" size font_size(18) color _e_col xalign 0.5
+                                            fixed:
+                                                xsize 64
+                                                ysize 7
+                                                xalign 0.5
+                                                add Solid(gui.bar_track_color, xysize=(64, 7))
+                                                add Solid(gui.energy_bar_color, xysize=(max(2, int(64 * _e_frac)), 7))
+                                    button:
+                                        background "images/tablebutton1b.png"
+                                        hover_foreground Solid("#6b652820")
+                                        xsize 89
+                                        ysize 50
+                                        action use_or_buy_potion_action(worker, "health_potion")
+                                        sensitive _cur_h < _max_h
+                                        vbox:
+                                            xalign 0.5
+                                            yalign 0.5
+                                            spacing 4
+                                            text "H [_cur_h]/[_max_h]" size font_size(18) color _h_col xalign 0.5
+                                            fixed:
+                                                xsize 64
+                                                ysize 7
+                                                xalign 0.5
+                                                add Solid(gui.bar_track_color, xysize=(64, 7))
+                                                add Solid(gui.health_bar_color, xysize=(max(2, int(64 * _h_frac)), 7))
+                                # Type / Action column (fused)
+                                frame:
+                                    background "images/tablebutton1b.png"
+                                    xsize 180
+                                    ysize 50
+                                    padding (0, 0)
+                                    $ worker_type = 'Servant' if worker.get('is_servant', False) else 'Worker'
+                                    $ action_text = get_sell_text(worker)
+                                    hbox:
+                                        xalign 0.0
                                         yalign 0.5
+                                        spacing 0
+                                        text "[worker_type] / " size font_size(22) color gui.journal_text_color yalign 0.5
+                                        textbutton "[action_text]":
+                                            text_size font_size(22)
+                                            text_color gui.journal_text_color
+                                            text_hover_color gui.journal_hover_color
+                                            action Show("confirm_sell_worker", worker=worker)
+                                            yalign 0.5
 
             # (Removed duplicate close button)
 
+    key "K_BACKSPACE" action If(
+        renpy.get_screen("Manager"),
+        Hide("workers"),
+        [Hide("workers"), Show("tavern")]
+    )
+
 screen map_screen():
-    on "show" action Function(maybe_show_intro_popup, "map_screen")
+    # Ensure workers are loaded when map opens (once per show, not per render;
+    # auto-refill doesn't count as a manual refresh)
+    on "show" action [Function(maybe_show_intro_popup, "map_screen"), Function(_map_screen_autorefill)]
     zorder 2
     modal True
     add map_bg
-    
-    # Ensure workers are loaded when map opens (auto-refill doesn't count as manual refresh)
-    python:
-        # Check if it's a new day - reset counter if so
-        if store.last_map_refill_day != store.current_day:
-            store.map_worker_refill_count = 0
-            store.last_map_refill_day = store.current_day
-        
-        # Only auto-refill if available_workers is empty
-        # Auto-refill does NOT count as a manual refresh - it's just initial population
-        should_refill = (not available_workers or len(available_workers) == 0)
-        
-        if should_refill:
-            renpy.log(f"MAP: Auto-refilling workers (initial load, does not count as refresh)")
-            load_buy_workers()
-            update_displayed_workers()
-            # Do NOT increment map_worker_refill_count - auto-refill is free and doesn't count
-            renpy.log(f"MAP: Workers auto-refilled. Manual refresh count: {store.map_worker_refill_count}/2, available: {len(available_workers)}")
-    
+
     # Map building buttons with focus_mask
     # Images are full map size with transparent areas, so they auto-position correctly
     # Order matters: later buttons render on top (higher z-order)
@@ -10075,7 +10280,7 @@ screen map_screen():
         unhovered Hide("tooltip")
     
     imagebutton:
-        idle get_map_button_idle_image("S4Shop")
+        idle Transform(get_map_button_idle_image("S4Shop"), matrixcolor=SaturationMatrix(0.35))
         hover get_map_button_idle_image("S4Shop")
         focus_mask True
         action NullAction()  # No buildings available for this location
@@ -10177,7 +10382,7 @@ screen map_screen():
         unhovered Hide("tooltip")
     
     imagebutton:
-        idle get_map_button_idle_image("N5Shop")
+        idle Transform(get_map_button_idle_image("N5Shop"), matrixcolor=SaturationMatrix(0.35))
         hover get_map_button_idle_image("N5Shop")
         focus_mask True
         action NullAction()  # No buildings available for this location
@@ -10203,7 +10408,7 @@ screen map_screen():
     
     # N6 Murderhouse - "In development" (NewMap: N6murderhousea.png, N6murderhouseb.png hover)
     imagebutton:
-        idle "gui/map/N6murderhousea.png"
+        idle Transform("gui/map/N6murderhousea.png", matrixcolor=SaturationMatrix(0.35))
         hover "gui/map/N6murderhouseb.png"
         focus_mask True
         action Show("in_development")
@@ -10212,19 +10417,19 @@ screen map_screen():
     
     # N5 Academy - on first unlock call Yvara prologue (tuition dialogue); when enrolled, show academy menu.
     imagebutton:
-        idle "gui/map/N5academya.png"
+        idle If(store.academy_enrolled, "gui/map/N5academya.png", Transform("gui/map/N5academya.png", matrixcolor=SaturationMatrix(0.35)))
         hover "gui/map/N5academyb.png"
         focus_mask True
-        action If(store.academy_enrolled, Show("academy_menu"), [Hide("map_screen"), Call("yvara_prologue")])
+        action If(store.academy_enrolled, Show("academy_menu"), [Hide("map_screen"), Jump("yvara_prologue")])
         hovered ShowTransient("tooltip", message="Academy" if store.academy_enrolled else "Academy (enroll to unlock)")
         unhovered Hide("tooltip")
     
     # Arena - first visit: dialogue; after unlock: arena menu (like Academy).
     imagebutton:
-        idle "gui/map/arenaa.png"
+        idle If(store.arena_unlocked, "gui/map/arenaa.png", Transform("gui/map/arenaa.png", matrixcolor=SaturationMatrix(0.35)))
         hover "gui/map/arenab.png"
         focus_mask True
-        action If(store.arena_unlocked, Show("arena_menu"), [Hide("map_screen"), Call("arena_first_dialogue")])
+        action If(store.arena_unlocked, Show("arena_menu"), [Hide("map_screen"), Jump("arena_first_dialogue")])
         hovered ShowTransient("tooltip", message="Arena" if store.arena_unlocked else "Arena (enter to unlock)")
         unhovered Hide("tooltip")
     
@@ -10284,24 +10489,29 @@ screen map_screen():
         # Money display with icon-style $ symbol
         hbox:
             spacing 5
-            text "$" color "#3c1f14" size 22 bold True yalign 0.5
-            text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
+            text "$" color gui.journal_dark_color size 22 bold True yalign 0.5
+            text "[format(int(money), ',')]" color gui.journal_dark_color size 28 yalign 0.5
         # Calendar display with icon
         hbox:
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month - 1]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 25 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color gui.journal_dark_color size 25 yalign 0.5
+        # Compact status strip: roster size and owned holdings (read-only)
+        python:
+            _tv_worker_count = len(store.workers)
+            _tv_building_count = len(getattr(store, "owned_buildings", []) or [])
+        text "Workers: [_tv_worker_count]      Buildings: [_tv_building_count]" color gui.journal_dark_color size 20
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
         python:
-            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+            _manager_name_color = gui.journal_hover_color if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else gui.journal_dark_color
         textbutton "[player_title] [player_name]":
             action Show("manager_character_sheet")
             text_color _manager_name_color
-            text_hover_color "#6b6528"
+            text_hover_color gui.journal_hover_color
             text_size 24
             text_italic True
             background None
@@ -10343,16 +10553,16 @@ screen map_screen():
                 action Show("error_popup", message="Select a building on the map to view purchase options.")
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered SetVariable("buy_buildings_text_hover", True)
                 unhovered SetVariable("buy_buildings_text_hover", False)
             textbutton "Buy Servants":
                 action Show("buy_servants_table")
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered SetVariable("plaza_servants_text_hover", True)
                 unhovered SetVariable("plaza_servants_text_hover", False)
             textbutton "Recruit Workers":
@@ -10361,8 +10571,8 @@ screen map_screen():
                     Show("error_popup", message="You can only recruit once per day"))
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
             textbutton "Take a Walk":
                 action If(
                     last_take_a_walk_day == current_day or take_a_walk_in_progress,
@@ -10371,8 +10581,8 @@ screen map_screen():
                 )
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered SetVariable("take_a_walk_text_hover", True)
                 unhovered SetVariable("take_a_walk_text_hover", False)
             if not tutorial_active:
@@ -10380,34 +10590,40 @@ screen map_screen():
                     action Show("buy_buildings")
                     xsize 300
                     text_size 42
-                    text_color "#3c1f14"
-                    text_hover_color "#6b6528"
+                    text_color gui.journal_dark_color
+                    text_hover_color gui.journal_hover_color
             textbutton "Visit Shops":
                 action Show("shop_selection")
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered SetVariable("shops_text_hover", True)
                 unhovered SetVariable("shops_text_hover", False)
             textbutton "Back":
                 action [Hide("map_screen"), Show("tavern")]
                 xsize 300
                 text_size 42
-                text_color "#6b6528"
+                text_color gui.journal_hover_color
                 text_hover_color "#ffffff"
 
-# --- screen daily_report() ---
+    key "K_BACKSPACE" action [Hide("map_screen"), Show("tavern")]
 
-label daily_report_screen:
-    call screen daily_report
-    return
+# --- screen daily_report() ---
 
 screen daily_report():
     on "show" action Function(maybe_show_intro_popup, "daily_report")
     tag menu
     modal True
     zorder 50
+
+    # Filter/cost computations are cached per (day, filters) key and only
+    # recomputed when the key changes (they used to run on every render).
+    default _dr_key = None
+    default _dr_totals = (0, 0, 0)
+    default _dr_filtered_reports = []
+    default _dr_unique_buildings = ["All Buildings"]
+    default _dr_unique_jobs = ["All Jobs"]
     
     add Transform("gui/gallery.png", align=(0.5, 0.5))
     
@@ -10439,106 +10655,120 @@ screen daily_report():
             $ day_name = day_names[(store.current_day - 1) % 7]
             $ month_name = month_names[store.current_month - 1]
             
-            # Calculate totals with filters applied
+            # Calculate totals + filter option lists + filtered rows, all keyed by
+            # (day, filters). Recomputed only when the key changes.
             python:
-                # Initialize totals
-                daily_total_earnings = 0
-                daily_total_costs = 0
-                daily_net_profit = 0
-                
-                if daily_report:
-                    # Ensure filters are set
-                    if not hasattr(store, 'building_filter') or store.building_filter is None:
-                        store.building_filter = "All Buildings"
-                    if not hasattr(store, 'daily_report_job_filter') or store.daily_report_job_filter is None:
-                        store.daily_report_job_filter = "All Jobs"
-                    
-                    # Filter reports
-                    filtered_for_total = []
-                    for report in daily_report:
-                        # Building filter
-                        building_match = True
-                        if building_filter != "All Buildings":
-                            building_name = report.get('building', 'Unknown Building')
-                            building = available_buildings.get(building_name, {})
-                            btype_id = building.get("type")
-                            type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
-                            parts = building_name.split('_')
-                            default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
-                            building_display_name = store.custom_names.get(building_name, default_name)
-                            full_display_name = f"{type_name}: {building_display_name}"
-                            if full_display_name != building_filter:
-                                building_match = False
-                        
-                        # Job filter
-                        job_match = True
-                        if daily_report_job_filter != "All Jobs":
-                            job_name = report.get('profession', 'N/A')
-                            if job_name != daily_report_job_filter:
-                                job_match = False
-                        
-                        if building_match and job_match:
-                            filtered_for_total.append(report)
-                    
-                    # Calculate earnings from filtered reports
-                    daily_total_earnings = sum(int(report.get("earnings", 0)) for report in filtered_for_total)
-                    
-                    # Calculate costs for filtered buildings
-                    for building_name, building in available_buildings.items():
-                        if not building.get("owned", False):
-                            continue
-                        
-                        # Apply building filter
-                        if building_filter != "All Buildings":
-                            btype_id = building.get("type")
-                            type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
-                            parts = building_name.split('_')
-                            default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
-                            building_display_name = store.custom_names.get(building_name, default_name)
-                            full_display_name = f"{type_name}: {building_display_name}"
-                            if full_display_name != building_filter:
+                # Ensure filters are set
+                if not hasattr(store, 'building_filter') or store.building_filter is None:
+                    store.building_filter = "All Buildings"
+                if not hasattr(store, 'daily_report_job_filter') or store.daily_report_job_filter is None:
+                    store.daily_report_job_filter = "All Jobs"
+
+                def _dr_building_display(building_name):
+                    building = available_buildings.get(building_name, {})
+                    btype_id = building.get("type")
+                    type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
+                    parts = building_name.split('_')
+                    default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
+                    return f"{type_name}: {store.custom_names.get(building_name, default_name)}"
+
+                _dr_now_key = (store.current_day, store.building_filter, store.daily_report_job_filter, len(daily_report) if daily_report else 0)
+                if _dr_key != _dr_now_key:
+                    daily_total_earnings = 0
+                    daily_total_costs = 0
+                    daily_net_profit = 0
+                    filtered_reports = []
+                    unique_buildings = ["All Buildings"]
+                    unique_jobs = ["All Jobs"]
+
+                    if daily_report:
+                        # Building filter options (from all reports)
+                        for report in daily_report:
+                            full_display_name = _dr_building_display(report.get('building', 'Unknown Building'))
+                            if full_display_name not in unique_buildings:
+                                unique_buildings.append(full_display_name)
+
+                        # Job filter options (restricted to the selected building)
+                        for report in daily_report:
+                            if building_filter != "All Buildings" and _dr_building_display(report.get('building', 'Unknown Building')) != building_filter:
                                 continue
-                        
-                        fixed_cost = get_building_base_maintenance_cost(building_name, building)
-                        worker_costs = compute_worker_portion_daily_costs(building.get("assigned_servants") or [], building.get("base_level", 1))[0]
-                        bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
-                        daily_total_costs += fixed_cost + worker_costs + bonus_cost
-                    
-                    daily_net_profit = daily_total_earnings - daily_total_costs
+                            job_name = report.get('profession', 'N/A')
+                            if job_name and job_name != 'N/A' and job_name not in unique_jobs:
+                                unique_jobs.append(job_name)
+                        if store.daily_report_job_filter not in unique_jobs:
+                            store.daily_report_job_filter = "All Jobs"
+
+                        # Filter reports (building + job)
+                        for report in daily_report:
+                            if building_filter != "All Buildings" and _dr_building_display(report.get('building', 'Unknown Building')) != building_filter:
+                                continue
+                            if store.daily_report_job_filter != "All Jobs" and report.get('profession', 'N/A') != store.daily_report_job_filter:
+                                continue
+                            filtered_reports.append(report)
+
+                        # Calculate earnings from filtered reports
+                        daily_total_earnings = sum(int(report.get("earnings", 0)) for report in filtered_reports)
+
+                        # Calculate costs for filtered buildings
+                        for building_name, building in available_buildings.items():
+                            if not building.get("owned", False):
+                                continue
+                            if building_filter != "All Buildings" and _dr_building_display(building_name) != building_filter:
+                                continue
+                            fixed_cost = get_building_base_maintenance_cost(building_name, building)
+                            worker_costs = compute_worker_portion_daily_costs(building.get("assigned_servants") or [], building.get("base_level", 1))[0]
+                            bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
+                            daily_total_costs += fixed_cost + worker_costs + bonus_cost
+
+                        daily_net_profit = daily_total_earnings - daily_total_costs
+
+                    _dr_totals = (daily_total_earnings, daily_total_costs, daily_net_profit)
+                    _dr_filtered_reports = filtered_reports
+                    _dr_unique_buildings = unique_buildings
+                    _dr_unique_jobs = unique_jobs
+                    # Key uses the possibly-reset job filter so the cache settles immediately
+                    _dr_key = (store.current_day, store.building_filter, store.daily_report_job_filter, len(daily_report) if daily_report else 0)
+
+                daily_total_earnings, daily_total_costs, daily_net_profit = _dr_totals
+                filtered_reports = _dr_filtered_reports
+                unique_buildings = _dr_unique_buildings
+                unique_jobs = _dr_unique_jobs
             
-            # Title with total on same line - centered
-            $ profit_color = "#4a8a4a" if daily_net_profit >= 0 else "#8a4a4a"
+            # Title - centered (net total lives in the summary band below)
+            $ profit_color = gui.success_color if daily_net_profit >= 0 else gui.danger_color
             $ profit_sign = "+" if daily_net_profit >= 0 else ""
-            label "Daily Report: [day_name], [store.current_day] [month_name] [store.current_year]    Total: {color=[profit_color]}[profit_sign]$[daily_net_profit]{/color}" xalign 0.5 style "header_style" text_size font_size(30)
+            label "Daily Report: [day_name], [store.current_day] [month_name] [store.current_year]" xalign 0.5 style "header_style" text_size font_size(30)
             
             
             if not daily_report:
                 text "No significant events occurred today." size font_size(24) xalign 0.5 color "#ffffff"
             else:
+                # Summary band: income / costs / net / active entries (cached totals only)
+                $ _dr_active_n = len(filtered_reports)
+                hbox:
+                    spacing 10
+                    xalign 0.5
+                    yoffset -30
+                    text "Income" size font_size(22) color gui.journal_text_color
+                    text "$[daily_total_earnings]" size font_size(22) color gui.success_color
+                    text "|" size font_size(22) color gui.parchment_muted_color
+                    text "Costs" size font_size(22) color gui.journal_text_color
+                    text "$[daily_total_costs]" size font_size(22) color gui.danger_color
+                    text "|" size font_size(22) color gui.parchment_muted_color
+                    text "Net" size font_size(22) color gui.journal_text_color
+                    text "[profit_sign]$[daily_net_profit]" size font_size(22) color profit_color
+                    text "|" size font_size(22) color gui.parchment_muted_color
+                    text "[_dr_active_n] workers active" size font_size(22) color gui.parchment_muted_color
                 hbox:
                     spacing 20
                     xalign 0.5
-                    yoffset -30  # Lowered filter 10px more
-                    
+                    yoffset -35  # Filters nudged up 5px (user request)
+
                     hbox:
                         spacing 10
-                        text "Filter by Building:" size font_size(20) color "#7a4b2a" yalign 0.5
-                        
-                        python:
-                            unique_buildings = ["All Buildings"]
-                            for report in daily_report:
-                                building_name = report.get('building', 'Unknown Building')
-                                building = available_buildings.get(building_name, {})
-                                btype_id = building.get("type")
-                                type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
-                                parts = building_name.split('_')
-                                default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
-                                building_display_name = store.custom_names.get(building_name, default_name)
-                                full_display_name = f"{type_name}: {building_display_name}"
-                                
-                                if full_display_name not in unique_buildings:
-                                    unique_buildings.append(full_display_name)
-                        
+                        text "Filter by Building:" size font_size(20) color gui.journal_text_color yalign 0.5
+
+                        # unique_buildings computed in the cached python block above
                         frame:
                             background "#4a2a1acc"
                             padding (10, 5)
@@ -10548,41 +10778,17 @@ screen daily_report():
                                 ysize 40
                                 background "#5a3a1a"
                                 hover_background "#6b4a2a"
+                                hover_foreground Solid("#6b652820")
                                 
-                                text "[building_filter]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                                text "[building_filter]" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5
                                 
                                 action Show("building_filter_menu", buildings=unique_buildings)
                     
                     hbox:
                         spacing 10
-                        text "Filter by Job:" size font_size(20) color "#7a4b2a" yalign 0.5
-                        
-                        python:
-                            # Ensure daily_report_job_filter is set to default if not defined
-                            if not hasattr(store, 'daily_report_job_filter') or store.daily_report_job_filter is None:
-                                store.daily_report_job_filter = "All Jobs"
-                            unique_jobs = ["All Jobs"]
-                            
-                            for report in daily_report:
-                                if building_filter != "All Buildings":
-                                    report_building_name = report.get('building', 'Unknown Building')
-                                    report_building = available_buildings.get(report_building_name, {})
-                                    btype_id = report_building.get("type")
-                                    type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
-                                    parts = report_building_name.split('_')
-                                    default_name = f"Building {parts[1]}" if len(parts) > 1 else report_building_name
-                                    building_display_name = store.custom_names.get(report_building_name, default_name)
-                                    full_display_name = f"{type_name}: {building_display_name}"
-                                    if full_display_name != building_filter:
-                                        continue
-                                
-                                job_name = report.get('profession', 'N/A')
-                                if job_name and job_name != 'N/A' and job_name not in unique_jobs:
-                                    unique_jobs.append(job_name)
-                            
-                            if daily_report_job_filter not in unique_jobs:
-                                store.daily_report_job_filter = "All Jobs"
-                        
+                        text "Filter by Job:" size font_size(20) color gui.journal_text_color yalign 0.5
+
+                        # unique_jobs computed in the cached python block above
                         frame:
                             background "#4a2a1acc"
                             padding (10, 5)
@@ -10592,45 +10798,13 @@ screen daily_report():
                                 ysize 40
                                 background "#5a3a1a"
                                 hover_background "#6b4a2a"
+                                hover_foreground Solid("#6b652820")
                                 
-                                text "[daily_report_job_filter]" size font_size(18) color "#ffffff" xalign 0.5 yalign 0.5
+                                text "[daily_report_job_filter]" size font_size(20) color "#ffffff" xalign 0.5 yalign 0.5
                                 
                                 action Show("daily_report_job_filter_menu", jobs=unique_jobs)
 
-                # Aplicar filtros (building y job)
-                python:
-                    # Ensure filters are set to default if not defined
-                    if not hasattr(store, 'daily_report_job_filter') or store.daily_report_job_filter is None:
-                        store.daily_report_job_filter = "All Jobs"
-                    
-                    filtered_reports = []
-                    for report in daily_report:
-                        building_match = True
-                        if building_filter != "All Buildings":
-                            building_name = report.get('building', 'Unknown Building')
-                            building = available_buildings.get(building_name, {})
-                            btype_id = building.get("type")
-                            type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
-                            parts = building_name.split('_')
-                            default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
-                            building_display_name = store.custom_names.get(building_name, default_name)
-                            full_display_name = f"{type_name}: {building_display_name}"
-                            
-                            if full_display_name != building_filter:
-                                building_match = False
-                        
-                        job_match = True
-                        if daily_report_job_filter != "All Jobs":
-                            job_name = report.get('profession', 'N/A')
-                            if job_name != daily_report_job_filter:
-                                job_match = False
-                        
-                        if building_match and job_match:
-                            filtered_reports.append(report)
-                    
-                    # Total is already calculated at the top with filters applied
-                    pass
-
+                # filtered_reports computed in the cached python block above
                 if not filtered_reports:
                     text "No events found for the selected building." size font_size(20) xalign 0.5 color "#ffffff"
                 else:
@@ -10638,47 +10812,65 @@ screen daily_report():
                         spacing 1
                         xoffset 5 # shift entire table (headers + rows) 5px to the right
                         yoffset -60  # Lowered table 30px from filter
-                        # Header row (fixed, outside viewport)
-                        hbox:
-                            spacing 0 # Remove default spacing, use manual spacing
-                            xsize 1650 # Fit within viewport to avoid scrollbar overlap
-                            yalign 0.5
-                            button:
-                                background "tablebutton.png"
-                                xsize 80 # Number column
-                                ysize 46
-                                # Slight right shift for header '#'
-                                text "#" size font_size(18) xalign 0.5 xoffset 12 yalign 0.5 yoffset -8
-                            null width 10 # Reduced spacing after # column
-                            button:
-                                background "tablebutton2.png"
-                                xsize 280 # Restored larger width
-                                ysize 46
-                                text "Building" size font_size(18)
-                            null width 25 # Standard spacing after Building (+5)
-                            button:
-                                background "tablebutton2.png"
-                                xsize 280 # Restored larger width
-                                ysize 46
-                                text "Job (Skill)" size font_size(18)
-                            null width 25 # Standard spacing after Profession (+5)
-                            button:
-                                background "tablebutton2.png"
-                                xsize 280 # Restored larger width
-                                ysize 46
-                                text "Worker" size font_size(18)
-                            null width 25 # Standard spacing after Worker (+5)
-                            button:
-                                background "tablebutton2.png"
-                                xsize 280 # Restored larger width
-                                ysize 46
-                                text "Story" size font_size(18)
-                            null width 25 # Standard spacing after Story (+5)
-                            button:
-                                background "tablebutton2.png"
-                                xsize 360 # Narrower result column to keep content inside viewport
-                                ysize 46
-                                text "Result (Click for Details)" size font_size(18)
+                        # Breathing room between the filter row and the column headers
+                        # (10: +5px more air before headers, user request)
+                        null height 10
+                        # Header row (fixed, outside viewport): plain labels over ONE
+                        # hairline — EXACTLY the workers-roster structure: header hbox
+                        # and rule share one sub-vbox (same origin) and one declared
+                        # width equal to the real cell sum, so the rule hugs the
+                        # columns instead of floating past them.
+                        # Cell sum: 80+10+280+25+280+25+280+25+280+25+360 = 1670.
+                        vbox:
+                            spacing 6
+                            hbox:
+                                spacing 0 # Remove default spacing, use manual spacing
+                                xsize 1670
+                                yalign 0.5
+                                button:
+                                    background None
+                                    xsize 80 # Number column
+                                    ysize 30
+                                    # Slight right shift for header '#'
+                                    text "#" size font_size(22) xalign 0.5 xoffset 12 yalign 0.5
+                                null width 10 # Reduced spacing after # column
+                                button:
+                                    background None
+                                    xsize 280 # Restored larger width
+                                    ysize 30
+                                    text "Building" size font_size(22)
+                                null width 25 # Standard spacing after Building (+5)
+                                button:
+                                    background None
+                                    xsize 280 # Restored larger width
+                                    ysize 30
+                                    text "Job (Skill)" size font_size(22)
+                                null width 25 # Standard spacing after Profession (+5)
+                                button:
+                                    background None
+                                    xsize 280 # Restored larger width
+                                    ysize 30
+                                    text "Worker" size font_size(22)
+                                null width 25 # Standard spacing after Worker (+5)
+                                button:
+                                    background None
+                                    xsize 280 # Restored larger width
+                                    ysize 30
+                                    text "Story" size font_size(22)
+                                null width 25 # Standard spacing after Story (+5)
+                                button:
+                                    background None
+                                    xsize 360 # Narrower result column to keep content inside viewport
+                                    ysize 30
+                                    text "Result (Click for Details)" size font_size(22)
+                            # Span [x0+40, x0+1580]: 40px left inset so the rule does
+                            # not crash into the panel margin (the # cell starts at
+                            # x0 but its glyph sits ~45px in); right end dies ~65px
+                            # past the Result label, matching the workers rule. The
+                            # group dividers below share this EXACT span (their
+                            # container, the row viewport, is offset +10, hence 30).
+                            use table_rule(1540, rule_xoffset=40)
+                        null height 4
 
                         # Data rows viewport (only data scrolls, headers stay fixed)
                         viewport:
@@ -10692,99 +10884,148 @@ screen daily_report():
                             vbox:
                                 spacing 1
                                 # Data rows (Iterate over filtered_reports)
-                                for i, report in enumerate(filtered_reports, 1):
-                                    # --- Pre-calculate values needed for the row ---
-                                    python:
-                                        # Find worker and determine action for worker button
-                                        found_worker = find_worker_by_name(report.get('worker_name', 'Unknown'))
-                                        if found_worker:
-                                            worker_button_action = Show("worker_details", worker=found_worker, in_roster=True)
-                                        else:
-                                            worker_button_action = NullAction() # Worker not found, button does nothing
-
-                                        # Get building display info
-                                        building_name_raw = report.get('building', 'Unknown Building')
-                                        building = available_buildings.get(building_name_raw, {})
-                                        btype_id = building.get("type")
-                                        type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
-                                        parts = building_name_raw.split('_')
-                                        default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name_raw
-                                        building_display_name = store.custom_names.get(building_name_raw, default_name)
-
-                                        # Get result text and color
-                                        result_text = report.get("result", "N/A")
-                                        earnings_text = "$" + str(int(report.get("earnings", 0)))
-                                        if result_text == "Unhandled":
-                                            color_code = "#808080"
-                                        elif result_text in ["Critical Success", "Success", "Rest"]:
-                                            color_code = "#006600"
-                                        elif result_text == "Mediocre":
-                                            color_code = "#666600"
-                                        elif result_text == "Failure":
-                                            color_code = "#660000"
-                                        elif result_text == "Refused":
-                                            color_code = "#663333"
-                                        else:
-                                            color_code = "#ffffff"
-                                    # --- End Pre-calculation ---
-
-                                    hbox:
-                                        spacing 0 # Remove default spacing, use manual spacing
-                                        xsize 1650 # Match header width to avoid overlap
-                                        yalign 0.5
-                                        # Number column
-                                        button:
-                                            background "tablebutton.png"
-                                            xsize 80 # Number column
-                                            ysize 46
-                                            # Keep numbers centered horizontally; remove extra xoffset so only header moves
-                                            text "[i]" size font_size(18) xalign 0.5 yalign 0.5 yoffset -8
-                                        null width 10 # Reduced spacing after # column
-                                        # Building column (type: name)
-                                        button:
-                                            background "tablebutton.png"
-                                            xsize 280 # Restored larger width
-                                            ysize 46
-                                            text "[type_name]: [building_display_name]" size font_size(18) # Use pre-calculated display name
-                                        null width 25 # Standard spacing after Building (+5)
-                                        # Profession column (Job with Skill)
+                                # Group rows by building display name (presentation only;
+                                # uses the cached filtered_reports and _dr_building_display)
+                                python:
+                                    _dr_grouped_map = {}
+                                    for _dr_rep in filtered_reports:
+                                        _dr_grouped_map.setdefault(_dr_building_display(_dr_rep.get('building', 'Unknown Building')), []).append(_dr_rep)
+                                    _dr_groups = list(_dr_grouped_map.items())
+                                    _dr_nav_reports = []
+                                    for _dr_gname, _dr_greps in _dr_groups:
+                                        _dr_nav_reports.extend(_dr_greps)
+                                    _dr_row_no = 0
+                                for _dr_group_name, _dr_group_reports in _dr_groups:
+                                    if _dr_group_name != _dr_groups[0][0]:
+                                        null height 5
+                                        # Same tone and the EXACT same span as the header
+                                        # rule (this viewport is offset +10 vs the header's
+                                        # container, hence 30 = 40 - 10); thinner weight is
+                                        # the only difference, keeping the hierarchy.
+                                        add Solid(gui.divider_color) xsize 1540 ysize 2 xoffset 30
+                                        null height 5
+                                    # Muted building header row before each group. A section
+                                    # label: sits a little LEFT of the Building column (a
+                                    # hanging indent), well clear of the left margin.
+                                    text "[_dr_group_name!q]" size font_size(22) color gui.parchment_muted_color xoffset 60
+                                    for report in _dr_group_reports:
+                                        $ _dr_row_no += 1
+                                        $ i = _dr_row_no
+                                        # --- Pre-calculate values needed for the row ---
                                         python:
-                                            profession_name = report.get('profession', 'N/A')
-                                            used_skill = report.get('used_skill', None)
-                                            worker_for_skill = report.get('worker', None)
-                                            if used_skill and used_skill != "N/A" and worker_for_skill:
-                                                skill_value = calculate_skill_with_traits(worker_for_skill, used_skill, include_libido=False)
-                                                profession_display = f"{profession_name} ({skill_value})"
+                                            # Find worker and determine action for worker button
+                                            found_worker = find_worker_by_name(report.get('worker_name', 'Unknown'))
+                                            if found_worker:
+                                                worker_button_action = Show("worker_details", worker=found_worker, in_roster=True)
                                             else:
-                                                profession_display = profession_name
-                                        button:
-                                            background "tablebutton.png"
-                                            xsize 280 # Restored larger width
-                                            ysize 46
-                                            text "[profession_display]" size font_size(18)
-                                        null width 25 # Standard spacing after Profession (+5)
-                                        # Worker column
-                                        button:
-                                            background "tablebutton.png"
-                                            xsize 280 # Restored larger width
-                                            ysize 46
-                                            text "[report.get('worker_name', 'Unknown')]" size font_size(18) hover_color "#6b6528"
-                                            action worker_button_action # Use the pre-calculated action
-                                        null width 25 # Standard spacing after Worker (+5)
-                                        # Story Name column
-                                        button:
-                                            background "tablebutton.png"
-                                            xsize 280 # Restored larger width
-                                            ysize 46
-                                            text "[report.get('event_data', {}).get('report', 'N/A')]" size font_size(18)
-                                        null width 25 # Standard spacing after Story (+5)
-                                        # Combined Result & Earnings column (clickable)
-                                        button:
-                                            background "tablebutton.png"
-                                            xsize 360
-                                            ysize 46
-                                            action Show("report_details", report=report, nav_reports=filtered_reports, nav_index=i - 1)
-                                            text "{color=[color_code]}[result_text] ([earnings_text]){/color}" size font_size(18)
+                                                worker_button_action = NullAction() # Worker not found, button does nothing
+
+                                            # Get building display info
+                                            building_name_raw = report.get('building', 'Unknown Building')
+                                            building = available_buildings.get(building_name_raw, {})
+                                            btype_id = building.get("type")
+                                            type_name = "Unassigned" if btype_id is None else next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), btype_id)
+                                            parts = building_name_raw.split('_')
+                                            default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name_raw
+                                            building_display_name = store.custom_names.get(building_name_raw, default_name)
+
+                                            # Get result text and color
+                                            result_text = report.get("result", "N/A")
+                                            earnings_text = "$" + str(int(report.get("earnings", 0)))
+                                            _dr_earn_val = int(report.get("earnings", 0))
+                                            if _dr_earn_val > 0:
+                                                _dr_earn_color = gui.success_color
+                                            elif _dr_earn_val < 0:
+                                                _dr_earn_color = gui.danger_color
+                                            else:
+                                                _dr_earn_color = gui.parchment_muted_color
+                                            if result_text == "Unhandled":
+                                                color_code = "#808080"
+                                            elif result_text in ["Critical Success", "Success", "Rest"]:
+                                                color_code = "#006600"
+                                            elif result_text == "Mediocre":
+                                                color_code = "#666600"
+                                            elif result_text == "Failure":
+                                                color_code = "#660000"
+                                            elif result_text == "Refused":
+                                                color_code = "#663333"
+                                            else:
+                                                color_code = "#ffffff"
+
+                                            # Small badges next to the worker name: worker level up,
+                                            # skill level ups, net HP lost today (see daily_worker_deltas)
+                                            _dr_delta = getattr(store, "daily_worker_deltas", {}).get(str(report.get('worker_name', '')), {})
+                                            _dr_badges = ""
+                                            if _dr_delta:
+                                                if _dr_delta.get("level"):
+                                                    _dr_badges += " {color=" + gui.gold_color + "}+Lv{/color}"
+                                                _dr_sk_n = len(_dr_delta.get("skills", []) or [])
+                                                if _dr_sk_n:
+                                                    _dr_badges += " {color=" + gui.success_color + "}+" + str(_dr_sk_n) + " skill" + ("s" if _dr_sk_n > 1 else "") + "{/color}"
+                                                _dr_hp_loss = _dr_delta.get("hp")
+                                                if _dr_hp_loss:
+                                                    _dr_badges += " {color=" + gui.danger_color + "}" + str(_dr_hp_loss) + " HP{/color}"
+                                        # --- End Pre-calculation ---
+
+                                        hbox:
+                                            spacing 0 # Remove default spacing, use manual spacing
+                                            xsize 1650 # Match header width to avoid overlap
+                                            yalign 0.5
+                                            # Number column
+                                            button:
+                                                background "images/tablebutton.png"
+                                                xsize 80 # Number column
+                                                ysize 46
+                                                # Keep numbers centered horizontally; remove extra xoffset so only header moves
+                                                text "[i]" size font_size(21) xalign 0.5 yalign 0.5 yoffset -8
+                                            null width 10 # Reduced spacing after # column
+                                            # Building column (type: name)
+                                            button:
+                                                background "images/tablebutton.png"
+                                                xsize 280 # Restored larger width
+                                                ysize 46
+                                                text "[type_name]: [building_display_name]" size font_size(21) # Use pre-calculated display name
+                                            null width 25 # Standard spacing after Building (+5)
+                                            # Profession column (Job with Skill)
+                                            python:
+                                                profession_name = report.get('profession', 'N/A')
+                                                used_skill = report.get('used_skill', None)
+                                                worker_for_skill = report.get('worker', None)
+                                                if used_skill and used_skill != "N/A" and worker_for_skill:
+                                                    skill_value = calculate_skill_with_traits(worker_for_skill, used_skill, include_libido=False)
+                                                    profession_display = f"{profession_name} ({skill_value})"
+                                                else:
+                                                    profession_display = profession_name
+                                            button:
+                                                background "images/tablebutton.png"
+                                                xsize 280 # Restored larger width
+                                                ysize 46
+                                                text "[profession_display]" size font_size(21)
+                                            null width 25 # Standard spacing after Profession (+5)
+                                            # Worker column (name + daily delta badges)
+                                            button:
+                                                background "images/tablebutton.png"
+                                                xsize 280 # Restored larger width
+                                                ysize 46
+                                                text "[report.get('worker_name', 'Unknown')]{size=17}[_dr_badges]{/size}" size font_size(21) hover_color gui.journal_hover_color
+                                                action worker_button_action # Use the pre-calculated action
+                                            null width 25 # Standard spacing after Worker (+5)
+                                            # Story Name column
+                                            button:
+                                                background "images/tablebutton.png"
+                                                xsize 280 # Restored larger width
+                                                ysize 46
+                                                text "[report.get('event_data', {}).get('report', 'N/A')]" size font_size(21)
+                                            null width 25 # Standard spacing after Story (+5)
+                                            # Combined Result & Earnings column (clickable)
+                                            button:
+                                                background "images/tablebutton.png"
+                                                xsize 360
+                                                ysize 46
+                                                action Show("report_details", report=report, nav_reports=_dr_nav_reports, nav_index=i - 1)
+                                                text "{color=[color_code]}[result_text]{/color} {color=[_dr_earn_color]}([earnings_text]){/color}" size font_size(21)
+
+    key "K_BACKSPACE" action Jump("day_transition")
 
 
 screen building_filter_menu(buildings):
@@ -10814,11 +11055,12 @@ screen building_filter_menu(buildings):
                 textbutton "[building]":
                     xsize 300
                     ysize 30
-                    background "#5a3a1a"
+                    background (gui.journal_hover_color if building == getattr(store, "building_filter", None) else "#5a3a1a")
                     hover_background "#6b4a2a"
+                    hover_foreground Solid("#6b652820")
                     text_size font_size(16)
                     text_color "#ffffff"
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     action [
                         SetVariable("building_filter", building),
                         SetVariable("daily_report_job_filter", "All Jobs"),  # Reset job filter when building changes
@@ -10830,12 +11072,15 @@ screen building_filter_menu(buildings):
             textbutton "Cancel":
                 xsize 300
                 ysize 30
-                background "#666666"
-                hover_background "#888888"
+                background "#5a3a1a"
+                hover_background "#6b4a2a"
+                hover_foreground Solid("#6b652820")
                 text_size font_size(16)
                 text_color "#ffffff"
-                text_hover_color "#6b6528"
+                text_hover_color gui.journal_hover_color
                 action Hide("building_filter_menu")
+
+    key "K_BACKSPACE" action Hide("building_filter_menu")
 
 screen daily_report_job_filter_menu(jobs):
     modal True
@@ -10864,11 +11109,12 @@ screen daily_report_job_filter_menu(jobs):
                 textbutton "[job]":
                     xsize 300
                     ysize 30
-                    background "#5a3a1a"
+                    background (gui.journal_hover_color if job == getattr(store, "daily_report_job_filter", None) else "#5a3a1a")
                     hover_background "#6b4a2a"
+                    hover_foreground Solid("#6b652820")
                     text_size font_size(16)
                     text_color "#ffffff"
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     action [
                         SetVariable("daily_report_job_filter", job),
                         Hide("daily_report_job_filter_menu")
@@ -10879,12 +11125,15 @@ screen daily_report_job_filter_menu(jobs):
             textbutton "Cancel":
                 xsize 300
                 ysize 30
-                background "#666666"
-                hover_background "#888888"
+                background "#5a3a1a"
+                hover_background "#6b4a2a"
+                hover_foreground Solid("#6b652820")
                 text_size font_size(16)
                 text_color "#ffffff"
-                text_hover_color "#6b6528"
+                text_hover_color gui.journal_hover_color
                 action Hide("daily_report_job_filter_menu")
+
+    key "K_BACKSPACE" action Hide("daily_report_job_filter_menu")
 
 screen report_details(report, nav_reports=None, nav_index=None):
     zorder 100
@@ -10992,7 +11241,7 @@ screen report_details(report, nav_reports=None, nav_index=None):
                         xsize 290
                         ysize 50
                         background None
-                        text "Previous" color "#ffffff" hover_color "#6b6528" xalign 0.0
+                        text "Previous" color "#ffffff" hover_color gui.journal_hover_color xalign 0.0
                         action [
                             SetVariable("current_report_index", current_report_index - 1),
                             Show("report_details", report=_nav_reports[current_report_index - 1], nav_reports=_nav_reports, nav_index=current_report_index - 1)
@@ -11013,7 +11262,7 @@ screen report_details(report, nav_reports=None, nav_index=None):
                         xsize 290
                         ysize 50
                         background None
-                        text "Next" color "#ffffff" hover_color "#6b6528" xalign 0.0
+                        text "Next" color "#ffffff" hover_color gui.journal_hover_color xalign 0.0
                         action [
                             SetVariable("current_report_index", current_report_index + 1),
                             Show("report_details", report=_nav_reports[current_report_index + 1], nav_reports=_nav_reports, nav_index=current_report_index + 1)
@@ -11032,34 +11281,27 @@ screen report_details(report, nav_reports=None, nav_index=None):
                     text_color "#ffffff"
                     action Hide("report_details")
 
+    key "K_BACKSPACE" action Hide("report_details")
+    # Ctrl+Left/Right mirror the Previous/Next buttons (only bound when the
+    # corresponding button is active, same conditions as above).
+    if can_go_previous:
+        key "ctrl_K_LEFT" action [
+            SetVariable("current_report_index", current_report_index - 1),
+            Show("report_details", report=_nav_reports[current_report_index - 1], nav_reports=_nav_reports, nav_index=current_report_index - 1)
+        ]
+    if can_go_next:
+        key "ctrl_K_RIGHT" action [
+            SetVariable("current_report_index", current_report_index + 1),
+            Show("report_details", report=_nav_reports[current_report_index + 1], nav_reports=_nav_reports, nav_index=current_report_index + 1)
+        ]
+
 screen tavern():
     on "show" action Function(maybe_show_intro_popup, "tavern")
-    $ renpy.log("Tavern screen displayed")
     # Persistent flags are now cleared at the start of _apply_pending_snapshot_and_show_tavern
     # Just ensure _context_restored is cleared if it was set
     if getattr(persistent, "_context_restored", False):
         $ persistent._context_restored = False
         $ renpy.save_persistent()
-    # Ensure calendar is initialized
-    # $ initialize_calendar()
-    
-    # NOTE: This should be handled by check_objective_completion() instead
-    # Keeping this disabled to prevent bypassing prerequisite checks
-    # $ tutorial_act = getattr(store, 'tutorial_active', False)
-    # $ obj4_shown = getattr(store, 'objective_4_dialogue_shown', False)
-    # $ obj3_complete = getattr(store, 'objective_3_complete', False)
-    # $ renpy.log(f"DEBUG: tavern screen check - tutorial_active={tutorial_act}, money=${money}, obj4_shown={obj4_shown}")
-    # 
-    # if tutorial_act and money >= 5000 and not obj4_shown and obj3_complete:
-    #     timer 0.1 action [
-    #         SetVariable("objective_4_complete", True),
-    #         SetVariable("current_objective", 5), 
-    #         SetVariable("objective_4_dialogue_shown", True),
-    #         Function(renpy.log, "DEBUG: Timer triggering objective 4 dialogue"),
-    #         Hide("tavern"),
-    #         Jump("show_objective_4_dialogue")
-    #     ]
-    
     zorder 1
     # Tavern background adjusted to 1515px width to account for side panel
     add tavern_bg:
@@ -11104,8 +11346,8 @@ screen tavern():
                 action Show("journal_panel")
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered ShowTransient("tooltip", message="View your quest objectives and track your progress", screen_name="tavern")
                 unhovered Hide("tooltip")
             textbutton "Explore":
@@ -11116,8 +11358,8 @@ screen tavern():
                 ]
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered ShowTransient("tooltip", message="Explore the city map and visit different locations", screen_name="tavern")
                 unhovered Hide("tooltip")
             textbutton "Buildings":
@@ -11128,8 +11370,8 @@ screen tavern():
                 ]
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered ShowTransient("tooltip", message="Manage your buildings, upgrade them, and adjust settings", screen_name="tavern")
                 unhovered Hide("tooltip")
             textbutton "Workers":
@@ -11140,21 +11382,22 @@ screen tavern():
                 ]
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered ShowTransient("tooltip", message="View and manage your workers roster", screen_name="tavern")
                 unhovered Hide("tooltip")
+            $ _storage_roster = workers_filtered_by_gender(store.workers)
             textbutton "Storage":
                 action [
                     SetVariable("left_worker", None),
-                    SetVariable("right_worker", (workers_filtered_by_gender(store.workers)[0] if workers_filtered_by_gender(store.workers) else False)),
+                    SetVariable("right_worker", (_storage_roster[0] if _storage_roster else False)),
                     Show("manager_inventory", return_to_tavern=True),
                     Hide("tavern")
                 ]
                 xsize 300
                 text_size 42
-                text_color "#3c1f14"
-                text_hover_color "#6b6528"
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
                 hovered ShowTransient("tooltip", message="Open storage to manage items and equipment.", screen_name="tavern")
                 unhovered Hide("tooltip")
             textbutton "Next Day":
@@ -11165,7 +11408,7 @@ screen tavern():
                 ]
                 xsize 300
                 text_size 42
-                text_color "#6b6528"
+                text_color gui.journal_hover_color
                 text_hover_color "#ffffff"
                 hovered ShowTransient("tooltip", message="Advance to the next day and process daily events", screen_name="tavern")
                 unhovered Hide("tooltip")
@@ -11179,24 +11422,29 @@ screen tavern():
         # Money display with icon-style $ symbol
         hbox:
             spacing 5
-            text "$" color "#3c1f14" size 22 bold True yalign 0.5
-            text "[format(int(money), ',')]" color "#3c1f14" size 28 yalign 0.5
+            text "$" color gui.journal_dark_color size 22 bold True yalign 0.5
+            text "[format(int(money), ',')]" color gui.journal_dark_color size 28 yalign 0.5
         # Calendar display with icon
         hbox:
             spacing 5
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month - 1]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color "#3c1f14" size 25 yalign 0.5
+            text "[day_name], [store.current_day] [month_name] [store.current_year]" color gui.journal_dark_color size 25 yalign 0.5
+        # Compact status strip: roster size and owned holdings (read-only)
+        python:
+            _tv_worker_count = len(store.workers)
+            _tv_building_count = len(getattr(store, "owned_buildings", []) or [])
+        text "Workers: [_tv_worker_count]      Buildings: [_tv_building_count]" color gui.journal_dark_color size 20
         # Player title and name (click to open character sheet) — blink when pending skill points
         if manager_has_unspent_skill_points():
             timer 0.7 repeat True action ToggleVariable("manager_name_blink_highlight")
         python:
-            _manager_name_color = "#6b6528" if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else "#3c1f14"
+            _manager_name_color = gui.journal_hover_color if (getattr(store, 'manager_name_blink_highlight', False) and manager_has_unspent_skill_points()) else gui.journal_dark_color
         textbutton "[player_title] [player_name]":
             action Show("manager_character_sheet")
             text_color _manager_name_color
-            text_hover_color "#6b6528"
+            text_hover_color gui.journal_hover_color
             text_size 24
             text_italic True
             background None
@@ -11214,7 +11462,7 @@ style tavern_title:
 
 style tavern_text:
     color "#ffffff"
-    size 18
+    size 20
 
 style tavern_button:
     background "#00000080"
@@ -11267,10 +11515,12 @@ screen gallery():
         yalign 0.5
         spacing 50
         
-        text "Gallery" size font_size(60) color "#3c1f14" xalign 0.5
+        text "Gallery" size font_size(60) color gui.journal_dark_color xalign 0.5
         text "Coming Soon..." size font_size(40) color "#887441" xalign 0.5
         
         textbutton "Return" action Return() xalign 0.5 text_size font_size(30)
+
+    key "K_BACKSPACE" action Return()
 
 screen worker_building_filter_menu(buildings):
     modal True
@@ -11299,11 +11549,12 @@ screen worker_building_filter_menu(buildings):
                 textbutton "[building]":
                     xsize 300
                     ysize 30
-                    background "#5a3a1a"
+                    background (gui.journal_hover_color if building == getattr(store, "worker_building_filter", None) else "#5a3a1a")
                     hover_background "#6b4a2a"
+                    hover_foreground Solid("#6b652820")
                     text_size font_size(16)
                     text_color "#ffffff"
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     action [
                         SetVariable("worker_building_filter", building),
                         SetVariable("worker_job_filter", "All Jobs"),  # Reset job filter when building changes
@@ -11315,12 +11566,15 @@ screen worker_building_filter_menu(buildings):
             textbutton "Cancel":
                 xsize 300
                 ysize 30
-                background "#666666"
-                hover_background "#888888"
+                background "#5a3a1a"
+                hover_background "#6b4a2a"
+                hover_foreground Solid("#6b652820")
                 text_size font_size(16)
                 text_color "#ffffff"
-                text_hover_color "#6b6528"
+                text_hover_color gui.journal_hover_color
                 action Hide("worker_building_filter_menu")
+
+    key "K_BACKSPACE" action Hide("worker_building_filter_menu")
 
 screen worker_job_filter_menu(jobs):
     modal True
@@ -11349,11 +11603,12 @@ screen worker_job_filter_menu(jobs):
                 textbutton "[job]":
                     xsize 300
                     ysize 30
-                    background "#5a3a1a"
+                    background (gui.journal_hover_color if job == getattr(store, "worker_job_filter", None) else "#5a3a1a")
                     hover_background "#6b4a2a"
+                    hover_foreground Solid("#6b652820")
                     text_size font_size(16)
                     text_color "#ffffff"
-                    text_hover_color "#6b6528"
+                    text_hover_color gui.journal_hover_color
                     action [
                         SetVariable("worker_job_filter", job),
                         Hide("worker_job_filter_menu")
@@ -11364,9 +11619,12 @@ screen worker_job_filter_menu(jobs):
             textbutton "Cancel":
                 xsize 300
                 ysize 30
-                background "#666666"
-                hover_background "#888888"
+                background "#5a3a1a"
+                hover_background "#6b4a2a"
+                hover_foreground Solid("#6b652820")
                 text_size font_size(16)
                 text_color "#ffffff"
-                text_hover_color "#6b6528"
+                text_hover_color gui.journal_hover_color
                 action Hide("worker_job_filter_menu")
+
+    key "K_BACKSPACE" action Hide("worker_job_filter_menu")

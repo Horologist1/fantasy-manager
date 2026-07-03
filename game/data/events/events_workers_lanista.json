@@ -285,5 +285,100 @@
     "random_worker": false,
     "always_available": false,
     "worker_filter": {}
+  },
+  {
+    "id": "lanista_post_arc_dominion_accounting",
+    "description": "The last bell of the Arena's card has barely faded when the Lanista arrives at your door — on time, always on time, since the accounting between you was settled once and for all. The pit leathers have been brushed. The night's take is carried in both scarred hands like something that was never truly the Lanista's to hold.\n\nThe Lanista: 'The evening's purse, [player_title]. Counted twice. The gate, the wagers, the seller of standing room — all of it entered in the book, down to the copper.' The strongbox is set on your counter, and the hands stay flat beside it, waiting.\n\nEleven seasons of the sand answer to your ledger now. The Master of the Sands does not sit until told, and you have not told them yet.",
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": ["tavern", "restaurant", "casino", "brothel"],
+    "background_image": "images/lanista/cg_postarc_dominion_accounting.png",
+    "nsfw": false,
+    "conditions": {
+      "start_when": "has_flag:lanista_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Count it to the copper and take the house's share. (Gain: Money, Reputation)",
+        "message": "You count it. Every coin, while the Lanista stands and watches you do it — no protest, no flicker, only the level patience of someone who has learned exactly what is owed and to whom. The tally is perfect. It is always perfect. When you close the box you push a cup across the counter, and the Master of the Sands takes it standing, drinks it in one draught the way medicine is taken, and waits to see if there is anything else of the evening you mean to claim.\n\nWord moves through the district the way it always does: the champion of eleven seasons keeps a flawless book for your house and stands accounting at your counter like a hired hand. Nobody says it to your face. Everybody knows whose name is over that door. ({actual_money}, {actual_reputation} reputation, +1 Joy).",
+        "effect": {
+          "money": 150,
+          "reputation": 4,
+          "joy": 1,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Wave the box away — tonight the sands keep their own purse.",
+        "message": "You push the strongbox back across the counter without opening it. For a moment the Lanista does not move at all — the debt is the shape of the world now, and you have just bent the shape of it with one hand.\n\n'That's not the arrangement.' The iron voice is careful, feeling for the trap. You tell them there is no trap; the pits earned it, the pits keep it. Something almost like the old fire lifts in the hollowed eyes — and is banked again, carefully, as though it were not theirs to burn. The box goes back under one arm. At the door the Master of the Sands pauses, not turning. 'The recruits eat better this month, then. I'll enter it in the book as your instruction, [player_title].' Even the mercy is filed under your name. ({actual_reputation} reputation, +3 Joy).",
+        "effect": {
+          "reputation": 2,
+          "joy": 3,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "lanista_post_arc_dominion_display",
+    "description": "Your common room is full, and the whisper has gone around it twice already: that is the Lanista — the Master of the Sands, the one who never went down in eleven seasons — standing behind your counter with a cloth over one shoulder, waiting on your word like any hired hand.\n\nThe Lanista: 'They keep looking, [player_title]. They want the sand story from the iron throat. Say the word and they'll have it. Say the other word and I'll clear the empties instead. Your house. Your call.'\n\nThe voice is level. It is always level now. Whatever the telling once cost, the Lanista pays it the way everything is paid these days — promptly, and to you.",
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": ["tavern", "restaurant", "casino", "brothel"],
+    "background_image": "images/lanista/cg_postarc_dominion_display.png",
+    "nsfw": false,
+    "conditions": {
+      "start_when": "has_flag:lanista_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Give the word. Let the crowd have their champion. (Gain: Money, Reputation)",
+        "message": "You give the word. The Lanista sets down the cloth, takes the middle of your floor, and gives them the great bout of the seventh season, turn by turn — the feint, the sand in the eyes, the crowd of thirty thousand on its feet. It is magnificent. The room roars in all the right places and drinks deep in the pauses, and the takings run half again their usual weight.\n\nOnly you, standing close, can hear what the room cannot: that the telling is perfect the way the accounting is perfect. A performance, executed to the standard of the house that owns it. When it ends, the Master of the Sands picks the cloth back up without being told and looks to you for the next instruction. ({actual_money}, {actual_reputation} reputation, -1 Joy).",
+        "effect": {
+          "money": 120,
+          "reputation": 8,
+          "joy": -1,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "The other word. A champion who clears tables is display enough.",
+        "message": "You say the other word. The Lanista nods once and moves through the crowded room collecting empties, and the sight of it does the talking no story could: the undefeated Master of the Sands, stacking cups in your house, at your word. The room grows quieter than a full room ought to be. Patrons drink, and watch, and mind their manners to a degree your door has never before enjoyed.\n\n'Efficient,' the Lanista says at the close, setting the last tray by the wash-tub. 'One story would've bought you a loud night. This buys you a hundred quiet ones.' There is no bitterness in it that you can hear. That is the part your own sleep is slowest to forgive. ({actual_money}, {actual_reputation} reputation, -2 Joy).",
+        "effect": {
+          "money": 40,
+          "reputation": 3,
+          "joy": -2,
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
   }
 ]

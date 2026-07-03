@@ -7,7 +7,9 @@ init python:
         """Returns the building object for a worker, or None if unassigned."""
         building_name = worker.get("assigned_building", "Unassigned")
         if building_name != "Unassigned":
-            return available_buildings.get(building_name, None)
+            # Resolver accepts both "Building 1" and "Building_1" key formats
+            building, _key = _resolve_building_by_name(building_name)
+            return building
         return None
 
     def _resolve_building_by_name(building_name):
@@ -74,9 +76,12 @@ init python:
         building_name = worker.get("assigned_building", "Unassigned")
         if not building_name or building_name == "Unassigned":
             return "Unassigned"
-        building = available_buildings.get(building_name)
+        # Resolver accepts both "Building 1" and "Building_1"; keep the actual key
+        # so custom_names / default_name lookups below use the canonical name.
+        building, _actual_key = _resolve_building_by_name(building_name)
         if not building:
             return "Unassigned"
+        building_name = _actual_key
         btype_id = building.get("type")
         btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
         if not btype:
@@ -154,13 +159,16 @@ init python:
         return building_contribution + manager_contribution
 
     def calculate_reputation(building_name):
-        building = available_buildings[building_name]
+        building = available_buildings.get(building_name)
+        if not building:
+            return 0
         cap = get_building_reputation_cap(building)
         # Use stored reputation if present, otherwise calculate base
-        total_reputation = building.get("reputation", building["base_level"] * 10)
-        for worker in building["assigned_servants"]:
+        total_reputation = building.get("reputation", building.get("base_level", 1) * 10)
+        for worker in building.get("assigned_servants", []):
             total_reputation -= 5
-            highest_skill = max(int(skill) for skill in worker["skills"].values())
+            # default=0 covers workers with an empty/missing skills dict
+            highest_skill = max((int(skill) for skill in worker.get("skills", {}).values()), default=0)
             total_reputation += highest_skill // 10
         # Store and clamp to level-based cap (no growth above cap until level up)
         building["reputation"] = max(0, min(total_reputation, cap))
@@ -240,17 +248,19 @@ init python:
         if not callable(_norm_pct):
             _norm_pct = lambda ww: 35
 
+        # Agrupar por clave normalizada: acepta "Building 1" y "Building_1" (resolver)
         workers_by_building = {}
         for w in store.workers:
             b_name = w.get("assigned_building", "Unassigned")
             if b_name != "Unassigned":
-                if b_name not in workers_by_building:
-                    workers_by_building[b_name] = []
-                workers_by_building[b_name].append(w)
+                b_key = _norm_building_key(b_name)
+                if b_key not in workers_by_building:
+                    workers_by_building[b_key] = []
+                workers_by_building[b_key].append(w)
 
         for b_name in store.owned_buildings:
-            building = available_buildings.get(b_name)
-            workers_here = workers_by_building.get(b_name, [])
+            building, _key = _resolve_building_by_name(b_name)
+            workers_here = workers_by_building.get(_norm_building_key(b_name), [])
             if not building or not workers_here:
                 continue
             

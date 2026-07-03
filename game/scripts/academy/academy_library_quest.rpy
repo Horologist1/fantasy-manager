@@ -4,12 +4,6 @@
 # Minimum 3 visits (prologue, act1, act2). Lattice item skips to seal from any point post-prologue.
 # Token: MANAGE (6 letters). MANAGER accepted with corrective nudge.
 
-init 900 python:
-    try:
-        style.choice_button_text.bold = False
-    except Exception:
-        pass
-
 default academy_lib_stage = 0
 default academy_lib_last_visit_total_days = None
 default academy_lib_seal_attempts_today = 0
@@ -193,7 +187,7 @@ label academy_lib_prologue:
     narrator "{i}\"Position one is M. Confirmed. The rest will follow if you know where to look.\"{/i}"
 
     narrator "Below it, in different ink — shakier, more desperate:"
-    narrator "{i}\"Day five. I have tried MASTER, GOVERN, DIRECT, and STEWARD. None of these have six letters. I may need sleep.\"{/i}"
+    narrator "{i}\"Day five. I have tried STEWARD, OVERSEER, and COMMANDER. None of these have six letters. I may need sleep.\"{/i}"
 
     narrator "A previous manager, it seems, walked this same path and did not finish it."
 
@@ -307,9 +301,6 @@ label academy_lib_act1_vowel_choice:
             $ academy_lib_mark_visit_consumed()
             window hide
             jump academy_lib_quest_return
-
-    # Should not reach here, but safety fallback
-    jump academy_lib_act1_vowel_correct
 
 
 label academy_lib_act1_vowel_correct:

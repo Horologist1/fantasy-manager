@@ -61,8 +61,8 @@
         "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors, recognizing true skill when they see it, back down immediately.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to intimidate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors size one another up, and not one of them wants to be first to test your worker. Muttering about coming back with more men, they slink off empty-handed.\n\nThe merchant exhales shakily and grips your hand. 'I thought they'd break my arms this time,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] squares up, but the debt collectors have muscle of their own and the numbers to back it. They shoulder past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -90,8 +90,8 @@
         "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors, outmaneuvered, back down.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to outmaneuver them, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors squint at the contract as clause after clause is turned against them. Unable to argue with the paperwork, they withdraw to 'consult their employer.'\n\nThe merchant stares at the voided terms, then at you. 'They had me signing my own ruin,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' The tale of the outwitted collectors makes the rounds, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] picks apart the contract's wording, but the collectors just laugh—they are paid to collect, not to read. They brush past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -218,8 +218,8 @@
         "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors, recognizing true skill when they see it, back down immediately.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to intimidate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors size one another up, and not one of them wants to be first to test your worker. Muttering about coming back with more men, they slink off empty-handed.\n\nThe merchant exhales shakily and grips your hand. 'I thought they'd break my arms this time,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] squares up, but the debt collectors have muscle of their own and the numbers to back it. They shoulder past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -247,8 +247,8 @@
         "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors, outmaneuvered, back down.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to outmaneuver them, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors squint at the contract as clause after clause is turned against them. Unable to argue with the paperwork, they withdraw to 'consult their employer.'\n\nThe merchant stares at the voided terms, then at you. 'They had me signing my own ruin,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' The tale of the outwitted collectors makes the rounds, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] picks apart the contract's wording, but the collectors just laugh—they are paid to collect, not to read. They brush past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -375,8 +375,8 @@
         "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors, recognizing true skill when they see it, back down immediately.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to intimidate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors size one another up, and not one of them wants to be first to test your worker. Muttering about coming back with more men, they slink off empty-handed.\n\nThe merchant exhales shakily and grips your hand. 'I thought they'd break my arms this time,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] squares up, but the debt collectors have muscle of their own and the numbers to back it. They shoulder past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -403,8 +403,8 @@
         "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors, outmaneuvered, back down.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to outmaneuver them, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors squint at the contract as clause after clause is turned against them. Unable to argue with the paperwork, they withdraw to 'consult their employer.'\n\nThe merchant stares at the voided terms, then at you. 'They had me signing my own ruin,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' The tale of the outwitted collectors makes the rounds, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] picks apart the contract's wording, but the collectors just laugh—they are paid to collect, not to read. They brush past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,

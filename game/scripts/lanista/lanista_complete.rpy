@@ -291,6 +291,24 @@ init python:
 
         return False
 
+    # Register the Lanista first-visit popup in the intro-popup registry that
+    # core/screens.rpy defines at init -1 (this block is init 0, so it runs
+    # after). Extending the store dict here keeps screens.rpy untouched.
+    _lanista_popup_registry = getattr(store, "INTRO_POPUP_TEXTS", None)
+    if _lanista_popup_registry is not None and hasattr(_lanista_popup_registry, "__setitem__"):
+        _lanista_popup_registry["lanista_visit"] = {
+            "title": "Lanista Romance Quest",
+            "body": [
+                "This is a visual novel style romance route. Progress comes from repeated visits, conversations, remarks, wagers, and gifts over multiple days.",
+                "",
+                "{u}Devotion{/u}: romantic progress (respect, trust, partnership). Higher devotion pushes scenes toward meeting the fighter as an equal.",
+                "{u}Dominion{/u}: domination progress (debt, leverage, ownership). Higher dominion pushes scenes toward the Lanista answering to your hand.",
+                "{u}Affection{/u}: overall closeness and route momentum. This is the main stage gate for both routes.",
+                "{u}Corruption{/u}: how far the Arena's old code has been worn away. It rises with dominion choices and with {u}Program the card{/u} — a four-rung show ladder (Crowd Pleasers, Pin-up Barbarians, Oil & Chains, The Spectacle) that unlocks new arena professions as it climbs.",
+                "{u}Quick read{/u}: use {u}Take their measure{/u} during visits to see current totals and route direction in-character.",
+            ],
+        }
+
 ################################################################################
 ### LANISTA — FIRST MEETING (gender choice)
 ################################################################################
@@ -322,6 +340,7 @@ define lanista_npc = Character("The Lanista", color="#c98a3a")
 ################################################################################
 
 label lanista_visit:
+    $ maybe_show_intro_popup("lanista_visit")
     if not getattr(store, "lanista_gender", ""):
         call lanista_first_meeting from _lanista_first_meeting_call
     $ lanista_visit_count += 1
@@ -392,7 +411,9 @@ label lanista_visit_menu:
     $ _finance_avail = lanista_stage >= 4 and not lanista_s4_gate_fired and lanista_debt_finance_unlocked and lanista_debt_finance_last_day != _total_days
     $ _finance_dom = lanista_is_dominion_route()
     $ _card_avail = lanista_s3_gate_fired and lanista_card_tier < 4 and lanista_card_last_day != _total_days
-    $ _wager_avail = lanista_stage >= 2 and lanista_wager_last_day != _total_days
+    # Wager opens at stage 1 (was 2): early-grind calibration — S1 needs a daily
+    # action beyond talk/remark/gift or the stage-2 affection gate is a gift wall.
+    $ _wager_avail = lanista_stage >= 1 and lanista_wager_last_day != _total_days
     $ _aftercrowd_avail = lanista_s4_gate_fired and (_total_days - (lanista_aftercrowd_last_day or 0)) >= 3
     menu:
         lanista_npc "..."
@@ -889,13 +910,13 @@ label lanista_s6_talk_1:
     $ _route = lanista_determine_ending()
     if _route == "dominion":
         narrator "The new order arrives at your establishment the way a fighter reports to the sand — on time, in good order, awaiting the day's word. The Arena runs under your name now; so, by the terms of the one bill that was never written down, does the one who keeps it. They present themselves at your door and wait to be told the shape of the service."
-        lanista_npc "First day under the new arrangement, [_ttl]. I've set the yard to the second and come where I'm kept. Name the work and I'll do it well — I do everything well, it's the one habit they never beat out of me. Only tell me my marks. I'd sooner know them than guess them."
+        lanista_npc "First day under the new arrangement. I've set the yard to the second and come where I'm kept. Name the work and I'll do it well — I do everything well, it's the one habit they never beat out of me. Only tell me my marks. I'd sooner know them than guess them."
     elif _route == "mixed":
         narrator "The new order comes to your door by appointment — half a fighter reporting for duty, half a lover arriving for the evening, and the Lanista themselves could not tell you, honestly, where the one leaves off and the other starts. They negotiated the terms of tonight as carefully as a card, and crossed the city to keep them as eagerly as any tryst. One foot in each world, and standing, somehow, square."
-        lanista_npc "Here I am, then, [_ttl] — on the terms we struck, and gladder of them than the terms quite account for. Half of me's come to be useful to you. The other half just wanted to come. Don't ask me to sort which is which at the door. I've given up trying."
+        lanista_npc "Here I am, then — on the terms we struck, and gladder of them than the terms quite account for. Half of me's come to be useful to you. The other half just wanted to come. Don't ask me to sort which is which at the door. I've given up trying."
     else:
         narrator "The new order has no ceremony to it, and that is the wonder of it. The Lanista simply comes — crosses the city of an evening when the yard is shut and the count is done, and arrives at your door unsummoned, unowed, because the wanting carried them the distance. Eleven seasons chained to one bowl of sand, and the first free use they make of a free evening is to spend it on you."
-        lanista_npc "Don't look so surprised, [_ttl]. The gate's mine to walk through now, in either direction, and I find it leads here. No debt drove me across that city tonight. Only that I'd rather be where you are than anywhere the map still offers me."
+        lanista_npc "Don't look so surprised. The gate's mine to walk through now, in either direction, and I find it leads here. No debt drove me across that city tonight. Only that I'd rather be where you are than anywhere the map still offers me."
     menu:
         "\"You came because you wanted to. That's all I ever want from you — the choice, freely made.\"":
             $ lanista_devotion += 3
@@ -915,7 +936,7 @@ label lanista_s6_talk_1:
 label lanista_s6_talk_2:
     $ _ttl = getattr(store, "player_title", "") or "stranger"
     narrator "You catch the Lanista between the two halves of the new life and see, for half a heartbeat before the guard comes up, exactly what it costs. The Arena still wants a full day's blood and craft — the cards, the counts, the recruits who don't grow themselves. And now there is you, and your door, and the city to cross between the two. The shadows under the hard eyes are a thing the iron is working hard to deny."
-    lanista_npc "I'm well, [_ttl]. Don't furnish me with that look. I ran a failing house eleven seasons on less sleep than this and never let a card slip. Two lives is one more than I had, not one too many. I'll carry it."
+    lanista_npc "I'm well. Don't furnish me with that look. I ran a failing house eleven seasons on less sleep than this and never let a card slip. Two lives is one more than I had, not one too many. I'll carry it."
     narrator "They say it the way a fighter calls 'no hit' on a wound already bleeding through the linen — not to deceive you, exactly, but because owning the cut has never once made it close faster, and the habit of standing is the only habit they fully trust."
     menu:
         "\"Then carry more. If you can run the Arena and still cross the city for me, you can give me the parts of you still holding back.\"":
@@ -938,13 +959,13 @@ label lanista_s6_talk_3:
     $ _route = lanista_determine_ending()
     if _route == "dominion":
         narrator "Tomorrow the arrangement settles into its final shape. Tonight the Lanista comes to you composed, accounts squared, and speaks of the thing they've made their peace with — the place they hold now, and the one mercy that makes the place bearable."
-        lanista_npc "I've taken my own measure, [_ttl], the way I'd measure a fighter — honestly, no flattery in it. I'm a kept thing now. I'll not dress it up finer than that. But there's kept and there's kept. A creature can be owned with contempt or owned with care, and the difference is the whole of what's left to it. You've never once made me feel the contempt. Mark that I've noticed. It's the hinge the rest of me swings on."
+        lanista_npc "I've taken my own measure, the way I'd measure a fighter — honestly, no flattery in it. I'm a kept thing now. I'll not dress it up finer than that. But there's kept and there's kept. A creature can be owned with contempt or owned with care, and the difference is the whole of what's left to it. You've never once made me feel the contempt. Mark that I've noticed. It's the hinge the rest of me swings on."
     elif _route == "mixed":
         narrator "Tomorrow the two lives stop being a thing you're testing and become a thing you simply are. Tonight the Lanista comes to you and says the both-things-at-once they've stopped trying to untangle, and the saying of it is the closest to peace you've seen the hard face hold."
-        lanista_npc "Here's the truth of me before it all sets, [_ttl], and it's two truths that won't lie down together. I love you — that's not the arrangement talking, it's under the arrangement and older than it. And I serve you, and there's a part of me that needs the serving near as much as the loving. Both real. Both mine. I stopped grieving that they don't match. A person can be more than one thing and still be true to all of it."
+        lanista_npc "Here's the truth of me before it all sets, and it's two truths that won't lie down together. I love you — that's not the arrangement talking, it's under the arrangement and older than it. And I serve you, and there's a part of me that needs the serving near as much as the loving. Both real. Both mine. I stopped grieving that they don't match. A person can be more than one thing and still be true to all of it."
     else:
         narrator "Tomorrow the thing settles into whatever it's going to be — the new order made permanent, the shape of the rest of it set. Tonight the Lanista finds you of their own accord and stands a while in your quiet, and when they speak it's without the dry armor, plainly, the way they've learned they can with you."
-        lanista_npc "I've been a transaction my whole life, [_ttl]. Bought in, sold on, leaned against, collected from. I knew the shape of every one of those. This is the first thing I've stood inside that I can't price — and I've tried, the merchant in me's tried hard, and the figure won't come. That's how I know it's real. Nothing real ever did add up."
+        lanista_npc "I've been a transaction my whole life. Bought in, sold on, leaned against, collected from. I knew the shape of every one of those. This is the first thing I've stood inside that I can't price — and I've tried, the merchant in me's tried hard, and the figure won't come. That's how I know it's real. Nothing real ever did add up."
     menu:
         "\"It's real. Whatever else this is, that's the part that lasts — and I'll spend the rest of it proving the word.\"":
             $ lanista_devotion += 4
@@ -968,6 +989,10 @@ label lanista_talk_generic:
         jump lanista_visit_menu
     $ _route = getattr(store, "lanista_ending_route", "") or lanista_determine_ending()
     $ _idx = int(getattr(store, "lanista_post_arc_talk_index", 0) or 0) % 3
+    # Day-gate post-arc Talk like every other talk (mirrors yvara_talk_post_arc,
+    # which stamps yvara_last_talk_total_days); the menu's _talk_free check
+    # then hides the option for the rest of the day.
+    $ lanista_last_talk_total_days = calculate_total_days()
     if _route == "devotion":
         if _idx == 0:
             lanista_npc "The pits ran clean today — two good bouts, a house full enough, and an evening with nowhere it has to be but here. A year ago I'd not have called that a life, [_ttl]. It's the best one I've had."
@@ -1007,7 +1032,10 @@ label lanista_s1_remark_1:
     narrator "You let your gaze travel the old wounds the Lanista wears like a second armor — the seam across one forearm, the notch missing from an ear, the pale rope of scar that vanishes under the collar."
     narrator "\"You kept count of those the hard way,\" you say."
     lanista_npc "Every one's a lesson I was slow to learn. The slow ones leave the deepest marks."
-    $ lanista_affection += 1
+    # Calibration: S1/S2 remarks grant +2 affection (was +1). Scripted S1+S2
+    # content alone left a 3-8 day gift wall against the stage gates (aff 20/39);
+    # S3+ remarks keep +1 so later pacing is unchanged.
+    $ lanista_affection += 2
     $ lanista_devotion += 1
     $ lanista_s1_remarks_done = list(lanista_s1_remarks_done) + ["s1_r1"]
     $ lanista_last_question_total_days = calculate_total_days()
@@ -1019,7 +1047,7 @@ label lanista_s1_remark_2:
     narrator "A recruit fumbles the haft of a practice spear. The Lanista crosses the yard, closes a scarred hand over the recruit's, and resets each finger without a word — patient, exact, the way one might tune an instrument."
     narrator "\"You could just shout at the lad,\" you observe."
     lanista_npc "Shouting teaches him to flinch. The hand teaches the hand. He'll keep this long after he's forgotten my voice."
-    $ lanista_affection += 1
+    $ lanista_affection += 2
     $ lanista_devotion += 1
     $ lanista_s1_remarks_done = list(lanista_s1_remarks_done) + ["s1_r2"]
     $ lanista_last_question_total_days = calculate_total_days()
@@ -1031,7 +1059,7 @@ label lanista_s1_remark_3:
     narrator "Along a high shelf behind the rack sits a row of victor's wreaths and bronze tokens, grey under a skin of chalk dust. Trophies of fighters who mattered, on days the crowd has long since spent."
     narrator "\"Nobody dusts those,\" you note."
     lanista_npc "Glory's cheap to win and cheaper to keep. The names matter to me. The shine never did."
-    $ lanista_affection += 1
+    $ lanista_affection += 2
     $ lanista_dominion += 1
     $ lanista_s1_remarks_done = list(lanista_s1_remarks_done) + ["s1_r3"]
     $ lanista_last_question_total_days = calculate_total_days()
@@ -1051,7 +1079,7 @@ label lanista_s2_remark_1:
     narrator "A champion's belt hangs on a peg by the weapons rack, the leather gone dark and supple with old wear, the bronze plate at its center worn bright by a thumb that no longer touches it. Close enough to see from the bench. Too far to be worn."
     narrator "\"You keep it where you'll look at it,\" you say, \"but not where you'll reach for it.\""
     lanista_npc "It fit a fighter who could carry it. I keep it honest about which of us is still standing."
-    $ lanista_affection += 1
+    $ lanista_affection += 2
     $ lanista_devotion += 1
     $ lanista_s2_remarks_done = list(lanista_s2_remarks_done) + ["s2_r1"]
     $ lanista_last_question_total_days = calculate_total_days()
@@ -1063,7 +1091,7 @@ label lanista_s2_remark_2:
     narrator "Before the gates open the Lanista stands at the mouth of the tunnel and counts the house as it fills — not the heads that come, you realize, but the benches that stay bare. With each empty row the jaw sets a fraction harder, a tally kept in muscle."
     narrator "\"You count the seats nobody took,\" you observe."
     lanista_npc "Full rows lie to you. They cheer, and you think you've won. The empty ones tell the truth, and the truth is what I owe by month's end."
-    $ lanista_affection += 1
+    $ lanista_affection += 2
     $ lanista_dominion += 1
     $ lanista_s2_remarks_done = list(lanista_s2_remarks_done) + ["s2_r2"]
     $ lanista_last_question_total_days = calculate_total_days()
@@ -1270,7 +1298,7 @@ label lanista_card_tier_1:
     $ _Their = _their.capitalize()
     narrator "You find the Lanista at the slate, chalking the night's pairings — clean matches, fighter against fighter, the way the craft says they should be. You lay your idea over the top of it. Call them Crowd Pleasers. Bouts built like stories: the slow start, the near-loss, the turn at the end the benches will come to their feet for. Not lies. Shaped truths. A fight that knows where it's going."
     lanista_npc "Shaped truths. You've a coin-counter's gift for naming a thing so it stops smelling like what it is."
-    lanista_npc "A bout isn't a tale you tell, [_ttl]. It's two people and the sand and whatever's true between them. You start writing the turn at the end, you're not a Master of the Sands anymore. You're a puppeteer."
+    lanista_npc "A bout isn't a tale you tell. It's two people and the sand and whatever's true between them. You start writing the turn at the end, you're not a Master of the Sands anymore. You're a puppeteer."
     narrator "But [_their] eye drifts to the benches as [_they] says it — half of them bare wood, no body to warm them — and the rest of the sentence dies in [_their] throat."
     menu:
         "\"You're not writing the ending. You're framing the fight so the crowd feels what you already feel watching it.\"":
@@ -1281,6 +1309,10 @@ label lanista_card_tier_1:
             lanista_npc "And now you've put it in my head that arranging them might be a kindness more than a sin. Damn you, [_ttl]. I want to try it. That's the part that worries me."
         "\"The benches are bare. Crowd Pleasers fill them. That's the whole of the arithmetic, and you've already done it.\"":
             $ lanista_dominion += 3
+            # Affection here reads as intensity/attachment, not tenderness — the
+            # dominion route shares the devotion route's affection stage gates,
+            # so its card choices must feed the same meter (all four tiers).
+            $ lanista_affection += 2
             $ lanista_corruption += 2
             narrator "You don't dress it up. You set the empty benches and the lenders' number side by side and let the Lanista count, because [_they] is the only one who can. The jaw works. The sum comes out the way it always does when you hold the chalk."
             lanista_npc "Bare benches don't pay the iron-smith. I know the column, [_ttl]. I knew it before you said it."
@@ -1300,7 +1332,7 @@ label lanista_card_tier_2:
     $ _They = _they.capitalize()
     $ _Their = _their.capitalize()
     narrator "You come back with the next rung already drawn. Pin-up Barbarians. The fighters stripped to half their armor and less — furs cut for the eye, skin oiled to catch the torchlight, the bout dressed up as much for wanting as for winning. You've seen how the front rows lean when a champion's shoulder comes bare. You propose the Arena lean back."
-    lanista_npc "Half their armor. ...You know what armor is for, [_ttl]. It's the difference between a scar and a grave."
+    lanista_npc "Half their armor. ...You know what armor is for. It's the difference between a scar and a grave."
     lanista_npc "And now you'd have me cut it away so the front row can ogle the dying. That's a different country than rigging a turn at the end. That's selling the flesh, not the fight."
     narrator "Yet [_they] doesn't say no. [_They] turns it over the way [_they] reads a map of country [_they] already suspects [_they] will have to cross."
     menu:
@@ -1312,6 +1344,7 @@ label lanista_card_tier_2:
             lanista_npc "I'd watch. There — the quiet part, the way you're always pulling it out of me. Pin-up Barbarians. Gods help me, I can already see how I'd light it, [_ttl]."
         "\"The body sells what the bout can't. You need the purse, and the purse wants skin. Name it and bank it.\"":
             $ lanista_dominion += 4
+            $ lanista_affection += 2
             $ lanista_corruption += 3
             narrator "You put it to the Lanista as a transaction, because that's what it is, and [_they] respects the lack of perfume on it even as it costs [_them]. [_They] does the sum — the skin against the silver, the dignity against the debt — and the answer is the answer."
             lanista_npc "Skin sells. I'd be a fool to pretend the books say otherwise. They don't."
@@ -1331,7 +1364,7 @@ label lanista_card_tier_3:
     $ _They = _they.capitalize()
     $ _Their = _their.capitalize()
     narrator "The next format you bring has teeth. Oil & Chains. The bouts fought to the submission and held there — the pin drawn out, the yield made into the show, irons and oil and the slow theater of one body bending another for the benches to feast on. Not a fight that ends in a winner. A fight that ends in a surrender, and lingers on it."
-    lanista_npc "Hold the pin. Draw out the yield. ...You're not describing a bout anymore, [_ttl]. You're describing the one thing I've spent my life teaching fighters never to do — hand the crowd the surrender as the prize."
+    lanista_npc "Hold the pin. Draw out the yield. ...You're not describing a bout anymore. You're describing the one thing I've spent my life teaching fighters never to do — hand the crowd the surrender as the prize."
     narrator "[_They] turns a length of chain over in [_their] hands as [_they] speaks — testing the weight of it, the link of it, the way [_they] tests everything before [_they] decides whether [_they] can live with it."
     menu:
         "\"A surrender given on purpose, beautifully, is the bravest thing in that bowl. Make it art — with me.\"":
@@ -1342,6 +1375,7 @@ label lanista_card_tier_3:
             lanista_npc "A surrender, given. Performed. ...I know how to make a body yield, [_ttl] — I've just never made it beautiful on purpose. With you behind it, I think I could. That should frighten me more than it does."
         "\"You know how to make a body yield. The crowd will pay to watch it. Do the math and put the irons on.\"":
             $ lanista_dominion += 4
+            $ lanista_affection += 2
             $ lanista_corruption += 3
             narrator "You set the ledger against the Lanista's pride one more time, and this time there's barely a contest left in it. [_They] has been doing this arithmetic for a whole season now, and [_they] knows the carry by heart. The chains, the oil, the held surrender — it all comes out in coin, and the coin is what keeps the gate."
             lanista_npc "Make a body yield for silver. I've sold a great many things to keep this sand. Now I sell the yielding itself."
@@ -1361,7 +1395,7 @@ label lanista_card_tier_4:
     $ _They = _they.capitalize()
     $ _Their = _their.capitalize()
     narrator "There's one rung left and you both know its name before you say it. The Spectacle. Not a bout dressed as wanting, not a yield held for the eye — the whole thing given over, combat and flesh fused into one show with no pretense of sport left standing in it. The last card. The one the old Lanista would have burned the Arena down before allowing."
-    lanista_npc "The Spectacle. You needn't pitch it, [_ttl]. I've watched it coming since the night I chalked a lame boy's name on this slate and called it a card."
+    lanista_npc "The Spectacle. You needn't pitch it. I've watched it coming since the night I chalked a lame boy's name on this slate and called it a card."
     lanista_npc "There's no code left to scrape against. We sanded it away a rung at a time, you and I. What you're asking for now isn't a compromise. It's the place all the compromises were always walking toward."
     narrator "[_They] looks at the slate — clean, waiting — and then at you, and there's no fight left in it. Only the question of how [_they] gives the last of it away."
     menu:
@@ -1373,6 +1407,7 @@ label lanista_card_tier_4:
             lanista_npc "The Spectacle. Ours. I'll build it so fine the dead I swore my old oath to would forgive me for it — because there's nothing shameful in worship, [_ttl], and that's what this will be. I see it now. I see all of it. Lead on."
         "\"The code's gone. The Arena's mine, and The Spectacle is what it stages now. Say the price and we're done.\"":
             $ lanista_dominion += 5
+            $ lanista_affection += 2
             $ lanista_corruption += 3
             narrator "You don't pretend it's a partnership. You state it like a deed of sale, because the Lanista has earned a creditor who won't lie to [_them]. [_They] hears the whole of it — the house, the sand, the last of the code — pass over the bench into your column, and [_they] receives it standing, the way a champion takes the count [_they] can't beat."
             lanista_npc "The Arena stages what its owner says it stages. And its owner is you. I'll not insult either of us by arguing the obvious."
@@ -1387,15 +1422,20 @@ label lanista_card_tier_4:
 label lanista_wager_menu:
     $ _ttl = getattr(store, "player_title", "") or "stranger"
     $ _corrupt_on_win = 0
+    # Wager EV (win pays 2x the stake, so EV = stake * (2p - 1)):
+    #    500 @ 50% -> EV    0  (break-even; the daily +20% money pump is gone)
+    #   1500 @ 45% -> EV -150  (-10% of stake)
+    #   3000 @ 40% -> EV -600  (-20% of stake; biggest stake stays the riskiest)
+    # Stakes are also gated on current money so the purse can never go negative.
     menu:
         lanista_npc "Put coin on the sand. Back your read — if it holds, you walk out twice what you brought."
-        "Bankroll an exhibition comeback. (Stake 500)":
-            $ _won, _delta = lanista_wager(500, 0.6)
+        "Bankroll an exhibition comeback. (Stake 500)" if money >= 500:
+            $ _won, _delta = lanista_wager(500, 0.5)
             jump lanista_wager_resolve
-        "Wager on a grudge match. (Stake 1500)":
-            $ _won, _delta = lanista_wager(1500, 0.5)
+        "Wager on a grudge match. (Stake 1500)" if money >= 1500:
+            $ _won, _delta = lanista_wager(1500, 0.45)
             jump lanista_wager_resolve
-        "Sponsor a beast-fight spectacle. (Stake 3000)" if lanista_card_tier >= 2:
+        "Sponsor a beast-fight spectacle. (Stake 3000)" if lanista_card_tier >= 2 and money >= 3000:
             $ _corrupt_on_win = 3
             $ _won, _delta = lanista_wager(3000, 0.4)
             jump lanista_wager_resolve
@@ -1452,7 +1492,7 @@ label lanista_aftercrowd_dev_t1:
         narrator "The last torch is doused and the gate barred, and the Lanista comes to find you in the empty dark before you can think to leave — crossing the cooling sand the way [_they] crosses to a thing [_they] wants and has stopped pretending not to."
     else:
         narrator "The count is locked away and the great bowl stands empty, and [_they] catches your wrist as you turn to go — not hard, only sure, the grip of someone who has decided the night isn't finished with you yet."
-    lanista_npc "Stay a moment. The sand keeps better company when you're in it, [_ttl]. I've stopped being ashamed to say so."
+    lanista_npc "Stay a moment. The sand keeps better company when you're in it. I've stopped being ashamed to say so."
     $ _bust = "images/lanista/lanista_{}_kiss.png".format(_g)
     if not renpy.loadable(_bust):
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
@@ -1482,7 +1522,7 @@ label lanista_aftercrowd_dev_t2:
         narrator "The gate's barred and the lamps are guttering, and the Lanista doesn't wait for the dark to do the asking tonight — [_they] crosses to you with the night's heat still on [_them] and hands that already know the way."
     else:
         narrator "You're barely alone before [_they] has you backed against the cool stone of the tunnel mouth, the want plain on [_them] now, no season of caution left to spend on hiding it."
-    lanista_npc "I've thought of this the whole damned card, [_ttl]. Counting the rounds till the gate could close on the rest of the world."
+    lanista_npc "I've thought of this the whole damned card. Counting the rounds till the gate could close on the rest of the world."
     $ _bust = "images/lanista/lanista_{}_unbutton.png".format(_g)
     if not renpy.loadable(_bust):
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
@@ -1520,7 +1560,7 @@ label lanista_aftercrowd_dev_t3:
         narrator "The gate is barred and the count is done, and [_they] draws you down onto the bench in the warm dark without a word wasted — the question that hovered the first night long since answered, and answered yes."
     else:
         narrator "The empty bowl holds nothing but the two of you and the guttering lamps, and [_they] pulls you in close, the night's heat still on [_them], wanting you with none of the old careful hesitation."
-    lanista_npc "No need to be clear-eyed about it anymore, [_ttl]. I know the shape of what this is. Come here."
+    lanista_npc "No need to be clear-eyed about it anymore. I know the shape of what this is. Come here."
     $ _scene = "s4_gate"
     $ _route = "devotion"
     python:
@@ -1570,7 +1610,7 @@ label lanista_aftercrowd_dev_t4:
         narrator "The gate is barred before the last of the crowd has cleared the road, and [_they] is on you the moment it falls — no patience left to spend, no part of [_them] still kept back, the whole long armored season of [_their] life burned down to wanting you and not caring who could see it."
     else:
         narrator "[_They] doesn't wait for the dark or the quiet tonight. [_Their] hands are in your clothes before the torches gutter out, the hunger plain and shameless on [_them], a fighter who has forgotten entirely how to brace."
-    lanista_npc "I've nothing left to keep behind the guard, [_ttl]. You took it all, and I let you, and I'd let you again tonight and every night the gate will bar. Come here. All of it. Now."
+    lanista_npc "I've nothing left to keep behind the guard. You took it all, and I let you, and I'd let you again tonight and every night the gate will bar. Come here. All of it. Now."
     $ _scene = "aftercrowd"
     $ _route = "devotion"
     python:
@@ -1622,7 +1662,7 @@ label lanista_aftercrowd_dom_t1:
         narrator "You send word down the tunnel after the gate is barred, and the Lanista comes — unhurried, composed, the cold dignity worn like the day's armor still buckled on. [_They] knows precisely why [_they] was summoned. [_They] comes anyway."
     else:
         narrator "The benches are empty and the night's coin is yours by every reckoning that matters. You do not rise to leave. You wait, and the Lanista crosses the sand to you, because both of you know that is how this goes now."
-    lanista_npc "You've a use for me past the count, then. ...Say it plain, [_ttl]. I'll not be summoned for nothing."
+    lanista_npc "You've a use for me past the count, then. ...Say it plain. I'll not be summoned for nothing."
     $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
     if not renpy.loadable(_bust):
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
@@ -1652,7 +1692,7 @@ label lanista_aftercrowd_dom_t2:
         narrator "You keep [_them] back a moment when the gate is barred, a hand flat on [_their] chest, and the Lanista holds the cold composure while you take [_their] measure at your leisure — both of you aware the stillness is a thing [_they] offers, not a thing [_they] feels."
     else:
         narrator "The night's coin is counted and yours, and you've a mind to collect the rest. [_They] comes when you bid [_them], chin level, the champion's dignity buckled on — and underneath it, already, the body that has stopped keeping its secrets from you."
-    lanista_npc "Collecting again. ...Go on, then, [_ttl]. Take your measure of me. I'll keep my face. We both know that's all I'll manage to keep."
+    lanista_npc "Collecting again. ...Go on, then. Take your measure of me. I'll keep my face. We both know that's all I'll manage to keep."
     $ _bust = "images/lanista/lanista_{}_unbutton.png".format(_g)
     if not renpy.loadable(_bust):
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
@@ -1690,7 +1730,7 @@ label lanista_aftercrowd_dom_t3:
         narrator "The gate is barred and the house is yours, the both of you long past pretending otherwise. You bid the Lanista to you, and [_they] comes with the cold dignity intact and the body beneath it already half lost to you."
     else:
         narrator "You take the proud face in your hand the way you did at the first gate — but there is no stopping now, no terms to set, only the familiar reckoning. [_They] meets your eye, level and composed, a fighter who chose this ground seasons ago and returns to it still calling it a loss."
-    lanista_npc "You'll have what you came for. ...You always do, [_ttl]. Spare me the asking. Take it."
+    lanista_npc "You'll have what you came for. ...You always do. Spare me the asking. Take it."
     $ _scene = "s4_gate"
     $ _route = "dominion"
     python:
@@ -1740,7 +1780,7 @@ label lanista_aftercrowd_dom_t4:
         narrator "You no longer summon [_them]; [_they] is already there when the gate falls, where [_they] is always now. The cold dignity is the last thing left standing in [_them] — a costume worn over a body schooled, season by season, to want your hand before you raise it."
     else:
         narrator "The gate bars on the richest house in eleven seasons, and the Lanista comes to you composed as ever — chin level, gaze steady — and you both know the composure is the only thing [_they] still owns outright, and that you let [_them] keep it because it pleases you to."
-    lanista_npc "The face is mine. ...Everything under it answers to you, and we've both long stopped pretending otherwise. Collect, [_ttl]. I'm trained to it."
+    lanista_npc "The face is mine. ...Everything under it answers to you, and we've both long stopped pretending otherwise. Collect. I'm trained to it."
     $ _scene = "aftercrowd"
     $ _route = "dominion"
     python:
@@ -1840,9 +1880,9 @@ label lanista_assess:
             narrator "The arc is settled. The Lanista answers to your hand now: the Broken Champion, running your pits by day and reporting to your house by the schedule you set."
         else:
             narrator "The arc is settled into something crooked and lived-in: the Reluctant Gladiator, half master of the sands, half kept thing, unwilling to sever either."
-        narrator "Measure: Ending — [_route_pretty] | Devotion [lanista_devotion] | Dominion [lanista_dominion] | Affection [lanista_affection] | Corruption [_corr]% | Card: tier [_card]/4 ([_card_name])"
+        narrator "Measure: Ending — [_route_pretty] | Devotion [lanista_devotion] | Dominion [lanista_dominion] | Affection [lanista_affection] | Corruption [_corr]/100 | Card: tier [_card]/4 ([_card_name])"
     else:
-        narrator "Measure: Stage [lanista_stage] | Devotion [lanista_devotion] | Dominion [lanista_dominion] | Affection [lanista_affection] | Corruption [_corr]% | Card: tier [_card]/4 ([_card_name]) | Likely ending: [_route_pretty]"
+        narrator "Measure: Stage [lanista_stage] | Devotion [lanista_devotion] | Dominion [lanista_dominion] | Affection [lanista_affection] | Corruption [_corr]/100 | Card: tier [_card]/4 ([_card_name]) | Likely ending: [_route_pretty]"
     jump lanista_visit_menu
 
 label lanista_s3_gate:
@@ -1888,7 +1928,7 @@ label lanista_s3_gate_devotion:
         pause
         window show
     narrator "Then the Lanista breaks it — a hand flat on your chest, gentle, setting a hand's breadth of cold air back between you. The breath that follows is ragged in a way you've never heard from that iron throat."
-    lanista_npc "Not like this, [_ttl]. Not tonight."
+    lanista_npc "Not like this. Not tonight."
     lanista_npc "Not with the lenders' number hanging over us both and me half able to tell what's want and what's drowning. When I take you — if I take you — it'll be clear-eyed. You're worth a clear head. I'll not give you less."
     call lanista_restore_visit_scene from _lanista_restore_s3_gate_dev
     menu:
@@ -1916,7 +1956,7 @@ label lanista_s3_gate_dominion:
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
     lanista_npc "So that's the way of it. The purse comes to collect, and what it wants isn't coin."
-    lanista_npc "I've put down bigger than you on that sand, [_ttl]. Don't mistake the debt for a leash."
+    lanista_npc "I've put down bigger than you on that sand. Don't mistake the debt for a leash."
     narrator "But the jaw is set too hard, and you both know the books don't lie. You hold the Lanista's eye and don't look away, and the silence does the arguing for you. Slowly — every inch of it a fighter's surrender, ceded and not given — the distance closes."
     $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
     if not renpy.loadable(_bust):
@@ -1943,7 +1983,7 @@ label lanista_s3_gate_dominion:
         pause
         window show
     narrator "Then you're the one who steps back — because taking it all tonight would be too easy, and easy isn't the same as owned. You leave the Lanista standing there, breath uneven, the proud line of the shoulders the only thing still holding."
-    lanista_npc "...That's enough. You've made your point, [_ttl]."
+    lanista_npc "...That's enough. You've made your point."
     lanista_npc "You'll have the rest when I decide it, not when the ledger does. I yielded the bout. I didn't hand you the whole sand. Remember the difference."
     call lanista_restore_visit_scene from _lanista_restore_s3_gate_dom
     menu:
@@ -1990,7 +2030,7 @@ label lanista_s4_gate_devotion:
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
-    lanista_npc "I held this back for the fighter I used to be. That one took the night's count and walked out the gate with the crowd. Whatever's left standing in this bowl with you isn't him — isn't armored, isn't careful. I'm done being careful with you, [_ttl]."
+    lanista_npc "I held this back for the fighter I used to be. That one took the night's count and walked out the gate with the crowd. Whatever's left standing in this bowl with you isn't him — isn't armored, isn't careful. I'm done being careful with you."
     narrator "The Lanista crosses the last of the distance and does not stop this time — no scarred hand that halts at your jaw to ask the question it won't say. [_Their] hands find the fastenings of your clothes with the same sure economy [_they] brings to a blade, and under the iron of it there is a tremor [_they] cannot quite still."
     $ _bust = "images/lanista/lanista_{}_vulnerable.png".format(_g)
     if not renpy.loadable(_bust):
@@ -2016,7 +2056,7 @@ label lanista_s4_gate_devotion:
             $ lanista_affection += 4
             $ lanista_devotion += 2
             narrator "The hard line of [_their] shoulders eases at that, by a degree no one else has ever been let close enough to see."
-            lanista_npc "Just here. ...Eleven years I've been iron, because iron is the thing that stays standing. You make me want to learn what's under it. A dangerous thing to want, [_ttl]. I find I want it anyway."
+            lanista_npc "Just here. ...Eleven years I've been iron, because iron is the thing that stays standing. You make me want to learn what's under it. A dangerous thing to want. I find I want it anyway."
     $ _scene = "s4_gate"
     $ _route = "devotion"
     python:
@@ -2081,7 +2121,7 @@ label lanista_s4_gate_dominion:
             $ lanista_dominion += 4
             $ lanista_affection += 2
             narrator "Something flickers behind the cold eyes — caught, and refusing to own it — and the proud jaw sets all the harder, which tells you everything the mouth will not."
-            lanista_npc "Have it, then. ...You read a body the way you read a ledger, [_ttl]. Damn you for it. Take your collection. I'll keep my silence, you'll keep your prize, and we'll both call that a fair exchange."
+            lanista_npc "Have it, then. ...You read a body the way you read a ledger. Damn you for it. Take your collection. I'll keep my silence, you'll keep your prize, and we'll both call that a fair exchange."
         "\"Yield it on your terms. I'll take it on mine. We both win that bargain.\"":
             $ lanista_affection += 3
             $ lanista_dominion += 2
@@ -2163,7 +2203,7 @@ label lanista_s5_gate_devotion:
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
-    lanista_npc "You saved it asking nothing. I've turned that over a hundred times and still can't make it balance — because it doesn't. It was never a trade. Whatever I am now, [_ttl], I'm it with you and not for you. There's a world of difference, and you're the one who taught it to me."
+    lanista_npc "You saved it asking nothing. I've turned that over a hundred times and still can't make it balance — because it doesn't. It was never a trade. Whatever I am now, I'm it with you and not for you. There's a world of difference, and you're the one who taught it to me."
     narrator "The Lanista crosses the sand to you, and there's no iron left in the approach — no fighter's economy, no held guard. [_They] comes the way the grief and the wanting come, together and unhidden, a body that has stood armored against the whole world for eleven seasons walking out with the armor laid down in the dust behind."
     $ _bust = "images/lanista/lanista_{}_vulnerable.png".format(_g)
     if not renpy.loadable(_bust):
@@ -2184,12 +2224,12 @@ label lanista_s5_gate_devotion:
             $ lanista_devotion += 4
             $ lanista_affection += 3
             narrator "You don't tell [_them] the grief is misplaced. You only open your arms to it and let [_them] bring the whole weight — the dead champion, the buried code, eleven seasons of standing alone — and set it down against you in the dark. [_They] shakes once, hard, and then [_their] hands find you and do not let go."
-            lanista_npc "Here, then. With you. ...I buried the best of me this season and never let myself mourn it. You hand me the leave to, and a shoulder to do it on. I'll waste neither, [_ttl]."
+            lanista_npc "Here, then. With you. ...I buried the best of me this season and never let myself mourn it. You hand me the leave to, and a shoulder to do it on. I'll waste neither."
         "\"No more armor. Not tonight. Just you, and me, and nothing owed in either direction.\"":
             $ lanista_affection += 4
             $ lanista_devotion += 2
             narrator "You say it like the simple truth it is, and you watch [_them] decide to believe it — the last of the iron going out of the proud frame, the body in your hands braced for nothing now but you. Nothing owed. Nothing collected. Only this."
-            lanista_npc "Nothing owed. ...Eleven years every touch came with a bill behind it, mine or theirs. You strip even that away. There's nothing left of me to defend, and I find I don't want to. Take me as I am, [_ttl]. There's no other version left."
+            lanista_npc "Nothing owed. ...Eleven years every touch came with a bill behind it, mine or theirs. You strip even that away. There's nothing left of me to defend, and I find I don't want to. Take me as I am. There's no other version left."
     $ _scene = "s5_gate"
     $ _route = "devotion"
     python:
@@ -2233,7 +2273,7 @@ label lanista_s5_gate_dominion:
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
-    lanista_npc "It's done, then. The number's gone, the Governor's date is ash, and the whole of it sits on the one bill we never wrote down. I came to pay it. Don't expect me to come cheaply, [_ttl] — a debt this size, a body settles slow."
+    lanista_npc "It's done, then. The number's gone, the Governor's date is ash, and the whole of it sits on the one bill we never wrote down. I came to pay it. Don't expect me to come cheaply — a debt this size, a body settles slow."
     narrator "[_They] crosses the sand to you with the champion's bearing fully intact — chin level, shoulders square, every step the measured advance of a fighter who has chosen the ground. The price is understood. [_They] has come to pay it in full, on [_their] feet, with the one thing the debt could never strip away held high: the manner of the paying."
     $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
     if not renpy.loadable(_bust):
@@ -2254,12 +2294,12 @@ label lanista_s5_gate_dominion:
             $ lanista_dominion += 4
             $ lanista_affection += 2
             narrator "You name the one mercy in the whole transaction, and you name it plainly — that the pride is [_theirs] to keep, the only line of credit you'll extend. Something flickers behind the cold eyes, caught and refusing to own it, and the proud jaw sets all the harder, which tells you everything the mouth will not."
-            lanista_npc "My pride. You'll take the whole of the rest and leave me that. ...You're a thorough collector, [_ttl], and a stranger sort of merciful one. Have your full measure, then. I'll pay it standing, I'll keep my feet, and we'll both call that the bargain."
+            lanista_npc "My pride. You'll take the whole of the rest and leave me that. ...You're a thorough collector, and a stranger sort of merciful one. Have your full measure, then. I'll pay it standing, I'll keep my feet, and we'll both call that the bargain."
         "\"Your terms for the manner, mine for the taking. Settle it like that and we both walk away square.\"":
             $ lanista_affection += 3
             $ lanista_dominion += 2
             narrator "The cold composure holds, but something behind it eases — you've left the pride its footing even as you claim the rest, and a fighter knows to the copper the worth of being allowed to settle a debt standing up."
-            lanista_npc "My manner, your taking. ...You'd grant me that, with the whole of me already on your books. The one creditor who lets the debtor keep their bearing through the paying. Small wonder I stopped trying to be rid of you. Square it, then — on those terms. I'll meet you copper for copper, [_ttl]."
+            lanista_npc "My manner, your taking. ...You'd grant me that, with the whole of me already on your books. The one creditor who lets the debtor keep their bearing through the paying. Small wonder I stopped trying to be rid of you. Square it, then — on those terms. I'll meet you copper for copper."
     $ _scene = "s5_gate"
     $ _route = "dominion"
     python:
@@ -2279,13 +2319,13 @@ label lanista_s5_gate_dominion:
         window show
     $ _pt = (getattr(store, "player_title", "") or "").strip().lower()
     if lanista_gender == "male" and _pt == "lord":
-        narrator "He pays the debt on his feet to the very last — jaw set, stare level, not a copper conceded that he doesn't choose to. His body keeps no such books. He's hard against you long before he'll own to it, and when you take him into you and set the pace of the settling yourself, the iron in his face never cracks while everything beneath it does — the breath torn loose, the scarred hands fisting in the bench, the whole proud frame paying in full and refusing, to the end, to call it anything but a debt discharged."
+        narrator "There is no ceremony, and he permits none. He undresses like a man stripping for the scales — exact, itemized, nothing lingered over — and stands to be audited. When you take him into you and set the pace of the settling, he renders what the terms demand and not a breath more: the strength, the heat, the shudder counted out like coin onto a table. It is thorough. It is exact. It is the coldest, most complete payment you have ever collected, and when the ledger closes you both hear it."
     elif lanista_gender == "male":
-        narrator "He keeps the champion's composure like coin he won't spend — the level stare, the proud jaw bent not a degree. His body settles the account the mouth won't speak of. He's wanting and ready well before the pride permits it, and when you draw him into you and set the rhythm yourself, riding the discipline clean out of him, the only confession he makes is the breath that tears and the hands that grip the bench and never, not once, reach to ask for more."
+        narrator "No first-night disbelief tonight, and no armor either — armor is for bouts, and this is commerce. He presents the account the way a merchant presents a bill: squarely, itemized, due. When you draw him into you and ride the discipline out of him, he pays each installment as it falls — the hard body, the held breath, the release yielded only when withholding it would cost more than it buys. Nothing is given. Everything is paid. The distinction is the whole of his pride now, and he keeps it to the last copper."
     elif _pt == "lord":
-        narrator "She pays in full and pays on her feet — chin high, gaze steady, conceding exactly what she's decided to concede and not a hair beyond it. Her body keeps a different ledger. She's slick and ready well before the proud mouth will allow, and when you move into her and make her take the pace you set, the carved stone of her face never alters while the rest of her clenches and shudders and gives — the debt settled to the last copper, the word for it never once crossing her lips."
+        narrator "She has priced the night already; you can see the arithmetic sitting behind the level eyes. She neither braces nor softens — she opens the account and lets you draw against it. When you move into her and make her take the pace you set, she meets it like an obligation squarely met: the clench, the shudder, the heat rendered up on schedule, her face a creditor's receipt recording the sum and none of the feeling. Only at the very end does the count slip — one breath, badly kept — and she folds even that back into the books as a debt to settle later."
     else:
-        narrator "She gives you the cold composure to the very end — every inch the champion paying a debt on terms of her own choosing. Her body settles otherwise. Slick and wanting under your hands, she arches into your mouth, your fingers, the rhythm you set, and the proud throat spends everything but the naming of it — the catch of breath, the helpless shudder, the surrender she'd bite through her own tongue before speaking aloud. You take the full price, and she pays it, and keeps her pride, and breaks, all at once, in the dark."
+        narrator "She undresses like a woman itemizing collateral and stands to be appraised without a flicker. This is commerce, and she has decided to be good at it. She arches into your mouth, your fingers, the rhythm you set, and pays out each response with a bookkeeper's precision — enough to satisfy the terms, nothing that could be mistaken for a gift. It is colder than the first surrender, and more absolute. That night her body betrayed her. Tonight she has signed the betrayal over in advance, and files it under settlement."
     narrator "After, [_they] lies back in the dark and lets the composure reassemble itself piece by piece — slower than [_they] would wish, and you both know precisely why. The debt is paid. The dignity is kept. Nothing else in the bowl belongs to [_them] now, and [_they] has known that for a season."
     lanista_npc "There. Paid in full, [_ttl] — and you'll mark that I paid it standing. That's the last of me that was ever mine to keep, and I kept it, and I'd thank you not to price it for less than it cost. The rest is yours. It's been yours. Tonight only made the books agree with the truth."
     jump lanista_s5_gate_end
@@ -2322,7 +2362,7 @@ label lanista_s6_gate_devotion:
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
-    lanista_npc "I kept waiting for the catch in it, [_ttl]. Eleven seasons taught me everything good arrives with a hook set in the soft of it. And here you are, hookless, season on season, and I've finally stopped reaching for the line. There isn't one. You're just mine, and I'm yours, and the gate swings both ways and neither of us is leaving through it."
+    lanista_npc "I kept waiting for the catch in it. Eleven seasons taught me everything good arrives with a hook set in the soft of it. And here you are, hookless, season on season, and I've finally stopped reaching for the line. There isn't one. You're just mine, and I'm yours, and the gate swings both ways and neither of us is leaving through it."
     narrator "[_They] crosses to you without an ounce of the fighter's economy left in the step — not the measured advance of the bowl, not the careful approach of a body braced for the next blow. [_They] comes the way you come home. The scarred hands that have only ever known the grip of a weapon find your face first, and hold it, and the holding is its own slow language."
     $ _bust = "images/lanista/lanista_{}_vulnerable.png".format(_g)
     if not renpy.loadable(_bust):
@@ -2343,12 +2383,12 @@ label lanista_s6_gate_devotion:
             $ lanista_devotion += 4
             $ lanista_affection += 3
             narrator "You ask for the one vow a transaction can't contain, and you watch [_them] give it without weighing it — the merchant in [_them] silent for once, the fighter's caution wholly set down. [_They] says it against your mouth, and means it past the reach of any ledger."
-            lanista_npc "Forever. There — I've said it, and the sky didn't ask my collateral. ...You're the only thing I've ever pledged the whole of myself to and felt richer for the pledging. Forever, [_ttl]. Hold me to it. I'll not need the holding."
+            lanista_npc "Forever. There — I've said it, and the sky didn't ask my collateral. ...You're the only thing I've ever pledged the whole of myself to and felt richer for the pledging. Forever. Hold me to it. I'll not need the holding."
         "\"No words. Just stay. Let me show you what the rest of it looks like.\"":
             $ lanista_affection += 4
             $ lanista_devotion += 2
             narrator "You don't ask [_them] for a vow; you give [_them] the thing the vow only points at — your hands, your warmth, the whole of an evening with nothing owed in either direction. [_They] takes it the way the parched take water, and asks for nothing beyond this, and this, and this."
-            lanista_npc "No words, then. ...Good. I've spent enough of them defending a thing that needs no defense. Show me, [_ttl]. I'm done talking my way out of being happy."
+            lanista_npc "No words, then. ...Good. I've spent enough of them defending a thing that needs no defense. Show me. I'm done talking my way out of being happy."
     $ _scene = "s6_gate"
     $ _route = "devotion"
     python:
@@ -2393,7 +2433,7 @@ label lanista_s6_gate_dominion:
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
-    lanista_npc "So this is the shape of it, going forward. Not a debt to be cleared but a debt that renews with the dawn — owed fresh each day, paid fresh each night. ...I've run the sum a hundred times and it comes out the same every count. I'm yours to call. The only figure left to settle is the manner, and I'll fight you for that one to the last copper. Let me keep my feet, [_ttl], and I'll pay you anything."
+    lanista_npc "So this is the shape of it, going forward. Not a debt to be cleared but a debt that renews with the dawn — owed fresh each day, paid fresh each night. ...I've run the sum a hundred times and it comes out the same every count. I'm yours to call. The only figure left to settle is the manner, and I'll fight you for that one to the last copper. Let me keep my feet, and I'll pay you anything."
     narrator "[_They] crosses to you with the champion's bearing fully intact — chin level, shoulders square, the measured advance of a fighter who has lost the war and means to lose nothing of the bearing. This is the whole of the negotiation now. You own the rest. The manner of the paying is the one fortress [_they] still garrisons, and [_they] holds it the way [_they] once held the bowl: unbeaten in the only way that was ever [_theirs] to keep."
     $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
     if not renpy.loadable(_bust):
@@ -2414,12 +2454,12 @@ label lanista_s6_gate_dominion:
             $ lanista_dominion += 4
             $ lanista_affection += 2
             narrator "You make the cruelty and the mercy a single permanent law — the owning total, the dignity guaranteed in the same breath — and you watch the proud jaw take the sentence and refuse, to the end, to soften at the one kindness folded inside it."
-            lanista_npc "Renewing nightly. The pride exempt in perpetuity. ...You'd bind me forever and write my one freedom into the same contract. A thorough collector and a stranger merciful one, as I've said before. Have your standing order, [_ttl]. I'll pay it on my feet every night you call, and we'll both go on naming that the bargain."
+            lanista_npc "Renewing nightly. The pride exempt in perpetuity. ...You'd bind me forever and write my one freedom into the same contract. A thorough collector and a stranger merciful one, as I've said before. Have your standing order. I'll pay it on my feet every night you call, and we'll both go on naming that the bargain."
         "\"Your terms for the manner, mine for the rest — for good, this time. Settle into it, and we'll both keep what matters.\"":
             $ lanista_affection += 3
             $ lanista_dominion += 2
             narrator "You make the season's unspoken truce permanent in two lines, and something behind the cold composure eases at the permanence of it — a fighter knows to the copper the worth of a treaty that does not have to be re-won each dawn."
-            lanista_npc "Permanent, then. My manner, your rest. ...You'd let me keep my bearing not for a night but for the whole of what's left. The one creditor who'd sooner his debtor stand than crawl. I stopped trying to be free of you seasons ago, [_ttl]. Settle it like this and I'll stop wishing it, besides."
+            lanista_npc "Permanent, then. My manner, your rest. ...You'd let me keep my bearing not for a night but for the whole of what's left. The one creditor who'd sooner his debtor stand than crawl. I stopped trying to be free of you seasons ago. Settle it like this and I'll stop wishing it, besides."
     $ _scene = "s6_gate"
     $ _route = "dominion"
     python:
@@ -2439,13 +2479,13 @@ label lanista_s6_gate_dominion:
         window show
     $ _pt = (getattr(store, "player_title", "") or "").strip().lower()
     if lanista_gender == "male" and _pt == "lord":
-        narrator "He pays the standing account on his feet to the very last — jaw set, stare level, conceding not a copper he hasn't decided to spend. His body keeps no such discipline. He's hard against you long before the pride will own it, and when you take him into you and set the rhythm of the settling yourself, the iron in his face holds while everything beneath it gives way — the breath torn loose, the scarred hands fisting white, the whole proud frame paying the account in full and refusing, to the end, to call it anything but a debt discharged on terms. It is the most he will ever surrender, and he surrenders it nightly, and never once aloud."
+        narrator "There is no bout left in it. He comes to your hand the way the yard comes to his — drilled, ordered, sure of its marks — and the long war between his face and his body has been decommissioned; both of them serve now. When you take him into you and set the rhythm, he keeps it the way he keeps the day's card: known, held, executed to the second. The surrender is not torn from him anymore. It is scheduled. And somewhere inside that perfect discipline — the breath spent on your count, the strength spent where you point it — is a fighter who sleeps sounder under standing orders than he ever did free."
     elif lanista_gender == "male":
-        narrator "He keeps the champion's composure like coin he will not spend — the level stare, the proud jaw bent not one degree. His body settles the account his mouth disowns. He's wanting and ready well before the discipline permits, and when you draw him into you and set the pace yourself, riding the iron clean out of him, the only confession he makes is the breath that tears and the hands that grip and never, not once, reach to ask. He pays you everything and names you none of it, and the not-naming is the price he's chosen to keep his feet through."
+        narrator "Nothing in him resists, because nothing in him remembers how the resisting went. The composure is no longer a wall; it is a uniform, worn because you permit it. When you draw him into you and set the pace, his body keeps your time the way it once kept the turning of the glass — habitual, exact, incapable of doing the thing badly. He spends his breath when you call for it and banks it when you don't. It is absolute, and it is calm, and the calm is the remarkable part: the account has stood open so long that paying it is simply what this body is for."
     elif _pt == "lord":
-        narrator "She pays in full and pays standing — chin high, gaze steady, conceding exactly what she's resolved to concede and not a hair past it. Her body keeps a different ledger entirely. She's slick and ready well before the proud mouth will allow, and when you move into her and make her take the pace you set, the carved stone of her face never alters while the rest of her clenches and shudders and gives — the account settled to the last copper, the word for it bitten through before it can cross her lips. She breaks, every night, in perfect silence, and counts the silence her last possession."
+        narrator "She no longer chooses the ground; the ground was ceded seasons ago, and the flag over it has long since stopped meaning anything but you. When you move into her she takes the pace you set the way sand takes a footprint — completely, without comment, already smooth for the next. The clench and shudder of her arrive on your schedule, owned so thoroughly they no longer read as concessions, and the stillness of her face is not defiance now, nor even pride. It is peace, of a strange kind — the settled quiet of a champion who knows her marks, holds them nightly, and has stopped imagining the bout ending any other way."
     else:
-        narrator "She gives you the cold composure to the very end — every inch the champion paying an account on terms of her own keeping. Her body settles otherwise, and helplessly. Slick and wanting under your hands, she arches into your mouth, your fingers, the rhythm you set, and the proud throat spends everything but the naming of it — the catch of breath, the involuntary shudder, the surrender she'd sooner bite through her own tongue than speak aloud. You take the full price; she pays it, and keeps her pride, and comes apart, all in the same unbroken silence, and it is the most intense thing either of you has ever held."
+        narrator "There is nothing left to break, and neither of you pretends otherwise. She gives herself to your mouth, your fingers, the order you choose, with the deep unhurried thoroughness of ritual — the same rite each night, because you set it, and order is the one language her body has ever wholly trusted. She comes apart on your count, silently, completely, and reassembles without being told. The silence is not her last possession anymore. It is her offering, laid down nightly on the altar of the arrangement — and the arrangement is the whole of the world now, and she keeps it beautifully."
     narrator "After, [_they] lies back in the dark and lets the composure rebuild itself piece by deliberate piece — slower than [_they] would wish, and you both know exactly why. The account is open now, and will be open every dawn hereafter. The dignity is kept. Nothing else in the bowl, or out of it, belongs to [_them] anymore, and [_they] long ago stopped pretending otherwise."
     lanista_npc "There's your standing order opened, [_ttl] — and you'll mark, as ever, that I paid it standing. That's the last of me that was ever mine, and you've let me keep it, night on night, when a lesser hand would've taken even that for the pleasure of the taking. I'll not call this love. I gave up the right to such soft words. But I'll call it the best terms a kept thing was ever offered, and I'll meet them, copper for copper, till the gods close the account themselves."
     jump lanista_s6_gate_end
@@ -2464,7 +2504,7 @@ label lanista_s6_gate_mixed:
         $ _bust = "images/lanista/lanista_{}_neutral.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
-    lanista_npc "Don't ask me to pick a lane at the door, [_ttl]. I've tried — gods know I've tried to sort the loving from the owing and lay them in separate ledgers, and they will not stay sorted. I love you and I'm kept by you and tonight both halves want the same thing of you. ...I've stopped calling that a wound. It's only the shape of me now. Take the whole of it or none."
+    lanista_npc "Don't ask me to pick a lane at the door. I've tried — gods know I've tried to sort the loving from the owing and lay them in separate ledgers, and they will not stay sorted. I love you and I'm kept by you and tonight both halves want the same thing of you. ...I've stopped calling that a wound. It's only the shape of me now. Take the whole of it or none."
     narrator "[_They] crosses to you and the step itself can't decide what it is — half the easy homecoming of a body that wants to be here, half the measured advance of one that has been called. The scarred hands find your face the way a lover's would, and then still, for a breath, the way a fighter stills before the bout. Both true. [_They] has stopped trying to make them lie down together."
     $ _bust = "images/lanista/lanista_{}_yielding.png".format(_g)
     if not renpy.loadable(_bust):
@@ -2487,12 +2527,12 @@ label lanista_s6_gate_mixed:
             $ lanista_devotion += 3
             $ lanista_affection += 3
             narrator "You reach past the performance for the part of [_them] that crossed the city because it wanted to, and you name that the truer half, and you watch the relief and the grief arrive in [_them] together — grief that you had to choose, relief that you chose the lover."
-            lanista_npc "The loving leads. ...You'd reach through all the rest and pull that one to the front. It is the true part, [_ttl] — I'll not pretend the other isn't real, but if you're asking which I'd haul from a fire, it was never the ledger. Let it lead, then. The rest of me will follow it across any city you like."
+            lanista_npc "The loving leads. ...You'd reach through all the rest and pull that one to the front. It is the true part — I'll not pretend the other isn't real, but if you're asking which I'd haul from a fire, it was never the ledger. Let it lead, then. The rest of me will follow it across any city you like."
         "\"Both halves, then. I'll keep the one and love the other — and I'll never ask you to choose between them.\"":
             $ lanista_dominion += 3
             $ lanista_affection += 3
             narrator "You don't make [_them] sever the thing in two; you take the whole divided truth of it as offered, the loving and the owing both, and you promise never to demand the impossible sorting. The proud frame eases at that the way it never eased at any single answer — you've let [_them] be more than one thing, and that, it turns out, is the mercy [_they] needed most."
-            lanista_npc "Both, and no choosing. ...That's the one offer I never let myself hope for, [_ttl] — that I could be kept and beloved and not made to murder half of myself to square it. You'll take me whole and crooked. I'll come to you both ways till the gods run out of evenings, and call myself, against every odd, a fortunate creature."
+            lanista_npc "Both, and no choosing. ...That's the one offer I never let myself hope for — that I could be kept and beloved and not made to murder half of myself to square it. You'll take me whole and crooked. I'll come to you both ways till the gods run out of evenings, and call myself, against every odd, a fortunate creature."
     $ _scene = "s6_gate"
     $ _route = "mixed"
     python:

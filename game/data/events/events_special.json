@@ -8,6 +8,7 @@
     "building_type": [
       "adventurers_guild"
     ],
+    "nsfw": true,
     "background_image": "guild_magic_breach",
     "success_image": "guild_magic_success",
     "failure_image": "guild_magic_failure",
@@ -342,24 +343,24 @@
   },
   {
     "id": "unique_daisy_lore_event",
-    "description": "Daisy bursts into your office holding a contract—not yours. The seal is a convincing replica of your own, the paper the right weight, but the terms are fabricated: inflated fees, penalty clauses that would bankrupt anyone who signs. 'I found this in the morning post, addressed to a new family in the market district. They were about to sign.' Someone is using your name to defraud newcomers. If it continues, the victims will come looking for you, and no amount of protest will undo the damage.",
+    "description": "Marigold bursts into your office holding a contract—not yours. The seal is a convincing replica of your own, the paper the right weight, but the terms are fabricated: inflated fees, penalty clauses that would bankrupt anyone who signs. 'I found this in the morning post, addressed to a new family in the market district. They were about to sign.' Someone is using your name to defraud newcomers. If it continues, the victims will come looking for you, and no amount of protest will undo the damage.",
     "weight": 2,
     "limited": true,
     "max_occurrences": 1,
     "cooldown_days": 14,
-    "worker_name": "Daisy",
+    "worker_name": "Marigold",
     "worker_selection": "none",
     "background_image": "worker_private_talk",
     "conditions": {
-      "start_when": "has_worker:Daisy"
+      "start_when": "has_worker:Marigold"
     },
     "excluded_flags": {
       "unique_daisy_lore_done": true
     },
     "choices": [
       {
-        "option": "Set a trap with Daisy's help and catch the forger. (Potential: Money)",
-        "message": "Daisy knows how forgers think. Within two days, you've identified the culprit—a disgraced clerk. Daisy poses as a buyer, and when the clerk produces the printing plates bearing your stolen seal, you walk in with a watchman. The plates are confiscated, the targeted families send gifts of gratitude, and the forger's equipment fetches a decent price at auction. ({actual_money})",
+        "option": "Set a trap with Marigold's help and catch the forger. (Potential: Money)",
+        "message": "Marigold knows how forgers think. Within two days, you've identified the culprit—a disgraced clerk. Marigold poses as a buyer, and when the clerk produces the printing plates bearing your stolen seal, you walk in with a watchman. The plates are confiscated, the targeted families send gifts of gratitude, and the forger's equipment fetches a decent price at auction. ({actual_money})",
         "effect": {
           "money": 400,
           "event_flags": {
@@ -369,7 +370,7 @@
       },
       {
         "option": "Buy up the forgeries quietly before they spread. (Cost: Money)",
-        "message": "You send Daisy to track down every circulating copy. It takes three days and more coin than you'd like—some copies have already been sold to intermediaries who know their value as leverage. One by one, the forgeries come back. You burn them that evening. The forger is still out there, but without the plates and copies, they'd need to start from scratch. ({actual_money})",
+        "message": "You send Marigold to track down every circulating copy. It takes three days and more coin than you'd like—some copies have already been sold to intermediaries who know their value as leverage. One by one, the forgeries come back. You burn them that evening. The forger is still out there, but without the plates and copies, they'd need to start from scratch. ({actual_money})",
         "effect": {
           "money": -350,
           "event_flags": {

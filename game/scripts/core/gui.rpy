@@ -53,6 +53,32 @@ define gui.hover_muted_color = '#3d2f17'
 define gui.text_color = '#3c1f14'
 define gui.interface_text_color = '#3c1f14'
 
+## Journal/parchment palette used across the custom management UI (screens.rpy).
+## Brown body text on parchment backgrounds (buttons, tables, labels).
+define gui.journal_text_color = "#7a4b2a"
+## Dark olive-green hover/selected accent.
+define gui.journal_hover_color = "#6b6528"
+## Very dark brown used for side-menu buttons and money/date readouts.
+define gui.journal_dark_color = "#3c1f14"
+
+## Design tokens - revamp ######################################################
+## Extended parchment-and-ink palette. Use these instead of new hex literals.
+## (gui.muted_color already exists above for bar regeneration - do not reuse it.)
+define gui.ink_color = "#2b1d12"              # strongest text on parchment
+define gui.parchment_muted_color = "#8f7a56"  # secondary text on parchment
+define gui.success_color = "#2e6b30"          # gains / positive on parchment
+define gui.danger_color = "#8a2b2b"           # losses / negative on parchment
+define gui.warning_color = "#996f1f"
+define gui.gold_color = "#7d5f1d"             # money accents on parchment
+define gui.success_bright = "#8fce8f"         # positive on dark surfaces
+define gui.danger_bright = "#e09090"          # negative on dark surfaces
+define gui.surface_dark = "#221a12ee"         # parchment-tinted dark modal background
+define gui.health_bar_color = "#a03c32"
+define gui.energy_bar_color = "#b98a2e"
+define gui.bar_track_color = "#00000033"
+define gui.row_alt_color = "#00000012"        # zebra striping on parchment tables
+define gui.divider_color = "#8f7a5680"        # ALL hairline rules/dividers on parchment
+
 
 ## Fonts and Font Sizes ########################################################
 

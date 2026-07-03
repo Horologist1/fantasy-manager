@@ -221,13 +221,11 @@ init python:
                     "preserving traits and skipping random backfill"
                 )
 
-        # Unique workers should not get random traits - they should only have traits defined in JSON
-        if worker.get("unique", False):
-            if "traits" not in worker:
-                worker["traits"] = []
-        else:
-            if "traits" not in worker:
-                worker["traits"] = []
+        # Unique workers should not get random traits - they should only have traits
+        # defined in JSON. That skip lives in ensure_minimum_traits (worker_traits.rpy);
+        # here every worker just gets an empty traits list as a default.
+        if "traits" not in worker:
+            worker["traits"] = []
 
         # Preserve existing comfort_level if it exists, otherwise set to comfort_desired or default to 1
         if "comfort_level" not in worker:

@@ -748,13 +748,21 @@ init python:
                 continue
             if stat == "energy":
                 old = int(worker.get("energy", 0) or 0)
-                worker["energy"] = max(0, old + delta)
-                stat_changes["energy"] = stat_changes.get("energy", 0) + delta
+                try:
+                    mx_e = int(calculate_max_energy(worker))
+                except Exception:
+                    mx_e = 100
+                worker["energy"] = max(0, min(mx_e, old + delta))
+                stat_changes["energy"] = stat_changes.get("energy", 0) + (worker["energy"] - old)
                 continue
             if stat == "health":
                 oldh = int(worker.get("health", 0) or 0)
-                worker["health"] = max(0, oldh + delta)
-                stat_changes["health"] = stat_changes.get("health", 0) + delta
+                try:
+                    mx_h = int(calculate_max_health(worker))
+                except Exception:
+                    mx_h = 100
+                worker["health"] = max(0, min(mx_h, oldh + delta))
+                stat_changes["health"] = stat_changes.get("health", 0) + (worker["health"] - oldh)
                 continue
             if stat == "libido" and getattr(persistent, "nsfw_enabled", False):
                 oldl = int(worker.get("libido", 0) or 0)
@@ -774,7 +782,10 @@ init python:
         except (TypeError, ValueError):
             cur = 0
         worker["skill_uses"][skill_name] = cur + int(amount)
-        if hasattr(store, "update_skill_levels"):
+        # Only this worker gained uses; a full-roster pass here was pure waste.
+        if hasattr(store, "update_skill_levels_for_worker"):
+            store.update_skill_levels_for_worker(worker)
+        elif hasattr(store, "update_skill_levels"):
             store.update_skill_levels()
 
     def training_apply_outcome(worker, interaction, logical_key, skill_name=None):

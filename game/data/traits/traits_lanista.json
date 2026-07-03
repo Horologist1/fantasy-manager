@@ -17,11 +17,5 @@
             "joy": -2
         },
         "description": "The Lanista works for your house by choice, but the Arena still claims their days. They give you the evenings they can spare; the double life of master and servant wears at the edges. [-2 Energy Regen, -2 Joy]"
-    },
-    {
-        "name": "Master of the Sands — Your Partner",
-        "only_assigned": true,
-        "modifiers": {},
-        "description": "The Lanista loves you and runs the Arena on their own terms — free, equal, and yours by choice rather than debt. They turn up across your buildings when it suits them, which is often."
     }
 ]

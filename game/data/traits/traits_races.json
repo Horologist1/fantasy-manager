@@ -304,5 +304,37 @@
     "duration": 0,
     "on_expire": {},
     "only_assigned": false
+  },
+  {
+    "name": "Centauride",
+    "conflicts": [
+      "Human",
+      "Elf",
+      "Dwarf",
+      "Orc",
+      "Ogre",
+      "Demon",
+      "Angel",
+      "Goblin",
+      "Furry",
+      "Vampire",
+      "Slime",
+      "Transformed"
+    ],
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 5
+      },
+      "energy": 5
+    },
+    "description": "A woman with horse features: tireless runners with powerful legs and boundless stamina. [+5 Agility, +5 Energy]",
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": "female",
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": false
   }
 ]

@@ -418,6 +418,23 @@
     "only_assigned": false
   },
   {
+    "name": "Wounded",
+    "duration": 7,
+    "on_expire": {
+      "add_trait": {
+        "name": "Scarred",
+        "duration": 0
+      }
+    },
+    "description": "A serious injury requiring 7 days recovery. Suppresses vitality and regeneration. After recovery, gains Scarred trait. (Assigned by events only.)",
+    "only_assigned": true,
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": null,
+    "requires_traits": [],
+    "attribute_minimums": {}
+  },
+  {
     "name": "Reforming",
     "conflicts": [],
     "modifiers": {

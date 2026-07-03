@@ -8,66 +8,48 @@ init python:
         store.bgm_volume = 0.6  # Volumen normal de BGM (60%)
     if not hasattr(store, 'event_volume'):
         store.event_volume = 0.4  # Volumen de eventos (40%)
-    if not hasattr(store, 'bgm_last_played_week'):
-        store.bgm_last_played_week = -1
-    if not hasattr(store, 'bgm_silence_start_time'):
-        store.bgm_silence_start_time = 0.0
-    if not hasattr(store, 'bgm_silence_duration'):
-        store.bgm_silence_duration = 60.0  # 1 minuto de silencio
+
+    # Breathing room between BGM repeats. The game deliberately avoids
+    # wall-to-wall music; before the loop existed, BGM played ONCE per session
+    # and then went silent forever (and the old fallback pointed at a file
+    # that doesn't exist).
+    BGM_LOOP_GAP_SECONDS = 90.0
 
     def start_bgm_simple(filename="audio/BGM.ogg"):
         """
-        Inicia la música de fondo principal en el canal 'music'.
-        Se reproduce una sola vez, sin loop.
+        Inicia la música de fondo principal en el canal 'music':
+        pista + pausa de respiración, en bucle.
         """
         try:
             renpy.file(filename)
-            renpy.music.play(filename, loop=False, if_changed=True, fadein=3.0, channel="music")
-            renpy.music.set_volume(0.6, delay=1.0, channel="music")
-            store.bgm_volume = 0.6
-            renpy.log(f"BGM DEBUG: Started BGM single play at 60% volume - {filename}")
         except Exception:
-            # Fallback to legacy theme
-            renpy.music.play("audio/main_theme.ogg", loop=False, if_changed=True, fadein=3.0, channel="music")
-            renpy.music.set_volume(0.6, delay=1.0, channel="music")
-            store.bgm_volume = 0.6
-            renpy.log("BGM DEBUG: Fallback to main_theme.ogg (single play at 60% volume)")
+            renpy.log(f"BGM DEBUG: {filename} not loadable; staying silent")
+            return
+        try:
+            playlist = [filename, "<silence %.1f>" % BGM_LOOP_GAP_SECONDS]
+            renpy.music.play(playlist, loop=True, if_changed=True, fadein=3.0, channel="music")
+            renpy.music.set_volume(store.bgm_volume, delay=1.0, channel="music")
+            renpy.log(f"BGM DEBUG: Started looping BGM ({filename} + {BGM_LOOP_GAP_SECONDS:.0f}s gap)")
+        except Exception as e:
+            renpy.log(f"BGM DEBUG: could not start BGM: {e}")
+
+    def ensure_bgm_playing():
+        """
+        Reanuda el bucle ambiental si el canal de música quedó parado
+        (p. ej. tras cargar una partida o un stop de emergencia).
+        """
+        try:
+            if not renpy.music.is_playing(channel="music"):
+                start_bgm_simple("audio/BGM.ogg")
+        except Exception as e:
+            renpy.log(f"BGM DEBUG: ensure_bgm_playing failed: {e}")
 
     def check_and_start_monday_bgm():
         """
-        Verifica si es lunes (día 1 de la semana) y si es el primer o último lunes del mes.
-        Si es lunes y cumple la condición, inicia la BGM.
+        Hook diario (nombre conservado por compatibilidad con event_daily_exec):
+        con el bucle ambiental ya no hay lógica de lunes, solo mantenerlo vivo.
         """
-        try:
-            is_monday = (store.current_day % 7 == 1) or (store.current_day == 1)
-            
-            if not is_monday:
-                renpy.log(f"BGM DEBUG: Not Monday - Day {store.current_day}")
-                return
-            
-            week_of_month = ((store.current_day - 1) // 7) + 1
-            
-            month_key = f"bgm_played_month_{store.current_year}_{store.current_month}"
-            bgm_played_this_month = getattr(store, month_key, False)
-            
-            is_first_monday = (week_of_month == 1)
-            is_last_monday = (week_of_month >= 4)
-            
-            if (is_first_monday or is_last_monday) and not bgm_played_this_month:
-                start_bgm_simple("audio/BGM.ogg")
-                setattr(store, month_key, True)
-                renpy.log(f"BGM DEBUG: BGM started - First/Last Monday of month, Week {week_of_month}")
-            else:
-                renpy.log(f"BGM DEBUG: Not first/last Monday or already played this month - Day {store.current_day}, Week {week_of_month}, Played: {bgm_played_this_month}")
-                
-        except Exception as e:
-            renpy.log(f"BGM MONDAY CHECK ERROR: {e}")
-
-    def start_bgm_with_pauses(filename="audio/BGM.ogg", silence_seconds=120.0):
-        """
-        DEPRECATED: Usar start_bgm_simple() o check_and_start_monday_bgm() en su lugar.
-        """
-        start_bgm_simple(filename)
+        ensure_bgm_playing()
 
     def play_event_music(event_data=None):
         """
@@ -108,90 +90,6 @@ init python:
         except Exception as e:
             renpy.log(f"EVENT MUSIC ERROR: {e}")
 
-    def end_event_music():
-        """
-        Termina la música del evento y restaura el volumen de la BGM principal.
-        """
-        try:
-            renpy.music.set_volume(0.0, delay=3.0, channel="sound")
-            
-            # Restaurar volumen de BGM principal
-            renpy.music.set_volume(store.bgm_volume, delay=3.0, channel="music")
-            renpy.log(f"EVENT MUSIC: BGM volume restored to {store.bgm_volume}")
-                
-        except Exception as e:
-            renpy.log(f"EVENT MUSIC END ERROR: {e}")
-
-    def get_remaining_bgm_silence_seconds(desired=60.0):
-        """
-        Devuelve el silencio restante hasta reanudar la BGM sin reiniciar el temporizador
-        si otro evento ocurre dentro de la misma ventana de silencio.
-        """
-        try:
-            import time
-            now = time.time()
-            resume_at = float(getattr(store, 'bgm_resume_at_epoch', 0.0) or 0.0)
-            if resume_at > now:
-                remaining = max(0.0, resume_at - now)
-            else:
-                remaining = float(desired)
-            if resume_at <= now:
-                store.bgm_resume_at_epoch = now + remaining
-            return remaining
-        except Exception as e:
-            renpy.log(f"BGM SILENCE CALC ERROR: {e}")
-            return float(desired)
-
-    def start_bgm_with_initial_silence(filename="audio/BGM.ogg", initial_silence=30.0, loop_silence=30.0):
-        """
-        Inicia la BGM empezando con un bloque de silencio inicial y luego lazo con pausas.
-        """
-        try:
-            renpy.file(filename)
-            renpy.music.play(f"<silence {initial_silence}>", loop=False, channel="music")
-            renpy.music.queue(filename, loop=False, fadein=3.0, channel="music")
-            renpy.music.queue(f"<silence {loop_silence}>", channel="music")
-            renpy.music.queue(filename, loop=True, fadein=3.0, channel="music")
-        except Exception:
-            renpy.music.play("audio/main_theme.ogg", loop=True, if_changed=True, fadein=3.0, channel="music")
-        renpy.music.set_volume(0.6, delay=1.0, channel="music")
-        renpy.log(f"BGM DEBUG: BGM with initial silence {initial_silence}s and loop silence {loop_silence}s")
-
-    def _resume_bgm_after_fade(remaining_silence=60.0, loop_silence=60.0, filename="audio/BGM.ogg"):
-        """
-        Helper ejecutado tras el fade-out para arrancar la BGM con silencio inicial
-        sin cortar el desvanecimiento.
-        """
-        try:
-            start_bgm_with_initial_silence(filename, initial_silence=remaining_silence, loop_silence=loop_silence)
-        except Exception as e:
-            renpy.log(f"BGM RESUME ERROR: {e}")
-
-    def restore_main_bgm_with_fadeout():
-        """
-        Restaura la música de fondo principal después de un evento con fade-out de 10 segundos.
-        """
-        try:
-            renpy.music.set_volume(0.0, delay=10.0, channel="music")
-            
-            renpy.music.queue("<silence 10.0>")
-            renpy.music.queue("audio/BGM.ogg", loop=False, fadein=2.0)
-            renpy.music.queue("<silence 120.0>")  # 2 minutes of silence
-            renpy.music.queue("audio/BGM.ogg", loop=True, fadein=3.0)  # Loop with fade-in
-            
-            # Restaurar volumen gradualmente
-            renpy.music.set_volume(0.6, delay=12.0, channel="music")
-            
-            renpy.log("BGM DEBUG: Started fade-out and BGM restoration sequence")
-        except Exception as e:
-            renpy.log(f"BGM RESTORE ERROR: {e}")
-
-    def restore_main_bgm():
-        """
-        Versión rápida sin fade-out para compatibilidad
-        """
-        restore_main_bgm_with_fadeout()
-
     def start_event_with_music(event_data):
         """
         Inicia un evento con la música apropiada basándose en los datos del evento.
@@ -200,14 +98,6 @@ init python:
         event_id = event_data.get('id', 'unknown') if event_data else 'unknown'
         renpy.log(f"EVENT START: {event_id} with music from JSON data")
 
-    def end_event_with_music():
-        """
-        Termina un evento y hace fade-out de la música del evento.
-        La música principal no se reanuda automáticamente.
-        """
-        end_event_music()
-        renpy.log("EVENT END: Event music faded out")
-    
     def end_event_with_quick_fadeout():
         """
         Termina un evento con fade-out rápido de la música del evento.
@@ -238,21 +128,6 @@ init python:
         except Exception as e:
             renpy.log(f"BGM IMMEDIATE FADEOUT ERROR: {e}")
     
-    def stop_event_music_now():
-        """
-        Para la música de evento inmediatamente sin fade-out.
-        Restaura el volumen de la BGM principal.
-        """
-        try:
-            renpy.music.stop(channel="sound")
-            
-            # Restaurar volumen de BGM principal
-            renpy.music.set_volume(store.bgm_volume, channel="music")
-            renpy.log(f"BGM DEBUG: BGM volume restored to {store.bgm_volume} after immediate stop")
-                
-        except Exception as e:
-            renpy.log(f"BGM STOP ERROR: {e}")
-    
     def emergency_stop_all_music():
         """
         Para toda la música inmediatamente - función de emergencia.
@@ -267,75 +142,35 @@ init python:
         except Exception as e:
             renpy.log(f"EMERGENCY STOP ERROR: {e}")
 
-    def show_day_transition():
-        # Black screen with date, then back to tavern
+    def run_start_of_day_automation(context=""):
+        """
+        Start-of-new-day automation, run right after the player closes the
+        daily report: relink building->worker refs, auto-supply potions,
+        auto-equip, auto-consume, and let the manager restore rested workers.
+        (Previously copy-pasted at 5 call sites with drifting feature sets.)
+        """
         try:
-            # Capture current date strings
-            day_names_local = renpy.store.day_names
-            month_names_local = renpy.store.month_names
-            day_name = day_names_local[(renpy.store.current_day - 1) % 7]
-            month_name = month_names_local[renpy.store.current_month - 1]
-            date_text = f"{day_name}, {renpy.store.current_day} {month_name} {renpy.store.current_year}"
-
-            # Dissolve to black
-            renpy.scene()
-            renpy.show("expression Solid('#000000')", tag="black_bg")
-            renpy.with_statement(dissolve)
-
-            # Show date text
-            renpy.show("expression Text('" + date_text + "', size=42, color='#ffffff')", tag="daytext", at_list=[Position(xalign=0.5, yalign=0.5)])
-            renpy.pause(1.5)
-
-            # Dissolve out and return to tavern
-            renpy.scene()
-            renpy.with_statement(dissolve)
-            renpy.call_in_new_context("_return_to_tavern")
-        except Exception as e:
-            renpy.log("DAY TRANSITION ERROR: " + str(e))
-
-label _return_to_tavern:
-    $ renpy.hide_screen("daily_report")
-    jump tavern_screen
-
-label day_transition:
-    # Show black IMMEDIATELY (no transition yet) to cover daily_report
-    scene expression Solid('#000000')
-    # NOW hide daily_report (it's covered by black, so no transparency)
-    $ renpy.hide_screen("daily_report")
-
-    # Start-of-new-day auto-consume hook (player closes the daily report).
-    # This is intentionally NOT "during work": it happens right after the report, before returning control.
-    python:
-        try:
-            renpy.log("AUTO_CONSUME_AFTER_REPORT_HOOK: running")
+            renpy.log(f"START_OF_DAY_AUTOMATION: running ({context})")
             # Keep building->worker references consistent (prevents UI seeing stale worker dicts)
             relink = getattr(store, "_relink_assigned_servants_to_store_workers", None)
             if callable(relink):
                 relink()
-            # Auto-supply potions (workers take 1-5 from manager) then auto-equip, then auto-consume
             for w in getattr(store, "workers", []) or []:
-                try:
-                    if w.get("auto_supply_potions", False) or w.get("auto_equip", False):
-                        renpy.log("AUTO_HOOK worker=" + str(w.get("name", "?")) +
-                                  " supply=" + str(w.get("auto_supply_potions", False)) +
-                                  " count=" + str(w.get("auto_supply_potion_count", 3)) +
-                                  " equip=" + str(w.get("auto_equip", False)))
-                except Exception:
-                    pass
                 try:
                     store.run_worker_auto_supply_potions(w)
                 except Exception as e1:
-                    renpy.log("run_worker_auto_supply_potions error: " + str(e1))
+                    renpy.log(f"run_worker_auto_supply_potions error ({context}): {e1}")
                 try:
                     store.run_worker_auto_equip(w)
                 except Exception as e2:
-                    renpy.log("run_worker_auto_equip error: " + str(e2))
+                    renpy.log(f"run_worker_auto_equip error ({context}): {e2}")
             thr = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
             ac = getattr(store, "auto_consume_start_of_day", None)
             if callable(ac):
                 for w in getattr(store, "workers", []) or []:
                     ac(w, threshold=thr)
-            # If anyone was put into rest, let the manager restore their job now that energy/HP may be refilled.
+            # If anyone was put into rest, let the manager restore their job now
+            # that energy/HP may be refilled.
             pm = getattr(store, "process_manager_auto_rest", None)
             if callable(pm):
                 pm(restore_only=True)
@@ -343,9 +178,54 @@ label day_transition:
             renpy.restart_interaction()
         except Exception as e:
             try:
-                renpy.log(f"AUTO_CONSUME_AFTER_REPORT_HOOK error: {e}")
+                renpy.log(f"START_OF_DAY_AUTOMATION error ({context}): {e}")
             except Exception:
                 pass
+
+    def unlock_governor_castle(log_tag=""):
+        """
+        Create/repair the Governor's Castle entry (idempotent). Used by both
+        endings and the tavern-screen consistency check — previously three
+        divergent copy-pastes (the repair copy silently upgraded base_level to
+        5). Canonical initial base_level is 3; existing upgrades are preserved
+        via setdefault so a repair never downgrades or resets progress.
+        """
+        castle_name = "Governor's Castle"
+        renpy.log(f"DEBUG: ===== UNLOCKING GOVERNOR'S CASTLE {log_tag} =====")
+        if castle_name not in available_buildings:
+            available_buildings[castle_name] = {}
+            renpy.log(f"DEBUG: Created new entry for {castle_name} in available_buildings")
+        castle = available_buildings[castle_name]
+        castle["price"] = 0
+        castle.setdefault("reputation", 0)
+        castle.setdefault("base_level", 3)
+        castle["type"] = "governor_castle"
+        castle["assigned_servants"] = castle.get("assigned_servants", [])
+        castle["servant_jobs"] = castle.get("servant_jobs", {})
+        castle["max_workers"] = 10
+        castle["costs"] = 0
+        castle["owned"] = True
+        castle.setdefault("skill", 50)
+        castle.setdefault("skill_bonus", 0)
+        if castle_name not in owned_buildings:
+            owned_buildings.append(castle_name)
+        store.buildings_owned = len(owned_buildings)
+        map_button_buildings["Castle"] = castle_name
+        custom_names.setdefault(castle_name, castle_name)
+        renpy.log(
+            f"DEBUG: Castle unlock OK {log_tag} - available: {castle_name in available_buildings}, "
+            f"owned: {castle_name in owned_buildings}, map: {'Castle' in map_button_buildings}"
+        )
+
+label day_transition:
+    # Show black IMMEDIATELY (no transition yet) to cover daily_report
+    scene expression Solid('#000000')
+    # NOW hide daily_report (it's covered by black, so no transparency)
+    $ renpy.hide_screen("daily_report")
+
+    # Start-of-new-day automation hook (player closes the daily report).
+    # This is intentionally NOT "during work": it happens right after the report, before returning control.
+    $ run_start_of_day_automation("day_transition")
     # Show date text with fade in
     $ day_name = day_names[(store.current_day - 1) % 7]
     $ month_name = month_names[store.current_month - 1]
@@ -616,7 +496,7 @@ label start:
         update_displayed_workers()
         renpy.log("After update_displayed_workers - displayed_workers: " + str([w["name"] for w in displayed_workers]))
 
-    # Music already started in main menu via start_bgm_with_pauses.
+    # Music already started in main menu via start_bgm_simple.
     # Do not touch the BGM here to avoid cuts.
     
     # Mark new game flags so subsequent loads that reach start don't re-init
@@ -636,7 +516,8 @@ label show_objective_1_dialogue:
     "These loyal souls are the first foundation of what I shall rebuild—and one day, the path to the reckoning."
     "Now I must put them to their destined labors. Let me consult my journal to discern the way ahead."
     $ renpy.log("DEBUG: show_objective_1_dialogue - FINISHED DIALOGUE")
-    jump tavern_screen
+    # Invoked via call/call_in_new_context: must return (a jump here leaked the frame).
+    return
 
 label show_objective_2_dialogue:
     scene expression workers_bg
@@ -645,7 +526,7 @@ label show_objective_2_dialogue:
     "The governor began with naught but ambition burning in his breast—I walk the same treacherous path he once trod. But the end will be different."
     "My journal has been inscribed with the next duty."
     $ renpy.log("DEBUG: show_objective_2_dialogue - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_3_dialogue:
     scene expression workers_bg
@@ -655,7 +536,7 @@ label show_objective_3_dialogue:
     "Should I require more detail on how they have performed, I may open the Daily Report and examine the results."
     "My journal has been inscribed with the next duty."
     $ renpy.log("DEBUG: show_objective_3_dialogue - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_4_dialogue:
     scene expression workers_bg
@@ -665,7 +546,7 @@ label show_objective_4_dialogue:
     "Every coin is another step toward the resources the day of reckoning will demand. I need infrastructure—improving the building to hold more workers, or the gear to be better prepared. Perhaps a bit of both."
     "Journal has been updated with the next objective."
     $ renpy.log("DEBUG: show_objective_4_dialogue - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_5_dialogue:
     scene expression workers_bg
@@ -676,7 +557,7 @@ label show_objective_5_dialogue:
     $ store.current_objective = 6
     call show_objective_6_intro from _call_show_objective_6_intro
     $ renpy.log("DEBUG: show_objective_5_dialogue - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_6_intro:
     scene expression workers_bg
@@ -684,7 +565,7 @@ label show_objective_6_intro:
     "Time to strengthen my foundation."
     "I will upgrade a building's level and raise its Building skill bonus—preparation for what comes when I dare to act. The upgrade costs 1,000 coins."
     $ renpy.log("DEBUG: show_objective_6_intro - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_6_outro:
     scene expression workers_bg
@@ -693,7 +574,7 @@ label show_objective_6_outro:
     "The foundation is stronger. Time to expand the scale of this entire operation."
     $ renpy.log("DEBUG: show_objective_6_outro - FINISHED DIALOGUE")
     call show_objective_7_intro from _call_show_objective_7_intro
-    jump tavern_screen
+    return
 
 label show_objective_7_intro:
     scene expression workers_bg
@@ -702,7 +583,7 @@ label show_objective_7_intro:
     "I shall invite one of my workers to a Friendly Lunch—breaking bread together—to learn their hearts and motivations."
     "Journal has been updated with the next objective."
     $ renpy.log("DEBUG: show_objective_7_intro - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_7_dialogue:
     scene expression workers_bg
@@ -714,7 +595,7 @@ label show_objective_7_dialogue:
     "The governor rules through fear and gold. Loyalty is a weapon he does not have. I shall build something different: a circle of those who have chosen to stand with me."
     "My journal has been inscribed with the next duty. The path to the grand design lies ahead."
     $ renpy.log("DEBUG: show_objective_7_dialogue - FINISHED DIALOGUE")
-    jump tavern_screen
+    return
 
 label show_objective_8_dialogue:
     scene expression workers_bg
@@ -836,54 +717,10 @@ label show_ending_assassination:
     call screen manager_levelup_benefit
     
     # Unlock the Governor's Castle
-    python:
-        castle_name = "Governor's Castle"
-        renpy.log("DEBUG: ===== UNLOCKING GOVERNOR'S CASTLE =====")
-        
-        # Always ensure the castle is properly set up, even if it already exists
-        if castle_name not in available_buildings:
-            available_buildings[castle_name] = {}
-            renpy.log(f"DEBUG: Created new entry for {castle_name} in available_buildings")
-        else:
-            renpy.log(f"DEBUG: {castle_name} already exists in available_buildings, updating...")
-        
-        # Update/Set all castle properties
-        available_buildings[castle_name]["price"] = 0
-        available_buildings[castle_name]["reputation"] = 0
-        available_buildings[castle_name]["base_level"] = 3
-        available_buildings[castle_name]["type"] = "governor_castle"
-        available_buildings[castle_name]["assigned_servants"] = available_buildings[castle_name].get("assigned_servants", [])
-        available_buildings[castle_name]["servant_jobs"] = available_buildings[castle_name].get("servant_jobs", {})
-        available_buildings[castle_name]["max_workers"] = 10
-        available_buildings[castle_name]["costs"] = 0
-        available_buildings[castle_name]["owned"] = True
-        available_buildings[castle_name]["skill"] = 50
-        available_buildings[castle_name]["skill_bonus"] = 0
-        
-        # Ensure it's in owned_buildings
-        if castle_name not in owned_buildings:
-            owned_buildings.append(castle_name)
-            renpy.log(f"DEBUG: Added {castle_name} to owned_buildings")
-        else:
-            renpy.log(f"DEBUG: {castle_name} already in owned_buildings")
-        
-        buildings_owned = len(owned_buildings)
-        map_button_buildings["Castle"] = castle_name
-        custom_names[castle_name] = castle_name
-        
-        # Verify everything is set correctly
-        renpy.log(f"DEBUG: === CASTLE UNLOCK VERIFICATION ===")
-        renpy.log(f"DEBUG: Castle in available_buildings: {castle_name in available_buildings}")
-        renpy.log(f"DEBUG: Castle in owned_buildings: {castle_name in owned_buildings}")
-        renpy.log(f"DEBUG: Castle in map_button_buildings: {'Castle' in map_button_buildings}")
-        renpy.log(f"DEBUG: map_button_buildings['Castle'] = {map_button_buildings.get('Castle', 'NOT SET')}")
-        renpy.log(f"DEBUG: Castle type: {available_buildings[castle_name].get('type', 'NOT SET')}")
-        renpy.log(f"DEBUG: Castle owned: {available_buildings[castle_name].get('owned', False)}")
-        renpy.log(f"DEBUG: get_map_building_name_safe('Castle') = {get_map_building_name_safe('Castle')}")
-        renpy.log(f"DEBUG: === END VERIFICATION ===")
-    
+    $ unlock_governor_castle("(ASSASSINATION)")
+
     "The Governor's Castle is now yours. You can access it from the map."
-    
+
     jump tavern_screen
 
 label show_ending_blackmail:
@@ -972,59 +809,33 @@ label show_ending_blackmail:
     call screen manager_levelup_benefit
     
     # Unlock the Governor's Castle
-    python:
-        castle_name = "Governor's Castle"
-        renpy.log("DEBUG: ===== UNLOCKING GOVERNOR'S CASTLE (BLACKMAIL) =====")
-        
-        # Always ensure the castle is properly set up, even if it already exists
-        if castle_name not in available_buildings:
-            available_buildings[castle_name] = {}
-            renpy.log(f"DEBUG: Created new entry for {castle_name} in available_buildings")
-        else:
-            renpy.log(f"DEBUG: {castle_name} already exists in available_buildings, updating...")
-        
-        # Update/Set all castle properties
-        available_buildings[castle_name]["price"] = 0
-        available_buildings[castle_name]["reputation"] = 0
-        available_buildings[castle_name]["base_level"] = 3
-        available_buildings[castle_name]["type"] = "governor_castle"
-        available_buildings[castle_name]["assigned_servants"] = available_buildings[castle_name].get("assigned_servants", [])
-        available_buildings[castle_name]["servant_jobs"] = available_buildings[castle_name].get("servant_jobs", {})
-        available_buildings[castle_name]["max_workers"] = 10
-        available_buildings[castle_name]["costs"] = 0
-        available_buildings[castle_name]["owned"] = True
-        available_buildings[castle_name]["skill"] = 50
-        available_buildings[castle_name]["skill_bonus"] = 0
-        
-        # Ensure it's in owned_buildings
-        if castle_name not in owned_buildings:
-            owned_buildings.append(castle_name)
-            renpy.log(f"DEBUG: Added {castle_name} to owned_buildings")
-        else:
-            renpy.log(f"DEBUG: {castle_name} already in owned_buildings")
-        
-        buildings_owned = len(owned_buildings)
-        map_button_buildings["Castle"] = castle_name
-        custom_names[castle_name] = castle_name
-        
-        # Verify everything is set correctly
-        renpy.log(f"DEBUG: === CASTLE UNLOCK VERIFICATION (BLACKMAIL) ===")
-        renpy.log(f"DEBUG: Castle in available_buildings: {castle_name in available_buildings}")
-        renpy.log(f"DEBUG: Castle in owned_buildings: {castle_name in owned_buildings}")
-        renpy.log(f"DEBUG: Castle in map_button_buildings: {'Castle' in map_button_buildings}")
-        renpy.log(f"DEBUG: map_button_buildings['Castle'] = {map_button_buildings.get('Castle', 'NOT SET')}")
-        renpy.log(f"DEBUG: Castle type: {available_buildings[castle_name].get('type', 'NOT SET')}")
-        renpy.log(f"DEBUG: Castle owned: {available_buildings[castle_name].get('owned', False)}")
-        renpy.log(f"DEBUG: get_map_building_name_safe('Castle') = {get_map_building_name_safe('Castle')}")
-        renpy.log(f"DEBUG: === END VERIFICATION ===")
-    
+    $ unlock_governor_castle("(BLACKMAIL)")
+
     "The Governor's Castle is now yours. You can access it from the map."
-    
+
     jump tavern_screen
 
 label tavern_screen():
     $ renpy.log("DEBUG: tavern_screen label - STARTING")
-    
+
+    # Call-stack hygiene: nothing legitimately returns past the hub (no `call
+    # tavern_screen` exists anywhere). Any frames still on the return stack here
+    # are leaks from flows that were call-ed but exited via jump; historically
+    # they accumulated forever, got pickled into saves, and made stray `return`
+    # statements teleport the player. Clear them.
+    python:
+        try:
+            _stale_frames = renpy.get_return_stack()
+            if _stale_frames:
+                renpy.log(f"DEBUG: tavern_screen clearing {len(_stale_frames)} stale call frame(s).")
+                renpy.set_return_stack([])
+        except Exception as _e:
+            renpy.log(f"WARNING: tavern_screen could not clear return stack: {_e}")
+
+    # Keep the ambient BGM loop alive (idempotent; covers loads and stops).
+    $ ensure_bgm_playing()
+
+
     $ current_obj = getattr(store, 'current_objective', None)
     $ tutorial_act = getattr(store, 'tutorial_active', False)
     $ obj4_shown = getattr(store, 'objective_4_dialogue_shown', False)
@@ -1034,29 +845,14 @@ label tavern_screen():
     python:
         if not tutorial_act:
             castle_name = "Governor's Castle"
-            # If castle should exist but isn't properly set up, fix it
-            if castle_name in owned_buildings:
-                if castle_name not in available_buildings:
-                    renpy.log(f"WARNING: {castle_name} in owned_buildings but not in available_buildings, fixing...")
-                    available_buildings[castle_name] = {
-                        "price": 0,
-                        "reputation": 0,
-                        "base_level": 5,
-                        "type": "governor_castle",
-                        "assigned_servants": [],
-                        "servant_jobs": {},
-                        "max_workers": 10,
-                        "costs": 0,
-                        "owned": True,
-                        "skill": 50,
-                        "skill_bonus": 0
-                    }
-                if "Castle" not in map_button_buildings:
-                    renpy.log(f"WARNING: Castle not in map_button_buildings, fixing...")
-                    map_button_buildings["Castle"] = castle_name
-                if castle_name not in custom_names:
-                    custom_names[castle_name] = castle_name
-                renpy.log(f"DEBUG: Castle verification - in owned: {castle_name in owned_buildings}, in available: {castle_name in available_buildings}, map_button: {'Castle' in map_button_buildings}")
+            # If castle should exist but isn't properly set up, repair it
+            if castle_name in owned_buildings and (
+                castle_name not in available_buildings
+                or "Castle" not in map_button_buildings
+                or castle_name not in custom_names
+            ):
+                renpy.log(f"WARNING: {castle_name} owned but inconsistent, repairing...")
+                unlock_governor_castle("(TAVERN REPAIR)")
     
     # Check if objective 4 dialogue is pending
     if getattr(store, 'pending_objective_4_dialogue', False) and not obj4_shown:
@@ -1087,10 +883,15 @@ label tavern_screen():
         show screen tavern
         pause 0.01
         jump tavern_screen
-    return
+    # Never `return` past the hub: there is no caller, so a bare return used to
+    # pop a stale leaked frame (teleporting the player) or end the game once the
+    # stack is clean. Loop back into the hub instead.
+    jump tavern_screen
 
 label next_day:
     $ renpy.log("DEBUG: next_day label - STARTING")
+    # Soft chime marking the day transition
+    $ play_ui_sound("day_chime")
     # Reset walk flag for new day
     $ take_a_walk_in_progress = False
     # Reset manager's daily interaction count
@@ -1118,23 +919,7 @@ label next_day:
             renpy.log("DEBUG: next_day - no event, showing daily report then going to tavern_screen")
             renpy.call_screen("daily_report")
             # "Start of day" as player experiences it: right after closing daily report.
-            try:
-                # Auto-supply and auto-equip first.
-                for w in store.workers:
-                    try:
-                        store.run_worker_auto_supply_potions(w)
-                    except Exception as e1:
-                        renpy.log("run_worker_auto_supply_potions error (next_day/no_event): " + str(e1))
-                    try:
-                        store.run_worker_auto_equip(w)
-                    except Exception as e2:
-                        renpy.log("run_worker_auto_equip error (next_day/no_event): " + str(e2))
-                _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
-                for w in store.workers:
-                    if hasattr(store, "auto_consume_start_of_day"):
-                        store.auto_consume_start_of_day(w, threshold=_th)
-            except Exception as e:
-                renpy.log(f"AUTO_CONSUME post-report error: {e}")
+            run_start_of_day_automation("next_day/no_event")
             renpy.jump("tavern_screen")
 
 label handle_event_then_daily_report:
@@ -1159,23 +944,7 @@ label handle_event_then_daily_report:
         # Show daily report
         renpy.call_screen("daily_report")
         # "Start of day" as player experiences it: right after closing daily report.
-        try:
-            # Auto-supply and auto-equip first.
-            for w in store.workers:
-                try:
-                    store.run_worker_auto_supply_potions(w)
-                except Exception as e1:
-                    renpy.log("run_worker_auto_supply_potions error (handle_event_then_daily_report): " + str(e1))
-                try:
-                    store.run_worker_auto_equip(w)
-                except Exception as e2:
-                    renpy.log("run_worker_auto_equip error (handle_event_then_daily_report): " + str(e2))
-            _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
-            for w in store.workers:
-                if hasattr(store, "auto_consume_start_of_day"):
-                    store.auto_consume_start_of_day(w, threshold=_th)
-        except Exception as e:
-            renpy.log(f"AUTO_CONSUME post-report error: {e}")
+        run_start_of_day_automation("handle_event_then_daily_report")
     
     # After daily report, go to tavern
     jump tavern_screen
@@ -1189,22 +958,7 @@ label handle_governor_retaliation_then_daily_report:
             renpy.log(f"BANKRUPTCY after governor retaliation flow: money ${store.money} (threshold <= {_bthr}), game over.")
             renpy.jump("game_over")
         renpy.call_screen("daily_report")
-        try:
-            for w in store.workers:
-                try:
-                    store.run_worker_auto_supply_potions(w)
-                except Exception as e1:
-                    renpy.log("run_worker_auto_supply_potions error (governor_retaliation flow): " + str(e1))
-                try:
-                    store.run_worker_auto_equip(w)
-                except Exception as e2:
-                    renpy.log("run_worker_auto_equip error (governor_retaliation flow): " + str(e2))
-            _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
-            for w in store.workers:
-                if hasattr(store, "auto_consume_start_of_day"):
-                    store.auto_consume_start_of_day(w, threshold=_th)
-        except Exception as e:
-            renpy.log(f"AUTO_CONSUME post-report error: {e}")
+        run_start_of_day_automation("governor_retaliation flow")
     jump tavern_screen
 
 label handle_governor_tension_then_daily_report:
@@ -1216,22 +970,7 @@ label handle_governor_tension_then_daily_report:
             renpy.log(f"BANKRUPTCY after governor tension event: money ${store.money} (threshold <= {_bthr}), game over.")
             renpy.jump("game_over")
         renpy.call_screen("daily_report")
-        try:
-            for w in store.workers:
-                try:
-                    store.run_worker_auto_supply_potions(w)
-                except Exception as e1:
-                    renpy.log("run_worker_auto_supply_potions error (governor_tension flow): " + str(e1))
-                try:
-                    store.run_worker_auto_equip(w)
-                except Exception as e2:
-                    renpy.log("run_worker_auto_equip error (governor_tension flow): " + str(e2))
-            _th = getattr(store, "AUTO_CONSUME_THRESHOLD", 0.30)
-            for w in store.workers:
-                if hasattr(store, "auto_consume_start_of_day"):
-                    store.auto_consume_start_of_day(w, threshold=_th)
-        except Exception as e:
-            renpy.log(f"AUTO_CONSUME post-report error: {e}")
+        run_start_of_day_automation("governor_tension flow")
     jump tavern_screen
 
 ################################################################################

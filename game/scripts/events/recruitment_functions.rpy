@@ -14,34 +14,6 @@ init python:
         for bad, good in replacements.items():
             sanitized = sanitized.replace(bad, good)
         return sanitized
-    def format_recruitment_message(message_text, applied_values):
-        """Replace placeholders like [actual_comfort] with applied values in recruitment messages."""
-        try:
-            if not message_text:
-                return ""
-            if not applied_values:
-                return message_text
-            formatted = message_text
-            for key, value in applied_values.items():
-                placeholder = f"[{key}]"
-                formatted = formatted.replace(placeholder, str(value))
-            return formatted
-        except Exception as e:
-            renpy.log(f"format_dynamic_message error: {e}")
-            return message_text
-
-    def launch_recruitment_via_label():
-        """
-        Deprecated: Recruitment is now launched via Ren'Py `Jump("start_recruitment_system")`
-        directly from UI actions to avoid stacking contexts (call_in_new_context), which was
-        a major source of post-load frozen/black screens after recruitment.
-        Kept for compatibility if any old screen still calls it.
-        """
-        try:
-            renpy.jump("start_recruitment_system")
-        except Exception as e:
-            renpy.log(f"launch_recruitment_via_label error: {e}")
-
     def get_recruitment_image(worker, outcome, event=None):
         """
         Resolve the best background / outcome image for a recruitment screen.
@@ -195,12 +167,13 @@ init python:
             return resolved
 
         return "images/event_bg.png"
-    def get_filtered_recruit_workers(event):
+    def get_filtered_recruit_workers(event, candidates=None):
         """
-        Get recruitment workers filtered by event requirements.
+        Get recruitment workers filtered by event requirements (worker_filter).
+        Pass `candidates` to filter an already-loaded pool instead of reloading.
         """
-        available_workers = load_recruit_workers()
-        worker_filter = event.get("worker_filter", {})
+        available_workers = candidates if candidates is not None else load_recruit_workers()
+        worker_filter = event.get("worker_filter", {}) or {}
         
         if not worker_filter:
             return available_workers
@@ -278,28 +251,6 @@ init python:
         
         return prepared_worker
 
-    def start_recruitment_event_legacy(event, worker):
-        """
-        Start a legacy format recruitment event using proper Ren'Py flow.
-        """
-        # Store event and worker data globally for the event system
-        store.current_recruitment_event = event
-        store.current_recruitment_worker = worker
-        
-        # Use the simple recruitment label for legacy events
-        renpy.call("recruitment_event_simple", event, worker)
-
-    def start_recruitment_event_advanced(event, worker):
-        """
-        Start an advanced format recruitment event using proper Ren'Py flow.
-        """
-        # Store event and worker data globally for the event system
-        store.current_recruitment_event = event
-        store.current_recruitment_worker = worker
-        
-        # Use the new Ren'Py label for proper dialogue and choice handling
-        renpy.call("recruitment_event_flow", event, worker)
-
     def process_recruitment_choice(choice_data, event, worker):
         """
         Process a recruitment event choice and return the outcome.
@@ -309,24 +260,45 @@ init python:
         
         # Determine if this is a skill check or guaranteed outcome
         if condition and condition != "building_skill":
-            # This is a skill check - we need a worker from our roster to perform it
+            # This is a skill check - we need a worker from our roster to perform it.
+            # Eligibility uses the same trait-adjusted skill as the roll
+            # (calculate_skill_with_traits), so workers whose skill comes only
+            # from traits/equipment are not wrongly excluded.
             eligible_workers = []
             for roster_worker in store.workers:
-                if roster_worker.get("skills", {}).get(condition, 0) > 0:
+                try:
+                    effective_skill = calculate_skill_with_traits(roster_worker, condition)
+                except Exception:
+                    effective_skill = roster_worker.get("skills", {}).get(condition, 0)
+                if effective_skill > 0:
                     eligible_workers.append(roster_worker)
-            
+
             if not eligible_workers:
                 # No eligible workers - automatic failure
+                try:
+                    if condition not in skill_names:
+                        renpy.log(f"WARNING: recruitment choice condition '{condition}' is not a known skill; no roster worker can pass it.")
+                except Exception:
+                    pass
                 outcome_status = "failure"
                 base_message = choice_data.get("message_failure", "No suitable worker available.")
                 applied_values = apply_recruitment_effects(effect.get("failure", {}), worker)
             else:
-                # Select the best worker for this skill
-                selected_worker = max(eligible_workers, key=lambda w: w.get("skills", {}).get(condition, 0))
-                skill_level = calculate_skill_with_traits(selected_worker, condition)
+                # Select the best worker for this skill (same trait-adjusted basis as the roll)
+                selected_worker = max(eligible_workers, key=lambda w: calculate_skill_with_traits(w, condition))
+                # Reuse the main engine's central skill-check info so recruitment
+                # gets the same difficulty bonus and minimum-chance floor as daily
+                # events (it also logs a WARNING for unknown skill conditions).
+                check_info = get_event_worker_skill_check_info(selected_worker, choice_data)
+                if check_info.get("valid"):
+                    target_chance = check_info.get("target_chance", 0)
+                    auto_success = check_info.get("auto_success", False)
+                else:
+                    target_chance = calculate_skill_with_traits(selected_worker, condition)
+                    auto_success = False
                 roll = random.randint(1, 100)
-                
-                if roll <= skill_level:
+
+                if auto_success or roll <= target_chance:
                     outcome_status = "success"
                     base_message = choice_data.get("message_success", "The arrangement succeeds; terms are met and the day moves forward.")
                     applied_values = apply_recruitment_effects(effect.get("success", {}), worker)
@@ -340,9 +312,14 @@ init python:
             # If success_chance present AND effect has success/failure branches → probability-based
             # If success_chance is 0 or effect has no success/failure → guaranteed (apply main effect)
             if success_chance is not None and ("success" in effect or "failure" in effect):
-                # Probability-based outcome
+                # Probability-based outcome: only the nested success/failure block
+                # is applied (the wrapper's other keys are author-side defaults).
+                # The difficulty floor (get_event_success_min_chance) is applied
+                # for parity with the main engine's probability events
+                # (see process_choice in script.rpy).
+                effective_success_chance = max(get_event_success_min_chance(), success_chance)
                 roll = random.random()
-                if roll <= success_chance:
+                if roll <= effective_success_chance:
                     outcome_status = "success"
                     base_message = choice_data.get("message_success", "The arrangement succeeds; terms are met and the day moves forward.")
                     applied_values = apply_recruitment_effects(effect.get("success", {}), worker)
@@ -366,6 +343,8 @@ init python:
         worker_name = worker.get("name", "Unknown") if worker else "Unknown"
         outcome_message = base_message.replace("[event_worker]", worker_name)
         outcome_message = outcome_message.replace("[acting_worker]", selected_worker.get("name", "Manager") if 'selected_worker' in locals() else "Manager")
+        # Replace player placeholders (parity with the main event engine)
+        outcome_message = outcome_message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
 
         # Apply dynamic message formatting for any remaining placeholders
         # Use the main format_dynamic_message from script.rpy for {actual_money} processing
@@ -476,7 +455,15 @@ init python:
             else:
                 renpy.log("Recruitment: No health target available; skipping health effect.")
             applied_values["actual_health"] = abs(health_change)
-        
+
+        # Apply joy to the worker when present (recruit events use joy like
+        # daily events; mirrors apply_effects in script.rpy)
+        if "joy" in effect_dict:
+            joy_change = effect_dict["joy"]
+            if joy_change != 0 and worker and hasattr(store, "apply_attribute_change"):
+                store.apply_attribute_change(worker, "joy", joy_change)
+                applied_values["actual_joy"] = joy_change
+
         # Handle worker recruitment
         if effect_dict.get("recruit_worker", False) and worker:
             # Apply cost modifier if present.
@@ -572,26 +559,5 @@ init python:
                     renpy.log(f"Recruitment custom give_item: added {item_id} to inventory")
                 else:
                     renpy.log("Recruitment custom give_item: missing item_id")
-        
-        return applied_values
 
-    def process_advanced_recruitment_choice(choice_data, event, worker):
-        """
-        Process an advanced recruitment choice and show the result using standard dialogue box.
-        """
-        try:
-            # Process the choice
-            outcome_details = process_recruitment_choice(choice_data, event, worker)
-            outcome_message = outcome_details.get("message", "Something happened.")
-            outcome_status = outcome_details.get("outcome", "success")
-            
-            # Hide the current screen
-            renpy.hide_screen("advanced_recruitment_event_screen")
-            
-            # Show result using unified screen (like interactions)
-            renpy.call_screen("recruitment_outcome", message=outcome_message, event=event, outcome=outcome_status)
-            
-        except Exception as e:
-            renpy.log(f"Error processing advanced recruitment choice: {e}")
-            renpy.hide_screen("advanced_recruitment_event_screen")
-            renpy.show_screen("error_popup", message="Choice processing error")
+        return applied_values

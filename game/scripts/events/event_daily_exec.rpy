@@ -474,7 +474,20 @@ init python:
     def process_daily_events():
         global daily_report, manager_inventory
         renpy.log("process_daily_events() starting...")
-        
+
+        # Daily badge tracker (level/skill ups, HP loss) shown in the report.
+        # SESSION-ONLY, and reset here at the single once-per-day entry point:
+        # process_daily_events runs exactly once per day (from `label next_day`).
+        # If it were ever chained twice within one day, only the last pass's
+        # deltas would show in the report. Not saved (display-only). (Audit note #6.)
+        store.daily_worker_deltas = {}
+        _hp_at_day_start = {}
+        for _w in store.workers:
+            try:
+                _hp_at_day_start[str(_w.get("name", ""))] = int(_w.get("health", 0) or 0)
+            except Exception:
+                pass
+
         # Clear image cache for new Daily Report
         clear_image_cache()
 
@@ -630,9 +643,6 @@ init python:
                             }
                             daily_report.append(report_entry)
                             continue  # Skip further processing for this worker
-
-                    # Initialize failed_rolls counter for joy adjustment
-                    worker["failed_rolls"] = worker.get("failed_rolls", 0)
 
                     # Track the number of events processed
                     processed_events = 0
@@ -817,8 +827,6 @@ init python:
                         except (TypeError, ValueError):
                             synergy_skill_bonus = 0
                         skill_threshold = min(100, max(0, adjusted_skill + synergy_skill_bonus))
-                        if roll < 50:
-                            worker["failed_rolls"] = worker.get("failed_rolls", 0) + 1
 
                         # Critical success: 10% of effective threshold, max 25%
                         crit_pct = min(25, max(1, int(round(0.10 * skill_threshold))))
@@ -1534,8 +1542,6 @@ init python:
             worker["max_health"] = calculate_max_health(worker)
             worker["max_energy"] = calculate_max_energy(worker)
 
-            worker["failed_rolls"] = 0
-
             comfort = worker.get("comfort_level", 1)
             romance = worker.get("romance", 0)
             relationship = worker.get("relationship", 10 + comfort)
@@ -1658,6 +1664,17 @@ init python:
         update_skill_levels()
         update_worker_levels()
 
+        # Record each surviving worker's net HP loss for the report badges
+        try:
+            for _w in store.workers:
+                _wn = str(_w.get("name", ""))
+                if _wn in _hp_at_day_start:
+                    _hp_delta = int(_w.get("health", 0) or 0) - _hp_at_day_start[_wn]
+                    if _hp_delta < 0:
+                        _record_daily_worker_delta(_wn, "hp", _hp_delta)
+        except Exception as e:
+            renpy.log(f"hp delta tracking error: {e}")
+
         # Reload available workers unconditionally
         available_workers = load_buy_workers()
         renpy.log(f"Reloaded available_workers: {[w['name'] for w in available_workers]}")
@@ -1692,6 +1709,34 @@ init python:
         if total_income >= 3000 and not store.event_flags.get("daily_revenue_10k_achieved", False):
             store.event_flags["daily_revenue_10k_achieved"] = True
             renpy.log("ACHIEVEMENT: Daily revenue objective (3,000 in one day) achieved!")
+
+        # Expire timed worker flags (interaction flags with duration > 0, e.g. the
+        # 4/5-day flags from interactions_special.json). See expire_worker_flags
+        # in worker_interactions.rpy for the duration semantics.
+        try:
+            expire_worker_flags()
+        except Exception as e:
+            renpy.log(f"FLAGS ERROR expiring worker flags: {e}")
+
+        # Restore sabotaged building skill bonuses once their timer expires.
+        # Counterpart of the governor-tension sabotage effect, which promised a
+        # 3-day recovery but never restored anything. Flags written at sabotage
+        # time: sabotage_restore_<building> = expiry day, sabotage_amount_<building>.
+        try:
+            _today_total = calculate_total_days()
+            for _flag in [k for k in list(store.event_flags.keys()) if k.startswith("sabotage_restore_")]:
+                if _today_total >= store.event_flags.get(_flag, 0):
+                    _bname = _flag[len("sabotage_restore_"):]
+                    _amount = store.event_flags.pop("sabotage_amount_" + _bname, 10)
+                    _b = available_buildings.get(_bname)
+                    if _b is not None:
+                        _b["skill_bonus"] = _b.get("skill_bonus", 0) + _amount
+                        renpy.notify(f"{custom_names.get(_bname, _bname)} has recovered from the sabotage.")
+                        renpy.log(f"TENSION: Restored sabotaged skill_bonus (+{_amount}) on {_bname}")
+                    store.event_flags.pop("sabotage_" + _bname, None)
+                    del store.event_flags[_flag]
+        except Exception as e:
+            renpy.log(f"TENSION ERROR restoring sabotage: {e}")
 
         # ===== GOVERNOR'S TENSION SYSTEM =====
         # Update tension level based on current objective
@@ -1735,11 +1780,14 @@ init python:
         # Build a pool of guaranteed/date-specific events from filtered list
         guaranteed_pool = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 0) >= 100]
 
-        # Fallback: also include events with exact_date matching today even if some filter excluded them unexpectedly
+        # Fallback: surface events with exact_date matching today in case the
+        # guaranteed/probability classification missed them. Scan the FILTERED
+        # list: scanning all_events bypassed occurrence caps and flags, so
+        # consumed one-shots re-fired every anniversary.
         try:
             today_day = store.current_day
             today_month = store.current_month
-            for e in all_events:
+            for e in possible_events:
                 conds = e.get("conditions", {}) or {}
                 start_when = conds.get("start_when", "")
                 if isinstance(start_when, str) and start_when.startswith("exact_date:"):
@@ -1831,9 +1879,10 @@ init python:
             else:
                 renpy.log("Guaranteed/date-specific pool had no valid events after worker availability checks.")
 
-        # Check for guaranteed events (100% probability or date-specific)
-        guaranteed_events = [e for e in possible_events if e.get("guaranteed", False) or e.get("event_probability", 30) >= 100]
-        
+        # NOTE: the guaranteed pool was fully handled by the immediate path above.
+        # Reaching this point means it was empty or had no eligible worker today,
+        # so re-locking onto it here would only starve the other pools (it used
+        # to: one unsatisfiable guaranteed event blocked every other event).
         # Check for priority events (NOT affected by managers):
         # - Events with explicit custom probability (event_probability defined)
         # - Events explicitly marked as priority (priority: true)
@@ -1860,54 +1909,36 @@ init python:
             if not _is_priority_event(e) and not e.get("guaranteed", False)
         ]
         
-        if guaranteed_events:
-            renpy.log(f"Found {len(guaranteed_events)} guaranteed events, skipping probability check")
+        should_trigger_event = False
+        events_to_consider = []
+
+        # Priority events (custom probability OR explicit priority/story tags) are
+        # NOT affected by managers. Each is gated exactly once, per-event, in the
+        # individual probability phase below. (They used to be double-gated: one
+        # shared roll against the pool's MAX probability here, then a second,
+        # manager-reduced roll below for events without an explicit probability —
+        # contradicting the "not affected by managers" design.)
+        if priority_events:
             should_trigger_event = True
-            possible_events = guaranteed_events  # Only consider guaranteed events
-        elif priority_events or (normal_events and has_active_professions):
-            # Two separate checks:
-            # 1. Priority events (custom probability OR explicit priority/story tags) - NOT affected by managers
-            # 2. Normal events - affected by managers
-            
-            should_trigger_event = False
-            events_to_consider = []
-            # Priority events with explicit custom probability are already gated once
-            # by the priority roll. Avoid rolling their probability a second time.
-            prepassed_priority_event_ids = set()
-            
-            # Check priority events (NOT affected by managers)
-            # Priority events include: custom probability OR explicit priority/story tags
-            if priority_events:
-                # Use event_probability if defined, otherwise use 50% for limited events
-                max_priority_prob = max([e.get("event_probability", 50) for e in priority_events])
-                priority_roll = renpy.random.randint(1, 100)
-                renpy.log(f"DEBUG: Priority events roll: {priority_roll}/100 (max prob: {max_priority_prob}%, NOT affected by managers, {len(priority_events)} events)")
-                if priority_roll <= max_priority_prob:
-                    should_trigger_event = True
-                    events_to_consider.extend(priority_events)
-                    for e in priority_events:
-                        event_id = e.get("id")
-                        if event_id and e.get("event_probability") is not None and e.get("event_probability", 0) < 100:
-                            prepassed_priority_event_ids.add(event_id)
-            
-            # Check normal events (affected by managers)
-            if normal_events and has_active_professions:
-                base_probability = 30
-                manager_count = count_active_managers()
-                manager_reduction = manager_count * 15
-                effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
-                
-                normal_roll = renpy.random.randint(1, 100)
-                renpy.log(f"DEBUG: Normal events roll: {normal_roll}/100 (base: {base_probability}%, managers: {manager_count} (-{manager_reduction}%), effective: {effective_probability}%)")
-                if normal_roll <= effective_probability:
-                    should_trigger_event = True
-                    events_to_consider.extend(normal_events)
-            
-            # If any check passed, consider those events
-            if events_to_consider:
-                possible_events = events_to_consider
-        else:
-            should_trigger_event = False
+            events_to_consider.extend(priority_events)
+            renpy.log(f"DEBUG: {len(priority_events)} priority event(s) advance to the individual probability phase (NOT affected by managers)")
+
+        # Normal events: one pool-level roll (manager-reduced), then per-event rolls below.
+        if normal_events and has_active_professions:
+            base_probability = 30
+            manager_count = count_active_managers()
+            manager_reduction = manager_count * 10  # unified with the individual phase: 10%/manager
+            effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
+
+            normal_roll = renpy.random.randint(1, 100)
+            renpy.log(f"DEBUG: Normal events roll: {normal_roll}/100 (base: {base_probability}%, managers: {manager_count} (-{manager_reduction}%), effective: {effective_probability}%)")
+            if normal_roll <= effective_probability:
+                should_trigger_event = True
+                events_to_consider.extend(normal_events)
+
+        # If any check passed, consider those events
+        if events_to_consider:
+            possible_events = events_to_consider
         
         if should_trigger_event:
             renpy.log("Triggering event check...")
@@ -1987,28 +2018,23 @@ init python:
 
                     for event, worker in valid_events:
                         event_id = event.get("id")
-                        # If event has custom probability (fixed chance), use it as-is (NOT affected by managers)
-                        # If not, use the effective base probability (reduced by managers)
+                        # Priority events roll their OWN probability (default 50%),
+                        # never manager-reduced. Normal events without a custom
+                        # probability use the manager-reduced base.
                         event_probability = event.get("event_probability")
-                        prepassed_priority = event_id in prepassed_priority_event_ids
-                        if event_probability is None:
-                            # No custom probability, use effective base (reduced by managers)
+                        if _is_priority_event(event):
+                            event_probability = max(1, event_probability if event_probability is not None else 50)
+                        elif event_probability is None:
                             event_probability = base_event_prob
                         else:
-                            # Has custom probability (fixed chance) - use it exactly as defined, NOT affected by managers
-                            # Only ensure it's not below 1% for safety
+                            # Custom probability on a normal event - use it exactly as
+                            # defined, NOT affected by managers; keep a 1% floor.
                             event_probability = max(1, event_probability)
 
                         if event.get("guaranteed", False) or event_probability >= 100:
                             # Guaranteed events always pass
                             probability_filtered_events.append((event, worker))
                             renpy.log(f"Event {event.get('id')} is guaranteed, adding to selection pool")
-                        elif prepassed_priority:
-                            probability_filtered_events.append((event, worker))
-                            renpy.log(
-                                f"Event {event.get('id')} already passed priority probability gate; "
-                                f"skipping duplicate individual probability roll."
-                            )
                         else:
                             # Roll for individual event probability
                             individual_roll = renpy.random.randint(1, 100)
@@ -2024,6 +2050,7 @@ init python:
 
                     if probability_filtered_events:
                         # Use weight-based selection among events that passed probability check
+                        chosen_event_tuple = None
                         total_weight = sum(event.get("weight", 1) for event, _ in probability_filtered_events)
                         if total_weight > 0:
                             choice_val = renpy.random.uniform(0, total_weight)

@@ -2,24 +2,6 @@
 
 
 init python:
-    if not hasattr(store, 'pending_exit'):
-        store.pending_exit = False
-    # Remove aggressive context popper to avoid UI glitches on quit
-
-    def _set_pending_exit_if_quitting(message):
-        try:
-            if isinstance(message, str) and message.lower().find("quit") != -1:
-                store.pending_exit = True
-        except Exception:
-            store.pending_exit = True
-
-    def _quit_now():
-        try:
-            from renpy import exports as rpy
-            rpy.quit()
-        except Exception:
-            pass
-    
     config.log = "log.txt"  # Force log file
     config.developer = True  # restore original dev setting
     
@@ -132,6 +114,11 @@ init python:
         skill_name = choice.get("condition")
         if not skill_name or skill_name == "building_skill":
             return info
+        try:
+            if skill_name not in skill_names:
+                renpy.log(f"WARNING: event choice condition '{skill_name}' is not a known skill; the check resolves at 0 base skill.")
+        except Exception:
+            pass
 
         threshold = _coerce_event_threshold(choice)
         try:
@@ -151,6 +138,10 @@ init python:
                 target_chance = max(skill_with_bonus, 90)
         else:
             target_chance = min(100, roll_skill + worker_bonus)
+            # Difficulty-scaled floor so low-skill checks are never hopeless.
+            # Tuned 25 points below the probability-event floor so skill still
+            # matters: nightmare 10, hard 20, normal 30, easy ~40, story 50.
+            target_chance = max(target_chance, max(5, int(get_event_success_min_chance() * 100) - 25))
 
         try:
             display_name = skill_names.get(skill_name, skill_name)
@@ -206,6 +197,8 @@ init python:
         display_skill = base_skill + skill_bonus
         building_bonus = get_event_success_bonus_building()
         target_chance = min(100, display_skill + building_bonus)
+        # Same difficulty-scaled floor as worker skill checks (see above).
+        target_chance = max(target_chance, max(5, int(get_event_success_min_chance() * 100) - 25))
         bonus_text = ""
         if building_bonus:
             bonus_text = " (+%d event)" % building_bonus
@@ -332,13 +325,6 @@ init python:
     if not hasattr(store, "event_last_occurred"):
         store.event_last_occurred = {}
     
-    def reset_calendar_to_start():
-        """Reset calendar to the very beginning (Day 1, Month 1, Year 1)"""
-        store.current_day = 1
-        store.current_month = 1
-        store.current_year = 1
-        renpy.log("Calendar manually reset to Day 1, Frostveil Year 1")
-
     def sync_calendar():
         """Synchronize calendar (store is the single source of truth)."""
         renpy.log(f"Calendar synced: Day {store.current_day}, {month_names[store.current_month - 1]} {store.current_year}")
@@ -535,13 +521,15 @@ init python:
         Calculate font size based on user preference.
         Large mode adds 40% increase for better readability.
         Excludes the workers and buy_servants_table screens from font size increase.
+
+        Called for nearly every widget: early-return when large-font mode is off,
+        and use a single get_screen call (it accepts a list of names) when it is on.
         """
-        if persistent.large_font_mode:
-            # Check if we're in excluded screens and exclude them from font increase
-            workers_screen = renpy.get_screen("workers")
-            buy_servants_screen = renpy.get_screen("buy_servants_table")
-            if workers_screen is None and buy_servants_screen is None:
-                return int(base_size * 1.4)
+        if not persistent.large_font_mode:
+            return base_size
+        # Check if we're in excluded screens and exclude them from font increase
+        if renpy.get_screen(("workers", "buy_servants_table")) is None:
+            return int(base_size * 1.4)
         return base_size
 
     def col_size(base_size):
@@ -1725,6 +1713,72 @@ init python:
             inventory[index] = (entry[0], entry_qty - quantity, entry[2] if len(entry) > 2 else False)
         return True
 
+    def mass_sell_inventory_items(plan, worker_name=None):
+        """Bulk-sell executor for manager_inventory shop mode (Sell stack/shown/duplicates).
+
+        plan: list of (item_id, quantity, unit_sell_price) tuples, computed at render
+        time in the manager_inventory screen with the same 50%-of-price math as sell_item.
+        Store-level (NOT a screen-local) on purpose: it is passed to the Confirm screen
+        as an action argument, and shown-screen args must stay picklable (BIBLIA §8).
+
+        Safety rails (re-verified here against the live inventory, not just at render):
+        - never touches equipped entries (entry[2] truthy)
+        - clamps each id to the currently available unequipped quantity
+        """
+        if worker_name:
+            src_worker = next((w for w in store.workers if hasattr(w, "get") and w.get("name") == worker_name), None)
+            inventory = src_worker.get("inventory", None) if src_worker else None
+        else:
+            inventory = getattr(store, "manager_inventory", None)
+        if inventory is None or not plan:
+            return
+        total_gold = 0
+        total_items = 0
+        for item_id, qty, unit_price in plan:
+            try:
+                remaining = int(qty)
+                unit_price = int(unit_price)
+            except (TypeError, ValueError):
+                continue
+            # Walk indices descending so pops don't shift unvisited entries.
+            for idx in range(len(inventory) - 1, -1, -1):
+                if remaining <= 0:
+                    break
+                entry = inventory[idx]
+                if not (hasattr(entry, "__getitem__") and not isinstance(entry, str) and not hasattr(entry, "get")):
+                    continue
+                if len(entry) < 2 or str(entry[0]) != str(item_id):
+                    continue
+                if store._is_equipped(entry):
+                    continue  # NEVER sell equipped entries
+                # remove_item_from_inventory_by_index requires a tuple entry
+                if not isinstance(entry, tuple):
+                    inventory[idx] = (entry[0], entry[1], entry[2] if len(entry) > 2 else False)
+                try:
+                    available = int(entry[1] or 0)
+                except (TypeError, ValueError):
+                    available = 0
+                take = min(remaining, available)
+                if take <= 0:
+                    continue
+                if remove_item_from_inventory_by_index(inventory, idx, take):
+                    remaining -= take
+                    total_items += take
+                    total_gold += unit_price * take
+        if total_items <= 0:
+            renpy.notify("Nothing eligible to sell.")
+            renpy.restart_interaction()
+            return
+        store.money += total_gold
+        if worker_name is None:
+            # Same manager_inventory refresh dance as remove_item_from_inventory:
+            # recreate the list so Ren'Py notices the change.
+            store.manager_inventory = list(store.manager_inventory)
+            renpy.store.manager_inventory = store.manager_inventory
+        # Single summary notify for the whole batch (not one per item), like sell_item's format.
+        renpy.notify(f"Sold {total_items} items for ${total_gold}")
+        renpy.restart_interaction()
+
     def use_potion_from_inventory(worker, potion_id):
         """
         Use a potion on a worker from manager_inventory.
@@ -1763,6 +1817,19 @@ init python:
         _get_normalized_manager_inventory()
         renpy.store.manager_inventory = store.manager_inventory
 
+    def buy_and_use_potion_now(worker, potion_id):
+        """Yes-path of confirm_buy_potion without the dialog (persistent.skip_potion_buy_confirm).
+        Mirrors the confirm screen's Yes action exactly: pay price, add to manager
+        inventory, then use it on the worker; error popup when money is short."""
+        potion_item = next((i for i in items_json["items"] if i["id"] == potion_id), None)
+        potion_price = potion_item.get("price", 0) if potion_item else 0
+        if store.money >= potion_price:
+            store.money -= potion_price
+            add_item_to_inventory(manager_inventory, potion_id, 1)
+            use_potion_from_inventory(worker, potion_id)
+        else:
+            renpy.show_screen("error_popup", message="You do not have enough money to buy this potion.")
+
     def use_or_buy_potion_action(worker, potion_id):
         """
         Returns an action to use a potion (from manager inventory) or show buy confirmation.
@@ -1782,6 +1849,9 @@ init python:
                 break
         if has_in_manager:
             return Function(use_potion_from_inventory, canonical, potion_id)
+        if getattr(persistent, "skip_potion_buy_confirm", False):
+            # "Don't ask again" is on: run the confirm screen's Yes path directly.
+            return Function(buy_and_use_potion_now, canonical, potion_id)
         return Show("confirm_buy_potion", worker=canonical, potion_id=potion_id)
 
     def use_item(item_id, worker=None):
@@ -2182,7 +2252,8 @@ init python:
                     renpy.log(f"evaluate_condition: Invalid number in after_date: {condition_str}")
                     return False
 
-                # Compare dates
+                # Compare dates (current_game_month is 0-based; JSON month is 1-based)
+                required_month_0based = required_month_1based - 1
                 if current_game_year > required_year: result = True
                 elif current_game_year == required_year:
                     if current_game_month > required_month_0based: result = True
@@ -2794,34 +2865,48 @@ init python:
         # Fallback to procedural generation
         return spawn_new_worker(filters=filters)
 
-    def update_skill_levels():
+    def _record_daily_worker_delta(worker_name, kind, value):
         """
-        For each worker, check each skill's uses. If skill_uses >= current skill level,
-        level up that skill by 1 and reset the skill_uses counter.
+        Accumulate per-worker deltas (worker level ups, skill level ups, net HP
+        loss) so the daily report can show small badges next to worker names.
+        Reset at the start of each day in process_daily_events; not saved
+        (the daily report itself is per-session display data).
         """
-        renpy.log("=== update_skill_levels() called ===")
-        for worker in store.workers:
-            worker_name = worker.get("name", "Unknown")
-            # Ensure skill_uses exists
-            if "skill_uses" not in worker:
-                worker["skill_uses"] = {}
-                renpy.log(f"Initialized skill_uses for {worker_name}")
-            
-            # Use worker["skills"] as the single source of truth for base skill levels
-            # Trait and item bonuses are calculated dynamically in calculate_skill_with_traits()
-            base_skills = worker.get("skills", {})
-            
-            if not base_skills:
-                renpy.log(f"WARNING: {worker_name} has no skills!")
-                continue
-            
-            # Ensure skill_uses is initialized for all skills
-            if "skill_uses" not in worker:
-                worker["skill_uses"] = {}
-            
-            # Check each skill for level ups
-            for skill_name in list(base_skills.keys()):  # Use list() to avoid modification during iteration
-                while True:
+        try:
+            track = getattr(store, "daily_worker_deltas", None)
+            if track is None:
+                track = {}
+                store.daily_worker_deltas = track
+            entry = track.setdefault(str(worker_name), {})
+            if kind == "skill":
+                entry.setdefault("skills", []).append(value)
+            else:
+                entry[kind] = value
+        except Exception as e:
+            renpy.log(f"daily_worker_deltas error: {e}")
+
+    def update_skill_levels_for_worker(worker):
+        """
+        Check one worker's skill uses; level up each skill whose accumulated
+        uses meet the tiered threshold (keeping leftover experience).
+        """
+        worker_name = worker.get("name", "Unknown")
+        # Ensure skill_uses exists
+        if "skill_uses" not in worker:
+            worker["skill_uses"] = {}
+            renpy.log(f"Initialized skill_uses for {worker_name}")
+
+        # Use worker["skills"] as the single source of truth for base skill levels
+        # Trait and item bonuses are calculated dynamically in calculate_skill_with_traits()
+        base_skills = worker.get("skills", {})
+
+        if not base_skills:
+            renpy.log(f"WARNING: {worker_name} has no skills!")
+            return
+
+        # Check each skill for level ups
+        for skill_name in list(base_skills.keys()):  # Use list() to avoid modification during iteration
+            while True:
                     # Read current skill level and accumulated uses directly from the dict.
                     current_skill_level = int(base_skills.get(skill_name, 0))
                     skill_uses = int(worker["skill_uses"].get(skill_name, 0))
@@ -2861,6 +2946,7 @@ init python:
                     remaining_uses = worker["skill_uses"][skill_name]
                     renpy.notify(f"{worker_name}'s {skill_name} skill leveled up from {old_level} to {new_level}!")
                     renpy.log(f"{worker_name} - {skill_name}: consumed {uses_needed} uses, remaining {remaining_uses}")
+                    _record_daily_worker_delta(worker_name, "skill", (skill_name, old_level, new_level))
 
                     # Reduce rebelliousness when leveling up a skill (worker feels satisfied with progress).
                     comfort = worker.get("comfort_level", 1)
@@ -2868,6 +2954,15 @@ init python:
                     new_rebelliousness = max(0, current_rebelliousness - comfort)
                     set_attribute_with_caps(worker, "rebelliousness", new_rebelliousness)
                     renpy.log(f"Skill level up reduces {worker_name}'s rebelliousness: {current_rebelliousness} -> {new_rebelliousness} (-{comfort} from comfort)")
+
+    def update_skill_levels():
+        """
+        Roster-wide wrapper: check every worker's skill uses and apply level-ups.
+        Prefer update_skill_levels_for_worker() when only one worker changed.
+        """
+        renpy.log("=== update_skill_levels() called ===")
+        for worker in store.workers:
+            update_skill_levels_for_worker(worker)
         renpy.log("=== update_skill_levels() finished ===")
 
     def add_academy_training_skill_uses(worker, profession, primary_skill=None):
@@ -2944,6 +3039,7 @@ init python:
                 worker["level"] += 1
                 worker["success_count"] = 0
                 renpy.notify(f"{worker['name']} leveled up from {old_level} to {worker['level']}!")
+                _record_daily_worker_delta(worker.get("name", ""), "level", (old_level, worker["level"]))
                 
                 # Reduce rebelliousness when leveling up (worker feels satisfied with progress)
                 comfort = worker.get("comfort_level", 1)
@@ -4093,8 +4189,8 @@ init python:
         new_relationship = max(10, new_min_relationship + relationship_bonus)
         worker["relationship"] = new_relationship
         
-        # Base worker daily cost by design.
-        worker["daily_cost"] = new_comfort * 20
+        # Canon rule: worker daily cost is comfort x difficulty rate (see worker_defaults.rpy).
+        worker["daily_cost"] = int(new_comfort * get_difficulty_comfort_mult())
         
         renpy.log(f"Comfort adjusted: {current_comfort} -> {new_comfort}, Relationship: {current_relationship} -> {new_relationship} (bonus: {relationship_bonus}), Daily Cost: ${worker['daily_cost']}")
 
@@ -4749,11 +4845,7 @@ init python:
         """
         Devuelve el nombre de visualización de Building 1 (el edificio base).
         """
-        building_name = "Building 1"
-        parts = building_name.split('_')
-        default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
-        display_name = store.custom_names.get(building_name, default_name)
-        return display_name
+        return store.custom_names.get("Building 1", "Building 1")
 
     def get_shop_tooltip_text(shop_id):
         """
@@ -5006,8 +5098,8 @@ init python:
                 # --- DEBUG LOGGING ---
                 renpy.log(f"--- Building Skill Check ---")
                 renpy.log(f"Building: {selected_building_name}")
-                renpy.log(f"Base Skill: {selected_building['skill']}")
-                renpy.log(f"Skill Bonus: {selected_building['skill_bonus']}")
+                renpy.log(f"Base Skill: {selected_building.get('skill', 0)}")
+                renpy.log(f"Skill Bonus: {selected_building.get('skill_bonus', 0)}")
                 renpy.log(f"Base Total Skill: {base_total_skill}")
                 renpy.log(f"With +{building_bonus}% bonus: {total_skill}")
                 renpy.log(f"Roll (1-100): {roll}")
@@ -5027,16 +5119,11 @@ init python:
                             add_worker_to_building(worker, selected_building_name)
                     assigned_servants = selected_building.get("assigned_servants", [])
 
-                # Get text first
-                description = store.current_event_description
-                option_text = choice["option"]
-                message_success = choice["message_success"]
-                message_failure = choice["message_failure"]
-
-                # Check if message_failure has been pre-replaced and revert if necessary
-                original_message_failure = "[event_worker] is badly burnt in the fight and will need time to recover. The guild's reputation takes a hit."
-                if "Unknown" in message_failure and "[event_worker]" not in message_failure:
-                    message_failure = original_message_failure
+                # Get text first (safe defaults: modded/hand-edited events may omit keys)
+                description = getattr(store, "current_event_description", "") or ""
+                option_text = choice.get("option", "") or ""
+                message_success = choice.get("message_success") or "The team handles it capably, and the situation resolves in your favor."
+                message_failure = choice.get("message_failure") or "Despite their best efforts, the situation slips out of their control."
 
                 # Determine outcome and worker
                 if roll <= total_skill:
@@ -5149,22 +5236,10 @@ init python:
                 outcome_message = outcome_message + build_changes_summary(applied_values)
                 
                 # Split long messages into multiple narrator bubbles to avoid overflow
+                # (delegates to the shared splitter instead of an inline re-implementation)
                 try:
                     if len(outcome_message) > 180:
-                        import re
-                        sentences = re.split(r'(?<=[\.!?])\s+', outcome_message)
-                        chunks = []
-                        current = ""
-                        for s in sentences:
-                            if len(current) + len(s) + 1 <= 180:
-                                current = (current + " " + s).strip()
-                            else:
-                                if current:
-                                    chunks.append(current)
-                                current = s
-                        if current:
-                            chunks.append(current)
-                        outcome_message = "\n".join(chunks)
+                        outcome_message = "\n".join(split_text_for_dialogue(outcome_message, max_chars=180))
                 except Exception:
                     pass
                 
@@ -5196,7 +5271,40 @@ init python:
                     eligible_workers = store.workers
 
                 # If no worker selection is intended for this event, skip skill check.
-                if worker_selection_mode == "none":
+                # Also route here when the condition is null/empty ("no condition"):
+                # previously a null-condition choice in a "random" event fell into the
+                # skill-check path with skill=None -> target chance 0 -> always failed.
+                if worker_selection_mode == "none" or not skill_name:
+                    # Probability-based "none" choice: when an option declares a success_chance
+                    # together with explicit success/failure blocks, it must be ROLLED. Calling
+                    # apply_effects() on the wrapper dict would silently drop the nested blocks
+                    # (it only reads top-level keys), so without this the reward is never applied
+                    # and the success message is always shown. Mirrors the is_probability_choice
+                    # handling further below; the difficulty floor (get_event_success_min_chance)
+                    # is applied for parity with every other probability event.
+                    _sc = effect.get("success_chance")
+                    if _sc is not None and ("success" in effect or "failure" in effect):
+                        effective_success_chance = max(get_event_success_min_chance(), _sc)
+                        roll = random.random()
+                        if roll <= effective_success_chance:
+                            outcome_status = "success"
+                            outcome_message = choice.get("message_success", "The gamble pays off.")
+                            applied_values = apply_effects(effect.get("success", {}), worker=acting_worker, **_ef_kw)
+                        else:
+                            outcome_status = "failure"
+                            outcome_message = choice.get("message_failure", "The gamble does not pay off.")
+                            applied_values = apply_effects(effect.get("failure", {}), worker=acting_worker, **_ef_kw)
+                        outcome_message = outcome_message.replace("[event_worker]", "your staff").replace("[acting_worker]", "your staff")
+                        outcome_message = outcome_message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
+                        outcome_message = format_dynamic_message(outcome_message, applied_values)
+                        outcome_message = outcome_message + build_changes_summary(applied_values)
+                        if hasattr(store, 'current_event_description') and store.current_event_description:
+                            store.current_event_description = store.current_event_description.replace("[event_worker]", "your staff").replace("[acting_worker]", "your staff")
+                        event_id = event.get("id")
+                        if event_id:
+                            store.event_occurrences[event_id] = store.event_occurrences.get(event_id, 0) + 1
+                            store.event_last_occurred[event_id] = calculate_total_days()
+                        return {"message": outcome_message, "outcome": outcome_status}
                     # Apply base effects directly
                     applied_values = apply_effects(effect, worker=acting_worker, **_ef_kw)
                     # Use the primary message if available, otherwise a generic one
@@ -5245,6 +5353,32 @@ init python:
                     if not choice.get("condition"):
                         # For choices without conditions in a "choose" worker event, skip worker validation
                         renpy.log(f"Worker selection mode is 'choose', but this specific choice has no condition, so no worker needed")
+                        # Probability-based choice (success_chance + explicit success/failure blocks)
+                        # must be ROLLED; apply_effects() on the wrapper dict would drop the nested
+                        # blocks (it only reads top-level keys). Mirrors the worker_selection:"none"
+                        # handling above. No shipped event currently uses choose + no-condition +
+                        # probability; this is defensive parity for future/modded events.
+                        _sc = effect.get("success_chance")
+                        if _sc is not None and ("success" in effect or "failure" in effect):
+                            effective_success_chance = max(get_event_success_min_chance(), _sc)
+                            roll = random.random()
+                            if roll <= effective_success_chance:
+                                outcome_status = "success"
+                                message = choice.get("message_success", "The gamble pays off.")
+                                applied_values = apply_effects(effect.get("success", {}), worker=acting_worker, **_ef_kw)
+                            else:
+                                outcome_status = "failure"
+                                message = choice.get("message_failure", "The gamble does not pay off.")
+                                applied_values = apply_effects(effect.get("failure", {}), worker=acting_worker, **_ef_kw)
+                            message = message.replace("[event_worker]", "your staff").replace("[acting_worker]", "your staff")
+                            message = message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
+                            message = format_dynamic_message(message, applied_values)
+                            message = message + build_changes_summary(applied_values)
+                            event_id = event.get("id")
+                            if event_id:
+                                store.event_occurrences[event_id] = store.event_occurrences.get(event_id, 0) + 1
+                                store.event_last_occurred[event_id] = calculate_total_days()
+                            return {"message": message, "outcome": outcome_status}
                         # Handle the choice without a worker
                         applied_values = apply_effects(effect, worker=acting_worker, **_ef_kw)
                         # Get the message and apply replacements
@@ -5275,7 +5409,8 @@ init python:
                 # This shouldn't happen for 'random' or 'choose' if eligible_workers exist
                 if selected_worker is None and worker_selection_mode != "none":
                     renpy.log(f"ERROR: selected_worker is None unexpectedly for mode {worker_selection_mode}")
-                    return "Error processing event: Could not determine worker."
+                    # Must return a dict: the caller does outcome_details.get(...).
+                    return {"message": "Error processing event: Could not determine worker.", "outcome": "failure"}
 
                 # --- CENTRALIZED GLOBAL UPDATE --- 
                 # Update global state AFTER selection is confirmed
@@ -5488,79 +5623,8 @@ init python:
                 # Optional: Log which event was reset
                 # renpy.log(f"Reset occurrence count for limited event: {event_id}")
 
-    def check_trait_durations():
-        """Handle trait expiration and effects"""
-        for worker in store.workers:
-            if "trait_durations" not in worker:
-                continue
-            traits_to_process = list(worker["trait_durations"].keys())
-            for trait_name in traits_to_process:
-                worker["trait_durations"][trait_name] -= 1
-                if worker["trait_durations"][trait_name] <= 0:
-                    trait_def = next((t for t in traits_list if t["name"] == trait_name), None)
-                    if trait_def and trait_def.get("duration", 0) > 0:
-                        handle_trait_expiration(worker, trait_def)
-                        if trait_def.get("duration", 0) > 0:
-                            if trait_name in worker.get("traits", []):
-                                # Use centralized removal to keep trait modifiers in sync
-                                remove_trait(worker, trait_name)
-                            if trait_name in worker.get("trait_durations", {}):
-                                del worker["trait_durations"][trait_name]
-
-    def handle_trait_expiration(worker, trait_def):
-        """Handle expiration effects for a trait"""
-        effects = trait_def.get("on_expire", {})
-        
-        # Add new traits
-        if "add_trait" in effects:
-            trait_data = effects["add_trait"]
-            
-            def process_trait_entry(trait_entry):
-                """Process a single trait entry (string, dict, or list element)."""
-                trait_name, duration = _trait_name_duration_from_entry(trait_entry)
-                
-                if trait_name and trait_name not in worker.get("traits", []):
-                    add_trait_with_duration(worker, trait_name, duration)
-                    renpy.notify(f"{worker['name']} gained {trait_name} from expired trait")
-            
-            # Handle different formats: string, list, or dict
-            for trait_entry in _coerce_trait_effect_entries(trait_data):
-                process_trait_entry(trait_entry)
-
-        # Add new workers with proper condition checking
-        if "add_worker" in effects:
-            worker_data = effects["add_worker"]
-            if "worker_name" in worker_data:
-                # Check if main worker meets conditions
-                conditions = worker_data.get("conditions", {})
-                meets_conditions = True
-                
-                # Skill check
-                if "skills" in conditions:
-                    for skill_id, min_value in conditions["skills"].items():
-                        if calculate_skill_with_traits(worker, skill_name) < min_value:
-                            meets_conditions = False
-                
-                # Trait check
-                if "traits" in conditions:
-                    for trait in conditions["traits"]:
-                        if trait not in worker.get("traits", []):
-                            meets_conditions = False
-                
-                if meets_conditions:
-                    add_specific_worker(worker, worker_data)
-                    
-            elif "random" in worker_data:
-                add_random_worker(worker, worker_data)
-
-        # Remove expired trait only if it has duration > 0
-        if trait_def.get("duration", 0) > 0:
-            trait_name = trait_def["name"]
-            if trait_name in worker.get("traits", []):
-                # Use centralized removal to keep trait modifiers in sync
-                remove_trait(worker, trait_name)
-            if trait_name in worker.get("trait_durations", {}):
-                del worker["trait_durations"][trait_name]
+    # check_trait_durations lives in worker_traits.rpy. A dead duplicate (shadowed by
+    # init order) and its handle_trait_expiration helper used to live here.
 
     def add_specific_worker(main_worker, config):
         """Add a specific worker by name with condition checking"""
@@ -5762,7 +5826,7 @@ init python:
                         renpy.log(f"Removed event flag: {flag_name}")
                 else:
                     # Check if the value is a string that needs to be evaluated
-                    if isinstance(flag_value, basestring) and flag_value.startswith("[") and flag_value.endswith("]"):
+                    if isinstance(flag_value, str) and flag_value.startswith("[") and flag_value.endswith("]"):
                         eval_str = flag_value[1:-1]
                         try:
                             evaluated_value = eval(eval_str)
@@ -5806,22 +5870,18 @@ init python:
                 except Exception as e:
                     renpy.log(f"ERROR in give_item: {e}")
             elif custom_action == "consume_item":
-                # Remove a specific item from the manager inventory
+                # Remove a specific item from the manager inventory.
+                # Inventory entries are 3-tuples (item_id, qty, equipped); delegate to
+                # remove_item_from_inventory, which normalizes every entry shape.
                 item_id = effect_dict.get("item_id")
                 try:
                     if item_id:
-                        # Find and remove the item
-                        item_removed = False
-                        for i, (inv_item_id, quantity) in enumerate(manager_inventory):
-                            if inv_item_id == item_id and quantity > 0:
-                                if quantity > 1:
-                                    manager_inventory[i] = (inv_item_id, quantity - 1)
-                                else:
-                                    del manager_inventory[i]
-                                item_removed = True
-                                break
-                        
-                        if item_removed:
+                        had_item = any(
+                            hasattr(e, "__getitem__") and not isinstance(e, str) and str(e[0]) == str(item_id)
+                            for e in manager_inventory
+                        )
+                        if had_item:
+                            remove_item_from_inventory(manager_inventory, item_id, 1)
                             renpy.notify(f"Used {item_id.replace('_',' ').title()}")
                             renpy.log(f"Custom consume_item: removed {item_id} from inventory")
                         else:
@@ -5835,19 +5895,18 @@ init python:
                 # First, consume item if specified
                 consume_item_id = effect_dict.get("consume_item")
                 if consume_item_id:
-                    item_consumed = False
-                    for i, (inv_item_id, quantity) in enumerate(manager_inventory):
-                        if inv_item_id == consume_item_id and quantity > 0:
-                            if quantity > 1:
-                                manager_inventory[i] = (inv_item_id, quantity - 1)
-                            else:
-                                del manager_inventory[i]
-                            item_consumed = True
-                            break
-                    if item_consumed:
-                        renpy.log(f"Custom grant_loot: consumed {consume_item_id}")
-                    else:
-                        renpy.log(f"Custom grant_loot: failed to consume {consume_item_id}")
+                    try:
+                        item_consumed = any(
+                            hasattr(e, "__getitem__") and not isinstance(e, str) and str(e[0]) == str(consume_item_id)
+                            for e in manager_inventory
+                        )
+                        if item_consumed:
+                            remove_item_from_inventory(manager_inventory, consume_item_id, 1)
+                            renpy.log(f"Custom grant_loot: consumed {consume_item_id}")
+                        else:
+                            renpy.log(f"Custom grant_loot: failed to consume {consume_item_id}")
+                    except Exception as e:
+                        renpy.log(f"ERROR in grant_loot consume: {e}")
                 
                 rolls = int(effect_dict.get("loot_rolls", 1))
                 try:
@@ -6199,12 +6258,6 @@ init python:
             return ""
         return "\nChanges: " + ", ".join(parts)
 
-    def combat_check():
-        for worker in store.workers:
-            if int(worker["skills"].get("9", 0)) >= 80:
-                return True
-        return False
-        
     def roll_loot(num_rolls):
         # Get the list of items from our loaded items_json.
         items_list = items_json.get("items", [])
@@ -6222,9 +6275,13 @@ init python:
         filtered_items = []
         for item in items_list:
             item_id = item.get("id", "").lower()
-            # Skip test items and debug items
-            if "test" not in item_id and "debug" not in item_id:
-                filtered_items.append(item)
+            # Skip test/debug items
+            if "test" in item_id or "debug" in item_id:
+                continue
+            # Quest items are obtained via events/shops, never random loot (mirrors shop exclusion)
+            if item.get("type") == "quest_item":
+                continue
+            filtered_items.append(item)
         
         if not filtered_items:
             renpy.log("roll_loot: No valid items after filtering test items.")
@@ -6303,16 +6360,6 @@ init python:
                 renpy.log("buy_item: Not enough money to purchase " + item.get("name", "Unknown"))
         else:
             renpy.log("buy_item: Item with id " + str(item_id) + " not found!")
-
-    def get_best_worker_with_skill(skill_name):
-        best_worker = None
-        highest_skill = -1
-        for worker in store.workers:
-            skill_level = calculate_skill_with_traits(worker, skill_name)  # Use calculate_skill_with_traits
-            if skill_level > highest_skill:
-                best_worker = worker
-                highest_skill = skill_level
-        return best_worker
 
     def get_worker_profession(worker):
         """Return the profession dict (with id, skills) for the worker's current job, or None if unassigned or rest."""
@@ -7478,6 +7525,8 @@ default unlocked_shops = {"shop1": True, "shop2": False, "shop3": False}
 
 # Font size preferences - persistent across sessions
 default persistent.large_font_mode = False
+# QoL: skip the "buy potion?" confirmation dialog (toggle in confirm dialog / options)
+default persistent.skip_potion_buy_confirm = False
 default available_workers = []
 default displayed_workers = []
 default roster_current_page = 0
@@ -7620,8 +7669,9 @@ init python:
     
     def get_tooltips_state_for_screen(screen_name):
         """Get tooltips state for a specific screen. Returns True if enabled (default)."""
-        # Default state: True only for map_screen, False for all others
-        default_state = True if screen_name == "map_screen" else False
+        # Default state: True only for map_screen and job_selection (the role-assignment
+        # modal has no info toggle button, so its skill/success tooltip must default on).
+        default_state = True if screen_name in ("map_screen", "job_selection") else False
         return tooltips_enabled_by_screen.get(screen_name, default_state)
 default event_worker_name = ""  # Variable to store the name of the worker being discussed in an event
 default current_affected_building = None  # Variable to store the currently affected building in an event
@@ -7637,22 +7687,13 @@ init python:
     if not hasattr(store, "acting_worker"):
         store.acting_worker = "Manager"
 
-# Set right_worker and current_worker to the first rostered worker, with higher priority
+# At init time the roster is always empty (workers load at game start), so the
+# old "point these at the first worker" branch never ran. Just default them.
 init 10 python:
-    renpy.log("Setting right_worker and current_worker...")
-    if hasattr(store, "workers") and store.workers:
-        store.right_worker = store.workers[0]
-        store.current_worker = store.workers[0]
-        renpy.log(f"Set right_worker to {store.right_worker['name']} and current_worker to {store.current_worker['name']}")
-    else:
+    if not hasattr(store, "right_worker"):
         store.right_worker = None
+    if not hasattr(store, "current_worker"):
         store.current_worker = None
-        renpy.log("No workers loaded, setting right_worker and current_worker to None")
-
-    # Apply defaults to workers if workers list exists
-    if hasattr(store, "workers"):
-        for worker in store.workers:
-            ensure_worker_defaults(worker)
 
 # Initialize inventories after all init phases
 label after_init:
@@ -7759,17 +7800,6 @@ init python:
                 building_type = next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), "")
                 display_name = store.custom_names.get(building_name, building_name)
                 store.affected_building_info = f"{building_type}: {display_name}"
-
-    class Player:
-        def __init__(self):
-            self.title = "Tavern Owner"  # Default title
-            self.name = "Player"  # Default name
-            self.money = 1000  # Starting money
-            self.workers = []  # List of workers
-            self.buildings = []  # List of buildings
-
-    # Create global player instance
-    player = Player()
 
 label explore:
     scene expression tavern_bg

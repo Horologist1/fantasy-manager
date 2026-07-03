@@ -919,15 +919,18 @@ init python:
         if not building:
             return None
         
-        # Reduce building skill bonus temporarily (stored in event_flags)
-        sabotage_key = f"sabotage_{building_name}"
-        store.event_flags[sabotage_key] = store.current_day
-        
-        # Reduce skill bonus (will be restored after 3 days)
+        # Reduce skill bonus; the daily loop restores it 3 days later via the
+        # sabotage_restore_/sabotage_amount_ flags (see event_daily_exec). Record
+        # the ACTUAL reduction: blindly restoring +10 would inflate low bonuses.
         old_bonus = building.get("skill_bonus", 0)
-        building["skill_bonus"] = max(0, old_bonus - 10)
-        
-        renpy.log(f"TENSION: {building_name} has been sabotaged! Skill bonus reduced.")
+        reduction = min(10, max(0, old_bonus))
+        building["skill_bonus"] = old_bonus - reduction
+
+        store.event_flags[f"sabotage_{building_name}"] = store.current_day
+        store.event_flags[f"sabotage_restore_{building_name}"] = calculate_total_days() + 3
+        store.event_flags[f"sabotage_amount_{building_name}"] = reduction
+
+        renpy.log(f"TENSION: {building_name} has been sabotaged! Skill bonus reduced by {reduction} for 3 days.")
         return building_name
     
     def apply_governor_spy_event():
@@ -1129,6 +1132,8 @@ screen journal_panel():
     modal True
     zorder 200
     on "show" action [Function(check_existing_building_upgrades), Function(check_objective_completion)]
+    # Universal close/back hotkey (mirrors config.rpy's esc routing for this screen)
+    key "K_BACKSPACE" action Hide("journal_panel")
     
     # Background overlay matching building selection
     add Solid("#000000dd")
@@ -1473,7 +1478,7 @@ screen journal_panel():
                         $ can_blackmail = has_team_blackmail()
                         
                         # Assassination path button (same style as objective 16)
-                        textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Magic)":
+                        textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Craft)":
                             xsize 580
                             text_size font_size(26)
                             text_color "#7a4b2a"
@@ -1687,26 +1692,6 @@ screen skip_tutorial_confirm():
 
 
 
-# ===== OBJECTIVE COMPLETION CHECKER =====
-label check_tutorial_progress:
-    if objective_just_completed > 0:
-        if objective_just_completed == 1:
-            $ objective_just_completed = 0
-            call show_objective_1_dialogue from _call_show_objective_1_dialogue
-        elif objective_just_completed == 2:
-            $ objective_just_completed = 0
-            call show_objective_2_dialogue from _call_show_objective_2_dialogue
-        elif objective_just_completed == 3:
-            $ objective_just_completed = 0
-            call show_objective_3_dialogue from _call_show_objective_3_dialogue
-        elif objective_just_completed == 4:
-            $ objective_just_completed = 0
-            call show_objective_4_dialogue from _call_show_objective_4_dialogue_1
-        elif objective_just_completed == 5:
-            $ objective_just_completed = 0
-            call show_objective_5_dialogue from _call_show_objective_5_dialogue
-    return
-
 # ===== NEW OBJECTIVE DIALOGUES =====
 # Note: show_objective_7_dialogue is defined in main_flow.rpy
 
@@ -1714,17 +1699,12 @@ label show_objective_10_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_10_dialogue - STARTING DIALOGUE")
-    "Thirty thousand coins. The number echoes in my mind like a promise fulfilled."
-    "My coffers overflow with gold, each coin a testament to the empire I have built from nothing."
-    "This is not mere wealth—it is power made manifest, the fuel that shall drive my campaign of vengeance to its inevitable conclusion."
-    "With such resources, I can move mountains and topple tyrants."
-    "I can buy loyalty, silence enemies, and fund operations that would make lesser men tremble."
-    "The governor may have his armies and his influence, but I have something he cannot match: the patience to build, and the gold to make it real."
-    "Every coin I have earned represents a choice, a sacrifice, a moment when I chose power over comfort."
-    "Now, that power is mine to wield, and I shall use it to reshape this city in my image."
-    "The path ahead is clear. Whether through steel or secrets, the governor's reign ends here."
-    "And when the dust settles, it shall be my banner that flies over the city, my law that governs, my will that shapes the future."
-    "My journal hath been inscribed with the next duty. The final pieces of my plan are falling into place."
+    "Thirty thousand coins. I count the sum twice — not from doubt, but for the pleasure of it."
+    "This is no mere wealth. It is the war chest of my vengeance, gathered coin by patient coin."
+    "The governor has his armies and his influence. I have patience, and now the gold to make patience dangerous."
+    "With such resources I can buy loyalty, purchase silence, and open doors that steel alone could never breach."
+    "Whether through blade or whisper, the reckoning draws nearer with every ledger I close."
+    "My journal has been inscribed with the next duty. The final pieces of my plan are falling into place."
     $ renpy.log("DEBUG: show_objective_10_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1732,16 +1712,12 @@ label show_objective_11_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_11_dialogue - STARTING DIALOGUE")
-    "Fifteen souls now serve my cause. Fifteen pairs of eyes watching, fifteen pairs of ears listening, fifteen minds working toward a single purpose: my victory."
-    "This is not merely a workforce—it is a network that spans the city like a web of shadows."
-    "No secret shall escape my notice, no conspiracy remain hidden, no plot go undetected."
-    "Each worker I have recruited brings their own skills, their own connections, their own value to my cause."
-    "Warriors who can strike with deadly precision, spies who can slip through the tightest security, merchants who can move goods and information with equal ease."
-    "The governor may have his guards and his informants, but I have something far more valuable: a network built on loyalty, not fear."
-    "My workers serve me because they believe in my cause, because they have seen the future I offer, and because they know that when I triumph, they shall share in that victory."
-    "With fifteen souls at my command, I can monitor every corner of the city, gather intelligence on every target, and strike when and where I choose."
-    "The governor's every move is known to me, his every weakness catalogued, his every ally marked."
-    "My journal hath been inscribed with the next duty. The web is complete, and the spider waits."
+    "Fifteen souls now serve beneath my banner — eyes watching, ears listening, hands and blades for every purpose."
+    "This is no mere workforce. It is a web laid across the city, and I sit at its center."
+    "Warriors, spies, merchants — each brings a craft my cause requires, and each chose to stand with me."
+    "The governor holds his people by fear and coin. Mine follow through loyalty, and loyalty keeps no second ledger."
+    "Little now moves in this city that I do not hear of by nightfall. His every weakness is catalogued, his every ally marked."
+    "My journal has been inscribed with the next duty. The web is complete, and the spider waits."
     $ renpy.log("DEBUG: show_objective_11_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1751,18 +1727,13 @@ label show_objective_12_dialogue:
     scene expression _consolidation_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_12_dialogue - STARTING DIALOGUE")
-    "The artifacts are mine! Three relics of power, each one a key to unlocking the governor's downfall."
-    "The Binding Gem pulses with inner fire, its crystalline surface catching the light like captured starlight."
-    "With this, I can break the djinn's protection, shattering the supernatural shield that has kept the governor safe from harm."
-    "The Obsidian Blade rests in its sheath, its edge so sharp it seems to cut the very air."
-    "Forged in darkness and quenched in shadow, this weapon can pierce any defense, magical or mundane."
-    "The Enchanted Ring gleams on my finger, its power flowing through me like liquid silver."
-    "With this, I can charm any ally, break any enchantment, and command respect from those who would otherwise stand against me."
-    "These are not mere trinkets—they are tools of destiny, each one carefully chosen to serve a specific purpose in my grand design."
-    "With these artifacts, I can face any foe, overcome any obstacle, and achieve what others would call impossible."
-    "The governor may have his armies and his wealth, but I have something he cannot match: the power of legend itself, forged into instruments of vengeance."
-    "The arsenal is complete, and the time for action draws near."
-    "My journal hath been inscribed with the next duty. The final preparations begin."
+    "The artifacts are mine. Three relics, and each a key to the governor's downfall."
+    "The Binding Gem, to shatter the djinn's protection that has kept him beyond the reach of harm."
+    "The Obsidian Blade, whose edge no defense — mortal or magical — can hope to turn aside."
+    "The Enchanted Ring, to sway allies and command respect where words alone would fail."
+    "These are no trinkets. They are instruments of vengeance, each chosen for its purpose in the grand design."
+    "The arsenal is complete, and the hour draws near."
+    "My journal has been inscribed with the next duty. The final preparations begin."
     $ renpy.log("DEBUG: show_objective_12_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1770,18 +1741,12 @@ label show_objective_13_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_13_dialogue - STARTING DIALOGUE")
-    "Three strongholds now fly my banner. Three bastions of power, each one a declaration of my growing influence."
-    "From these fortresses, I command the city."
-    "Each building serves a purpose: taverns where information flows like wine, guilds where warriors train and plan, brothels where secrets are whispered in the dark, restaurants where deals are made over fine meals."
-    "This is not merely an empire of shadows—it is a network of power that rivals any force in the city."
-    "The governor may sit in his castle, but I control the streets, the markets, the places where real power is born."
-    "From these bastions, I shall launch my final assault."
-    "Each building is a staging ground, each worker a soldier in my army, each coin a weapon in my arsenal."
-    "The governor's influence wanes with each passing day, while mine grows stronger."
-    "He may have his title and his crown, but I have something far more valuable: the loyalty of those who control the city's true power—its people, its commerce, its secrets."
-    "When the time comes, when I make my move, these three strongholds shall be the foundation upon which I build a new order."
-    "The old ways shall fall, and from their ashes, my empire shall rise."
-    "My journal hath been inscribed with the next duty. The stage is set, and the players take their positions."
+    "Three strongholds now fly my banner, and from them I command the streets the governor only taxes."
+    "Taverns where information flows like wine. Halls where warriors train. Houses where secrets change hands in the dark."
+    "Each building is a staging ground; each worker within it, a soldier in my quiet army."
+    "The governor sits in his castle and calls it power. I hold the markets, the rumors, the debts — the city's true bones."
+    "When the hour comes, these three bastions shall bear the weight of everything that follows."
+    "My journal has been inscribed with the next duty. The stage is set, and the players take their positions."
     $ renpy.log("DEBUG: show_objective_13_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1789,18 +1754,12 @@ label show_objective_14_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_14_dialogue - STARTING DIALOGUE")
-    "My elite guard is assembled. Warriors who can fell any foe, agents who can outwit any schemer, champions who stand ready to serve my cause."
-    "These are not mere workers—they are the finest the city has to offer, each one a master of their craft."
-    "Warriors with combat skills that would make legends tremble, agents with cleverness and charm that can turn any situation to my advantage."
-    "With such champions at my side, victory is not merely possible—it is assured."
-    "The governor may have his guards, but I have something far more dangerous: individuals who have chosen to stand with me, who believe in my cause, and who will stop at nothing to see it through."
-    "Each member of my elite guard brings their own unique talents to the table."
-    "Some excel in open combat, ready to strike with overwhelming force. Others prefer the shadows, using cunning and charm to achieve their goals without bloodshed."
-    "Together, they form a force that can adapt to any situation, overcome any obstacle, and achieve any objective."
-    "Whether the path requires steel or subtlety, I have the right tool for the job."
-    "The governor's days are numbered. With this elite guard at my command, there is nothing that can stand between me and my vengeance."
-    "The final act begins."
-    "My journal hath been inscribed with the next duty. The pieces are in place, and the endgame approaches."
+    "My elite guard stands assembled — the finest this city can offer, each one a master of their craft."
+    "Some excel at open steel, ready to strike with overwhelming force. Others work in shadow, all cunning and charm."
+    "Together they can meet whatever the reckoning demands, whether the path calls for blood or for whispers."
+    "The governor keeps guards who serve for coin. I keep champions who chose my cause and will see it through."
+    "His days are numbered. The final act begins."
+    "My journal has been inscribed with the next duty. The pieces are in place, and the endgame approaches."
     $ renpy.log("DEBUG: show_objective_14_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1808,18 +1767,12 @@ label show_objective_15_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_15_dialogue - STARTING DIALOGUE")
-    "Three thousand coins in a single day. The number alone is staggering, but what it represents is far greater."
-    "My empire generates wealth like a mighty river, flowing endlessly into my coffers."
-    "This is not mere prosperity—it is the power I have built, the machine of commerce that shall fuel my vengeance and fund my rise to dominance."
-    "Each coin earned is a testament to the network I have created, the workers I have trained, the buildings I have established."
-    "This is the culmination of every choice, every sacrifice, every moment of planning that has brought me to this point."
-    "With such wealth flowing through my hands, I can fund operations that would bankrupt lesser men."
-    "I can buy loyalty, silence enemies, and create opportunities that others can only dream of."
-    "The governor may have inherited his wealth, but I have built mine from nothing."
-    "Every coin I earn is a victory, every transaction a step closer to my goal."
-    "This is the power I have forged through patience and planning."
-    "The machine of prosperity that I have built shall not only fund my vengeance, but ensure that when I take control, the city's economy flows through my hands."
-    "My journal hath been inscribed with the next duty. The final preparations are complete, and the time for action has come."
+    "Three thousand coins in a single day. The river of commerce I have dug now flows without my hand upon the wheel."
+    "Every coin is a testament — to the workers I have trained, the buildings I have raised, the patient years of labor."
+    "The governor inherited his fortune. I forged mine from a single deed and a grudge, and mine still grows."
+    "Wealth such as this can fund operations that would beggar lesser men, and buy what loyalty alone cannot."
+    "The machine is built. It wants only a target."
+    "My journal has been inscribed with the next duty. The final preparations are complete, and the time for action has come."
     $ renpy.log("DEBUG: show_objective_15_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 

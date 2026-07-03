@@ -642,7 +642,7 @@
               "relevant_traits": [
                 "Tough",
                 "Confident",
-                "Experienced"
+                "Brawler"
               ],
               "trait_success": "{worker_name}'s {trait} carried the day against the veteran.",
               "earnings": {
@@ -809,8 +809,8 @@
               ],
               "relevant_traits": [
                 "Tough",
-                "Brave",
-                "Experienced"
+                "Audacity",
+                "Brawler"
               ],
               "trait_success": "{worker_name}'s {trait} was the key against the minotaur.",
               "earnings": {
@@ -883,9 +883,9 @@
                 "Combat"
               ],
               "relevant_traits": [
-                "Brave",
+                "Audacity",
                 "Tough",
-                "Experienced"
+                "Adventurer"
               ],
               "trait_success": "{worker_name}'s {trait} prevailed against the beast.",
               "earnings": {
@@ -958,7 +958,7 @@
                 "Combat"
               ],
               "relevant_traits": [
-                "Experienced",
+                "Brawler",
                 "Confident",
                 "Tough"
               ],
@@ -1132,7 +1132,7 @@
                 "Striptease"
               ],
               "relevant_traits": [
-                "Sensual",
+                "Sexy Air",
                 "Playful",
                 "Charming"
               ],

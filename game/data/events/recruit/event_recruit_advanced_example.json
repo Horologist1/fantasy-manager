@@ -137,7 +137,7 @@
       },
       {
         "option": "Offer above their asking price to show genuine appreciation. (Potential: Reputation, Relationship)",
-        "message": "You offer more than they asked for, wanting them to feel truly valued. [event_worker]'s expression softens with genuine surprise. 'You would do that? I appreciate your generosity.' They accept with [actual_cost] per day and their spirits lift noticeably. Word of your generous treatment spreads, enhancing your reputation (+10 Reputation). You sense a stronger bond forming between you and Violet (+20 Relationship).",
+        "message": "You offer more than they asked for, wanting them to feel truly valued. [event_worker]'s expression softens with genuine surprise. 'You would do that? I appreciate your generosity.' They accept with [actual_cost] per day and their spirits lift noticeably. Talk of the fair wage travels through the district, raising your standing (+10 Reputation). You sense a stronger bond forming between you and Violet (+20 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 10,

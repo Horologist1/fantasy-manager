@@ -111,7 +111,7 @@
   },
   {
     "id": "aelis_noble_visitors",
-    "description": "A small group of city nobles visits the tavern, attracted by stories of Aelis’ charm and skill. After getting a VIP table at the tavern, they request specifically for Aelis to serve and entertain them. As the night goes on, the nobles enjoy their food and drinks, and request for a special service from Aelis to make this night memorable. She now has the chance to impress influential guests with her charms, skills, and wit.",
+    "description": "A small group of city nobles visits the tavern, attracted by stories of Aelis' charm and skill. After getting a VIP table at the tavern, they request specifically for Aelis to serve and entertain them. As the night goes on, the nobles enjoy their food and drinks, and request for a special service from Aelis to make this night memorable. She now has the chance to impress influential guests with her charms, skills, and wit.",
     "weight": 8,
     "limited": true,
     "event_probability": 80,
@@ -215,7 +215,7 @@
   },
   {
     "id": "aelis_final_tavern_star",
-    "description": "Aelis is now a respected and well-known performer in the tavern. Word of her graceful dances and lively presence has spread through the cities, drawing in a wide range of patrons each evening. Merchants, travelers, and even minor nobles now visit the tavern not only for the food and drinks, but to see her perform and enjoy the atmosphere she creates. Tonight, however, the tavern feels especially lively. The room is fuller than usual, and many eyes quietly follow Aelis as she moves through the crowd. With confident grace, Aelis captivates the crowd, encouraging guests to stay longer, spend more, and leave with stories of the tavern’s remarkable entertainer.",
+    "description": "Aelis is now a respected and well-known performer in the tavern. Word of her graceful dances and lively presence has spread through the cities, drawing in a wide range of patrons each evening. Merchants, travelers, and even minor nobles now visit the tavern not only for the food and drinks, but to see her perform and enjoy the atmosphere she creates. Tonight, however, the tavern feels especially lively. The room is fuller than usual, and many eyes quietly follow Aelis as she moves through the crowd. With confident grace, Aelis captivates the crowd, encouraging guests to stay longer, spend more, and leave with stories of the tavern's remarkable entertainer.",
     "weight": 8,
     "limited": true,
     "event_probability": 80,
@@ -262,7 +262,7 @@
         "option": "Serve customers elegantly and make polite conversation with the patrons. (requires Service)",
         "condition": "Service",
         "threshold": 85,
-        "message_success": "Aelis moves gracefully between the crowded tables, balancing trays with practiced ease. She serves drinks and meals with a warm smile, exchanging a few polite words with each group of patrons. Her calm confidence and attentive service quickly win people over, turning simple orders into pleasant conversations. Laughter spreads through the room as guests enjoy both the tavern’s offerings and her charming company, leaving many patrons more relaxed, generous, and eager to return. (New trait, +2000 gold, +13 tavern reputation)",
+        "message_success": "Aelis moves gracefully between the crowded tables, balancing trays with practiced ease. She serves drinks and meals with a warm smile, exchanging a few polite words with each group of patrons. Her calm confidence and attentive service quickly win people over, turning simple orders into pleasant conversations. Laughter spreads through the room as guests enjoy both the tavern's offerings and her charming company, leaving many patrons more relaxed, generous, and eager to return. (New trait, +2000 gold, +13 tavern reputation)",
         "message_failure": "Aelis moves between the tables, trying to serve the patrons while keeping polite conversation flowing. However, the busy room quickly becomes overwhelming. Orders get mixed up, and her attempts at conversation feel rushed and awkward. Some guests grow impatient as they wait for their drinks, while others lose interest and return to their own discussions. By the end of the evening, the service feels disorganized, and the atmosphere of the tavern never quite reaches the lively mood she had hoped to create. (-1200 gold, -9 tavern reputation)",
         "effect": {
           "success": {
