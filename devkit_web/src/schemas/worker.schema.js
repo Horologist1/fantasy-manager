@@ -21,6 +21,8 @@ export const worker_schema = {
     encounter_only: { type: 'bool' },
     monster: { type: 'bool' },
     procedural: { type: 'bool' },
+    recruit_only: { type: 'bool' },        // excluded from the buy-workers shop; obtainable only via recruit events
+    recruitment_locked: { type: 'bool' },  // held out of the recruit pool (quest/story workers, e.g. Yvara, The Lanista)
     skills: { type: 'dict_of_numbers' },
     names_list: { type: ['string', 'null'], catalog: 'names_lists' },
     traits: { type: 'list_of_strings', catalog: 'all_traits' },

@@ -13,7 +13,8 @@ local.properties
 .cursor/
 
 # Developer maintenance scripts — offline JSON tooling, not needed at runtime
-tools/
+# Anchored to repo root so it does NOT swallow devkit_web/src/tools/ (app source).
+/tools/
 
 # Desktop devkit (compiled editor exe) — distributed separately
 devkit/

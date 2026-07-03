@@ -26,6 +26,8 @@ export const worker_editor_sections = [
       copyField('encounter_only', { label: 'Encounter only' }),
       copyField('monster', { label: 'Monster' }),
       copyField('procedural', { label: 'Procedural' }),
+      copyField('recruit_only', { label: 'Recruit only (not in buy-workers shop)' }),
+      copyField('recruitment_locked', { label: 'Recruitment locked (quest/story worker)' }),
       copyField('names_list', { label: 'Names list (procedural)' }),
       copyField('template_id', { label: 'Template id (internal)' }),
     ],
