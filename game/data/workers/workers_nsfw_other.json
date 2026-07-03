@@ -39,7 +39,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A mysterious performer whose dark allure captivates in passionate encounters.",
+        "description": "Elena keeps to the shadows at the edge of a room until she chooses not to. Lithe, watchful, and disinclined to explain herself, she has a way of holding a gaze a heartbeat too long — just enough to leave a question hanging that she never quite answers.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -83,7 +83,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A versatile performer whose warm presence and adaptable skills suit a wide range of intimate encounters.",
+        "description": "Ivy has a warmth that puts a nervous guest at ease inside a minute and a versatility that keeps them coming back. Whatever an evening turns out to need, she meets it with the same unhurried, open-handed ease.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -127,7 +127,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A cheerful worker whose bright smile captivates in more daring roles.",
+        "description": "Delilah greets even the boldest request with a bright, unbothered smile. There's a fearlessness to her that most only pretend at — she goes where others hesitate, and makes it look like the most natural thing in the world.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -171,7 +171,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A dark warlock whose arcane prowess enhances seductive encounters.",
+        "description": "Zorak trades on an air of the arcane — low-voiced, unhurried, and watchful, the kind of man rumored to know things he shouldn't. Whether the sorcery is real or merely very well practiced, few who fall under his attention seem to care.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -215,7 +215,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A mesmerizing sorceress whose magic enhances intimate performances.",
+        "description": "Seraphina carries herself like a woman who has already read the room's every thought and found them all predictable. Clever and coolly composed, she wields attention the way others might wield a spell — deliberately, and to precise effect.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -259,7 +259,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A sly rogue whose agility shines in daring, intimate escapades.",
+        "description": "Kael is a rogue in the old sense — quick-fingered, sharper than he lets on, and never quite where you expect him to be. He treats every arrangement like a lock worth picking, and takes an unhurried, obvious pleasure in the work.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -303,7 +303,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A captivating dancer whose fluid movements enthrall in sensual performances.",
+        "description": "Lyria performs the way a storm gathers — slow, deliberate, impossible to look away from. There's nothing soft in it; she favors command over coyness, and holds a room by sheer force of presence rather than any practiced flutter.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -347,7 +347,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A chivalrous knight whose strength enhances intimate battles.",
+        "description": "Draven wears an old-fashioned discipline like armor — courteous, upright, and unshakably composed. He gives those in his company a knight's careful attention, and there's a quiet appeal in a man so plainly used to keeping his word.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -391,7 +391,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A priestess whose sacred rites blend with provocative allure.",
+        "description": "Selene moves with the grave, unhurried calm of the cloister she may or may not have left behind. She turns ritual into presence — every gesture measured, every silence weighted — and leaves people uncertain whether they've been blessed or claimed.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -435,7 +435,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A wild barbarian whose raw power fuels intense encounters.",
+        "description": "Ragnar has the build of a man raised on the northern steadings and, to the surprise of most, the shrewd, watchful mind to match it. He lets people underestimate the second thing on account of the first — and rarely corrects them until it suits him.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -479,7 +479,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A nimble ranger whose agility enhances provocative pursuits.",
+        "description": "Talon has a hunter's stillness and a hunter's quickness both — patient until the moment asks otherwise, then faster than seems fair. He watches more than he speaks, and misses very little of what he watches.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -523,7 +523,7 @@
         "traits": [
             "Goblin"
         ],
-        "description": "A mischievous goblin girl whose wild energy and agility make her perfect for adventurous encounters.",
+        "description": "A goblin girl with a bottomless well of energy and a grin that promises trouble. Amanita is quick, wild, and gleefully game for anything, and wears her mischief with no apology whatsoever.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -567,7 +567,7 @@
         "traits": [
             "Orc"
         ],
-        "description": "A rugged orc whose raw strength and warrior spirit make him a bold presence in any encounter.",
+        "description": "A broad-backed orc with a warrior's bearing and a surprisingly even temper beneath it. Moss carries himself like someone who has never once needed to prove his strength — which is precisely why no one thinks to question it.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -612,7 +612,7 @@
             "Demon",
             "Futa"
         ],
-        "description": "A seductive demoness bound to serve, excelling in alluring tasks.",
+        "description": "A demoness bound by old pact to a service she did not choose — and has, in time, grown unsettlingly good at. Lotus wears her obligation like a silk cord: elegant, deliberate, and never quite as loose as it looks.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -700,7 +700,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A cheerful and charming worker with a sunny disposition and captivating allure.",
+        "description": "Warm and quick to laugh, Daisy has a gift for making a guest feel less like a customer and more like the most welcome person to walk in all week. There's no artifice in it — she simply likes people, and it shows.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -744,7 +744,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A confident male worker designed as a reliable fallback profile for masculine images.",
+        "description": "Broad-shouldered and easygoing, Guy is the dependable sort every house is glad to have — unhurried, good-humored, and hard to rattle. He takes people as he finds them, and expects to be taken the same way.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -788,7 +788,7 @@
         "traits": [
             "Elf"
         ],
-        "description": "A studious elven worker with the unhurried calm of a long-lived race, suited to roles that reward intellect and grace.",
+        "description": "A studious elf with the unhurried calm of the long-lived, Aelarin observes far more than he says. He brings a scholar's patience and a quiet, understated grace to whatever he turns his attention to.",
         "gender": "male",
         "comfort_desired": 1
     },

@@ -43,7 +43,7 @@
             "Clever",
             "Optimist"
         ],
-        "description": "A skilled and experienced worker with a calm demeanor, perfect for general tasks.",
+        "description": "Cedar brings a restless, sunny energy wherever he lands — quick with a plan, quicker with a grin, and stubbornly certain things will turn out right. He tires most people out just by keeping up with him, then charms them into forgiving it.",
         "gender": "male",
         "comfort_desired": 4,
         "images_folder": "aspen",
@@ -93,7 +93,7 @@
             "Clever",
             "Charismatic"
         ],
-        "description": "A skilled worker with a calm, alluring presence, suited for customer service and hospitality roles.",
+        "description": "Laurel never met a room he couldn't work. Bright, fast-talking, and impossible to fluster, he keeps a crowd laughing and a guest feeling like an old friend — and remembers exactly which drink each of them ordered last time.",
         "gender": "male",
         "comfort_desired": 4
     },
@@ -141,7 +141,7 @@
             "Graceful",
             "Clever"
         ],
-        "description": "A mysterious figure known for her elegance and charm, ideal for refined tasks.",
+        "description": "Fern says little and implies a great deal. Elegant and unhurried, she lets a raised brow do the work of a whole sentence, and leaves most people convinced she knows something they don't. Usually, she does.",
         "gender": "female",
         "comfort_desired": 4,
         "recruit_only": false
@@ -190,7 +190,7 @@
             "Graceful",
             "Clever"
         ],
-        "description": "An enigmatic performer whose dramatic flair excels in entertainment and performance settings.",
+        "description": "There's a gravity to Dahlia that turns heads before she's said a word. She carries herself like the closing act of a play everyone came to see — poised, deliberate, and perfectly aware of the effect. In her, grace is a kind of strategy.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -238,7 +238,7 @@
             "Graceful",
             "Clever"
         ],
-        "description": "A passionate performer whose fiery spirit excels in entertainment and artistic performances.",
+        "description": "An elf of the eastern courts, Primrose moves with the practiced grace of someone raised to be watched. Refined and quietly clever, she treats a performance the way a painter treats light — nothing showy, everything placed exactly where it lands hardest.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -286,7 +286,7 @@
             "Exotic",
             "Confident"
         ],
-        "description": "A graceful performer with excellent social skills and natural charm.",
+        "description": "Jasmine is all warmth and sharp edges — an easy laugh, a bright eye, and a mind three steps ahead of the conversation. She wears the look of somewhere far-off and the confidence of a woman entirely at home wherever she stands.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -334,7 +334,7 @@
             "Confident",
             "Energetic"
         ],
-        "description": "A cheerful and hardworking individual with a bright smile, suited for service roles.",
+        "description": "Marigold works harder and smiles wider than anyone has a right to at the end of a long shift. Bright, tireless, and generous with her good humor, she's the sort who lifts a whole room without ever seeming to try.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -382,7 +382,7 @@
             "Exotic",
             "Confident"
         ],
-        "description": "A vibrant and charismatic performer with exceptional charm and social grace.",
+        "description": "Poppy is elven and unmistakably so — long-lived poise wrapped around a spark of pure mischief. Vivid, magnetic, and cheerfully sure of herself, she draws an eye and keeps it, then acts as though she never noticed at all.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -525,7 +525,7 @@
             "Graceful",
             "Great Figure"
         ],
-        "description": "A spirited, tireless woman with horse-like features and a sweet, obliging temperament, perfect for any task.",
+        "description": "A spirited, tireless centauride with a sweet and obliging temperament. Fleet-footed and eager to please, Chestnut throws herself into whatever's asked of her with more good cheer than the work usually deserves.",
         "gender": "female",
         "comfort_desired": 4
     },

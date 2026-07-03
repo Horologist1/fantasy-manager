@@ -39,7 +39,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A skilled worker with a calm, alluring presence, suited for intimate roles.",
+        "description": "Lean and unhurried, Asher moves through a crowded room like he owns the quiet parts of it. He says little and watches much, with a knack for making whoever he's beside feel like the only person worth watching back.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -83,7 +83,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A charismatic and capable worker with excellent social skills and combat training.",
+        "description": "An easy smile and an easier manner — Flynn is the sort remembered fondly by everyone and known well by no one. He talks his way into most rooms and, more usefully, back out of them again.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -127,7 +127,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A mysterious figure whose elegance and charm shine in provocative performances.",
+        "description": "Sharp-eyed and quick on her feet, Victoria keeps her own counsel and her own blade close. There's a restlessness to her that reads as danger to some and as challenge to others — and she rarely troubles to correct either.",
         "gender": "female",
         "comfort_desired": 1,
         "recruit_only": false
@@ -172,7 +172,7 @@
         "traits": [
             "Human"
         ],
-        "description": "An enigmatic performer with a flair for the dramatic, great for stage work.",
+        "description": "A performer to the marrow, Amanda never quite lets you see where the act ends and the woman begins. She favors the dramatic entrance, the pointed silence, and the smile that could mean anything — and usually does.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -216,7 +216,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A stoic warrior with a keen sense of honor, ideal for combat roles.",
+        "description": "Broad-handed and slow to speak, Thane measures twice and says once. He gravitates to work that rewards patience and a steady grip, carrying himself with the quiet certainty of a man who has never needed to raise his voice to be heard.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -260,7 +260,7 @@
         "traits": [
             "Elf"
         ],
-        "description": "An elegant elf with a natural talent for diplomacy and performance.",
+        "description": "An elf of poised, unhurried grace, Elowen reads a room the way others read a page — easily, and down to the last line. She wears elegance like a second skin, though those who mistake it for softness tend to learn better.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -304,7 +304,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A cheerful and charming worker with a sunny disposition and natural grace.",
+        "description": "Warm as a hearth in winter, Daisy remembers names, favorite drinks, and old griefs alike. She has a gift for setting nervous strangers at ease, and a laugh with a way of filling whatever room she happens to be standing in.",
         "gender": "female",
         "comfort_desired": 1
     },
@@ -348,7 +348,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A confident male worker designed as a reliable fallback profile for masculine images.",
+        "description": "Broad-shouldered and even-tempered, Bud is the steady sort every house needs — quick to lend a hand, slow to take offense, and dependable to a fault. Little rattles him, and he prefers it that way.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -392,7 +392,7 @@
         "traits": [
             "Elf"
         ],
-        "description": "A studious elven worker with an eye for detail, useful in roles that reward patience and intellect.",
+        "description": "A studious elf with a scholar's patience and a careful, observant eye. Thalion prefers the work others find tedious — the counting, the cataloguing, the fine detail — and does it better than anyone thinks to expect.",
         "gender": "male",
         "comfort_desired": 1
     },
@@ -525,7 +525,7 @@
         "traits": [
             "Human"
         ],
-        "description": "A versatile performer whose warm presence and adaptable skills suit a wide range of tasks.",
+        "description": "Heather has the ready warmth of a natural host — an open smile, a quick read on a guest's mood, and the knack of making an ordinary evening feel like an occasion. Adaptable and unflappable, she settles into whatever a night asks of her.",
         "gender": "female",
         "comfort_desired": 1
     }

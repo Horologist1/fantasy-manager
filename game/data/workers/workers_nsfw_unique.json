@@ -43,7 +43,7 @@
             "Assassin",
             "Confident"
         ],
-        "description": "A skilled and experienced worker with a calm demeanor, perfect for general tasks.",
+        "description": "There's a coiled, restless edge to Aspen that never quite settles — a man who moves like he's always half a heartbeat from acting, and rarely lets on which way. Dangerous company, and entirely aware of how well that suits him.",
         "gender": "male",
         "comfort_desired": 4
     },
@@ -91,7 +91,7 @@
             "Elegant",
             "Graceful"
         ],
-        "description": "A skilled worker with a calm, alluring presence, suited for intimate roles.",
+        "description": "Florian is polished to a fault — fine manners, a low and unhurried voice, and the kind of studied elegance that makes a room feel underdressed. He gives his full attention like a rare gift, and lets you feel the value of it.",
         "gender": "male",
         "comfort_desired": 4
     },
@@ -139,7 +139,7 @@
             "Graceful",
             "Clever"
         ],
-        "description": "A mysterious figure known for her elegance and charm, ideal for refined tasks.",
+        "description": "Violet trades in suggestion. She says little outright, letting a glance or an unfinished sentence do the work, and leaves a room convinced they've understood far more than she actually offered. The mystery, naturally, is entirely deliberate.",
         "gender": "female",
         "comfort_desired": 4,
         "recruit_only": false
@@ -188,7 +188,7 @@
             "Charming",
             "Sensitive"
         ],
-        "description": "An enigmatic performer whose dramatic flair excels in intimate settings.",
+        "description": "Soft-spoken and warmly charming, Lily feels everything a shade more keenly than most — quick to blush, quicker to melt, and disarmingly genuine with it. Nothing about the way she responds is performed, and that honesty is its own kind of pull.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -236,7 +236,7 @@
             "Graceful",
             "Clever"
         ],
-        "description": "A passionate performer whose fiery spirit excels in intimate encounters.",
+        "description": "An elf of eastern grace, Rose carries the poise of someone who has had a very long time to perfect it. Refined, unhurried, and quietly exacting, she makes even the smallest gesture feel deliberate — and impossible to ignore.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -284,7 +284,7 @@
             "Exotic",
             "Confident"
         ],
-        "description": "A graceful performer with excellent social skills and natural charm.",
+        "description": "Iris is bright, quick, and impossible to unsettle — a ready laugh over a mind that never stops working. She wears an air of somewhere far-off and the easy confidence of a woman who has never once doubted she belonged in the room.",
         "gender": "female",
         "comfort_desired": 4
     },
@@ -333,7 +333,7 @@
             "Deluxe Derriere",
             "Meek"
         ],
-        "description": "A gentle performer of mature bearing whose demure nature and natural appeal excel in intimate settings.",
+        "description": "A gentle soul of mature, generous bearing, Holly meets people with a demure warmth that sets them instantly at ease. Soft-spoken and unhurried, she has a quiet, natural appeal that asks for nothing and draws everyone in regardless.",
         "gender": "female",
         "comfort_desired": 4
     },
