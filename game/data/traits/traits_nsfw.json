@@ -1,5 +1,39 @@
 [
   {
+    "name": "Gay",
+    "conflicts": [
+      "Lesbian"
+    ],
+    "modifiers": {},
+    "description": "He is drawn exclusively to men, and his work reflects it. Same-sex encounters are his craft; clients outside his preference are handled through the Homosexual skill.",
+    "nsfw": true,
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": "male",
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": true
+  },
+  {
+    "name": "Lesbian",
+    "conflicts": [
+      "Gay"
+    ],
+    "modifiers": {},
+    "description": "She is drawn exclusively to women, and her work reflects it. Same-sex encounters are her craft; clients outside her preference are handled through the Homosexual skill.",
+    "nsfw": true,
+    "attribute_caps": {},
+    "daily_effects": {},
+    "gender_restriction": "female",
+    "requires_traits": [],
+    "attribute_minimums": {},
+    "duration": 0,
+    "on_expire": {},
+    "only_assigned": true
+  },
+  {
     "name": "Open Minded",
     "conflicts": [
       "Shy",

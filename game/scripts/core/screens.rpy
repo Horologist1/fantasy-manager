@@ -1779,6 +1779,56 @@ screen more_options():
                             [SetField(persistent, "worker_gender_filter", "male"), MainMenu()],
                             SetField(persistent, "worker_gender_filter", "male")))
 
+        ## Worker Orientation (NSFW): per-trait cycle Off -> On -> Force, one row under Worker Gender
+        if persistent.nsfw_enabled:
+            vbox:
+                xpos 475
+                ypos 550
+                spacing 4
+                $ _om_labels = {"off": "Off", "enable": "On", "force": "Force"}
+                $ _om_next = {"off": "enable", "enable": "force", "force": "off"}
+                $ _gm = getattr(persistent, "orientation_gay_mode", "off")
+                $ _lm = getattr(persistent, "orientation_lesbian_mode", "off")
+                $ _gm_label = _om_labels.get(_gm, "Off")
+                $ _lm_label = _om_labels.get(_lm, "Off")
+                $ _force_warning = _("Force applies the trait to every worker of that gender, story characters included. Stories adapt; images only match if the worker's folder has fitting ones (copy/rename 'homo' images or add new). Apply?")
+                $ _warn_seen = getattr(persistent, "orientation_force_warning_seen", False)
+                $ _orient_hover = getattr(store, "_more_opts_orientation_hover", False)
+                hbox:
+                    spacing 40
+                    textbutton "Gay+: [_gm_label]":
+                        text_size font_size(26)
+                        text_color gui.journal_dark_color
+                        text_hover_color gui.journal_hover_color
+                        background None
+                        hover_background None
+                        hovered SetVariable("_more_opts_orientation_hover", True)
+                        unhovered SetVariable("_more_opts_orientation_hover", False)
+                        action If(_om_next.get(_gm, "enable") == "force" and not _warn_seen,
+                            Confirm(_force_warning,
+                                [SetField(persistent, "orientation_force_warning_seen", True), SetField(persistent, "orientation_gay_mode", "force")]),
+                            SetField(persistent, "orientation_gay_mode", _om_next.get(_gm, "enable")))
+                    textbutton "Les+: [_lm_label]":
+                        text_size font_size(26)
+                        text_color gui.journal_dark_color
+                        text_hover_color gui.journal_hover_color
+                        background None
+                        hover_background None
+                        hovered SetVariable("_more_opts_orientation_hover", True)
+                        unhovered SetVariable("_more_opts_orientation_hover", False)
+                        action If(_om_next.get(_lm, "enable") == "force" and not _warn_seen,
+                            Confirm(_force_warning,
+                                [SetField(persistent, "orientation_force_warning_seen", True), SetField(persistent, "orientation_lesbian_mode", "force")]),
+                            SetField(persistent, "orientation_lesbian_mode", _om_next.get(_lm, "enable")))
+                if _orient_hover:
+                    text "Trait for workers exclusively w/ gay/les content. Applies to workers: Off = made w/ the trait; On = also by % chance; Force = all.":
+                        yoffset -2
+                        size 18
+                        color "#5D2E1A"
+                        xalign 0.0
+                        xmaximum 430
+                        text_align 0.0
+
         ## Difficulty: Story / Easy / Normal / Hard / Nightmare
         vbox:
             xpos 475

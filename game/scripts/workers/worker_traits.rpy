@@ -677,6 +677,24 @@ init python:
 
     def ensure_minimum_traits(worker, min_traits=3, max_traits=5):
         """Ensure worker has minimum number of traits, adding random ones if needed."""
+        # Worker Orientation options (More Options): "force" gives the orientation trait
+        # to every worker of the matching gender - unique story workers INCLUDED (player
+        # choice; narrative works everywhere, images depend on each worker's folder). NSFW-only.
+        if getattr(persistent, "nsfw_enabled", False):
+            _wgender = str(worker.get("gender", "")).strip().lower()
+            _forced_trait = None
+            if _wgender == "male" and getattr(persistent, "orientation_gay_mode", "off") == "force":
+                _forced_trait = "Gay"
+            elif _wgender == "female" and getattr(persistent, "orientation_lesbian_mode", "off") == "force":
+                _forced_trait = "Lesbian"
+            if _forced_trait:
+                if not worker.get("traits"):
+                    worker["traits"] = []
+                if _forced_trait not in worker["traits"]:
+                    worker["traits"].append(_forced_trait)
+                    recalculate_trait_modifiers(worker)
+                    renpy.log(f"Orientation force: added '{_forced_trait}' to {worker.get('name', 'Unknown')}")
+
         # Unique story workers (Yvara, the Lanista, Aelis...) must keep exactly their
         # authored traits: random backfill contradicted the design (the Lanista ships
         # with a single trait on purpose).
@@ -684,7 +702,7 @@ init python:
             return
         if not worker.get("traits"):
             worker["traits"] = []
-        
+
         current_count = len(worker["traits"])
         if current_count >= min_traits:
             return  # Already has enough traits
@@ -707,9 +725,15 @@ init python:
         # Get possible traits (excluding only_assigned and respecting NSFW settings)
         # Option: only_traits_without_requirements → only traits with no gender_restriction
         only_no_reqs = getattr(persistent, "only_traits_without_requirements", False)
+        # Worker Orientation "enable": Gay/Lesbian join the random pool despite only_assigned
+        _nsfw_on = getattr(persistent, "nsfw_enabled", False)
+        _gay_random = _nsfw_on and getattr(persistent, "orientation_gay_mode", "off") == "enable"
+        _les_random = _nsfw_on and getattr(persistent, "orientation_lesbian_mode", "off") == "enable"
         possible_traits = [
             t for t in trait_source
-            if not t.get("only_assigned", False)
+            if (not t.get("only_assigned", False)
+                or (_gay_random and t["name"] == "Gay")
+                or (_les_random and t["name"] == "Lesbian"))
             and (persistent.nsfw_enabled or not t.get("nsfw", False))
             and t["name"] not in worker["traits"]
             and (not only_no_reqs or not t.get("gender_restriction"))

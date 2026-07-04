@@ -32,6 +32,7 @@
           "daily_stories": [
             {
               "id": "prostitute_vanilla_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 4,
               "report": "Client paid for Sex",
               "difficulty_modifier": 5,
@@ -96,6 +97,7 @@
             },
             {
               "id": "prostitute_anal_client_male",
+              "excluded_traits": ["Gay"],
               "worker_gender_requirement": "male",
               "weight": 3,
               "report": "Client paid for Anal",
@@ -160,6 +162,7 @@
             },
             {
               "id": "prostitute_anal_client_female",
+              "excluded_traits": ["Lesbian"],
               "worker_gender_requirement": "female",
               "weight": 3,
               "report": "Client paid for Anal",
@@ -225,6 +228,7 @@
             },
             {
               "id": "prostitute_oral_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 4,
               "report": "Client paid for a Blowjob",
               "difficulty_modifier": 5,
@@ -287,6 +291,7 @@
             },
             {
               "id": "prostitute_hand_client_male",
+              "excluded_traits": ["Gay"],
               "worker_gender_requirement": "male",
               "weight": 3,
               "report": "Client paid for Fingering",
@@ -349,6 +354,7 @@
             },
             {
               "id": "prostitute_hand_client_female",
+              "excluded_traits": ["Lesbian"],
               "worker_gender_requirement": "female",
               "weight": 3,
               "report": "Client paid for Handjob",
@@ -411,6 +417,7 @@
             },
             {
               "id": "prostitute_homo_client_male",
+              "excluded_traits": ["Gay"],
               "worker_gender_requirement": "male",
               "weight": 2,
               "report": "Same-Sex Client Service",
@@ -473,6 +480,7 @@
             },
             {
               "id": "prostitute_homo_client_female",
+              "excluded_traits": ["Lesbian"],
               "worker_gender_requirement": "female",
               "weight": 2,
               "report": "Same-Sex Client Service",
@@ -530,6 +538,649 @@
                 "Sexy Air": 3
               },
               "trait_msg_success": "The female client is thrilled by {worker_name}'s {trait} approach to lesbian intimacy.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_vanilla_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 4,
+              "report": "Client paid for Sex",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Sex"
+              ],
+              "negative_traits": {
+                "Shy": 3
+              },
+              "trait_success": "The male client is really into {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_vanilla_client_gay",
+              "failure_image": "prostitute_vanilla_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't find his rhythm with the male client tonight. The kisses land wrong, the pace stutters, and what should be effortless heat between men turns awkward. The client departs disappointed, complaining the passion he paid for never showed up.",
+                "mediocre": "{worker_name} works the male client with practiced motions but no fire. It's competent man-to-man sex - the client gets off, yet the spark that makes two bodies burn together never ignites.",
+                "success": "{worker_name} reads the male client like a book he's written himself. Strong hands, teasing mouth, hips that answer every push - genuine hunger between men that guides the client to a finish he'll be thinking about for days.",
+                "critical_success": "{worker_name} gives the male client a night that redefines what he thought sex could be. Raw male chemistry, perfect rhythm, tenderness and roughness traded at exactly the right moments - the client leaves shaking and already counting coins for his return."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Beautiful": 6,
+                "Graceful": 4,
+                "Elegant": 4,
+                "Sexy Air": 5
+              },
+              "trait_msg_success": "The male client is really into {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} put the male client off."
+            },
+            {
+              "id": "prostitute_vanilla_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 4,
+              "report": "Client paid for Sex",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Sex"
+              ],
+              "negative_traits": {
+                "Shy": 3
+              },
+              "trait_success": "The female client is really into {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_vanilla_client_lesbian",
+              "failure_image": "prostitute_vanilla_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't find her rhythm with the female client tonight. Touches too hesitant, kisses out of step - the heat between them never builds. The client dresses in silence, disappointed that the passion between women she paid for never arrived.",
+                "mediocre": "{worker_name} pleases the female client with practiced fingers and lips, but the fire isn't there. It's competent woman-to-woman sex - the client finishes, yet leaves without the glow she came looking for.",
+                "success": "{worker_name} knows a woman's body because she loves them. Soft mouth, clever fingers, patience that builds wave after wave - the female client melts under touches only another woman gives, and leaves utterly satisfied.",
+                "critical_success": "{worker_name} turns the night into something the female client will whisper about for weeks. Perfect feminine chemistry - slow burn, tangled limbs, climax after climax - until the client is spent, devoted, and already dreaming of her return."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Beautiful": 6,
+                "Graceful": 4,
+                "Elegant": 4,
+                "Sexy Air": 5
+              },
+              "trait_msg_success": "The female client is really into {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} put the female client off."
+            },
+            {
+              "id": "prostitute_anal_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 3,
+              "report": "Client paid for Anal",
+              "skill_options": [
+                "Anal"
+              ],
+              "trait_success": "{worker_name}'s {trait} makes him an incredible top for the male client.",
+              "earnings": {
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_anal_client_gay",
+              "failure_image": "prostitute_anal_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to take control of the male client. Poor angles, hesitant pace, and none of the confidence the man paid to surrender to. The client leaves unsatisfied, still hungry to be dominated properly.",
+                "mediocre": "{worker_name} tops the male client competently but without command. The client gets off, yet the overwhelming man-to-man domination he craved never quite materializes.",
+                "success": "{worker_name} takes the male client exactly how he begged to be taken. Confident, relentless, reading every gasp - the client surrenders completely to a top who knows his craft, and loves every second of it.",
+                "critical_success": "{worker_name} proves himself the perfect top. He owns the male client utterly - commanding pace, iron stamina, expert angles - until the man is wrecked, grateful, and swearing no one has ever dominated him like this."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Aggressive": 3,
+                "Porn Star": 3,
+                "Confident": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes him an incredible top for the male client.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_anal_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 3,
+              "report": "Client paid for Anal",
+              "skill_options": [
+                "Anal"
+              ],
+              "trait_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the female client.",
+              "earnings": {
+                "success": "100 + skill",
+                "critical_success": "100 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_anal_client_lesbian",
+              "failure_image": "prostitute_anal_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} isn't ready for how intense the female client's toy can be. She tenses up from the discomfort, killing the mood, and the client's carefully planned fantasy falls apart before it begins.",
+                "mediocre": "{worker_name} endures the strap and the female client's enthusiasm, but her discomfort shows. The client finishes her game, yet it's not the eager partner she paid for.",
+                "success": "{worker_name} takes the female client's toy like a pro - prepped, relaxed, moving back against every stroke. Her moans of pleasure mixed with pain drive the woman wild as she submits completely to another woman's hands.",
+                "critical_success": "{worker_name} is an anal goddess. She works her body divinely against the harness, milking every drop of pleasure from the encounter, and her complete submission leaves the female client breathless and already booking her next visit."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Flexible": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Obedient": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the female client.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_oral_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 4,
+              "report": "Client paid for a Blowjob",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The male client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_oral_client_gay",
+              "failure_image": "prostitute_oral_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} fumbles what should come naturally - too much teeth, a rhythm that fights the male client's desire instead of feeding it. The man's arousal withers away and he gives up, frustrated.",
+                "mediocre": "{worker_name} gives the male client a competent but uninspired blowjob. The man reaches his peak, but it's nothing he hasn't had before - nothing that'll bring him back through the door.",
+                "success": "{worker_name} knows exactly what a man wants from another man's mouth. Varying between teasing licks and deep, hungry sucking, holding eye contact while working the male client to a climax that leaves him swearing under his breath.",
+                "critical_success": "{worker_name} gives head like only a man who loves it can. Perfect technique, no hesitation, taking the male client to the root until he cries out and surrenders completely - a devoted regular is born tonight."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The male client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_oral_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 4,
+              "report": "Client paid for Oral",
+              "difficulty_modifier": 5,
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The female client can't get enough of {worker_name}'s {trait} between her thighs.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_oral_client_lesbian",
+              "failure_image": "prostitute_oral_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} loses the thread between the female client's thighs - wrong pressure, wrong pace, no feel for the build. The woman's arousal fades into polite disappointment and she calls the session early.",
+                "mediocre": "{worker_name} works the female client with technique but no hunger. The woman peaks, quietly, and is dressed and gone before the candle burns down - satisfied, not seduced.",
+                "success": "{worker_name} savours the female client like she has all night. Patient tongue, clever fingers, listening to every hitch of breath until the woman shatters - twice - and tips like she's paying for a secret.",
+                "critical_success": "{worker_name} delivers the kind of pleasure only a woman who adores women can give. She reads every tremor, denies and rewards, and by the end the female client is boneless, laughing, and asking whether {worker_name} takes standing appointments."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The female client can't get enough of {worker_name}'s {trait} between her thighs.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_hand_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 3,
+              "report": "Client paid for Handjob",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The male client is amazed by {worker_name}'s {trait} grip.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_hand_client_gay",
+              "failure_image": "prostitute_hand_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} handles the male client like he's never touched another man - too rough, wrong pace, awkward angles that kill the mood. The client grows frustrated as their expectations crumble into disappointment and can't finish.",
+                "mediocre": "{worker_name} gives the male client a competent but forgettable handjob. Mechanical strokes bring the man to his peak, but there's nothing memorable or exciting in it.",
+                "success": "{worker_name} works the male client with a grip that knows exactly what it's holding. Perfect pressure, rhythm changes, a man's instinct for a man's body - building him up to an overwhelming and satisfying release.",
+                "critical_success": "{worker_name} gives the most breathtaking handjob the male client has ever bought. Masterful technique, flawless timing, and the confident touch of a man who loves the work create an unforgettable crescendo of pleasure."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Playful": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The male client is amazed by {worker_name}'s {trait} grip.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_hand_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 3,
+              "report": "Client paid for Fingering",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_hand_client_lesbian",
+              "failure_image": "prostitute_hand_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} loses her way with the female client - too rough, wrong pace, movements that chase instead of build. The woman grows frustrated as satisfaction slips further away and can't reach her peak.",
+                "mediocre": "{worker_name} fingers the female client competently but without finesse. Basic strokes get her off, yet nothing about it will outlast the walk home.",
+                "success": "{worker_name} shows what a woman's fingers can do in hands that know. Perfect pressure, rhythm shifts, confident curls that build the female client up to an intense and shaking climax.",
+                "critical_success": "{worker_name} gives the most breathtaking fingering the female client has ever experienced. Masterful technique, flawless timing, and a woman's understanding of exactly where and when drive her to multiple overwhelming orgasms."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Aggressive": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_hetero_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "Client outside Preference",
+              "skill_options": [
+                "Homo"
+              ],
+              "trait_success": "The female client is thrilled by {worker_name}'s {trait} despite his preferences.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_hetero_client_gay",
+              "failure_image": "prostitute_hetero_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't hide that women aren't where his heart lies. The hesitation shows in every touch, the chemistry dies on the sheets, and the female client leaves feeling rejected rather than desired.",
+                "mediocre": "{worker_name} serves the female client with professional precision but no genuine heat. She gets what she paid for, yet misses the passion she was hoping to stir in him.",
+                "success": "{worker_name} sets his preferences aside and gives the female client true craftsmanship. Skilled hands, generous attention, and showmanship polished enough that she never doubts for a second she's desired.",
+                "critical_success": "{worker_name} turns professionalism into an art form. The female client gets a night so attentive and skilled she'll never guess his heart lies elsewhere - she leaves glowing and singing the house's praises to every noblewoman she knows."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client is thrilled by {worker_name}'s {trait} despite his preferences.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "prostitute_hetero_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Client outside Preference",
+              "skill_options": [
+                "Homo"
+              ],
+              "trait_success": "The male client is thrilled by {worker_name}'s {trait} despite her preferences.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "prostitute_hetero_client_lesbian",
+              "failure_image": "prostitute_hetero_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't disguise that men aren't where her desire lives. The distance shows in every gesture, the chemistry dies, and the male client leaves feeling rejected and short-changed.",
+                "mediocre": "{worker_name} handles the male client with practiced precision but no genuine heat. He finishes satisfied enough, yet senses the enthusiasm he was hoping for never arrived.",
+                "success": "{worker_name} sets her preferences aside and works the male client with true professional craft. Confident hands, perfect pacing, and a performance convincing enough that he never doubts he's desired.",
+                "critical_success": "{worker_name} turns professionalism into an art form. The male client gets a night so skilled and attentive he'll never guess her heart lies elsewhere - he leaves devoted and telling every friend about the house."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The male client is thrilled by {worker_name}'s {trait} despite her preferences.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
             },
@@ -679,6 +1330,7 @@
             },
             {
               "id": "masseuse_oral_steam_and_mouth",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 5,
               "report": "Steam Room Tipping Point",
               "skill_options": [
@@ -739,6 +1391,7 @@
             },
             {
               "id": "masseuse_hand_oil_edge",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 4,
               "report": "Oil, Edge, Finish",
               "skill_options": [
@@ -794,6 +1447,254 @@
                 "Confident": 3
               },
               "trait_msg_success": "The client's breath syncs to {worker_name}'s {trait} touch.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not steady the rhythm.",
+              "negative_traits": {}
+            },
+            {
+              "id": "masseuse_oral_steam_and_mouth_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 5,
+              "report": "Steam Room Tipping Point",
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The heat and {worker_name}'s {trait} undo the male client's restraint.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_oral_steam_and_mouth_gay",
+              "failure_image": "masseuse_oral_steam_and_mouth_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} misreads the steam-haze flirtation with the male client and pulls back too late - teeth, timing off, a laugh that isn't kind. The man towels off embarrassed, muttering that a massage should stay a massage.",
+                "mediocre": "{worker_name} follows through under the hiss of steam: willing enough, but routine - more checklist than craving. The male client finishes, tips, and won't remember the face.",
+                "success": "Shoulders first, then breath at the ear - {worker_name} lets the steam do half the work on the male client. On the bench, mouth slow and sure around him, swallowing heat along with pride. The man shakes afterward like he was the one massaged inside out.",
+                "critical_success": "{worker_name} maps want under the man's sweat-slick skin: breath, pause, then devotion with lips and tongue until the male client can't stand. He stumbles out praising the 'spa package' like a secret religion."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": -1
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Clever": 3,
+                "Playful": 3
+              },
+              "trait_msg_success": "The heat and {worker_name}'s {trait} undo the male client's restraint.",
+              "trait_msg_failure": "{worker_name}'s {trait} could not steady the moment.",
+              "negative_traits": {}
+            },
+            {
+              "id": "masseuse_oral_steam_and_mouth_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 5,
+              "report": "Steam Room Tipping Point",
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The heat and {worker_name}'s {trait} undo the female client's restraint.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_oral_steam_and_mouth_lesbian",
+              "failure_image": "masseuse_oral_steam_and_mouth_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} misreads the steam-haze flirtation with the female client and leans in too late - wrong pressure, wrong moment, a laugh that isn't kind. The woman towels off embarrassed, muttering that a massage should stay a massage.",
+                "mediocre": "{worker_name} follows through under the hiss of steam: willing enough, but routine - more checklist than craving. The female client finishes, tips, and won't remember the face.",
+                "success": "Shoulders first, then breath at the ear - {worker_name} lets the steam do half the work on the female client. On the bench, mouth slow and patient between her thighs, swallowing heat along with pride. The woman shakes afterward like she was the one massaged inside out.",
+                "critical_success": "{worker_name} maps want under the woman's sweat-slick skin: breath, pause, then devotion with lips and tongue until the female client can't stand. She stumbles out praising the 'spa package' like a secret religion."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": -1
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Clever": 3,
+                "Playful": 3
+              },
+              "trait_msg_success": "The heat and {worker_name}'s {trait} undo the female client's restraint.",
+              "trait_msg_failure": "{worker_name}'s {trait} could not steady the moment.",
+              "negative_traits": {}
+            },
+            {
+              "id": "masseuse_hand_oil_edge_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 4,
+              "report": "Oil, Edge, Finish",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The male client's breath syncs to {worker_name}'s {trait} touch.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_hand_oil_edge_gay",
+              "failure_image": "masseuse_hand_oil_edge_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} chases the male client's release too fast - oil slick turns to friction burn, rhythm jagged. The man sits up apologizing for his own body and pays to leave.",
+                "mediocre": "{worker_name} gets the male client there, technically: pressure, pace, finish. The man nods thanks, already dressing - satisfied the way a meal is fine, not memorable.",
+                "success": "Palms wide, then knuckles, then the slow spiral that tightens like a spring. {worker_name} whispers when to breathe; the male client breaks on warm oil and shameless gratitude.",
+                "critical_success": "{worker_name} plays the man like an instrument - rise, hold, deny, release - until the male client laughs and curses at once. He tips heavy and books the same slot next week, already addicted to hands that listen."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Delicate": 3,
+                "Clever": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The male client's breath syncs to {worker_name}'s {trait} touch.",
+              "trait_msg_failure": "{worker_name}'s {trait} did not steady the rhythm.",
+              "negative_traits": {}
+            },
+            {
+              "id": "masseuse_hand_oil_edge_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 4,
+              "report": "Oil, Edge, Finish",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The female client's breath syncs to {worker_name}'s {trait} touch.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "masseuse_hand_oil_edge_lesbian",
+              "failure_image": "masseuse_hand_oil_edge_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} chases the female client's release too fast - oil slick, rhythm jagged, pressure that pushes instead of invites. The woman sits up apologizing for her own body and pays to leave.",
+                "mediocre": "{worker_name} gets the female client there, technically: pressure, pace, finish. The woman nods thanks, already dressing - satisfied the way a meal is fine, not memorable.",
+                "success": "Palms wide, then fingertips, then the slow spiral that tightens like a spring. {worker_name} whispers when to breathe; the female client breaks on warm oil and shameless gratitude.",
+                "critical_success": "{worker_name} plays her like an instrument - rise, hold, deny, release - until the female client laughs and curses at once. She tips heavy and books the same slot next week, already addicted to hands that listen."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -2,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Delicate": 3,
+                "Clever": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client's breath syncs to {worker_name}'s {trait} touch.",
               "trait_msg_failure": "{worker_name}'s {trait} did not steady the rhythm.",
               "negative_traits": {}
             },
@@ -892,6 +1793,7 @@
           "daily_stories": [
             {
               "id": "ea_prostitute_vanilla_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 4,
               "report": "Client paid for Sex",
               "difficulty_modifier": -5,
@@ -956,6 +1858,7 @@
             },
             {
               "id": "ea_prostitute_anal_client_male",
+              "excluded_traits": ["Gay"],
               "worker_gender_requirement": "male",
               "weight": 3,
               "report": "Client paid for Anal",
@@ -1021,6 +1924,7 @@
             },
             {
               "id": "ea_prostitute_anal_client_female",
+              "excluded_traits": ["Lesbian"],
               "worker_gender_requirement": "female",
               "weight": 3,
               "report": "Client paid for Anal",
@@ -1087,6 +1991,7 @@
             },
             {
               "id": "ea_prostitute_bdsm_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 2,
               "report": "Dom Client paid for BDSM",
               "skill_options": [
@@ -1152,6 +2057,7 @@
             },
             {
               "id": "ea_prostitute_oral_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 4,
               "report": "Client paid for a Blowjob",
               "difficulty_modifier": -5,
@@ -1214,6 +2120,7 @@
             },
             {
               "id": "ea_prostitute_hand_client_male",
+              "excluded_traits": ["Gay"],
               "worker_gender_requirement": "male",
               "weight": 3,
               "report": "Client paid for Fingering",
@@ -1277,6 +2184,7 @@
             },
             {
               "id": "ea_prostitute_hand_client_female",
+              "excluded_traits": ["Lesbian"],
               "worker_gender_requirement": "female",
               "weight": 3,
               "report": "Client paid for Handjob",
@@ -1340,6 +2248,7 @@
             },
             {
               "id": "ea_prostitute_homo_client_male",
+              "excluded_traits": ["Gay"],
               "worker_gender_requirement": "male",
               "weight": 2,
               "report": "Same-Sex Client Service",
@@ -1403,6 +2312,7 @@
             },
             {
               "id": "ea_prostitute_homo_client_female",
+              "excluded_traits": ["Lesbian"],
               "worker_gender_requirement": "female",
               "weight": 2,
               "report": "Same-Sex Client Service",
@@ -1466,6 +2376,7 @@
             },
             {
               "id": "ea_prostitute_group_clients",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 1,
               "report": "Clients paid for a Gangbang",
               "difficulty_modifier": -15,
@@ -1533,6 +2444,7 @@
             },
             {
               "id": "ea_prostitute_vip_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 2,
               "report": "VIP paid for the Special",
               "difficulty_modifier": -15,
@@ -1655,6 +2567,1051 @@
               "trait_msg_success": "{worker_name}'s {trait} nature helps them fulfill the client's darkest desires.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_vanilla_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 4,
+              "report": "Client paid for Sex",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Sex"
+              ],
+              "negative_traits": {
+                "Shy": 3
+              },
+              "trait_success": "The male client is really into {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_vanilla_client_gay",
+              "failure_image": "ea_prostitute_vanilla_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't find his rhythm with the male client tonight. The kisses land wrong, the pace stutters, and what should be effortless heat between men turns awkward. The client departs disappointed, complaining the passion he paid for never showed up.",
+                "mediocre": "{worker_name} works the male client with practiced motions but no fire. It's competent man-to-man sex - the client gets off, yet the spark that makes two bodies burn together never ignites.",
+                "success": "{worker_name} reads the male client like a book he's written himself. Strong hands, teasing mouth, hips that answer every push - genuine hunger between men that guides the client to a finish he'll be thinking about for days.",
+                "critical_success": "{worker_name} gives the male client a night that redefines what he thought sex could be. Raw male chemistry, perfect rhythm, tenderness and roughness traded at exactly the right moments - the client leaves shaking and already counting coins for his return."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Beautiful": 6,
+                "Graceful": 4,
+                "Elegant": 4,
+                "Sexy Air": 5
+              },
+              "trait_msg_success": "The male client is really into {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} put the male client off."
+            },
+            {
+              "id": "ea_prostitute_vanilla_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 4,
+              "report": "Client paid for Sex",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Sex"
+              ],
+              "negative_traits": {
+                "Shy": 3
+              },
+              "trait_success": "The female client is really into {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_vanilla_client_lesbian",
+              "failure_image": "ea_prostitute_vanilla_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't find her rhythm with the female client tonight. Touches too hesitant, kisses out of step - the heat between them never builds. The client dresses in silence, disappointed that the passion between women she paid for never arrived.",
+                "mediocre": "{worker_name} pleases the female client with practiced fingers and lips, but the fire isn't there. It's competent woman-to-woman sex - the client finishes, yet leaves without the glow she came looking for.",
+                "success": "{worker_name} knows a woman's body because she loves them. Soft mouth, clever fingers, patience that builds wave after wave - the female client melts under touches only another woman gives, and leaves utterly satisfied.",
+                "critical_success": "{worker_name} turns the night into something the female client will whisper about for weeks. Perfect feminine chemistry - slow burn, tangled limbs, climax after climax - until the client is spent, devoted, and already dreaming of her return."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Beautiful": 6,
+                "Graceful": 4,
+                "Elegant": 4,
+                "Sexy Air": 5
+              },
+              "trait_msg_success": "The female client is really into {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} put the female client off."
+            },
+            {
+              "id": "ea_prostitute_anal_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 3,
+              "report": "Client paid for Anal",
+              "skill_options": [
+                "Anal"
+              ],
+              "trait_success": "{worker_name}'s {trait} makes him an incredible top for the male client.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_anal_client_gay",
+              "failure_image": "ea_prostitute_anal_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} struggles to take control of the male client. Poor angles, hesitant pace, and none of the confidence the man paid to surrender to. The client leaves unsatisfied, still hungry to be dominated properly.",
+                "mediocre": "{worker_name} tops the male client competently but without command. The client gets off, yet the overwhelming man-to-man domination he craved never quite materializes.",
+                "success": "{worker_name} takes the male client exactly how he begged to be taken. Confident, relentless, reading every gasp - the client surrenders completely to a top who knows his craft, and loves every second of it.",
+                "critical_success": "{worker_name} proves himself the perfect top. He owns the male client utterly - commanding pace, iron stamina, expert angles - until the man is wrecked, grateful, and swearing no one has ever dominated him like this."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Aggressive": 3,
+                "Porn Star": 3,
+                "Confident": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes him an incredible top for the male client.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_anal_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 3,
+              "report": "Client paid for Anal",
+              "skill_options": [
+                "Anal"
+              ],
+              "trait_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the female client.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_anal_client_lesbian",
+              "failure_image": "ea_prostitute_anal_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} isn't ready for how intense the female client's toy can be. She tenses up from the discomfort, killing the mood, and the client's carefully planned fantasy falls apart before it begins.",
+                "mediocre": "{worker_name} endures the strap and the female client's enthusiasm, but her discomfort shows. The client finishes her game, yet it's not the eager partner she paid for.",
+                "success": "{worker_name} takes the female client's toy like a pro - prepped, relaxed, moving back against every stroke. Her moans of pleasure mixed with pain drive the woman wild as she submits completely to another woman's hands.",
+                "critical_success": "{worker_name} is an anal goddess. She works her body divinely against the harness, milking every drop of pleasure from the encounter, and her complete submission leaves the female client breathless and already booking her next visit."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Flexible": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Obedient": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the anal session incredibly hot for the female client.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_bdsm_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "Dom Client paid for BDSM",
+              "skill_options": [
+                "BDSM"
+              ],
+              "trait_success": "{worker_name}'s {trait} takes the BDSM session with the male dom to the next level.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_bdsm_client_gay",
+              "failure_image": "ea_prostitute_bdsm_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} doesn't get what the male dom is about. Either fighting the restraints too much or not showing the submission the man craves. No chemistry between them, no satisfaction.",
+                "mediocre": "{worker_name} goes along with the male dom's bondage and punishment but the heart's not in it. The man gets some physical pleasure but misses the psychological thrill of truly owning another man.",
+                "success": "{worker_name} embraces the submissive side completely under the male dom's hands. Moans of pain mixed with pleasure, begging, and total man-to-man surrender get the client off on the power trip.",
+                "critical_success": "{worker_name} proves the perfect sub, reading the male dom's desires and responding to every punishment with intoxicating pain-pleasure. The session between them reaches overwhelming heights."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": -1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "rebelliousness": -2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Obedient": 3,
+                "Tough": 3,
+                "Porn Star": 3,
+                "Masochist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} takes the BDSM session with the male dom to the next level.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_bdsm_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Dom Client paid for BDSM",
+              "skill_options": [
+                "BDSM"
+              ],
+              "trait_success": "{worker_name}'s {trait} takes the BDSM session with the domme to the next level.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_bdsm_client_lesbian",
+              "failure_image": "ea_prostitute_bdsm_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} doesn't get what the domme is about. Either fighting the restraints too much or not showing the submission the woman craves. No chemistry between them, no satisfaction.",
+                "mediocre": "{worker_name} goes along with the domme's bondage and punishment but the heart's not in it. The woman gets some physical pleasure but misses the psychological thrill of truly owning another woman.",
+                "success": "{worker_name} embraces the submissive side completely under the domme's hands. Moans of pain mixed with pleasure, begging, and total woman-to-woman surrender get the client off on the power trip.",
+                "critical_success": "{worker_name} proves the perfect sub, reading the domme's desires and responding to every punishment with intoxicating pain-pleasure. The session between them reaches overwhelming heights."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -3,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -1,
+                  "rebelliousness": -1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "rebelliousness": -2,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -4,
+                  "rebelliousness": 3,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Obedient": 3,
+                "Tough": 3,
+                "Porn Star": 3,
+                "Masochist": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} takes the BDSM session with the domme to the next level.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_oral_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 4,
+              "report": "Client paid for a Blowjob",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The male client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_oral_client_gay",
+              "failure_image": "ea_prostitute_oral_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} fumbles what should come naturally - too much teeth, a rhythm that fights the male client's desire instead of feeding it. The man's arousal withers away and he gives up, frustrated.",
+                "mediocre": "{worker_name} gives the male client a competent but uninspired blowjob. The man reaches his peak, but it's nothing he hasn't had before - nothing that'll bring him back through the door.",
+                "success": "{worker_name} knows exactly what a man wants from another man's mouth. Varying between teasing licks and deep, hungry sucking, holding eye contact while working the male client to a climax that leaves him swearing under his breath.",
+                "critical_success": "{worker_name} gives head like only a man who loves it can. Perfect technique, no hesitation, taking the male client to the root until he cries out and surrenders completely - a devoted regular is born tonight."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The male client can't get enough of {worker_name}'s {trait} during the blowjob.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_oral_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 4,
+              "report": "Client paid for Oral",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Oral"
+              ],
+              "trait_success": "The female client can't get enough of {worker_name}'s {trait} between her thighs.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_oral_client_lesbian",
+              "failure_image": "ea_prostitute_oral_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} loses the thread between the female client's thighs - wrong pressure, wrong pace, no feel for the build. The woman's arousal fades into polite disappointment and she calls the session early.",
+                "mediocre": "{worker_name} works the female client with technique but no hunger. The woman peaks, quietly, and is dressed and gone before the candle burns down - satisfied, not seduced.",
+                "success": "{worker_name} savours the female client like she has all night. Patient tongue, clever fingers, listening to every hitch of breath until the woman shatters - twice - and tips like she's paying for a secret.",
+                "critical_success": "{worker_name} delivers the kind of pleasure only a woman who adores women can give. She reads every tremor, denies and rewards, and by the end the female client is boneless, laughing, and asking whether {worker_name} takes standing appointments."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The female client can't get enough of {worker_name}'s {trait} between her thighs.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_hand_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 3,
+              "report": "Client paid for Handjob",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The male client is amazed by {worker_name}'s {trait} grip.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_hand_client_gay",
+              "failure_image": "ea_prostitute_hand_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} handles the male client like he's never touched another man - too rough, wrong pace, awkward angles that kill the mood. The client grows frustrated as their expectations crumble into disappointment and can't finish.",
+                "mediocre": "{worker_name} gives the male client a competent but forgettable handjob. Mechanical strokes bring the man to his peak, but there's nothing memorable or exciting in it.",
+                "success": "{worker_name} works the male client with a grip that knows exactly what it's holding. Perfect pressure, rhythm changes, a man's instinct for a man's body - building him up to an overwhelming and satisfying release.",
+                "critical_success": "{worker_name} gives the most breathtaking handjob the male client has ever bought. Masterful technique, flawless timing, and the confident touch of a man who loves the work create an unforgettable crescendo of pleasure."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Playful": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The male client is amazed by {worker_name}'s {trait} grip.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_hand_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 3,
+              "report": "Client paid for Fingering",
+              "skill_options": [
+                "Hand"
+              ],
+              "trait_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_hand_client_lesbian",
+              "failure_image": "ea_prostitute_hand_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} loses her way with the female client - too rough, wrong pace, movements that chase instead of build. The woman grows frustrated as satisfaction slips further away and can't reach her peak.",
+                "mediocre": "{worker_name} fingers the female client competently but without finesse. Basic strokes get her off, yet nothing about it will outlast the walk home.",
+                "success": "{worker_name} shows what a woman's fingers can do in hands that know. Perfect pressure, rhythm shifts, confident curls that build the female client up to an intense and shaking climax.",
+                "critical_success": "{worker_name} gives the most breathtaking fingering the female client has ever experienced. Masterful technique, flawless timing, and a woman's understanding of exactly where and when drive her to multiple overwhelming orgasms."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -1,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Clever": 3,
+                "Delicate": 3,
+                "Aggressive": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client is amazed by {worker_name}'s {trait} technique.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_group_clients_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 1,
+              "report": "Clients paid for a Gangbang",
+              "difficulty_modifier": -15,
+              "skill_options": [
+                "Group"
+              ],
+              "trait_success": "The men are blown away by {worker_name}'s {trait} in handling all of them at once.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_group_clients_gay",
+              "failure_image": "ea_prostitute_group_clients_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} gets overwhelmed trying to please a room full of men. Can't keep up with everyone's demands and the whole thing turns into a mess of frustrated customers.",
+                "mediocre": "{worker_name} tries his best but lacks the coordination for group action. Some of the men get satisfied while others feel left out - an uneven experience all around.",
+                "success": "{worker_name} handles the group of men like a champ, switching between them smoothly. The stamina and skill keep every man in the room happy during the wild session.",
+                "critical_success": "{worker_name} orchestrates a flawless all-male orgy. With seemingly endless stamina and skill, satisfying every man simultaneously and leaving the whole room completely drained."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": 1,
+                  "rebelliousness": -1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -2,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The men are blown away by {worker_name}'s {trait} in handling all of them at once.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_group_clients_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 1,
+              "report": "Clients paid for a Group Session",
+              "difficulty_modifier": -15,
+              "skill_options": [
+                "Group"
+              ],
+              "trait_success": "The women are blown away by {worker_name}'s {trait} in handling all of them at once.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_group_clients_lesbian",
+              "failure_image": "ea_prostitute_group_clients_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} gets overwhelmed trying to please a room full of women. Can't keep up with everyone's needs and the evening dissolves into frustrated whispers and early departures.",
+                "mediocre": "{worker_name} tries her best but lacks the coordination for group action. Some of the women get satisfied while others feel left out - an uneven experience all around.",
+                "success": "{worker_name} handles the group of women like a maestra, moving between them smoothly - mouths, hands, and whispered instructions keeping every woman in the room trembling during the wild session.",
+                "critical_success": "{worker_name} orchestrates a flawless all-female orgy. With seemingly endless stamina and skill, satisfying every woman simultaneously and leaving the whole room breathless and devoted."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": 1,
+                  "rebelliousness": -1,
+                  "reputation": 5,
+                  "libido": -2
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -2,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Agile": 3,
+                "Porn Star": 3,
+                "Tough": 3,
+                "Energetic": 3
+              },
+              "trait_msg_success": "The women are blown away by {worker_name}'s {trait} in handling all of them at once.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_vip_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "VIP paid for the Special",
+              "difficulty_modifier": -15,
+              "skill_options": [
+                "Special"
+              ],
+              "trait_success": "The VIP gentleman is captivated by {worker_name}'s {trait} and considers making him his regular.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_vip_client_gay",
+              "failure_image": "ea_prostitute_vip_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't deliver the exclusive special service the VIP gentleman demands. The lack of creativity and poor reading of the man's elite desires disappoints a client who expected something truly unique between men for his money.",
+                "mediocre": "{worker_name} attempts the special service but it feels routine rather than exclusive. The VIP gentleman gets his pleasure, yet misses the innovation and personal touch that makes an evening between men worth the premium price.",
+                "success": "{worker_name} provides an exceptional special service tailored to the VIP gentleman's unique desires. The creative approach, attention to detail, and exclusive techniques create a man-to-man experience that justifies the elite pricing.",
+                "critical_success": "{worker_name} delivers an unforgettable special service that exceeds even the VIP gentleman's expectations. Innovative techniques, flawless execution, and the fulfilment of his most private fantasies create a legendary encounter he'll never forget."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -10,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 3,
+                  "reputation": 20,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -10,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The VIP gentleman is captivated by {worker_name}'s {trait} and considers making him his regular.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_vip_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "VIP paid for the Special",
+              "difficulty_modifier": -15,
+              "skill_options": [
+                "Special"
+              ],
+              "trait_success": "The VIP lady is captivated by {worker_name}'s {trait} and considers making her her regular.",
+              "earnings": {
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_vip_client_lesbian",
+              "failure_image": "ea_prostitute_vip_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't deliver the exclusive special service the VIP lady demands. The lack of creativity and poor reading of the woman's elite desires disappoints a client who expected something truly unique between women for her money.",
+                "mediocre": "{worker_name} attempts the special service but it feels routine rather than exclusive. The VIP lady gets her pleasure, yet misses the innovation and personal touch that makes an evening between women worth the premium price.",
+                "success": "{worker_name} provides an exceptional special service tailored to the VIP lady's unique desires. The creative approach, attention to detail, and exclusive techniques create a woman-to-woman experience that justifies the elite pricing.",
+                "critical_success": "{worker_name} delivers an unforgettable special service that exceeds even the VIP lady's expectations. Innovative techniques, flawless execution, and the fulfilment of her most private fantasies create a legendary encounter she'll never forget."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -10,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 3,
+                  "reputation": 20,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -10,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Charming": 3,
+                "Elegant": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The VIP lady is captivated by {worker_name}'s {trait} and considers making her her regular.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {}
+            },
+            {
+              "id": "ea_prostitute_hetero_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "Client outside Preference",
+              "skill_options": [
+                "Homo"
+              ],
+              "trait_success": "The female client is thrilled by {worker_name}'s {trait} despite his preferences.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_hetero_client_gay",
+              "failure_image": "ea_prostitute_hetero_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't hide that women aren't where his heart lies. The hesitation shows in every touch, the chemistry dies on the sheets, and the female client leaves feeling rejected rather than desired.",
+                "mediocre": "{worker_name} serves the female client with professional precision but no genuine heat. She gets what she paid for, yet misses the passion she was hoping to stir in him.",
+                "success": "{worker_name} sets his preferences aside and gives the female client true craftsmanship. Skilled hands, generous attention, and showmanship polished enough that she never doubts for a second she's desired.",
+                "critical_success": "{worker_name} turns professionalism into an art form. The female client gets a night so attentive and skilled she'll never guess his heart lies elsewhere - she leaves glowing and singing the house's praises to every noblewoman she knows."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Confident": 3
+              },
+              "trait_msg_success": "The female client is thrilled by {worker_name}'s {trait} despite his preferences.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
+            },
+            {
+              "id": "ea_prostitute_hetero_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Client outside Preference",
+              "skill_options": [
+                "Homo"
+              ],
+              "trait_success": "The male client is thrilled by {worker_name}'s {trait} despite her preferences.",
+              "earnings": {
+                "success": "50 + skill",
+                "critical_success": "50 + skill * 2",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "ea_prostitute_hetero_client_lesbian",
+              "failure_image": "ea_prostitute_hetero_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} can't disguise that men aren't where her desire lives. The distance shows in every gesture, the chemistry dies, and the male client leaves feeling rejected and short-changed.",
+                "mediocre": "{worker_name} handles the male client with practiced precision but no genuine heat. He finishes satisfied enough, yet senses the enthusiasm he was hoping for never arrived.",
+                "success": "{worker_name} sets her preferences aside and works the male client with true professional craft. Confident hands, perfect pacing, and a performance convincing enough that he never doubts he's desired.",
+                "critical_success": "{worker_name} turns professionalism into an art form. The male client gets a night so skilled and attentive he'll never guess her heart lies elsewhere - he leaves devoted and telling every friend about the house."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -4
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Open Minded": 3,
+                "Porn Star": 3,
+                "Energetic": 3,
+                "Sexy Air": 3
+              },
+              "trait_msg_success": "The male client is thrilled by {worker_name}'s {trait} despite her preferences.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "difficulty_modifier": -10
             },
             {
               "id": "expert_libido20_lost_control",
@@ -1926,6 +3883,7 @@
             },
             {
               "id": "stripper_lapdance_escalation",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 1,
               "report": "Lapdance Escalated",
               "description": "{worker_name} turned a lapdance into sex with the client when they offered triple pay.",
@@ -1987,6 +3945,144 @@
                 "Beautiful": 3
               },
               "trait_msg_success": "{worker_name} used {trait} to keep control during sex and maximize the client's spending.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "stripper_lapdance_escalation_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 1,
+              "report": "Lapdance Escalated",
+              "description": "{worker_name} turned a lapdance into sex with a male client when he offered triple pay.",
+              "nsfw_only": true,
+              "descriptions": {
+                "success": "{worker_name} controlled the pace and had sex with the male client for a lucrative payment.",
+                "failure": "The male client pushed too hard, and {worker_name} refused to have sex and cut the session early with no gain.",
+                "mediocre": "{worker_name} took the risk and had sex with the male client for a modest payment.",
+                "critical_success": "{worker_name} had sex with the male client in a high-end session and earned premium tips."
+              },
+              "skill_options": [
+                "Striptease",
+                "Sex"
+              ],
+              "trait_success": "{worker_name} used {trait} to keep control during sex and maximize the male client's spending.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3"
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -8,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -8,
+                  "libido": 1
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 6,
+                  "libido": -2,
+                  "romance": 1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 12,
+                  "libido": -3,
+                  "romance": 1
+                }
+              },
+              "story_image": "stripper_lapdance_escalation_gay",
+              "failure_image": "stripper_lapdance_escalation_gay_failure",
+              "trait_roll_modifiers": {},
+              "positive_traits": {
+                "Charming": 3,
+                "Sexy Air": 4,
+                "Exotic": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "{worker_name} used {trait} to keep control during sex and maximize the male client's spending.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "stripper_lapdance_escalation_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 1,
+              "report": "Lapdance Escalated",
+              "description": "{worker_name} turned a lapdance into sex with a female client when she offered triple pay.",
+              "nsfw_only": true,
+              "descriptions": {
+                "success": "{worker_name} controlled the pace and had sex with the female client for a lucrative payment.",
+                "failure": "The female client pushed too hard, and {worker_name} refused to have sex and cut the session early with no gain.",
+                "mediocre": "{worker_name} took the risk and had sex with the female client for a modest payment.",
+                "critical_success": "{worker_name} had sex with the female client in a high-end session and earned premium tips."
+              },
+              "skill_options": [
+                "Striptease",
+                "Sex"
+              ],
+              "trait_success": "{worker_name} used {trait} to keep control during sex and maximize the female client's spending.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3"
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -8,
+                  "libido": 1
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -8,
+                  "libido": 1
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 6,
+                  "libido": -2,
+                  "romance": 1
+                },
+                "critical_success": {
+                  "energy": -3,
+                  "joy": 2,
+                  "reputation": 12,
+                  "libido": -3,
+                  "romance": 1
+                }
+              },
+              "story_image": "stripper_lapdance_escalation_lesbian",
+              "failure_image": "stripper_lapdance_escalation_lesbian_failure",
+              "trait_roll_modifiers": {},
+              "positive_traits": {
+                "Charming": 3,
+                "Sexy Air": 4,
+                "Exotic": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "{worker_name} used {trait} to keep control during sex and maximize the female client's spending.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {},
               "event_image_skill_exclude": []
@@ -2591,6 +4687,7 @@
             },
             {
               "id": "service_generous_tipper_nsfw_restaurant",
+              "excluded_traits": ["Lesbian"],
               "weight": 2,
               "report": "The Generous Tipper",
               "skill_options": [
@@ -2651,6 +4748,76 @@
                 "Open Minded": 3
               },
               "trait_msg_success": "The wealthy patron can't resist {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Shy": 4,
+                "Conservative": 5
+              }
+            },
+            {
+              "id": "service_generous_tipper_nsfw_restaurant_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "The Generous Tipper",
+              "skill_options": [
+                "Charm"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "The wealthy lady can't resist {worker_name}'s {trait}.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "service_generous_tipper_nsfw_restaurant_lesbian",
+              "failure_image": "service_generous_tipper_nsfw_restaurant_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} misreads the wealthy lady's intentions entirely. When the woman suggests they 'continue the evening privately,' {worker_name} freezes up and stammers through an awkward rejection. The patroness feels humiliated, leaves without paying her full bill, and the whole encounter leaves {worker_name} shaken and embarrassed.",
+                "mediocre": "{worker_name} follows the wealthy lady to the private dining room after closing, but nerves get the better of her. The touches are clumsy and rushed, the rhythm all wrong. The patroness finishes with a sigh of mild satisfaction, leaves a decent tip, but clearly expected more from someone so attractive.",
+                "success": "{worker_name} locks the private dining room door and kneels between the lady's legs with a confident smile. Teases her slowly with fingers first, then works her with a steady mouth that has the woman gripping the tablecloth. The patroness comes hard, gasping, and presses a heavy purse of gold into {worker_name}'s hand before leaving on unsteady legs.",
+                "critical_success": "{worker_name} turns the after-hours encounter into something the wealthy lady will never forget. Starts by straddling her lap, grinding slowly while whispering exactly what she's going to do. Then delivers such expert attention - patient tongue, clever fingers, perfect rhythm - that the woman has to bite her fist to keep quiet. She finishes twice before the night is over, and leaves an obscene amount of gold along with a standing invitation to her private estate."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -2,
+                  "joy": 0,
+                  "libido": -3,
+                  "reputation": 0
+                },
+                "success": {
+                  "energy": -3,
+                  "joy": 1,
+                  "libido": -5,
+                  "reputation": 3
+                },
+                "critical_success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "libido": -8,
+                  "reputation": 5,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Beautiful": 4,
+                "Clever": 4,
+                "Good Kisser": 3,
+                "Open Minded": 3
+              },
+              "trait_msg_success": "The wealthy lady can't resist {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {
                 "Shy": 4,
@@ -4982,6 +7149,7 @@
             },
             {
               "id": "bartender_last_call_nsfw_tavern",
+              "excluded_traits": ["Lesbian"],
               "weight": 2,
               "report": "Last Call Seduction",
               "skill_options": [
@@ -5004,6 +7172,75 @@
                 "mediocre": "{worker_name} lets the attractive stranger stay past closing. They end up pressed against the back wall of the stockroom, kissing hungrily, but it's rushed and awkward. The stranger's hands are rough and impatient, {worker_name} can't find a comfortable angle, and the whole thing ends with a quick, unsatisfying fuck standing up between the ale barrels. The stranger leaves a few coins on the bar.",
                 "success": "{worker_name} has been eyeing the dark-haired regular all evening, and when the last patron leaves, neither pretends there's any other reason to stay. They come together behind the bar, {worker_name} pressed against the counter, the stranger's mouth hot on their neck while hands work clothing loose. {worker_name} wraps their legs around the stranger's waist and they fuck right there, slow and deep, the empty tavern echoing with gasps. Afterward, the stranger leaves a heavy purse and a promise to come back tomorrow.",
                 "critical_success": "{worker_name} doesn't even wait for the door to close behind the last customer. Pulls the muscular traveler behind the bar by their collar and kisses them hard. What follows is an hour of increasingly intense sex - bent over the bar, on the floor between the tables, against the stockroom door. {worker_name} rides them until they're both shaking, then lets the traveler take them from behind while they grip the bar rail. The stranger is so thoroughly satisfied they leave enough gold to cover the tavern's earnings for a week, and word of the tavern's 'hospitality' brings curious new patrons."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "joy": -2,
+                  "libido": -1,
+                  "rebelliousness": 1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": 0,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "libido": -6,
+                  "reputation": 3
+                },
+                "critical_success": {
+                  "energy": -5,
+                  "joy": 3,
+                  "libido": -10,
+                  "reputation": 5,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Beautiful": 4,
+                "High Libido": 3,
+                "Open Minded": 3,
+                "Nympho": 3
+              },
+              "trait_msg_success": "{worker_name}'s {trait} makes the late-night encounter irresistible.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Conservative": 5,
+                "Shy": 4,
+                "Low Libido": 3
+              }
+            },
+            {
+              "id": "bartender_last_call_nsfw_tavern_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Last Call Seduction",
+              "skill_options": [
+                "Charm"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "{worker_name}'s {trait} makes the late-night encounter irresistible.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "bartender_last_call_nsfw_tavern_lesbian",
+              "failure_image": "bartender_last_call_nsfw_tavern_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} tries to reciprocate when the last patron - a striking mercenary woman - leans across the bar and brushes her hand. But the nervous fumbling that follows is painful. {worker_name} knocks over a bottle reaching for her, the kiss is all teeth, and by the time they get behind the bar together the mood is dead. The mercenary leaves with an apologetic smile and {worker_name} cleans up alone, frustrated and unsatisfied.",
+                "mediocre": "{worker_name} lets the attractive stranger stay past closing. They end up pressed against the back wall of the stockroom, kissing hungrily, but it's rushed and awkward. The woman's hands are rough and impatient, {worker_name} can't find a comfortable angle, and the whole thing ends with a quick, unsatisfying tangle standing up between the ale barrels. The stranger leaves a few coins on the bar.",
+                "success": "{worker_name} has been eyeing the dark-haired regular all evening, and when the last patron leaves, neither woman pretends there's any other reason to stay. They come together behind the bar, {worker_name} pressed against the counter, the stranger's mouth hot on her neck while hands work clothing loose. Fingers and lips find their rhythm right there, slow and deep, the empty tavern echoing with gasps. Afterward, the mercenary leaves a heavy purse and a promise to come back tomorrow.",
+                "critical_success": "{worker_name} doesn't even wait for the door to close behind the last customer. Pulls the tall swordswoman behind the bar by her collar and kisses her hard. What follows is an hour of increasingly intense sex - bent over the bar, on the floor between the tables, against the stockroom door. {worker_name} rides her thigh until they're both shaking, then surrenders to clever fingers while gripping the bar rail. The mercenary is so thoroughly satisfied she leaves enough gold to cover the tavern's earnings for a week, and word of the tavern's 'hospitality' brings curious new patrons."
               },
               "consequences": {
                 "failure": {
@@ -5317,6 +7554,7 @@
             },
             {
               "id": "entertainer_private_performance_nsfw_tavern",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 1,
               "report": "Private Performance",
               "skill_options": [
@@ -5377,6 +7615,148 @@
                 "Flexible": 3
               },
               "trait_msg_success": "The noble is utterly entranced by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Conservative": 5,
+                "Shy": 4,
+                "Stiff": 3
+              }
+            },
+            {
+              "id": "entertainer_private_performance_nsfw_tavern_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 1,
+              "report": "Private Performance",
+              "skill_options": [
+                "Charm"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "The noble gentleman is utterly entranced by {worker_name}'s {trait}.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill * 2",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "entertainer_private_performance_nsfw_tavern_gay",
+              "failure_image": "entertainer_private_performance_nsfw_tavern_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} accepts the noble gentleman's invitation to perform privately in the upstairs room, but freezes when the man's hand slides up his thigh mid-song. The performance crumbles, {worker_name} stammers through an excuse and flees the room. The noble is furious at being refused after paying for the 'full experience' and threatens to ruin the tavern's reputation.",
+                "mediocre": "{worker_name} dances for the noble gentleman in the private room, letting clothes fall away piece by piece. But when the man pulls him onto his lap, {worker_name}'s rhythm falters. The sex that follows is functional but uninspired - the noble gets off, {worker_name} goes through the motions. The payment is fair but the gentleman won't be requesting a private show again.",
+                "success": "{worker_name} gives the noble gentleman exactly the escalation he's craving. Starts with a slow, teasing dance, peeling away garments one by one while holding the man's gaze. When the noble can't take any more, {worker_name} straddles him in the velvet chair and rides him with the same rhythm as the dance - controlled, sensual, building. The gentleman comes undone completely, moaning {worker_name}'s name, and pays triple the agreed price.",
+                "critical_success": "{worker_name} delivers a private performance that blurs the line between art and pure carnality. The dance starts slow, hypnotic, every movement designed to drive the noble gentleman mad with want. By the time {worker_name} is naked and straddling him, the aristocrat is begging. What follows is an extended session where {worker_name} controls every moment - riding, grinding, whispering filth into the man's ear between kisses. The noble climaxes so hard he nearly passes out, then books {worker_name} for every visit to the city, paying an exclusive retainer that dwarfs normal earnings."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": 0,
+                  "libido": -4,
+                  "reputation": 0
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "libido": -7,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -5,
+                  "joy": 4,
+                  "libido": -10,
+                  "reputation": 10,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Graceful": 4,
+                "Exhibitionist": 4,
+                "Beautiful": 3,
+                "Flexible": 3
+              },
+              "trait_msg_success": "The noble gentleman is utterly entranced by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Conservative": 5,
+                "Shy": 4,
+                "Stiff": 3
+              }
+            },
+            {
+              "id": "entertainer_private_performance_nsfw_tavern_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 1,
+              "report": "Private Performance",
+              "skill_options": [
+                "Charm"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "The noble lady is utterly entranced by {worker_name}'s {trait}.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill * 2",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "entertainer_private_performance_nsfw_tavern_lesbian",
+              "failure_image": "entertainer_private_performance_nsfw_tavern_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} accepts the noble lady's invitation to perform privately in the upstairs room, but freezes when the woman's hand slides up her thigh mid-song. The performance crumbles, {worker_name} stammers through an excuse and flees the room. The lady is furious at being refused after paying for the 'full experience' and threatens to ruin the tavern's reputation.",
+                "mediocre": "{worker_name} dances for the noble lady in the private room, letting clothes fall away piece by piece. But when the woman pulls her onto her lap, {worker_name}'s rhythm falters. What follows is functional but uninspired - the lady gets off, {worker_name} goes through the motions. The payment is fair but the noblewoman won't be requesting a private show again.",
+                "success": "{worker_name} gives the noble lady exactly the escalation she's craving. Starts with a slow, teasing dance, peeling away garments one by one while holding the woman's gaze. When the lady can't take any more, {worker_name} straddles her in the velvet chair and moves against her with the same rhythm as the dance - controlled, sensual, building. The noblewoman comes undone completely, moaning {worker_name}'s name, and pays triple the agreed price.",
+                "critical_success": "{worker_name} delivers a private performance that blurs the line between art and pure carnality. The dance starts slow, hypnotic, every movement designed to drive the noble lady mad with want. By the time {worker_name} is naked and straddling her, the aristocrat is begging. What follows is an extended session where {worker_name} controls every moment - grinding, teasing, whispering filth into the woman's ear between kisses. The lady climaxes so hard she nearly passes out, then books {worker_name} for every visit to the city, paying an exclusive retainer that dwarfs normal earnings."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": 0,
+                  "libido": -4,
+                  "reputation": 0
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "libido": -7,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -5,
+                  "joy": 4,
+                  "libido": -10,
+                  "reputation": 10,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Graceful": 4,
+                "Exhibitionist": 4,
+                "Beautiful": 3,
+                "Flexible": 3
+              },
+              "trait_msg_success": "The noble lady is utterly entranced by {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {
                 "Conservative": 5,
@@ -6100,6 +8480,7 @@
             },
             {
               "id": "dealer_winners_reward_nsfw_casino",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 1,
               "report": "Winner's Reward",
               "skill_options": [
@@ -6159,6 +8540,146 @@
                 "Open Minded": 3
               },
               "trait_msg_success": "The winner can't take their eyes off {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Conservative": 5,
+                "Shy": 4,
+                "Low Libido": 3
+              }
+            },
+            {
+              "id": "dealer_winners_reward_nsfw_casino_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 1,
+              "report": "Winner's Reward",
+              "skill_options": [
+                "Service"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "The winner can't take his eyes off {worker_name}'s {trait}.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill * 2",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "dealer_winners_reward_nsfw_casino_gay",
+              "failure_image": "dealer_winners_reward_nsfw_casino_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} accepts the big winner's invitation to 'help celebrate' in the VIP suite, but the reality is awkward. The man is too drunk to perform and {worker_name} spends an uncomfortable hour trying to coax life into a situation that isn't happening. Eventually gives up, receives a fraction of the promised tip, and slinks back to the floor feeling used and foolish.",
+                "mediocre": "{worker_name} follows the flush-with-winnings gambler to the private suite above the casino. The sex between them is perfunctory - the man is too excited about his gold to focus on {worker_name}, rushing through the act. A quick blowjob, a few minutes of distracted thrusting, and it's over. The tip is adequate but {worker_name} feels more like a prop in someone else's celebration than a participant.",
+                "success": "{worker_name} celebrates the winner's big night in the upstairs suite with enthusiasm that matches the man's euphoria. Pushes him onto the silk-sheeted bed, strips slowly while the gambler watches with hungry eyes, then climbs on top and rides him with a gambler's own sense of rhythm - slow when he wants fast, fast when he's about to finish, edging him until he's begging. When he finally comes, it's explosive. The winner empties a sizable portion of his winnings onto the nightstand.",
+                "critical_success": "{worker_name} turns the post-victory celebration into the winner's greatest prize of the night. Starts in the suite's private bath, washing the man with teasing hands that linger everywhere. Then leads him dripping to the bed where {worker_name} puts on a show - touching himself while the gambler watches, desperate. When {worker_name} finally lets him have what he wants, the sex between them is intense and prolonged, every thrust met with rolling hips and breathless groans. They fuck until dawn, the winner spending himself three times. The gambler leaves half his winnings behind and tells everyone the casino's 'VIP experience' is worth any bet."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -2,
+                  "libido": -1,
+                  "rebelliousness": 1,
+                  "reputation": -3
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": 0,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "libido": -6,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -5,
+                  "joy": 3,
+                  "libido": -10,
+                  "reputation": 8,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Beautiful": 4,
+                "High Libido": 3,
+                "Nympho": 3,
+                "Open Minded": 3
+              },
+              "trait_msg_success": "The winner can't take his eyes off {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Conservative": 5,
+                "Shy": 4,
+                "Low Libido": 3
+              }
+            },
+            {
+              "id": "dealer_winners_reward_nsfw_casino_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 1,
+              "report": "Winner's Reward",
+              "skill_options": [
+                "Service"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "The winner can't take her eyes off {worker_name}'s {trait}.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill * 2",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "dealer_winners_reward_nsfw_casino_lesbian",
+              "failure_image": "dealer_winners_reward_nsfw_casino_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} accepts the big winner's invitation to 'help celebrate' in the VIP suite, but the reality is awkward. The woman is too drunk to enjoy anything and {worker_name} spends an uncomfortable hour trying to coax life into a situation that isn't happening. Eventually gives up, receives a fraction of the promised tip, and slinks back to the floor feeling used and foolish.",
+                "mediocre": "{worker_name} follows the flush-with-winnings gambler to the private suite above the casino. The encounter between them is perfunctory - the woman is too excited about her gold to focus on {worker_name}, rushing through it all. A few hurried kisses, some distracted fumbling under silk sheets, and it's over. The tip is adequate but {worker_name} feels more like a prop in someone else's celebration than a participant.",
+                "success": "{worker_name} celebrates the winner's big night in the upstairs suite with enthusiasm that matches the woman's euphoria. Pushes her onto the silk-sheeted bed, strips slowly while the gambler watches with hungry eyes, then settles between her thighs with a gambler's own sense of rhythm - slow when she wants fast, fast when she's about to finish, edging her until she's begging. When she finally comes, it's explosive. The winner empties a sizable portion of her winnings onto the nightstand.",
+                "critical_success": "{worker_name} turns the post-victory celebration into the winner's greatest prize of the night. Starts in the suite's private bath, washing the woman with teasing hands that linger everywhere. Then leads her dripping to the bed where {worker_name} puts on a show - touching herself while the gambler watches, desperate. When {worker_name} finally gives her what she wants, the night between them is intense and prolonged, fingers and mouths trading places until dawn, the winner shattering three times. The gambler leaves half her winnings behind and tells everyone the casino's 'VIP experience' is worth any bet."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -3,
+                  "joy": -2,
+                  "libido": -1,
+                  "rebelliousness": 1,
+                  "reputation": -3
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": 0,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "libido": -6,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -5,
+                  "joy": 3,
+                  "libido": -10,
+                  "reputation": 8,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Beautiful": 4,
+                "High Libido": 3,
+                "Nympho": 3,
+                "Open Minded": 3
+              },
+              "trait_msg_success": "The winner can't take her eyes off {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {
                 "Conservative": 5,
@@ -6833,6 +9354,7 @@
             },
             {
               "id": "server_champagne_room_nsfw_casino",
+              "excluded_traits": ["Lesbian"],
               "weight": 1,
               "report": "Champagne Room",
               "skill_options": [
@@ -6895,6 +9417,78 @@
                 "Open Minded": 3
               },
               "trait_msg_success": "The VIP is completely captivated by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {
+                "Conservative": 5,
+                "Shy": 5,
+                "Low Libido": 3
+              }
+            },
+            {
+              "id": "server_champagne_room_nsfw_casino_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 1,
+              "report": "Champagne Room",
+              "skill_options": [
+                "Charm"
+              ],
+              "stat_requirements": {
+                "libido": 15
+              },
+              "trait_success": "The VIP ladies are completely captivated by {worker_name}'s {trait}.",
+              "earnings": {
+                "failure": "-(roll - skill)",
+                "mediocre": "skill * 2",
+                "success": "100 + skill * 2",
+                "critical_success": "100 + skill * 3"
+              },
+              "story_image": "server_champagne_room_nsfw_casino_lesbian",
+              "failure_image": "server_champagne_room_nsfw_casino_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} is summoned to the champagne room to serve a circle of wealthy noblewomen, but when their hands start wandering under her skirt, she flinches and pulls away. The ladies mock her for being 'too uptight for this kind of work' and demand a different server. {worker_name} returns to the floor humiliated, the VIPs refuse to tip, and management is not pleased.",
+                "mediocre": "{worker_name} serves champagne to the noblewomen while their hands roam freely over her body. She lets one pull her onto her lap and grind against her while she pours refills, and slips clever fingers under another's gown when she insists. It's mechanical and joyless, but the ladies tip decently for the compliance if not the enthusiasm.",
+                "success": "{worker_name} works the champagne room like she owns it. Pours drinks while perched on a noblewoman's knee, letting elegant hands explore under her uniform. When the richest one beckons her closer, she straddles her and moves against her right there in the booth while the others watch and throw gold coins. Her moans are genuine enough to drive the whole room wild, and two more ladies want their turn. She handles them all with a smile, collecting a small fortune in tips.",
+                "critical_success": "{worker_name} transforms the champagne room into her personal stage. Starts by serving drinks in increasingly provocative poses, letting the noblewomen bid for her attention. The winner gets a slow, devastating lap dance that ends with {worker_name} sinking between her thighs while the others watch in awe. She pleasures her senseless while maintaining eye contact with the rest, then works her way through every lady in the room who can match the price. By the end, she's dripping with sweat and satisfaction, surrounded by thoroughly ruined aristocrats and enough gold to fund the casino for a week."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -2,
+                  "joy": -3,
+                  "rebelliousness": 2,
+                  "reputation": -5,
+                  "libido": -1
+                },
+                "mediocre": {
+                  "energy": -3,
+                  "joy": -1,
+                  "libido": -4,
+                  "reputation": 0
+                },
+                "success": {
+                  "energy": -5,
+                  "joy": 2,
+                  "libido": -8,
+                  "reputation": 5
+                },
+                "critical_success": {
+                  "energy": -6,
+                  "joy": 3,
+                  "libido": -12,
+                  "reputation": 10,
+                  "relationship": 1
+                }
+              },
+              "nsfw_only": true,
+              "positive_traits": {
+                "Sexy Air": 5,
+                "Beautiful": 5,
+                "Large Breasts": 3,
+                "Exhibitionist": 4,
+                "Nympho": 3,
+                "Open Minded": 3
+              },
+              "trait_msg_success": "The VIP ladies are completely captivated by {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {
                 "Conservative": 5,
@@ -7473,6 +10067,7 @@
             },
             {
               "id": "courtesan_seduction_nsfw",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 2,
               "report": "Seduced Aristocratic Patron",
               "difficulty_modifier": -5,
@@ -7536,6 +10131,7 @@
             },
             {
               "id": "courtesan_vip_private_chamber",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 2,
               "report": "Private Chamber with VIP",
               "difficulty_modifier": -5,
@@ -7594,6 +10190,268 @@
                 "Beautiful": 3
               },
               "trait_msg_success": "The VIP is completely enthralled by {worker_name}'s {trait} in the private chamber.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "courtesan_seduction_nsfw_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "Seduced Aristocratic Patron",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Sex"
+              ],
+              "trait_success": "The aristocratic gentleman is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "courtesan_seduction_nsfw_gay",
+              "failure_image": "courtesan_seduction_nsfw_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} attempts to seduce the aristocratic gentleman but fails to create the connection the man quietly hoped for. The encounter feels forced and awkward, and the noble leaves unwilling to risk such discreet services again.",
+                "mediocre": "{worker_name} manages a basic seduction but lacks the finesse the aristocracy expects. The intimate encounter between them is functional, yet fails to kindle the passion the gentleman sought behind closed doors.",
+                "success": "{worker_name} masterfully seduces the aristocratic gentleman with elegant, unhurried confidence. Refined technique and genuine desire between two men create an intensely satisfying encounter that leaves the noble completely captivated.",
+                "critical_success": "{worker_name} delivers a legendary seduction that exceeds every aristocratic expectation. The perfect blend of elegance, discretion, and intimate mastery leaves the gentleman utterly devoted, whispering of the encounter only to the most trusted of his circle."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -10,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 20
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -10,
+                  "libido": -3
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Elegant": 3,
+                "Energetic": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The aristocratic gentleman is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "courtesan_seduction_nsfw_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Seduced Aristocratic Patron",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Sex"
+              ],
+              "trait_success": "The noblewoman is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "courtesan_seduction_nsfw_lesbian",
+              "failure_image": "courtesan_seduction_nsfw_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} attempts to seduce the noblewoman but fails to create the connection the lady quietly hoped for. The encounter feels forced and awkward, and the noblewoman leaves unwilling to risk such discreet services again.",
+                "mediocre": "{worker_name} manages a basic seduction but lacks the finesse the aristocracy expects. The intimate encounter between them is functional, yet fails to kindle the passion the lady sought behind closed doors.",
+                "success": "{worker_name} masterfully seduces the noblewoman with elegant, unhurried tenderness. Refined technique and genuine desire between two women create an intensely satisfying encounter that leaves the lady completely captivated.",
+                "critical_success": "{worker_name} delivers a legendary seduction that exceeds every aristocratic expectation. The perfect blend of elegance, discretion, and intimate mastery leaves the noblewoman utterly devoted, whispering of the encounter only to the most trusted of her circle."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -10,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 10,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 20
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -10,
+                  "libido": -3
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Elegant": 3,
+                "Energetic": 3,
+                "Magnetic": 3
+              },
+              "trait_msg_success": "The noblewoman is overwhelmed by {worker_name}'s {trait} during the intimate encounter.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "courtesan_vip_private_chamber_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 2,
+              "report": "Private Chamber with VIP",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Sex",
+                "Oral"
+              ],
+              "trait_success": "The VIP gentleman is completely enthralled by {worker_name}'s {trait} in the private chamber.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "courtesan_vip_private_chamber_gay",
+              "failure_image": "courtesan_vip_private_chamber_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to satisfy the VIP gentleman's discreet desires in the private chamber. The poor reading of what the man truly wanted disappoints a patron who paid handsomely for an unforgettable night between men.",
+                "mediocre": "{worker_name} provides adequate service in the private chamber, but the encounter never rises above functional. The VIP gentleman leaves satisfied in body yet unmoved, the premium price unearned.",
+                "success": "{worker_name} delivers an exceptional private chamber experience. Refined technique, unhurried attention, and the honest heat between two men create an encounter worthy of the castle's elite reputation.",
+                "critical_success": "{worker_name} provides a legendary night that exceeds all the VIP gentleman's expectations. Elegance, passion, and intimate mastery overwhelm the man so completely that he becomes a devoted regular, recommending the castle in the most careful of whispers."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -15,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 15,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 25
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -15,
+                  "libido": -3
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Porn Star": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The VIP gentleman is completely enthralled by {worker_name}'s {trait} in the private chamber.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "courtesan_vip_private_chamber_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 2,
+              "report": "Private Chamber with VIP",
+              "difficulty_modifier": -5,
+              "skill_options": [
+                "Charm",
+                "Sex",
+                "Oral"
+              ],
+              "trait_success": "The VIP lady is completely enthralled by {worker_name}'s {trait} in the private chamber.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "courtesan_vip_private_chamber_lesbian",
+              "failure_image": "courtesan_vip_private_chamber_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to satisfy the VIP lady's discreet desires in the private chamber. The poor reading of what the woman truly wanted disappoints a patron who paid handsomely for an unforgettable night between women.",
+                "mediocre": "{worker_name} provides adequate service in the private chamber, but the encounter never rises above functional. The VIP lady leaves satisfied in body yet unmoved, the premium price unearned.",
+                "success": "{worker_name} delivers an exceptional private chamber experience. Refined technique, unhurried attention, and the honest heat between two women create an encounter worthy of the castle's elite reputation.",
+                "critical_success": "{worker_name} provides a legendary night that exceeds all the VIP lady's expectations. Elegance, passion, and intimate mastery overwhelm the woman so completely that she becomes a devoted regular, recommending the castle in the most careful of whispers."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -15,
+                  "libido": -3
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 2,
+                  "reputation": 15,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 3,
+                  "rebelliousness": -1,
+                  "reputation": 25
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "joy": -2,
+                  "rebelliousness": 2,
+                  "reputation": -15,
+                  "libido": -3
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Porn Star": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The VIP lady is completely enthralled by {worker_name}'s {trait} in the private chamber.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {},
               "event_image_skill_exclude": []
@@ -7828,6 +10686,7 @@
           "daily_stories": [
             {
               "id": "pleasure_servant_noble_client",
+              "excluded_traits": ["Gay", "Lesbian"],
               "weight": 4,
               "report": "Pleasured Noble Client",
               "skill_options": [
@@ -7888,6 +10747,142 @@
                 "Beautiful": 3
               },
               "trait_msg_success": "The noble client is enthralled by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "pleasure_servant_noble_client_gay",
+              "required_traits": ["Gay"],
+              "worker_gender_requirement": "male",
+              "weight": 4,
+              "report": "Pleasured Noble Client",
+              "skill_options": [
+                "Sex",
+                "Anal",
+                "Oral",
+                "Hand"
+              ],
+              "trait_success": "The noble gentleman is enthralled by {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "pleasure_servant_noble_client_gay",
+              "failure_image": "pleasure_servant_noble_client_gay_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to satisfy the noble gentleman's desires. The poor reading of what the man wanted behind the discretion of the castle walls disappoints a patron who expected exceptional service between men for his coin.",
+                "mediocre": "{worker_name} provides basic pleasure services but lacks the refinement the aristocracy expects. The gentleman finishes, yet the encounter never becomes the memorable night between men he sought.",
+                "success": "{worker_name} delivers exceptional pleasure to the noble gentleman. Skilled technique, honest man-to-man heat, and attentive service create an experience worthy of the castle's reputation.",
+                "critical_success": "{worker_name} provides pleasure of legendary quality. The perfect blend of technique, passion, and intuitive understanding of the gentleman's desires overwhelms him so completely that he becomes a devoted regular, spreading careful word among trusted circles."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Porn Star": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The noble gentleman is enthralled by {worker_name}'s {trait}.",
+              "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
+              "negative_traits": {},
+              "event_image_skill_exclude": []
+            },
+            {
+              "id": "pleasure_servant_noble_client_lesbian",
+              "required_traits": ["Lesbian"],
+              "worker_gender_requirement": "female",
+              "weight": 4,
+              "report": "Pleasured Noble Client",
+              "skill_options": [
+                "Sex",
+                "Anal",
+                "Oral",
+                "Hand"
+              ],
+              "trait_success": "The noble lady is enthralled by {worker_name}'s {trait}.",
+              "earnings": {
+                "success": "50 + skill * 2",
+                "critical_success": "50 + skill * 3",
+                "mediocre": "skill",
+                "failure": "-(roll - skill)"
+              },
+              "story_image": "pleasure_servant_noble_client_lesbian",
+              "failure_image": "pleasure_servant_noble_client_lesbian_failure",
+              "descriptions": {
+                "failure": "{worker_name} fails to satisfy the noble lady's desires. The poor reading of what the woman wanted behind the discretion of the castle walls disappoints a patron who expected exceptional service between women for her coin.",
+                "mediocre": "{worker_name} provides basic pleasure services but lacks the refinement the aristocracy expects. The lady finishes, yet the encounter never becomes the memorable night between women she sought.",
+                "success": "{worker_name} delivers exceptional pleasure to the noble lady. Skilled technique, honest woman-to-woman tenderness, and attentive service create an experience worthy of the castle's reputation.",
+                "critical_success": "{worker_name} provides pleasure of legendary quality. The perfect blend of technique, passion, and intuitive understanding of the lady's desires overwhelms her so completely that she becomes a devoted regular, spreading careful word among trusted circles."
+              },
+              "consequences": {
+                "failure": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                },
+                "success": {
+                  "energy": -4,
+                  "joy": 1,
+                  "reputation": 5,
+                  "libido": -1
+                },
+                "critical_success": {
+                  "joy": 2,
+                  "rebelliousness": -1,
+                  "reputation": 10
+                },
+                "mediocre": {
+                  "energy": -4,
+                  "health": -1,
+                  "joy": -2,
+                  "rebelliousness": 1,
+                  "reputation": -5,
+                  "libido": -2
+                }
+              },
+              "nsfw_only": false,
+              "positive_traits": {
+                "Sexy Air": 3,
+                "Obedient": 3,
+                "Porn Star": 3,
+                "Beautiful": 3
+              },
+              "trait_msg_success": "The noble lady is enthralled by {worker_name}'s {trait}.",
               "trait_msg_failure": "{worker_name}'s {trait} didn't help this time.",
               "negative_traits": {},
               "event_image_skill_exclude": []

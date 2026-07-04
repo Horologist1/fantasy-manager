@@ -276,6 +276,18 @@ init python:
     if not hasattr(persistent, "worker_gender_filter") or persistent.worker_gender_filter not in ("both", "male", "female"):
         persistent.worker_gender_filter = "both"
 
+    # Worker orientation traits (NSFW), one cycle per trait:
+    # "off" = only_assigned behavior (designed/modded workers only),
+    # "enable" = joins the random trait pool for generated workers,
+    # "force" = every worker of the matching gender gets it, unique story workers included.
+    if not hasattr(persistent, "orientation_gay_mode") or persistent.orientation_gay_mode not in ("off", "enable", "force"):
+        persistent.orientation_gay_mode = "off"
+    if not hasattr(persistent, "orientation_lesbian_mode") or persistent.orientation_lesbian_mode not in ("off", "enable", "force"):
+        persistent.orientation_lesbian_mode = "off"
+    # One-time image warning when first switching an orientation trait to Force
+    if not hasattr(persistent, "orientation_force_warning_seen"):
+        persistent.orientation_force_warning_seen = False
+
     # Global defaults for worker automation (used by More Options > Defaults).
     if not hasattr(persistent, "default_auto_supply_potions"):
         persistent.default_auto_supply_potions = False
