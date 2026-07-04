@@ -327,6 +327,14 @@
     "description": "They have unstable mental health, affecting their performance and behavior. [Daily -3~+3 Rebelliousness, -1 Charm, -1 Service]",
     "nsfw": false
   },
+  "Gay": {
+    "description": "He is drawn exclusively to men, and his work reflects it. Same-sex encounters are his craft; clients outside his preference are handled through the Homosexual skill.",
+    "nsfw": true
+  },
+  "Lesbian": {
+    "description": "She is drawn exclusively to women, and her work reflects it. Same-sex encounters are her craft; clients outside her preference are handled through the Homosexual skill.",
+    "nsfw": true
+  },
   "Open Minded": {
     "description": "They embrace new experiences and unconventional requests with enthusiasm. [+2 Extreme, +2 Group, +1 BDSM]",
     "nsfw": true

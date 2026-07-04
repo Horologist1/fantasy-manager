@@ -8,8 +8,11 @@ function requirementSteps() {
       label: 'Required traits (optional)', default: [],
       hint: 'Story only triggers for workers having all of these.' },
     { id: 'excluded_traits', type: 'list_of_strings', catalog: 'all_traits',
-      label: 'Excluded traits (optional)', default: [],
-      hint: 'Story never triggers for workers having any of these.' },
+      label: 'Excluded traits', default: ['Gay', 'Lesbian'],
+      hint: 'Story never triggers for workers having any of these. Defaults to Gay/Lesbian: '
+        + 'straight-audience stories should not reach gay/lesbian workers, who get their own '
+        + 'variants. Clear it for orientation-neutral stories (e.g. libido spikes, solo scenes), '
+        + 'or when authoring a Gay/Lesbian variant itself (put the trait in Required instead).' },
     { id: 'worker_gender', type: 'enum', label: 'Worker gender requirement',
       options: ['any', 'female', 'male'], default: 'any' },
     { id: 'nsfw_only', type: 'bool', label: 'Only in NSFW mode?', default: false },

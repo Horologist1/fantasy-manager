@@ -16,7 +16,7 @@
   },
   "tavern": {
     "name": "Tavern",
-    "skill_name": "Accomodations",
+    "skill_name": "Accommodations",
     "skill_description": "Luxurious furnishings, comfortable beds, and welcoming atmospheres that make guests feel at home. Enhanced accommodations help your innkeepers handle difficult guests and create memorable experiences. Formula: Base Level + Skill Bonus = Success chance in Events."
   },
   "casino": {
