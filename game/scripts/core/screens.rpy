@@ -862,7 +862,7 @@ style quick_button:
     yminimum 92
     xpadding 18
     ypadding 12
-    background Frame("gui/button/quick_[prefix_]_background.png", gui.quick_button_borders, tile=gui.button_tile)
+    background Frame("gui/button/quick_[prefix_]background.png", gui.quick_button_borders, tile=gui.button_tile)
 
 style quick_button_text:
     properties gui.text_properties("quick_button")
@@ -2925,7 +2925,7 @@ style window:
 
 style choice_button:
     variant "small"
-    background Frame("gui/button/choice_[prefix_]_background.png", gui.choice_button_borders, tile=gui.choice_button_tile)
+    background Frame("gui/button/choice_[prefix_]background.png", gui.choice_button_borders, tile=gui.choice_button_tile)
 
 style radio_button:
     variant "small"
