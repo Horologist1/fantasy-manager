@@ -234,6 +234,19 @@ init python:
     build.classify('_fix.py', None)
     build.classify('temp_original.rpy', None)
 
+    ## Exclude art working files (Krita/Photoshop/etc.). These are editing
+    ## sources for the exported PNG/JPG assets and must never ship - a single
+    ## .kra can dwarf the flattened image it produces.
+    build.classify('**.kra', None)
+    build.classify('**.psd', None)
+    build.classify('**.xcf', None)
+    build.classify('**.clip', None)
+    build.classify('**.ora', None)
+
+    ## Exclude the devkit JSON-schema reference (modding documentation; the
+    ## devkit itself is already excluded above, so its companion doc follows).
+    build.classify('game/data/json_schema_standard.md', None)
+
     ## Exclude Android signing/config files from PC distributions.
     build.classify('android.json', None)
     build.classify('**.keystore', None)
