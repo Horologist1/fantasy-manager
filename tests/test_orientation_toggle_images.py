@@ -110,3 +110,67 @@ def test_stale_force_marker_without_trait_is_cleaned():
     # Trait manually removed (devkit) but marker left behind -> still "remove"
     # so the applier clears the stale marker.
     assert toggle_action("off", False, MARKER_FORCE) == "remove"
+
+
+# --- source contracts (wiring, mirrors test_event_ux_quality.py style) -------
+
+import os
+import re
+
+GAME = os.path.join(os.path.dirname(__file__), "..", "game")
+
+
+def _read_script(*parts):
+    with open(os.path.join(GAME, *parts), encoding="utf-8-sig") as f:
+        return f.read()
+
+
+def test_les_image_pattern_matches_les_and_homo_only():
+    visuals = _read_script("scripts", "events", "event_visuals.rpy")
+    m = re.search(r'"les":\s*\[([^\]]*)\]', visuals)
+    assert m, "les image alias missing from get_skill_search_patterns"
+    patterns = [p.strip().strip('"') for p in m.group(1).split(",")]
+    assert "les" in patterns and "homo" in patterns
+    assert "hetero" not in patterns and "gay" not in patterns and "sex" not in patterns
+
+
+def test_orientation_remap_wired_into_all_four_resolvers():
+    visuals = _read_script("scripts", "events", "event_visuals.rpy")
+    script = _read_script("scripts", "script.rpy")
+    # event_visuals: definition + get_event_image + _resolve_worker_skill_media_name.
+    assert visuals.count("_orientation_image_skill(") >= 3
+    # script.rpy: get_worker_image (simulated story_image) + get_worker_image_random.
+    assert script.count("_orientation_image_skill(") >= 2
+
+
+def test_default_folder_stages_guarded_for_locked_lookups():
+    visuals = _read_script("scripts", "events", "event_visuals.rpy")
+    script = _read_script("scripts", "script.rpy")
+    assert visuals.count("not _orientation_locked") >= 4  # P5-P8 in get_event_image
+    assert script.count("not _orientation_locked") >= 2   # P3-P4 in get_worker_image_random
+
+
+def test_lock_engages_only_for_same_sex_remaps():
+    # Review decision 2026-08-24: homo->"sex" must NOT skip default-folder art.
+    visuals = _read_script("scripts", "events", "event_visuals.rpy")
+    script = _read_script("scripts", "script.rpy")
+    assert visuals.count('_orientation_locked = _osk_remapped in ("gay", "les")') == 1
+    assert script.count('_orientation_locked = _osk_remapped in ("gay", "les")') == 1
+
+
+def test_toggle_buttons_run_the_reconcile_sweep():
+    screens = _read_script("scripts", "core", "screens.rpy")
+    assert screens.count("Function(reconcile_orientation_toggle)") >= 4  # 2 per button (Confirm + direct)
+    traits = _read_script("scripts", "workers", "worker_traits.rpy")
+    assert "store.reconcile_orientation_toggle = reconcile_orientation_toggle" in traits
+
+
+def test_rolled_marker_set_only_behind_only_assigned_bypass():
+    traits = _read_script("scripts", "workers", "worker_traits.rpy")
+    idx = traits.find('worker["orientation_forced"] = "rolled"')
+    assert idx != -1, "rolled marker assignment missing from worker_traits.rpy"
+    # The assignment must sit inside the guard that checks the only_assigned bypass
+    # (_gay_random/_les_random): all three tokens within the preceding ~500 chars.
+    window = traits[max(0, idx - 500):idx]
+    assert "only_assigned" in window
+    assert "_gay_random" in window and "_les_random" in window
