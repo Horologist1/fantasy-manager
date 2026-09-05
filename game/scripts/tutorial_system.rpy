@@ -122,7 +122,7 @@ default objective_descriptions = {
     
     4: "Gold is the lifeblood of power, and power is the weapon I must wield. Five thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources the day of reckoning will demand. The governor may sit in his fortress now, but each coin I earn is a step toward the moment I can move against him.",
     
-    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors I shall learn to tend to my workers' needs and employ items with wisdom. This knowledge will be vital when my operation grows and the governor takes notice. No remedy is truly necessary—workers regain their strength each day—but with this elixir, a worker may accomplish far more than a single task, turning the tide of fortune in my favor.",
+    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors I shall learn to tend to my workers' needs and employ items with wisdom. This knowledge will be vital when my operation grows and the governor takes notice.\n\nLet me also mark the rhythm of a working day. Each worker undertakes at least one task a day—the very tasks set down in the daily report. As my establishment's reputation grows and word of it spreads, more patrons come calling, and a worker may be pressed into several tasks in a single day. Yet every task drains their energy, and a worker left spent leaves the rest undone. They regain their strength each night without remedy, but with this elixir I may keep them on their feet through a busy day, turning the tide of fortune in my favor. And should I judge the burden too heavy, I may decree in each building's management a limit upon the tasks any worker takes in a day.",
     
     6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its Building skill for the trials ahead—trials that will come when the governor notices my rise. To elevate a building's level shall cost one thousand coins. Then, I must increase the building's Building skill bonus by ten measures, be they equipment, ingredients, or Hag Potions—whatever the establishment requires to weather the storms of fortune.",
     
@@ -1262,6 +1262,13 @@ screen journal_panel():
                             text_hover_color "#6b6528"
                             action [Hide("journal_panel"), Show("workers")]
                         text "Tip: For this tutorial, purchase the potion from the shop and transfer it manually. In the future, you can use potions directly from Manage Workers or Manage Buildings." size font_size(22) color "#7a4b2a"
+                        textbutton "Manage Buildings > Select building > Daily Stories Limit":
+                            xsize 580
+                            text_size font_size(24)
+                            text_color "#7a4b2a"
+                            text_hover_color "#6b6528"
+                            action [Hide("journal_panel"), Hide("tavern"), Show("Building_select_global")]
+                        text "Tip: Extra daily stories come from the building's Reputation (capped by its level) and stop once a worker runs out of energy. Cap them per worker with Daily Stories Limit." size font_size(22) color "#7a4b2a"
                     
                     elif current_objective == 6:
                         text "Tutorial:":
