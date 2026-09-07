@@ -1,0 +1,1932 @@
+[
+  {
+    "id": "worker_aspen_corvus_terms",
+    "arc_id": "aspen_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_aspen_corvus_terms_at",
+    "description": "Five days after Aspen's exhausted vigil, he lays a charcoal map across your desk. Corvus has not attacked; he has been testing doors, bribing carters, and leaving black feathers where Aspen will find them. Aspen admits the old crew once used that patience to frighten targets into making mistakes. He can predict the next contact, but only if he stops pretending he can guard every window alone. At dusk a runner arrives with Corvus's terms: one private meeting at the abandoned tannery, or the pressure on your household continues.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Aspen",
+    "worker_progress": {
+      "any_skills": {
+        "Combat": 55,
+        "Anal": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:aspen_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "worker_aspen_corvus_terms_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Let Aspen dictate the ground and turn the tannery into a controlled confrontation. (Requires Combat 55+)",
+        "condition": "Combat",
+        "threshold": 55,
+        "message_success": "Aspen enters by the roof while you light the ground-floor lanterns. Corvus's two shadows find themselves watched from three angles, their escape route quietly barred. Aspen never draws steel; he names every mistake Corvus made on the way in and offers him one clean exit. Corvus takes it, furious but impressed. For the first time in days, Aspen sleeps until noon. (+3 Combat, +220 gold, +3 reputation)",
+        "message_failure": "The tannery has one passage Aspen did not remember. Corvus uses it to circle behind him, and the meeting becomes a scrambling retreat through vats and rotten boards. Everyone gets home, but a smashed supplier's cart and a watchman's silence both require coin. Aspen accepts the lesson without excuses: memory is not a plan. (+1 Combat, -140 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 220,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Combat": 3
+            },
+            "event_flags": {
+              "worker_aspen_corvus_terms_done": true
+            }
+          },
+          "failure": {
+            "money": -140,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Combat": 1
+            },
+            "event_flags": {
+              "worker_aspen_corvus_terms_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Aspen charm Corvus's runner into revealing the crew's real grievance. (Requires Anal 65+)",
+        "condition": "Anal",
+        "threshold": 65,
+        "image_skill": "Charm",
+        "message_success": "Aspen recognizes the runner's nervous bravado and meets it with an unnervingly easy smile. Over cards and expensive brandy, he lets the man boast until the truth slips out: Corvus wants an old route ledger, not Aspen's blood. The ledger was lost years ago, but the confession gives you leverage. You sell Corvus a convincing copy and buy peace without kneeling. Aspen looks almost offended by how cleanly it works. (+3 Anal, +300 gold, +2 reputation)",
+        "message_failure": "The runner mistakes Aspen's attention for weakness and feeds him a polished lie. You discover the deception only after paying a courier to chase a nonexistent ledger across half the city. Aspen sends the runner away untouched, but his jaw remains tight all evening; being played wounds his pride more deeply than a knife would have. (+1 Anal, -180 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 300,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Anal": 3
+            },
+            "event_flags": {
+              "worker_aspen_corvus_terms_done": true
+            }
+          },
+          "failure": {
+            "money": -180,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Anal": 1
+            },
+            "event_flags": {
+              "worker_aspen_corvus_terms_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_aspen_unlocked_door",
+    "arc_id": "aspen_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "A week after the tannery meeting, Corvus's black feathers stop appearing. Aspen should be relieved. Instead, he checks the locks twice and sleeps in his clothes. When you confront him, he admits that danger gave him rules; safety asks him to trust someone else with the night. He leaves his dagger on your desk and asks you to choose what comes next: one last operation that proves his past no longer owns him, or a private night in which he surrenders control by choice rather than defeat.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Aspen",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Combat": 85,
+        "Anal": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_aspen_corvus_terms_at,7"
+    },
+    "excluded_flags": {
+      "worker_aspen_unlocked_door_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Help Aspen dismantle Corvus's last smuggling route without taking a life. (Requires Combat 85+)",
+        "condition": "Combat",
+        "threshold": 85,
+        "message_success": "Aspen plans the raid with a discipline his younger self never possessed. He marks exits for laborers, evidence for the watch, and a clear path for Corvus to flee the city. At dawn the warehouse stands empty except for ledgers and contraband. No corpse buys the victory. Aspen watches the watch seal the doors, then gives you his old crew knife to melt down. He has mastered violence well enough to refuse it. (+5 Combat, +500 gold, +7 reputation, permanent Blademaster trait)",
+        "message_failure": "A lookout panics and the careful raid becomes a running fight along the canal. Aspen gets everyone out alive, but the contraband burns and Corvus escapes with the useful ledgers. The watch charges your household for damaged moorings. Aspen still gives up the crew knife, though his expression says the past received a messier farewell than he wanted. (+2 Combat, -240 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Combat": 5
+            },
+            "add_trait": {
+              "name": "Blademaster",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_aspen_unlocked_door_done": true
+            }
+          },
+          "failure": {
+            "money": -240,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Combat": 2
+            },
+            "event_flags": {
+              "worker_aspen_unlocked_door_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Give Aspen the private, consensual surrender he is asking for. (Requires Anal 85+)",
+        "condition": "Anal",
+        "threshold": 85,
+        "message_success": "You establish every boundary before the bedroom door closes, and Aspen answers each question without swagger. He kneels because he chooses to, lets you bind his wrists, and breathes through the first instinct to pull free. Later, when you take him slowly from behind, the trust matters more than the ache or the pleasure. He asks you not to stop, then laughs—shaken and unguarded—when he realizes the unlocked door no longer frightens him. By morning the dagger remains on the desk. (+5 Anal, +10 joy, permanent Desire Whisperer trait)",
+        "message_failure": "Aspen agrees too quickly and goes rigid as soon as the restraints close. You stop, untie him, and stay beside him until his breathing steadies. Nothing sexual follows. He is embarrassed, but you refuse to let embarrassment rewrite consent. By dawn he can admit that surrender is not a trick learned in one night. The trust survives, even if the fantasy must wait. (+2 Anal, +2 joy)",
+        "effect": {
+          "success": {
+            "joy": 10,
+            "skill_modifiers": {
+              "Anal": 5
+            },
+            "add_trait": {
+              "name": "Desire Whisperer",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_aspen_unlocked_door_done": true
+            }
+          },
+          "failure": {
+            "joy": 2,
+            "skill_modifiers": {
+              "Anal": 2
+            },
+            "event_flags": {
+              "worker_aspen_unlocked_door_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_florian_name_beneath_mask",
+    "arc_id": "florian_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_florian_name_beneath_mask_at",
+    "description": "Five days after Florian's masked affair, a lacquered invitation arrives from the same private salon. Its host, Lady Merrow, claims Florian once designed a page for a forbidden family chronicle and now wants him to authenticate it before rivals expose her. Florian recognizes the pressure disguised as courtesy. More troubling is the personal note tucked inside: the masked stranger intends to attend, this time without disguise. Florian smooths the paper until it lies perfectly flat and asks whether he should enter as an artisan who controls the evidence or as a gentleman willing to hear the stranger's true name.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Florian",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Craft": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:florian_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "worker_florian_name_beneath_mask_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Have Florian expose the forgery hidden in the chronicle's gilding. (Requires Craft 55+)",
+        "condition": "Craft",
+        "threshold": 55,
+        "message_success": "Under salon lamps, Florian studies glue, gold leaf, and the pressure of each pen stroke. He finds a later hand buried beneath the border and demonstrates it without humiliating Lady Merrow. The incriminating page is removed, the authentic work preserved, and every collector present learns the value of Florian's eye. The unmasked stranger—Lord Evren, a younger son with more courage than title—stays to thank him. (+3 Craft, +280 gold, +4 reputation)",
+        "message_failure": "Florian identifies the altered page but misjudges when it was added. A rival collector pounces on the uncertainty and turns the salon into a tribunal of competing experts. Lady Merrow pays only a fraction of the promised fee, and you cover the cost of new pigments used in the examination. Evren still gives Florian his name, though not the triumphant evening either imagined. (+1 Craft, -120 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 280,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Craft": 3
+            },
+            "event_flags": {
+              "worker_florian_name_beneath_mask_done": true
+            }
+          },
+          "failure": {
+            "money": -120,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Craft": 1
+            },
+            "event_flags": {
+              "worker_florian_name_beneath_mask_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Florian turn Lady Merrow's social trap into a negotiation. (Requires Clever 65+)",
+        "condition": "Clever",
+        "threshold": 65,
+        "message_success": "Florian never directly accuses the host. He asks three mild questions, lets her rivals answer too eagerly, and uses their vanity to establish that everyone in the room needs the chronicle kept private. Lady Merrow pays for his silence and agrees to credit his restored pages in her catalogue. Evren removes his mask before the final toast and invites Florian to meet again where neither of them must perform a role. (+3 Clever, +340 gold, +3 reputation)",
+        "message_failure": "The questions are elegant but too pointed. Lady Merrow closes ranks, and the salon's smiles acquire edges. Florian secures a safe departure, yet loses the commission and spends the walk home replaying every sentence. Evren slips him an apology at the door; honesty begins between them, but the night's politics cost dearly. (+1 Clever, -160 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 340,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_florian_name_beneath_mask_done": true
+            }
+          },
+          "failure": {
+            "money": -160,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_florian_name_beneath_mask_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_florian_unfinished_border",
+    "arc_id": "florian_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Evren brings Florian the salvaged chronicle page. Its border is unfinished, abandoned years ago when Florian learned that patrons praised his polish while refusing to print his name. Evren offers two futures: complete the page for a public exhibition under Florian's own signature, or finish it privately as the first object in a life where affection is not another masked commission. Florian admits he wants recognition and intimacy with equal force—and fears that asking for either will make the other vanish.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Florian",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Craft": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_florian_name_beneath_mask_at,7"
+    },
+    "excluded_flags": {
+      "worker_florian_unfinished_border_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Complete the border publicly and make Florian's authorship impossible to erase. (Requires Craft 85+)",
+        "condition": "Craft",
+        "threshold": 85,
+        "message_success": "Florian paints his own story into the margin: a masked figure entering at one corner and emerging bare-faced at the other. The exhibition catalogue names him in full. Collectors crowd the glass, commissions follow, and Evren stands beside him without disguise. Florian's signature is tiny, immaculate, and permanent. He no longer mistakes invisibility for elegance. (+5 Craft, +520 gold, +8 reputation, permanent Tale Weaver trait)",
+        "message_failure": "A batch of blue pigment dries dull, and Florian cannot restore the border before the exhibition opens. He displays the unfinished page anyway, including a card explaining what was lost and what remains. Critics are divided; repair costs consume the fee. Yet his name is on the wall, and Evren stays beside him while strangers debate the work. (+2 Craft, -220 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 520,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Craft": 5
+            },
+            "add_trait": {
+              "name": "Tale Weaver",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_florian_unfinished_border_done": true
+            }
+          },
+          "failure": {
+            "money": -220,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Craft": 2
+            },
+            "event_flags": {
+              "worker_florian_unfinished_border_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Florian finish the page in Evren's rooms, with no masks between them. (Requires Clever 85+)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Florian sets down the brush before the border is complete and tells Evren exactly what he wants. The answer is a kiss without ceremony, then clothes opened slowly rather than torn away. Florian guides Evren's hand, receives him with patient confidence, and lets pleasure disorder the composure he once wore like armor. In the morning they add two intertwined vines to the page and sign it together on the reverse, a private truth no catalogue needs to validate. (+5 Clever, +10 joy, permanent Courtesan's Grace trait)",
+        "message_failure": "Florian tries to make the encounter as flawless as one of his pages: every candle placed, every phrase rehearsed. Evren finally asks whether he is sharing a bed with a man or attending another performance. The question hurts, but it breaks the script. They spend the night talking instead of having sex, and the unfinished border remains honest evidence that intimacy cannot be perfected in advance. (+2 Clever, +3 joy)",
+        "effect": {
+          "success": {
+            "joy": 10,
+            "skill_modifiers": {
+              "Clever": 5
+            },
+            "add_trait": {
+              "name": "Courtesan's Grace",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_florian_unfinished_border_done": true
+            }
+          },
+          "failure": {
+            "joy": 3,
+            "skill_modifiers": {
+              "Clever": 2
+            },
+            "event_flags": {
+              "worker_florian_unfinished_border_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_iris_language_of_petals",
+    "arc_id": "iris_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_iris_language_of_petals_at",
+    "description": "Five days after Iris arranged the moon-white flowers, three customers repeat phrases that appeared in her bouquet card. She realizes the arrangement was copied from a Silvered Table cipher: each flower, cut length, and ribbon color directs a favor through the city. Someone has begun using her displays as a message board. Iris is delighted by the puzzle and furious at the presumption. Tonight a crate of rare saffron crocuses arrives with no bill, along with a request to place one very specific bouquet in the front window.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Iris",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Charm": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:iris_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "worker_iris_language_of_petals_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Have Iris alter the bouquet and send the hidden message back to its author. (Requires Clever 55+)",
+        "condition": "Clever",
+        "threshold": 55,
+        "message_success": "Iris changes one crocus for a marigold, shortens the blue ribbon by a finger, and turns a demand into an invitation to negotiate. Before midnight, a broker arrives laughing at the audacity. Iris secures payment for every future use of her window and a list of forbidden messages she will never carry. The flowers become hers again because she understands their second language better than the intruder. (+3 Clever, +260 gold, +3 reputation)",
+        "message_failure": "One stem is cut on the wrong diagonal. The intended broker reads warning where Iris meant parley and sends two nervous guards instead of coin. The misunderstanding is resolved before blades leave sheaths, but the crocuses are ruined and a neighboring merchant demands compensation for the commotion. Iris records the error in a new cipher book. (+1 Clever, -130 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 260,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_iris_language_of_petals_done": true
+            }
+          },
+          "failure": {
+            "money": -130,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_iris_language_of_petals_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Iris make the requested display, then charm every observer into revealing why they came. (Requires Charm 65+)",
+        "condition": "Charm",
+        "threshold": 65,
+        "message_success": "Iris places the bouquet and spends the evening offering samples of spiced tea to anyone who lingers near the window. A dock clerk asks about weather, a jeweler praises the ribbon, and a magistrate's aide pretends to be lost. By closing time Iris has mapped the entire chain of interest and sold harmless introductions between three of them. Nobody realizes the cheerful florist was the sharpest broker in the room. (+3 Charm, +320 gold, +4 reputation)",
+        "message_failure": "Iris's questions are a shade too bright and the watchers recognize that they are being watched. They vanish one by one, leaving only false names and untouched tea. The requested payment never arrives, and the rare flowers wilt before they can be resold. Iris keeps her smile, but the failed read costs both coin and confidence. (+1 Charm, -150 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 320,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "worker_iris_language_of_petals_done": true
+            }
+          },
+          "failure": {
+            "money": -150,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "worker_iris_language_of_petals_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_iris_open_table",
+    "arc_id": "iris_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, the Silvered Table offers Iris a chair at its spring salon. The invitation is both apology and recruitment: she may present her flower cipher as a legitimate brokerage method, but every favor arranged there will attach her name to the network she once served only as a resource. Iris refuses to be owned again. She proposes a counteroffer—an open table governed by rules she writes—or a private demonstration for the broker who underestimated her, where negotiation and desire can meet without either pretending to be innocent.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Iris",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Charm": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_iris_language_of_petals_at,7"
+    },
+    "excluded_flags": {
+      "worker_iris_open_table_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Back Iris's open table and let her publish rules the old brokers cannot bend. (Requires Clever 85+)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Iris arrives with nine bouquets and a printed charter: no trafficking in people, no unnamed debts, no favor without a stated price. She decodes a hidden conflict between two senior brokers before they can spring it on her, then offers a solution under her own rules. By dawn the salon is using her charter because it works better than secrecy. Iris leaves with contracts, not chains, and a reputation for finding value where others see only ornament. (+5 Clever, +560 gold, +8 reputation, permanent High Roller's Eye trait)",
+        "message_failure": "The old brokers exploit one ambiguous clause and bury the salon in competing claims. Iris catches the maneuver too late to win the vote, but she publicly withdraws her bouquets before anyone can use them. Printing costs and cancelled arrangements hurt; still, several younger brokers follow her out, carrying copies of the charter. The open table begins smaller than planned, not dead. (+2 Clever, -230 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 560,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Clever": 5
+            },
+            "add_trait": {
+              "name": "High Roller's Eye",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_iris_open_table_done": true
+            }
+          },
+          "failure": {
+            "money": -230,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Clever": 2
+            },
+            "event_flags": {
+              "worker_iris_open_table_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Iris conduct a private negotiation in the language of pleasure. (Requires Charm 85+)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Iris makes the broker state terms before she allows a kiss. Every garment removed costs him one honest answer; every touch she permits earns him one question in return. By the time his mouth is between her thighs, she has the names behind the scheme and he has learned that pleasing her is not the same as possessing leverage over her. She climaxes without surrendering a single secret she meant to keep, then writes the final agreement while he is still catching his breath. (+5 Charm, +380 gold, +9 joy, permanent Courtesan's Grace trait)",
+        "message_failure": "The broker tries to turn flirtation into entitlement, reaching past a boundary Iris stated plainly. She ends the encounter at once, calls the waiting guard, and has him escorted out half-dressed. The contract is lost and rumors follow, but Iris does not bargain with her own consent. She burns his flowers in the courtyard and keeps the ashes as ink. (+2 Charm, -120 gold, +3 joy)",
+        "effect": {
+          "success": {
+            "money": 380,
+            "joy": 9,
+            "skill_modifiers": {
+              "Charm": 5
+            },
+            "add_trait": {
+              "name": "Courtesan's Grace",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_iris_open_table_done": true
+            }
+          },
+          "failure": {
+            "money": -120,
+            "joy": 3,
+            "skill_modifiers": {
+              "Charm": 2
+            },
+            "event_flags": {
+              "worker_iris_open_table_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_lily_garden_boundaries",
+    "arc_id": "lily_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_lily_garden_boundaries_at",
+    "description": "Five days after Lily's moonlit garden confession, she asks to return there before the next performance. Her former tutor taught her to treat discomfort as proof of discipline, and she still freezes when an audience asks for more than she planned to give. Lily has written three boundaries on a card, but worries that reading them aloud will disappoint the patrons who admire her softness. A small rehearsal audience is waiting beyond the hedge. Tonight she can practice making tenderness a strength instead of an invitation to ignore her limits.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Lily",
+    "worker_progress": {
+      "any_skills": {
+        "Charm": 55,
+        "Sex": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:lily_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "worker_lily_garden_boundaries_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Have Lily speak her limits before performing, without apology. (Requires Charm 55+)",
+        "condition": "Charm",
+        "threshold": 55,
+        "message_success": "Lily's voice trembles on the first sentence and steadies on the second. She tells the guests what she will share, what she will not, and how they may show appreciation. The clarity changes the room: applause comes at the right moments, no hand reaches without invitation, and Lily's warmth feels chosen rather than extracted. Several patrons pay extra for another garden evening conducted by the same rules. (+3 Charm, +240 gold, +4 reputation)",
+        "message_failure": "Lily softens every boundary with so many apologies that the audience hears uncertainty instead of instruction. One guest repeatedly interrupts, and Lily ends the rehearsal early rather than let the mood turn coercive. Refunds cost coin, but walking away is still a boundary kept. Later she rewrites the card in shorter, firmer sentences. (+1 Charm, -110 gold, +1 joy)",
+        "effect": {
+          "success": {
+            "money": 240,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "worker_lily_garden_boundaries_done": true
+            }
+          },
+          "failure": {
+            "money": -110,
+            "joy": 1,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "worker_lily_garden_boundaries_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Rehearse Lily's consent signals through a carefully staged intimate dance. (Requires Sex 65+)",
+        "condition": "Sex",
+        "threshold": 65,
+        "image_skill": "Striptease",
+        "message_success": "Every movement has a clear answer: a green ribbon invites closeness, a palm against the chest means pause, and a closed flower ends the scene. Lily incorporates the signals so naturally that the rehearsal never feels clinical. The audience follows her lead, and she finishes flushed but smiling, proud that desire can remain legible even without spoken interruption. The garden keeper books two private demonstrations. (+3 Sex, +280 gold, +3 reputation)",
+        "message_failure": "The signals are too subtle under low lantern light. A guest misses the pause and Lily steps out of the dance immediately. The misunderstanding is corrected and no harm is done, but the rehearsal cannot continue. She replaces delicate gestures with unmistakable ones and insists the next audience be briefed first. (+1 Sex, -90 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 280,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Sex": 3
+            },
+            "event_flags": {
+              "worker_lily_garden_boundaries_done": true
+            }
+          },
+          "failure": {
+            "money": -90,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Sex": 1
+            },
+            "event_flags": {
+              "worker_lily_garden_boundaries_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_lily_garden_in_bloom",
+    "arc_id": "lily_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Lily receives an offer to headline a moonlit garden salon under her own name. The host accepts her written boundaries and asks her to design the finale. Lily wants the evening to prove that sensitivity is craft, not fragility. She can build a public performance around trust and clear invitation, or close the gates after the audience leaves and share the garden with one chosen partner, exploring intimacy with no tutor, contract, or paying gaze to define her.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Lily",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Charm": 85,
+        "Sex": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_lily_garden_boundaries_at,7"
+    },
+    "excluded_flags": {
+      "worker_lily_garden_in_bloom_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Let Lily lead the salon through invitation, refusal, and earned trust. (Requires Charm 85+)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Lily turns the finale into a conversation with the whole garden. She invites one guest to fasten a ribbon, gently refuses another request, and lets the audience see that neither answer diminishes her warmth. When she finally dances beneath the flowering arch, every cheer feels given on terms she authored. The host doubles the fee, and Lily pins her boundary card beside the dressing mirror like a medal. (+5 Charm, +540 gold, +8 reputation, permanent People's Champion trait)",
+        "message_failure": "A drunk guest treats Lily's staged refusal as a challenge. She stops the music and has him removed, but the broken rhythm scatters the audience before the planned finale. The host argues over the fee until several guests defend Lily publicly. The salon loses money, yet her rules become the story people repeat—not the unfinished dance. (+2 Charm, -180 gold, +3 reputation)",
+        "effect": {
+          "success": {
+            "money": 540,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Charm": 5
+            },
+            "add_trait": {
+              "name": "People's Champion",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_lily_garden_in_bloom_done": true
+            }
+          },
+          "failure": {
+            "money": -180,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Charm": 2
+            },
+            "event_flags": {
+              "worker_lily_garden_in_bloom_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Close the gates and let Lily choose a private, fully consensual night of pleasure. (Requires Sex 85+)",
+        "condition": "Sex",
+        "threshold": 85,
+        "message_success": "With the garden empty, Lily chooses every next step aloud. She asks to be undressed beneath the arbor, guides a lover's mouth between her thighs, and discovers that her quick, helpless sounds need not belong to an audience. When she asks for penetration, it is with an eager certainty that would have astonished the frightened student she once was. She comes with her fingers locked around her partner's hand, then laughs at how loudly the nightingales answer. (+5 Sex, +12 joy, permanent Desire Whisperer trait)",
+        "message_failure": "The first touch awakens an old memory and Lily's desire vanishes beneath panic. Her partner stops immediately, wraps her in a robe, and follows her request to sit without questions. She cries from frustration, not harm, and eventually names what frightened her. The night ends with tea and honest quiet. Choosing to stop becomes as important as choosing to begin. (+2 Sex, +4 joy)",
+        "effect": {
+          "success": {
+            "joy": 12,
+            "skill_modifiers": {
+              "Sex": 5
+            },
+            "add_trait": {
+              "name": "Desire Whisperer",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_lily_garden_in_bloom_done": true
+            }
+          },
+          "failure": {
+            "joy": 4,
+            "skill_modifiers": {
+              "Sex": 2
+            },
+            "event_flags": {
+              "worker_lily_garden_in_bloom_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_rose_second_fan",
+    "arc_id": "rose_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_rose_second_fan_at",
+    "description": "Five days after Rose reclaimed her confidence, an elderly elf named Sayo attends rehearsal carrying a lacquered fan painted with the same mountain cranes Rose uses in her signature turn. Sayo says she watched Rose perform decades ago in an eastern court and remembers a sharper, stranger ending than the polished one Rose now presents. She offers to teach the lost sequence, but warns that it was designed as a declaration of independence from patrons who treated dancers as ornaments. Rose must decide whether to recover the difficult original or reinterpret its challenge for the audience she has now.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Rose",
+    "worker_progress": {
+      "any_skills": {
+        "Striptease": 55,
+        "Charm": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:rose_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "worker_rose_second_fan_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Learn the lost fan sequence exactly as Sayo remembers it. (Requires Striptease 55+)",
+        "condition": "Striptease",
+        "threshold": 55,
+        "message_success": "The old choreography is all reversals: concealment becoming command, apparent retreat turning into a step through the audience. Rose practices until both fans snap open on the same breath. When Sayo finally nods, Rose performs the sequence for a small crowd and its defiance lands across generations. The painted cranes seem to fly when the final silk layer falls away. (+3 Striptease, +270 gold, +4 reputation)",
+        "message_failure": "Rose remembers the shapes but not the old tempo. One fan opens late, catches a sleeve, and turns the declaration into an awkward struggle with silk. Sayo stops the rehearsal before frustration becomes injury. Repairing the antique fan is costly, though Rose copies every step into a notebook so the dance will not be lost again. (+1 Striptease, -130 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 270,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Striptease": 3
+            },
+            "event_flags": {
+              "worker_rose_second_fan_done": true
+            }
+          },
+          "failure": {
+            "money": -130,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Striptease": 1
+            },
+            "event_flags": {
+              "worker_rose_second_fan_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Ask Rose to build a new ending from the old dance's meaning. (Requires Charm 65+)",
+        "condition": "Charm",
+        "threshold": 65,
+        "message_success": "Rose keeps the cranes and discards the courtly bow. At the end she closes one fan over the patron's chair, opens the other toward the public door, and walks through it to applause. Sayo laughs first and loudest. The routine belongs neither to the old court nor to a rival imitator; it is unmistakably Rose's. Requests for the new performance arrive before dawn. (+3 Charm, +320 gold, +3 reputation)",
+        "message_failure": "The new symbols are elegant but too private. The audience admires the fans without understanding the refusal at the dance's heart, and Sayo calls the ending beautiful but toothless. Rose pays the musicians for an extra rehearsal and begins again, less interested in prettiness than truth. (+1 Charm, -100 gold, +1 joy)",
+        "effect": {
+          "success": {
+            "money": 320,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "worker_rose_second_fan_done": true
+            }
+          },
+          "failure": {
+            "money": -100,
+            "joy": 1,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "worker_rose_second_fan_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_rose_cranes_at_dawn",
+    "arc_id": "rose_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Sayo secures Rose a dawn performance at the river pavilion where the original crane dance was first banned. The governor's descendants will attend, as will artists who know exactly what the routine once meant. Rose can make the restored dance a public act of artistic ownership, or reserve the pavilion after the crowd departs for a private performance in which every layer removed answers to her own desire rather than a patron's command.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Rose",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Striptease": 85,
+        "Charm": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_rose_second_fan_at,7"
+    },
+    "excluded_flags": {
+      "worker_rose_cranes_at_dawn_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Perform the complete crane dance before the governor's heirs. (Requires Striptease 85+)",
+        "condition": "Striptease",
+        "threshold": 85,
+        "message_success": "Rose begins before sunrise, each fan stroke catching more light than the last. Silk falls not as tribute but as discarded heraldry, and the final bare-shouldered turn faces the governor's box without a bow. The younger heir rises to applaud; the elder remains seated, which pleases Sayo even more. By breakfast, three troupes have asked Rose to teach the restored work under her own name. (+5 Striptease, +580 gold, +8 reputation, permanent Tale Weaver trait)",
+        "message_failure": "River wind seizes one fan during the most difficult turn and sends it skittering beneath the governor's box. Rose finishes with the remaining fan, proud but visibly furious. Critics call the performance brave and uneven. The pavilion charges for a damaged screen, yet Sayo retrieves the lost fan and tells Rose that banned art has survived worse weather. (+2 Striptease, -210 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 580,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Striptease": 5
+            },
+            "add_trait": {
+              "name": "Tale Weaver",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_rose_cranes_at_dawn_done": true
+            }
+          },
+          "failure": {
+            "money": -210,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Striptease": 2
+            },
+            "event_flags": {
+              "worker_rose_cranes_at_dawn_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Keep the pavilion after dawn for Rose's private, erotic version of the dance. (Requires Charm 85+)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "When the doors close, Rose performs for one chosen lover and never once glances toward the empty patron's box. She uses the fans to delay each revelation until anticipation becomes almost painful, then places them aside and guides her lover's hands over the body the court once treated as display. Their mouth follows the path her silk has uncovered; Rose gives instructions, receives pleasure, and reaches climax looking straight into eyes she selected. The final bow belongs to no one. (+5 Charm, +11 joy, permanent Courtesan's Grace trait)",
+        "message_failure": "Rose begins confidently, but the old pavilion makes every private gesture feel watched by ghosts. She stops before the last layer and asks to leave. Her lover obeys without disappointment. They share breakfast on the river steps instead, and Rose admits that reclaiming a place does not require giving it every part of herself. (+2 Charm, +4 joy)",
+        "effect": {
+          "success": {
+            "joy": 11,
+            "skill_modifiers": {
+              "Charm": 5
+            },
+            "add_trait": {
+              "name": "Courtesan's Grace",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_rose_cranes_at_dawn_done": true
+            }
+          },
+          "failure": {
+            "joy": 4,
+            "skill_modifiers": {
+              "Charm": 2
+            },
+            "event_flags": {
+              "worker_rose_cranes_at_dawn_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_violet_scented_reply",
+    "arc_id": "violet_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_violet_scented_reply_at",
+    "description": "Five days after Violet's midnight discovery, a handkerchief appears on her dressing table carrying the same impossible perfume she followed that night: black tea, winter rose, and the metallic trace used by information brokers to mark a private question. The stitched monogram belongs to Magistrate Selene, a woman publicly hostile to the broker network. Violet suspects the magistrate is asking for help without admitting vulnerability. The reply must be delivered at a crowded recital, where one wrong gesture could expose both women.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Violet",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Sex": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:violet_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "worker_violet_scented_reply_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Have Violet answer through a counter-scent only Selene will recognize. (Requires Clever 55+)",
+        "condition": "Clever",
+        "threshold": 55,
+        "message_success": "Violet layers bergamot over the winter rose and places one drop on the recital program: yes, but on neutral ground. Selene catches the scent while applauding and never turns her head. Later, a clerk brings evidence of officials selling sealed court records. Violet arranges its anonymous return and collects the magistrate's discreet reward. Not a word links them. (+3 Clever, +290 gold, +4 reputation)",
+        "message_failure": "The recital hall is warmer than expected, and bergamot overwhelms the metallic base. Selene reads warning instead of agreement and leaves before the final movement. Violet spends the next day paying intermediaries to correct the message without exposing its route. The evidence remains safe, but the opportunity narrows. (+1 Clever, -140 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 290,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_violet_scented_reply_done": true
+            }
+          },
+          "failure": {
+            "money": -140,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_violet_scented_reply_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Violet deliver the reply during a deliberately distracting dance. (Requires Sex 65+)",
+        "condition": "Sex",
+        "threshold": 65,
+        "image_skill": "Striptease",
+        "message_success": "Violet turns the intermission into an impromptu dance, all slow turns and almost-revealed intent. While the room watches her hips, she passes behind Selene's chair and replaces the scented handkerchief with one tied in the agreed knot. The magistrate does not smile until Violet is facing away. Patrons tip generously, never guessing the performance carried a judicial conspiracy through its center. (+3 Sex, +330 gold, +3 reputation)",
+        "message_failure": "The dance draws too much attention. A gossip columnist notices the exchange and begins asking why the magistrate received special treatment. Violet plants a false romantic rumor to bury the real purpose, but buying the columnist's silence is expensive. Selene gets the reply; subtlety does not. (+1 Sex, -170 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 330,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Sex": 3
+            },
+            "event_flags": {
+              "worker_violet_scented_reply_done": true
+            }
+          },
+          "failure": {
+            "money": -170,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Sex": 1
+            },
+            "event_flags": {
+              "worker_violet_scented_reply_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_violet_last_secret",
+    "arc_id": "violet_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Selene brings Violet the broker ledger recovered through their exchange. One page contains Violet's own old cipher name and a final sealed entry. Opening it might identify the person who first sold her information; destroying it would end the network's claim on her past. Selene offers a third possibility in private: trust another person enough to read the entry together, then spend the night replacing secrecy with chosen intimacy. Violet, who has always made mystery serve her, must decide which secret deserves to survive.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Violet",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Sex": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_violet_scented_reply_at,7"
+    },
+    "excluded_flags": {
+      "worker_violet_last_secret_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Decode the entry, expose the seller, and burn the network around them. (Requires Clever 85+)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Violet notices that every third perfume mark is reversed. The entry names a retired broker who has been extorting former assets for years. She and Selene replace the ledger with a false copy, follow the payment trail, and deliver the real evidence to an honest judge. Arrests begin before breakfast. Violet burns the page bearing her cipher name and keeps only the decoded key—a reminder that no secret is stronger than the mind reading it. (+5 Clever, +520 gold, +8 reputation, permanent Card Shark trait)",
+        "message_failure": "The final cipher contains a trap: decoding one line alerts an old dead-drop chain. The retired broker flees before Selene's officers arrive, taking most of the extorted coin. Violet saves the victims' names and destroys the rest, but legal fees and counter-bribes eat through the reward. Her own page still burns cleanly. (+2 Clever, -230 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 520,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Clever": 5
+            },
+            "add_trait": {
+              "name": "Card Shark",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_violet_last_secret_done": true
+            }
+          },
+          "failure": {
+            "money": -230,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Clever": 2
+            },
+            "event_flags": {
+              "worker_violet_last_secret_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Read the truth with Selene, then let Violet risk being fully known. (Requires Sex 85+)",
+        "condition": "Sex",
+        "threshold": 85,
+        "image_skill": "les",
+        "message_success": "The entry names no grand enemy, only a frightened friend who sold one harmless detail and spent years hiding the shame. Violet closes the ledger and, for once, explains exactly what she feels. Selene answers by asking permission before every touch. Their lovemaking is slow and unscripted; Violet opens her thighs, guides Selene's fingers inside her, and gives up the habit of turning every moan into misdirection. The secret they keep afterward is simply that trust pleased her. (+5 Sex, +11 joy, permanent Desire Whisperer trait)",
+        "message_failure": "The entry's small betrayal cuts deeper than Violet expected. When Selene reaches for her, Violet turns the gesture into flirtation and tries to hide behind a practiced role. Selene recognizes the defense and stops the encounter before performance replaces honesty. They sleep separately, but in the morning Violet tells her the truth without perfume, cipher, or unfinished sentence. (+2 Sex, +4 joy)",
+        "effect": {
+          "success": {
+            "joy": 11,
+            "skill_modifiers": {
+              "Sex": 5
+            },
+            "add_trait": {
+              "name": "Desire Whisperer",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_violet_last_secret_done": true
+            }
+          },
+          "failure": {
+            "joy": 4,
+            "skill_modifiers": {
+              "Sex": 2
+            },
+            "event_flags": {
+              "worker_violet_last_secret_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_dahlia_empty_balcony",
+    "arc_id": "dahlia_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_dahlia_empty_balcony_at",
+    "description": "After a crowded evening, Dahlia remains on the empty balcony rehearsing the same entrance long after there is no audience left to impress. A folded playbill in her pocket names the Royal Vesper Theatre, where she once served as understudy to the celebrated actress Marcella Vane. Dahlia admits that Marcella taught her how to command a room, then made certain she never received a closing-night bow. The theatre is reviving their old production and has offered Dahlia one audition—at noon tomorrow, with Marcella judging.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Dahlia",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Dahlia"
+    },
+    "excluded_flags": {
+      "worker_dahlia_empty_balcony_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Help Dahlia prepare the role exactly as written, then let her presence do the rest. (Requires Charm 40+)",
+        "condition": "Charm",
+        "threshold": 40,
+        "message_success": "Dahlia enters without flourish and speaks the familiar lines as though the theatre has been waiting years to hear them correctly. Marcella's notes become increasingly trivial while the other judges lean forward. Dahlia earns the role for three performances and accepts with a measured nod, saving her smile for the empty balcony afterward. (+3 Charm, +180 gold, +3 reputation)",
+        "message_failure": "Dahlia's preparation is immaculate, but Marcella interrupts so often that the scene never gathers force. The judges offer a minor courtier's role instead. Dahlia refuses it politely; the lost booking hurts, yet taking another place in Marcella's shadow would have hurt more. (+1 Charm, -80 gold, +1 joy)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "worker_dahlia_empty_balcony_done": true
+            }
+          },
+          "failure": {
+            "money": -80,
+            "joy": 1,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "worker_dahlia_empty_balcony_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Find the hidden cut in the script that Marcella hopes Dahlia will miss. (Requires Clever 50+)",
+        "condition": "Clever",
+        "threshold": 50,
+        "message_success": "Dahlia compares three editions and finds six lines removed only from her copy—lines that transform the scene's passive beauty into its strategist. She restores them at the audition. Marcella cannot object without admitting the sabotage, and the judges reward Dahlia's command of the complete text. She leaves with the lead and the altered script as evidence. (+3 Clever, +220 gold, +4 reputation)",
+        "message_failure": "The editions differ in dozens of harmless ways, and Dahlia restores a passage the theatre cut for length rather than malice. Marcella uses the mistake to call her undisciplined. The audition ends early, and research fees come from your purse. Dahlia keeps searching; suspicion was premature, not necessarily wrong. (+1 Clever, -100 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 220,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_dahlia_empty_balcony_done": true
+            }
+          },
+          "failure": {
+            "money": -100,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_dahlia_empty_balcony_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_dahlia_stolen_applause",
+    "arc_id": "dahlia_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_dahlia_stolen_applause_at",
+    "description": "Five days after the audition, anonymous handbills accuse Dahlia of stealing Marcella's role through private influence. The wording quotes a rehearsal note only cast members saw. Dahlia could answer with spectacle, drawing a larger audience than gossip can poison, or trace the leak through the theatre's jealous hierarchy. She is furious, but beneath the anger is an older fear: that people will always call her poise manipulation because they cannot imagine grace earned through labor.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Dahlia",
+    "worker_progress": {
+      "any_skills": {
+        "Charm": 55,
+        "Clever": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_dahlia_empty_balcony_at,5"
+    },
+    "excluded_flags": {
+      "worker_dahlia_stolen_applause_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Turn opening night into an undeniable answer to the handbills. (Requires Charm 55+)",
+        "condition": "Charm",
+        "threshold": 55,
+        "message_success": "Dahlia refuses a defensive speech. She performs. By the final scene, the audience is so still that the handbills rustling under their seats sound obscene. Her curtain call lasts through three returns, and even Marcella must step aside to let her receive it. Ticket receipts erase the cost of the smear and establish Dahlia as more than anyone's understudy. (+3 Charm, +310 gold, +5 reputation)",
+        "message_failure": "Dahlia pushes too hard against the rumor and turns several delicate scenes into declarations. The audience applauds her effort but not the play, giving critics room to describe her as ambitious rather than accomplished. The theatre deducts weak ticket sales from the company share. (+1 Charm, -150 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 310,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "worker_dahlia_stolen_applause_done": true
+            }
+          },
+          "failure": {
+            "money": -150,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "worker_dahlia_stolen_applause_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Trace the quoted rehearsal note and identify who fed the printer. (Requires Clever 65+)",
+        "condition": "Clever",
+        "threshold": 65,
+        "message_success": "Dahlia gives three cast members copies of the note with different punctuation. The next handbill repeats one version exactly, leading to Marcella's dresser, who confesses she was promised a permanent theatre post. Dahlia releases the confession without humiliating the woman and makes the theatre pay for a public correction. Her strategy is as graceful as her entrance. (+3 Clever, +280 gold, +5 reputation)",
+        "message_failure": "The printer recognizes the trap and combines details from all three copies. Suspicion spreads through the cast, poisoning rehearsals without producing proof. Dahlia pays to halt the handbill run and apologizes to colleagues she tested unfairly. The leak remains, but she learns that strategy without trust can cost more than gossip. (+1 Clever, -170 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 280,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_dahlia_stolen_applause_done": true
+            }
+          },
+          "failure": {
+            "money": -170,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_dahlia_stolen_applause_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_dahlia_closing_bow",
+    "arc_id": "dahlia_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Marcella announces her retirement and offers Dahlia the theatre's permanent lead—on the condition that the final performance end with Marcella alone beneath the spotlight. The company wants peace, the public expects rivalry, and Dahlia understands the temptation of winning by making another woman disappear. She can accept the condition and transform the shared scene from within, or refuse the inherited hierarchy and lead an independent performance where every member of the company receives a name and bow.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Dahlia",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Charm": 85,
+        "Clever": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_dahlia_stolen_applause_at,7"
+    },
+    "excluded_flags": {
+      "worker_dahlia_closing_bow_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Share the stage, then make generosity more commanding than rivalry. (Requires Charm 85+)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Dahlia honors the promised final spotlight, but before stepping away she places Marcella's hand in that of the youngest understudy. The gesture turns a private vanity into a visible succession. Marcella takes her bow, then calls Dahlia back without being prompted. The audience rises for both, and the theatre's permanent contract bears Dahlia's name in letters as large as the title. (+5 Charm, +560 gold, +8 reputation, permanent People's Champion trait)",
+        "message_failure": "Dahlia's gesture is too subtle for the balcony and too surprising for Marcella. The final tableau breaks, leaving both women uncertain in the light. Reviews praise the acting but mock the confused curtain call. The contract remains available at a reduced fee, and Dahlia accepts with fewer illusions about symbolic victories. (+2 Charm, -190 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 560,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Charm": 5
+            },
+            "add_trait": {
+              "name": "People's Champion",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_dahlia_closing_bow_done": true
+            }
+          },
+          "failure": {
+            "money": -190,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Charm": 2
+            },
+            "event_flags": {
+              "worker_dahlia_closing_bow_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Build an independent closing act that credits every hidden hand. (Requires Clever 85+)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Dahlia hires the rehearsal hall across the square and stages a one-night production with names for dressers, musicians, understudies, and scene painters printed on the front of the playbill. Her timing turns Marcella's farewell crowd into an audience for a different future. The show sells out, and the new company votes Dahlia its first artistic director rather than its solitary star. (+5 Clever, +500 gold, +9 reputation, permanent Tale Weaver trait)",
+        "message_failure": "The independent production loses two musicians and a venue permit on opening day. Dahlia improvises a chamber version, but expenses exceed the door take and critics compare it unfavorably to Marcella's lavish farewell. Even so, every worker receives a bow, and enough of them stay to try again next season. (+2 Clever, -250 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 9,
+            "skill_modifiers": {
+              "Clever": 5
+            },
+            "add_trait": {
+              "name": "Tale Weaver",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_dahlia_closing_bow_done": true
+            }
+          },
+          "failure": {
+            "money": -250,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Clever": 2
+            },
+            "event_flags": {
+              "worker_dahlia_closing_bow_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_fern_unfinished_sentence",
+    "arc_id": "fern_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_fern_unfinished_sentence_at",
+    "description": "Fern finds a sealed note beneath her usual teacup. It contains three merchant names, a blank fourth line, and the phrase she once used while negotiating for the Quiet Ledger—a registry of debts that powerful people preferred to leave unwritten. Fern admits she helped compile it, believing accurate secrets were safer than rumors, until its owner began using entries to ruin anyone who refused him. The blank line is an invitation or threat: supply a fourth name before sunset, or become it.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Fern",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Fern"
+    },
+    "excluded_flags": {
+      "worker_fern_unfinished_sentence_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Read the note's paper, fold, and omissions for clues to its sender. (Requires Clever 40+)",
+        "condition": "Clever",
+        "threshold": 40,
+        "message_success": "Fern notices flour dust in the seal and a water stain shaped by a counting-house grille. Two of the named merchants share a warehouse beside the river mill; the third is bait. She sends the blank note back through the correct clerk with one added word: 'No.' By dusk the ledger's owner knows she can still read his methods, and the threat becomes a request to negotiate. (+3 Clever, +170 gold, +3 reputation)",
+        "message_failure": "The paper is deliberately common and the flour dust planted. Fern sends her reply to the wrong counting house, alerting an innocent merchant and spreading the very rumor she meant to contain. Compensation quiets him, but the ledger's owner learns that her first read can be rushed. (+1 Clever, -90 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 170,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_fern_unfinished_sentence_done": true
+            }
+          },
+          "failure": {
+            "money": -90,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_fern_unfinished_sentence_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Fern imply she has already copied the ledger and watch who panics. (Requires Sex 50+)",
+        "condition": "Sex",
+        "threshold": 50,
+        "image_skill": "Clever",
+        "message_success": "Fern mentions the imaginary copy to one gossip in a room full of listeners, then does nothing. By afternoon, two merchants offer protection and a third sends coin for silence she never requested. Their reactions identify the ledger's most frightened clients and give her leverage to demand a meeting. Fern never tells a direct lie; she merely leaves space for guilty people to write their own conclusions. (+3 Sex, +230 gold, +2 reputation)",
+        "message_failure": "The implication travels farther than Fern intends. A blameless guild officer assumes he has been accused and publicly denounces your household. Fern corrects the rumor, but the retraction lacks the speed of the original suggestion. The ledger's owner enjoys the spectacle from a safe distance. (+1 Sex, -110 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 230,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Sex": 3
+            },
+            "event_flags": {
+              "worker_fern_unfinished_sentence_done": true
+            }
+          },
+          "failure": {
+            "money": -110,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Sex": 1
+            },
+            "event_flags": {
+              "worker_fern_unfinished_sentence_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_fern_green_awning",
+    "arc_id": "fern_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_fern_green_awning_at",
+    "description": "Five days later, the Quiet Ledger's owner agrees to meet beneath the green awning of a crowded tea market. Master Pell is older than Fern remembers and more afraid. He claims a magistrate seized half the ledger and will prosecute everyone named unless Fern helps recover it. Fern suspects Pell is concealing which half he kept. Around them, porters, clerks, and informants pretend not to listen. She can dissect his story in public or use the market's appetite for suggestion to make his allies reveal themselves.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Fern",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Sex": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_fern_unfinished_sentence_at,5"
+    },
+    "excluded_flags": {
+      "worker_fern_green_awning_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Make Pell account for every missing page and every convenient omission. (Requires Clever 55+)",
+        "condition": "Clever",
+        "threshold": 55,
+        "message_success": "Fern asks about page numbers instead of names. Pell describes a sequence that cannot exist unless he removed the most valuable folio before the seizure. When she says nothing, he fills the silence with a confession. The magistrate has only harmless debts; Pell kept the blackmail material. Fern trades his lie for the folio and pays a clerk to register its destruction. (+3 Clever, +250 gold, +4 reputation)",
+        "message_failure": "Pell anticipated questions about pagination and planted duplicated numbers. Fern catches one contradiction but follows it into a maze of forged indices. By the time she understands, Pell has departed beneath a porter's cloak. Tea merchants demand payment for the overturned tables left during the chase. (+1 Clever, -140 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 250,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "worker_fern_green_awning_done": true
+            }
+          },
+          "failure": {
+            "money": -140,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "worker_fern_green_awning_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Fern stage a false arrest and watch which listeners move to protect Pell. (Requires Sex 65+)",
+        "condition": "Sex",
+        "threshold": 65,
+        "image_skill": "Clever",
+        "message_success": "Fern raises one brow at a hired actor wearing a watchman's sash. The instant he approaches, a spice seller blocks the lane, a clerk reaches for Pell's satchel, and a porter signals the northern exit. The market exposes Pell's entire support chain in three breaths. Fern calls off the performance and offers each accomplice safer work in exchange for testimony. (+3 Sex, +310 gold, +3 reputation)",
+        "message_failure": "A real patrol enters just as the false watchman announces the arrest. Confusion becomes panic, Pell's allies scatter, and the actor spends an hour explaining the costume in a guardhouse. Fern secures his release and avoids charges, but loses the clean view of Pell's network. (+1 Sex, -160 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 310,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Sex": 3
+            },
+            "event_flags": {
+              "worker_fern_green_awning_done": true
+            }
+          },
+          "failure": {
+            "money": -160,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Sex": 1
+            },
+            "event_flags": {
+              "worker_fern_green_awning_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_fern_quiet_ledger",
+    "arc_id": "fern_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Pell leaves the complete Quiet Ledger in Fern's room and disappears. Its entries could enrich your household, protect dozens of debtors, or destroy officials who have hidden cruelty behind respectable names. Fern has spent years pretending neutrality made information clean. Now every unopened page feels like a decision made by silence. She can build a transparent debt archive that returns evidence to those harmed, or orchestrate one final web of implications that forces the worst names to erase the ledger themselves.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Fern",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Sex": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_fern_green_awning_at,7"
+    },
+    "excluded_flags": {
+      "worker_fern_quiet_ledger_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Turn the ledger into a verified archive controlled by the people named in it. (Requires Clever 85+)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Fern separates proof from rumor, returns private letters, and copies evidence of crimes into sealed packets for their victims. She publishes rules explaining exactly who may open what and why. Several merchants repay predatory debts rather than face documented hearings. The archive earns fees for honest arbitration, but its greater value is that no single keeper can weaponize it again. (+5 Clever, +520 gold, +8 reputation, permanent Barkeep's Wisdom trait)",
+        "message_failure": "Two entries contradict each other, and Fern releases one packet before resolving the discrepancy. An innocent bookkeeper faces public suspicion until the correction arrives. Fern compensates him and suspends the archive while rebuilding its verification rules. The work survives, chastened by the harm an elegant system can still cause. (+2 Clever, -230 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 520,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Clever": 5
+            },
+            "add_trait": {
+              "name": "Barkeep's Wisdom",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_fern_quiet_ledger_done": true
+            }
+          },
+          "failure": {
+            "money": -230,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Clever": 2
+            },
+            "event_flags": {
+              "worker_fern_quiet_ledger_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Make the ledger's worst clients believe every rival already has a copy. (Requires Sex 85+)",
+        "condition": "Sex",
+        "threshold": 85,
+        "image_skill": "Clever",
+        "message_success": "Fern sends six empty envelopes and one true quotation, each recipient certain the others received more. By midnight the guilty parties are buying one another's silence, confessing to clerks, and demanding a neutral bonfire. Fern lets them watch the real ledger burn after restitution contracts are signed. She profits modestly, but her finest reward is the moment powerful liars become trapped by their own assumptions. (+5 Sex, +460 gold, +7 reputation, permanent Fortune's Favorite trait)",
+        "message_failure": "One official refuses to panic and compares envelopes with the others. The bluff collapses before restitution is complete. Fern burns the ledger anyway and uses household funds to move two vulnerable debtors beyond retaliation. Her web fails, but the people at its center do not pay the price. (+2 Sex, -260 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 460,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Sex": 5
+            },
+            "add_trait": {
+              "name": "Fortune's Favorite",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_fern_quiet_ledger_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Sex": 2
+            },
+            "event_flags": {
+              "worker_fern_quiet_ledger_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_holly_empty_cup",
+    "arc_id": "holly_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_holly_empty_cup_at",
+    "description": "Near closing, Holly carries tea to every tired worker and guest, then quietly sways beside the last table. Her own cup is empty and cold. She admits she has been taking extra appointments for patrons who ask for 'someone kind,' listening through their grief and loneliness long after paid hours end. One such patron, Widow Bell, has sent a silver tea service and a request that Holly visit her home each week. The fee is generous; the expectation that Holly will never need care in return is not.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Holly",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Holly"
+    },
+    "excluded_flags": {
+      "worker_holly_empty_cup_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Help Holly set visiting hours and make care a service with limits. (Requires Service 40+)",
+        "condition": "Service",
+        "threshold": 40,
+        "message_success": "Holly writes a warm contract: two hours, one pot of tea, no emergency summons after midnight. Widow Bell bristles, then confesses that the clarity is a relief; she had feared every kindness was pity. Their first scheduled visit ends on time, with both women looking forward to the next. Holly returns carrying a full cup for herself. (+3 Service, +180 gold, +3 reputation)",
+        "message_failure": "Holly states the hours but abandons them the first time Widow Bell begins to cry. The visit stretches past midnight, and Holly misses a paid shift the next morning. She does not regret staying, but understands that a boundary postponed whenever it matters is not yet a boundary. (+1 Service, -90 gold, +1 joy)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "worker_holly_empty_cup_done": true
+            }
+          },
+          "failure": {
+            "money": -90,
+            "joy": 1,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "worker_holly_empty_cup_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Teach Holly to ask directly what a lonely patron wants before offering herself. (Requires Sex 50+)",
+        "condition": "Sex",
+        "threshold": 50,
+        "image_skill": "Service",
+        "message_success": "Holly asks Widow Bell whether she wants conversation, touch, practical help, or simply another person in the room. The widow is startled, then chooses conversation and a hand held across the table. Naming the need keeps Holly from trying to supply everything at once. Bell pays the agreed fee and recommends Holly's unusual honesty to two friends. (+3 Sex, +220 gold, +3 reputation)",
+        "message_failure": "Holly asks so gently that Widow Bell hears an offer without limits and requests all four kinds of care at once. Holly cannot meet the expectation and leaves them both disappointed. She refunds part of the fee, then practices asking the same question without shrinking from the answer. (+1 Sex, -100 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 220,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Sex": 3
+            },
+            "event_flags": {
+              "worker_holly_empty_cup_done": true
+            }
+          },
+          "failure": {
+            "money": -100,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Sex": 1
+            },
+            "event_flags": {
+              "worker_holly_empty_cup_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_holly_bell_at_midnight",
+    "arc_id": "holly_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "worker_holly_bell_at_midnight_at",
+    "description": "Five days later, Widow Bell rings the household bell at midnight despite the new agreement. Her estranged daughter has arrived after years away, and their reunion has collapsed into accusations. Holly is the only person both women trust, but entering the quarrel could turn her kindness into unpaid family duty. She can structure a mediated conversation with clear terms, or use the intimate knowledge gathered over tea to help each woman hear what the other cannot say plainly.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Holly",
+    "worker_progress": {
+      "any_skills": {
+        "Service": 55,
+        "Sex": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_holly_empty_cup_at,5"
+    },
+    "excluded_flags": {
+      "worker_holly_bell_at_midnight_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Set a one-hour mediation with rules, pauses, and an end time. (Requires Service 55+)",
+        "condition": "Service",
+        "threshold": 55,
+        "message_success": "Holly puts fresh tea between the women and an hourglass beside it. Each may speak until the sand reaches a mark; neither may call the other ungrateful. The structure feels stiff for ten minutes and merciful by twenty. They do not reconcile, but they agree to exchange letters and stop using Holly as a messenger. Widow Bell pays the emergency rate without complaint. (+3 Service, +260 gold, +4 reputation)",
+        "message_failure": "The daughter refuses the hourglass and Widow Bell treats every pause as abandonment. Holly keeps extending the session until dawn, when both women leave angrier and she is too tired to work. She invoices the agreed hour anyway—the first imperfect boundary she enforces after the fact. (+1 Service, -110 gold, +1 joy)",
+        "effect": {
+          "success": {
+            "money": 260,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "worker_holly_bell_at_midnight_done": true
+            }
+          },
+          "failure": {
+            "money": -110,
+            "joy": 1,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "worker_holly_bell_at_midnight_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Help each woman translate accusation into the need beneath it. (Requires Sex 65+)",
+        "condition": "Sex",
+        "threshold": 65,
+        "image_skill": "Service",
+        "message_success": "Holly hears 'You left me' beneath criticism of letters, and 'You never wanted me grown' beneath anger about marriage. She names neither diagnosis; she asks the questions that let mother and daughter discover them. The argument softens into grief, then into two separate apologies with no demand for immediate forgiveness. They thank Holly for refusing to choose a side. (+3 Sex, +230 gold, +5 reputation)",
+        "message_failure": "Holly guesses wrong, interpreting the daughter's anger as guilt when it is fear. The woman feels analyzed and storms out. Widow Bell blames Holly for making matters worse, then apologizes the next day. Holly returns half the fee and writes down a hard lesson: empathy is an invitation to ask, not permission to assume. (+1 Sex, -120 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 230,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Sex": 3
+            },
+            "event_flags": {
+              "worker_holly_bell_at_midnight_done": true
+            }
+          },
+          "failure": {
+            "money": -120,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Sex": 1
+            },
+            "event_flags": {
+              "worker_holly_bell_at_midnight_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "worker_holly_room_kept_warm",
+    "arc_id": "holly_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, Widow Bell and her daughter offer to fund a small parlor where Holly can receive grieving, lonely, or anxious patrons under written rules. The room could make her gift sustainable, but Holly worries that professional kindness will become another mask for self-neglect. Before she agrees, she wants one evening that answers a simpler question: can she receive as generously as she gives? She can open the parlor with a disciplined model of care, or reserve its first night for consensual intimacy centered entirely on Holly's own pleasure and choices.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Holly",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Service": 85,
+        "Sex": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "after_days_from_flag:worker_holly_bell_at_midnight_at,7"
+    },
+    "excluded_flags": {
+      "worker_holly_room_kept_warm_done": true
+    },
+    "nsfw": true,
+    "choices": [
+      {
+        "option": "Open the parlor with appointments, rest periods, and reciprocal care built into every day. (Requires Service 85+)",
+        "condition": "Service",
+        "threshold": 85,
+        "message_success": "Holly designs the room around limits as carefully as comfort: a visible clock, a bell either person may ring, and an hour between appointments when no one may ask anything of her. Her first patrons leave steadier, not dependent, and a junior attendant brings Holly tea during the protected hour. The parlor earns modestly and becomes known as a place where kindness does not consume its keeper. (+5 Service, +540 gold, +8 reputation, permanent Graceful Server trait)",
+        "message_failure": "Demand overwhelms the appointment book in its first week. Holly accepts too many exceptions, and the protected hour disappears beneath urgent knocks. She closes for three days, refunds several patrons, and reopens with half the schedule and a locked rest-room door. The lesson is expensive, but the parlor survives because Holly finally includes herself among the people it must protect. (+2 Service, -220 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 540,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Service": 5
+            },
+            "add_trait": {
+              "name": "Graceful Server",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_holly_room_kept_warm_done": true
+            }
+          },
+          "failure": {
+            "money": -220,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Service": 2
+            },
+            "event_flags": {
+              "worker_holly_room_kept_warm_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Reserve the first night for Holly to receive patient, attentive pleasure. (Requires Sex 85+)",
+        "condition": "Sex",
+        "threshold": 85,
+        "image_skill": "les",
+        "message_success": "Holly names what she wants in a voice that grows firmer with each request: the door locked, her clothes removed slowly, no need to comfort anyone. Her partner massages the tension from her shoulders, kisses down her full body, and waits for Holly to guide their mouth between her thighs. She allows herself to lie back, ask for more, and climax without turning the moment into gratitude or service. Afterward someone else brings the tea. (+5 Sex, +12 joy, permanent Sacred Touch trait)",
+        "message_failure": "Holly keeps asking whether her partner is comfortable until attention shifts away from her again. When this pattern is gently named, she begins to cry from embarrassment. The sexual encounter stops, but the care does not: she is held, covered, and served tea she did not prepare. Receiving remains difficult, yet the night gives her a first honest practice. (+2 Sex, +5 joy)",
+        "effect": {
+          "success": {
+            "joy": 12,
+            "skill_modifiers": {
+              "Sex": 5
+            },
+            "add_trait": {
+              "name": "Sacred Touch",
+              "duration": 0
+            },
+            "event_flags": {
+              "worker_holly_room_kept_warm_done": true
+            }
+          },
+          "failure": {
+            "joy": 5,
+            "skill_modifiers": {
+              "Sex": 2
+            },
+            "event_flags": {
+              "worker_holly_room_kept_warm_done": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

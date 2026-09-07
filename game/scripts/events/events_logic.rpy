@@ -1,7 +1,15 @@
 # events_logic.rpy
 
 init python:
+    from fm_events.building_policy import (
+        choice_allowed_by_building_policy,
+        event_has_policy_relevant_choices,
+        event_worker_allowed_by_building_policy,
+    )
+
     EVENT_FILTER_DEBUG = False
+    CHARACTER_EVENT_GLOBAL_COOLDOWN_DAYS = 5
+    CHARACTER_EVENT_POOL_CAP = 1
 
     def _event_filter_log(message, force=False):
         if force or EVENT_FILTER_DEBUG or getattr(config, "developer", False):
@@ -11,6 +19,415 @@ init python:
         if pid is None:
             return ""
         return str(pid).strip().lower()
+
+    def choice_is_visible_for_content_filter(choice):
+        """Apply the content policy to one choice without mutating event data."""
+        return bool(getattr(persistent, "nsfw_enabled", False) or not content_object_is_restricted(choice))
+
+    def event_is_visible_for_content_filter(event, include_pending_building=True):
+        """Reject serialized NSFW events before any text, choices, music, or media is shown."""
+        if not event or not hasattr(event, "get") or getattr(persistent, "nsfw_enabled", False):
+            return True
+        if content_object_is_restricted(event):
+            return False
+        choices = event.get("choices", []) or []
+        if choices and not any(choice_is_visible_for_content_filter(choice) for choice in choices):
+            return False
+
+        pending_building_name = getattr(store, "current_affected_building", None) if include_pending_building else None
+        if pending_building_name:
+            pending_building, _key = _resolve_building_by_name(pending_building_name)
+            pending_type_id = pending_building.get("type") if pending_building else None
+            pending_type = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == pending_type_id), None)
+            if pending_type and not building_type_is_visible(pending_type):
+                return False
+
+        required_types = event.get("building_type", []) or []
+        if isinstance(required_types, str):
+            required_types = [required_types]
+        matched_types = [bt for bt in building_types_json.get("building_types", []) if bt.get("id") in required_types]
+        matched_ids = {bt.get("id") for bt in matched_types}
+        if required_types and any(type_id not in matched_ids for type_id in required_types):
+            return False
+        if matched_types and not any(building_type_is_visible(bt) for bt in matched_types):
+            return False
+        return True
+
+    def get_content_visible_event_buildings(event, buildings=None):
+        """Return owned matching buildings without letting mixed events select hidden types in SFW mode."""
+        buildings = buildings if buildings is not None else available_buildings
+        required_types = (event or {}).get("building_type", []) or []
+        if isinstance(required_types, str):
+            required_types = [required_types]
+        result = []
+        for building_name, building in (buildings or {}).items():
+            if not hasattr(building, "get") or not building.get("owned", False):
+                continue
+            btype_id = building.get("type")
+            if required_types and btype_id not in required_types:
+                continue
+            btype = next((entry for entry in building_types_json.get("building_types", []) if entry.get("id") == btype_id), None)
+            if btype and not building_type_is_visible(btype):
+                continue
+            result.append((building_name, building))
+        return result
+
+    def event_has_restricted_content(event, choice=None):
+        """Classify event provenance independently of the current NSFW toggle."""
+        event = event or {}
+        if content_object_is_restricted(event) or content_object_is_restricted(choice):
+            return True
+        affected_name = getattr(store, "current_affected_building", None)
+        affected_building, _affected_key = _resolve_building_by_name(affected_name) if affected_name else (None, None)
+        affected_type = affected_building.get("type") if affected_building else None
+        required_types = event.get("building_type", []) or []
+        if isinstance(required_types, str):
+            required_types = [required_types]
+        type_ids = [affected_type] if affected_type else list(required_types)
+        for btype in building_types_json.get("building_types", []) or []:
+            if btype.get("id") in type_ids and content_object_is_restricted(btype):
+                return True
+        return False
+
+    store.choice_is_visible_for_content_filter = choice_is_visible_for_content_filter
+    store.event_is_visible_for_content_filter = event_is_visible_for_content_filter
+    store.get_content_visible_event_buildings = get_content_visible_event_buildings
+    store.event_has_restricted_content = event_has_restricted_content
+
+    def event_worker_is_visible_for_content_filter(worker):
+        """Keep restricted workers out of event presentation without altering the roster."""
+        if not worker or not hasattr(worker, "get"):
+            return True
+        return bool(
+            getattr(persistent, "nsfw_enabled", False)
+            or not content_object_is_restricted(worker)
+        )
+
+    def worker_matches_event_progress(worker, event):
+        """Check save-safe event-level progression gates against permanent worker values."""
+        progress = (event or {}).get("worker_progress") or {}
+        if not progress:
+            return True
+        if not worker or not hasattr(worker, "get"):
+            return False
+
+        def _meets(actual, required):
+            try:
+                if isinstance(required, bool):
+                    return False
+                return float(actual) >= float(required)
+            except (TypeError, ValueError):
+                return False
+
+        if "min_level" in progress and not _meets(worker.get("level", 0), progress.get("min_level")):
+            return False
+
+        min_stats = progress.get("min_stats") or {}
+        if not hasattr(min_stats, "items"):
+            return False
+        for stat_name, required in min_stats.items():
+            if not _meets(worker.get(stat_name, 0), required):
+                return False
+
+        min_skills = progress.get("min_skills") or {}
+        if not hasattr(min_skills, "items"):
+            return False
+        base_skills = worker.get("skills") or {}
+        if not hasattr(base_skills, "get"):
+            base_skills = {}
+        for skill_name, required in min_skills.items():
+            if not _meets(base_skills.get(skill_name, 0), required):
+                return False
+
+        if "any_skills" in progress:
+            any_skills = progress.get("any_skills")
+            if not any_skills or not hasattr(any_skills, "items"):
+                return False
+            if not any(_meets(base_skills.get(skill_name, 0), required) for skill_name, required in any_skills.items()):
+                return False
+
+        required_traits = progress.get("required_traits") or []
+        worker_traits = set(worker.get("traits") or [])
+        if any(trait not in worker_traits for trait in required_traits):
+            return False
+        return True
+
+    def _event_worker_gender_requirement(event):
+        """Normalized worker_gender_requirement: "male"/"female", else None.
+        "any", "", null and unknown values mean no gate — a truthy "any" must never
+        reach an equality filter (it would exclude every worker)."""
+        req = (event or {}).get("worker_gender_requirement") if hasattr(event, "get") else None
+        req = str(req or "").strip().lower()
+        return req if req in ("male", "female") else None
+
+    def filter_workers_for_event_progress(worker_list, event):
+        """Return content-visible workers that satisfy progression without mutating the roster.
+        Honors worker_gender_requirement here (the shared chokepoint) so the
+        resolution-time pickers in events.rpy can never leak the other gender."""
+        gender_req = _event_worker_gender_requirement(event)
+        return [
+            worker for worker in (worker_list or [])
+            if not worker_is_in_franchise(worker)
+            and event_worker_is_visible_for_content_filter(worker)
+            and worker_matches_event_progress(worker, event)
+            and (gender_req is None
+                 or str(worker.get("gender", "") if hasattr(worker, "get") else "").strip().lower() == gender_req)
+        ]
+
+    def worker_matches_event_choice_building_policy(worker, event, choice):
+        """Apply the assigned building's skill policy to one event choice/worker pair."""
+        if not worker or not hasattr(worker, "get"):
+            return False
+        building_name = worker.get("assigned_building")
+        building, _key = _resolve_building_by_name(building_name) if building_name else (None, None)
+        if not building:
+            return not event_has_policy_relevant_choices(event)
+        required_types = (event or {}).get("building_type", []) or []
+        if isinstance(required_types, str):
+            required_types = [required_types]
+        if required_types and building.get("type") not in required_types:
+            return False
+        return choice_allowed_by_building_policy(
+            building,
+            choice,
+            worker.get("gender"),
+        )
+
+    def filter_workers_for_event_choice_building_policy(worker_list, event, choice):
+        """Keep only workers allowed to depict the selected choice in their building."""
+        return [
+            worker for worker in (worker_list or [])
+            if worker_matches_event_choice_building_policy(worker, event, choice)
+        ]
+
+    def filter_workers_for_event_building_policy(worker_list, event):
+        """Keep workers who can perform at least one policy-relevant event choice."""
+        if not event_has_policy_relevant_choices(event):
+            return list(worker_list or [])
+        result = []
+        for worker in (worker_list or []):
+            if not worker or not hasattr(worker, "get"):
+                continue
+            building_name = worker.get("assigned_building")
+            building, _key = _resolve_building_by_name(building_name) if building_name else (None, None)
+            if building and event_worker_allowed_by_building_policy(building, event, worker):
+                result.append(worker)
+        return result
+
+    def event_building_policy_has_eligible_worker(building, event):
+        """True when this building can cast the event without violating its skill policy."""
+        if not event_has_policy_relevant_choices(event):
+            return True
+        candidates = filter_workers_for_event_progress(
+            (building or {}).get("assigned_servants", []) or [],
+            event,
+        )
+        if store._event_has_identity_filters(event):
+            candidates = [
+                worker for worker in candidates
+                if store._worker_matches_event_identity(worker, event)
+            ]
+        return any(
+            event_worker_allowed_by_building_policy(building, event, worker)
+            for worker in candidates
+        )
+
+    store.worker_matches_event_choice_building_policy = worker_matches_event_choice_building_policy
+    store.filter_workers_for_event_choice_building_policy = filter_workers_for_event_choice_building_policy
+    store.filter_workers_for_event_building_policy = filter_workers_for_event_building_policy
+    store.event_building_policy_has_eligible_worker = event_building_policy_has_eligible_worker
+
+    def event_choice_has_qualifying_worker(choice, event):
+        """Mirror of the post-choice eligibility build in events.rpy (choose/random):
+        True when at least one appropriately-assigned worker could take this
+        choice's skill check. Lets the choice screen disable dead-end options
+        BEFORE the player burns the event on "no eligible workers"."""
+        if not choice or not hasattr(choice, "get"):
+            return True
+        condition_skill = choice.get("condition")
+        if not condition_skill or condition_skill == "building_skill":
+            return True
+        try:
+            threshold = int(choice.get("threshold", 0) or 0)
+        except Exception:
+            threshold = 0
+        workers = getattr(store, "workers", []) or []
+        buildings = getattr(store, "available_buildings", {}) or {}
+        affected = getattr(store, "current_affected_building", None)
+        event_building_types = (event or {}).get("building_type", []) if hasattr(event, "get") else []
+        if affected:
+            pool = [w for w in workers if w.get("assigned_building") == affected]
+        elif event_building_types:
+            pool = [
+                w for w in workers
+                if w.get("assigned_building", "Unassigned") != "Unassigned"
+                and w.get("assigned_building") in buildings
+                and buildings[w.get("assigned_building")].get("type") in event_building_types
+            ]
+        else:
+            pool = list(workers)
+        pool = filter_workers_for_event_progress(pool, event)
+        req_tr = list(choice.get("required_traits", []) or [])
+        if choice.get("required_trait"):
+            req_tr.append(choice.get("required_trait"))
+        ex_tr = choice.get("excluded_traits", []) or []
+        if req_tr or ex_tr:
+            pool = [w for w in pool if store._worker_meets_trait_requirements(w, req_tr, ex_tr)]
+        if store._event_has_identity_filters(event):
+            pool = [w for w in pool if store._worker_matches_event_identity(w, event)]
+        pool = filter_workers_for_event_choice_building_policy(pool, event, choice)
+        if threshold > 0:
+            pool = [w for w in pool if get_event_worker_skill_check_info(w, choice).get("roll_skill", 0) >= threshold]
+        return bool(pool)
+
+    def event_progress_is_satisfied(event, worker_pool=None):
+        """Resolve progression against the event's fixed identity before admitting it to the pool."""
+        if not (event or {}).get("worker_progress"):
+            return True
+        candidates = list(worker_pool if worker_pool is not None else (getattr(store, "workers", []) or []))
+        has_identity = getattr(store, "_event_has_identity_filters", None)
+        matches_identity = getattr(store, "_worker_matches_event_identity", None)
+        if callable(has_identity) and has_identity(event) and callable(matches_identity):
+            candidates = [worker for worker in candidates if matches_identity(worker, event)]
+        return bool(filter_workers_for_event_progress(candidates, event))
+
+    def event_is_character_arc(event):
+        """Authored character arcs are explicitly classified; never infer them from IDs."""
+        return bool((event or {}).get("arc_id"))
+
+    def character_event_cooldown_ready(current_day=None):
+        """Global character-event cadence, independent of manager count."""
+        current_day = calculate_total_days() if current_day is None else current_day
+        last_day = getattr(store, "character_event_last_day", None)
+        if last_day is None:
+            return True
+        try:
+            return int(current_day) - int(last_day) >= CHARACTER_EVENT_GLOBAL_COOLDOWN_DAYS
+        except (TypeError, ValueError):
+            return True
+
+    def limit_character_arc_candidates(events):
+        """Keep ordinary events plus a bounded weighted sample of eligible character arcs."""
+        ordinary = [event for event in (events or []) if not event_is_character_arc(event)]
+        arcs = [event for event in (events or []) if event_is_character_arc(event)]
+        if not arcs or not character_event_cooldown_ready():
+            return ordinary
+
+        remaining = list(arcs)
+        selected = []
+        cap = max(0, int(CHARACTER_EVENT_POOL_CAP))
+        while remaining and len(selected) < cap:
+            weights = []
+            for event in remaining:
+                try:
+                    weights.append(max(0.0, float(event.get("weight", 1))))
+                except (TypeError, ValueError):
+                    weights.append(0.0)
+            total = sum(weights)
+            if total <= 0:
+                break
+            roll = renpy.random.uniform(0, total)
+            cumulative = 0.0
+            picked_index = len(remaining) - 1
+            for index, weight in enumerate(weights):
+                cumulative += weight
+                if roll <= cumulative:
+                    picked_index = index
+                    break
+            selected.append(remaining.pop(picked_index))
+        return ordinary + selected
+
+    def record_character_event_fired(event):
+        """Start the global arc cooldown without marking the event completed."""
+        if not event_is_character_arc(event):
+            return False
+        current_day = int(calculate_total_days())
+        store.character_event_last_day = current_day
+        return True
+
+    def reconcile_cancelled_character_arc_timestamps(events):
+        """Remove legacy completion stamps proven to come from cancelled arc events."""
+        flags = getattr(store, "event_flags", None)
+        occurrences = getattr(store, "event_occurrences", None)
+        if not hasattr(flags, "get") or not hasattr(occurrences, "get"):
+            return []
+
+        removed = []
+        for event in events or []:
+            if not (event or {}).get("arc_id"):
+                continue
+            event_id = str(event.get("id", "")).strip()
+            timestamp_flag = str(event.get("completion_timestamp_flag", "")).strip()
+            if not event_id or not timestamp_flag or timestamp_flag not in flags:
+                continue
+            if not flags.get(f"{event_id}_passed", False):
+                continue
+            try:
+                completed_count = int(occurrences.get(event_id, 0) or 0)
+            except (TypeError, ValueError):
+                completed_count = 0
+            if completed_count <= 0:
+                flags.pop(timestamp_flag, None)
+                removed.append(timestamp_flag)
+        return removed
+
+    def reconcile_shop_unlock_state():
+        """Heal legacy Shop 2 UI state into the event-gating namespace."""
+        if not hasattr(store, "unlocked_shops") or store.unlocked_shops is None:
+            store.unlocked_shops = {}
+        if not hasattr(store, "event_flags") or store.event_flags is None:
+            store.event_flags = {}
+
+        changed = []
+        shop2_open = bool(
+            store.unlocked_shops.get("shop2", False)
+            or store.event_flags.get("shop2_unlocked", False)
+        )
+        if shop2_open:
+            if not store.unlocked_shops.get("shop2", False):
+                store.unlocked_shops["shop2"] = True
+                changed.append("unlocked_shops.shop2")
+            if not store.event_flags.get("shop2_unlocked", False):
+                store.event_flags["shop2_unlocked"] = True
+                changed.append("shop2_unlocked")
+            timestamp = store.event_flags.get("shop2_unlock_timestamp")
+            if isinstance(timestamp, bool) or not isinstance(timestamp, (int, float)):
+                store.event_flags["shop2_unlock_timestamp"] = int(calculate_total_days())
+                changed.append("shop2_unlock_timestamp")
+
+        shop3_open = bool(
+            store.unlocked_shops.get("shop3", False)
+            or store.event_flags.get("shop3_unlocked", False)
+        )
+        if shop3_open:
+            if not store.unlocked_shops.get("shop3", False):
+                store.unlocked_shops["shop3"] = True
+                changed.append("unlocked_shops.shop3")
+            if not store.event_flags.get("shop3_unlocked", False):
+                store.event_flags["shop3_unlocked"] = True
+                changed.append("shop3_unlocked")
+        return changed
+
+    def record_character_event_completed(event):
+        """Stamp arc completion only after a player choice has resolved."""
+        if not event_is_character_arc(event):
+            return False
+        timestamp_flag = str((event or {}).get("completion_timestamp_flag", "")).strip()
+        if timestamp_flag:
+            if not hasattr(store, "event_flags") or store.event_flags is None:
+                store.event_flags = {}
+            store.event_flags[timestamp_flag] = int(calculate_total_days())
+        return True
+
+    store.worker_matches_event_progress = worker_matches_event_progress
+    store.filter_workers_for_event_progress = filter_workers_for_event_progress
+    store.event_progress_is_satisfied = event_progress_is_satisfied
+    store.event_is_character_arc = event_is_character_arc
+    store.character_event_cooldown_ready = character_event_cooldown_ready
+    store.limit_character_arc_candidates = limit_character_arc_candidates
+    store.record_character_event_fired = record_character_event_fired
+    store.reconcile_cancelled_character_arc_timestamps = reconcile_cancelled_character_arc_timestamps
+    store.record_character_event_completed = record_character_event_completed
 
     def _job_is_active_profession(job_val):
         """True if servant_jobs value counts as a real profession (not empty/rest/unassigned)."""
@@ -197,6 +614,8 @@ init python:
             return True
         if _coerce_event_min_skill(event) is not None:
             return True
+        if event_has_policy_relevant_choices(event):
+            return True
         return False
 
     def _building_matches_event_worker_requirements(
@@ -274,6 +693,8 @@ init python:
             min_skill=min_skill,
             skill_name=skill_nm,
         ):
+            return False
+        if not event_building_policy_has_eligible_worker(building, event):
             return False
         return True
 
@@ -363,7 +784,7 @@ init python:
                     # --->>> END LOGGING <<<---
 
                     # Original filtering logic
-                    if not persistent.nsfw_enabled and event.get("nsfw", False):
+                    if not persistent.nsfw_enabled and content_object_is_restricted(event):
                         # renpy.log(f"Skipping NSFW event: {event.get('id')}") # Optional log
                         continue
                     if exclude_prefix and event.get("id", "").startswith(exclude_prefix):
@@ -405,6 +826,9 @@ init python:
         Returns:
             list: Filtered list of possible event dictionaries.
         """
+        reconcile_shop_unlock_state()
+        reconcile_cancelled_character_arc_timestamps(all_events)
+
         if active_building_types is None:
             active_building_types = [b["type"] for b in available_buildings.values() if b.get("type") is not None]
 
@@ -422,6 +846,12 @@ init python:
             event_id = event.get("id")
             if not event_id:
                 _event_filter_log(f"Skipping event with no ID: {event}")
+                continue
+            if not event_is_visible_for_content_filter(event, include_pending_building=False):
+                _event_filter_log(f"Filtered out {event_id} by the active content filter")
+                continue
+            if not event_progress_is_satisfied(event, store.workers):
+                _event_filter_log(f"Filtered out {event_id} because its subject has not met worker_progress")
                 continue
 
             # Check if this event was passed and if it's time for it to reappear
@@ -485,14 +915,7 @@ init python:
 
             # Worker / profession / skill gates for event availability (non-recruit pool).
             if event_uses_building_availability_gates(event):
-                candidate_buildings = []
-                for b_name, b in available_buildings.items():
-                    if not b.get("owned", False):
-                        continue
-                    b_type = b.get("type")
-                    if event_building_types and b_type not in event_building_types:
-                        continue
-                    candidate_buildings.append((b_name, b))
+                candidate_buildings = get_content_visible_event_buildings(event, available_buildings)
 
                 requirements_met = False
                 for _, candidate in candidate_buildings:
@@ -590,6 +1013,7 @@ init python:
             possible_events.append(event)
             _event_filter_log(f"Event {event_id} passed all filters and is now a possible event")
 
+        possible_events = limit_character_arc_candidates(possible_events)
         _event_filter_log(f"Selected {len(possible_events)} possible events: {[e['id'] for e in possible_events]}")
 
         # If no events passed the filter, log a warning

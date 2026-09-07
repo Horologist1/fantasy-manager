@@ -223,5 +223,33 @@
         "Gutstabber", "Bonegnasher", "Soulshredder", "Goregrinder", "Deathdealer",
         "Bloodsucker", "Soulsnatcher", "Bonegrinder", "Fleshdevourer", "Skullsplitter",
         "Gutripper", "Bonechewer", "Soulreaper", "Gorefeaster", "Deathbringer"
+    ],
+    "goblin_female": [
+        "Brikka", "Nixra", "Zibbi", "Rikka", "Mogga", "Tikka", "Kezzi", "Vrinni",
+        "Snagga", "Gribba", "Yikka", "Pezza", "Drokki", "Bazza", "Fizzi", "Krikka",
+        "Wobbi", "Trizza", "Gnekka", "Pikka", "Ruzza", "Snikki", "Vekka", "Jibbi",
+        "Kazza", "Mizzi", "Tobba", "Brinni", "Zakka", "Quibba", "Nerra", "Skibbi",
+        "Vorga", "Kippa", "Drezzi", "Lugga", "Prikka", "Temzi", "Wikka", "Yezza"
+    ],
+    "orc_male": [
+        "Kharuk", "Drogash", "Vorg", "Murgan", "Ghorak", "Tharzug", "Brugor", "Krovan",
+        "Zharuk", "Mogar", "Drakhan", "Urzog", "Grathok", "Borug", "Kargan", "Vrosh",
+        "Torvak", "Rugath", "Skarnak", "Durgan", "Hrogar", "Krulak", "Orvash", "Grazhul",
+        "Brogan", "Thorgun", "Mazrak", "Kurdak", "Vorghan", "Razgor", "Uldrak", "Gromek",
+        "Tarvok", "Zurgan", "Brakar", "Hurgan", "Karzug", "Morvak", "Drogan", "Vargul"
+    ],
+    "demon_female": [
+        "Velyra", "Xazira", "Malvera", "Nyssara", "Azraya", "Selkira", "Vezhara", "Calithra",
+        "Morzaya", "Thessira", "Zarethi", "Velmira", "Lazhara", "Noctara", "Syrzane", "Ezravia",
+        "Vaelissa", "Malthira", "Xyranel", "Drezara", "Orlissa", "Vashira", "Nereza", "Zolthira",
+        "Kalyss", "Vireza", "Sableth", "Ilyzra", "Marzeth", "Thalyra", "Kezhara", "Azmira",
+        "Lyssara", "Vorzena", "Nymzara", "Elthira", "Sarzaya", "Zevrissa", "Myzara", "Calyth"
+    ],
+    "slime_female": [
+        "Luma", "Mirea", "Glissa", "Nymia", "Olyne", "Melli", "Aquarel", "Lympha",
+        "Nerine", "Sylma", "Vella", "Miora", "Pluvia", "Rilla", "Tilma", "Nuala",
+        "Eluvi", "Maryn", "Selyne", "Orbia", "Cerula", "Melia", "Liqua", "Nymelle",
+        "Viridia", "Azura", "Dewra", "Muriel", "Lymera", "Selka", "Rinia", "Veya",
+        "Mistra", "Oluna", "Fluvia", "Neria", "Calma", "Ulyne", "Marela", "Silvi"
     ]
 }

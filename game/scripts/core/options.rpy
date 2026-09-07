@@ -24,7 +24,8 @@ define gui.show_name = True
 
 
 
-define config.version = "0.9.5.6"
+define config.version = "0.9.6.1"
+define build.version = "0.9.6.1"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -198,6 +199,16 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
+
+    ## Internal development/release documents are not player-facing content.
+    build.classify('AUDIT_SUMMARY.md', None)
+    build.classify('RELEASE_NOTES.md', None)
+
+    ## Never distribute Python bytecode. Installed copies compile from the
+    ## matching .py source, avoiding stale cache/source pairs after updates.
+    build.classify('**/__pycache__/', None)
+    build.classify('**/__pycache__/**', None)
+    build.classify('**.pyc', None)
     
     ## Exclude the docs folder completely
     build.classify('docs/**', None)
@@ -213,6 +224,10 @@ init python:
     ## never used at runtime; .py patchers + .pyc blobs can trip download-scanner heuristics).
     build.classify('tools/**', None)
     build.classify('tools/', None)
+
+    ## Test sources are development-only and must not enter release packages.
+    build.classify('tests/**', None)
+    build.classify('tests/', None)
 
     ## Exclude local AI/tooling metadata and debug artifacts from releases.
     build.classify('AGENTS.md', None)
@@ -285,9 +300,18 @@ init python:
     if persistent.nsfw_enabled is None:
         persistent.nsfw_enabled = True  # Default to True (NSFW content shown)
 
-    # Worker gender filter: "both", "male", "female" - filters workers as if the other gender didn't exist
+    # Worker gender filter: "both", "male", "female". Existing hidden workers remain employed.
     if not hasattr(persistent, "worker_gender_filter") or persistent.worker_gender_filter not in ("both", "male", "female"):
         persistent.worker_gender_filter = "both"
+    if not hasattr(persistent, "worker_gender_filter_warning_ack"):
+        persistent.worker_gender_filter_warning_ack = None
+
+    def set_worker_gender_filter(mode, acknowledge=False):
+        """Set the filter and whether its hidden-worker warning is acknowledged."""
+        if mode not in ("both", "male", "female"):
+            mode = "both"
+        persistent.worker_gender_filter = mode
+        persistent.worker_gender_filter_warning_ack = mode if acknowledge else None
 
     # Worker orientation traits (NSFW), one cycle per trait:
     # "off" = only_assigned behavior (designed/modded workers only),
@@ -339,25 +363,172 @@ init python:
         persistent.default_auto_rest_entry_pct = _auto_rest_pct
 
     # Optionally, customize the preferences screen to include this option
+    def set_nsfw_content_enabled(enabled):
+        """Apply the runtime content policy without rewriting canonical game state."""
+        enabled = bool(enabled)
+        persistent.nsfw_enabled = enabled
+        # Recorded into the save file so loading can restore the mode later.
+        store.save_nsfw_mode = enabled
+
+        # These are derived catalogs/caches only. Workers, reports, inventories,
+        # events and assignments are deliberately left untouched.
+        trait_refresh = globals().get("refresh_traits_cache")
+        if callable(trait_refresh):
+            trait_refresh(force=True)
+        interaction_refresh = globals().get("invalidate_interactions_cache")
+        if callable(interaction_refresh):
+            interaction_refresh()
+        if hasattr(store, "_worker_portrait_cache"):
+            store._worker_portrait_cache = {}
+
+        # Close overlays whose screen-local variables may retain already-resolved
+        # text or media from the previous policy. Their backing data is preserved.
+        for screen_name in (
+            "manager_inventory", "worker_details", "report_details",
+            "worker_history_popup", "interaction_dialogue",
+        ):
+            try:
+                renpy.hide_screen(screen_name)
+            except Exception:
+                pass
+
+        # Restore a previously suspended transient only when its active slot is free.
+        # The dictionaries contain data only, so they remain save/rollback safe.
+        if enabled:
+            suspended_event = getattr(store, "_content_filter_suspended_event_context", None)
+            if suspended_event and not getattr(store, "current_event", None):
+                store.current_event = suspended_event.get("event")
+                store.current_worker = suspended_event.get("worker")
+                store.current_affected_building = suspended_event.get("affected_building")
+                store.temp_eligible_workers_for_event = list(suspended_event.get("eligible_workers") or [])
+                store.building_notification = suspended_event.get("building_notification")
+                store.chosen_choice_data = suspended_event.get("chosen_choice_data")
+                store._content_filter_suspended_event_context = None
+                renpy.log("CONTENT_FILTER: restored suspended random event")
+                renpy.jump("handle_random_event")
+                return
+
+            suspended_recruitment = getattr(store, "_content_filter_suspended_recruitment_context", None)
+            if suspended_recruitment and not getattr(store, "current_recruitment_event", None):
+                store.current_recruitment_event = suspended_recruitment.get("event")
+                store.current_recruitment_worker = suspended_recruitment.get("worker")
+                store.in_recruitment = True
+                store._content_filter_suspended_recruitment_context = None
+                renpy.log("CONTENT_FILTER: restored suspended recruitment")
+                renpy.jump("resume_content_filtered_recruitment")
+                return
+
+        abort_transient = False
+        if not enabled:
+            event_visible = globals().get("event_is_visible_for_content_filter")
+            content_restricted = globals().get("content_object_is_restricted")
+            current_event = getattr(store, "current_event", None)
+            if current_event and hasattr(current_event, "get"):
+                abort_transient = bool(callable(event_visible) and not event_visible(current_event))
+                current_worker = getattr(store, "current_worker", None)
+                if not abort_transient and current_worker and callable(content_restricted):
+                    abort_transient = bool(content_restricted(current_worker))
+                if abort_transient:
+                    store._content_filter_suspended_event_context = {
+                        "event": current_event,
+                        "worker": current_worker,
+                        "affected_building": getattr(store, "current_affected_building", None),
+                        "eligible_workers": list(getattr(store, "temp_eligible_workers_for_event", []) or []),
+                        "building_notification": getattr(store, "building_notification", None),
+                        "chosen_choice_data": getattr(store, "chosen_choice_data", None),
+                    }
+                    store.current_event = None
+
+            recruitment_event = getattr(store, "current_recruitment_event", None)
+            if recruitment_event and hasattr(recruitment_event, "get"):
+                recruitment_blocked = bool(callable(event_visible) and not event_visible(recruitment_event))
+                recruitment_worker = getattr(store, "current_recruitment_worker", None)
+                if not recruitment_blocked and recruitment_worker and callable(content_restricted):
+                    recruitment_blocked = bool(content_restricted(recruitment_worker))
+                if recruitment_blocked:
+                    store._content_filter_suspended_recruitment_context = {
+                        "event": recruitment_event,
+                        "worker": recruitment_worker,
+                    }
+                    store.current_recruitment_event = None
+                    if hasattr(store, "current_recruitment_worker"):
+                        store.current_recruitment_worker = None
+                    if hasattr(store, "in_recruitment"):
+                        store.in_recruitment = False
+                    abort_transient = True
+
+        if abort_transient:
+            clear_context = getattr(store, "clear_random_event_context", None)
+            if callable(clear_context):
+                clear_context("content_filter_toggled")
+            renpy.log("CONTENT_FILTER: aborted restricted transient context after disabling NSFW")
+            renpy.jump("tavern_screen")
+
+        renpy.restart_interaction()
+
     def add_nsfw_preference():
         return [
             ("Show NSFW Content", "nsfw_enabled", True, False, "Toggle NSFW content visibility.")
         ]
 
-    # After loading a save: if Worker Gender is "Only Male" or "Only Female" and the save has workers of the other gender, show a warning and offer to go to Main Menu
+    def _save_has_restricted_building(buildings, building_types):
+        for building in (buildings or {}).values():
+            if not hasattr(building, "get"):
+                continue
+            btype_id = building.get("type")
+            if not btype_id:
+                continue
+            btype = next((entry for entry in (building_types or []) if hasattr(entry, "get") and entry.get("id") == btype_id), None)
+            if btype and content_object_is_restricted(btype):
+                return True
+        return False
+
+    def _save_expects_nsfw(recorded_mode, buildings, building_types):
+        # Saves made before save_nsfw_mode existed load it as None; for those we
+        # fall back to inspecting the buildings the player actually owns.
+        if recorded_mode is not None:
+            return bool(recorded_mode)
+        return _save_has_restricted_building(buildings, building_types)
+
+    # persistent.nsfw_enabled is global, so a session that flipped it to SFW
+    # would mask every NSFW save as "Restricted Business". Restore is upward-only:
+    # loading never disables a mode the player enabled by hand.
+    def _after_load_restore_nsfw_mode():
+        recorded = getattr(store, "save_nsfw_mode", None)
+        building_types = building_types_json.get("building_types", [])
+        if _save_expects_nsfw(recorded, getattr(store, "available_buildings", {}), building_types) and not getattr(persistent, "nsfw_enabled", False):
+            set_nsfw_content_enabled(True)
+            renpy.notify("NSFW mode restored to match this save")
+        if recorded is None:
+            store.save_nsfw_mode = bool(getattr(persistent, "nsfw_enabled", False))
+
+    # Warn once per filter mode when a loaded save contains workers hidden by that filter.
     def _after_load_check_gender_filter():
-        if getattr(persistent, "worker_gender_filter", "both") == "both":
-            return
-        mode = persistent.worker_gender_filter
-        workers = getattr(store, "workers", [])
-        if not workers:
-            return
-        other_gender = "female" if mode == "male" else "male"
-        has_other = any((w.get("gender") or "").strip().lower() == other_gender for w in workers if hasattr(w, "get"))
-        if has_other:
-            store._pending_gender_filter_load_warning = True
-            renpy.show_screen("gender_filter_after_load_warning")
+        # Must never raise: Ren'Py runs after_load callbacks in a plain loop,
+        # so an exception here would skip every callback registered later.
+        try:
+            if getattr(persistent, "worker_gender_filter", "both") == "both":
+                return
+            mode = persistent.worker_gender_filter
+            workers = getattr(store, "workers", [])
+            if not workers:
+                return
+            other_gender = "female" if mode == "male" else "male"
+            has_other = any((w.get("gender") or "").strip().lower() == other_gender for w in workers if hasattr(w, "get"))
+            warning_ack = getattr(persistent, "worker_gender_filter_warning_ack", None)
+            if has_other and warning_ack != mode:
+                store._pending_gender_filter_load_warning = True
+                renpy.show_screen("gender_filter_after_load_warning")
+        except Exception as e:
+            import traceback
+            renpy.log("GENDER_FILTER: ERROR - after_load check failed: %s" % e)
+            renpy.log("GENDER_FILTER: traceback: %s" % traceback.format_exc())
 
     if not hasattr(config, "after_load_callbacks"):
         config.after_load_callbacks = []
     config.after_load_callbacks.append(_after_load_check_gender_filter)
+    # _after_load_restore_nsfw_mode is invoked from label after_load
+    # (save_snapshot.rpy) instead of config.after_load_callbacks: the label runs
+    # after every callback AND after the label's second snapshot pass, so
+    # save_nsfw_mode / available_buildings already hold their final restored
+    # values when the heuristic reads them.

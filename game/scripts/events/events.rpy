@@ -32,6 +32,7 @@ init python:
         else:
             candidates = list(workers)
 
+        candidates = filter_workers_for_event_progress(candidates, event)
         for candidate in candidates:
             if _worker_meets_trait_requirements(candidate, required_traits_list, excluded_traits_list):
                 return True
@@ -192,23 +193,80 @@ init python:
 
     store.clear_random_event_context = clear_random_event_context
 
+
+    def suspend_random_event_context(event=None, reason="content_filter"):
+        """Preserve blocked transient event data for restoration when NSFW is re-enabled."""
+        event = event or getattr(store, "current_event", None)
+        if event:
+            store._content_filter_suspended_event_context = {
+                "event": event,
+                "worker": getattr(store, "current_worker", None),
+                "affected_building": getattr(store, "current_affected_building", None),
+                "eligible_workers": list(getattr(store, "temp_eligible_workers_for_event", []) or []),
+                "building_notification": getattr(store, "building_notification", None),
+                "chosen_choice_data": getattr(store, "chosen_choice_data", None),
+            }
+        store.current_event = None
+        clear_random_event_context(reason)
+
+    store.suspend_random_event_context = suspend_random_event_context
+
+    def _random_event_show_bg_py(media):
+        """Python twin of the _random_event_show_bg label, callable mid-loop.
+
+        renpy.call() cannot resume inside a python block, so paged events
+        (description_pages / message_pages) switch scene media through this
+        helper instead. Mirrors the label: black backdrop + fit "contain" on a
+        1920x1080 stage so odd aspect ratios letterbox instead of cropping.
+        """
+        try:
+            renpy.scene()
+            renpy.show("random_event_black", what=Solid("#000000"), zorder=-1)
+            if media and isinstance(media, str) and media.lower().endswith((".webm", ".mp4")):
+                what = Movie(play=media, size=(1920, 1080), loop=True)
+            elif media:
+                what = Transform(Image(media), xalign=0.5, yalign=0.5, fit="contain", xysize=(1920, 1080))
+            else:
+                what = Solid("#000000")
+            renpy.show("random_event_bg", what=what, zorder=0)
+        except Exception as e:
+            renpy.log(f"_random_event_show_bg_py failed for {media}: {e}")
+
+    def _narrate_event_pages(pages, fallback_bg, limit=180):
+        """Show a list of {image, text} pages: switch scene media per page, then
+        narrate that page's text in overflow-safe chunks. Returns the media that
+        ended up on screen (so callers can keep current_bg in sync)."""
+        shown = fallback_bg
+        for page in pages or []:
+            img = page.get("image") if hasattr(page, "get") else None
+            if img:
+                resolved = _resolve_event_media_name(img)
+                if resolved and resolved != shown:
+                    _random_event_show_bg_py(resolved)
+                    shown = resolved
+            text = (page.get("text") if hasattr(page, "get") else "") or ""
+            for _chunk in _split_for_narrator(text, limit=limit):
+                renpy.say(narrator, _chunk)
+        return shown
+
     def _split_for_narrator(msg: str, limit: int = 180):
         """
-        Split a message into chunks for narrator display, respecting sentence boundaries.
-        Falls back to splitting by natural pauses (commas/semicolons/colons), then by words.
+        Split a message into chunks for narrator display.
+        Paragraph breaks (blank lines) always start a new chunk: embedded
+        newlines consume textbox height the character limit cannot see, so a
+        chunk that fits by length can still overflow the window.
+        Within a paragraph, split on sentence boundaries (a closing quote
+        after .!? still ends the sentence), then natural pauses
+        (commas/semicolons/colons), then words.
         """
         try:
             import re
 
             msg = str(msg or "")
-            if not msg or len(msg) <= limit:
+            if not msg:
                 return [msg]
 
             chunks = []
-            current = ""
-
-            # 1) Sentence split first
-            sentences = re.split(r'(?<=[\.!?])\s+', msg)
 
             def flush(buf):
                 if buf:
@@ -225,48 +283,61 @@ init python:
                         buf = (buf + " " + w).strip()
                 flush(buf)
 
-            for s in sentences:
-                s = s.strip()
-                if not s:
+            # Sentence end = .!? optionally followed by a closing quote/bracket.
+            # Two fixed-width lookbehinds: Python re rejects variable-width ones.
+            sentence_end = r"(?:(?<=[.!?])|(?<=[.!?]['\"’”)\]]))\s+"
+
+            for paragraph in re.split(r"\s*\n\s*\n\s*", msg):
+                paragraph = paragraph.strip()
+                if not paragraph:
+                    continue
+                if len(paragraph) <= limit:
+                    chunks.append(paragraph)
                     continue
 
-                # If sentence fits in current chunk, add it
-                if current and (len(current) + len(s) + 1) <= limit:
-                    current = (current + " " + s).strip()
-                    continue
-
-                # Otherwise, flush current and handle s
-                flush(current)
                 current = ""
-
-                if len(s) <= limit:
-                    current = s
-                    continue
-
-                # 2) Split long sentence by natural pauses
-                parts = re.split(r'(?<=[,;:])\s+', s)
-                part_buf = ""
-                for p in parts:
-                    p = p.strip()
-                    if not p:
+                for s in re.split(sentence_end, paragraph):
+                    s = s.strip()
+                    if not s:
                         continue
 
-                    if part_buf and (len(part_buf) + len(p) + 1) <= limit:
-                        part_buf = (part_buf + " " + p).strip()
+                    # If sentence fits in current chunk, add it
+                    if current and (len(current) + len(s) + 1) <= limit:
+                        current = (current + " " + s).strip()
                         continue
+
+                    # Otherwise, flush current and handle s
+                    flush(current)
+                    current = ""
+
+                    if len(s) <= limit:
+                        current = s
+                        continue
+
+                    # Split long sentence by natural pauses
+                    parts = re.split(r'(?<=[,;:])\s+', s)
+                    part_buf = ""
+                    for p in parts:
+                        p = p.strip()
+                        if not p:
+                            continue
+
+                        if part_buf and (len(part_buf) + len(p) + 1) <= limit:
+                            part_buf = (part_buf + " " + p).strip()
+                            continue
+
+                        flush(part_buf)
+                        part_buf = ""
+
+                        if len(p) <= limit:
+                            part_buf = p
+                        else:
+                            # Split too-long part by words
+                            split_by_words(p)
 
                     flush(part_buf)
-                    part_buf = ""
 
-                    if len(p) <= limit:
-                        part_buf = p
-                    else:
-                        # 3) Split too-long part by words
-                        split_by_words(p)
-
-                flush(part_buf)
-
-            flush(current)
+                flush(current)
 
             if not chunks:
                 return [msg]
@@ -308,8 +379,23 @@ label handle_random_event:
 
     # Get event data (Ren'Py $)
     $ event = store.current_event
-    $ worker_selection_mode = event.get("worker_selection", "none")
+    if event.get("personal_story_event", False) or event.get("id", "").startswith("worker_story_"):
+        $ renpy.log("Discarded retired generated story event: %r" % event.get("id", "unknown"))
+        $ store.current_event = None
+        $ store.clear_random_event_context("retired_generated_story")
+        return
+    if not event_is_visible_for_content_filter(event):
+        $ renpy.log("Blocked serialized event by current content filter: %r" % event.get("id", "unknown"))
+        $ store.suspend_random_event_context(event, "content_filter")
+        return
     $ final_worker = store.current_worker # Initial worker (may be None)
+    if final_worker and not event_worker_is_visible_for_content_filter(final_worker):
+        $ renpy.log("Blocked serialized event worker by current content filter: %r" % final_worker.get("name", "unknown"))
+        $ store.suspend_random_event_context(event, "content_filter_worker")
+        return
+    $ record_character_event_fired(event)
+    $ worker_selection_mode = event.get("worker_selection", "none")
+    $ history_worker = None # Subject retained for authored personal events without a skill check.
     $ event_status = "start" # Control flag for logic flow
     $ worker_needed = False # Flag if the chosen action requires a worker
     $ outcome_message = ""
@@ -328,11 +414,7 @@ label handle_random_event:
         # First, select a specific building if needed for this event
         building_notification = None
         if "building_type" in event and event.get("building_type"):
-            event_building_types = event.get("building_type", [])
-            eligible_buildings = [
-                (b_name, b) for b_name, b in available_buildings.items()
-                if b.get("type") in event_building_types and b.get("owned", False)
-            ]
+            eligible_buildings = get_content_visible_event_buildings(event, available_buildings)
             if eligible_buildings and store.event_uses_building_availability_gates(event):
                 filtered = [
                     (b_name, b) for b_name, b in eligible_buildings
@@ -345,13 +427,17 @@ label handle_random_event:
                     eligible_buildings = []
             if eligible_buildings:
                 # Select a specific building and store its name
-                affected_building_name, affected_building = random.choice(eligible_buildings)
+                preferred_worker = getattr(store, "current_worker", None)
+                preferred_building_name = preferred_worker.get("assigned_building") if hasattr(preferred_worker, "get") else None
+                preferred_building = next(((name, building) for name, building in eligible_buildings if name == preferred_building_name), None)
+                affected_building_name, affected_building = preferred_building or random.choice(eligible_buildings)
                 store.current_affected_building = affected_building_name
                 
                 # Format building info for display
                 btype_id = affected_building.get("type")
                 if btype_id:
-                    building_type = next((bt["name"] for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), "")
+                    btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+                    building_type = building_type_display_name(btype, "")
                     display_name = store.custom_names.get(affected_building_name, affected_building_name)
                     affected_building_info = f"{building_type}: {display_name}"
                     
@@ -390,16 +476,26 @@ label handle_random_event:
         if store.building_notification:
             narrator "[store.building_notification]"
         
-        # Then display the event description (split into chunks to avoid overflow)
+        # Then display the event description (split into chunks to avoid overflow).
+        # Paged events switch scene media per description page; background_image
+        # stays equal to the first page's image so the initial display matches.
         if store.temp_narrator_text:
             python:
-                for _chunk in _split_for_narrator(store.temp_narrator_text, limit=180):
-                    renpy.say(narrator, _chunk)
+                _desc_pages = event.get("description_pages") if hasattr(event, "get") else None
+                if _desc_pages:
+                    current_bg = _narrate_event_pages(_desc_pages, current_bg, limit=180)
+                else:
+                    for _chunk in _split_for_narrator(store.temp_narrator_text, limit=180):
+                        renpy.say(narrator, _chunk)
 
     # Prepare choices (Python) - use store functions to avoid pickle errors
     python:
         prepared_choices = []
         for choice_option in event.get("choices", []):
+            if not choice_is_visible_for_content_filter(choice_option):
+                continue
+            if final_worker is not None and not worker_matches_event_choice_building_policy(final_worker, event, choice_option):
+                continue
             # Check for required flags at the choice level
             required_flags = choice_option.get("required_flags", {})
             if required_flags:
@@ -514,6 +610,18 @@ label handle_random_event:
             new_choice["condition"] = choice_option.get("condition", None)
             new_choice["_blocked"] = (not trait_requirements_met and trait_visibility == "blocked")
             new_choice["_blocked_reason"] = blocked_reason
+            # Dead-end guard: a skill-check option no roster member can attempt
+            # would burn the event on "no eligible workers" AFTER the pick.
+            # Disable it up front with the reason instead.
+            if (not new_choice["_blocked"] and final_worker is None
+                    and worker_selection_mode in ("choose", "random")
+                    and new_choice.get("condition") not in (None, "building_skill")):
+                try:
+                    if not event_choice_has_qualifying_worker(choice_option, event):
+                        new_choice["_blocked"] = True
+                        new_choice["_blocked_reason"] = "No assigned worker can attempt this check."
+                except Exception as e:
+                    renpy.log(f"qualifying-worker precheck failed: {e}")
             # Skip choices with empty or whitespace-only option to avoid blank slots in the UI
             if not (option_text and str(option_text).strip()):
                 continue
@@ -566,7 +674,7 @@ label handle_random_event:
                 # If we have a specific affected building, limit to workers from that building
                 if hasattr(store, "current_affected_building") and store.current_affected_building:
                     affected_building = store.current_affected_building
-                    for w in store.workers:
+                    for w in filter_workers_for_event_progress(store.workers, event):
                         if w.get("assigned_building") == affected_building:
                             # Check threshold if specified
                             if threshold > 0 and condition_skill:
@@ -578,7 +686,7 @@ label handle_random_event:
                     renpy.log(f"Limiting eligible workers to those in affected building: {affected_building}")
                 # Otherwise, use the original building type filtering
                 elif event_building_types:
-                    for w in store.workers:
+                    for w in filter_workers_for_event_progress(store.workers, event):
                         assigned_bldg = w.get("assigned_building", "Unassigned")
                         if assigned_bldg != "Unassigned" and assigned_bldg in available_buildings:
                             if available_buildings[assigned_bldg].get("type") in event_building_types:
@@ -590,7 +698,7 @@ label handle_random_event:
                                 else:
                                     temp_eligible.append(w)
                 else:
-                    for w in store.workers:
+                    for w in filter_workers_for_event_progress(store.workers, event):
                         # Check threshold if specified
                         if threshold > 0 and condition_skill:
                             worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
@@ -612,6 +720,11 @@ label handle_random_event:
                 # Filter by event worker_name and/or specific_worker_images (OR semantics)
                 if store._event_has_identity_filters(event):
                     temp_eligible = [w for w in temp_eligible if store._worker_matches_event_identity(w, event)]
+                temp_eligible = filter_workers_for_event_choice_building_policy(
+                    temp_eligible,
+                    event,
+                    chosen_choice_data,
+                )
 
                 if not temp_eligible:
                     renpy.log("No eligible workers for choice, cannot proceed.")
@@ -634,7 +747,7 @@ label handle_random_event:
                     # If we have a specific affected building, limit to workers from that building
                     if hasattr(store, "current_affected_building") and store.current_affected_building:
                         affected_building = store.current_affected_building
-                        for w in store.workers:
+                        for w in filter_workers_for_event_progress(store.workers, event):
                             if w.get("assigned_building") == affected_building:
                                 # Check threshold if specified
                                 if threshold > 0 and condition_skill:
@@ -646,7 +759,7 @@ label handle_random_event:
                         renpy.log(f"Limiting eligible workers to those in affected building: {affected_building}")
                     # Otherwise, use the original building type filtering
                     elif event_building_types:
-                        for w in store.workers:
+                        for w in filter_workers_for_event_progress(store.workers, event):
                             assigned_bldg = w.get("assigned_building", "Unassigned")
                             if assigned_bldg != "Unassigned" and assigned_bldg in available_buildings:
                                 if available_buildings[assigned_bldg].get("type") in event_building_types:
@@ -658,7 +771,7 @@ label handle_random_event:
                                     else:
                                         temp_eligible.append(w)
                     else:
-                        for w in store.workers:
+                        for w in filter_workers_for_event_progress(store.workers, event):
                             # Check threshold if specified
                             if threshold > 0 and condition_skill:
                                 worker_skill = get_event_worker_skill_check_info(w, chosen_choice_data).get("roll_skill", 0)
@@ -680,6 +793,11 @@ label handle_random_event:
                     # Filter by event worker_name and/or specific_worker_images (OR semantics)
                     if store._event_has_identity_filters(event):
                         temp_eligible = [w for w in temp_eligible if store._worker_matches_event_identity(w, event)]
+                    temp_eligible = filter_workers_for_event_choice_building_policy(
+                        temp_eligible,
+                        event,
+                        chosen_choice_data,
+                    )
 
                     if temp_eligible:
                         final_worker = random.choice(temp_eligible)
@@ -702,6 +820,7 @@ label handle_random_event:
                 event_status = "proceed_with_action"
         else:
             renpy.log("Worker not needed for this choice.")
+            history_worker = final_worker
             final_worker = None
             store.current_worker = None
             event_status = "proceed_with_action"
@@ -727,12 +846,16 @@ label handle_random_event:
                 # Re-process the outcome message with the chosen worker's name
                 python:
                     if final_worker:
-                        import re as _re
                         acting_worker_name = final_worker.get("name", "the worker")
                         # Update the outcome message for when it's displayed later.
                         # Word-boundary replace: a blanket .replace() also mangled
                         # "the workers" into e.g. "Aeliss".
-                        store.temp_narrator_text = _re.sub(r"\bthe worker\b", acting_worker_name, store.temp_narrator_text)
+                        # NOTE: use the init-imported `re` (store.re) directly. Do NOT
+                        # `import re as _re` here: this is a label python: block, so any
+                        # name bound here lands in the persistent store. Binding a module
+                        # (_re) makes the store unpicklable and breaks ALL saves. See
+                        # LA BIBLIA / project_save_pickle_gotcha.
+                        store.temp_narrator_text = re.sub(r"\bthe worker\b", acting_worker_name, store.temp_narrator_text)
                         store.temp_narrator_text = store.temp_narrator_text.replace("[event_worker]", acting_worker_name)
                         store.temp_narrator_text = store.temp_narrator_text.replace("[acting_worker]", acting_worker_name)
                         
@@ -751,8 +874,10 @@ label handle_random_event:
     $ event_outcome_for_bg = "default" # Default outcome for background check
     if event_status == "proceed_with_action":
         $ outcome_details = process_choice(chosen_choice_data, event, final_worker) # Assume process_choice returns dict now
+        $ record_character_event_completed(event)
         $ outcome_message = outcome_details.get("message", "An unknown outcome occurred.")
         $ event_outcome_for_bg = outcome_details.get("outcome", "default") # Get success/failure status
+        $ record_event_choice_moment(chosen_choice_data, event, final_worker or history_worker, event_outcome_for_bg)
         $ renpy.log(f"Event outcome for background: {event_outcome_for_bg}")
     elif event_status == "no_worker_available":
         $ outcome_message = "You look around, but none of your people have the skills this situation demands. The moment passes without resolution—an opportunity lost to a gap in your roster."
@@ -775,25 +900,33 @@ label handle_random_event:
 
     # --- Update background based on outcome ---
     # Pass choice condition as skill hint so worker-folder skill media can be used
-    # when success/failure-specific event media is not present.
-    $ skill_for_event_media = chosen_choice_data.get("condition") if chosen_choice_data else None
-    # Quiet audio stinger for the resolved outcome
-    python:
-        if event_outcome_for_bg == "success":
-            play_ui_sound("success")
-        elif event_outcome_for_bg == "failure":
-            play_ui_sound("failure")
+    # when success/failure-specific event media is not present. A choice may set
+    # "image_skill" to override the rolled condition when the outcome text depicts
+    # something else (e.g. condition "Sex" resolving a scheme -> "Clever", or a
+    # same-sex scene -> "les"/"gay"); explicit null suppresses skill media so the
+    # success/failure_image or generic fallback is used instead.
+    $ skill_for_event_media = chosen_choice_data.get("image_skill", chosen_choice_data.get("condition")) if chosen_choice_data else None
     $ new_bg = get_event_background(event, event_outcome_for_bg, final_worker, skill_name=skill_for_event_media, choice=chosen_choice_data)
     if new_bg != current_bg:
         call _random_event_show_bg(new_bg) from _call__random_event_show_bg_1
         $ current_bg = new_bg # Update the current background variable
 
     # --- Show the final outcome message (split into chunks if long) ---
+    # Paged choices (message_pages) narrate their own text while switching scene
+    # media per page; the Changes summary from process_choice is appended last.
+    # The choice's "message" field stays as the joined text for history/records.
     python:
-        _chunks = _split_for_narrator(outcome_message, limit=130)
-    python:
-        for _chunk in _chunks:
-            renpy.say(narrator, _chunk)
+        _msg_pages = chosen_choice_data.get("message_pages") if (chosen_choice_data and hasattr(chosen_choice_data, "get")) else None
+        if event_status == "proceed_with_action" and _msg_pages:
+            _changes_suffix = ""
+            if outcome_message and "\nChanges: " in outcome_message:
+                _changes_suffix = outcome_message.rsplit("\nChanges: ", 1)[-1]
+            current_bg = _narrate_event_pages(_msg_pages, current_bg, limit=130)
+            if _changes_suffix:
+                renpy.say(narrator, "Changes: " + _changes_suffix)
+        else:
+            for _chunk in _split_for_narrator(outcome_message, limit=130):
+                renpy.say(narrator, _chunk)
     # --- Final image-only click (no message) ---
     window hide
     pause

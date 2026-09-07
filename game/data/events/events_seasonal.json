@@ -14,7 +14,7 @@
     },
     "choices": [
       {
-        "option": "Accept the pouch of coin. (Potential: Gold)",
+        "option": "Accept the pouch of coin. (Gain: Gold)",
         "message": "He slides a leather purse across the wood. 'Old currency. Still spends. The Governor's men don't trace every sale in the shadows—yet.' He melts into the crowd before you can thank him.",
         "effect": {
           "money": 300,
@@ -24,7 +24,7 @@
         }
       },
       {
-        "option": "Ask him to spread word among his contacts. (Potential: Reputation)",
+        "option": "Ask him to spread word among his contacts. (Gain: Reputation)",
         "message": "'I know people. The kind who remember when this district had more... options.' He nods once. 'I'll mention your establishment. Quietly.' Within days, a trickle of better clientele begins.",
         "effect": {
           "reputation": 15,
@@ -34,7 +34,7 @@
         }
       },
       {
-        "option": "Press him for useful information. (Potential: Gold, Reputation)",
+        "option": "Press him for useful information. (Gain: Gold, Reputation)",
         "message": "'The merchant quarter? His eyes are everywhere there.' He leans closer. 'But the docks—overworked, underpaid guards. Goods move. People move. The Governor cares about coin, not cargo.' The insight proves useful.",
         "effect": {
           "money": 150,
@@ -45,8 +45,8 @@
         }
       },
       {
-        "option": "Refuse. Your path is yours alone. (Potential: Reputation)",
-        "message": "He studies you a moment, then tucks the packet away. 'Understood. Pride has its place.' He leaves a worn silver coin on the sill. 'For the door. Old superstition.' Somehow, word of your independence still gets around.",
+        "option": "Refuse. Your path is yours alone. (Gain: Reputation)",
+        "message": "He studies you a moment, then tucks the packet away. 'Understood. Pride has its place.' He leaves a worn silver coin on the sill. 'For the door. Old superstition.' The regulars who watched the exchange draw their own conclusions, and the story of the offer you refused travels further than the offer ever did.",
         "effect": {
           "reputation": 5,
           "event_flags": {
@@ -81,7 +81,7 @@
     },
     "choices": [
       {
-        "option": "Accept the traveler's heirloom sword. (Potential: Iron Sword)",
+        "option": "Accept the traveler's heirloom sword. (Gain: Iron Sword)",
         "message": "The traveler draws a wrapped bundle from beneath his cloak and lays it on the table. Inside: a sword of old make, its balance exquisite and its edge keen despite years of travel. 'This served me well on roads you'll never walk,' he says. 'May it serve you better.' (Iron Sword added to inventory)",
         "effect": {
           "custom": "give_item",
@@ -92,7 +92,7 @@
         }
       },
       {
-        "option": "Take the sealed gift box. Whatever it holds is yours. (Potential: Random loot)",
+        "option": "Take the sealed gift box. Whatever it holds is yours. (Gain: Random loot)",
         "message": "The traveler produces a sealed box of lacquered wood, its surface warm to the touch. 'Even I don't know what's inside,' he says with a grin. 'Bought it from a fortune teller who swore it would find its rightful owner. Today, that's you.' You lift the lid. (Random loot added)",
         "effect": {
           "custom": "grant_loot",
@@ -103,7 +103,7 @@
         }
       },
       {
-        "option": "Invite Violet to join your roster. (Potential: Violet — only if not already recruited)",
+        "option": "Invite Violet to join your roster. (Gain: Violet — only if not already recruited)",
         "message": "You ask the traveler about the woman he arrived with—the one with watchful eyes who's been nursing the same drink all evening. He smiles. 'Violet has been looking for the right establishment. Yours has the quality she demands.' He waves her over. She sets down her glass and approaches. 'I've been watching your progress,' she says. 'Very well. I'll lend you my talents.'",
         "effect": {
           "custom": "recruit_worker",
@@ -114,7 +114,7 @@
         }
       },
       {
-        "option": "Recruit a capable worker from passing caravans. (Potential: Random worker)",
+        "option": "Recruit a capable worker from passing caravans. (Gain: Random worker)",
         "message": "The traveler spreads the word among the caravans camped outside the city walls. By dusk, a handful of candidates arrive. You run quick trials—questions, demonstrations, a test of temperament. One stands out: capable, steady, and looking for exactly the kind of work you offer. They join your ranks before nightfall.",
         "effect": {
           "custom": "recruit_worker",
@@ -125,7 +125,7 @@
         }
       },
       {
-        "option": "Decline politely. Your path is set without outside gifts. (Potential: Reputation)",
+        "option": "Decline politely. Your path is set without outside gifts. (Gain: Reputation)",
         "message": "You refuse with a courteous bow. 'I appreciate the offer, but what I've built here stands on its own.' The traveler studies you for a moment, then nods slowly. 'Pride in one's own work—that's rarer than gold in my experience.' He finishes his drink, leaves a generous tip, and steps back into the evening. Word of your independence reaches the right ears.",
         "effect": {
           "reputation": 5,
@@ -147,24 +147,24 @@
   },
   {
     "id": "3magickings",
-    "description": "A strange light fills your establishment as three cloaked figures materialize from thin air. Their robes shimmer with stitched constellations, and their faces remain hidden in shadow. The air grows still. 'We are travelers between realms,' the central figure intones. 'On this day, we grant one boon to those who prove themselves worthy—or those who simply ask.' The other two nod in unison. 'Choose wisely. Fortune favors the bold, but humility has its own rewards.'",
+    "description": "A strange light fills your establishment as three cloaked figures materialize from thin air. Their robes shimmer with stitched constellations, and their faces remain hidden in shadow. The air grows still. 'We are travelers between realms,' the central figure intones. 'On this day, we grant one boon to those who prove themselves worthy—or those who simply ask.' The other two nod in unison. 'Choose with care. The bold are given what they ask for. The humble are given what they need.'",
     "weight": 100,
     "limited": true,
     "max_occurrences": 1,
     "worker_selection": "none",
-    "worker_gender_requirement": "any",
+    "worker_gender_requirement": null,
     "background_image": "event_bg",
     "event_music": "audio/event.ogg",
     "choices": [
       {
-        "option": "Accept their gift of gold with humble gratitude. (Potential: Gold)",
+        "option": "Accept their gift of gold with humble gratitude. (Gain: Gold)",
         "message": "You bow respectfully and thank them. The central figure gestures, and a leather pouch appears in your hands—weighty with coin. 'A fair exchange. May it serve your purpose.' The three figures fade into mist, leaving behind the faint scent of incense.",
         "effect": {
           "money": 800
         }
       },
       {
-        "option": "Attempt to impress them with wit and charm for a greater reward. (Risk: lesser reward; Potential: Gold)",
+        "option": "Attempt to impress them with wit and charm for a greater reward. (Potential: Gold; Risk: Lesser reward)",
         "message_success": "You speak with confidence, weaving a tale of your establishment's promise and your own ambitions. The figures listen in silence. At last, the left one laughs—a sound like wind through ancient stones. 'Bold. We admire boldness.' A second, heavier pouch materializes. 'Twice the gift, for twice the spirit.'",
         "message_failure": "You reach for eloquence, but the words tumble out awkwardly. The central figure raises a hand. 'Enough. Sincerity matters more than performance.' A smaller pouch appears. 'Here. A token, not a reward.'",
         "effect": {
@@ -192,7 +192,7 @@
         }
       },
       {
-        "option": "Refuse. Your path is yours alone. (Potential: Reputation)",
+        "option": "Refuse. Your path is yours alone. (Gain: Reputation)",
         "message": "You meet their gaze steadily. 'I thank you, but I'll make my own fortune.' The central figure inclines their head. 'Pride has its place.' They vanish without another word. Yet somehow, tales of your independence reach the right ears.",
         "effect": {
           "reputation": 3

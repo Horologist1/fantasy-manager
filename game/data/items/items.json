@@ -450,6 +450,7 @@
       "name": "Obsidian Blade",
       "display_name": "Obsidian Blade",
       "type": "weapon",
+      "extra_filter_categories": ["quest_item"],
       "effect": {
         "skill_modifiers": {
           "Combat": 4
@@ -574,6 +575,7 @@
       "id": "enchanted_ring",
       "name": "Enchanted Ring",
       "type": "accessory",
+      "extra_filter_categories": ["quest_item"],
       "effect": {
         "skill_modifiers": {
           "Striptease": 2
@@ -2386,7 +2388,7 @@
           "Combat": 20
         }
       },
-      "description": "A blade bestowed by the arena's master for a flawless trial. Favoured by gladiators. (+20 Combat)",
+      "description": "A blade bestowed by the arena's master when a fighter claims the champion's crown. Favoured by gladiators. (+20 Combat)",
       "durability": 180,
       "price": 12000,
       "weight": 6,
@@ -2828,6 +2830,79 @@
       "shop_available": true
     },
     {
+      "id": "champion_hand_wraps",
+      "name": "Champion's Hand Wraps",
+      "display_name": "Champion's Hand Wraps",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 2,
+        "romance": 2,
+        "relationship": 2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "Fresh linen wraps cut for a veteran fighter's hands. Varra/Varro: +3 Devotion, +4 Affection. Worker gift effect: +2 Relationship, +2 Joy, +2 Romance.",
+      "price": 180,
+      "weight": 1,
+      "shop_available": true
+    },
+    {
+      "id": "arena_whetstone",
+      "name": "Arena Whetstone",
+      "display_name": "Arena Whetstone",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 1,
+        "romance": 1,
+        "relationship": 2,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A fine-grained whetstone in a leather case stamped with crossed swords. Varra/Varro: +2 Devotion, +3 Affection. Worker gift effect: +2 Relationship, +1 Joy, +1 Romance.",
+      "price": 500,
+      "weight": 2,
+      "shop_available": true
+    },
+    {
+      "id": "iron_oath_chain",
+      "name": "Iron Oath Chain",
+      "display_name": "Iron Oath Chain",
+      "type": "gift",
+      "effect": {
+        "health": 0,
+        "energy": 0,
+        "remove_trait": [],
+        "joy": 0,
+        "romance": 2,
+        "relationship": 1,
+        "rebelliousness": -1,
+        "cap": false,
+        "add_trait": null,
+        "libido_max": 0,
+        "libido_regeneration": 0,
+        "libido": 0,
+        "money": 0
+      },
+      "description": "A short blackened chain engraved with the Arena's crest: a promise can bind as firmly as any debt. Varra/Varro: +3 Dominion, +2 Affection. Worker gift effect: +1 Relationship, +2 Romance, -1 Rebelliousness.",
+      "price": 700,
+      "weight": 2,
+      "shop_available": true
+    },
+    {
       "id": "cipher_lattice",
       "name": "Cryptographer's Lattice",
       "display_name": "Cryptographer's Lattice",
@@ -2884,9 +2959,209 @@
       "price": 2900,
       "weight": 2,
       "image": "amulet"
+    },
+    {
+      "id": "tailored_service_coat",
+      "name": "Tailored Service Coat",
+      "display_name": "Tailored Service Coat",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Charm": 6}},
+      "description": "A fitted steward's coat that makes courtesy look effortless. (+6 Charm)",
+      "durability": 120,
+      "price": 720,
+      "weight": 4,
+      "image": "tailored_service_coat"
+    },
+    {
+      "id": "master_steward_coat",
+      "name": "Master Steward's Coat",
+      "display_name": "Master Steward's Coat",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Charm": 8}},
+      "description": "Immaculate formal tailoring lends authority to every gesture. (+8 Charm)",
+      "durability": 150,
+      "price": 1920,
+      "weight": 4,
+      "image": "tailored_service_coat"
+    },
+    {
+      "id": "open_brocade_waistcoat",
+      "name": "Open Brocade Waistcoat",
+      "display_name": "Open Brocade Waistcoat",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 5, "Charm": 2, "Hand": 2, "Oral": 2}},
+      "description": "Open brocade frames the chest with deliberate elegance. (+5 Sex, +2 Charm, +2 Hand, +2 Oral)",
+      "durability": 80,
+      "price": 400,
+      "weight": 3,
+      "image": "brocade_courtier_attire"
+    },
+    {
+      "id": "velvet_courtier_attire",
+      "name": "Velvet Courtier Attire",
+      "display_name": "Velvet Courtier Attire",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 8, "Charm": 4, "Hand": 3, "Oral": 3}},
+      "description": "Velvet and silk turn courtly fashion into invitation. (+8 Sex, +4 Charm, +3 Hand, +3 Oral)",
+      "durability": 140,
+      "price": 1520,
+      "weight": 4,
+      "image": "brocade_courtier_attire"
+    },
+    {
+      "id": "open_collar_waistcoat",
+      "name": "Open-Collar Waistcoat",
+      "display_name": "Open-Collar Waistcoat",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 3, "Charm": 1, "Hand": 1, "Oral": 1}},
+      "description": "Fitted to frame the shoulders and left artfully undone. (+3 Sex, +1 Charm, +1 Hand, +1 Oral)",
+      "durability": 50,
+      "price": 140,
+      "weight": 3,
+      "image": "brocade_courtier_attire"
+    },
+    {
+      "id": "companions_doublet",
+      "name": "Companion's Doublet",
+      "display_name": "Companion's Doublet",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 6, "Charm": 3, "Hand": 2, "Oral": 2}},
+      "description": "Close-cut, with precisely one fastening too few. (+6 Sex, +3 Charm, +2 Hand, +2 Oral)",
+      "durability": 100,
+      "price": 570,
+      "weight": 3,
+      "image": "brocade_courtier_attire"
+    },
+    {
+      "id": "incubus_invitation",
+      "name": "The Incubus' Invitation",
+      "display_name": "The Incubus' Invitation",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 10, "Charm": 6, "Hand": 4, "Oral": 4}},
+      "description": "Black and gold make seduction look inevitable. (+10 Sex, +6 Charm, +4 Hand, +4 Oral)",
+      "durability": 180,
+      "price": 4250,
+      "weight": 4,
+      "image": "brocade_courtier_attire"
+    },
+    {
+      "id": "seductive_body_harness",
+      "name": "Seductive Body Harness",
+      "display_name": "Seductive Body Harness",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 5, "Anal": 2, "BDSM": 1, "Hand": 2, "Oral": 2}},
+      "description": "Soft leather straps leave little hidden. (+5 Sex, +2 Anal, +1 BDSM, +2 Hand, +2 Oral)",
+      "durability": 60,
+      "price": 420,
+      "weight": 1,
+      "image": "seductive_body_harness"
+    },
+    {
+      "id": "luxury_body_harness_set",
+      "name": "Luxury Body Harness Set",
+      "display_name": "Luxury Body Harness Set",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 8, "Anal": 4, "BDSM": 1, "Charm": 4, "Hand": 4, "Oral": 4}},
+      "description": "Gilded black harness. (+8 Sex, +4 Anal, +1 BDSM, +4 Charm, +4 Hand, +4 Oral)",
+      "durability": 100,
+      "price": 1680,
+      "weight": 2,
+      "image": "luxury_body_harness_set"
+    },
+    {
+      "id": "silk_performance_briefs",
+      "name": "Silk Performance Briefs",
+      "display_name": "Silk Performance Briefs",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 3, "Anal": 1, "BDSM": 1, "Hand": 1, "Oral": 1}},
+      "description": "Silk briefs with slim harness straps. (+3 Sex, +1 Anal, +1 BDSM, +1 Hand, +1 Oral)",
+      "durability": 40,
+      "price": 162,
+      "weight": 1,
+      "image": "seductive_body_harness"
+    },
+    {
+      "id": "rakes_secret",
+      "name": "The Rake's Secret",
+      "display_name": "The Rake's Secret",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 6, "Anal": 3, "BDSM": 1, "Charm": 3, "Hand": 3, "Oral": 3}},
+      "description": "Hidden formal harness. (+6 Sex, +3 Anal, +1 BDSM, +3 Charm, +3 Hand, +3 Oral)",
+      "durability": 80,
+      "price": 630,
+      "weight": 1,
+      "image": "seductive_body_harness"
+    },
+    {
+      "id": "emperor_midnight_harness",
+      "name": "Emperor's Midnight Harness",
+      "display_name": "Emperor's Midnight Harness",
+      "type": "clothing",
+      "effect": {"skill_modifiers": {"Sex": 10, "Anal": 6, "BDSM": 1, "Charm": 6, "Hand": 5, "Oral": 5}},
+      "description": "Imperial silk harness. (+10 Sex, +6 Anal, +1 BDSM, +6 Charm, +5 Hand, +5 Oral)",
+      "durability": 120,
+      "price": 4750,
+      "weight": 2,
+      "image": "luxury_body_harness_set"
+    },
+    {
+      "id": "stage_laced_boots",
+      "name": "Stage-Laced Boots",
+      "display_name": "Stage-Laced Boots",
+      "type": "accessory",
+      "effect": {"skill_modifiers": {"Striptease": 4, "Agility": 1, "Sex": 2, "Hand": 1, "Oral": 1}},
+      "description": "Supple stage boots. (+4 Striptease, +1 Agility, +2 Sex, +1 Hand, +1 Oral)",
+      "price": 330,
+      "weight": 3,
+      "image": "performer_stage_boots"
+    },
+    {
+      "id": "master_performer_boots",
+      "name": "Master Performer Boots",
+      "display_name": "Master Performer Boots",
+      "type": "accessory",
+      "effect": {"skill_modifiers": {"Striptease": 7, "Agility": 1, "Sex": 4, "Hand": 2, "Oral": 2}},
+      "description": "Premium flexible stage boots. (+7 Striptease, +1 Agility, +4 Sex, +2 Hand, +2 Oral)",
+      "price": 1080,
+      "weight": 3,
+      "image": "performer_stage_boots"
+    },
+    {
+      "id": "basic_performer_boots",
+      "name": "Basic Performer Boots",
+      "display_name": "Basic Performer Boots",
+      "type": "accessory",
+      "effect": {"skill_modifiers": {"Striptease": 2, "Agility": 1, "Sex": 1, "Hand": 1, "Oral": 1}},
+      "description": "Soft-soled ankle boots. (+2 Striptease, +1 Agility, +1 Sex, +1 Hand, +1 Oral)",
+      "price": 125,
+      "weight": 3,
+      "image": "performer_stage_boots"
+    },
+    {
+      "id": "dancers_stage_boots",
+      "name": "Dancer's Stage Boots",
+      "display_name": "Dancer's Stage Boots",
+      "type": "accessory",
+      "effect": {"skill_modifiers": {"Striptease": 5, "Agility": 1, "Sex": 3, "Hand": 1, "Oral": 1}},
+      "description": "Leather boots made for sure movement. (+5 Striptease, +1 Agility, +3 Sex, +1 Hand, +1 Oral)",
+      "price": 480,
+      "weight": 3,
+      "image": "performer_stage_boots"
+    },
+    {
+      "id": "satyrs_stride",
+      "name": "The Satyr's Stride",
+      "display_name": "The Satyr's Stride",
+      "type": "accessory",
+      "effect": {"skill_modifiers": {"Striptease": 9, "Agility": 1, "Sex": 6, "Hand": 3, "Oral": 3}},
+      "description": "Legendary boots for bad decisions. (+9 Striptease, +1 Agility, +6 Sex, +3 Hand, +3 Oral)",
+      "price": 4600,
+      "weight": 3,
+      "image": "performer_stage_boots"
     }
   ],
   "excluded_from_shops": [
+    "arena_champion_blade",
     "binding_gem",
     "gold_coin",
     "silver_coin",

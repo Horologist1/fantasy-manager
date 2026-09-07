@@ -1,0 +1,720 @@
+{
+  "building_id": "adventurers_guild",
+  "profession_id": "boss_hunting",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "adventurers_guild_boss_hunting_romance_reason_to_return",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Reason to Return",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "failure_image": "boss_hunting_story1_failure",
+      "positive_traits": {
+        "Determined": 4,
+        "Agile": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The beast offers one honest opening all afternoon and {worker_name} refuses every false one before it, patient in a way the older hunters do not recognize. The patience has a name, and it is yours. The kill is close, clean, and over in a breath, and the walk back to town is faster than the walk out.",
+        "critical_success": "The guild rarely logs a kill this economical: four strokes, no wasted blood, a hide without a single stray cut. The appraiser pays collector rates for it, never guessing the discipline was really a promise to be back before your lamps went out.",
+        "mediocre": "{worker_name} fights well but keeps checking the exit like it might close, and the beast reads the divided attention. The kill takes twice as long as it should and the bounty barely clears the cost of salves.",
+        "failure": "The tail comes around in the half-second {worker_name} spends thinking of you, and the ground does the rest. The party wrestles the hunt to a draw while the beast limps off with the bounty still on its head. What aches worse than the ribs is arriving at your door with empty hands."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 3,
+          "romance": 3,
+          "reputation": 14
+        },
+        "mediocre": {
+          "energy": -5,
+          "health": -2,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -5,
+          "health": -6,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_romance_trophy_promise",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Trophy Like a Promise",
+      "skill_options": [
+        "Craft"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "failure_image": "boss_hunting_story1_failure",
+      "positive_traits": {
+        "Clever": 3,
+        "Determined": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} fields the carcass with a care the guild skinners call excessive - joints eased apart, the hide peeled in one patient sheet - because every trophy is a story to bring back to you, and stories should arrive undamaged. The appraiser pays a premium for work this clean.",
+        "critical_success": "The hide comes off whole, the horns unchipped, the heart packed in salt within the hour. The guild's buyer names it the best field dressing of the season and pays accordingly, and {worker_name} keeps one small scale back - not for the money, for your shelf.",
+        "mediocre": "The dressing is rushed; a storm was coming, and so was the thought of your lit windows. The hide takes two careless cuts and sells at common rate.",
+        "failure": "Hurrying back to you, {worker_name} fords the river with the pelt badly lashed, and the water gets into everything. The trophy that was going to be a story sells as scrap, and the last mile to your door is the slowest of the day."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -2,
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "romance": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_friend_called_the_retreat",
+      "weight": 2,
+      "report": "Called the Retreat",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "boss_hunting_approach_recon",
+      "failure_image": "boss_hunting_approach_recon_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} watches the boss's shoulders drop and reads it right: not dying, gathering. The retreat call comes one breath before the second wind breaks, and your whole team walks out with their gear, their limbs, and a proof-of-wound claim that keeps the bounty alive for next week. Nobody cheers a retreat, but you both know what this one saved your house.",
+        "critical_success": "The call comes so early it looks like cowardice for exactly ten seconds - until the beast erupts through the space the team just left. The guild logs the cleanest withdrawal on record, the claim pays out, and two veteran hunters ask to transfer to your roster on the strength of it.",
+        "mediocre": "The retreat comes late and ragged. Everyone gets out, but a pack of lures and a good rope stay behind, and the claim clerk haggles the payout down to pocket coin.",
+        "failure": "{worker_name} holds the call too long, wanting to bring you a victory instead of a warning. The second wind catches the team mid-doubt: packs abandoned, a week of supplies gone, one of your hunters carried the last mile. The apology to you is the hardest part of the walk home."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -5,
+          "health": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_friend_flank_for_rookie",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Walking the Flank",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "failure_image": "boss_hunting_story1_failure",
+      "positive_traits": {
+        "Charming": 4,
+        "Robust": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} gives up the killing position - the one that pays the glory share - to walk the flank beside your greenest hunter through a first boss. When the rookie freezes at the roar, there is a shoulder already there. The kill lands, the rookie stands, and your roster keeps an earner it would have lost by nightfall.",
+        "critical_success": "Under that steady flanking the rookie lands the wound that opens the kill and comes home lit like a lantern. {worker_name} waves off the credit and gives you the only report that matters: this one will stay, and this one will be good.",
+        "mediocre": "The rookie survives the day but never unfreezes, and the kill costs double the time with half the crew effective. The bounty pays; nothing else does.",
+        "failure": "The roar hits and the rookie bolts, and {worker_name} has to choose between the kill window and the chase. The chase wins, the boss escapes, and the rookie quits by morning anyway - gear returned, nerve gone. {worker_name} carries it home as a debt owed to you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 9
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_rebel_poached_claim",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Poached Claim",
+      "skill_options": [
+        "Agility"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "boss_hunting_approach_recon",
+      "failure_image": "boss_hunting_approach_recon_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "An allied party staked the drake two days ago and camped smug on the claim. {worker_name} slips past their fire at moonset, takes the kill alone in the dark, and files the trophy at the guild desk before their kettle boils. The coin is real; the look on their captain's face is free.",
+        "critical_success": "The night kill is so quiet the allied party sleeps through it a valley away. By the time they reach the lair there is nothing left but drag marks and a paid-out contract carrying your house's seal. Their complaint dies at the desk - first blood, first coin.",
+        "mediocre": "The poach half-works: the kill lands, but the allied party arrives before the trophy is packed and the guild splits the bounty to keep the peace. Everyone leaves angry.",
+        "failure": "A sentry {worker_name} did not count on raises the camp mid-poach. The guild fines your house for claim-jumping, the allied party pins the grievance to the board with your name on it, and the drake - untouched - watches the whole mess from the ridge."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 4
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_rebel_glory_kill",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Glory Kill",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "failure_image": "boss_hunting_story1_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "The plan says wait for the lures. {worker_name} decides the plan is boring, walks past the trap line, and takes the boss head-on in front of three other parties. It should not work. It works. The bounty pays, the story pays better, and nobody who watched will trust a plan again all season.",
+        "critical_success": "The off-plan charge is so outrageous the beast never adjusts - it dies mid-lunge to a strike no tactics manual would sign off on. Hunters buy {worker_name} drinks until close, and half of them ask which house to sign with. Yours, apparently.",
+        "mediocre": "The stunt half-lands. The boss goes down eventually, but the abandoned trap line cost the party its coordination and the bounty gets carved thin by grievances.",
+        "failure": "The glory charge springs the trap line early. The boss walks out through the wreckage of two days' rigging - hired lures, borrowed nets, all billed to your house - and the other parties make sure the guild knows whose hunter broke formation."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "health": -2,
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 5
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -5,
+          "health": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -5,
+          "health": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_lovesyou_fights_to_come_home",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Fights to Come Home",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "failure_image": "boss_hunting_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "There is a way of fighting that only people with something to lose can manage: no wasted reach, no borrowed risk, every strike thrown from balance because falling is no longer allowed. {worker_name} fights that way now, and the kills have gotten cleaner since loving you. The bounty comes home the same day the hunter does.",
+        "critical_success": "The beast gets one chance and never sees it spent. Three moves, a finished contract, and a hunter walking out of the valley unmarked - the old-timers call it the safest impossible kill they have seen. {worker_name} could tell them the trick of it: have somewhere to be.",
+        "mediocre": "Careful fighting keeps everyone whole but gives the beast too much room, and the day ends with a wounded boss gone to ground. The partial claim pays out small; the contract stands open.",
+        "failure": "The window opens - narrow, survivable, the kind {worker_name} used to take without counting. Not anymore. The strike stays sheathed, the beast slides back into the deep caves, and the bounty resets on the board. The party says nothing on the walk out; they have seen what the caution is made of, and not one of them would spend it cheap. Nobody bled today. {worker_name} comes home to you whole, which was the entire point."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 3,
+          "reputation": 14
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_lovesyou_prepared_return",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Packed to Come Home",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "boss_hunting_approach_recon",
+      "failure_image": "boss_hunting_approach_recon_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The gear gets checked twice now - straps, edges, the rope that held last month and must hold again - a quiet new habit with an obvious cause. On the mountain it shows: {worker_name} takes the boss from the high approach with an exit already walked, and the whole hunt runs like something planned by a person intending, very specifically, to come home to you.",
+        "critical_success": "Route, timing, retreat - all rehearsed the evening before by lamplight. The hunt ends so fast the escort barely unslings a bow, and the guild adds a speed bonus to the contract. Love, it turns out, reads exactly like preparation from the outside.",
+        "mediocre": "The careful route costs hours, and the boss has moved by the time {worker_name} reaches the lair. Tracking salvages a small partial claim from the day, nothing more.",
+        "failure": "At the scree crossing the short line is loose and the long line costs the daylight, and {worker_name} takes the long line without hesitating - there is a supper somewhere that matters more than a deadline. The boss is gone by dusk and the bounty resets, and when the party grumbles, it is soft; every one of them knows what the long way around was for. No blood, no bill. Just a hunter at your door by midnight, whole."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 3,
+          "reputation": 14
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_bestfriends_shared_map",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Shared Map",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "boss_hunting_approach_recon",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The plan gets drawn at your table the night before, two mugs and one map, {worker_name} arguing approach lines with you as if the ledger were shared - because by now it might as well be. The hunt runs exactly as the two of you drew it, and the bounty arrives together with the map, corrections inked in for next season.",
+        "critical_success": "The route the two of you built holds so clean that two other parties offer coin for copies of the notes. {worker_name} sells them at your table, slides the whole take across the wood, and unrolls the next map before the ink on this one is dry. Same time next week."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "energy": -2,
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_bestfriends_your_colors",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Kill in Your Colors",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "positive_traits": {
+        "Determined": 4,
+        "Audacity": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "On a joint hunt with three houses circling the credit, {worker_name} makes sure the killing blow lands under your colors where the guild adjudicator can see it. The bounty routes to your book, the ledger entry names your house, and the wink afterward says this was never in doubt.",
+        "critical_success": "The blow is not just credited, it is witnessed - a kill so clean the adjudicator sketches it for the guild record with your house's mark in the corner. Two hunters from the rival parties ask, quietly, whether you are hiring. {worker_name} hands you their names along with the bounty."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_harem_dedicated_kill",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Dedicated Kill",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "positive_traits": {
+        "Determined": 4,
+        "Agile": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} hunts wearing your token at the throat, and the guild has learned what it means: this one is kept, this one is claimed, this one does not freelance. The kill is dispatched with unhurried certainty and the bounty comes to you before the blood is dry on the boots - not to the guild desk, to you, because that is the order of things.",
+        "critical_success": "Word spreads of the hunter who kills like a storm and then lays the bounty at one particular door. Three managers try to buy the contract out; the guild tells them what {worker_name} told them, which is that nothing here is for sale. The mystique alone doubles the booking offers routed through you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_harem_only_your_target",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Only What You Named",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "boss_hunting_approach_recon",
+      "positive_traits": {
+        "Agile": 4,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The board is full of fatter bounties, and {worker_name} does not look at them. You named the target; the target is what dies. The hunt keeps to the letter of your instruction - the approach you approved, the hours you set - and the obedience shows up in the work itself: no improvisation, no waste, no surprises in your ledger.",
+        "critical_success": "A rival manager dangles triple rate for one off-book hunt, and {worker_name} relays the offer to you unopened, then takes down your chosen target in half the allotted time. The rival raises the offer. The answer does not change. The guild has started calling your instructions the contract behind the contract."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -2,
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_servant_standing_orders",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Standing Orders",
+      "skill_options": [
+        "Craft"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "boss_hunting_approach_recon",
+      "positive_traits": {
+        "Determined": 3,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The field camp runs the way you wrote it: lures set at your intervals, blades whetted to your standard, the tally kept in your format down to the ink color. The party only notices how smooth the hunt feels; {worker_name} knows exactly whose hand shaped it, and keeps the boss's movement schedule pinned beside your orders like scripture.",
+        "critical_success": "When a second party's camp collapses in the night rain, they limp to yours - and find dry powder, hot food, and gear racked to your specification. They pay camp fees without being asked twice, and their captain copies your standing orders into their own book. The hunt itself goes flawlessly; the camp made it inevitable."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_boss_hunting_servant_double_contract",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Both Contracts Taken",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "boss_hunting_story1",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You post two bounties for the week where one would be fair, and {worker_name} takes both without comment - night marches between valleys, meals eaten standing, mud to the knee. Both heads arrive on schedule because you asked, and the only request that comes back with them is for the next assignment.",
+        "critical_success": "Both kills land early, and {worker_name} spends the spare day hauling a stranded merchant's wagon out of the pass - in your house's name, on the reasoning that everything done in the field is done in your name. The merchant's thank-you letter and a standing discount reach your desk before the hunter does."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

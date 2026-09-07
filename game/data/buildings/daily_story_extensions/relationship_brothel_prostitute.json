@@ -1,0 +1,664 @@
+{
+  "_comment": "Relationship daily stories (EXEMPLAR: Prostitute). CONTRACT: (1) stat-gated dailies (romance>=75 x2, relationship>=75 x2, rebelliousness>=60 x2) roll normally; romance/relationship stories RAISE the gating stat on success and LOWER it on failure; rebellion stories cost real money on failure. (2) 'Loves you' x2 rolls normally: success = the love is channeled into working for YOU and your business; failure = too in love to perform, the counterpart is MOVED and forgives -> earnings 0 (you collect nothing; the worker still draws salary), gentle consequences. (3) Best Friends / Harem Member / House Servant x2 each are no_fail (success/critical only), anchored on the bond with the MANAGER. STYLE: stories are about what happens BECAUSE of the bond (consequence, not declaration; being explicit about love is fine). PROSE: gender-neutral for worker AND manager - use {worker_name}, 'you', 'the client/they'; never she/her/he/his. story_image reuses existing profession art as placeholder.",
+  "building_id": "brothel",
+  "profession_id": "prostitute",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "prostitute_romance_your_name",
+      "weight": 2,
+      "report": "Your Name Slipped Out",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Charming": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Midway through sex, your name slips from {worker_name}'s mouth instead of the client's. The mistake goes unnoticed, but the desire behind it changes every thrust that follows. The client climaxes under attention meant for you and gladly pays extra for passion no ordinary booking could manufacture.",
+        "critical_success": "Your name escapes at the exact moment the client orgasms. {worker_name} does not stop; thinking of you only deepens the rhythm, carrying the hour into a second climax. The client mistakes private longing for extraordinary sex, books the next open night, and tips enough to make the slip profitable.",
+        "mediocre": "{worker_name}'s head is back in your office instead of on the bed. The client feels the distance and leaves only what was owed.",
+        "failure": "{worker_name} spends the hour somewhere else entirely, and being second stings the client into leaving early. The night ends with {worker_name} wondering whether you even notice any of this."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "prostitute_romance_turned_down_buyout",
+      "weight": 2,
+      "report": "Refused a Buyout",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A wealthy regular offers to buy {worker_name} out of the house entirely, a life of comfort for the asking. {worker_name} refuses, and the truth left unsaid is that this heart already has an owner. The regular pays for the privilege of having been refused.",
+        "critical_success": "The refusal is so graceful that the whole room understands there is someone {worker_name} will not leave, and wonders who could inspire devotion like that. Half the floor books an hour just to sit near it.",
+        "mediocre": "{worker_name} wavers on the answer long enough that it sounds like a negotiation, and the moment loses its magic.",
+        "failure": "For one weak breath {worker_name} almost says yes, and the near-betrayal of you curdles the whole exchange. The regular leaves unbought and unimpressed, and the distance to you feels wider than when the night began."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "prostitute_friend_house_first",
+      "weight": 2,
+      "report": "Caught a Schemer",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} smells the con before it lands, a client warming up to walk out unpaid, and because your house is half a home now, reroutes the schemer into the priciest service on the board and takes the coin up front.",
+        "critical_success": "{worker_name} doesn't just close the schemer, but turns the would-be cheat into a boastful regular, then finds you afterward to talk through how to spot the next one. Partners, not employer and employee.",
+        "mediocre": "{worker_name} half-catches the trick and salvages part of the fee; the house neither loses much nor gains.",
+        "failure": "{worker_name} misreads the mark and the smooth talker slips out owing for a full night, and what stings most is the feeling of having let you down, not the ledger."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "prostitute_friend_new_girl",
+      "weight": 2,
+      "report": "Steadied a Newcomer",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Knowing how much a lost recruit costs you, {worker_name} spends the slow hour talking a shaking newcomer through the terrors of a first night. The house keeps an earner it would have lost by dawn, a favor done for you as much as for the newcomer.",
+        "critical_success": "The newcomer blooms under the coaching and pulls a strong first night unaided. {worker_name} hands you two earners out of one quiet evening, pleased mostly by the look on your face.",
+        "mediocre": "The pep talk helps a little; the newcomer survives the shift but barely earns.",
+        "failure": "The advice only sharpens the newcomer's fear, and the recruit bolts before midnight. {worker_name} takes the failure personally, certain of having disappointed you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -3
+        }
+      }
+    },
+    {
+      "id": "prostitute_rebel_side_rate",
+      "weight": 2,
+      "report": "Rebellious Prostitute",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "After the booked sex, {worker_name} offers an oral finish for a price that never reaches your register. The client accepts, climaxes, and leaves praising the house; the proper fee enters your ledger while the extra coins vanish into {worker_name}'s clothes.",
+        "critical_success": "{worker_name} has built a quiet menu beneath yours: extra oral, a second round of penetration, anything paid directly at the bedside. Tonight a wealthy regular buys the lot. The client leaves exhausted and delighted, your base fee stays spotless, and a heavy private tip disappears off the books.",
+        "mediocre": "The off-book deal sours halfway through; the client haggles and the numbers get awkward.",
+        "failure": "The skim gets noticed. A furious regular complains about being double-charged, and the loss lands squarely on you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "prostitute_rebel_own_blacklist",
+      "weight": 2,
+      "report": "Barred a Client",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "{worker_name} throws a paying client out on nothing but instinct. It costs the evening's coin, but the instinct was right, the client was trouble your house is better without.",
+        "critical_success": "The instinct is dead on: the barred client is caught cheating two doors down within the hour, and {worker_name}'s nerve earns the house quiet respect.",
+        "mediocre": "{worker_name} bars a client on a hunch that never proves out; a slow night gets slower.",
+        "failure": "{worker_name} throws out one of your best-paying regulars over a private grudge, and that considerable purse walks out of your books for good."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 1,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 2,
+          "reputation": 5
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "prostitute_lovesyou_for_your_ledger",
+      "weight": 3,
+      "report": "Loves Only You",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} rides the client with skilled, unhurried rhythm, but the purpose behind every roll of the hips is yours. The client grips the sheets through a hard orgasm; you receive every coin. Loving you turns the stranger in the bed into one more way to strengthen the house you are building.",
+        "critical_success": "The client gets oral pleasure, deep penetration, and a second orgasm after the first should have ended the hour. {worker_name} keeps going because every extra coin will land in your hand. The overwhelmed client books ahead, praising a devotion whose true recipient was never in the room.",
+        "mediocre": "The heart keeps getting between {worker_name} and the work, and the client senses only half a companion in the room. The tip reflects it.",
+        "failure": "Tonight the love simply wins, and {worker_name} cannot give a stranger what is being kept for you. But the client, seeing something raw and true, is moved rather than angry; the unfinished night is forgiven and let go. You collect nothing from it, and {worker_name} walks away whole."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "prostitute_lovesyou_hardest_client",
+      "weight": 3,
+      "report": "All for Your Sake",
+      "skill_options": [
+        "Sex"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "failure_image": "prostitute_vanilla_client_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "A demanding regular requests rough sex within the agreed limits. {worker_name} handles every hard thrust without losing control, brings the client to climax, and thinks through the strain of the coin returning to you. The full fee comes home, and so does {worker_name}, tired but unharmed.",
+        "critical_success": "The hardest client on the book finally meets a worker who can control the pace. {worker_name} turns the rough penetration into two clean orgasms, stops at every stated boundary, and earns a rare tip. Enduring the hour for you becomes mastery rather than mere survival.",
+        "mediocre": "{worker_name} endures the client with a mind fixed elsewhere, and the client leaves underwhelmed by someone who was clearly somewhere better.",
+        "failure": "The wanting is too loud to work around, and {worker_name} stops. The hard client, of all people, softens; something in that honesty disarms even the worst of them, and the night is let go with unexpected grace. The house earns nothing, no harm is done, and {worker_name} is spared."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "prostitute_bestfriends_house_first",
+      "weight": 3,
+      "report": "Your Partner in Trade",
+      "skill_options": [
+        "Sex"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "prostitute_vanilla_client",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the floor as if your ledger were a shared one, sniffing out a would-be dine-and-dasher and steering the cheat into a full pre-paid evening before anyone can blink. The coin arrives in your hand with a wink that says we, not you.",
+        "critical_success": "{worker_name} doesn't just save the night, but reorganizes the whole book on the fly for you, bumping the free-spenders to prime hours. The take is the best your house has logged all season, and your grin is clearly worth more than the money."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "prostitute_bestfriends_watches_your_back",
+      "weight": 3,
+      "report": "Watching Your Back",
+      "skill_options": [
+        "Sex"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "prostitute_vanilla_client",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A client leans on {worker_name} for gossip about your dealings, and instead of talking, {worker_name} comes straight to you with exactly what the stranger was fishing for, a friend covering your blind side while still turning a normal night's coin.",
+        "critical_success": "What {worker_name} overhears is a plot against your house dressed up as a business offer. The warning saves you a small fortune, and the thanks get waved off. That's what friends are for."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "prostitute_harem_yours_alone",
+      "weight": 3,
+      "report": "Marked as Yours",
+      "skill_options": [
+        "Oral"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your mark stays visible when {worker_name} undresses, and clients pay a premium for it: an hour of oral sex from a mouth that is already claimed. {worker_name} kneels, works the client with slow lips and tongue, and swallows the climax without hurry. The extra coin goes where the loyalty already lives - into your hands.",
+        "critical_success": "Two regulars bid against each other for {worker_name}'s last hour, and the mark at that throat is what drives the price up. The winner gets unhurried oral sex - lips, tongue, a climax teased to the edge and held there until they beg for release. Afterward {worker_name} lays the heavy purse in your palm, every coin inside: the mouth can be rented for an hour, the loyalty never."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "prostitute_harem_your_orders",
+      "weight": 3,
+      "report": "Under Your Orders",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "positive_traits": {
+        "Graceful": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You specify the service before the door opens: oral first, penetration after, no forbidden touch and no rushed climax. {worker_name} follows the order exactly. The client leaves sexually satisfied, never realizing that the real pleasure in the room was carrying out your instructions without deviation.",
+        "critical_success": "Every detail of your script lands perfectly. {worker_name} delays the first orgasm, changes rhythm when you prescribed, then works the client into a second with mouth and hands. The doubled tip pays for flawless sex; the quiet pride afterward comes from having served as your instrument."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "prostitute_servant_double_shift",
+      "weight": 3,
+      "report": "Double Shift",
+      "skill_options": [
+        "Sex",
+        "Oral",
+        "Hand"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You ask for extra hours, and {worker_name} takes every open room. One client wants oral sex, the next hard penetration, the next a slow hand between the legs; each leaves after an orgasm and pays in full. The double shift happens for one reason: you ordered it.",
+        "critical_success": "Long after the rest of the floor goes dark, {worker_name} is still working the last client - legs open, rhythm steady, as careful with this orgasm as with the first of the night. No climax is hurried and no fee is lost. By dawn the double shift has become the richest line in your ledger."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "prostitute_servant_hard_list",
+      "weight": 3,
+      "report": "The Hard List",
+      "skill_options": [
+        "Sex",
+        "Anal"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "prostitute_vanilla_client",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You hand {worker_name} the clients everyone else avoids. The complainer gets patient oral sex, the silent regular gets forceful penetration within the stated limits, and both leave after real orgasms with nothing left to dispute. Your difficult list becomes paid work instead of empty rooms.",
+        "critical_success": "The worst name on your list requests anal sex and arrives expecting another refusal. Because you assigned the booking, {worker_name} takes control, sets the limits, and works the client to a shuddering orgasm. The former menace pays double and asks to become a regular assigned to {worker_name} alone."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

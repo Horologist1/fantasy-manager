@@ -1,0 +1,1740 @@
+[
+  {
+    "id": "cedar_personal_stage_2",
+    "arc_id": "cedar_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "cedar_personal_stage_2_at",
+    "description": "Five days after Cedar's first confrontation with the debt collector, three market porters arrive carrying notices in Cedar's name. The collector has sold copies of the disputed debt to several small creditors, each promised first claim on the same payment. Cedar studies the mismatched seals with a fierce grin. The fraud is sloppy, but unless he can prove where the copies were made, honest traders may still believe them. A paper runner is due to collect the next bundle before sunset.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Cedar",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Charm": 55
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:cedar_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "cedar_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Cedar replace the bundle with marked copies and follow the runner. (Requires Clever 58+; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 58,
+        "message_success": "Cedar reproduces every fold, stain, and crooked string, adding a tiny tally mark only he can read. The runner takes the bait straight to a rented scribe's room. By dusk Cedar has the duplicate contracts, the payment ledger, and the names of two merchants who paid for false claims. Returning their deposits earns both gratitude and a reward. (+2 Clever, +420 gold, +4 reputation)",
+        "message_failure": "Cedar's substitute bundle is convincing at a glance, but he ties the cord with a household knot instead of the printer's hitch. The runner notices, bolts, and scatters the genuine notices into a canal. Cedar recovers enough scraps to warn the creditors, though compensating the porters and hiring a clerk to cancel the claims is costly. (+1 Clever, -220 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 420,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Clever": 2
+            },
+            "event_flags": {
+              "cedar_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -220,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "cedar_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Cedar call the creditors together and turn their anger toward the fraud. (Requires Charm 62+; Potential: Reputation)",
+        "condition": "Charm",
+        "threshold": 62,
+        "message_success": "Cedar fills the back room with suspicious creditors and somehow has them laughing at the collector's arithmetic before the first cup cools. He lays the contradictory claims side by side, never dodging his real old debt and never letting the fraud hide behind it. The creditors leave as witnesses rather than enemies, funding a joint complaint from the deposits they recover. (+3 Charm, +180 gold, +6 reputation)",
+        "message_failure": "Cedar's bright confidence reads as glibness to people who arrived fearing a loss. Two creditors talk over him, a third storms out, and the meeting dissolves into accusations. The copied claims are eventually discredited, but only after you pay a neutral clerk to reconcile every account. (+1 Charm, -300 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "cedar_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "cedar_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "cedar_personal_stage_3",
+    "arc_id": "cedar_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The collector answers Cedar's evidence with one final gamble: a public auction of the remaining debt claims, timed for a crowded trade day. If a respectable buyer takes the bundle, the fraud gains a new legal face. Cedar arrives with the original contract, the recovered ledger, and enough restless energy for three people. He can dismantle the auction clause by clause or win the room so completely that no bidder will touch the collector's paper.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Cedar",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Charm": 85
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:cedar_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "cedar_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Cedar expose the collector's circular accounts before the auctioneer. (Requires Clever 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Cedar maps the collector's accounts across the auction board in colored chalk. Every supposed debt loops back to a fee the collector paid himself, and every copied claim ends at the same false witness. The auctioneer voids the lot, the trade court seizes the collector's bond, and Cedar receives a share for documenting the scheme. His grin afterward is lighter: optimism has become method, not denial. (New trait, +850 gold, +8 reputation)",
+        "message_failure": "Cedar sees the pattern but rushes the explanation. The collector exploits one transposed date and persuades the auctioneer to postpone rather than void the sale. You buy the claims at their reduced reserve to keep them out of hostile hands, then surrender them for cancellation. The debt is finally dead, but the clean ending costs dearly. (-480 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 850,
+            "reputation": 8,
+            "add_trait": "Cedar, Debtbreaker",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "cedar_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -480,
+            "reputation": -2,
+            "event_flags": {
+              "cedar_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Give Cedar the floor and let him persuade every bidder to stand down. (Requires Charm 85+; Potential: Trait, Reputation)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Cedar does not plead. He tells the story of every porter, trader, and apprentice squeezed by the collector, naming what each false signature would have cost. One bidder closes her purse, then another. Soon the auction hall is chanting for the lot to be burned. The auctioneer withdraws it, and the collector leaves through a lane of silent merchants. Cedar has turned private trouble into public solidarity. (New trait, +500 gold, +8 reputation)",
+        "message_failure": "Cedar begins strongly, but his jokes sharpen into mockery and give the collector room to pose as the injured party. Most bidders withdraw, though one speculator remains. You pay that buyer to relinquish the bundle and have it destroyed under witness. Cedar is free of the claims, but the room remembers a messy spectacle. (-400 gold, -4 reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 8,
+            "add_trait": "Cedar, Voice of the Debtors",
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "cedar_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -4,
+            "event_flags": {
+              "cedar_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "laurel_personal_stage_2",
+    "arc_id": "laurel_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "laurel_personal_stage_2_at",
+    "description": "A former footman from Laurel's old household slips into the kitchen before dawn. The vanished house has been keeping an unofficial guest ledger, recording favors and indiscretions under serving codes Laurel once devised. Its surviving patron plans to present selected pages to the magistrate as proof that Laurel stole from the estate. The footman has one page and the location of the rest, but frightened servants will only help someone they trust.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Laurel",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Charm": 55,
+        "Service": 55
+      }
+    },
+    "background_image": "worker_service",
+    "conditions": {
+      "start_when": "after_days_from_flag:laurel_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "laurel_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Have Laurel reunite the old staff and ask them to testify together. (Requires Charm 58+; Potential: Reputation)",
+        "condition": "Charm",
+        "threshold": 58,
+        "message_success": "Laurel remembers every servant's name, grievance, and favorite after-shift drink. By noon, six former staff members sit around the table comparing copies. His easy humor steadies them until fear gives way to indignation. They sign a joint statement explaining the codes, making it impossible to isolate Laurel as the culprit. (+3 Charm, +220 gold, +6 reputation)",
+        "message_failure": "Laurel tries to make the reunion feel like old times, but old resentments arrive with the guests. A joke reminds one maid who carried the blame for a noble's mistake, and the room fractures. Two staff members still sign, while the others demand payment for their silence. (+1 Charm, -280 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 220,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "laurel_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -280,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "laurel_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Laurel reconstruct the coded ledger from the household's service routines. (Requires Service 62+; Potential: Money, Reputation)",
+        "condition": "Service",
+        "threshold": 62,
+        "message_success": "Laurel lays out place cards, cellar tallies, and bell schedules until the ledger becomes a map of the old house. A mark alleged to mean stolen silver actually means a late supper; another records lamp oil sent to a secret guest room. A records clerk buys a clean transcription for the inquiry, and the patron's selective reading collapses. (+3 Service, +380 gold, +5 reputation)",
+        "message_failure": "Laurel reconstructs most of the code, but one changed seating plan sends him down the wrong path. The clerk catches the error before filing, forcing a costly second transcription and weakening confidence in the statement. The ledger can no longer condemn Laurel, though it does not yet clear him. (+1 Service, -240 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 380,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "laurel_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -240,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "laurel_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "laurel_personal_stage_3",
+    "arc_id": "laurel_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The magistrate calls a final hearing in the old house's shuttered dining hall, where the patron intends to use rank and ritual to control the room. Laurel walks in beneath the crest that once defined his place and quietly straightens a crooked chair. He can confront the patron as the confident host he has become or use his exact knowledge of household protocol to make the old lies contradict themselves.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Laurel",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Charm": 85,
+        "Service": 85
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:laurel_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "laurel_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Laurel take command of the hearing as its true host. (Requires Charm 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Laurel greets witnesses, seats rivals where they cannot whisper, and guides testimony with warmth that never yields an inch. The patron tries to reduce him to a former servant; Laurel answers by naming every guest the house betrayed. By the ruling, the hall belongs socially to Laurel, whatever the deed says. Damages are awarded and the remaining threats are withdrawn. (New trait, +900 gold, +8 reputation)",
+        "message_failure": "Laurel's confidence wins the gallery but irritates the magistrate, who cuts short his sharpest exchange. The patron's charge is dismissed for lack of proof, yet so is Laurel's claim for damages. Legal fees consume the victory, and the old house closes without an apology. (-350 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 8,
+            "add_trait": "Laurel, Master of the Room",
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "laurel_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -350,
+            "reputation": -1,
+            "event_flags": {
+              "laurel_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Laurel demonstrate the ledger codes through a flawless formal service. (Requires Service 85+; Potential: Trait, Reputation)",
+        "condition": "Service",
+        "threshold": 85,
+        "message_success": "Laurel restages the disputed evening place by place. Each bell, tray, and cellar token matches the staff statement; the patron's version would require one servant to occupy three rooms at once. The magistrate laughs once, then rules. Laurel bows with perfect courtesy, not submission, and leaves the crest behind. (New trait, +620 gold, +8 reputation)",
+        "message_failure": "A cracked service bell produces the wrong tone and muddles the sequence at the worst moment. Laurel recovers enough to expose the patron's central lie, but the demonstration looks less decisive than it should. The case ends in a sealed settlement that covers only part of your costs. (-260 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 620,
+            "reputation": 8,
+            "add_trait": "Laurel, Keeper of Confidence",
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "laurel_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": -2,
+            "event_flags": {
+              "laurel_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "sage_personal_stage_2",
+    "arc_id": "sage_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "sage_personal_stage_2_at",
+    "description": "Sage's interference with the smuggler drop has shaken loose two young runners from his former network. They arrive separately, each carrying half of a route cipher and each convinced the other may be bait. The network's quartermaster will change every sign by morning. Sage can decode the abandoned paths and lead the runners out quietly, or persuade old contacts that protecting them is safer than serving a collapsing crew.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Sage",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Charm": 55
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:sage_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "sage_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Sage decode the split cipher and move the runners by forgotten routes. (Requires Clever 60+; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 60,
+        "message_success": "Sage overlays the cipher halves with a tavern song sheet; the rests, not the notes, reveal the route. He leads the runners through a cooper's yard and an unused postern while the quartermaster watches the obvious roads. At dawn the runners are safe, and a medicine seller rewards the return of goods they carried away from the network. (+3 Clever, +400 gold, +5 reputation)",
+        "message_failure": "One faded symbol sends Sage to a gate that was bricked up years ago. The group doubles back under pursuit and abandons a pack of saleable dyes to cross the river unseen. The runners escape, but damaged fences and hush money leave a trail through the accounts. (+1 Clever, -300 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 400,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "sage_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "sage_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Sage call in old favors with a song only the network recognizes. (Requires Charm 64+; Potential: Reputation)",
+        "condition": "Charm",
+        "threshold": 64,
+        "message_success": "Sage plays the old road ballad in three crowded inns, changing one verse to announce that the quartermaster broke the network's own rules. By midnight, door guards are looking the other way and ferrymen refuse the pursuers' coin. The runners walk out protected by a chorus of small loyalties Sage once earned and never spent. (+3 Charm, +120 gold, +7 reputation)",
+        "message_failure": "Sage's signal reaches the wrong ears first. A nervous contact mistakes the altered verse for a threat and warns the quartermaster. Sage still talks a ferryman into carrying the runners away, but you must pay for the boat, the delay, and the ferryman's silence. (+1 Charm, -360 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 120,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "sage_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -360,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "sage_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "sage_personal_stage_3",
+    "arc_id": "sage_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The smuggler quartermaster chooses a familiar battleground for the final answer: Sage's evening performance in the Lantern Square. Agents ring the crowd, ready to plant contraband in his instrument case and name him as the network's leader. Sage spots the exchange before the last verse. He can reverse the quartermaster's signals with a carefully prepared counterplot or turn the entire square into witnesses who will not let the old crew rewrite his story.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Sage",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Charm": 85
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:sage_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "sage_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Spring Sage's counterplot and route the planted crate to the quartermaster. (Requires Clever 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Sage changes tempo, and friendly runners relay the beat as instructions. The planted crate passes hand to hand until it rests beneath the quartermaster's own bench just as the watch enters. Receipts from the intercepted drop lie on top. The network's leader is caught with evidence and no plausible song to sing. The watch pays Sage for closing the case. (New trait, +800 gold, +7 reputation)",
+        "message_failure": "A drummer in the crowd misses Sage's altered beat and sends the crate toward an innocent vendor. Sage breaks off the performance to stop it, exposing the plot but losing the chance to trap its author. The quartermaster flees; the watch clears Sage after a long search, while you compensate the vendor for ruined stock. (-420 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 7,
+            "add_trait": "Sage, Ciphersong",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "sage_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -420,
+            "reputation": -2,
+            "event_flags": {
+              "sage_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Sage reveal the scheme in a new ballad before the whole square. (Requires Charm 85+; Potential: Trait, Reputation)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Without naming names, Sage folds the planted crate, the false stamps, and the quartermaster's favorite threat into a chorus the crowd learns at once. When an agent reaches for the instrument case, fifty voices shout the next line: 'Mind the hand beneath the latch.' The watch catches the culprit, and the quartermaster's secrecy dies in laughter. (New trait, +550 gold, +8 reputation)",
+        "message_failure": "Sage's improvised accusation is too clever for half the square and too obvious for the agents. They abandon the crate and vanish before the watch arrives. The audience enjoys the song but leaves unsure what was performance and what was confession. Sage is cleared, though only after you fund sworn statements from the rescued runners. (-350 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 550,
+            "reputation": 8,
+            "add_trait": "Sage, Ballad of the Open Road",
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "sage_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -350,
+            "reputation": -3,
+            "event_flags": {
+              "sage_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "primrose_personal_stage_2",
+    "arc_id": "primrose_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "primrose_personal_stage_2_at",
+    "description": "The failed whisper campaign against Primrose gives way to a subtler attack. Her former employer has entered one of Primrose's court compositions in the Moon Lantern Exhibition under another performer's name, then cited the stolen choreography as proof that Primrose copies others. A frightened wardrobe apprentice brings the original cue cards, written in Primrose's eastern shorthand, but fears losing her position if identified.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Primrose",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Charm": 55,
+        "Clever": 55
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:primrose_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "primrose_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Have Primrose perform the composition's missing court verse before the judges. (Requires Charm 60+; Potential: Money, Reputation)",
+        "condition": "Charm",
+        "threshold": 60,
+        "message_success": "Primrose takes the exhibition floor without spectacle. She adds the missing verse: a sequence built around an eastern court greeting the imitator never learned. Every gesture answers a symbol on the old cue cards. The judges recognize authorship in the details and award Primrose a special purse for preservation of court art. (+3 Charm, +480 gold, +6 reputation)",
+        "message_failure": "The exhibition floor is cramped, and Primrose clips a lantern stand during the unfamiliar public staging. She completes the missing verse, but the disruption gives her former employer room to call it a recent embellishment. The judges suspend the rival entry rather than naming Primrose its author, and repairs reduce the evening to a costly draw. (+1 Charm, -260 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 480,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "primrose_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "primrose_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Primrose authenticate the cue cards without exposing the apprentice. (Requires Clever 63+; Potential: Reputation)",
+        "condition": "Clever",
+        "threshold": 63,
+        "message_success": "Primrose identifies ink batches, rehearsal corrections, and a private notation borrowed from eastern calligraphy. She leads the judges to archived programs carrying the same hand years earlier, proving the cards without naming their source. The apprentice remains safe, while the false entry is struck from the exhibition. (+3 Clever, +160 gold, +7 reputation)",
+        "message_failure": "Primrose protects the apprentice so carefully that the evidence appears to arrive from nowhere. The judges accept the cards as old but cannot establish custody. The false entry is delayed, not removed, and you pay an archivist to secure the documents until a formal review. (+1 Clever, -320 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 160,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "primrose_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -320,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "primrose_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "primrose_personal_stage_3",
+    "arc_id": "primrose_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The Moon Lantern judges invite Primrose and her former employer to present final claims before artists, merchants, and envoys from the eastern courts. The employer arrives with contracts; Primrose brings the authenticated cue cards and the calm of someone who knows exactly where every gesture belongs. She can establish her authorship through an unforgettable final performance or dismantle the employer's paper trail with court-trained precision.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Primrose",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Charm": 85,
+        "Clever": 85
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:primrose_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "primrose_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Primrose unveil the complete Moon Lantern composition. (Requires Charm 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Primrose performs the work as it was meant to breathe: each restrained turn placing light on the next, the final court bow transforming into her own signature. The imitation looks like a sketch beside a finished painting. The judges name her author, patrons commission future pieces, and the former employer's contracts lose all value. (New trait, +950 gold, +8 reputation)",
+        "message_failure": "A lantern wick gutters and breaks the visual chain at the composition's heart. Primrose continues with grace, but the judges cannot ignore that the decisive passage was obscured. They credit her as co-author and forbid further use without permission, a safe but unsatisfying compromise that does not cover the production costs. (-380 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 950,
+            "reputation": 8,
+            "add_trait": "Primrose, Moon Lantern Artist",
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "primrose_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -380,
+            "reputation": -1,
+            "event_flags": {
+              "primrose_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Primrose expose the contracts' mistranslated eastern clauses. (Requires Clever 85+; Potential: Trait, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Primrose reads the employer's contract aloud in both tongues. A clause presented as transfer of ownership actually grants one-season performance rights; another forged seal uses a mourning form no living court would employ. The envoys confirm every point. The judges void the claim and appoint Primrose to advise future exhibitions on eastern works. (New trait, +600 gold, +8 reputation)",
+        "message_failure": "Primrose catches the false translation but attributes one seal to the wrong court era. The envoys correct her, lending the employer a moment of credibility. A later review still voids the broad ownership claim, though Primrose must accept a narrow settlement and fund the translation costs. (-300 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 8,
+            "add_trait": "Primrose, Courtwise Curator",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "primrose_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -2,
+            "event_flags": {
+              "primrose_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "jasmine_personal_stage_2",
+    "arc_id": "jasmine_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "jasmine_personal_stage_2_at",
+    "description": "The Varenthi mediation uncovers a missing third codicil, written during the siblings' father's last trading voyage. A junior clerk who copied it seeks Jasmine out because both siblings are now hunting the document. He remembers Jasmine as the only go-between who never altered a message. The codicil is hidden among customs manifests, but the clerk will not reveal which warehouse until convinced Jasmine can keep him outside the family feud.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Jasmine",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Charm": 55
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:jasmine_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "jasmine_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Jasmine identify the codicil through the manifests' hidden trade pattern. (Requires Clever 60+; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 60,
+        "message_success": "Jasmine notices that every voyage entry rounds spice weights upward except one. The missing fractions spell a warehouse shelf and lock number in an old Varenthi merchant cipher. She retrieves the codicil before either sibling's agents arrive and places it with a neutral notary, who pays a discovery fee from the estate. (+3 Clever, +450 gold, +5 reputation)",
+        "message_failure": "Jasmine finds the cipher but reverses the berth and shelf numbers. By the time she reaches the correct warehouse, an agent has forced the lock. She saves the codicil during the ensuing scramble, though torn seals require expensive authentication before a notary will accept it. (+1 Clever, -280 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 450,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "jasmine_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -280,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "jasmine_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Jasmine win the clerk's trust and arrange neutral protection. (Requires Charm 63+; Potential: Reputation)",
+        "condition": "Charm",
+        "threshold": 63,
+        "message_success": "Jasmine jokes the frightened clerk into breathing normally, then promises only what she can deliver. She brings in a guild notary, a caravan matron, and two witnesses with no Varenthi ties. Surrounded by people Jasmine has carefully put at ease, the clerk names the warehouse and gives a clean deposition. (+3 Charm, +180 gold, +7 reputation)",
+        "message_failure": "Jasmine's confident assurances sound too much like the polished promises the Varenthi siblings have already made. The clerk withholds the shelf number until you pay for guarded lodging and a bond guaranteeing his safety. He eventually talks, but the arrangement is expensive and publicly awkward. (+1 Charm, -340 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "jasmine_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -340,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "jasmine_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "jasmine_personal_stage_3",
+    "arc_id": "jasmine_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The third codicil orders the Varenthi trading house divided not between the siblings, but into a trust for its crews and clerks. Both heirs challenge it at a packed guild assembly, each expecting Jasmine to bend the wording in return for protection. Instead, Jasmine arrives carrying every message she once relayed between them. She can build an airtight chain of intent or make the hostile assembly accept a settlement centered on the workers the family overlooked.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Jasmine",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Charm": 85
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:jasmine_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "jasmine_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Have Jasmine prove the codicil through the family's own correspondence. (Requires Clever 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Jasmine arranges the old messages by ink, ship, and exchange rate. Casual phrases reveal that both siblings knew their father was converting ownership into crew shares long before his death. Every denial contradicts a letter Jasmine can date independently. The guild upholds the trust and pays her from the estate for reconstructing the record. (New trait, +900 gold, +8 reputation)",
+        "message_failure": "One letter bears a reused courier stamp, breaking Jasmine's chronology at a crucial month. The guild still recognizes the codicil, but reserves a larger portion for the siblings to avoid appeal. Jasmine's neutrality survives; the cost of expert authentication does not. (-400 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 8,
+            "add_trait": "Jasmine, Keeper of the True Account",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "jasmine_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -1,
+            "event_flags": {
+              "jasmine_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Jasmine broker a settlement the crews will defend. (Requires Charm 85+; Potential: Trait, Reputation)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Jasmine gives each sibling one dignified concession and neither the victory they demanded. Then she invites captains, porters, and clerks to describe what the trading house requires to survive. By the end, the heirs accept ceremonial seats while the worker trust holds real control. Jasmine walks out with both bridges intact because she built a third road between them. (New trait, +620 gold, +8 reputation)",
+        "message_failure": "Jasmine balances the opening offers too finely, and both siblings suspect a hidden advantage. The assembly descends into bargaining by threat. A guild elder finally imposes the codicil's basic terms, but the crews receive less autonomy and blame the mediation for the delay. (-300 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 620,
+            "reputation": 8,
+            "add_trait": "Jasmine, Bridge Between Rivals",
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "jasmine_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -3,
+            "event_flags": {
+              "jasmine_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "marigold_personal_stage_2",
+    "arc_id": "marigold_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "marigold_personal_stage_2_at",
+    "description": "The disgraced clerk caught forging your seal was only supplying one branch of the scheme. Marigold finds hair-thin differences in three new delivery chits: the same false seal, but cleaner paper and sharper type. Someone with a proper press is redirecting food and lamp oil from neighborhood orders. Marigold traces the ink to a cooperative print house whose apprentices may not know their night foreman is using their work.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Marigold",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Craft": 55
+      }
+    },
+    "background_image": "worker_craft",
+    "conditions": {
+      "start_when": "after_days_from_flag:marigold_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "marigold_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Marigold compare orders and predict the foreman's next diversion. (Requires Clever 59+; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 59,
+        "message_success": "Marigold covers a wall with delivery times and still finds energy to color-code them. The diversions form a rotating pattern designed to keep any one district from noticing. She predicts the next false wagon, where the watch catches the foreman with stolen oil and a purse of bribes. Recovered goods are returned, and grateful merchants pay a reward. (+3 Clever, +460 gold, +6 reputation)",
+        "message_failure": "Marigold spots the rotation but mistakes a festival delay for part of the pattern. The watch waits at an empty warehouse while the false wagon takes another street. She recovers the abandoned chits, enough to warn the victims, but replacing the missing food falls to your purse. (+1 Clever, -300 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 460,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "marigold_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "marigold_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Marigold reproduce the press flaw and identify the exact machine. (Requires Craft 63+; Potential: Reputation)",
+        "condition": "Craft",
+        "threshold": 63,
+        "message_success": "Marigold works cheerfully through the night, testing pressure, paper dampness, and worn type. A tiny crescent beside every capital M can only come from the cooperative's oldest hand press. The apprentices recognize the flaw and help open the locked night cabinet, where the false seal and diverted orders are stored. (+3 Craft, +220 gold, +7 reputation)",
+        "message_failure": "Marigold matches the ink but not the pressure, accusing the wrong press and putting the apprentices on the defensive. She apologizes, starts again, and eventually finds the foreman's portable platen hidden under packing cloth. The evidence survives, but the cooperative charges for the disrupted day's work. (+1 Craft, -260 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 220,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Craft": 3
+            },
+            "event_flags": {
+              "marigold_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Craft": 1
+            },
+            "event_flags": {
+              "marigold_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "marigold_personal_stage_3",
+    "arc_id": "marigold_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "With the night foreman exposed, the print cooperative faces closure. Dozens of honest notices now carry the same machine flaw as the forgeries, and frightened merchants refuse them all. Marigold insists the answer is not another hidden cleanup. At a public verification day, she can reveal the forged order network in one clear account or craft a new split-mark seal that every neighborhood supplier can verify without trusting a single clerk.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Marigold",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Craft": 85
+      }
+    },
+    "background_image": "worker_craft",
+    "conditions": {
+      "start_when": "after_days_from_flag:marigold_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "marigold_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Marigold present the whole forgery network as an open ledger. (Requires Clever 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Marigold turns a maze of dates, carts, and false names into a story every supplier can follow. She separates innocent print jobs from forged orders and identifies where each stolen crate went. Restitution from the foreman's seized accounts repays the victims and leaves a fee for her work. Her tireless attention restores trust without sacrificing the apprentices. (New trait, +850 gold, +8 reputation)",
+        "message_failure": "Marigold's presentation contains too much detail at once. Merchants confuse two similarly named carriers and accuse an innocent driver before the error is corrected. The network is exposed, but you fund a public retraction and the cooperative loses several contracts. (-420 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 850,
+            "reputation": 8,
+            "add_trait": "Marigold, Bright-Eyed Investigator",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "marigold_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -420,
+            "reputation": -3,
+            "event_flags": {
+              "marigold_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Marigold build a split-mark seal for the district's suppliers. (Requires Craft 85+; Potential: Trait, Reputation)",
+        "condition": "Craft",
+        "threshold": 85,
+        "message_success": "Marigold cuts a seal whose two halves are held by different cooperatives. Pressed together, they form a marigold bloom with hairline petals no lone forger can reproduce. She teaches suppliers to check it in minutes, laughing through a lesson that could have felt like a lecture. Orders resume before sunset, and the district adopts her method. (New trait, +600 gold, +8 reputation)",
+        "message_failure": "The first split seal aligns poorly on damp paper, producing blurred petals that merchants reject. Marigold catches the flaw before mass use, but recutting both halves and compensating delayed suppliers drains your funds. A simpler version eventually works without becoming a district standard. (-360 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 8,
+            "add_trait": "Marigold, Sealwright",
+            "skill_modifiers": {
+              "Craft": 3
+            },
+            "event_flags": {
+              "marigold_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -360,
+            "reputation": -2,
+            "event_flags": {
+              "marigold_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "poppy_personal_stage_2",
+    "arc_id": "poppy_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "poppy_personal_stage_2_at",
+    "description": "Harwick retreats from his claim on Poppy, then sends renewal notices to six other workers once held on his lifetime leases. Poppy recognizes the tactic: isolate each person, offer a smaller payment, and make surrender look practical. She also remembers that Harwick registered every contract through a guild clerk who stamped dates before trainees were old enough to sign. The former workers are wary of any new leader, including Poppy.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Poppy",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Charm": 55,
+        "Clever": 55
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:poppy_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "poppy_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Have Poppy bring the former workers together on equal terms. (Requires Charm 60+; Potential: Reputation)",
+        "condition": "Charm",
+        "threshold": 60,
+        "message_success": "Poppy opens with a wicked imitation of Harwick's solemn contract voice, breaking the room's fear without belittling it. She refuses to speak for anyone, asking each worker what freedom would look like instead. By evening they have a shared petition, rotating spokespeople, and enough confidence to deliver it together. (+3 Charm, +140 gold, +7 reputation)",
+        "message_failure": "Poppy's mischief helps some workers relax but convinces others she is treating the danger lightly. Two leave before the plan is settled. The remaining group signs a petition only after you fund individual legal consultations and guarded lodging for those Harwick has threatened. (+1 Charm, -360 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 140,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "poppy_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -360,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "poppy_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Poppy trace the impossible dates through the guild registry. (Requires Clever 64+; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 64,
+        "message_success": "Poppy compares signatures with apprenticeship rolls and spots Harwick's trick: he backdated renewals to birthdays, before three workers had even entered his school. The clerk's stamp book proves the pages were filed years later. A legal society buys copies of the evidence and agrees to represent the group. (+3 Clever, +420 gold, +6 reputation)",
+        "message_failure": "Poppy finds the date discrepancy but handles a brittle registry page too quickly, tearing its corner across the clerk's mark. The text remains readable, yet the guild demands conservation and a sworn expert before releasing it. The evidence survives at significant cost. (+1 Clever, -300 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 420,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "poppy_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "poppy_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "poppy_personal_stage_3",
+    "arc_id": "poppy_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Harwick petitions the labor guild to enforce every remaining lease at once, betting the former workers cannot sustain a common defense. The hearing chamber is packed with brokers eager to preserve their own contracts. Poppy arrives in vivid colors instead of the gray uniform Harwick required, carrying the joint petition and the damaged registry page. She can give the former workers a public voice or unravel the legal machinery that kept them dependent.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Poppy",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Charm": 85,
+        "Clever": 85
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:poppy_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "poppy_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Poppy turn the joint petition into testimony no broker can dismiss. (Requires Charm 85+; Potential: Trait, Reputation)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Poppy speaks last. She threads six different stories into one pattern, using humor only where it gives frightened witnesses room to breathe. When Harwick calls them ungrateful, the gallery answers with their names. The guild voids the leases, censures Harwick, and establishes independent advocates for future trainees. (New trait, +550 gold, +8 reputation)",
+        "message_failure": "Poppy's sharpest joke lands on a guild elder who does not enjoy recognizing himself in it. The room cools, and the ruling voids only the six leases before it rather than changing policy. Everyone walks free, but legal fees swallow the compensation and brokers claim the case was an exception. (-380 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 550,
+            "reputation": 8,
+            "add_trait": "Poppy, Voice Unbound",
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "poppy_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -380,
+            "reputation": -2,
+            "event_flags": {
+              "poppy_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Poppy prove the leases form one deliberately fraudulent system. (Requires Clever 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Poppy aligns the backdated renewals with Harwick's fee ledger. Each supposed extension begins exactly when a trainee's debt should have ended, and each new charge exists only to trigger the next extension. The guild cannot preserve one contract without endorsing the whole circular fraud. It voids the roster and awards restitution from Harwick's bond. (New trait, +900 gold, +8 reputation)",
+        "message_failure": "Poppy proves the circular fees but overlooks a lawful amendment buried in one worker's file. Harwick uses it to argue that every case differs. The guild still releases the petitioners after individual review, though the process consumes weeks and most of the recovered bond. (-420 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 8,
+            "add_trait": "Poppy, Contractbreaker",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "poppy_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -420,
+            "reputation": -1,
+            "event_flags": {
+              "poppy_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "chestnut_personal_stage_1",
+    "arc_id": "chestnut_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "chestnut_personal_stage_1_at",
+    "description": "An ostler brings Chestnut a bent brass mile-bell stamped with the running-horse mark of her old centauride relay. Last night a medicine wagon followed the bell off the King's Road and found a washed-out ford; the drivers blame Chestnut, whose route marks still appear in the relay ledger. Chestnut remembers hanging that bell two hills east before she left. With another night caravan due, she is already fastening her travel cloak, eager to set matters right rather than let strangers carry her blame.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Chestnut",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "background_image": "worker_agility",
+    "conditions": {
+      "start_when": "has_worker:Chestnut"
+    },
+    "excluded_flags": {
+      "chestnut_personal_stage_1_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Chestnut run the ridge and track where the bell was dragged. (Requires Agility 45+; Potential: Money, Reputation)",
+        "condition": "Agility",
+        "threshold": 45,
+        "message_success": "Chestnut covers the ridge before the light fails, finding furrows where a two-wheeled cart hauled the bell west. She resets the marker, flags the broken ford, and intercepts the night caravan at a full gallop. The grateful apothecary pays for the saved medicines, while Chestnut returns muddy and delighted to have outrun the rumor. (+3 Agility, +300 gold, +5 reputation)",
+        "message_failure": "Chestnut pushes too hard on rain-soft ground and loses the cart tracks among sheep paths. She still reaches the caravan first, but only by taking a stony descent that leaves her lame for the evening. You hire riders to reset the marker and compensate the delayed apothecary. (+1 Agility, -220 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 300,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Agility": 3
+            },
+            "event_flags": {
+              "chestnut_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -220,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Agility": 1
+            },
+            "event_flags": {
+              "chestnut_personal_stage_1_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Chestnut organize a safe detour through the farm wayhouses. (Requires Service 48+; Potential: Reputation)",
+        "condition": "Service",
+        "threshold": 48,
+        "message_success": "Chestnut remembers which farms have broad gates, dry sheds, and owners who wake kindly for a medicine wagon. She rides from door to door, arranging lanterns, fodder, and fresh directions. The caravan reaches town only an hour late, with every vial intact, and the farmers praise the centauride who made a road out of hospitality. (+3 Service, +120 gold, +6 reputation)",
+        "message_failure": "Chestnut promises the detour before checking a miller's narrow footbridge. The loaded wagon cannot cross, forcing a long turn through private fields. The medicine arrives safely, but trampled barley and emergency fodder must be paid for. (+1 Service, -280 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 120,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "chestnut_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -280,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "chestnut_personal_stage_1_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "chestnut_personal_stage_2",
+    "arc_id": "chestnut_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "chestnut_personal_stage_2_at",
+    "description": "The moved bell leads back to Wayhouse Nine, where relay tolls have risen while maintenance money vanishes. Chestnut's old route captain insists her memory is wrong and produces a ledger bearing her hoof-mark beside several false inspections. Chestnut knows she marked completed runs, never repairs. A courier carrying the current toll book is due at the wayhouse, and the exhausted drivers there are deciding whether speaking up is worth losing the road.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Chestnut",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Agility": 55,
+        "Service": 55
+      }
+    },
+    "background_image": "worker_agility",
+    "conditions": {
+      "start_when": "after_days_from_flag:chestnut_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "chestnut_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Chestnut race the courier to the toll office and secure the current book. (Requires Agility 60+; Potential: Money, Reputation)",
+        "condition": "Agility",
+        "threshold": 60,
+        "message_success": "Chestnut takes the high sheep track, clearing fallen branches the courier must circle. She reaches the toll office first and has a magistrate seal the book before anyone can alter it. The entries show repair funds diverted on every route bearing Chestnut's old mark. Seized toll money covers the drivers' losses and a reward. (+3 Agility, +500 gold, +6 reputation)",
+        "message_failure": "A loose shoe slows Chestnut on the last mile, and the courier reaches the office ahead of her. Two pages are burning when she arrives. She stamps out the fire and saves enough entries to open an inquiry, but a farrier, filing fees, and missing evidence reduce the result. (+1 Agility, -260 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Agility": 3
+            },
+            "event_flags": {
+              "chestnut_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Agility": 1
+            },
+            "event_flags": {
+              "chestnut_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Chestnut turn the wayhouse into a drivers' testimony station. (Requires Service 63+; Potential: Reputation)",
+        "condition": "Service",
+        "threshold": 63,
+        "message_success": "Chestnut sets out feed, hot stew, dry blankets, and blank statements in that order. Drivers who would never attend a formal hearing begin comparing toll receipts over supper. By midnight, twenty routes are documented and three farmers have brought broken marker posts as evidence. Chestnut's care gives the road a voice the captain cannot dismiss. (+3 Service, +180 gold, +7 reputation)",
+        "message_failure": "Chestnut works tirelessly but asks for statements before the wet drivers have eaten or rested. Tempers flare, and several leave with their receipts. Enough witnesses remain to challenge the captain, though you must pay messengers to track down the missing accounts later. (+1 Service, -320 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "chestnut_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -320,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "chestnut_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "chestnut_personal_stage_3",
+    "arc_id": "chestnut_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The relay council agrees to remove Chestnut's old captain only if someone can prove the neglected eastern route still works. A storm has swollen the river, and a fever clinic beyond it needs antitoxin before dawn. Chestnut volunteers before the council finishes asking. She can carry the sealed case over the ridge herself or coordinate a chain of farmers, drivers, and wayhouses that will keep serving the road after this single urgent night.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Chestnut",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Agility": 85,
+        "Service": 85
+      }
+    },
+    "background_image": "worker_agility",
+    "conditions": {
+      "start_when": "after_days_from_flag:chestnut_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "chestnut_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Trust Chestnut to carry the antitoxin across the storm ridge. (Requires Agility 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Agility",
+        "threshold": 85,
+        "message_success": "Chestnut runs where wheels cannot, using old relay cuts hidden by bramble and years. She crosses the flooded span on its stone parapet and reaches the clinic with the wax seal unbroken. At sunrise she returns beside a line of reopened marker bells. The council clears her name, restores the eastern route, and pays the emergency courier purse. (New trait, +900 gold, +8 reputation)",
+        "message_failure": "Chestnut clears the ridge but slips at the flooded span, bruising a foreleg and cracking the case's outer box. She protects every vial and reaches the clinic after dawn; the treatment still works, though the council calls the route unsafe and charges the rescue team to your account. (-450 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 8,
+            "add_trait": "Chestnut, Windroad Runner",
+            "skill_modifiers": {
+              "Agility": 3
+            },
+            "event_flags": {
+              "chestnut_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -450,
+            "reputation": -1,
+            "event_flags": {
+              "chestnut_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Chestnut build a living relay from the wayhouses she united. (Requires Service 85+; Potential: Trait, Reputation)",
+        "condition": "Service",
+        "threshold": 85,
+        "message_success": "Chestnut assigns each leg to the person and mount best suited for it, with dry blankets, spare lanterns, and feed waiting at every exchange. The antitoxin never stops moving, yet no runner carries it far enough to fail. It reaches the clinic before midnight. The council adopts Chestnut's cooperative relay and gives the wayhouses a permanent share of tolls. (New trait, +650 gold, +8 reputation)",
+        "message_failure": "Chestnut's relay is generous but too complicated; two teams wait at different barns while the antitoxin sits between them. She takes the case herself for the final miles, arriving just in time. The clinic is served, but emergency hires and wasted supplies make the council reluctant to copy the plan. (-380 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 650,
+            "reputation": 8,
+            "add_trait": "Chestnut, Heart of the Wayhouses",
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "chestnut_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -380,
+            "reputation": -2,
+            "event_flags": {
+              "chestnut_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "oak_personal_stage_1",
+    "arc_id": "oak_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "oak_personal_stage_1_at",
+    "description": "A former pupil sends Oak a rain-soaked primer from the Eirenwood school where he once taught. Beneath its lessons, someone has scraped away Oak's marginal notes and written a claim that the village grove belongs to a timber consortium. The copied signature is his. Oak is less offended by the forgery than by the use of a teaching book to dispossess the families who filled its pages with pressed leaves. He asks for a quiet table, fine tools, and time to make the buried writing speak.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Oak",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "background_image": "worker_craft",
+    "conditions": {
+      "start_when": "has_worker:Oak"
+    },
+    "excluded_flags": {
+      "oak_personal_stage_1_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Oak reconstruct the erased lesson from language and context. (Requires Clever 45+; Potential: Reputation)",
+        "condition": "Clever",
+        "threshold": 45,
+        "message_success": "Oak compares the surviving phrases with exercises he taught in the same year. The missing passage is not a deed but a lesson on communal stewardship, quoting the village charter by chapter. His patient reconstruction points directly to the archive volume that can disprove the consortium's claim. (+3 Clever, +120 gold, +6 reputation)",
+        "message_failure": "Oak identifies the subject but assigns one phrase to the wrong dialect lesson. The archive clerk catches the mismatch, making the reconstruction look speculative. The reference still narrows the search, though you must pay for a broader examination of school and village records. (+1 Clever, -240 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 120,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "oak_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -240,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "oak_personal_stage_1_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Oak lift the overwritten ink without damaging the primer. (Requires Craft 48+; Potential: Money, Reputation)",
+        "condition": "Craft",
+        "threshold": 48,
+        "message_success": "Oak builds a slanting light frame from polished tin and applies a thin wash that darkens the older iron ink first. His original notes return line by line beneath the false claim, including a dated reference and his true signature. A conservator certifies the work and pays Oak for documenting the method. (+3 Craft, +320 gold, +5 reputation)",
+        "message_failure": "The wet primer reacts unevenly to Oak's first wash, feathering both layers at the edge. He stops before the central text is harmed and recovers the dated reference, but a professional conservator must finish the work at considerable expense. (+1 Craft, -280 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 320,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Craft": 3
+            },
+            "event_flags": {
+              "oak_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -280,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Craft": 1
+            },
+            "event_flags": {
+              "oak_personal_stage_1_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "oak_personal_stage_2",
+    "arc_id": "oak_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "oak_personal_stage_2_at",
+    "description": "The primer points to a charter stored in the elven chapterhouse, but the timber consortium has already filed a newer survey that shifts the grove boundary by forty paces. Oak remembers teaching his pupils to measure the line from three living landmark trees, not from the stone marker shown on the survey. One tree was cut years ago, one still stands, and the third may survive as a root pattern beneath the school courtyard.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Oak",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Clever": 55,
+        "Craft": 55
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:oak_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "oak_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Have Oak derive the old boundary from lessons, shadows, and growth records. (Requires Clever 60+; Potential: Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 60,
+        "message_success": "Oak combines pupil diagrams, annual ring counts, and the surviving tree's solstice shadow. The three independent measures meet at the same buried root crown, forty-two paces beyond the consortium's marker. A surveyor verifies the proof and refunds the examination bond from the consortium's deposit. (+3 Clever, +440 gold, +6 reputation)",
+        "message_failure": "Oak's reasoning is sound, but he uses a sketch made before the schoolyard wall was moved. The resulting point misses the root crown by six paces. A second survey corrects the error and still challenges the consortium line, though the mistake costs money and confidence. (+1 Clever, -300 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 440,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "oak_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "oak_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Oak reveal the buried root pattern with a careful courtyard model. (Requires Craft 64+; Potential: Reputation)",
+        "condition": "Craft",
+        "threshold": 64,
+        "message_success": "Oak constructs a narrow sounding frame that maps density beneath the paving without lifting every stone. The old root fan appears in chalk arcs across the courtyard, matching pressed leaves and measurements in generations of pupil primers. Even the consortium's surveyor admits the living landmark predates his marker. (+3 Craft, +180 gold, +7 reputation)",
+        "message_failure": "Oak's frame resonates with an old drainage channel and marks a false branch. He recognizes the mistake before presenting it, but several paving stones must be lifted to locate the true root crown by hand. The evidence is recovered after costly repairs to the schoolyard. (+1 Craft, -340 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 7,
+            "skill_modifiers": {
+              "Craft": 3
+            },
+            "event_flags": {
+              "oak_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -340,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Craft": 1
+            },
+            "event_flags": {
+              "oak_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  },
+  {
+    "id": "oak_personal_stage_3",
+    "arc_id": "oak_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "The chapterhouse convenes beneath the surviving landmark tree to rule on Eirenwood's grove. The timber consortium argues that living markers are sentimental and imprecise; former pupils arrive carrying Oak's old primers, each with a different leaf, measurement, or copied lesson. Oak can teach the assembly how generations of records form a rigorous proof or build a permanent boundary instrument that joins the charter's language to the land itself.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Oak",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Clever": 85,
+        "Craft": 85
+      }
+    },
+    "background_image": "worker_clever",
+    "conditions": {
+      "start_when": "after_days_from_flag:oak_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "oak_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Oak turn the hearing into a lesson in living records. (Requires Clever 85+; Potential: Trait, Money, Reputation)",
+        "condition": "Clever",
+        "threshold": 85,
+        "message_success": "Oak asks former pupils to place their primers by year. Leaf veins, shadow lengths, and copied exercises change gradually but converge on the same boundary. What the consortium calls sentiment becomes a century of repeated observation. The chapterhouse preserves the grove, fines the false survey, and appoints Oak to advise village archives. (New trait, +850 gold, +8 reputation)",
+        "message_failure": "Oak's lesson is patient, but one elder mistakes variation between pupil drawings for contradiction. The chapterhouse protects the grove provisionally while ordering a costly formal resurvey. The consortium loses its immediate claim, though the village must spend much of its relief fund defending the line again. (-400 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 850,
+            "reputation": 8,
+            "add_trait": "Oak, Keeper of Living Records",
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "oak_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -1,
+            "event_flags": {
+              "oak_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Oak construct a charter dial that fixes the boundary without harming the grove. (Requires Craft 85+; Potential: Trait, Reputation)",
+        "condition": "Craft",
+        "threshold": 85,
+        "message_success": "Oak sets a bronze dial around the surviving tree without piercing bark or root. At solstice marks, its arms point to the buried root crown and the old stump, reproducing the charter line for any observer. The consortium's stone marker is exposed as impossible. The chapterhouse adopts the dial as both monument and working survey tool. (New trait, +650 gold, +8 reputation)",
+        "message_failure": "A hidden twist in the old tree's trunk shifts the dial's first shadow line. Oak notices, but not before the consortium challenges the demonstration. The primers still save the grove under a negotiated conservation order, while recasting the dial and repairing its mount consumes the award. (-360 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 650,
+            "reputation": 8,
+            "add_trait": "Oak, Charterwright",
+            "skill_modifiers": {
+              "Craft": 3
+            },
+            "event_flags": {
+              "oak_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -360,
+            "reputation": -2,
+            "event_flags": {
+              "oak_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ],
+    "nsfw": false
+  }
+]

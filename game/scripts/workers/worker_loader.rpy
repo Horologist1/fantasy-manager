@@ -1,6 +1,26 @@
 init python:
     _worker_json_files_cache = None
 
+    def _worker_catalog_identity(worker):
+        """Internal dedupe key; procedural templates never need a display name."""
+        if worker.get("procedural_template", False):
+            return worker.get("template_id") or worker.get("monster_archetype") or "Unknown Monster Template"
+        return worker.get("name", "Unknown")
+
+    def _load_worker_json_entry(file_path):
+        """Return one worker entry without leaking file handles to the store."""
+        with renpy.file(file_path) as handle:
+            raw = handle.read()
+        text = raw.decode("utf-8") if hasattr(raw, "decode") else raw
+        data = json.loads(text)
+        if hasattr(data, "get"):
+            return data
+        if hasattr(data, "__iter__") and not isinstance(data, (str, bytes)):
+            for entry in data:
+                if hasattr(entry, "get"):
+                    return entry
+        return None
+
     def _get_worker_json_files(refresh=False):
         """
         Cache worker JSON file list to avoid repeated renpy.list_files() scans.
@@ -90,14 +110,14 @@ init python:
                 with renpy.file("data/workers.json") as f:
                     workers_data = json.loads(f.read().decode("utf-8"))
                     for worker in workers_data:
-                        worker_name = worker.get("name", "Unknown")
+                        worker_name = _worker_catalog_identity(worker)
                         
                         # Skip if already loaded (avoid duplicates)
                         if worker_name in loaded_names:
                             continue
                         
                         # Apply NSFW/SFW mode filter
-                        if not persistent.nsfw_enabled and worker.get("nsfw", False):
+                        if not persistent.nsfw_enabled and content_object_is_restricted(worker):
                             continue
                         
                         # Apply worker gender filter (Both / Only Male / Only Female)
@@ -114,10 +134,11 @@ init python:
                         if worker.get("encounter_only", False) and not include_encounter_only and not for_events:
                             continue
                         
-                        # Ensure defaults are applied
-                        ensure_worker_defaults(worker)
-                        _ensure_worker_min_traits(worker)
-                        _stamp_template_id_from_json(worker)
+                        # Procedural templates are recipes, not worker instances.
+                        if not worker.get("procedural_template", False):
+                            ensure_worker_defaults(worker)
+                            _ensure_worker_min_traits(worker)
+                            _stamp_template_id_from_json(worker)
                         all_workers.append(worker)
                         loaded_names.add(worker_name)
 
@@ -144,14 +165,14 @@ init python:
                         workers_data = json.loads(f.read().decode("utf-8"))
                         file_workers_loaded = 0
                         for worker in workers_data:
-                            worker_name = worker.get("name", "Unknown")
+                            worker_name = _worker_catalog_identity(worker)
                             
                             # Skip if already loaded (avoid duplicates)
                             if worker_name in loaded_names:
                                 continue
                             
                             # Apply NSFW/SFW mode filter
-                            if not persistent.nsfw_enabled and worker.get("nsfw", False):
+                            if not persistent.nsfw_enabled and content_object_is_restricted(worker):
                                 continue
                             
                             # Apply worker gender filter (Both / Only Male / Only Female)
@@ -168,10 +189,11 @@ init python:
                             if worker.get("encounter_only", False) and not include_encounter_only and not for_events:
                                 continue
                             
-                            # Ensure defaults are applied
-                            ensure_worker_defaults(worker)
-                            _ensure_worker_min_traits(worker)
-                            _stamp_template_id_from_json(worker)
+                            # Procedural templates are recipes, not worker instances.
+                            if not worker.get("procedural_template", False):
+                                ensure_worker_defaults(worker)
+                                _ensure_worker_min_traits(worker)
+                                _stamp_template_id_from_json(worker)
                             all_workers.append(worker)
                             loaded_names.add(worker_name)
                             file_workers_loaded += 1
@@ -306,17 +328,20 @@ init python:
 
     def workers_filtered_by_gender(workers_list):
         """
-        Return a list of workers that match the persistent worker_gender_filter.
-        Use this when displaying the roster so that Only Male / Only Female behaves
-        as if the other gender doesn't exist.
+        Return the active roster matching the persistent worker_gender_filter.
+        Remote franchise staff are managed only from Franchise Holdings.
         """
         if not workers_list:
             return workers_list
+        active_workers = [
+            w for w in workers_list
+            if not hasattr(w, "get") or not worker_is_in_franchise(w)
+        ]
         mode = getattr(persistent, "worker_gender_filter", "both")
         if mode == "both":
-            return list(workers_list)
+            return active_workers
         result = []
-        for w in workers_list:
+        for w in active_workers:
             if not hasattr(w, "get"):
                 result.append(w)
                 continue

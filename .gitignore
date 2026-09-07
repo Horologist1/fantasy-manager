@@ -12,6 +12,7 @@ local.properties
 # IDE / AI tooling and internal dev docs — not needed in the public repo
 .claude/
 .cursor/
+.hermes/
 /docs/
 
 # Developer maintenance scripts — offline JSON tooling, not needed at runtime
@@ -52,3 +53,6 @@ ui_probe/
 game/saves/
 game/tl/None/*.rpymc
 
+# Python bytecode caches (pure python-packages + tests)
+__pycache__/
+*.pyc

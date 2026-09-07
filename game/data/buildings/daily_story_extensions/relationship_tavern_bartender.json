@@ -1,0 +1,660 @@
+{
+  "_comment": "Relationship daily stories (Bartender). Follows the contract fixed in relationship_brothel_prostitute.json: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 (stat-gated roll normally, feedback on the gating stat), 2x 'Loves you' (normal roll, failure = moved and forgiven -> earnings 0), 2x Best Friends / Harem Member / House Servant (no_fail, anchored on the manager). Prose gender-neutral for worker AND manager. story_image reuses existing bartender art as placeholder.",
+  "building_id": "tavern",
+  "profession_id": "bartender",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "tavern_bartender_romance_lamp_lit",
+      "weight": 2,
+      "report": "A Lamp Kept Lit",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "positive_traits": {
+        "Charming": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} keeps the taproom open past close on the thin chance you'll come down to count the till in person. You don't, but a rain-soaked caravan crew does, drawn to the only lit door on the street, and they drink until the small hours. The lamp was for you; the coin is too.",
+        "critical_success": "You do come down, near midnight, and the caravan master watches {worker_name} come alive at the sound of the stair. Deciding a house run on that kind of feeling must be worth trusting, the master books the back room for a full week and pays it up front.",
+        "mediocre": "{worker_name} keeps the place open and nobody comes, not the trade and not you. Oil and candles burn all night over an empty room, and the take barely covers them.",
+        "failure": "{worker_name} watches the door all shift instead of the taps. A cask floods the boards, the stew scorches, and the last patrons leave unserved and unhappy. The worst of it is not the mess. The worst of it is that you never came."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_romance_suitor_at_the_bar",
+      "weight": 2,
+      "report": "Suitor at the Bar",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "positive_traits": {
+        "Elegant": 4,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A silver-handed patron courts {worker_name} across the bar all evening, and {worker_name} keeps the flirtation exactly warm enough to keep the whole table ordering. The suitor goes home with an empty purse and no promise, because that heart is already spoken for, though the person it belongs to only signs the wages.",
+        "critical_success": "The suitor, refused with such grace that losing feels like winning, buys rounds for the room to save face and comes back the next night to lose again. {worker_name} pockets nothing but the pleasure of a secret kept, and your till pockets the rest.",
+        "mediocre": "{worker_name} plays the game a beat too carefully and the suitor cools, settling the tab at face value. A profitable evening dies of caution.",
+        "failure": "The suitor pushes too far and {worker_name} snaps, loud enough for the whole room: there is someone. The table settles up early, the taproom goes awkward, and the someone in question never even hears the words that emptied it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_friend_watered_barrels",
+      "weight": 2,
+      "report": "Watered Barrels",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} taps the new delivery, takes one mouthful, and knows: the supplier is watering your barrels. By the time you hear about it, the wagon has been stopped at the gate, the cooper's mark checked against the ledger, and a refund is being counted into the till. Nobody guards a purse like a friend who considers it half a home.",
+        "critical_success": "{worker_name} makes the supplier broach a barrel in front of witnesses, and the thin ale speaks for itself. The refund arrives with an apology and a discount that will outlast the season, and {worker_name} waves off your thanks. Somebody has to mind the house.",
+        "mediocre": "{worker_name} suspects the ale is thin but can't prove it on the tongue alone. The argument ends in a grudging half-credit and a supplier who will be more careful, or at least more subtle.",
+        "failure": "{worker_name} accuses on a tired palate and is wrong; the barrel was sound. The supplier leaves insulted, word travels the market row by noon, and {worker_name} spends the night sick over having cost you a good name to protect you from nothing."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_friend_ran_the_till",
+      "weight": 2,
+      "report": "Till Like a Co-Owner",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "positive_traits": {
+        "Clever": 4,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Payday night, three deep at the bar, and {worker_name} runs the till like a co-owner: counts change twice, bites a clipped coin and hands it back, chalks every round on the slate. When you cash out, the drawer is right to the copper. A small thing that is not small at all.",
+        "critical_success": "A charming stranger starts the short-change patter mid-rush and {worker_name} reverses it so smoothly the crowd applauds; the stranger pays double to escape with dignity. After close, {worker_name} sits with you over the books like the money belongs to both of you. The way {worker_name} sees it, it does.",
+        "mediocre": "The crush wins a few skirmishes; some rounds go unchalked and a jug walks off. The drawer balances, roughly, the way rough nights do.",
+        "failure": "A fast-handed regular gets into the drawer during the worst of the rush. {worker_name} quietly makes up part of the loss from tips without telling you, and you find out anyway, which stings the two of you worse than the missing coin ever could."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_rebel_free_rounds",
+      "weight": 2,
+      "report": "Free Rounds",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "{worker_name}'s friends drink free tonight, your ale poured with your blessing never asked. But friends bring friends, the corner table swells into a crowd, and the paying strangers around them drink faster to keep pace with the laughter. The night comes out ahead in spite of itself.",
+        "critical_success": "A free round dropped on the right table at the right hour turns the taproom into the loudest room on the street, and the crowd that follows the noise pays for that round twenty times over. {worker_name} takes the credit; you take the coin.",
+        "mediocre": "The free ale flows and the crowd it draws nurses one cup apiece for three hours. Generosity, it turns out, attracts people who like things free.",
+        "failure": "Somebody shouts on the house louder than {worker_name} ever said it, and suddenly it is everyone's round. Two casks vanish into a cheering mob before the tap can be wrestled shut, and the cheering is not worth what it cost your cellar."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 6
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_rebel_moonshine",
+      "weight": 2,
+      "report": "Moonshine on the Sly",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 30)"
+      },
+      "descriptions": {
+        "success": "Under the counter sits a jug that never came off any wagon you paid for. {worker_name} sells the backroom moonshine by the thimble to those who ask right, sharp and illegal and profitable, and enough of the coin finds your till to keep the arrangement invisible. Even rebellion has overheads.",
+        "critical_success": "The illegal thimble gets a reputation. Drinkers come for the moonshine and stay for three lawful pints on top, and on paper your ledger has never looked so honest. {worker_name} polishes the counter over the jug and says nothing at all.",
+        "mediocre": "Tonight's batch tastes like lamp oil. The buyers want refunds in whispers, and whispered refunds still come out of real coin.",
+        "failure": "An excise man at the end of the bar turns the jug over and asks for the stamp. There is no stamp. The fine is written in your name, since it was your license the moonshine traded under, and {worker_name} shrugs like weather happened."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_lovesyou_unnamed_drink",
+      "weight": 3,
+      "report": "The Unnamed Drink",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "There is a new drink at your tavern with no name and no price on the slate. {worker_name} invented it on a slow evening and will not say what is in it or who it is for; the regulars swear it tastes like missing someone, and they order it in twos. Every coin of it lands in your till. That is, though nobody says so, the point.",
+        "critical_success": "A merchant tries to buy the recipe outright, coin on the counter. {worker_name} refuses without looking up from the glass being polished, and the refusal makes the drink famous by week's end. The unnamed thing outsells your best ale, and only one person in the city could tell you what it means.",
+        "mediocre": "The drink comes out wrong tonight, too bitter, too honest, and the regulars pat the bar kindly and go back to beer. Some feelings do not keep between batches.",
+        "failure": "Tonight the missing gets too loud to mix around. {worker_name} sets down the bottle mid-pour, fills a tray on the house, and raises one glass toward the stair to your office in a silent toast the room does not understand and joins anyway. Nothing is charged for that hour. Nothing needed to be."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_lovesyou_warm_room",
+      "weight": 3,
+      "report": "A Room Kept Warm",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "failure_image": "bartender_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The bar runs warm when {worker_name} is on it, and the regulars have noticed without knowing why: the fire banked just so, your usual chair kept clear, the good glasses polished as if someone worth impressing might walk in any minute. People stay longer in a room that is waiting for somebody, and they drink while they stay.",
+        "critical_success": "You walk in unannounced, and the whole room watches {worker_name} come alight: pours sharper, laughs easier, works the bar like a stage now that the only audience that matters has arrived. The regulars, warmed by standing near it, order like it is festival night, and the take says so.",
+        "mediocre": "{worker_name} spends the shift glancing at a door that never opens. The pours drift generous, the mind drifts further, and the margin quietly thins.",
+        "failure": "A merchant offers triple for the last bottle behind the bar. {worker_name} has kept it for the night you return and cannot bring it down. The merchant follows that glance toward your stair, laughs, and withdraws the offer without insult. No coin enters the till, but no bottle or goodwill is lost."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_bestfriends_cellar_count",
+      "weight": 3,
+      "report": "The Cellar Count",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "After close, {worker_name} walks your cellar with a candle and a taster's cup and finds two casks a week from turning. By morning there is a cellarman's special chalked on the slate, and by the weekend both casks are sold out at full price. A loss becomes a profit because a friend counts your stock as if it were half theirs.",
+        "critical_success": "The sour casks prompt a full cellar reset. {worker_name} redraws the rotation, shifts the fast sellers to the front racks, and badgers the cooper into replacing a weeping barrel for free. The month's margin comes out the best you have ever booked, and the only fee is that you sit down and drink the special together."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_bestfriends_bar_talk",
+      "weight": 3,
+      "report": "Bar Talk, Told First",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "bartender_mysterious_stranger_tavern",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Bartenders hear everything. A stranger at the end of the bar buys rounds and asks casual little questions about your debts, your lease, your temper. {worker_name} pours, smiles, and learns far more from the stranger than the stranger learns from anyone, then comes straight up to your office with the whole picture before the tab is settled.",
+        "critical_success": "The friendly questions turn out to be the front end of a move against your lease. Because {worker_name} caught it over a wiped counter days before it landed, you meet it prepared and it dies without a sound. When you try to settle the debt, {worker_name} pours two of the good ones and charges you for exactly one of them."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "relationship": 1,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_harem_spoken_for",
+      "weight": 3,
+      "report": "Spoken For",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "positive_traits": {
+        "Beautiful": 4,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The mark at {worker_name}'s throat sits just above the apron knot, and the regulars have learned what it means: spoken for, and not by anyone in this room. They flirt anyway, because being turned down graciously by someone who belongs to you has become one of the house's finer entertainments, and they tip for the privilege.",
+        "critical_success": "A wealthy stranger tries to buy an evening's exception and is refused so beautifully that the coin lands on the counter anyway, paid for the pleasure of the refusal itself, with compliments to be passed along to whoever {worker_name} answers to. {worker_name} brings you both, the fortune and the compliments, without a flicker of temptation."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_harem_private_reserve",
+      "weight": 3,
+      "report": "The Private Reserve",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "positive_traits": {
+        "Elegant": 4,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "There is one bottle behind your bar that no coin can open. {worker_name} keeps it dusted and pours it on your word only, and the patrons who keep trying to buy it keep being sold the second-best instead, at a price that climbs with every refusal. Devotion, it turns out, is excellent for margins.",
+        "critical_success": "A drunk lordling offers triple for a single glass of the untouchable bottle. {worker_name} pours a thimble of something similar instead and charges the difference for the privilege of having asked, and the lordling declares it the finest drink of the year. The real bottle waits, unopened, for the only order that matters."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_servant_open_to_close",
+      "weight": 3,
+      "report": "Open to Close",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "bartender_story1",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You mention the tavern is short-handed, and {worker_name} simply takes both shifts: opens the shutters at dawn, closes them past midnight, scrubs the boards in between. No complaint, no request for thanks. The house is yours, so the house gets kept, and that settles the matter.",
+        "critical_success": "Open to close and every task between, cellar rotated, taps stripped and cleaned, ledger squared, all done to the standard of someone who expects you personally to inspect it. The double shift banks a double take, and the only question {worker_name} asks at the end of it is what tomorrow's orders are."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_bartender_servant_rough_room",
+      "weight": 3,
+      "report": "The Rough Room Held",
+      "skill_options": [
+        "Charm",
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "bartender_bar_fight_tavern",
+      "positive_traits": {
+        "Robust": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Militia payday fills the room with the crowd nobody else will work. You post {worker_name} behind the bar with three rules, and the three rules hold all night: cut off exactly whom you named, water nothing, flatter everyone. The roughest room of the month closes without a broken glass, and the takings match the noise.",
+        "critical_success": "A brawl starts anyway and dies before the second punch, because {worker_name} steps between the tables precisely the way you taught and talks two soldiers back into their chairs. By last call the would-be fighters are buying each other's rounds, and the guard, arriving to find nothing, stays to drink instead."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

@@ -437,7 +437,7 @@
   {
     "id": "romance_level1_lord_female_romantic",
     "name": "Playful Flirting",
-    "description": "I engage in witty, charming discourse with subtle compliments and confident bearing. She responds with graceful warmth, creating an electric tension that crackles between us like lightning in a summer storm.",
+    "description": "I trade wit for wit and let a compliment land where it will do the most good. She answers in kind, and somewhere between her smile and the pause before it, the conversation stops being idle.",
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -468,7 +468,7 @@
   {
     "id": "romance_level1_lord_male_romantic",
     "name": "Playful Flirting",
-    "description": "I engage in witty, charming discourse with subtle compliments and relaxed poise. He responds with warm confidence, and the romantic tension between us grows like a flame kindled in darkness.",
+    "description": "I keep the banter easy and the compliments precise. He gives back as good as he gets, holding my gaze a beat longer each time, until neither of us is pretending the game is only a game.",
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -499,7 +499,7 @@
   {
     "id": "romance_level1_lady_female_romantic",
     "name": "Playful Flirting",
-    "description": "I engage in light, playful banter with subtle touches and meaningful glances. She responds with knowing smiles and playful teasing that creates an intimate romantic connection between us, as two souls drawn together by fate's design.",
+    "description": "I keep the banter light and let a touch linger on her arm a moment past innocent. She notices — of course she notices — and her answering smile says she has decided to enjoy where this is going.",
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -530,7 +530,7 @@
   {
     "id": "romance_level1_lady_male_romantic",
     "name": "Playful Flirting",
-    "description": "I share meaningful looks and subtle touches that go beyond mere friendship. He responds with understanding and reciprocal interest, creating a deeper bond between us that transcends the bounds of simple camaraderie.",
+    "description": "I let my glances say what work talk never quite manages, and a touch on his shoulder carries the rest. He straightens a little whenever I come near now. We both know what that means, and neither of us says it yet.",
     "interaction_level": 1,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -561,7 +561,7 @@
   {
     "id": "romance_level2_lord_female",
     "name": "Intimate Dinner",
-    "description": "I arrange a private dinner, with fine food and wine laid out on a small table. The candles cast dancing shadows on the walls as evening deepens. She arrives, and we sit across from each other, the conversation flowing like wine. As the night progresses, I find myself sharing deeper romantic feelings and desires I had kept hidden. Our hands touch across the table, fingers lingering, and the intimacy between us grows. The shadows dance with the flames of passion, and we are lost in this moment of connection.",
+    "description": "I clear the ledgers off the small table, set out the good wine, and let the kitchen show off for once. She arrives dressed for the evening rather than for work, which settles the question of what this dinner is. Between courses the talk drifts from business into everything I had been saving for someday, and when our hands meet across the table, neither of us moves first to end it. The candles burn low. We stop keeping track of the hour.",
     "interaction_level": 2,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -596,7 +596,7 @@
   {
     "id": "romance_level2_lord_male_romantic",
     "name": "Intimate Dinner",
-    "description": "I arrange a private dinner, with fine food and wine laid out on a small table. The candles cast dancing shadows on the walls as evening deepens. He arrives, and we sit across from each other, the conversation flowing like wine. As the night progresses, I find myself sharing deeper romantic feelings and desires I had kept hidden. Our hands touch across the table, fingers lingering, and the intimacy between us grows. The shadows dance with the flames of passion, and we are lost in this moment of connection.",
+    "description": "I book the private room, set two places, and open a bottle older than most of my staff. He arrives early — a tell I file away with some satisfaction. Dinner runs long because neither of us wants to reach the end of it; the confessions come out somewhere after the second glass, unplanned and unregretted. When our hands meet over the last of the wine, he does not pull back. The candles are guttering by the time either of us admits the hour.",
     "interaction_level": 2,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -631,7 +631,7 @@
   {
     "id": "romance_level2_lady_female_romantic",
     "name": "Intimate Dinner",
-    "description": "I arrange a private dinner, with fine food and wine laid out on a small table. The candles cast dancing shadows on the walls as evening deepens. She arrives, and we sit across from each other, the conversation flowing like wine. As the night progresses, I find myself sharing deeper romantic feelings and desires I had kept hidden. Our hands touch across the table, fingers lingering, and the intimacy between us grows. The shadows dance with the flames of passion, and we are lost in this moment of connection.",
+    "description": "I lay the table myself — the good plates, the wine I never open, candles enough to flatter us both. She arrives with her hair done differently, and that small effort undoes me more than the wine does. We talk past the food going cold, trading the truths that only ever come out by candlelight, and her fingers find mine across the table as if the reach were the most natural thing in the world. Perhaps by then it is.",
     "interaction_level": 2,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -666,7 +666,7 @@
   {
     "id": "romance_level2_lady_male",
     "name": "Intimate Dinner",
-    "description": "I arrange a private dinner, with fine food and wine laid out on a small table. The candles cast dancing shadows on the walls as evening deepens. He arrives, and we sit across from each other, the conversation flowing like wine. As the night progresses, I find myself sharing deeper romantic feelings and desires I had kept hidden. Our hands touch across the table, fingers lingering, and the intimacy between us grows. The shadows dance with the flames of passion, and we are lost in this moment of connection.",
+    "description": "I arrange the dinner for the quiet hours after closing — the good wine, the last of the honey cakes, candlelight where lamplight would do. He arrives freshly shaved and slightly nervous, which I choose to find promising. The conversation starts careful and forgets to stay that way; by the time the bottle is empty, so is the space between our hands on the table. Neither of us hurries to reclaim them.",
     "interaction_level": 2,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -701,7 +701,7 @@
   {
     "id": "romance_level3_lord_female_nsfw",
     "name": "Passionate Night",
-    "description": "The tension between us has been building for days, and tonight it finally breaks. In my private chambers, the fire crackles as I pull her close, our lips meeting with urgent hunger. There's no time for gentle words or careful exploration - we need each other now, desperately. Clothes fall away in a rush, and we come together with raw, untamed passion. Her moans are urgent, her touch desperate, as we lose ourselves in the fire of our desire. This is passion in its purest form - wild, consuming, and utterly intoxicating. We move together with frantic energy, each touch more urgent than the last, until we collapse in each other's arms, breathless and satisfied.",
+    "description": "Days of held glances come due at last. She barely lets the chamber door close before she is in my arms, and the careful distance we have kept dissolves against it. We undress each other badly — buttons, laces, impatience — and fall to the bed already tangled. She is not quiet, and I stop wanting her to be. When we finally still, she stays sprawled across me, tracing idle lines on my chest, wearing the smile of a woman who intends to be back.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -736,7 +736,7 @@
   {
     "id": "romance_level3_lord_female_sfw",
     "name": "Intimate Escape",
-    "description": "I plan a special excursion to a secluded spot I know - a hidden garden or a quiet overlook with a view of the city. We slip away together, leaving our duties behind. As we walk, we share stories and laughter, the distance between us closing with each step. In this private space, away from prying eyes, we explore our deeper connection. She trusts me completely, and we share intimate moments of understanding, as two souls united in secret. The romantic tension between us builds as we find ourselves alone in this beautiful, secluded place.",
+    "description": "I know a place the city forgets to watch — a walled garden gone half-wild, where the rooftops turn to copper at dusk. We slip away in the slow hours and leave our titles at the gate. She walks closer than she needs to, laughs more easily than she ever does under my roof, and somewhere between the stories we trade, her hand ends up in mine and stays there. Nothing happens that anyone could name. Everything happens that matters.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -771,7 +771,7 @@
   {
     "id": "romance_level3_lord_male_romantic_nsfw",
     "name": "Passionate Night",
-    "description": "The tension between us has been building for days, and tonight it finally breaks. In my private chambers, the fire crackles as I pull him close, our lips meeting with urgent hunger. There's no time for gentle words or careful exploration - we need each other now, desperately. Clothes fall away in a rush, and we come together with raw, untamed passion. His moans are urgent, his touch desperate, as we lose ourselves in the fire of our desire. This is passion in its purest form - wild, consuming, and utterly intoxicating. We move together with frantic energy, each touch more urgent than the last, until we collapse in each other's arms, breathless and satisfied.",
+    "description": "The tension has been building for days, and tonight neither of us pretends otherwise. He kisses me at the door, hard, before I can offer him a drink — the drink was never the point. We take it out on each other half the night, urgent first and unhurried after, learning what makes the other's breath break. Afterward he lies with one arm thrown across me, heavy and unapologetic, and I find I have no complaints to file.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -806,7 +806,7 @@
   {
     "id": "romance_level3_lord_male_romantic_sfw",
     "name": "Intimate Escape",
-    "description": "I plan a special excursion to a secluded spot I know - a hidden garden or a quiet overlook with a view of the city. We slip away together, leaving our duties behind. As we walk, we share stories and laughter, the distance between us closing with each step. In this private space, away from prying eyes, we explore our deeper connection. He trusts me completely, and we share intimate moments of understanding, as two souls united in secret. The romantic tension between us builds as we find ourselves alone in this beautiful, secluded place.",
+    "description": "I know an overlook above the mill quarter where the whole city lays itself out like a map of things we no longer have to think about. We climb it in the late afternoon and stay past sundown. Away from staff and ledgers he talks differently — slower, truer — and I catch myself listening the way I usually listen only for profit. On the walk back our shoulders keep touching. Neither of us corrects it.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -841,7 +841,7 @@
   {
     "id": "romance_level3_lady_female_romantic_nsfw",
     "name": "Passionate Night",
-    "description": "The tension between us has been building for days, and tonight it finally breaks. In my private chambers, the fire crackles as I pull her close, our lips meeting with urgent hunger. There's no time for gentle words or careful exploration - we need each other now, desperately. Clothes fall away in a rush, and we come together with raw, untamed passion. Her moans are urgent, her touch desperate, as we lose ourselves in the fire of our desire. This is passion in its purest form - wild, consuming, and utterly intoxicating. We move together with frantic energy, each touch more urgent than the last, until we collapse in each other's arms, breathless and satisfied.",
+    "description": "It breaks at last, whatever we were calling it. She pulls the pins from my hair; I answer with the laces of her dress, and the firelight gets an education. Even in our hunger we take our time — hands and mouths, gasps traded like confidences, each of us determined the other will come undone first. We both win. She falls asleep with her leg thrown over mine, and I let the candle burn itself out rather than move.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -876,7 +876,7 @@
   {
     "id": "romance_level3_lady_female_romantic_sfw",
     "name": "Intimate Escape",
-    "description": "I plan a special excursion to a secluded spot I know - a hidden garden or a quiet overlook with a view of the city. We slip away together, leaving our duties behind. As we walk, we share stories and laughter, the distance between us closing with each step. In this private space, away from prying eyes, we explore our deeper connection. She trusts me completely, and we share intimate moments of understanding, as two souls united in secret. The romantic tension between us builds as we find ourselves alone in this beautiful, secluded place.",
+    "description": "There is a hidden garden behind the old chapel that I have never shown anyone. I show her. We spend the afternoon among the overgrown roses trading stories we have never let past our own teeth, and the quiet between the stories is somehow the better part. When she tucks a stray blossom behind my ear it is half a joke — and then her hand lingers, and it is not a joke at all. We walk back slowly. The city can wait.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -911,7 +911,7 @@
   {
     "id": "romance_level3_lady_male_nsfw",
     "name": "Passionate Night",
-    "description": "The tension between us has been building for days, and tonight it finally breaks. In my private chambers, the fire crackles as I pull him close, our lips meeting with urgent hunger. There's no time for gentle words or careful exploration - we need each other now, desperately. Clothes fall away in a rush, and we come together with raw, untamed passion. His moans are urgent, his touch desperate, as we lose ourselves in the fire of our desire. This is passion in its purest form - wild, consuming, and utterly intoxicating. We move together with frantic energy, each touch more urgent than the last, until we collapse in each other's arms, breathless and satisfied.",
+    "description": "Days of pretending this was something else end at my chamber door. He is gentler than his hands suggest and less patient than his manners promised — a combination I intend to explore at length. Clothes land where they land; the bed takes the rest of the argument. He says my name at the end like it costs him something, and afterward, my ear against his heartbeat, I decide the sound was worth the price.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -946,7 +946,7 @@
   {
     "id": "romance_level3_lady_male_sfw",
     "name": "Intimate Escape",
-    "description": "I plan a special excursion to a secluded spot I know - a hidden garden or a quiet overlook with a view of the city. We slip away together, leaving our duties behind. As we walk, we share stories and laughter, the distance between us closing with each step. In this private space, away from prying eyes, we explore our deeper connection. He trusts me completely, and we share intimate moments of understanding, as two souls united in secret. The romantic tension between us builds as we find ourselves alone in this beautiful, secluded place.",
+    "description": "I steal him away to a quiet overlook I found years ago, back when I had nothing to run from but my own thoughts. We watch the barges crawl the river and talk about everything that is not work — childhood, appetites, the lives we meant to live. He listens like the answers matter and stands close enough that the wind is no excuse. By the time the lamps come on below us, something has been agreed between us that neither of us said aloud.",
     "interaction_level": 3,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -981,7 +981,7 @@
   {
     "id": "romance_level4_lord_female",
     "name": "Refined Romantic Evening",
-    "description": "I create a perfect evening of quality time together in my private chambers. Soft candlelight illuminates the room as we sit together by the fireplace, perhaps reading poetry to each other, playing a quiet game of cards, or simply sharing stories while sipping fine wine. The atmosphere is intimate and relaxed - no urgency, no expectations, just the pleasure of each other's company. We talk about our dreams, our past adventures, and our hopes for the future, creating moments of deep connection that go beyond words. The hours pass effortlessly as we bask in the warmth of our bond, finding joy in the simple pleasure of being together. This refined approach to romance nurtures our relationship with gentle care, building a foundation of trust and intimacy that makes every moment together feel like a gift.",
+    "description": "An evening with no agenda but her. Wine we do not hurry, a fire kept fed, a game of cards she wins twice — once fairly. She reads aloud from whatever she pulls off my shelf and does the voices when she thinks I am too drowsy to tease her for it. We talk about the years behind us and the ones we intend to have, and midnight arrives without either of us noticing the hours filing past. It is the simplest thing I do all week, and the one I would defend with a blade.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -1016,7 +1016,7 @@
   {
     "id": "romance_level4_lord_male_romantic",
     "name": "Refined Romantic Evening",
-    "description": "I create a perfect evening of quality time together in my private chambers. Soft candlelight illuminates the room as we sit together by the fireplace, perhaps reading poetry to each other, playing a quiet game of cards, or simply sharing stories while sipping fine wine. The atmosphere is intimate and relaxed - no urgency, no expectations, just the pleasure of each other's company. We talk about our dreams, our past adventures, and our hopes for the future, creating moments of deep connection that go beyond words. The hours pass effortlessly as we bask in the warmth of our bond, finding joy in the simple pleasure of being together. This refined approach to romance nurtures our relationship with gentle care, building a foundation of trust and intimacy that makes every moment together feel like a gift.",
+    "description": "We claim the evening for ourselves — the deep chairs, the good bottle, the fire built to last. He beats me at cards and is insufferable about it; I read to him until the insufferability subsides. Mostly we talk, the way only two people with nothing left to prove can talk, about old campaigns and older regrets and what we want the next years to hold. No urgency, no performance. Just his laugh across the firelight, which I have come to count among my holdings.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -1051,7 +1051,7 @@
   {
     "id": "romance_level4_lady_female_romantic",
     "name": "Refined Romantic Evening",
-    "description": "I create a perfect evening of quality time together in my private chambers. Soft candlelight illuminates the room as we sit together by the fireplace, perhaps reading poetry to each other, playing a quiet game of cards, or simply sharing stories while sipping fine wine. The atmosphere is intimate and relaxed - no urgency, no expectations, just the pleasure of each other's company. We talk about our dreams, our past adventures, and our hopes for the future, creating moments of deep connection that go beyond words. The hours pass effortlessly as we bask in the warmth of our bond, finding joy in the simple pleasure of being together. This refined approach to romance nurtures our relationship with gentle care, building a foundation of trust and intimacy that makes every moment together feel like a gift.",
+    "description": "I bar the door to business and give the evening to her entirely. We share the long couch by the fire, her feet in my lap, a book passing back and forth whenever one of us finds a line too good to keep. The wine goes slowly; the talk does not — dreams, grudges, the futures we are no longer afraid to say out loud. Nothing in the night asks anything of us. That is the luxury, and we are rich in it.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -1086,7 +1086,7 @@
   {
     "id": "romance_level4_lady_male",
     "name": "Refined Romantic Evening",
-    "description": "I create a perfect evening of quality time together in my private chambers. Soft candlelight illuminates the room as we sit together by the fireplace, perhaps reading poetry to each other, playing a quiet game of cards, or simply sharing stories while sipping fine wine. The atmosphere is intimate and relaxed - no urgency, no expectations, just the pleasure of each other's company. We talk about our dreams, our past adventures, and our hopes for the future, creating moments of deep connection that go beyond words. The hours pass effortlessly as we bask in the warmth of our bond, finding joy in the simple pleasure of being together. This refined approach to romance nurtures our relationship with gentle care, building a foundation of trust and intimacy that makes every moment together feel like a gift.",
+    "description": "An evening hoarded like coin. He mends the fire while I pour; we play cards for outrageous, imaginary stakes and pay our debts in stories — his past, mine, the versions of the future we are each quietly building around the other. The candles burn down at their own pace. When the clock finally embarrasses us both, neither of us can say where the hours went, only that they were spent well and in good company.",
     "interaction_level": 4,
     "cost_energy": 0,
     "cost_money": 10,
@@ -1120,7 +1120,7 @@
   {
     "id": "romance_level4_lord_female_nsfw",
     "name": "Perfect Night",
-    "description": "Our bond has reached its zenith, and tonight we celebrate it in the most intimate way possible. In my private chambers, surrounded by the soft glow of candlelight, I lead her to my bed with a confidence born of deep connection and perfect understanding. We come together not with desperate urgency, but with the refined skill of lovers who know each other completely. Every touch is deliberate, every movement perfectly timed, as we explore each other's bodies with the expertise that comes from true intimacy. She surrenders completely to the ecstasy, her cries of pleasure harmonizing with my own as we move in perfect synchrony. This is more than passion—it is the complete merging of two souls, bound together by love, desire, and absolute trust, reaching heights of pleasure that only true connection can achieve.",
+    "description": "There is no hurry left in us — that is what the trust has bought. I undress her slowly by candlelight, unwrapping what I already know by heart and want anyway. We move together with the ease of long practice and none of its boredom: I know the sound she makes when I linger, and she knows exactly how to unmake my composure and does it twice. Her pleasure crests unhidden, my name somewhere in it, and mine follows close behind. Afterward she lies in the crook of my arm, tracing the scar she has never once asked about, and I think: this. This is the holding worth all the others.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -1155,7 +1155,7 @@
   {
     "id": "romance_level4_lord_male_romantic_nsfw",
     "name": "Perfect Night",
-    "description": "Our bond has reached its zenith, and tonight we celebrate it in the most intimate way possible. In my private chambers, surrounded by the soft glow of candlelight, I lead him to my bed with a confidence born of deep connection and perfect understanding. We come together not with desperate urgency, but with the refined skill of lovers who know each other completely. Every touch is deliberate, every movement perfectly timed, as we explore each other's bodies with the expertise that comes from true intimacy. He surrenders completely to the ecstasy, his cries of pleasure harmonizing with my own as we move in perfect synchrony. This is more than passion—it is the complete merging of two souls, bound together by love, desire, and absolute trust, reaching heights of pleasure that only true connection can achieve.",
+    "description": "No urgency tonight — urgency is for lovers still proving something. I take him to bed the way we drink the good vintage: slowly, with attention. We know each other's bodies as thoroughly as our tempers by now; he uses that knowledge without mercy, and I return the favor until neither of us can keep a steady breath. He finishes with my name low in his throat and pulls me over the edge after him. Afterward we lie tangled, his heartbeat slowing under my palm, and neither of us reaches for a single word. There is nothing left unproven.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -1190,7 +1190,7 @@
   {
     "id": "romance_level4_lady_female_romantic_nsfw",
     "name": "Perfect Night",
-    "description": "Our bond has reached its zenith, and tonight we celebrate it in the most intimate way possible. In my private chambers, surrounded by the soft glow of candlelight, I lead her to my bed with a confidence born of deep connection and perfect understanding. We come together not with desperate urgency, but with the refined skill of lovers who know each other completely. Every touch is deliberate, every movement perfectly timed, as we explore each other's bodies with the expertise that comes from true intimacy. She surrenders completely to the ecstasy, her cries of pleasure harmonizing with my own as we move in perfect synchrony. This is more than passion—it is the complete merging of two souls, bound together by love, desire, and absolute trust, reaching heights of pleasure that only true connection can achieve.",
+    "description": "We have long since stopped fumbling — what is left is fluency. I lay her down in the candlelight and take my time, because I know precisely what my patience does to her, and she suffers it beautifully for as long as she can bear before dragging me down to her. Every touch lands where it means to; every gasp is one I have earned before and want again. She comes apart with her fingers wound in my hair, and returns the ruin with interest. Later, tangled and warm, she hums something tuneless against my shoulder. It is the sound I would keep over any coin I own.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,
@@ -1225,7 +1225,7 @@
   {
     "id": "romance_level4_lady_male_nsfw",
     "name": "Perfect Night",
-    "description": "Our bond has reached its zenith, and tonight we celebrate it in the most intimate way possible. In my private chambers, surrounded by the soft glow of candlelight, I lead him to my bed with a confidence born of deep connection and perfect understanding. We come together not with desperate urgency, but with the refined skill of lovers who know each other completely. Every touch is deliberate, every movement perfectly timed, as we explore each other's bodies with the expertise that comes from true intimacy. He surrenders completely to the ecstasy, his cries of pleasure harmonizing with my own as we move in perfect synchrony. This is more than passion—it is the complete merging of two souls, bound together by love, desire, and absolute trust, reaching heights of pleasure that only true connection can achieve.",
+    "description": "Tonight there is nothing to negotiate and nothing to prove. He learned long ago what I want and — rarer — believes I mean it, so when I draw him to my bed he follows my lead without a flicker of pride. We move slowly, deliberately, wringing every note from the hours; he knows the exact moment to stop being gentle, and takes it. I finish with his name and start again with his help. Afterward he gathers me in without being asked, and sleep finds us mid-sentence, and I would not trade the interrupted thought for a finished empire.",
     "interaction_level": 4,
     "interaction_type": "romantic",
     "cost_energy": 0,

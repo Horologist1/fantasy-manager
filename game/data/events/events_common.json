@@ -61,6 +61,7 @@
     "worker_filter": {},
     "player_gender_requirement": null
   },
+
   {
     "id": "guild_rivalry_taunt",
     "description": "Crude flyers plastered across every post in the district—your name mocked in bad verse, your guild drawn as a joke. The rival guild's seal is still wet. Passersby stop to read and glance your way. You need to respond or let this stand.",
@@ -396,7 +397,7 @@
         }
       },
       {
-        "option": "Accept the gift and ignore the note. (Potential: Money)",
+        "option": "Accept the gift and ignore the note. (Gain: Money)",
         "message": "You pocket the gift, let [acting_worker] enjoy it, and leave the mystery alone. The sender stays anonymous and probably appreciates that. Easy money, no drama ({actual_money}, +5 Joy).",
         "effect": {
           "money": 400,
@@ -2288,7 +2289,7 @@
         "option": "Send a worker to stand up to them. (Risk: Health; Potential: Money, Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] steps into the aisle with nothing but nerve—topples a table into the lead robber, scatters the rest before they regroup. A brief, ugly scramble ends with the bandits fleeing into the alley, leaving sacks behind. You still lose some takings to chaos and spooked patrons, but far less than surrender—and word spreads that your house is not undefended ({actual_money}, {actual_reputation} reputation).",
-        "message_failure": "[acting_worker] throws the first punch and takes the second twice as hard—a weighted club catches them across the ribs. The robbers grab what they can and run laughing. Medics, apologies, and shaken high-rollers cost you dearly. [acting_worker] leaves leaning on someone's shoulder, pale and bleeding ({actual_money}, {actual_reputation} reputation, -18 Health).",
+        "message_failure": "[acting_worker] throws the first punch and takes the second twice as hard—a weighted club catches them across the ribs. The robbers grab what they can and run laughing. Medics, apologies, and shaken high-rollers cost you dearly. [acting_worker] leaves leaning on someone's shoulder, pale and bleeding ({actual_money}, {actual_reputation} reputation, -5 Health).",
         "effect": {
           "success": {
             "money": -220,

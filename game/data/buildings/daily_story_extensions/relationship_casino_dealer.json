@@ -1,0 +1,658 @@
+{
+  "_comment": "Relationship daily stories (Dealer). Follows the contract in relationship_brothel_prostitute.json: 2x romance-gated, 2x relationship-gated, 2x rebellion-gated (all roll normally, stat feedback on success/failure), 2x 'Loves you' (normal roll, failure forgiven -> earnings 0), 2x Best Friends / Harem Member / House Servant (no_fail). Prose gender-neutral for worker and manager. story_image reuses existing dealer art as placeholder.",
+  "building_id": "casino",
+  "profession_id": "dealer",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "casino_dealer_romance_private_offer",
+      "weight": 2,
+      "report": "Not for Sale",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "failure_image": "dealer_high_roller_casino_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A velvet-gloved magnate offers {worker_name} triple wages to deal at a rival floor. {worker_name} taps the felt of your table twice, says this seat is taken, and deals the magnate in. People who have been refused gamble to prove a point, and this one proves it expensively.",
+        "critical_success": "By midnight the refusal is floor legend. Gamblers crowd in wanting the dealer who could not be bought, and every one of them loses a little coin wondering who on earth the anchor is.",
+        "mediocre": "{worker_name} takes a breath too long to say no. The pause reads as a price, the magnate leaves to shop elsewhere, and the table turns only its ordinary trade.",
+        "failure": "For one hand {worker_name} actually imagines going, and the guilt of it shakes the deal apart. The magnate wins big off the distraction and leaves smiling, and the distance between {worker_name} and you feels wider than the whole gaming floor."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_romance_audience_of_one",
+      "weight": 2,
+      "report": "Dealt for One",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "failure_image": "dealer_high_roller_casino_failure",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "You walk the floor tonight, and {worker_name} knows the exact moment you come through the door without looking up. The shuffle sharpens, the patter warms, the riffle lands like applause. A dealer performing for someone is worth watching, and the table fills to standing.",
+        "critical_success": "{worker_name} runs the finest table of the season on the strength of your being in the room, every cut and payout half a message meant for you. The crowd stays for hours, betting just to stay near it, never once guessing who the show is for.",
+        "mediocre": "{worker_name} splits attention between the shoe and the doorway in case you pass again. The gamblers get a competent night and nothing more.",
+        "failure": "{worker_name} keeps finding you across the room and loses the count of the shoe doing it. A payout goes out wrong in the loser's favor, the pit has to eat the error, and {worker_name} closes the table certain you saw every second of it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_friend_counter_method",
+      "weight": 2,
+      "report": "The Counter's Method",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "dealer_card_counter_casino",
+      "failure_image": "dealer_card_counter_casino_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A quiet player's bets swell only when the shoe runs rich, and {worker_name} clocks it in three hands. No scene, no accusation: just an early shuffle every time the count climbs, until the edge starves. After close, {worker_name} lays the whole method on your desk, the bet spread, the signal, the partner sitting third base, because your house's blind spots are a shared problem now.",
+        "critical_success": "{worker_name} bleeds the counter's advantage so dry the player gives up and starts gambling straight, then loses back everything the system had won. The written method lands on your desk before dawn with the partner's face described down to the rings.",
+        "mediocre": "{worker_name} senses the pattern but never quite pins it. The counter leaves modestly ahead, and the note left for you says only: watch the quiet one in gray.",
+        "failure": "{worker_name} second-guesses the instinct one shoe too long, and the quiet player colors up a heavy purse and vanishes. The ledger takes the hit, but what keeps {worker_name} up is having watched it happen at your table, on your coin."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_friend_rookie_drill",
+      "weight": 2,
+      "report": "Drilled the Rookies",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "dealer_card_counter_casino",
+      "failure_image": "dealer_card_counter_casino_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The dead hours belong to the rookies tonight. {worker_name} runs them through your rules until they stick: cut card depth, payout order, when to call the pit and when to just smile. Come the evening rush a rookie catches a bent corner on the queen of coins, exactly as drilled, and the house keeps money it would never have known it lost. A favor done for your floor, not for the rookie.",
+        "critical_success": "The rookies run clean all night, and one of them flags a palmed chip with the precise phrase {worker_name} taught at noon. You gained a second sharp table out of one slow afternoon, and {worker_name} pretends not to be pleased about it.",
+        "mediocre": "The drill helps a little. The rookies survive the rush without disaster, and without distinction.",
+        "failure": "{worker_name} drills too hard and a rookie freezes mid-rush, botching a payout in front of a full table. The disputed pot gets refunded to keep the peace, and {worker_name} carries the cost as a personal debt to you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_rebel_sleeve_chips",
+      "weight": 2,
+      "report": "Chips in a Sleeve",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "dealer_card_counter_casino",
+      "failure_image": "dealer_card_counter_casino_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "During the color-up a chip rides {worker_name}'s wrist into a cuff, then another an hour later. Small denominations, big churn; the tray balances close enough that nobody counts twice, and a private purse gets a little heavier on your time.",
+        "critical_success": "The take runs bold tonight and the tray still squares on paper, because {worker_name} skims only from pots so large no one can hold their shape in memory. Your cut looks healthy. It should look healthier.",
+        "mediocre": "A pit boss lingers behind the table for an hour and the sleeve stays empty. An honest, resentful shift.",
+        "failure": "A gambler counts a short payout aloud, twice, with the whole table listening. The pit comps drinks and refunds the pot to bury the scene, and every coin of the smoothing-over comes out of your ledger while {worker_name} deals on with a straight face."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_rebel_midnight_game",
+      "weight": 2,
+      "report": "The Midnight Game",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "failure_image": "dealer_high_roller_casino_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "After the doors lock, a knock. {worker_name} deals a private game on your felt with your decks for a crowd that never signs the book, raking a quiet cut and feeding just enough through the cage that the morning ledger shows a plausible late rush instead of a question.",
+        "critical_success": "The midnight table draws serious money, the kind that avoids daylight on principle, and the game runs so smoothly the players ask for a weekly seat. The rent {worker_name} pays into your books to keep it all quiet is, ironically, one of the better takes of the week.",
+        "mediocre": "Only three players show and one of them is broke. The game limps to a close before the candles do, barely worth the risk of the borrowed keys.",
+        "failure": "A deck from the midnight game goes back into the day rotation creased and wax-marked, and sharp eyes read it like a posted notice. Your table bleeds for half a shift before the pit catches the cards, and the burned decks and made-good losses all land on you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_lovesyou_house_edge",
+      "weight": 3,
+      "report": "The Edge Is Yours",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "failure_image": "dealer_high_roller_casino_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Every card tonight snaps off the deck like a struck match, every payout lands to the copper. The house edge is your edge, and {worker_name} guards it the way other people guard letters: not one basis point gets away, because every point kept is a thing done for you. The gamblers only know the table feels impossible to beat.",
+        "critical_success": "{worker_name} deals a shoe so clean it borders on cruelty. The regulars mutter about luck, rebuy, and lose by the book for hours, and the whole immaculate massacre is quietly addressed to you. The count at close is the kind you read twice.",
+        "mediocre": "{worker_name} deals well enough, but keeps half an ear tuned to the floor in case your voice crosses it. The table earns its ordinary keep from a dealer who is somewhere else.",
+        "failure": "A gambler sits down at third base wearing a scent that is almost yours, and the count in {worker_name}'s head simply dissolves. Thirteen cards go out to a five-seat table. The hand is voided, the table roars with laughter, and {worker_name} laughs too, helpless, because nothing was lost, nothing was won, and the reason cannot be said out loud."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_lovesyou_chip_letters",
+      "weight": 3,
+      "report": "Chips Like Letters",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "failure_image": "dealer_high_roller_casino_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} handles your chips the way some people handle letters from home, squared, counted, nothing sticking, nothing sliding. The gamblers watch those hands and understand this is a table that cannot be cheated and does not cheat, so the wagers grow. At close, every rack reads like a sentence: look what I kept safe for you.",
+        "critical_success": "Word moves along the floor that {worker_name}'s table is the honest one, and the careful money, which is always the biggest money, migrates to it. The tray at close is a small fortune, counted twice for the pleasure of handing it to you exact.",
+        "mediocre": "The count stays true but the mind keeps drifting to what you might be doing two floors up. The table earns its keep and no more.",
+        "failure": "Mid-shift a gambler goes down on one knee and proposes to the player in the next seat, and the table erupts. {worker_name}, undone by it in a way no one at the table could name, deals the next card face-up out of turn and has to void the hand. The newly engaged couple buys drinks for everyone and waves the dead hand off as good luck. Nothing lost, nothing won, and {worker_name} spends the walk home rehearsing words that are not for the couple."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_bestfriends_floor_read",
+      "weight": 3,
+      "report": "The Floor Read",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "dealer_card_counter_casino",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "After the last table closes, {worker_name} pulls a chair up to your desk uninvited and gives you the night's true accounting, the kind no ledger holds: which regular is betting scared money, which one is a bad week from a debt you do not want on your floor, which rookie needs moving before the weekend crowd eats them. You adjust the house to the read, and the house runs better for it. That is on top of a full night's honest take.",
+        "critical_success": "Buried in the floor read is the item that matters: the lucky streak at the corner table is a two-person team working signals. You watch where {worker_name} tells you to watch, catch the pair mid-signal, and save a sum that would have stung for a season. The thanks get waved off before you finish saying them."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_bestfriends_kept_the_whale",
+      "weight": 3,
+      "report": "Kept the Whale",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "positive_traits": {
+        "Charming": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The biggest spender of the season hits a losing streak and starts blaming the house, loudly, one insult away from walking out of your books forever. {worker_name} slows the game to a stroll, tells an honest story about a worse night, and lets the small hands that mean nothing fall the whale's way until pride is safe again. The whale stays, loses graciously, and books next week, and {worker_name} did all of it for your ledger, not the pit's.",
+        "critical_success": "By the end of the night the whale is laughing at the losing streak and asking for {worker_name}'s table by name in future, with two rich friends promised for next visit. A walkout that would have cost you a season becomes your steadiest income, salvaged over the course of six patient hands."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_harem_your_procedure",
+      "weight": 3,
+      "report": "Your Procedure",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your procedure, executed to the letter: the shuffle count you set, the cut depth you set, the patter you wrote, the exact three-breath pause between hands. {worker_name} runs the table with an eerie, willing perfection, and the gamblers feel a single will behind the felt without ever guessing the will is not the dealer's. The obedience is the pleasure; the take is merely its proof.",
+        "critical_success": "The precision rattles a table of veterans into playing tight and losing steadily, by the book, all night. The pit boss quietly asks what you did to get discipline like that and gets no answer, because the answer belongs to you and {worker_name} alone."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_harem_wears_your_mark",
+      "weight": 3,
+      "report": "Dealing in Your Mark",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "dealer_high_roller_casino",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your mark sits at {worker_name}'s wrist, riding just above every deal, subtle enough to pass and plain enough that the regulars know exactly what it means. There is a strange thrill in losing money to someone who belongs to the owner of the house, and the gamblers pay for it in swollen tips, courting the attention of a dealer whose attention is entirely spoken for.",
+        "critical_success": "A rich stranger spends the whole night trying to catch {worker_name}'s eye over ever-larger wagers, and the eye never once leaves the cards. The stranger finally asks what it costs to turn that head and is told, pleasantly, that the price does not exist. The night's losses get paid like an entrance fee to something they will never enter."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_servant_dead_hours",
+      "weight": 3,
+      "report": "The Dead Hours",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "dealer_card_counter_casino",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You need the graveyard hours covered and {worker_name} takes them without a word, dealing to insomniacs, sailors, and the stubborn drunk who will not go home. The shuffle stays crisp at the fourth hour and the fortieth hand, the table stays honest till dawn, and the trickle that every other dealer calls not worth the candle adds up, coin by coin, in your name.",
+        "critical_success": "{worker_name} outlasts the night entirely and catches the early trade, the merchants who like a quiet game before the day's business. The dead shift logs its best take in the books' memory, and when you offer the morning off, {worker_name} asks instead which table you want covered next."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_dealer_servant_worst_table",
+      "weight": 3,
+      "report": "The Unwanted Table",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "dealer_card_counter_casino",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You point at the corner table, the one with the spilled drinks and the slurred accusations, the one dealers ask to be rotated off of, and {worker_name} simply goes. Every hostile hand gets dealt with the same impeccable patience, every insult absorbed and returned as a payout counted twice for the complainer's benefit, and by close the worst seats in your house are, quietly, paying ones.",
+        "critical_success": "The roughest regular at the corner table sobers up mid-tirade under {worker_name}'s unshakable calm, apologizes to the whole table, and settles into becoming its steadiest spender. The cursed corner logs its best week on record, held together by one obedient dealer who went where you pointed."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

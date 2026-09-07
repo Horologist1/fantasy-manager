@@ -453,7 +453,7 @@
     "attribute_minimums": {},
     "duration": 3,
     "on_expire": {},
-    "only_assigned": false
+    "only_assigned": true
   },
   {
     "name": "Arena Champion",

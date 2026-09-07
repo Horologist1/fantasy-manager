@@ -1,0 +1,650 @@
+{
+  "_comment": "Relationship daily stories (Servant, Governor's Castle). Follows the contract: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 roll normally with stat feedback/rebellion losses, 2x 'Loves you' normal roll (failure earns 0), 2x Best Friends + 2x Harem Member + 2x House Servant no_fail. Prose is concrete, consequence-first, worker/manager gender-neutral.",
+  "building_id": "governor_castle",
+  "profession_id": "servant",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "governor_castle_servant_romance_first_brightness",
+      "weight": 2,
+      "report": "Brighter Than Dawn",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "failure_image": "servant_aristocratic_service_failure",
+      "positive_traits": {
+        "Hardworking": 4,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} opens the morning with the study ready before the first bell: inkstand, lamp, and ledger chest are all set as if your day had already begun. The hall receives you through a calm rhythm and a room that feels protected by foresight.",
+        "critical_success": "At your first knock, the hall is not only clean but ordered by intent: linens on the ceremonial benches, hearth stones bright, and two waiting couriers turned aside to the outer service line. They leave praising that this wing never starts late, and your steward notes a cleaner night's take because nothing was improvised.",
+        "mediocre": "{worker_name} keeps the corridor service steady, but a steward interrupts to fix a missed handoff from the gallery. The repair is made before dusk, and the hall opens anyway, though not as seamlessly as your house can do when fully ready.",
+        "failure": "{worker_name} spends too long arranging a cushion at your chair and misses a requested handover in the west corridor. The service is restored quickly, but the slip is plain to the staff and your steward records it as an avoidable delay."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_romance_refused_private_holiday",
+      "weight": 2,
+      "report": "Refused the Holiday",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "failure_image": "servant_aristocratic_service_failure",
+      "positive_traits": {
+        "Graceful": 4,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A steward from the inner wing offers a week of rest with private comforts. {worker_name} refuses politely, places the offer back on the tray untouched, and returns to your hall to finish the last lantern checks. The steward who offered it sends the task list back with a quiet respect for the choice.",
+        "critical_success": "The offer grows hotter: ring, bed in the guest wing, and influence in a distant court. {worker_name} refuses with the same steady courtesy and still keeps your entire household shift in perfect order. The visitors who heard of it reward your steadiness with generous goodwill and a cleaner evening book.",
+        "mediocre": "{worker_name} hesitates through the whole hour before refusing the offer. The work is eventually done, but the hesitation leaves your morning plans with a small fray at their edge.",
+        "failure": "{worker_name} accepts the proposal in the first breath, then turns it away only after the steward asks twice. A single request remains unanswered for several minutes, and the missing care stings more than any coin could measure in this wing."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -7
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_relationship_steward_alarm",
+      "weight": 2,
+      "report": "The Steward's Alarm",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "servant_libido20_flustered_attendance",
+      "failure_image": "servant_libido20_flustered_attendance_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A whisper reaches the service hall that a corridor lock is being changed off the books. {worker_name} hears it before it hardens into alarm, checks the lock room in silence, and blocks the wrong hand before it crosses the threshold. By the time the bell would have rung, the lock is secure and no one in your house sleeps poorly.",
+        "critical_success": "The whisper leads to the second corridor where two men test the service lift for a second visit. {worker_name} guides two guards there while leaving your records untouched and your household names clear, then returns before the bell. The disturbance never reaches the audience room.",
+        "mediocre": "The alarm reaches half the wing before {worker_name} can move everyone. The intrusion is still stopped, and your wing survives, but the staff keeps one corridor in a defensive posture for the whole shift.",
+        "failure": "A steward dismisses the whisper as panic, and it reaches you too late. A minor lock is forced in the north hall, and the house absorbs a late repair. The blame lands on the rumor's delay, not on your household's judgment."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_relationship_chairs_for_friends",
+      "weight": 2,
+      "report": "The Right Guests",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "failure_image": "servant_aristocratic_service_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 4,
+        "Hardworking": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} spots a cluster of loud visiting guests before they reach the inner benches and moves them to a quieter gallery without ceremony. Your favored corner stays clear for those who came with purpose, and the council hour runs smooth to the final bell.",
+        "critical_success": "Three invitations clash at once; {worker_name} silently reorders messenger timing, steward placement, and bench order so the right voices meet you in private and the loud crowd is steered away. The night closes with both groups pleased, and your household gains the next three private visits on a fresh term.",
+        "mediocre": "The adjustment works for a short while, but a heated pair lands in the same hall before the first bell ends. Your staff repairs the mood and the room remains usable, though the opportunity for a smoother evening has passed.",
+        "failure": "A single misread message sends a prized guest to the noisy gallery. The evening is saved by an extra steward and a late adjustment, yet your wing is whispered about as one that needed an extra hand."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 9
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_rebellion_shadowed_supplies",
+      "weight": 2,
+      "report": "The Unapproved Room",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "servant_libido20_flustered_attendance",
+      "failure_image": "servant_libido20_flustered_attendance_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 25)"
+      },
+      "descriptions": {
+        "success": "A noble requests extra linens before a private rehearsal. {worker_name} moves one cart from the common store before morning bells and sets the corridor to ceremonial readiness without asking for approval from anyone outside your house. The rehearsal begins exactly as your household promised it would.",
+        "critical_success": "Inside the cart is a costly set prepared for another wing. {worker_name} hides it in the correct cache and records a second replacement run so your own stores remain balanced through the week. The night closes with your steward grateful for foresight over noise.",
+        "mediocre": "The linen arrives in the right room after the scheduled hour. A guest notices the substitution and the staff smooths the explanation, but the shift loses polish where it once held a straight line.",
+        "failure": "A steward tallies the store and finds a mismatch. You cover the missing linen from your reserves and the incident is written into maintenance notes as a lesson: the house keeps books, but tonight the house pays for its own lesson."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 6
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_rebellion_untidy_exit",
+      "weight": 2,
+      "report": "A Private Disorder",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "failure_image": "servant_aristocratic_service_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 18)"
+      },
+      "descriptions": {
+        "success": "After-hours, a noisy guest requests service in the west wing and everyone else hesitates. {worker_name} declines the favor but still returns the wing to order before leaving, turning a burden into discipline and protecting your private wing from needless gossip.",
+        "critical_success": "The request turns out to be a test from a rival house. {worker_name} arranges a visible, harmless tidy drill that leaves a marker at the threshold and sends the visitors to the public gallery. The trap closes clean and the house loses nothing.",
+        "mediocre": "The disorder is corrected before dawn, but a guest still remembers the moment of uncertainty. The payment remains, though the room no longer carries the usual sheen of calm that your house sells by reputation.",
+        "failure": "A tray reaches the wing without a steward's mark, and the corridor stays unsettled until the morning steward signs off on repairs. Your ledger pays for mended order, and your name is spoken with a small edge in the lower hall."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 2,
+          "reputation": 5
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_lovesyou_home_steward",
+      "weight": 3,
+      "report": "Your Corner First",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "failure_image": "servant_aristocratic_service_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Before a foreign delegation arrives, {worker_name} prepares your study first: your sealing wax, the right ledger, and the chair angled away from the draft. When the delegates enter, that same intimate knowledge puts every answer at hand before it is requested. They pay for a house that seems to think ahead; only you know whom it was thinking of.",
+        "critical_success": "The delegation arrives late and demands a second audience room. {worker_name} builds it around the habits learned from serving you, down to the lamp height and order of documents, without disturbing your study. The visitors leave convinced your entire household possesses that foresight and pay a premium for it.",
+        "mediocre": "{worker_name} serves the guests well, but one eye remains on your corridor and the pace loosens. The result is acceptable coin and a clear reminder of where the heart belongs.",
+        "failure": "The delegation asks twice for fresh lamps while {worker_name} keeps listening for your step in the corridor. A noble catches the glance toward your empty study and understands. The audience is postponed without complaint or penalty, and the hour goes unbilled."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_lovesyou_unpriced_hour",
+      "weight": 3,
+      "report": "The Unpriced Hour",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "servant_libido20_flustered_attendance",
+      "failure_image": "servant_libido20_flustered_attendance_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "A hard-edged guest arrives expecting only routine. {worker_name} serves them with habits learned from loving you: the lamp set low, the tray in exact order, silence offered before it is requested. What began as attention to you becomes flawless public service, and the guest pays for the ease without guessing its source.",
+        "critical_success": "The visitor changes demands several times; {worker_name} absorbs each ask without losing the order set for your rooms. The guest remains, satisfied and generous, because devotion to your standard makes the encounter feel more precious than any simple paid hour.",
+        "mediocre": "The service is polite and complete, but {worker_name} drifts to the hallway every few breaths. The guests notice what is missing and pay only the base price.",
+        "failure": "{worker_name} misses the rhythm of the hour, searching the torchlit stair for your figure instead. The offended guest is gentler than expected: they step back, thank the household steward, and forgive the lapse. No fee is taken, and the steward marks the incident as a beloved distraction, not misconduct."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_bestfriends_evening_report",
+      "weight": 3,
+      "report": "The Evening Report",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "The dusk procession is about to cross the north gallery when {worker_name} remembers the loose stair you noticed together last spring. Servants and lanterns are shifted to the garden route before your party reaches the door, sparing you a public delay and a dangerous step.",
+        "critical_success": "Checking that stair reveals fresh tool marks rather than age. {worker_name} closes the gallery, traces the work to a rival steward, and gives you both a safe procession route and the name behind the attempted embarrassment before the first candle is lit."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_bestfriends_missed_name",
+      "weight": 3,
+      "report": "Saved from a Bad List",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "servant_libido20_flustered_attendance",
+      "positive_traits": {
+        "Charming": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2"
+      },
+      "descriptions": {
+        "success": "A staff list misspells your title and assigns you the hall you once swore never to use again. {worker_name} knows both errors without asking, corrects the copies before dawn, and keeps the court from seeing either slight.",
+        "critical_success": "The wrong hall proves deliberate: its adjoining screen would have exposed a private meeting. {worker_name} reroutes both households, preserves your schedule, and leaves the rival steward wondering how a trap known only to your closest friend was spotted."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 7
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_harem_private_protocol",
+      "weight": 3,
+      "report": "Your Private Protocol",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "positive_traits": {
+        "Graceful": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "Before a private supper, {worker_name} arranges screens, lamps, and the service bell around the habits of your inner household. The guests receive effortless hospitality but learn nothing about who shares your wing or which doors open after the last course.",
+        "critical_success": "A watcher from a rival wing tries to count those doors. {worker_name} feeds the spy a perfect decoy route through an unused salon while your household moves unseen behind the screens, leaving the supper elegant and your private life unread."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_harem_guarded_chair",
+      "weight": 3,
+      "report": "The Guarded Chair",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "servant_libido20_flustered_attendance",
+      "positive_traits": {
+        "Hardworking": 4,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "Someone assumes they may claim the chair tied to your household meetings. {worker_name} places a discreet token tied to your seal on it and keeps that place untouched, protecting your private boundary without a word.",
+        "critical_success": "After midnight, a second caller offers coin for the same shortcut and presents a copied seal. {worker_name} redirects the visitor to the public hall, keeps your chair untouched, and hands the forgery to your steward before dawn."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_houseservant_double_wing_sweep",
+      "weight": 3,
+      "report": "Both Wings, One Word",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "servant_aristocratic_service",
+      "positive_traits": {
+        "Energetic": 5,
+        "Hardworking": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "You add an extra sweep order for the same night, and {worker_name} runs both wings as one continuous watch over lanterns, stables, and stairways. The household sleeps without a dark stair or cold hearth because your house can still move as one body.",
+        "critical_success": "Three hazards appear before dawn, and {worker_name} finds each before it becomes an alarm. A hinge is repaired, a stair edge is bound, and the wind is redirected before it can strip the east banner; your household keeps its composure untouched."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_servant_houseservant_unasked_harvest",
+      "weight": 3,
+      "report": "Chores Unasked",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "servant_libido20_flustered_attendance",
+      "positive_traits": {
+        "Robust": 4,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "The list ends before the last bell, but {worker_name} still finds three neglected marks in your service court: a dim torch, a loose hatch, and damp stone. All three are fixed, and your house sleeps on a cleaner footing than any one shift should have allowed.",
+        "critical_success": "Before dawn, {worker_name} adds a full maintenance plan for the quarter and sends it to you with one clear sentence: this is what the house would owe if ignored. You wake to a cleaner set of routines and a household that bears your mark."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+[
+  {
+    "name": "Kara",
+    "folder": "varra",
+    "cost": 0,
+    "nsfw": true,
+    "unique": true,
+    "recruitment_locked": false,
+    "event_recruit_only": true,
+    "required_store_value": [
+      {"var": "lanista_gender", "equals": "male"},
+      {"var": "lanista_ending_done", "equals": true}
+    ],
+    "encounter_only": false,
+    "monster": false,
+    "procedural": false,
+    "skills": {
+      "Sex": 48,
+      "Anal": 32,
+      "BDSM": 38,
+      "Hand": 42,
+      "Oral": 42,
+      "Homo": 38,
+      "Special": 28,
+      "Group": 36,
+      "Extreme": 34,
+      "Striptease": 56,
+      "Combat": 76,
+      "Clever": 30,
+      "Charm": 44,
+      "Service": 28,
+      "Agility": 58,
+      "Craft": 24
+    },
+    "names_list": "western_female",
+    "traits": [
+      "Human",
+      "Strong",
+      "Tall",
+      "Tough",
+      "Great Figure",
+      "Cool Scars"
+    ],
+    "description": "Kin to the Master of the Sands, and a fighter still in her fighting years. Kara has the family stillness and the family scars, but her knees are sound and her seasons are ahead of her. With the Arena's future settled, she takes work in your house to build a purse and reputation of her own, and she is not particular about which trade pays best.",
+    "gender": "female",
+    "comfort_desired": 2
+  },
+  {
+    "name": "Kara",
+    "folder": "varra",
+    "cost": 0,
+    "nsfw": false,
+    "unique": true,
+    "recruitment_locked": false,
+    "event_recruit_only": true,
+    "required_store_value": [
+      {"var": "lanista_gender", "equals": "male"},
+      {"var": "lanista_ending_done", "equals": true}
+    ],
+    "encounter_only": false,
+    "monster": false,
+    "procedural": false,
+    "skills": {
+      "Sex": 48,
+      "Anal": 32,
+      "BDSM": 38,
+      "Hand": 42,
+      "Oral": 42,
+      "Homo": 38,
+      "Special": 28,
+      "Group": 36,
+      "Extreme": 34,
+      "Striptease": 56,
+      "Combat": 76,
+      "Clever": 30,
+      "Charm": 44,
+      "Service": 28,
+      "Agility": 58,
+      "Craft": 24
+    },
+    "names_list": "western_female",
+    "traits": [
+      "Human",
+      "Strong",
+      "Tall",
+      "Tough",
+      "Great Figure",
+      "Cool Scars"
+    ],
+    "description": "Kin to the Master of the Sands, and a fighter still in her fighting years. Kara has the family stillness and the family scars, but her knees are sound and her seasons are ahead of her. With the Arena's future settled, she takes work in your house to build a purse and reputation of her own.",
+    "gender": "female",
+    "comfort_desired": 2
+  }
+]

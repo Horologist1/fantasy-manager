@@ -1,0 +1,656 @@
+{
+  "_comment": "Relationship daily stories (Tavern server). Follows the contract of relationship_brothel_prostitute.json: 2x romance-gated + 2x relationship-gated + 2x rebelliousness-gated (weight 2, stat feedback loop), 2x 'Loves you' (normal roll, failure forgiven -> earnings 0), 2x Best Friends + 2x Harem Member + 2x House Servant (no_fail, weight 3). Prose gender-neutral for worker and manager; story_image reuses existing profession art as placeholder.",
+  "building_id": "tavern",
+  "profession_id": "tavern_server",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "tavern_tavern_server_romance_room_glow",
+      "weight": 2,
+      "report": "As If You Watched",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "failure_image": "service_story1_tavern_server_failure",
+      "positive_traits": {
+        "Energetic": 5,
+        "Beautiful": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "You cross the common room once on your way to the cellar, and {worker_name} lights up like a lamp being trimmed. Trays fly faster, the banter sharpens, and patrons who came in for one pot stay for three, warming themselves on a glow that has nothing to do with the hearth.",
+        "critical_success": "The whole shift becomes a performance for an audience of one. {worker_name} works the room like a stage, timing every joke to land where you can hear it, and the till closes heavier than a festival night.",
+        "mediocre": "You never come down from the office, and the sparkle dims to routine. Drinks land on time, tabs get squared, and nothing about the night is worth retelling.",
+        "failure": "{worker_name} watches the stairs for you all night instead of watching the floor. Orders land at the wrong tables, a whole roast goes to a party that asked for soup, and table six starts a mocking toast to young love that the room takes up with gusto. The blush lasts until closing; so does the mess on the tab."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_romance_poached_offer",
+      "weight": 2,
+      "report": "Refused a Rival's Offer",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "failure_image": "service_story1_tavern_server_failure",
+      "positive_traits": {
+        "Elegant": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A rival taproom's owner spends the evening courting {worker_name} with double wages and shorter nights. {worker_name} pours the recruiter's ale, listens politely, and answers that some rooms hold reasons no pay slip can list, with one glance at your office door that closes the negotiation. The recruiter drinks deep and tips like an apology.",
+        "critical_success": "The refusal travels. By last call half the regulars have heard that {worker_name} turned down double pay to stay under your roof, and the room drinks a toast to the house nobody wants to leave. Two of the rival's own patrons follow the story home to your taps.",
+        "mediocre": "The offer flusters more than it flatters. {worker_name} stumbles through a maybe that means no, and spends the rest of the shift rattled, pouring short and apologizing long.",
+        "failure": "The recruiter pushes once too often and {worker_name} snaps, too loud, beside a full table, and the raw thing underneath the refusal is out before it can be swallowed. The room goes quiet in the worst way. A round gets comped to paper over the scene, and you never even learn you were the argument."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_friend_slander_shutdown",
+      "weight": 2,
+      "report": "Slander Shut Down",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "failure_image": "service_story1_tavern_server_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A drunk merchant starts holding court about your debts and your morals, inventing freely on both counts. {worker_name} sets the tray down, recites what the merchant actually owes this house down to the last copper, and offers to read it again, louder. The laughter lands on the right target, the tab gets settled in full as the fastest exit available, and the story that survives the night is yours.",
+        "critical_success": "The takedown is so clean the merchant buys the room a round by way of apology, and two tables of strangers who watched it decide a house defended that fiercely must be worth drinking in. You gain regulars; the gossip dies at the door.",
+        "mediocre": "The retort lands soft. The merchant mutters into a mug, the slander dies of boredom rather than defeat, and the night moves on unimpressed.",
+        "failure": "The third insult lands and {worker_name} goes over the table. The scuffle spills more ale than the truth was worth, the merchant limps out shouting about savage service, and {worker_name} closes up certain the brawl cost you more than the lies ever could have."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_friend_till_watch",
+      "weight": 2,
+      "report": "The Till Squared",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_clumsy_paperwork_tavern_server",
+      "failure_image": "service_clumsy_paperwork_tavern_server_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "After close, {worker_name} runs a finger down the chalk and finds the night's leaks: a round never rung, a tab counted short, a pot of stew that walked out unpaid. No announcement, no credit claimed. The corrections just appear in the drawer, because a friend does not watch your money bleed out through sloppy arithmetic.",
+        "critical_success": "The recount turns up a pattern: the same regular, short-paying the same clever way, every market day for a month. {worker_name} leaves the evidence squared on your desk with a note suggesting how to end it without a scene. The drawer comes up heavier and the leak stays plugged.",
+        "mediocre": "The tabs mostly balance. An hour of squinting at chalk marks buys back small change and a headache.",
+        "failure": "Reworking the sums by candlelight, {worker_name} scrubs out the wrong column and has to rebuild half the night from memory. The drawer comes up short, and worse than the missing coin is knocking on your door to admit the damage was friendly fire."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 3
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 6
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_rebel_face_tax",
+      "weight": 2,
+      "report": "The Face Tax",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_clumsy_paperwork_tavern_server",
+      "failure_image": "service_clumsy_paperwork_tavern_server_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "{worker_name} keeps a private price list, and it is written in faces: the kind get their rounds shaved thin, the rude pay a rudeness tax folded invisibly into the tally. Tonight the arithmetic runs the house's way, the surcharges outweigh the mercy, and nobody thinks to count the chalk.",
+        "critical_success": "A table of loud mercenaries gets taxed all night for their manners and tips on top of it, too busy bragging to do sums. The kindness discounts come out of their pockets entirely, and the drawer has rarely looked so righteous.",
+        "mediocre": "Tonight the mercy outweighs the tax: too many friendly faces, too many shaved rounds. The drawer comes out even and none the wiser.",
+        "failure": "A sharp-eyed clerk compares tallies with a neighbor and finds the rudeness tax, line by line. The shouting pulls in the whole room, both tables get refunds plus a free round to keep them from walking, and your house wears the word cheat for a night."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_rebel_slow_walk",
+      "weight": 2,
+      "report": "Grudges at a Crawl",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "failure_image": "service_story1_tavern_server_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "{worker_name} keeps a mental list of patrons who have earned the slow walk, and tonight the list gets its due: warm ale, long waits, and the unprovable smile of someone doing it entirely on purpose. The favored tables get lightning service instead, drink deeper, and cover the difference twice over.",
+        "critical_success": "The most tiresome name on the list gives up and leaves, and the freed table fills with a crew of thirsty stonemasons who drink until the candles gutter. Spite has never turned a neater profit.",
+        "mediocre": "The grudges get serviced but so does nobody else particularly well. The night limps to an ordinary close and the list grows by one name.",
+        "failure": "The wrong patron gets the treatment: a guild steward scouting venues for a feast of forty. The steward times the wait on a pocket glass, announces the number to the room, and books the feast with the tavern across the square. That contract was yours until tonight."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_lovesyou_candle_table",
+      "weight": 3,
+      "report": "The Candle Table",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "failure_image": "service_story1_tavern_server_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "One table in the room is sacred: wiped twice an hour, a candle stub always burning, never seated no matter how the crowd presses. It is yours, whether you ever come down or not. {worker_name} runs the rest of the floor at a sprint to afford that little ritual, and the patrons, reading the hustle as pride in the work, tip for it. Only the candle knows what it actually is.",
+        "critical_success": "Tonight you actually sit there. {worker_name} brings your drink first, flushed and flawless, then works the room in a state of grace that empties two casks. The candle burns down; the till fills up; cause and effect, plain as arithmetic.",
+        "mediocre": "A stranger plants themselves at the candle table and {worker_name} spends half the shift maneuvering them off it, guarding a secret instead of carrying trays. The room gets served, barely.",
+        "failure": "You come downstairs without warning, and {worker_name}, mid-stride under a full tray, simply stops working the moment your face appears. Six mugs go down in a bright crash, the room roars its delight, and the lost round is on the house because there is no one left composed enough to charge for it. {worker_name} sweeps up scarlet-eared, and later someone finds the candle at the empty table relit, no explanation offered."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 1,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_lovesyou_every_coin",
+      "weight": 3,
+      "report": "Every Coin Is Yours",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "failure_image": "service_story1_tavern_server_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} hawks the good vintage table by table and takes the doubles nobody asked for, because every coin that crosses this bar ends the night in your strongbox, and that is reason enough. The love has nowhere respectable to go, so it goes into the till.",
+        "critical_success": "A festival crowd hits the room and {worker_name} refuses to buckle: the floor run solo through the crush, the whole mob talked up to the good cask, not one order dropped. The take is obscene. Counting it into your box afterward, {worker_name} stacks the coins in neat towers, the way you like them.",
+        "mediocre": "The hustle is there but the head is upstairs with you. Two upsells collapse mid-pitch, one tray goes out half-remembered, and the night ends merely ordinary.",
+        "failure": "Halfway through pitching the good vintage, {worker_name} says your name instead of the wine's and cannot find the way back from it. The patron watches the blush travel and waves the sale gently away, no wine tonight, only a pat on the arm and a murmured 'whoever it is, they are lucky.' The purse stays shut, the night earns you nothing, and {worker_name} floats through closing anyway."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_bestfriends_six_places",
+      "weight": 3,
+      "report": "Six Places at Once",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} runs your floor the way you would if you could stand in six places at once: the tab-dodger spotted before the boots are laced, the keg flagged before it blows foam, the fiddler steered to the corner where the deep purses sit. None of it is asked for. All of it ends in your drawer.",
+        "critical_success": "By close {worker_name} has re-seated the room twice, converted a brewing brawl into a drinking contest with an entry fee, and left a note on your desk naming which supplier is watering the ale. It reads less like a shift and more like co-ownership, minus the paperwork."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_bestfriends_storm_day",
+      "weight": 3,
+      "report": "Your Worst Day Carried",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_clumsy_paperwork_tavern_server",
+      "positive_traits": {
+        "Charming": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You spend the day wrestling the ledgers with a face like storm weather, and {worker_name} reads it from across the room. The floor gets handled without you: disputes settled, tabs squared, the loud table talked into singing instead of swinging. At close, the till arrives on your desk counted and correct, your supper beside it, no questions attached.",
+        "critical_success": "The night not only runs itself, it collects for you: {worker_name} charms three regulars into remembering tabs they had let go grey, all warmth, no teeth. Old debts walk themselves to your desk, and the only comment offered is a shrug and 'you looked like you could use a good number today.'"
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 10
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_harem_token_on_display",
+      "weight": 3,
+      "report": "Your Token on Display",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the rowdy room wearing your token in plain sight, warm with every table and promised to none of them. Patrons buy round after round chasing a smile that is already spoken for, and the unanswered question of whose token it is keeps the ale moving better than any menu could.",
+        "critical_success": "A wealthy traveler spends half the night trying to buy the token's story and, failing, simply keeps buying: wine for the room, a gold piece left for a telling that never comes. {worker_name} brings you the coin and the compliment together and asks for nothing but the look on your face."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_harem_first_glass",
+      "weight": 3,
+      "report": "The First Glass",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Before the doors open, {worker_name} draws one glass from the best cask and sets it at your place, a private rite before the public ones. Then the floor gets run to your standing orders exactly: your seating, your pours, your prices, kept to the letter because keeping them is its own kind of touch. The night runs smooth as poured cream.",
+        "critical_success": "A flush patron tries to hire {worker_name} away for a private party after hours, purse open on the bar. The refusal is serene: this one answers to you, entirely, and no purse rewrites that. Word of loyalty that absolute travels fast, and so does word of the house that commands it. Bookings follow within the week."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_servant_open_to_close",
+      "weight": 3,
+      "report": "Dawn Till Last Call",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} opens the room and closes it, scrubs the boards before dawn and carries trays through the whole rowdy day between, because you said the house needed it. No complaint, no clock-watching. Just your word, carried out until the last chair goes up on the last table.",
+        "critical_success": "Double market day, the floor packed wall to wall, and {worker_name} simply declines to sink: every order held in memory, every spill met with a cloth already moving, sixteen hours on your single quiet request. The till weighs in like a harvest."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_tavern_server_servant_worst_tables",
+      "weight": 3,
+      "report": "The Avoided Tables",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_tavern_server",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You point at the tables nobody wants, the spitters and the graspers and the singers of one endless song, and {worker_name} takes every one of them without a flicker. Patient, correct service, poured over the worst tempers in the parish until even the grasping hands settle and pay in full. That corner turns a profit because someone does exactly what you ask.",
+        "critical_success": "The most hated regular in the district leaves pleased and nearly sober for the first time in living memory, then books the corner table for a name-day feast. The other servers watch it happen like a conjuring trick. It is not a trick. It is your instruction, followed all the way to the end."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

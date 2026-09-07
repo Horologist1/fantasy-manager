@@ -1,0 +1,656 @@
+{
+  "_comment": "Relationship daily stories (Casino server). Follows the contract of the exemplar file relationship_brothel_prostitute.json: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 (all roll normally, stat feedback on success/failure), 2x 'Loves you' (normal roll, failure forgiven -> earnings 0), 2x Best Friends / Harem Member / House Servant (no_fail). Prose gender-neutral for worker and manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "casino",
+  "profession_id": "casino_server",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "casino_casino_server_romance_lucky_charm",
+      "weight": 2,
+      "report": "A Whale's Lucky Charm",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "positive_traits": {
+        "Beautiful": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A superstitious high-roller decides {worker_name} is luck itself and pays the floor fee to keep the tray close to the table. What the whale reads as fortune is only the glow of someone thinking about you between orders, but it keeps the cards warm and the bets climbing all night.",
+        "critical_success": "The whale wins big with {worker_name} at the rail, tips a slice of the pot on the spot, then loses the rest back to your tables trying to buy the same luck twice. A heart at ease, it turns out, outsells every vintage on the list.",
+        "mediocre": "The whale's luck runs flat and the superstition cools with it; {worker_name} pours, smiles, and the night stays ordinary.",
+        "failure": "Mid-deal the whale asks what {worker_name} keeps smiling at, and the honest glance toward your office lands exactly where it shouldn't. The whale decides the charm was never theirs to rent, cashes out cold, and {worker_name} spends the last hour wondering whether you noticed any of it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_romance_cellar_letter",
+      "weight": 2,
+      "report": "The Cellar Letter",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} sells the cellar's best all evening, pitching every bottle the way one sets a table for someone loved, and the wanting underneath gives each recommendation the ring of truth. VIPs who came for cards leave having drunk half their winnings.",
+        "critical_success": "One table gives up choosing and asks {worker_name} to simply decide for them. The decision, made with the care of a gift meant for you, costs them a small fortune and delights them completely; the cellar ledger has never closed so heavy.",
+        "mediocre": "{worker_name} keeps glancing at the mezzanine where you sometimes stand, and half the recommendations trail off before the price is named.",
+        "failure": "A VIP orders the house's finest, and {worker_name}, eyes on a mezzanine you are not standing on, pours the wrong year at the right price. The VIP knows vintages the way {worker_name} knows your footsteps, and the correction is loud, public, and comped."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_friend_scam_to_desk",
+      "weight": 2,
+      "report": "A Scam, Still Warm",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Between champagne rounds {worker_name} catches two merchants tuning a signal scheme for the card tables, a cough for clubs, a cufflink for spades. It lands on your desk before their first hand is dealt, warm as a fresh roll, and the pit turns the pair politely inside out at the door.",
+        "critical_success": "{worker_name} lets the pair play just long enough to put real money down, then tips you at the perfect moment. The house keeps the forfeited stake under its own rules, and the story crosses the floor as a friendly warning that your tables are watched by more than the pit boss.",
+        "mediocre": "The whisper reaches you one hand too late; the pair wins small and slips out, and all you keep is a description.",
+        "failure": "{worker_name} gets the table number wrong, and your pit boss shakes down a spotless visiting noble while the real pair cleans out the corner table. The apology costs you a comped suite, and {worker_name} avoids your eyes at closing."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_friend_whale_map",
+      "weight": 2,
+      "report": "Mapped the Whale",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} spends the shift learning a new whale the way friends learn each other: which seat, which vintage, which flattery lands and which stings. The map is on your desk by closing, and by tomorrow the whale has a usual table and your house has a regular.",
+        "critical_success": "The read is so exact that you seat the whale next to their favorite kind of argument and stock the one liquor nobody else in the city carries. The whale declares your floor the only civilized room in town and opens a house account with real weight behind it.",
+        "mediocre": "The notes are half guesses; the whale stays a stranger and the comps miss more often than they land.",
+        "failure": "{worker_name} reads a well-dressed poser as the season's whale, and on that word you comp the royal suite to someone whose letters of credit turn out to be stage props. The embarrassment is yours in front of the whole floor, and {worker_name} knows exactly whose fault that is."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 9
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_rebel_sold_secrets",
+      "weight": 2,
+      "report": "Sold Table Talk",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "What VIPs say over champagne is worth more than the champagne, and {worker_name} has stopped pretending otherwise. Tonight's gleanings, a shaky merger, a quiet affair, a debt about to be called, go to a broker two streets over, and the side purse comes home heavier while your floor stays none the wiser.",
+        "critical_success": "The broker pays triple for one particular whisper and asks for a standing supply. {worker_name} harvests the gossip so smoothly that the tables actually tip better, mistaking all that attentive hovering for devoted service.",
+        "mediocre": "The night's talk is all weather and bad beats; the broker shrugs and pays in small coin.",
+        "failure": "The broker turns out to work for the very VIP whose ruin was being discussed, and the trail runs straight back to your champagne floor. The VIP closes a house account older than your tenure and tells two friends why, and the loss lands on your books, not on {worker_name}'s purse."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_rebel_short_pours",
+      "weight": 2,
+      "report": "Short Pours",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "The good bottles go out a finger light all night, and the difference goes home in {worker_name}'s coat. Gamblers watching cards never watch the pour, and the cellar count comes out close enough to pass.",
+        "critical_success": "{worker_name} refines the trick, honest pours for the wine-wise, short ones for the drunk and winning, and clears more off the margins than the tray earns straight. Your stock ledger balances to the drop, on paper.",
+        "mediocre": "A sharp-eyed steward keeps drifting through the section, and {worker_name} pours honest all night out of pure caution; nothing gained, nothing risked.",
+        "failure": "A VIP who summers in vineyard country tastes the water in the third glass and does the arithmetic out loud, at volume. You comp the table, then the neighboring table, and open a fresh bottle in front of witnesses while {worker_name} studies the carpet."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_lovesyou_floor_glow",
+      "weight": 3,
+      "report": "A Quiet Joy",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "There is a particular shine on the champagne floor tonight, and it is {worker_name}, quietly happy for reasons filed under your name. VIPs linger near it without knowing why, order another round just to stay inside it, and the take runs high on nothing but the spillover of a heart at peace.",
+        "critical_success": "A melancholy magnate follows the warmth all evening the way a cold traveler follows firelight, drinking the good vintage and tipping in gold, and finally asks what the secret is. Wrong question, says {worker_name}, smiling at nothing, at you, and the magnate pays double for an answer that never comes.",
+        "mediocre": "The glow keeps sliding into plain distraction; orders arrive correct but slow, and the floor runs an ordinary night.",
+        "failure": "A VIP mistakes the warmth for an invitation and makes a proposition over the rim of a glass. The refusal comes out a shade too sharp, because {worker_name}'s heart was spoken for before the sentence finished, and the VIP leaves early with wounded dignity. By morning an amused note of apology arrives at the desk. Nothing earned, nothing burned."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_lovesyou_cold_corner",
+      "weight": 3,
+      "report": "Warmed the Cold Corner",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "failure_image": "service_story1_casino_server_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} volunteers for the dead corner of the floor, the tables that never tip, because they are still your tables. The love has to go somewhere, so it goes into remembering four dozen names and the drinks that belong to them, and by midnight the cold corner is ordering by the bottle.",
+        "critical_success": "The corner that has bled money since you opened turns its first real profit, and the misers who colonized it swear it is the best service in the house. {worker_name} sets the count on your desk without a word, but the message folded inside it is not subtle.",
+        "mediocre": "Devotion carries the corner through the shift but cannot make its regulars spend; the count comes back thin and tidy.",
+        "failure": "An old widowed VIP at the corner's last table asks, gently, who the smile is for, and {worker_name} answers with too much truth. The gambling stops; the pair talk until the candles gutter, about love spent and love kept, and the VIP leaves early, moved and unspending. Flowers arrive next morning, addressed to the one with the lucky heart."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_bestfriends_desk_close",
+      "weight": 3,
+      "report": "Closing at Your Desk",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Last tray down, {worker_name} appears at your office with the whole evening folded into five sentences: which VIP is about to default, which croupier is being courted by a rival house, which vintage runs out before the weekend. It is the report a partner gives, worth more than the tray's take, and the tray's take was excellent.",
+        "critical_success": "Tonight's five sentences include one that matters: two guild men at the corner table were pricing your best croupiers for poaching. You counter by morning with raises that cost a fraction of replacing them, and {worker_name} waves off the thanks, already asking what tomorrow needs."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_bestfriends_storm_talked_down",
+      "weight": 3,
+      "report": "Talked Down a Storm",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "positive_traits": {
+        "Charming": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A whale on a losing streak stands up looking for something to break, and {worker_name} gets there first, glass in hand, talking the storm down as if the house's name were a shared one. Ten minutes later the whale is laughing at the bar and buying rounds instead of breaking chairs, and nobody else on the floor understands what almost happened.",
+        "critical_success": "By last call the tamed whale has adopted {worker_name} as a confidant and your casino as the only room in town that treats a bad night kindly. The next visit opens with an apology and a spending spree, and you hear the whole tale across your desk, told as a comedy, with your losses played for laughs because there were none."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_harem_your_mark",
+      "weight": 3,
+      "report": "Serving in Your Mark",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The small token at {worker_name}'s throat is yours, and the champagne floor knows how to read it. VIPs pay a premium to be served by the one who is spoken for, hands stay respectful without a word from security, and every glass lands with the composure of someone who knows exactly where they belong.",
+        "critical_success": "A visiting magnate spends the whole evening trying to buy the token's story, then simply pays for the mystery instead, a tip the size of a table stake, for the privilege of being refused by someone who belongs to another. {worker_name} brings you every coin and the story intact."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_harem_salon_orders",
+      "weight": 3,
+      "report": "Salon on Your Word",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You send {worker_name} into the private salon with instructions down to the glass: the magistrate gets the dry vintage and no questions, the young banker gets flattered, the admiral gets left entirely alone. Every order lands to the letter, and the salon runs like a piece of your own mind set walking, pleasure taken in the obedience itself.",
+        "critical_success": "The salon's most difficult guest spends the night testing the boundaries and finds them exact: gracious, warm, immovable. The guest asks who trained such perfect service and receives only a small smile; the tip that follows suggests the answer was understood anyway."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_servant_two_sections",
+      "weight": 3,
+      "report": "Both Salons at Once",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "positive_traits": {
+        "Energetic": 4,
+        "Robust": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A short-staffed night; you point at the empty section and {worker_name} takes both without being asked twice. Open to close, two trays' worth of tables served at one tray's pace, no complaint and no dropped glass, because you said it was needed and that settles the question.",
+        "critical_success": "By closing, VIPs from both sections are requesting {worker_name} by name, never suspecting they had been sharing. Two sections' takings arrive in one steady pair of hands, counted, sorted, and set on your desk before you had thought to ask for them."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_casino_server_servant_sour_tables",
+      "weight": 3,
+      "report": "The Sour Tables",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_casino_server",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You assign {worker_name} the floor's sour end, the sore losers, the finger-snappers, the superstitious who blame the server for the cards. Every table gets the same impeccable, unruffled service, and by midnight the complaints your floor manager braced for simply never arrive.",
+        "critical_success": "The floor's most notorious table-slapper leaves a tip for the first time in living memory, muttering that at least somebody in this house understands service. {worker_name} accepts it without expression and logs it with the rest, another unpleasant duty done perfectly because you assigned it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

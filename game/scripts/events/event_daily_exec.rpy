@@ -6,6 +6,9 @@
 
 init python:
 
+    from fm_events.earnings import protect_positive_payout, resolve_story_earnings
+    from fm_performance.reporting import collect_net_hp_losses, snapshot_worker_health
+
     # Configurable skill penalty for high libido on non-sexual jobs.
     # Rule:
     # - At libido 20 -> -5 effective skill
@@ -20,6 +23,42 @@ init python:
     def _daily_debug_log(message):
         if DAILY_SIM_DEBUG:
             renpy.log(message)
+
+    def choose_guaranteed_event_tuple(valid_events, current_day, current_month):
+        """Prefer expiring exact-date events, then deterministic recovery events."""
+        if not valid_events:
+            return None
+
+        exact_today = []
+        for event_tuple in valid_events:
+            event = event_tuple[0]
+            start_when = str((event.get("conditions", {}) or {}).get("start_when", ""))
+            if not start_when.startswith("exact_date:"):
+                continue
+            try:
+                raw_day, raw_month = start_when.split(":", 1)[1].split(",", 1)
+                if int(raw_day.strip()) == int(current_day) and int(raw_month.strip()) == int(current_month):
+                    exact_today.append(event_tuple)
+            except (TypeError, ValueError):
+                continue
+        if exact_today:
+            return sorted(exact_today, key=lambda item: str(item[0].get("id", "")))[0]
+
+        recovery_events = [
+            event_tuple for event_tuple in valid_events
+            if event_tuple[0].get("recovery_priority", False)
+        ]
+        if recovery_events:
+            return sorted(recovery_events, key=lambda item: str(item[0].get("id", "")))[0]
+
+        total_weight = sum(event.get("weight", 1) for event, _worker in valid_events)
+        pick = renpy.random.uniform(0, total_weight)
+        cumulative_weight = 0
+        for event_tuple in valid_events:
+            cumulative_weight += event_tuple[0].get("weight", 1)
+            if pick <= cumulative_weight:
+                return event_tuple
+        return valid_events[0]
 
     def get_difficulty_comfort_mult():
         """Comfort unit cost scaled by difficulty."""
@@ -258,11 +297,12 @@ init python:
 
         return True
 
-    def is_story_eligible_for_worker(story, worker):
+    def is_story_eligible_for_worker(story, worker, ignore_nsfw_filter=False):
         """Trait/stat based story pre-filter. All keys are optional."""
-        worker_traits = set(worker.get("traits", []) or [])
+        worker_traits = get_worker_trait_match_names(worker)
 
-        if story.get("nsfw_only", False) and not getattr(persistent, "nsfw_enabled", False):
+        story_restricted = content_object_is_restricted(story)
+        if story_restricted and not ignore_nsfw_filter and not getattr(persistent, "nsfw_enabled", False):
             return False
 
         required_traits = story.get("required_traits", []) or []
@@ -300,6 +340,34 @@ init python:
             return [(str(t), default_weight) for t in data]
         return []
 
+    def _fm_normal_event_probability(event, worker):
+        """Per-building manager gating for a normal event (spec 2026-08-13).
+
+        Context: paired worker's building wins; else min manager count among
+        content-visible buildings matching the event's building_type; else no
+        context -> flat base. Fallback on import failure: flat base 30 (never
+        resurrects the old global reduction, never crashes the daily loop).
+        """
+        try:
+            from fm_events.manager_gating import event_probability, resolve_context_count
+        except Exception as e:
+            renpy.log("manager gating import failed: %r" % (e,))
+            return 30
+        worker_count = None
+        if worker is not None and hasattr(worker, "get"):
+            ab = worker.get("assigned_building")
+            resolved = _resolve_building_key(ab) if ab and ab != "Unassigned" else None
+            if resolved:
+                worker_count = count_managers_in_building(resolved)
+        candidate_counts = []
+        if worker_count is None and event.get("building_type"):
+            try:
+                for _cand_name, _cand_b in get_content_visible_event_buildings(event, available_buildings):
+                    candidate_counts.append(count_managers_in_building(_cand_name))
+            except Exception:
+                candidate_counts = []
+        return event_probability(resolve_context_count(worker_count, candidate_counts))
+
     def _pick_weighted_trait(matching_traits_weights):
         """Pick one trait by weight. matching_traits_weights = [(trait, weight), ...]. Returns trait or None."""
         if not matching_traits_weights:
@@ -322,7 +390,7 @@ init python:
         if effective_skill <= 0:
             return effective_skill, None
 
-        if profession.get("nsfw", False):
+        if content_object_is_restricted(profession):
             return effective_skill, None
 
         try:
@@ -353,6 +421,19 @@ init python:
             f"(-{penalty} effective skill, libido {current_libido}/{max_libido})."
         )
         return adjusted, note
+
+    def _story_requires_high_libido(story):
+        """True when the story is gated on a minimum libido (a libido-vent story).
+        Supports both {"libido": 20} and {"libido": {"min": 20}} requirement forms."""
+        if not story or not hasattr(story, "get"):
+            return False
+        req = (story.get("stat_requirements") or {}).get("libido")
+        if hasattr(req, "get"):
+            req = req.get("min")
+        try:
+            return int(req) > 0
+        except (TypeError, ValueError):
+            return False
 
     # Staffing: per-profession penalty (0 workers) / bonus (>=1) on building earnings; clamp product.
     STAFFING_MONEY_MULT_MIN = 1.0 / 3.0
@@ -400,6 +481,135 @@ init python:
         money_mult = max(STAFFING_MONEY_MULT_MIN, min(STAFFING_MONEY_MULT_MAX, raw_money))
         roll_bonus = max(-PRESENCE_ROLL_BONUS_TOTAL_CAP, min(PRESENCE_ROLL_BONUS_TOTAL_CAP, roll_bonus_raw))
         return money_mult, roll_bonus
+
+    def get_projected_job_roll_bonus(worker, profession, building, btype):
+        """Return the staffing roll bonus after hypothetically assigning worker to profession."""
+        if not building or not btype or not worker or not profession:
+            return 0
+
+        projected_building = dict(building)
+        projected_jobs = dict(building.get("servant_jobs") or {})
+        worker_name = worker.get("name")
+        if worker_name:
+            projected_jobs[worker_name] = profession.get("id", "")
+        projected_building["servant_jobs"] = projected_jobs
+
+        workers_here = list(building.get("assigned_servants") or [])
+        if worker_name and not any(w.get("name") == worker_name for w in workers_here if hasattr(w, "get")):
+            workers_here.append(worker)
+
+        _money_mult, roll_bonus = compute_building_staffing_modifiers(btype, projected_building, workers_here)
+        return roll_bonus
+
+    def estimate_daily_job_success(worker, profession, building_roll_bonus=0, building=None, building_type=None):
+        """Estimate the weighted success threshold using the same rules as the daily job roll."""
+        if not worker or not profession or is_unrefuseable_profession(profession):
+            return None
+
+        stories = profession.get("daily_stories", []) or []
+        worker_gender = worker.get("gender", "")
+
+        def _compatible(include_player_filter):
+            result = []
+            for story in stories:
+                if building is not None and not story_allowed_by_building_policy(building, story, worker_gender):
+                    continue
+                gender_requirement = story.get("worker_gender_requirement")
+                if gender_requirement is not None and gender_requirement != worker_gender:
+                    continue
+                if not is_story_eligible_for_worker(story, worker):
+                    continue
+                if include_player_filter and not store.event_passes_player_gender_requirement(story):
+                    continue
+                result.append(story)
+            return result
+
+        compatible_stories = _compatible(True)
+        if not compatible_stories:
+            compatible_stories = _compatible(False)
+        if not compatible_stories:
+            return None
+
+        diff = getattr(persistent, "difficulty", "normal")
+        difficulty_skill_penalty = 10 if diff == "nightmare" else 0
+        worker_traits = get_worker_trait_match_names(worker)
+        weighted_threshold = 0.0
+        total_weight = 0.0
+
+        for story in compatible_stories:
+            skill_options = story.get("skill_options", []) or []
+            if skill_options:
+                effective_skill = sum(calculate_skill_with_traits(worker, skill) for skill in skill_options) // len(skill_options)
+            else:
+                effective_skill = 0
+            effective_skill = max(0, effective_skill - difficulty_skill_penalty)
+            effective_skill, _libido_note = apply_nonsexual_libido_skill_penalty(worker, profession, effective_skill)
+
+            adjusted_skill = max(0, effective_skill + int(story.get("difficulty_modifier", 0) or 0))
+            positive = _parse_trait_weights(story.get("positive_traits") or story.get("relevant_traits") or [])
+            negative = _parse_trait_weights(story.get("negative_traits") or [])
+            trait_modifier = sum(weight for trait, weight in positive if trait in worker_traits)
+            trait_modifier -= sum(weight for trait, weight in negative if trait in worker_traits)
+            policy_focus_bonus = get_building_policy_focus_bonus(building, building_type, worker.get("gender")) if building is not None else 0
+            threshold = min(100, max(0, adjusted_skill + trait_modifier + int(building_roll_bonus or 0) + policy_focus_bonus))
+
+            try:
+                weight = max(0.0, float(story.get("weight", 1) or 0))
+            except (TypeError, ValueError):
+                weight = 1.0
+            weighted_threshold += threshold * weight
+            total_weight += weight
+
+        if total_weight <= 0:
+            return None
+        return int(round(weighted_threshold / total_weight))
+
+    def sanitize_daily_report_entry_for_filter(report_entry, btype, profession, story=None):
+        """Attach immutable content provenance; presentation performs all masking."""
+        story = story or {}
+        worker = report_entry.get("worker", {}) or {}
+        is_nsfw_content = bool(
+            content_object_is_restricted(btype)
+            or content_object_is_restricted(profession)
+            or content_object_is_restricted(story)
+        )
+        report_entry["building_type_id"] = (btype or {}).get("id")
+        # Archive the raw canonical label. SFW masking belongs exclusively to
+        # get_report_building_display(), so changing the toggle stays reversible.
+        report_entry.setdefault("building_type_name", (btype or {}).get("name", (btype or {}).get("id", "Building")))
+        if not report_entry.get("building_display_name"):
+            building_name = report_entry.get("building", "Unknown Building")
+            parts = str(building_name).split("_")
+            default_name = "Building %s" % parts[1] if len(parts) > 1 else str(building_name).replace("_", " ")
+            custom_name = (getattr(store, "custom_names", {}) or {}).get(building_name, default_name)
+            report_entry["building_display_name"] = "%s: %s" % (report_entry["building_type_name"], custom_name)
+        report_entry["profession_id"] = (profession or {}).get("id")
+        report_entry["nsfw_content"] = is_nsfw_content
+        report_entry["worker_nsfw"] = bool(content_object_is_restricted(worker))
+        return report_entry
+
+    def build_no_permitted_stories_report_entry(worker, building_name, btype, profession):
+        # Neutral ledger row for a worker whose every story was vetoed by the
+        # Skill Policy / eligibility filters; without it the worker silently
+        # vanished from the daily report with $0 and no explanation.
+        report_entry = {
+            "worker_name": worker.get("name", "Unknown"),
+            "worker": worker,
+            "building": building_name,
+            "event_data": {"story_image": "Refuse"},
+            "report": f"{worker.get('name', 'Unknown')} had no permitted tasks",
+            "description": f"{worker.get('name', 'Unknown')} spent the day idle: the building's Skill Policy does not permit any of this job's tasks for them. Review the policy or reassign the worker.",
+            "result": "Unhandled",
+            "earnings": 0,
+            "used_skill": "N/A",
+            "roll": "N/A",
+            "trait_roll": None,
+            "trait_success_messages": [],
+            "group_event": False,
+            "loot": [],
+            "story_image": get_event_image(worker, {"story_image": "Refuse"}, outcome="refused"),
+        }
+        return sanitize_daily_report_entry_for_filter(report_entry, btype, profession)
 
     def is_unrefuseable_profession(profession):
         prof_id = str((profession or {}).get("id", "")).strip().lower()
@@ -481,12 +691,9 @@ init python:
         # If it were ever chained twice within one day, only the last pass's
         # deltas would show in the report. Not saved (display-only). (Audit note #6.)
         store.daily_worker_deltas = {}
-        _hp_at_day_start = {}
-        for _w in store.workers:
-            try:
-                _hp_at_day_start[str(_w.get("name", ""))] = int(_w.get("health", 0) or 0)
-            except Exception:
-                pass
+        # process_daily_events can cross Ren'Py interactions; session state
+        # survives those boundaries without leaking into saves or rollback.
+        renpy.session["_fm_daily_hp_at_start"] = snapshot_worker_health(store.workers)
 
         # Clear image cache for new Daily Report
         clear_image_cache()
@@ -547,6 +754,10 @@ init python:
             if not btype_id:
                 continue
 
+            if btype_id == "arena" and not arena_operations_are_unlocked():
+                renpy.log("DAILY: Arena opening trial incomplete -> skipping operations")
+                continue
+
             btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == btype_id), None)
             if not btype:
                 continue
@@ -564,8 +775,24 @@ init python:
             building["costs"] = building.get("costs", 0) + bonus_cost
             renpy.log(f"Building {building_name} new costs after skill bonus: {building['costs']}")
 
+            policy_incident = apply_building_policy_incident(building, btype, building_name)
+            policy_incident_worker_name = None
+            policy_incident_profession_id = None
+            if policy_incident:
+                policy_incident_worker_name = policy_incident.get("worker_name")
+                policy_incident_profession_id = str(policy_incident.get("profession_id", "")).strip().lower()
+                policy_profession = next(
+                    (entry for entry in (btype.get("professions", []) or []) if str(entry.get("id", "")).strip().lower() == policy_incident_profession_id),
+                    {"id": "service_policy", "name": "Service Policy", "nsfw_content": bool(content_object_is_restricted(btype))},
+                )
+                sanitize_daily_report_entry_for_filter(policy_incident, btype, policy_profession, policy_incident.get("event_data", {}))
+                daily_report.append(policy_incident)
+
             for profession in btype.get("professions", []):
                 _pid = str(profession.get("id", "")).strip().lower()
+                if not profession_is_visible(profession, btype):
+                    renpy.log(f"DAILY: Profession {_pid} hidden by content filter -> skipping")
+                    continue
                 assigned_workers = [
                     name_to_store.get(w.get("name"), w)
                     for w in building["assigned_servants"]
@@ -612,6 +839,17 @@ init python:
 
                 for worker in eligible_workers:
                     renpy.log(f"Processing worker: {worker['name']}, ID: {id(worker)}")
+                    worker_events_remaining = events_per_worker
+                    if (
+                        policy_incident
+                        and worker.get("name") == policy_incident_worker_name
+                        and str(profession.get("id", "")).strip().lower() == policy_incident_profession_id
+                        and worker_events_remaining > 0
+                    ):
+                        worker_events_remaining -= 1
+                        renpy.log("POLICY: consumed one daily story for %s after a missed service request" % worker.get("name", "Unknown"))
+                    if worker_events_remaining <= 0:
+                        continue
                     # Check for rebelliousness
                     if not is_unrefuseable_profession(profession):
                         rebelliousness = worker.get("rebelliousness", 50)
@@ -641,12 +879,13 @@ init python:
                                 "loot": [],
                                 "story_image": get_event_image(worker, {"story_image": "Refuse"}, outcome="refused")
                             }
+                            sanitize_daily_report_entry_for_filter(report_entry, btype, profession, {"story_image": "Refuse"})
                             daily_report.append(report_entry)
                             continue  # Skip further processing for this worker
 
                     # Track the number of events processed
                     processed_events = 0
-                    for _ in range(events_per_worker):
+                    for _ in range(worker_events_remaining):
                         daily_story_traits_granted = []
                         daily_story_traits_removed = []
                         # Check if worker has enough energy to perform another event
@@ -657,19 +896,23 @@ init python:
                         stories = profession.get("daily_stories", [])
                         if not stories:
                             continue
+                        hidden_content_job = bool(content_object_is_restricted(btype) or content_object_is_restricted(profession))
                         
                         # Filter stories by worker gender, manager (Lord/Lady) gender, and eligibility
                         worker_gender = worker.get("gender", "")
+                        building_policy_focus_bonus = get_building_policy_focus_bonus(building, btype, worker.get("gender"))
 
                         def _collect_daily_stories_compatible(include_player_filter, include_eligible):
                             out = []
                             for story in stories:
+                                if not story_allowed_by_building_policy(building, story, worker_gender):
+                                    continue
                                 story_gender_req = story.get("worker_gender_requirement", None)
                                 if story_gender_req is not None and story_gender_req != worker_gender:
                                     continue
                                 if include_player_filter and not store.event_passes_player_gender_requirement(story):
                                     continue
-                                if include_eligible and not is_story_eligible_for_worker(story, worker):
+                                if include_eligible and not is_story_eligible_for_worker(story, worker, ignore_nsfw_filter=hidden_content_job):
                                     continue
                                 out.append(story)
                             return out
@@ -678,15 +921,25 @@ init python:
                         # Relax manager gender if nothing matches (same idea as legacy worker/eligible fallback)
                         if not compatible_stories:
                             compatible_stories = _collect_daily_stories_compatible(False, True)
-                        # Safety fallback: worker gender only (ignore eligibility and manager filter)
-                        if not compatible_stories:
-                            compatible_stories = _collect_daily_stories_compatible(False, False)
-                            if compatible_stories:
-                                renpy.log(f"Story filter fallback used for {worker.get('name', 'Unknown')} in profession {profession.get('id', 'unknown')}")
                         
                         if not compatible_stories:
                             renpy.log(f"No compatible stories found for {worker['name']} (gender: {worker_gender})")
-                            continue
+                            daily_report.append(build_no_permitted_stories_report_entry(worker, building_name, btype, profession))
+                            break
+
+                        # A focused Academy course uses the matching lesson variant.
+                        # If data is incomplete, focus_story_pool preserves the full legacy pool.
+                        _academy_profession_id = str(profession.get("id", "")).strip().lower()
+                        if _academy_profession_id.startswith("academy_"):
+                            try:
+                                from fm_academy.curriculum import focus_story_pool
+                                _academy_focus = get_academy_training_focus(_academy_profession_id)
+                                compatible_stories = focus_story_pool(
+                                    compatible_stories,
+                                    (_academy_focus or {}).get("primary"),
+                                )
+                            except Exception as e:
+                                renpy.log("Academy story focus fallback for %s: %r" % (_academy_profession_id, e))
                         
                         chosen_story = select_weighted_event(compatible_stories)
                         if not chosen_story:
@@ -776,6 +1029,7 @@ init python:
                                 "loot": [],
                                 "story_image": get_event_image(worker, chosen_story, outcome="success", skill_name=used_skill)
                             }
+                            sanitize_daily_report_entry_for_filter(report_entry, btype, profession, chosen_story)
                             daily_report.append(report_entry)
                             processed_events += 1
                             continue
@@ -800,6 +1054,11 @@ init python:
 
                         # Apply libido-based skill penalty on non-sexual jobs.
                         effective_skill, libido_penalty_note = apply_nonsexual_libido_skill_penalty(worker, profession, effective_skill)
+                        # Libido-vent stories ARE the outlet for that tension (and carry their own
+                        # difficulty_modifier); a red penalty note on the day the valve fires
+                        # reads as a problem, so only show it on non-vent days.
+                        if libido_penalty_note and _story_requires_high_libido(chosen_story):
+                            libido_penalty_note = None
 
                         # Apply difficulty modifier from story
                         difficulty_modifier = chosen_story.get("difficulty_modifier", 0)
@@ -812,8 +1071,7 @@ init python:
                         neg_data = chosen_story.get("negative_traits") or []
                         pos_trait_weights = _parse_trait_weights(pos_data)
                         neg_trait_weights = _parse_trait_weights(neg_data)
-                        worker_traits_raw = worker.get("traits", []) or []
-                        worker_traits = set(str(t).strip() for t in (worker_traits_raw if hasattr(worker_traits_raw, "__iter__") else []) if t)
+                        worker_traits = get_worker_trait_match_names(worker)
                         matching_pos = [(t, w) for t, w in pos_trait_weights if t in worker_traits]
                         matching_neg = [(t, w) for t, w in neg_trait_weights if t in worker_traits]
                         trait_modifier = sum(w for _, w in matching_pos) - sum(w for _, w in matching_neg)
@@ -823,7 +1081,7 @@ init python:
                         # Roll outcome: success if d100 <= skill threshold. Synergy bonus raises the threshold (not the die).
                         roll = random.randint(1, 100)
                         try:
-                            synergy_skill_bonus = int(building_roll_bonus)
+                            synergy_skill_bonus = int(building_roll_bonus) + int(building_policy_focus_bonus)
                         except (TypeError, ValueError):
                             synergy_skill_bonus = 0
                         skill_threshold = min(100, max(0, adjusted_skill + synergy_skill_bonus))
@@ -846,19 +1104,24 @@ init python:
                             # Failure: everything above threshold+10
                             outcome = "Failure"
                             reputation_change = -5
+                        # no_fail stories (relationship-arc rewards) never fail: keep the
+                        # crit chance but remap Mediocre/Failure -> Success so they read as
+                        # a guaranteed reward.
+                        if chosen_story.get("no_fail") and outcome in ("Mediocre", "Failure"):
+                            outcome = "Success"
+                            reputation_change = 5
                         outcome_key = outcome.lower().replace(" ", "_")
 
-                        earnings_formula = chosen_story.get("earnings", {}).get(outcome_key, "0")
-                        env = {"skill": skill_threshold, "level": worker.get("level", 1), "roll": roll}
-                        try:
-                            earnings = eval(earnings_formula, {"__builtins__": None}, env)
-                        except Exception:
-                            earnings = 0
-
-                        # Earnings from JSON are used as-is (formulas already encode tier scaling)
-                        earnings = int(earnings)
-                        if outcome == "Failure" and earnings == 0:
-                            earnings = -10
+                        base_earnings, earnings_error = resolve_story_earnings(
+                            chosen_story,
+                            outcome_key,
+                            skill=skill_threshold,
+                            level=worker.get("level", 1),
+                            roll=roll,
+                        )
+                        if earnings_error:
+                            renpy.log("EARNINGS FORMULA ERROR: " + earnings_error)
+                        earnings = base_earnings
 
                         # Trait messages: pick ONE weighted-random trait. Success/critical -> positive; Failure/mediocre -> negative.
                         trait_success_messages = []
@@ -893,6 +1156,19 @@ init python:
                         # Difficulty earnings scaling (applies to positive earnings only)
                         if earnings > 0:
                             earnings = int(round(earnings * get_difficulty_earnings_mult()))
+
+                        # A valid positive formula must never become "No payout" because
+                        # a downstream trait, management or staffing multiplier is broken.
+                        earnings, payout_repaired = protect_positive_payout(
+                            outcome_key,
+                            base_earnings=base_earnings,
+                            final_earnings=earnings,
+                        )
+                        if payout_repaired:
+                            renpy.log(
+                                "EARNINGS PAYOUT REPAIRED: story=%s outcome=%s base=%s"
+                                % (chosen_story.get("id", "<unknown>"), outcome_key, base_earnings)
+                            )
 
                         # Story/Easy: floor on failure losses (daily stories use failure: "-roll" after rebalance)
                         if outcome == "Failure" and earnings < 0:
@@ -1029,7 +1305,7 @@ init python:
                             check_skill_label = selected_skill
                             avg_seg = ""
                         if selected_skill:
-                            full_description += "\n\n{{color={}}}{{size=18}}({}: {}{}{} — Skill roll {} — {}){{/size}}{{/color}}".format(
+                            full_description += "\n\n{{color={}}}{{size=20}}({}: {}{}{} — Skill roll {} — {}){{/size}}{{/color}}".format(
                                 outcome_color,
                                 check_skill_label,
                                 adjusted_skill,
@@ -1039,17 +1315,40 @@ init python:
                                 outcome,
                             )
                         else:
-                            full_description += "\n\n{{color={}}}{{size=18}}(Skill roll {} — {}){{/size}}{{/color}}".format(
+                            full_description += "\n\n{{color={}}}{{size=20}}(Skill roll {} — {}){{/size}}{{/color}}".format(
                                 outcome_color, roll, outcome
                             )
 
+                        # Gated stories say WHY they fired: stat gates (romance /
+                        # friendship / rebelliousness / libido) show the worker's
+                        # current value; trait gates (Loves you, Harem Member...)
+                        # show the trait name. Same lookup order as the gate check
+                        # (nested skills first, legacy top-level fallback).
+                        _gate_reqs = chosen_story.get("stat_requirements", {}) or {}
+                        _gate_bits = []
+                        if hasattr(_gate_reqs, "items"):
+                            for _gate_stat in _gate_reqs:
+                                _gate_ws = worker.get("skills", {}) if hasattr(worker, "get") else {}
+                                if hasattr(_gate_ws, "get"):
+                                    _gate_val = _gate_ws.get(_gate_stat, worker.get(_gate_stat, 0))
+                                else:
+                                    _gate_val = worker.get(_gate_stat, 0) if hasattr(worker, "get") else 0
+                                try:
+                                    _gate_bits.append("{} {}".format(str(_gate_stat).capitalize(), int(_gate_val)))
+                                except Exception:
+                                    _gate_bits.append(str(_gate_stat).capitalize())
+                        for _gate_trait in (chosen_story.get("required_traits") or []):
+                            _gate_bits.append(str(_gate_trait))
+                        if _gate_bits:
+                            full_description += "\n{{color=#557799}}{{size=20}}(Unlocked by {}){{/size}}{{/color}}".format(", ".join(_gate_bits))
+
                         _earn_col = "#228822" if earnings > 0 else ("#aa2222" if earnings < 0 else "#666666")
                         if earnings > 0:
-                            full_description += "\n{{color={0}}}{{size=18}}Earned +${1}{{/size}}{{/color}}".format(_earn_col, earnings)
+                            full_description += "\n{{color={0}}}{{size=20}}Earned +${1}{{/size}}{{/color}}".format(_earn_col, earnings)
                         elif earnings < 0:
-                            full_description += "\n{{color={0}}}{{size=18}}Lost ${1}{{/size}}{{/color}}".format(_earn_col, -earnings)
+                            full_description += "\n{{color={0}}}{{size=20}}Lost ${1}{{/size}}{{/color}}".format(_earn_col, -earnings)
                         else:
-                            full_description += "\n{{color={0}}}{{size=18}}No payout{{/size}}{{/color}}".format(_earn_col)
+                            full_description += "\n{{color={0}}}{{size=20}}No payout{{/size}}{{/color}}".format(_earn_col)
 
                         # Use skill name directly
                         if selected_skill is not None:
@@ -1082,6 +1381,15 @@ init python:
 
                         report_entry = {
                             "building": building_name,
+                            "building_type_id": btype.get("id"),
+                            "building_type_name": building_type_display_name(btype, btype.get("id", "Building")),
+                            "building_display_name": "%s: %s" % (
+                                building_type_display_name(btype, btype.get("id", "Building")),
+                                (getattr(store, "custom_names", {}) or {}).get(
+                                    building_name,
+                                    "Building %s" % str(building_name).split("_")[1] if len(str(building_name).split("_")) > 1 else str(building_name).replace("_", " "),
+                                ),
+                            ),
                             "profession": profession.get("name", "Unknown Profession"),
                             "worker_name": worker.get("name", "Unknown"),
                             "worker": worker,
@@ -1114,8 +1422,9 @@ init python:
                                 for bonus in bonus_items:
                                     item_id = bonus.get("item_id")
                                     chance = min(1.0, max(0.0, bonus.get("chance", 1.0)))
-                                    # Skip NSFW items if NSFW is disabled
-                                    if bonus.get("nsfw", False) and not persistent.nsfw_enabled:
+                                    # Keep restricted definitions/inventory intact, but do not
+                                    # acquire them through a hidden runtime route.
+                                    if not item_content_is_visible(item_id) or (content_object_is_restricted(bonus) and not persistent.nsfw_enabled):
                                         continue
                                     # Only on critical success if specified
                                     if bonus.get("critical_only", False) and outcome != "Critical Success":
@@ -1135,20 +1444,30 @@ init python:
                                         if looted_worker:
                                             # Add the worker to the roster immediately
                                             ensure_worker_defaults(looted_worker)
-                                            looted_worker["source"] = "recruited"
                                             store.workers.append(looted_worker)
                                             
                                             # Update the report
                                             report_entry["description"] += f"\n\n{{color=#00ff00}}Captured {looted_worker['name']}!{{/color}}"
                                             report_entry["loot"].append(f"Monster Worker: {looted_worker['name']}")
-                                            renpy.notify(f"Captured {looted_worker['name']}!")
+                                            if not hidden_content_job or getattr(persistent, "nsfw_enabled", False):
+                                                renpy.notify(f"Captured {looted_worker['name']}!")
+                        sanitize_daily_report_entry_for_filter(report_entry, btype, profession, chosen_story)
                         daily_report.append(report_entry)
                         processed_events += 1
 
+        for report_entry in daily_report:
+            record_daily_report_moment(report_entry)
+        try:
+            from fm_lanista.arena_feedback import summarize_daily_arena_feedback
+            _arena_feedback = summarize_daily_arena_feedback(daily_report, calculate_total_days())
+            if _arena_feedback:
+                store.arena_lanista_feedback_pending = _arena_feedback
+        except Exception as e:
+            renpy.log("Arena Lanista feedback summary failed: %s" % str(e))
         renpy.log(f"process_daily_events() finished. Report entries: {len(daily_report)}")
         return None # Function finished successfully
 
-# ==============================
+    # ==============================
     # process_next_day() function
     # ==============================
     def _relink_assigned_servants_to_store_workers():
@@ -1452,6 +1771,10 @@ init python:
         store.current_event = None
         store.current_worker = None
 
+        # Close the previous day's history before advancing the calendar. This
+        # captures training, interactions and manual changes made in the tavern.
+        capture_all_worker_activity_changes()
+
         # Bankruptcy at day start: catches spending after last daily report (UI uses store.money).
         _thr = getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", BANKRUPTCY_MONEY_THRESHOLD)
         _cur = int(getattr(store, "money", 0) or 0)
@@ -1472,7 +1795,7 @@ init python:
             renpy.log("REBELLIOUSNESS_V2: Migration applied (primed _last_applied for all workers)")
         # Advance the date first
         advance_date()
-        
+
         # Check if it's Monday and start BGM if needed
         check_and_start_monday_bgm()
 
@@ -1531,6 +1854,8 @@ init python:
         # Re-run auto-equip at day start so newly obtained gear (including accessories)
         # is considered without requiring manual toggle/profession changes.
         for worker in store.workers:
+            if worker_is_in_franchise(worker):
+                continue
             if worker.get("auto_equip", False):
                 try:
                     run_worker_auto_equip(worker)
@@ -1539,6 +1864,8 @@ init python:
 
         # Recalculate max health/energy and reset daily counters (regen moved to after events and dead check)
         for worker in store.workers:
+            if worker_is_in_franchise(worker):
+                continue
             worker["max_health"] = calculate_max_health(worker)
             worker["max_energy"] = calculate_max_energy(worker)
 
@@ -1586,8 +1913,14 @@ init python:
         # Ensure assigned_servants reference live worker objects before processing events
         _relink_assigned_servants_to_store_workers()
 
+        # Remote franchises use one aggregate calculation and one report row.
+        # They deliberately stay outside process_daily_events and its story/media paths.
+        process_franchise_holdings_day()
+
         # Process daily events (THIS POPULATES THE GLOBAL daily_report)
         process_daily_events_result = process_daily_events()
+        # Preserve work damage, spent energy, libido and learning before nightly recovery.
+        capture_all_worker_activity_changes()
         # Check if process_daily_events triggered an early game over (e.g., if it were to return "game_over")
         if process_daily_events_result == "game_over":
             return "game_over" # Propagate game over if needed
@@ -1612,17 +1945,19 @@ init python:
                 total_building_costs += building.get('costs', 0)
         # --- END INCOME/COST CALCULATION ---
 
-        # Check for dead workers
-        dead_workers = check_worker_health()
-        if dead_workers:
-            if len(dead_workers) == 1:
-                renpy.say(None, f"{dead_workers[0]} has died and had to be let go.")
+        # Zero health is reversible: withdraw the worker from duty, never delete the roster entry.
+        incapacitated_workers = check_worker_health()
+        if incapacitated_workers:
+            if len(incapacitated_workers) == 1:
+                renpy.say(None, f"{incapacitated_workers[0]} collapsed and was withdrawn from duty to recover.")
             else:
-                names_text = ", ".join(dead_workers[:-1]) + f" and {dead_workers[-1]}"
-                renpy.say(None, f"{names_text} have died and had to be let go.")
+                names_text = ", ".join(incapacitated_workers[:-1]) + f" and {incapacitated_workers[-1]}"
+                renpy.say(None, f"{names_text} collapsed and were withdrawn from duty to recover.")
 
-        # --- NIGHTLY REST: Regenerate health/energy/libido AFTER events and dead check ---
+        # --- NIGHTLY REST: Regenerate health/energy/libido AFTER events and incapacitation check ---
         for worker in store.workers:
+            if worker_is_in_franchise(worker):
+                continue
             old_health = worker["health"]
             base_regen = worker.get("level", 1)
             trait_regen = calculate_health_regeneration(worker)
@@ -1663,17 +1998,16 @@ init python:
         # Update skill levels and worker levels
         update_skill_levels()
         update_worker_levels()
+        # Record recovery and any worker/skill level-ups as separate changes.
+        capture_all_worker_activity_changes()
 
-        # Record each surviving worker's net HP loss for the report badges
-        try:
-            for _w in store.workers:
-                _wn = str(_w.get("name", ""))
-                if _wn in _hp_at_day_start:
-                    _hp_delta = int(_w.get("health", 0) or 0) - _hp_at_day_start[_wn]
-                    if _hp_delta < 0:
-                        _record_daily_worker_delta(_wn, "hp", _hp_delta)
-        except Exception as e:
-            renpy.log(f"hp delta tracking error: {e}")
+        # Record each surviving worker's net HP loss for the report badges.
+        # Pop guarantees a later day cannot consume a stale baseline.
+        for _wn, _hp_delta in collect_net_hp_losses(
+            store.workers,
+            renpy.session.pop("_fm_daily_hp_at_start", {}),
+        ).items():
+            _record_daily_worker_delta(_wn, "hp", _hp_delta)
 
         # Reload available workers unconditionally
         available_workers = load_buy_workers()
@@ -1816,18 +2150,19 @@ init python:
 
                 eligible_workers = []
                 if event_building_types:
+                    visible_building_names = {name for name, _building in get_content_visible_event_buildings(event, available_buildings)}
                     eligible_workers = [
                         w for w in store.workers
                         if w.get("assigned_building", "Unassigned") != "Unassigned"
-                        and w.get("assigned_building") in available_buildings
-                        and available_buildings[w.get("assigned_building")].get("type") in event_building_types
+                        and w.get("assigned_building") in visible_building_names
                     ]
                 else:
                     eligible_workers = store.workers
 
-                worker_gender_requirement = event.get("worker_gender_requirement", None)
-                if worker_gender_requirement:
-                    eligible_workers = [w for w in eligible_workers if w.get("gender", "") == worker_gender_requirement]
+                # Gender gate lives in filter_workers_for_event_progress (normalized:
+                # "any"/null = no gate); a raw equality filter here broke on "any".
+                eligible_workers = filter_workers_for_event_progress(eligible_workers, event)
+                eligible_workers = filter_workers_for_event_building_policy(eligible_workers, event)
 
                 worker = None
                 is_available = False
@@ -1860,17 +2195,11 @@ init python:
                     guaranteed_valid_events.append((event, worker))
 
             if guaranteed_valid_events:
-                total_weight = sum(evt.get("weight", 1) for evt, _ in guaranteed_valid_events)
-                pick = renpy.random.uniform(0, total_weight)
-                cum = 0
-                chosen_tuple = None
-                for evt_tuple in guaranteed_valid_events:
-                    cum += evt_tuple[0].get("weight", 1)
-                    if pick <= cum:
-                        chosen_tuple = evt_tuple
-                        break
-                if chosen_tuple is None:
-                    chosen_tuple = guaranteed_valid_events[0]
+                chosen_tuple = choose_guaranteed_event_tuple(
+                    guaranteed_valid_events,
+                    store.current_day,
+                    store.current_month,
+                )
                 chosen_event, chosen_worker = chosen_tuple
                 renpy.log(f"Triggering guaranteed event immediately: {chosen_event.get('id')}")
                 store.current_event = chosen_event
@@ -1894,6 +2223,7 @@ init python:
                 e.get("event_probability") is not None
                 or bool(e.get("priority", False))
                 or event_type in ("story", "quest")
+                or event_is_character_arc(e)
             )
 
         priority_events = [
@@ -1923,16 +2253,14 @@ init python:
             events_to_consider.extend(priority_events)
             renpy.log(f"DEBUG: {len(priority_events)} priority event(s) advance to the individual probability phase (NOT affected by managers)")
 
-        # Normal events: one pool-level roll (manager-reduced), then per-event rolls below.
+        # Normal events: one pool-level roll at the flat base. Manager gating is
+        # now PER-BUILDING and applied in the individual-probability phase below
+        # (spec 2026-08-13: a manager calms their own building, not the world).
         if normal_events and has_active_professions:
             base_probability = 30
-            manager_count = count_active_managers()
-            manager_reduction = manager_count * 10  # unified with the individual phase: 10%/manager
-            effective_probability = max(1, base_probability - manager_reduction)  # Minimum 1%
-
             normal_roll = renpy.random.randint(1, 100)
-            renpy.log(f"DEBUG: Normal events roll: {normal_roll}/100 (base: {base_probability}%, managers: {manager_count} (-{manager_reduction}%), effective: {effective_probability}%)")
-            if normal_roll <= effective_probability:
+            renpy.log(f"DEBUG: Normal events roll: {normal_roll}/100 (base: {base_probability}%; manager gating is per-building in the individual phase)")
+            if normal_roll <= base_probability:
                 should_trigger_event = True
                 events_to_consider.extend(normal_events)
 
@@ -1958,19 +2286,19 @@ init python:
                     # Determine eligible workers
                     eligible_workers = []
                     if event_building_types:
+                        visible_building_names = {name for name, _building in get_content_visible_event_buildings(event, available_buildings)}
                         eligible_workers = [
                             w for w in store.workers
                             if w.get("assigned_building", "Unassigned") != "Unassigned"
-                            and w["assigned_building"] in available_buildings
-                            and available_buildings[w["assigned_building"]].get("type") in event_building_types
+                            and w.get("assigned_building") in visible_building_names
                         ]
                     else:
                         eligible_workers = store.workers
 
-                    # Gender requirement
-                    worker_gender_requirement = event.get("worker_gender_requirement", None)
-                    if worker_gender_requirement:
-                        eligible_workers = [w for w in eligible_workers if w.get("gender", "") == worker_gender_requirement]
+                    # Gender gate lives in filter_workers_for_event_progress (normalized:
+                    # "any"/null = no gate); a raw equality filter here broke on "any".
+                    eligible_workers = filter_workers_for_event_progress(eligible_workers, event)
+                    eligible_workers = filter_workers_for_event_building_policy(eligible_workers, event)
 
                     worker = None
                     is_available = False
@@ -2010,22 +2338,19 @@ init python:
                 if valid_events:
                     # Filter events by their individual probability
                     probability_filtered_events = []
-                    # Calculate effective base probability with manager reduction (already calculated above)
-                    # Use the same effective_probability calculated earlier, or recalculate if needed
-                    manager_count = count_active_managers()
-                    manager_reduction = manager_count * 10
-                    base_event_prob = max(1, 30 - manager_reduction)  # Minimum 1%
 
                     for event, worker in valid_events:
                         event_id = event.get("id")
                         # Priority events roll their OWN probability (default 50%),
                         # never manager-reduced. Normal events without a custom
-                        # probability use the manager-reduced base.
+                        # probability use the PER-BUILDING manager-gated base
+                        # (worker's building, else min across matching buildings).
                         event_probability = event.get("event_probability")
                         if _is_priority_event(event):
                             event_probability = max(1, event_probability if event_probability is not None else 50)
                         elif event_probability is None:
-                            event_probability = base_event_prob
+                            event_probability = _fm_normal_event_probability(event, worker)
+                            renpy.log(f"DEBUG: {event_id} per-building gated probability: {event_probability}%")
                         else:
                             # Custom probability on a normal event - use it exactly as
                             # defined, NOT affected by managers; keep a 1% floor.

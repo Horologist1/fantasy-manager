@@ -13,9 +13,97 @@
         "name": "Reluctant Gladiator",
         "only_assigned": true,
         "modifiers": {
-            "energy_regeneration": -2,
-            "joy": -2
+            "energy_regeneration": -1
         },
-        "description": "The Lanista works for your house by choice, but the Arena still claims their days. They give you the evenings they can spare; the double life of master and servant wears at the edges. [-2 Energy Regen, -2 Joy]"
+        "description": "The Lanista works for your house by choice, but the Arena still claims their days. They give you the evenings they can spare; the double life of master and servant wears at the edges. [-1 Energy Regen]"
+    },
+    {
+        "name": "Unbroken",
+        "only_assigned": true,
+        "modifiers": {
+            "skill_modifiers": {
+                "Charm": 1
+            }
+        },
+        "description": "The champion's code holds, whole and unbent. Eleven seasons on the sand taught the Lanista to wear the body as armor and keep want behind the guard, and none of that has slipped — clothes stay on, the composure never cracks, nothing is offered that wasn't asked for plainly. They meet you the way they would read a fighter's stance: measured, unhurried, entirely their own. You have taken nothing from them yet. [+1 Charm]"
+    },
+    {
+        "name": "Curious",
+        "only_assigned": true,
+        "modifiers": {
+            "libido": 2,
+            "skill_modifiers": {
+                "Charm": 2,
+                "Striptease": 1
+            }
+        },
+        "description": "A crack has opened in the old discipline. The Lanista has started to wonder what the guard was ever protecting — to catch themselves looking, to let a glance hold a beat too long before the fighter's reflex pulls it back. Nothing has been surrendered outright; the code still mostly stands. But curiosity is how every wall comes down, one honest question at a time, and they have begun to ask. [+2 Libido, +2 Charm, +1 Striptease]"
+    },
+    {
+        "name": "Open-Minded",
+        "only_assigned": true,
+        "modifiers": {
+            "libido": 4,
+            "joy": 2,
+            "skill_modifiers": {
+                "Charm": 3,
+                "Striptease": 2,
+                "Sex": 1
+            }
+        },
+        "description": "The wall the champion built is coming down in courses. The Lanista no longer treats desire as a weakness to be drilled out — they have decided, with a fighter's blunt honesty, that a thing enjoyed is not a thing lost. The old shame is gone; what replaces it is appetite, met head-on and without apology. Eleven seasons of holding the line, and they have simply chosen to stop. [+4 Libido, +2 Joy, +3 Charm, +2 Striptease, +1 Sex]"
+    },
+    {
+        "name": "Uninhibited",
+        "only_assigned": true,
+        "modifiers": {
+            "libido": 6,
+            "libido_regeneration": 3,
+            "joy": 4,
+            "earnings_multiplier": 1.05,
+            "skill_modifiers": {
+                "Charm": 4,
+                "Striptease": 3,
+                "Sex": 2
+            }
+        },
+        "description": "The code is a memory now, and the Lanista wears its absence lightly. There is no guard left to drop — they move through want the way they once moved through a bout, sure-footed and unafraid, taking pleasure openly and giving it back harder. What the sand called discipline they now call a cage they were glad to leave. Little embarrasses them; less is refused. [+6 Libido, +3 Libido Regen, +4 Joy, +5% Earnings, +4 Charm, +3 Striptease, +2 Sex]"
+    },
+    {
+        "name": "Arena Exhibitionist",
+        "aliases": ["Exhibitionist"],
+        "only_assigned": true,
+        "modifiers": {
+            "libido": 8,
+            "libido_regeneration": 5,
+            "joy": 6,
+            "earnings_multiplier": 1.10,
+            "skill_modifiers": {
+                "Charm": 5,
+                "Striptease": 5,
+                "Sex": 3,
+                "Group": 2
+            }
+        },
+        "description": "The champion who once fought to be watched for skill now craves to be watched for this. The Lanista has turned the old arena instinct inside out — the crowd, the eyes, the roar of an audience — and aimed it at the body they spent a lifetime armoring. Being seen used to be a matter of honor; now it is a matter of hunger. They perform their own undoing and love the noise it makes. [+8 Libido, +5 Libido Regen, +6 Joy, +10% Earnings, +5 Charm, +5 Striptease, +3 Sex, +2 Group]"
+    },
+    {
+        "name": "Pin-Up Barbarian",
+        "only_assigned": true,
+        "modifiers": {
+            "libido": 10,
+            "libido_regeneration": 6,
+            "libido_max": 10,
+            "joy": 8,
+            "earnings_multiplier": 1.15,
+            "skill_modifiers": {
+                "Charm": 6,
+                "Striptease": 7,
+                "Sex": 4,
+                "Group": 3,
+                "Extreme": 2
+            }
+        },
+        "description": "Nothing of the old code survives, and the Lanista does not mourn it. The scarred champion of eleven honest seasons has become pure spectacle — the barbarian on the poster, the body as pin-up, every inch of the fighter's discipline reforged into appetite and display. They are entirely unbound: no shame, no reserve, no line they will not cross laughing. What the sand made, you have wholly unmade, and they thank you for the ruin. [+10 Libido, +6 Libido Regen, +10 Libido Max, +8 Joy, +15% Earnings, +6 Charm, +7 Striptease, +4 Sex, +3 Group, +2 Extreme]"
     }
 ]

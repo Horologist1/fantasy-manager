@@ -395,42 +395,42 @@ init python:
         if current_objective == 1:
             char_sheet_done = getattr(store, "manager_start_skill_chosen", False)
             if workers_hired >= 3 and char_sheet_done:
-                return "Progress: Workers 3/3\nManager Assign Skill point 1/1 ->"
+                return "Progress: Workers 3/3\nManager Assign Skill point 1/1 {image=journal_check_on}"
             return f"Progress: Workers {workers_hired}/3\nManager Assign Skill point {1 if char_sheet_done else 0}/1"
         elif current_objective == 2:
             if building_1_type_set:
-                return "Progress: Building type hath been chosen ->"
+                return "Progress: Building type hath been chosen {image=journal_check_on}"
             else:
                 return "Progress: Building type remains unselected"
         elif current_objective == 3:
             if workers_assigned_count >= 3:
-                return "Progress: 3 workers assigned to their duties ->"
+                return "Progress: 3 workers assigned to their duties {image=journal_check_on}"
             else:
                 return f"Progress: {workers_assigned_count}/3 workers assigned to professions"
         elif current_objective == 4:
             return f"Progress: {money}/5000 Coins"
         elif current_objective == 5:
             if store.potion_purchased and store.potion_transferred and store.potion_used_on_worker:
-                return "Progress: Energy potion's power hath been witnessed ->"
+                return "Progress: Energy potion's power hath been witnessed {image=journal_check_on}"
             elif store.potion_purchased and store.potion_transferred:
-                return "Progress: 2/3 - Transfer potion to worker ->, Use potion on worker"
+                return "Progress: 2/3 - Energy potion purchased {image=journal_check_on}, Transferred to worker {image=journal_check_on}, Use potion on worker"
             elif store.potion_purchased:
-                return "Progress: 1/3 - Buy energy potion ->, Transfer to worker, Use on worker"
+                return "Progress: 1/3 - Energy potion purchased {image=journal_check_on}, Transfer to worker, Use on worker"
             else:
                 return "Progress: 0/3 - Buy energy potion from shop, Transfer to worker, Use on worker"
         elif current_objective == 6:
             if store.building_upgraded_tutorial and store.building_skill_bonus_increased_tutorial:
-                return "Progress: Building level enhanced ->, Building skill bonus increased ->"
+                return "Progress: Building level enhanced {image=journal_check_on}, Building skill bonus increased {image=journal_check_on}"
             elif store.building_upgraded_tutorial:
-                return "Progress: 1/2 - Building level enhanced ->, Increase Building skill bonus"
+                return "Progress: 1/2 - Building level enhanced {image=journal_check_on}, Increase Building skill bonus"
             elif store.building_skill_bonus_increased_tutorial:
-                return "Progress: 1/2 - Building skill bonus increased ->, Enhance building level"
+                return "Progress: 1/2 - Building skill bonus increased {image=journal_check_on}, Enhance building level"
             else:
                 return "Progress: 0/2 - Upgrade building level, Increase Building skill bonus"
         elif current_objective == 7:
             return "Progress: Invite a worker to Friendly Lunch ($150)\nGuidance: Workers -> Details -> Interactions -> Friendship -> Friendly Lunch"
         elif current_objective == 8:
-            actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+            actual_buildings = journal_owned_building_count()
             actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
             return f"Progress:\n- Buildings: {actual_buildings}/2\n- Workers: {actual_workers}/10\n- Coins: {money}/10000"
         elif current_objective == 9:
@@ -453,15 +453,15 @@ init python:
             has_obsidian_blade = has_objective_12_item_flag("obsidian_blade")
             has_enchanted_ring = has_objective_12_item_flag("enchanted_ring")
             items_collected = sum([has_binding_gem, has_obsidian_blade, has_enchanted_ring])
-            check_gem = "✓" if has_binding_gem else "✗"
-            check_blade = "✓" if has_obsidian_blade else "✗"
-            check_ring = "✓" if has_enchanted_ring else "✗"
+            check_gem = "{image=journal_check_on}" if has_binding_gem else "{image=journal_check_off}"
+            check_blade = "{image=journal_check_on}" if has_obsidian_blade else "{image=journal_check_off}"
+            check_ring = "{image=journal_check_on}" if has_enchanted_ring else "{image=journal_check_off}"
             # Debug logging
             renpy.log(f"DEBUG Objective 12: binding_gem={has_binding_gem}, obsidian_blade={has_obsidian_blade}, enchanted_ring={has_enchanted_ring}")
             renpy.log(f"DEBUG Objective 12: manager_inventory sample={str(store.manager_inventory[:3]) if len(store.manager_inventory) > 0 else 'EMPTY'}")
-            return f"Progress: {items_collected}/3 Artifacts\n- Binding Gem: {check_gem}\n- Obsidian Blade: {check_blade}\n- Enchanted Ring: {check_ring}"
+            return f"Progress: {items_collected}/3 Artifacts\n- Binding Gem: {check_gem} (follow the rumors)\n- Obsidian Blade: {check_blade} (Elite Emporium)\n- Enchanted Ring: {check_ring} (Adventurer's Market)"
         elif current_objective == 13:
-            actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+            actual_buildings = journal_owned_building_count()
             return f"Progress: {actual_buildings}/3 Buildings"
         elif current_objective == 14:
             warriors = count_workers_with_skill("Combat", 80)
@@ -473,12 +473,12 @@ init python:
                 charm = _get_worker_skill_value(w, "Charm")
                 if clever >= 80 or charm >= 80:
                     unique_agents += 1
-            warriors_ready = "✓" if warriors >= 3 else "✗"
-            agents_ready = "✓" if unique_agents >= 2 else "✗"
+            warriors_ready = "{image=journal_check_on}" if warriors >= 3 else "{image=journal_check_off}"
+            agents_ready = "{image=journal_check_on}" if unique_agents >= 2 else "{image=journal_check_off}"
             return f"Progress (Requires BOTH):\n- Elite Warriors (Combat 80+): {warriors}/3 {warriors_ready}\n- Elite Agents (Clever/Charm 80+): {unique_agents}/2 {agents_ready}"
         elif current_objective == 15:
             if store.event_flags.get("daily_revenue_10k_achieved", False):
-                return "Progress: Daily revenue goal achieved (3,000 coins) ->"
+                return "Progress: Daily revenue goal achieved (3,000 coins) {image=journal_check_on}"
             else:
                 return "Progress: Achieve 3,000 coins revenue in a single day\nTip: Upgrade buildings, assign skilled workers, increase Building skill"
         elif current_objective == 16:
@@ -487,8 +487,8 @@ init python:
             else:
                 combat_count = count_workers_with_skill("Combat", 70)
                 clever_count = count_workers_with_skill("Clever", 70)
-                blade_ready = "[Ready]" if combat_count >= 5 else "[Not Ready]"
-                shadow_ready = "[Ready]" if clever_count >= 5 else "[Not Ready]"
+                blade_ready = "{image=journal_check_on}" if combat_count >= 5 else "{image=journal_check_off}"
+                shadow_ready = "{image=journal_check_on}" if clever_count >= 5 else "{image=journal_check_off}"
                 return f"Progress: Choose your path of vengeance\n- Path of the Blade (Combat 70+): {combat_count}/5 {blade_ready}\n- Path of the Shadow (Clever 70+): {clever_count}/5 {shadow_ready}\nTip: Check out shops for items to boost skills!"
         else:
             return "Progress: The path remains shrouded in mystery"
@@ -524,12 +524,20 @@ init python:
                     return True
         return False
     
+    # Arena and Academy are unlocked venues, not player-built holdings; the
+    # Journal's building objectives (8 and 13) must not count them.
+    _journal_excluded_buildings = frozenset(("Arena", "Academy"))
+
+    def journal_owned_building_count():
+        _owned = getattr(store, "owned_buildings", None) or []
+        return len([b for b in _owned if b not in _journal_excluded_buildings])
+
     def can_complete_objective_8():
         """Check if objective 8 conditions are met"""
         # Check prerequisite: objective 7 must be complete
         if not getattr(store, 'objective_7_complete', False):
             return False
-        actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+        actual_buildings = journal_owned_building_count()
         actual_workers = len(store.workers) if hasattr(store, 'workers') else total_workers
         return actual_buildings >= 2 and actual_workers >= 10 and money >= 10000
     
@@ -577,7 +585,7 @@ init python:
         # Check prerequisite: objective 12 must be complete
         if not getattr(store, 'objective_12_complete', False):
             return False
-        actual_buildings = len(store.owned_buildings) if hasattr(store, 'owned_buildings') else buildings_owned
+        actual_buildings = journal_owned_building_count()
         return actual_buildings >= 3
     
     def can_complete_objective_14():
@@ -1128,6 +1136,10 @@ init python:
 
 
 # ===== JOURNAL SCREEN =====
+# Inline checkboxes for progress text; the game font lacks ✓/✗ glyphs (rendered as tofu)
+image journal_check_on = Transform("gui/icons/batch_checkbox_on.png", xysize=(24, 24))
+image journal_check_off = Transform("gui/icons/batch_checkbox_off.png", xysize=(24, 24))
+
 screen journal_panel():
     modal True
     zorder 200
@@ -1220,7 +1232,7 @@ screen journal_panel():
                             text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
-                            action [Hide("journal_panel"), Show("Building_select_global")]
+                            action [Hide("journal_panel"), Hide("tavern"), Show("Building_select_global")]
                     
                     elif current_objective == 3:
                         text "Tutorial:":
@@ -1279,13 +1291,13 @@ screen journal_panel():
                             text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
-                            action [Hide("journal_panel"), Show("Building_select_global")]
+                            action [Hide("journal_panel"), Hide("tavern"), Show("Building_select_global")]
                         textbutton "Manage Buildings > Select building > Skill Bonus":
                             xsize 580
                             text_size font_size(24)
                             text_color "#7a4b2a"
                             text_hover_color "#6b6528"
-                            action [Hide("journal_panel"), Show("Building_select_global")]
+                            action [Hide("journal_panel"), Hide("tavern"), Show("Building_select_global")]
                         text "Tip: Each +10 Building skill bonus costs $100/day." size font_size(22) color "#7a4b2a"
                     
                     elif current_objective == 7:
@@ -1406,7 +1418,7 @@ screen journal_panel():
                                     ]
                                 text "Your hunt for the Binding Gem has dragged on. Call in a favor to secure it.":
                                     xsize 580
-                                    size font_size(18)
+                                    size font_size(20)
                                     color "#5a6a7a"
 
                     elif current_objective == 13:
@@ -1639,8 +1651,8 @@ screen journal_panel():
             action Hide("journal_panel")
             xalign 1.0
             yalign 0.0
-            xoffset -35
-            yoffset 5    # Higher up
+            xoffset -45
+            yoffset 15
         
 
 # ===== SKIP TUTORIAL CONFIRMATION =====
@@ -1819,14 +1831,14 @@ label show_tutorial_completion_message:
         
         renpy.log(f"DEBUG: Castle unlocked in completion message - in owned: {castle_name in owned_buildings}, map_button: {'Castle' in map_button_buildings}")
     
-    "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished."
+    "The vengeance is complete! My empire stands supreme, and my enemies lie vanquished."
     "The governor's reign hath ended, brought low by my hand through steel or secrets, as I chose."
     "The city now answers to a new master—one who built their power from nothing, who forged an empire of shadows through cunning and determination."
     "The Governor's Castle is now mine, a symbol of my triumph and a testament to the empire I have built."
     "Within its walls, I command the finest servants, the most skilled courtesans, the deadliest guards, and the wisest chamberlains."
     "The castle serves as the crown jewel of my domain, a place where power flows like wine and where my will becomes law."
     "From this moment forth, the castle is mine to command as I see fit—its halls echo with my authority, its chambers filled with those who serve my cause."
+    "The old order hath fallen. A new empire rises, and I am its master."
     "With your quest complete, new opportunities arise. You can now purchase buildings in other cities through the 'Buy Buildings Abroad' option on the map."
     "But remember: the Governor's Castle remains the heart of your empire, a constant reminder of the vengeance you have achieved and the power you now wield."
-    "The old order hath fallen. A new empire rises, and I am its master."
     jump tavern_screen

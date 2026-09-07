@@ -1,0 +1,265 @@
+[
+  {
+    "name": "Cedar, Debtbreaker",
+    "description": "Cedar turns predatory accounts back on their authors and makes optimism practical. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Cedar, Voice of the Debtors",
+    "description": "Cedar can turn private hardship into public solidarity without losing his warmth. [+5% $, +5 Joy, +4 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Charm": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Laurel, Master of the Room",
+    "description": "Laurel commands a hostile room through composure, memory, and impeccable social judgment. [+5% $, +5 Joy, +4 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Charm": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Laurel, Keeper of Confidence",
+    "description": "Laurel's perfect service is no longer submission; it is evidence, control, and chosen dignity. [+5% $, +5 Joy, +4 Service]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Service": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Sage, Ciphersong",
+    "description": "Sage carries instructions through rhythm and turns coded performances into precise plans. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Sage, Ballad of the Open Road",
+    "description": "Sage can give a crowd one voice and make secrecy collapse beneath a memorable chorus. [+5% $, +5 Joy, +4 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Charm": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Primrose, Moon Lantern Artist",
+    "description": "Primrose performs with an authorship no imitation can reproduce. [+5% $, +5 Joy, +4 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Charm": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Primrose, Courtwise Curator",
+    "description": "Primrose reads contracts and cultures with equal care, protecting art without surrendering its meaning. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Jasmine, Keeper of the True Account",
+    "description": "Jasmine reconstructs truth from ledgers, letters, and the details others overlook. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Jasmine, Bridge Between Rivals",
+    "description": "Jasmine preserves dignity on both sides while building a third path neither rival could see. [+5% $, +5 Joy, +4 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Charm": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Marigold, Bright-Eyed Investigator",
+    "description": "Marigold makes tangled evidence understandable without losing sight of the people inside it. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Marigold, Sealwright",
+    "description": "Marigold crafts safeguards that ordinary people can verify and forgers cannot cheaply copy. [+5% $, +5 Joy, +4 Craft]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Craft": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Poppy, Voice Unbound",
+    "description": "Poppy gives frightened witnesses room to breathe, then makes certain their names are heard. [+5% $, +5 Joy, +4 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Charm": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Poppy, Contractbreaker",
+    "description": "Poppy recognizes circular obligations and knows exactly where to break their logic. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Chestnut, Windroad Runner",
+    "description": "Chestnut can cross the old roads where wheels, weather, and hesitation fail. [+5% $, +5 Joy, +4 Agility]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Agility": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Chestnut, Heart of the Wayhouses",
+    "description": "Chestnut makes a relay stronger than any single runner through preparation and trust. [+5% $, +5 Joy, +4 Service]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Service": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Oak, Keeper of Living Records",
+    "description": "Oak preserves knowledge as a living chain of observation rather than a dead page. [+5% $, +5 Joy, +4 Clever]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Clever": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Oak, Charterwright",
+    "description": "Oak builds instruments that make old boundaries visible, repeatable, and hard to falsify. [+5% $, +5 Joy, +4 Craft]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.05, "joy": 5, "skill_modifiers": {"Craft": 4}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Amanita, Queen of the Rafters",
+    "description": "Amanita chose her own home and can cross its highest beams before a pursuer reaches the stairs. [+6% $, +5 Energy, +5 Agility]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.06, "energy": 5, "skill_modifiers": {"Agility": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Amanita, The Unshockable",
+    "description": "Amanita turns provocation into fearless spectacle on terms that remain unmistakably her own. [+6% $, +10 Joy, +5 Extreme]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "nsfw": true,
+    "modifiers": {"earnings_multiplier": 1.06, "joy": 10, "skill_modifiers": {"Extreme": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Moss, The House Shield",
+    "description": "Moss protects a room with terrifying economy and never confuses strength with cruelty. [+6% $, +15 Health, +5 Combat]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.06, "health": 15, "skill_modifiers": {"Combat": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Moss, The Measured Hand",
+    "description": "Moss controls dangerous people through precision, restraint, and an authority quieter than rage. [+6% $, +10 Health, +5 BDSM]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "nsfw": true,
+    "modifiers": {"earnings_multiplier": 1.06, "health": 10, "skill_modifiers": {"BDSM": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Nuphar, The Uncatchable Tide",
+    "description": "Nuphar can flow through the smallest weakness in any cage and leave her chosen name behind. [+6% $, +5 Energy, +5 Agility]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.06, "energy": 5, "skill_modifiers": {"Agility": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Nuphar, The Unbroken Whole",
+    "description": "However many shapes Nuphar takes, every part carries the mind and name she chose. [+6% $, +10 Joy, +5 Special]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "nsfw": true,
+    "modifiers": {"earnings_multiplier": 1.06, "joy": 10, "skill_modifiers": {"Special": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Lotus, The Pactweaver",
+    "description": "Lotus can rewrite obligation into a covenant where skill is offered but never owned. [+6% $, +5 Joy, +5 Craft]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.06, "joy": 5, "skill_modifiers": {"Craft": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  },
+  {
+    "name": "Lotus, The Unbound Star",
+    "description": "Lotus turns a command into a performance whose meaning and ending belong only to her. [+6% $, +10 Joy, +5 Charm]",
+    "only_assigned": true,
+    "duration": 0,
+    "gender_restriction": null,
+    "requires_traits": [],
+    "modifiers": {"earnings_multiplier": 1.06, "joy": 10, "skill_modifiers": {"Charm": 5}},
+    "daily_effects": {}, "attribute_caps": {}, "attribute_minimums": {}, "on_expire": {}
+  }
+]

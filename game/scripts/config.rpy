@@ -6,7 +6,6 @@
 define player = Character("Manager")
 define academy_director = Character("Academy Director")
 define yvara = Character("Yvara")
-define arena_promoter = Character("Arena Promoter")
 define lab_director = Character("Lab Director")
 define narrator = Character(None)  # Narration / no speaker name (e.g. arena trial result)
 # Benefit/stat gain messages (same green #006600 as interaction success in event_daily_exec)
@@ -143,6 +142,9 @@ init python:
         config.autosave_slots = 0
     except Exception:
         pass
+    # No quicksaves either: with the default True, FilePagePrevious() on page 1
+    # lands on a phantom "quick" page the UI never intends to show.
+    config.has_quicksave = False
 
     # Custom quit handler with confirmation that actually works
     def reliable_quit():
@@ -173,12 +175,46 @@ init python:
     # Keep confirmed quit installed at all times
     config.quit_action = Function(confirmed_quit)
     
+    def set_save_blocked_context(context_name=None):
+        """Mark a gameplay transaction that must finish before save/menu access."""
+        if context_name:
+            renpy.session["_fm_save_blocked_context"] = str(context_name)
+        else:
+            renpy.session.pop("_fm_save_blocked_context", None)
+
+    def save_is_allowed():
+        """Only stable gameplay state may open the game menu or write a save."""
+        return not (
+            renpy.session.get("_fm_save_blocked_context")
+            or getattr(store, "in_recruitment", False)
+        )
+
     # Custom ESC key handler for hierarchical screen closing
     def custom_escape_action():
         """
         Handle ESC key using the same close actions as the X/Close buttons on screens.
         This ensures consistent behavior and proper navigation flow.
         """
+        # Recruitment and explicitly-marked gameplay transactions are not stable
+        # save points. ESC/right-click intentionally do nothing until they finish.
+        if not save_is_allowed():
+            return
+
+        # Modal popups over the roster/batch stack must close topmost-first, BEFORE
+        # the workers/Manager early-returns below. Those hide the whole underlying
+        # screen, so without this a popup over `workers` (filter menus, Batch, the
+        # auto-fill/preset pickers) would leave ESC nuking `workers` instead of the
+        # popup. Order = top of the stack downward.
+        for _modal in (
+            "inventory_filter_popup", "worker_selection_popup",
+            "preset_picker", "autofill_building_picker",
+            "batch_job_picker", "batch_building_picker", "batch_worker_manager",
+            "worker_job_filter_menu", "worker_building_filter_menu",
+        ):
+            if renpy.get_screen(_modal):
+                renpy.hide_screen(_modal)
+                return
+
         # job_selection now closes to underlying caller context (Manager/workers).
         if renpy.get_screen("job_selection"):
             renpy.hide_screen("job_selection")
@@ -222,12 +258,11 @@ init python:
             
             # Simple hide actions for popups
             "journal_panel": Hide("journal_panel"),
-            "worker_selection_popup": Return(),
             "building_type_selection": Return(),
             "adjust_skill_bonus": Return(),
             "adjust_comfort": Return(),
             "rename_building": Return(),
-            "interaction_result": Return(),
+            "interaction_result": [Hide("interaction_result"), Return()],
             "interaction_menu": Return(),
             "interaction_category": Return(),
             "recruitment_outcome": Return(),
@@ -235,7 +270,9 @@ init python:
             "building_filter_menu": Return(),
             "worker_building_filter_menu": Return(),
             "report_details": Return(),
-            "manager_inventory": Hide("manager_inventory"),
+            # Storage hides its caller while open. A bare Hide leaves no gameplay
+            # screen and produces the reported non-crashing black screen.
+            "manager_inventory": Function(close_manager_inventory),
             
             # Event screens
             "random_event_choice": Return(),
@@ -262,10 +299,12 @@ init python:
             "recruitment_event_screen",
             
             # Configuration popups
-            "journal_panel", "worker_selection_popup", "building_type_selection", "adjust_skill_bonus",
+            "journal_panel", "building_type_selection", "adjust_skill_bonus",
             "adjust_comfort", "rename_building", "interaction_result", "interaction_menu",
             "interaction_category", "more_details_screen", "building_filter_menu",
-            "worker_building_filter_menu", "report_details", "manager_inventory", "worker_details",
+            # worker_details can be shown over Storage; close the visible top layer
+            # before asking Storage to restore its own hidden caller.
+            "worker_building_filter_menu", "report_details", "worker_details", "manager_inventory",
             
             # Shop and building screens (HIGH PRIORITY - user wants these to close easily)
             "shop_selection", "buy_buildings", "buy_servants_table",

@@ -174,6 +174,9 @@ init python:
             pm = getattr(store, "process_manager_auto_rest", None)
             if callable(pm):
                 pm(restore_only=True)
+            # Potions and restored assignments can change worker state after the
+            # daily report; close those changes into today's activity log now.
+            capture_all_worker_activity_changes()
             # Force UI refresh so screens don't show stale worker dicts/values.
             renpy.restart_interaction()
         except Exception as e:
@@ -302,6 +305,8 @@ label start:
             store.player_name = ""
             store.player_title = ""
             renpy.log("START: Cleared player_name and player_title for new game")
+        # New games record the active NSFW mode so their saves restore it on load.
+        store.save_nsfw_mode = bool(getattr(persistent, "nsfw_enabled", False))
     
     # Start BGM at game start (only plays once, no loops)
     $ start_bgm_simple("audio/BGM.ogg")
@@ -354,6 +359,7 @@ label start:
             store.event_flags = {}
             store.event_occurrences = {}
             store.event_last_occurred = {}
+            store.character_event_last_day = None
             store.manager_interactions_today = 0
             store.last_take_a_walk_day = None
             store.last_save_slot = None
@@ -753,8 +759,8 @@ label show_ending_blackmail:
     
     "Their weapons are not swords or spells, but secrets and seduction."
     
-    "From the [building_count] strongholds I have built, from the [worker_count] souls who have sworn fealty to my cause, from the [money] coins that have filled my coffers."
-    
+    "From the [building_count] strongholds I have built, from the [worker_count] souls who have sworn fealty to my cause, from the [money] coins that have filled my coffers —"
+
     "All of it hath led to this single, decisive moment."
     
     "The governor's mansion looms before us, but we do not come to kill. We come to steal what he values most: his secrets, his reputation, his power."
@@ -790,15 +796,15 @@ label show_ending_blackmail:
     
     "All of it secured through cunning and blackmail, the tools of a true master of the shadows."
     
-    "The city's elite scramble to curry favor with the new power in their midst. They come bearing gifts, seeking alliances, offering tribute."
-    
-    "I accept their offerings, but I do not forget."
-    
-    "I do not forget how they stood by while my family was destroyed. I do not forget how they profited from our ruin. But for now, I am content."
-    
+    "The city's elite come to me quietly now, through side doors and sealed letters, each of them wondering what else those stolen documents might hold. They bear gifts, seek alliances, offer tribute — and they are very, very polite."
+
+    "I accept their offerings, and I keep their letters."
+
+    "I do not forget how they stood by while my family was destroyed. I do not forget how they profited from our ruin. Their names rest in my ledgers now, beside the governor's. For the moment, that is enough."
+
     "The governor's portrait hangs in my main establishment, but with a black ribbon across it. A warning to all who would cross me. A declaration that the old order is dead, and a new empire hath risen in its place."
-    
-    "My revenge is complete. But my ambition? That is only beginning."
+
+    "My revenge is complete, and not a drop of blood was spilled — only ink. But my ambition? That is only beginning."
     
     "The sun rises on a new day, and I am its master."
     $ renpy.log("DEBUG: show_ending_blackmail - EPIC ENDING COMPLETE")
@@ -813,10 +819,13 @@ label show_ending_blackmail:
 
     "The Governor's Castle is now yours. You can access it from the map."
 
+    # FM-SAVE-ANCHOR: canonical-tavern-dest
     jump tavern_screen
 
+# FM-SAVE-ANCHOR: tavern-screen-label
 label tavern_screen():
     $ renpy.log("DEBUG: tavern_screen label - STARTING")
+    $ set_save_blocked_context(None)
 
     # Call-stack hygiene: nothing legitimately returns past the hub (no `call
     # tavern_screen` exists anywhere). Any frames still on the return stack here
@@ -890,8 +899,7 @@ label tavern_screen():
 
 label next_day:
     $ renpy.log("DEBUG: next_day label - STARTING")
-    # Soft chime marking the day transition
-    $ play_ui_sound("day_chime")
+    # Day-transition chime removed by request; only the button click cue remains.
     # Reset walk flag for new day
     $ take_a_walk_in_progress = False
     # Reset manager's daily interaction count
@@ -1003,9 +1011,11 @@ label age_verification:
                 "Do you want to enable NSFW content and art? (You can change this later in Options > About)"
                 "Enable NSFW content":
                     $ persistent.nsfw_enabled = True
+                    $ save_nsfw_mode = True
                     $ renpy.log("NSFW preference chosen at age gate: True")
                 "Disable NSFW content":
                     $ persistent.nsfw_enabled = False
+                    $ save_nsfw_mode = False
                     $ renpy.log("NSFW preference chosen at age gate: False")
             centered "{color=#ffffff}Preference saved. You can change this later in Options > About.{/color}"
             with fade

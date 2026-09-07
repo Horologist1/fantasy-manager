@@ -1,0 +1,668 @@
+{
+  "_comment": "Relationship daily stories for Monster Taming (Adventurers Guild). Follows the exemplar contract in relationship_brothel_prostitute.json: 2 romance / 2 relationship / 2 rebellion stat-gated (feedback loop on the gating stat, rebellion failure costs real money), 2 'Loves you' (normal roll, failure forgiven -> earnings 0), 2 each Best Friends / Harem Member / House Servant (no_fail). Loves-you flavor: animals read a settled heart; failure = the beast bonds to the longing itself and refuses its buyer, sale postponed, no harm. Prose gender-neutral for worker and manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "adventurers_guild",
+  "profession_id": "monster_taming",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "adventurers_guild_monster_taming_romance_careful_hands",
+      "weight": 2,
+      "loot": {
+        "monster_worker": {
+          "chance": 0.1,
+          "filters": {
+            "monster": true,
+            "encounter_only": true
+          }
+        }
+      },
+      "report": "Came Home Careful",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "failure_image": "monster_taming_combat_failure",
+      "positive_traits": {
+        "Determined": 4,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A cornered dire-lynx offers {worker_name} the old bad trade: lunge now and maybe end it fast, or hold position and do it right. There was a time {worker_name} would have lunged. Not now, not with someone worth coming home to. The patient capture takes an hour longer and costs nothing but sweat, and the beast reaches the pens without a scratch on either side.",
+        "critical_success": "The whole team notices the change: the reckless one has become the careful one, and careful tamers bring back whole, sellable animals. The lynx fetches a premium precisely because there is not a mark on it, and {worker_name} banks the bonus already composing how to tell you about the catch.",
+        "mediocre": "{worker_name} plays it so safe the lynx slips the ring twice. Caution is new and does not quite fit yet; the day ends with rope burns and an empty cage, though nothing worse.",
+        "failure": "Halfway through the pin, {worker_name}'s mind drifts to you at exactly the wrong heartbeat. The lynx reads the gap and makes it pay: gear shredded, quarry gone, and the long walk back spent wondering whether wanting someone this much is making the work worse instead of better."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -5,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_romance_pens_at_peace",
+      "weight": 2,
+      "report": "Buyers at the Rail",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "failure_image": "monster_taming_combat_failure",
+      "positive_traits": {
+        "Charming": 4,
+        "Magnetic": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The surly drake row drills clean exactly once a day: the hour you walk the pens. {worker_name} noticed weeks ago and now books every buyer for that hour, letting the stock perform under the one condition that makes it perform, the two of you side by side at the rail. Today's buyer signs at full price, convinced the guild breeds the calmest drakes in the province.",
+        "critical_success": "A skeptical collector comes to catch the trick and finds none, just a pen of monsters gone soft-eyed around two people who keep glancing at each other. The collector buys a matched pair and mutters something about whatever is in the water here. {worker_name} walks you back to the office slower than strictly necessary.",
+        "mediocre": "You are called away mid-viewing and the drakes turn sour the moment you go. {worker_name} salvages the demonstration, but the buyer haggles hard, sensing the shift in the pens without understanding it.",
+        "failure": "You and {worker_name} have words that morning, small ones, but the drakes taste the friction like weather. The prize animal snaps at the buyer's sleeve, the sale dies on the spot, and {worker_name} spends the evening rehearsing an apology that refuses to come out right."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_friend_pen_reinforce",
+      "weight": 2,
+      "report": "The Pen Rebuilt",
+      "skill_options": [
+        "Craft"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "monster_taming_capture_rig_prep",
+      "failure_image": "monster_taming_capture_rig_prep_failure",
+      "positive_traits": {
+        "Hardworking": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} finds tooth-marks on the basilisk pen's north post, low down where nobody kneels to look. Anyone else would log it for the morning crew. But it is your coin sleeping in these cages, so {worker_name} stays past dark with fresh iron and doubled bracing, and that very night the basilisk hits the new post hard enough to bend it, and no further.",
+        "critical_success": "The tooth-marks turn out to be the least of it. {worker_name} works down the whole row and finds three more pens a week from failing. The refit costs an evening and some iron; the stampede it prevents would have cost you the season. When you try to say as much, {worker_name} shrugs it off. You would have done the same.",
+        "mediocre": "The bracing goes up crooked and has to be redone by daylight. The pen holds, but only because the basilisk was in a forgiving mood.",
+        "failure": "{worker_name} reinforces the wrong wall. The basilisk goes through the neglected south side an hour before dawn, and the recapture eats the day, the fees, and a neighbor's fence besides. What lands hardest is not your anger, you barely show any, but the certainty of having guarded your coin badly."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_friend_dealer_con",
+      "weight": 2,
+      "report": "Checked the Teeth",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "failure_image": "monster_taming_combat_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A dealer offers you a manticore at half the going rate, and you are halfway to shaking on it when {worker_name} asks for five minutes with the animal. Five minutes is enough: filed spurs, dyed mane, a sedative still wearing off. A swamp chimera dressed up as a manticore. {worker_name} names every fraud out loud, pleasantly, and the price collapses to what the beast is actually worth. You buy it anyway. Chimeras sell too.",
+        "critical_success": "Saving your purse becomes a second trade. Word of the dealer's habits moves quietly through the guild hall, and by evening two rival buyers come asking to have their own stock checked, for a fee. Your ledger ends the day fatter because your friend cannot stand to watch you get cheated.",
+        "mediocre": "Something about the animal bothers {worker_name}, but the proof will not surface before the dealer packs up. You pass on the deal. No loss, no gain, and no way to be sure.",
+        "failure": "{worker_name} vouches for the beast and the beast is wrong: a temperament flaw the sedative was hiding. It wrecks a feeding stall by nightfall, the fees land in your ledger, and {worker_name} takes it harder than the numbers deserve. The guarantee was personal."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_rebel_opened_cage",
+      "weight": 2,
+      "report": "An Opened Cage",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "failure_image": "monster_taming_combat_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "The caged griffin was taken with chicks in the nest. {worker_name} checked, the way nobody else bothered to, then opened the cage at dusk, quietly, the capture deemed unjust by an authority of one. The griffin clears the wall and is gone. The strange part: the whole pen row settles overnight, as if the stock had been screaming about it all along, and calmer animals show better and sell better come morning.",
+        "critical_success": "By some miracle of timing, a warden arrives the next day with seizure papers for an unlawfully taken griffin. The fine for holding it would have been brutal. The empty cage reads as compliance rather than conscience, the warden leaves satisfied, and {worker_name} says nothing and polishes the latch.",
+        "mediocre": "{worker_name} frees the griffin and spends the rest of the shift papering over the gap in inventory with creative counting. It holds, barely, and the day earns what a distracted day earns.",
+        "failure": "The griffin was sold. Paid for. The buyer arrives with a cart and papers to collect an empty cage, and the refund comes out of your strongbox in front of everyone. {worker_name} stands by the choice, arms folded, which somehow makes the arithmetic worse."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 5
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_rebel_forbidden_crate",
+      "weight": 2,
+      "report": "The Unsigned Crate",
+      "skill_options": [
+        "Craft"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "monster_taming_capture_rig_prep",
+      "failure_image": "monster_taming_capture_rig_prep_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 25)"
+      },
+      "descriptions": {
+        "success": "There is a new crate in quarantine row with airholes drilled in a pattern {worker_name} invented and paperwork you have never seen. Inside: a null-scaled burrower, banned in three provinces and worth a fortune in all of them. A collector who asks no questions pays in unmarked coin before the ink on the false manifest is dry.",
+        "critical_success": "The collector, it turns out, wants breeding stock, not a single specimen, and pays a mad premium for first refusal on anything else that happens to fall off a wagon. {worker_name} pockets nothing and hands you everything, grinning like the law is a rumor.",
+        "mediocre": "The buyer {worker_name} had lined up gets cold feet. The forbidden thing sits in its crate eating twice its weight in feed while the profit margin quietly starves.",
+        "failure": "A guild inspector knows that airhole pattern. The crate is confiscated, the fine is written against the building, your name and not {worker_name}'s, and the lecture about license revocation lasts until dark."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_lovesyou_settled_heart",
+      "weight": 3,
+      "report": "The Untameable, Quiet",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "failure_image": "monster_taming_combat_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The storm-hawk has thrown four handlers and bitten two more. Then {worker_name} walks in, {worker_name} who loves you and has stopped fighting anything inside, and the bird simply settles. Animals read hearts the way tamers read weather, and this heart has nothing circling it anymore. The hawk steps onto the glove, the calm transfers like heat, and the buyer who watches it happen pays asking price for a miracle. Every coin goes into your books, which is, as far as {worker_name} is concerned, the point of coin.",
+        "critical_success": "Word spreads that the guild keeps a tamer the untameable go quiet for. Three owners of hopeless cases book handling sessions at triple rate. None of them guess the technique, because the technique is loving somebody and being done pretending otherwise. It cannot be taught, only banked, and {worker_name} hands you the take with an expression you are choosing not to read.",
+        "mediocre": "The hawk settles for {worker_name} and for no one else, which impresses the buyer but does not close a sale on a bird only one person can hold. Handling fees, nothing more.",
+        "failure": "The hawk does not calm near the longing. It bonds to it. By evening the bird refuses the buyer outright, screaming at any hand that is not {worker_name}'s, a creature that has chosen its person with the same helpless totality its person chose you. The buyer, watching that, cannot even be angry; the sale is postponed until the bond eases, no harm done and no coin taken. {worker_name} walks the hawk back to its perch and tells it, quietly, that it has terrible timing and excellent taste."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_lovesyou_easy_sale",
+      "weight": 3,
+      "report": "Calm Stock Sells",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "failure_image": "monster_taming_combat_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} walks a nervous first-time buyer down the pen rows, and everything on both sides of the rail goes easy. The drakes stop pacing; the lynx unhoods without a fuss. Stock stands calm around a person in love, and calm stock sells itself. The buyer, who came only to look, leaves owning two animals and believing it was entirely a personal decision. The take is yours. So is the reason {worker_name}'s heart is settled enough to work like this.",
+        "critical_success": "The buyer returns next morning with partners in tow, specifically to walk the rows with the calm one. Nobody in the party can explain why the pens feel safe around {worker_name}. {worker_name} could, but the explanation would involve saying your name, so the mystery stands and the contracts stack up instead.",
+        "mediocre": "The calm works, but on the wrong animal. The buyer falls for a beast that is not for sale and leaves empty-handed, promising to come back for it. Perhaps they will.",
+        "failure": "The buyer jerks the young sand-drake's lead hard enough to make it flinch. Thinking of what you would say, {worker_name} takes the lead back and refuses the sale outright. The buyer recognizes fierce attachment when it stands in front of them and leaves without pressing a claim or penalty. No fee changes hands, but the animal is unharmed and your name never enters the dispute."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_bestfriends_priced_right",
+      "weight": 3,
+      "report": "The Underpriced Drake",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "positive_traits": {
+        "Clever": 5,
+        "Confident": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your sale sheet lists the war-drake at last season's number. {worker_name} reads it over your shoulder, stops, and taps the line: the market moved and the drake moved with it, and your best friend is not going to stand there watching you give away a hundred crowns out of politeness to your own paperwork. The price gets corrected before the buyer arrives, and the buyer pays it without blinking.",
+        "critical_success": "Correcting one number turns into an evening bent over your whole price book, two chairs pulled to one desk, the good bottle open. By the end the entire roster is repriced to what the market actually bears, and the difference across a season will be worth more than any single beast in the pens. {worker_name} claims the last of the good bottle as commission and calls the account settled."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_bestfriends_auction_plot",
+      "weight": 3,
+      "report": "The Auction Plot",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Wise": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Two dealers at the feed merchant's stall talk one stall too loudly: a plan to flood next week's auction with cheap, doctored stock the same day you bring your best animals to market. {worker_name} does not confront them, just memorizes every word, finishes the errand, turns a normal day's coin, and lays the whole scheme out on your desk by supper so the two of you can plan around it.",
+        "critical_success": "You do better than plan around it. On {worker_name}'s advice you pull out of the rigged auction and sell privately that same week, at better prices, to buyers who fled the doctored animals the moment word somehow got around about them. The schemers eat the loss that was meant for you. {worker_name} calls it a coincidence, twice, with a straight face."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_harem_lure_dance",
+      "weight": 3,
+      "report": "The Lure Dance",
+      "skill_options": [
+        "Extreme"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "monster_taming_seduction",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Exhibitionist": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The evening show fills the gallery: seduction-taming, performed by the one who wears your collar and, by the end, nothing else. {worker_name} works the captive drake through the lure-dance, bare skin and slow promises, hips tracing the old fertility patterns while the beast strains against the bars in open, heavy arousal and the crowd forgets to breathe. Every tease runs exactly to the limits you set, obedience made into an art form, and when the coin is counted {worker_name} kneels and pours all of it into your hands.",
+        "critical_success": "The drake finishes the night trembling, desperate and utterly conquered, and so does the audience. A collector pays a small fortune on the spot for the beast, tamed, then asks what a private performance would cost. {worker_name}, still flushed and bare under your collar, does not even glance at the collector, only at you, waiting for the answer that matters. The price you name is paid without haggling."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_harem_your_apex",
+      "weight": 3,
+      "report": "Your Chain of Command",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "positive_traits": {
+        "Confident": 5,
+        "Strong": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Pack animals learn hierarchy by watching, and every beast in the yard has watched the guild's best tamer defer to you. The result is a pen row that treats your footsteps as apex law. A snarling dispute between two wyrms dies the instant you step to the rail and {worker_name} moves to your shoulder, and the visiting buyer, seeing a yard governed by one word and one glance, pays a premium for animals trained inside that chain of command.",
+        "critical_success": "The buyer's own beast, a half-mad thing dragged along on a chain, goes still in your yard for the first time in a year, calmed by an order it can finally read: {worker_name} belongs to you, and everything down-chain of that has its place. The buyer pays handling rates, then training rates, then simply asks what you would take for a month of {worker_name}'s time. The answer is no. Some things you keep."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_servant_quarantine_row",
+      "weight": 3,
+      "report": "Quarantine Row",
+      "skill_options": [
+        "Craft"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "monster_taming_capture_rig_prep",
+      "positive_traits": {
+        "Hardworking": 5,
+        "Obedient": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You hand over the list nobody wants, the venom-drip cages, the night feeds, quarantine row, and {worker_name} takes it without a word and works it end to end, impeccable and silent. By morning the row has never looked cleaner, the sick stock is eating again, and the vet's bill comes in smaller than it has been all season, because someone did every small task exactly as told.",
+        "critical_success": "The quarantine inspector walks the row and clears it a full week early, unheard of, freeing beasts for sale that should still be sitting in isolation eating your margin. Asked how the row got this clean, {worker_name} gives the only explanation that has ever been needed: you asked."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 5
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 10
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_monster_taming_servant_drill_regimen",
+      "weight": 3,
+      "report": "Your Regimen, Exactly",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "monster_taming_combat",
+      "positive_traits": {
+        "Obedient": 5,
+        "Tough": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The conditioning regimen you wrote is strict enough that the other tamers call it cruelty to handlers. {worker_name} runs it anyway, every repetition, every timing, no complaint and no shortcuts, not out of fear but because you wrote it. The beasts that come off the program move like drilled soldiers, and drilled stock is exactly what the buyers with real money keep asking for.",
+        "critical_success": "A month of perfect, obedient execution proves itself in one afternoon: a buyer tests three of your conditioned beasts against a rival's and yours perform without a single fault. The rival demands to know the method. The method is standing quietly at your office door, waiting for the next instruction."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

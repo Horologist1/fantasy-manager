@@ -1,0 +1,667 @@
+{
+  "building_id": "brothel",
+  "profession_id": "expert_attendant",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "brothel_expert_attendant_romance_borrowed_devotion",
+      "weight": 2,
+      "report": "Borrowed Devotion",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_vip_client",
+      "failure_image": "ea_prostitute_vip_client_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "110 + skill * 2",
+        "critical_success": "120 + skill * 3",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A VIP books the devotion hour, the costly fantasy of being genuinely adored. {worker_name} undresses the client, gives slow oral pleasure, and whispers through the sex with tenderness learned from wanting you. The resulting orgasm feels like love because every false vow in that bed was borrowed from a true one.",
+        "critical_success": "The VIP climaxes twice under oral sex, slow penetration, and promises convincing enough to sound like a shared future. Marriage is proposed before dawn, twice. {worker_name} declines gracefully, banks the proposal gifts in your ledger, and leaves smiling at the secret: all that devotion was yours.",
+        "mediocre": "Halfway through the act {worker_name} loses track of which smile belongs to the work and which belongs to you, and the confusion reads as distraction. The VIP pays the base rate and not a coin more.",
+        "failure": "Your name is what breaks it. The VIP asks for a whispered endearment and {worker_name} hesitates one beat too long, unwilling to spend it on a stranger. The seams of the act show, the VIP feels cheated of the fantasy, and the fee walks out with the complaint. {worker_name} spends the rest of the night wondering whether you will ever know what that hesitation cost."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_romance_wrong_audience",
+      "weight": 2,
+      "report": "The Wrong Audience",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_vanilla_client",
+      "failure_image": "ea_prostitute_vanilla_client_failure",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Energetic": 3
+      },
+      "earnings": {
+        "success": "110 + skill * 2",
+        "critical_success": "120 + skill * 3",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "You spend the evening one floor below, and {worker_name} knows the walls are thin. The client receives expert oral sex and deep, patient thrusts, but every moan sent through the plaster is performed for you. The client climaxes inside another person's private message and pays handsomely for the privilege.",
+        "critical_success": "{worker_name} turns the bed toward the wall above your office and makes the whole room audible: the wet rhythm of oral sex, the headboard under hard penetration, the cry at each climax. The client leaves trembling and rebooks weekly, never realizing the finest performance of the night had the wrong audience.",
+        "mediocre": "{worker_name} keeps one ear on the stairs all night, listening for your step instead of the client's breathing. The work is competent and absent, and the client can tell the difference.",
+        "failure": "Your voice drifts up from the floor below at exactly the wrong moment, and {worker_name} loses the client entirely, rhythm, thread and all. The VIP demands money back for an attendant who was so plainly performing for somebody else, and {worker_name} cannot even argue the point."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_friend_credit_book",
+      "weight": 2,
+      "report": "Your Credit Book",
+      "skill_options": [
+        "Special"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "ea_prostitute_vip_client",
+      "failure_image": "ea_prostitute_vip_client_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill * 2",
+        "critical_success": "130 + skill * 3",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "VIPs talk after, and {worker_name} listens like a partner in your business. Tonight the talk is a magnate bragging through the afterglow about debts stacked to the chin, and by morning the warning is on your desk: take that one's coin up front. The default lands a week later, on some other house's ledger.",
+        "critical_success": "{worker_name} cross-references three patrons' loose talk into a map of who is solvent and who is merely performing solvency, then sits with you until the VIP book is sorted. Two bad accounts closed, one good one doubled, and the house banks the difference within the week.",
+        "mediocre": "The evening's gossip is all rumor and no substance. {worker_name} files it away for you anyway; nothing gained, nothing risked, one late candle burned.",
+        "failure": "{worker_name} vouches for a charming regular, and on that word you extend the platinum suite on credit. The regular vanishes owing a fortnight's fees, and {worker_name} takes it harder than you do, having spent your trust and bought nothing with it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_friend_delegation_save",
+      "weight": 2,
+      "report": "Saved the Delegation",
+      "skill_options": [
+        "Group"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_group_clients",
+      "failure_image": "ea_prostitute_group_clients_failure",
+      "positive_traits": {
+        "Graceful": 5,
+        "Robust": 3
+      },
+      "earnings": {
+        "success": "115 + skill * 2",
+        "critical_success": "125 + skill * 3",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A trade delegation books the grand suite, but the junior attendant freezes at the sight of six waiting guests. To protect your contract, {worker_name} takes the room alone, moving from oral sex to penetration and back until every guest has climaxed. The delegation sees mastery, never the disaster your friend concealed.",
+        "critical_success": "Six guests become one controlled piece of group sex under {worker_name}'s hands, mouth, and body. Nobody is neglected; nobody leaves without an orgasm. By the second hour the delegation is negotiating a standing arrangement. {worker_name} names your price, wins it, and hands you the terms with a tired grin.",
+        "mediocre": "The evening holds together, barely. {worker_name} spends more effort covering the junior's nerves than working the room, and the delegation leaves polite and unimpressed.",
+        "failure": "Six guests is five too many for the state the junior leaves things in. The delegation departs early, the deposit goes back with apologies, and {worker_name} sits with you past midnight rebuilding the pitch to win them back, angrier about the lost contract than you are."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -5
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_rebel_menu_rewrite",
+      "weight": 2,
+      "report": "Rewrote Your Menu",
+      "skill_options": [
+        "Special"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "ea_prostitute_vip_client",
+      "failure_image": "ea_prostitute_vip_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "95 + skill * 2",
+        "critical_success": "115 + skill * 3",
+        "mediocre": "skill",
+        "failure": "-(roll + 40)"
+      },
+      "descriptions": {
+        "success": "You arrive to find your VIP price board rewritten in {worker_name}'s hand, every rate raised a fifth and two services struck off entirely as beneath the house. Nobody asked you. Infuriatingly, the VIPs pay the new rates without blinking.",
+        "critical_success": "The rewritten menu makes exclusivity the product: fewer services, steeper prices, a waiting list where a welcome mat used to be. Within days your competitors are copying the board a season too late, and {worker_name} accepts your surrender with unbearable serenity.",
+        "mediocre": "Half the changes work and half confuse the regulars, and {worker_name} spends the evening explaining a menu nobody ordered rewritten. The take is a wash.",
+        "failure": "One struck-off service happens to be the standing weekly order of your richest patron, who reads the new board as a personal insult and cancels the retainer on the spot. {worker_name} shrugs, unrepentant: the house is better off without that one. The ledger disagrees loudly."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -1,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_rebel_private_vetting",
+      "weight": 2,
+      "report": "Vetting on a Whim",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "ea_prostitute_vanilla_client",
+      "failure_image": "ea_prostitute_vanilla_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "90 + skill * 2",
+        "critical_success": "110 + skill * 3",
+        "mediocre": "skill",
+        "failure": "-(roll + 30)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has started interviewing prospective VIPs before accepting bookings, a policy nobody approved, with standards nobody can name. Tonight's reject storms off; tonight's accept turns out to be a delight who spends triple the average and asks to return. The whim, so far, is outperforming your paperwork.",
+        "critical_success": "The private vetting catches what your ledger never could: a prospective client wanted in two cities under a different name, sniffed out over a single glass of wine. The magistrate pays the informant's purse discreetly, and your house's reputation for untouchable standards climbs another rung.",
+        "mediocre": "{worker_name} rejects two applicants and accepts one, on grounds that remain a mystery to everyone including, possibly, {worker_name}. The evening's take is ordinary and the ceremony was theater.",
+        "failure": "{worker_name} turns a foreign dignitary away at the door, no reason offered beyond a wrinkled nose. The letter of protest reaches you before the door stops swinging, along with the bill for a canceled suite that your house will never be paid for."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 3
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_lovesyou_sweetheart_act",
+      "weight": 3,
+      "report": "The Sweetheart Act",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_vip_client",
+      "failure_image": "ea_prostitute_vip_client_failure",
+      "earnings": {
+        "success": "110 + skill * 2",
+        "critical_success": "120 + skill * 3",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The house special is counterfeit devotion. {worker_name} sells it with eyes closed: oral sex given like worship, penetration welcomed like reunion, every whispered vow aimed past the client toward you. The VIP climaxes believing the love is real and pays a fortune for a feeling that truly exists, just elsewhere.",
+        "critical_success": "{worker_name} lets genuine love for you flood the performance without changing its destination. The VIP receives naked tenderness, two orgasms, and a whispered promise convincing enough to break the heart. The doubled payment goes into your ledger; the real promise comes home with {worker_name}.",
+        "mediocre": "The trick of thinking the client away only half-works; the devotion arrives at the bed diluted, warm rather than burning. The VIP pays the standard rate for what was advertised as the sublime.",
+        "failure": "Tonight the act refuses to start. The VIP asks to be adored and {worker_name} sets the script down mid-scene, unable to counterfeit the one thing being kept true for you. Strangest of all is the VIP's reaction: a long silence, then something like reverence at having witnessed real love, however aimed elsewhere. The fee is waived by mutual, wordless consent, and {worker_name} leaves the room lighter, not poorer."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_lovesyou_all_night_magnate",
+      "weight": 3,
+      "report": "An All-Night Booking",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_vanilla_client",
+      "failure_image": "ea_prostitute_vanilla_client_failure",
+      "earnings": {
+        "success": "110 + skill * 2",
+        "critical_success": "120 + skill * 3",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The widowed magnate books a whole night, less for sex than for the warmth afterward. {worker_name} gives both: slow oral pleasure, gentle penetration, then arms that hold the client through sleep. The tenderness comes from loving you, poured carefully into a stranger who pays gratefully for the borrowed measure.",
+        "critical_success": "After sex and two quiet orgasms, the magnate falls asleep against {worker_name} without waking once in grief. At dawn another full night is booked before clothes are found. {worker_name} brings the doubled fee home to you, having sold only the overflow of a love no client could purchase outright.",
+        "mediocre": "The measure is poured too carefully. The magnate senses the warmth stopping an inch short of the skin and tips accordingly, comforted but not transformed.",
+        "failure": "Deep in the night the magnate murmurs a request: say you love me. {worker_name} has said it a thousand times to a thousand strangers, and cannot say it once more, because the words finally belong to someone. The truth comes out instead, quiet and unadorned. The magnate, who has bought counterfeit love on three continents, listens to the real thing described and refuses to be sorry about any of it. No fee changes hands; the magnate leaves a friend of the house, and {worker_name} sleeps easier than the ledger does."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_bestfriends_book_triage",
+      "weight": 3,
+      "report": "VIP Book Triage",
+      "skill_options": [
+        "Special"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ea_prostitute_vip_client",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "150 + skill * 2",
+        "critical_success": "180 + skill * 3",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "After close, {worker_name} pulls a chair to your desk uninvited and deals the VIP book out between you like cards: keep, cut, raise. An hour of ruthless, laughing triage later the book is leaner and worth more, and three of the raises pay the new rate before the week is out, without a murmur.",
+        "critical_success": "One of the cuts turns out to be the escape hatch: a patron {worker_name} flagged on pure instinct is arrested for fraud days later, with half the district's houses on the creditor list and yours nowhere on it. You try to say thank you; {worker_name} deals next season's plan onto your desk instead."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_bestfriends_poacher_gala",
+      "weight": 3,
+      "report": "Outshone the Poacher",
+      "skill_options": [
+        "Group"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ea_prostitute_group_clients",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "150 + skill * 2",
+        "critical_success": "180 + skill * 3",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A rival house throws a lavish salon and quietly invites your entire VIP list. {worker_name} attends uninvited, works the crowd all evening like the professional the rival could never afford, and by the final toast has every one of your patrons laughing at the poaching attempt over the poacher's own wine. The whole list reports to your floor the next night, appetite sharpened.",
+        "critical_success": "{worker_name} leaves the salon with more than your list intact: two of the rival's own best patrons follow along out of sheer curiosity about a house that commands loyalty like that. The rival's invitation now hangs framed behind your bar. {worker_name}'s idea, {worker_name}'s nail, {worker_name}'s hammer."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_harem_reserved_page",
+      "weight": 3,
+      "report": "The Reserved Page",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_vip_client",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "150 + skill * 2",
+        "critical_success": "180 + skill * 3",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "One page of your book is stamped reserved for {worker_name}, leaving only a single hour for sale. A VIP pays an evening's price for it and receives naked oral pleasure, deep penetration, and a hard climax. Scarcity makes the sex expensive; belonging to you makes the scarcity real.",
+        "critical_success": "A prince's envoy tries to buy the reserved page outright and learns it is not the house's to sell. The permitted hour still ends with expert oral sex and two orgasms, but midnight returns {worker_name} to you. The envoy pays a fortune for what your claim allows only briefly."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_harem_borrowed_surrender",
+      "weight": 3,
+      "report": "Borrowed Surrender",
+      "skill_options": [
+        "BDSM"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_bdsm_client",
+      "positive_traits": {
+        "Graceful": 5,
+        "Beautiful": 3
+      },
+      "earnings": {
+        "success": "150 + skill * 2",
+        "critical_success": "180 + skill * 3",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The patron pays to command someone whose surrender already belongs to you. {worker_name} recites your limits before the cuffs close, then obeys every permitted order through oral sex, penetration, and the patron's climax. The borrowed submission feels absolute precisely because your authority remains present in the room.",
+        "critical_success": "When the patron demands one act beyond your rules, {worker_name} stops everything with two words: not permitted. The refusal makes the scene hotter inside its boundaries. Oral sex resumes, the restraints tighten, and the patron climaxes twice before paying double for surrender that could be borrowed but never stolen from you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_servant_pointed_finger",
+      "weight": 3,
+      "report": "The Untouched Booking",
+      "skill_options": [
+        "Extreme"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_extreme_client",
+      "positive_traits": {
+        "Robust": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "150 + skill * 2",
+        "critical_success": "180 + skill * 3",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The extreme request has sat untouched for a week. You point to the booking, then to {worker_name}; after the limits are agreed, that is enough. Restraints, oral service, and hard anal sex are delivered without hesitation. The client leaves spent, and the outrageous fee is folded on your desk by morning.",
+        "critical_success": "The client returns because nobody else can handle the requested mix of restraint, oral sex, and relentless anal penetration without losing control of the scene. {worker_name} follows your assignment through repeated climaxes and sends the full purse home. The request becomes a monthly booking at twice the price."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_expert_attendant_servant_full_party",
+      "weight": 3,
+      "report": "Served the Whole Party",
+      "skill_options": [
+        "Group"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "ea_prostitute_group_clients",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "150 + skill * 2",
+        "critical_success": "180 + skill * 3",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A mercenary company books enough group sex for three attendants. You assign one. {worker_name} takes the whole room, moving from mouth to hands to penetration until all six guests have climaxed at least once. The captain pays the three-worker fee, astonished that obedience and stamina made your impossible order look easy.",
+        "critical_success": "By dawn, six mercenaries lie spent around a worker still following your order. Oral sex, penetration, and one final shared round have carried every guest through repeated orgasms without crossing an agreed limit. The company books three future nights in advance, insisting that only {worker_name} can service them."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

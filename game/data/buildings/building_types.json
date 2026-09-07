@@ -52,7 +52,7 @@
               "story_image": "prostitute_vanilla_client",
               "failure_image": "prostitute_vanilla_client_failure",
               "descriptions": {
-                "failure": "{worker_name} struggles to find the rhythm that should come naturally. The movements are awkward, each movement lacking the spark that transforms contact into passion. The client departs with disappointment weighing heavy in their eyes, complaining about the lack of passion.",
+                "failure": "{worker_name} struggles to find the rhythm that should come naturally. The movements are awkward, missing the spark that transforms contact into passion. The client departs with disappointment weighing heavy in their eyes, and does not promise to return.",
                 "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire. It's competent but uninspired sex - the client gets off, yet something essential remains missing—the spark that elevates pleasure to art.",
                 "success": "{worker_name} demonstrates the skill of a master craftsman. Teasing the client with soft touches before things get heated. Genuine moans and movements that flow like water given form guide the client toward heights of satisfaction they never knew existed.",
                 "critical_success": "{worker_name} turns this into a night the client will never forget. Perfect mix of tender and wild that drives the client crazy. Multiple orgasms and they're already dreaming of their return to this paradise."
@@ -373,7 +373,7 @@
               "descriptions": {
                 "failure": "{worker_name} doesn't know how to use her hands properly on a man. Too rough, wrong pace, or just awkward movements that kill the mood. The male client grows frustrated as their expectations crumble into disappointment and can't finish.",
                 "mediocre": "{worker_name} gives a competent but uninspired handjob that achieves the fundamental goal without creating magic. Mechanical movements that bring the client to a crescendo of pleasure but nothing memorable or exciting.",
-                "success": "{worker_name} shows real skill with her hands. Perfect pressure, rhythm changes, and building tension with the patience of an artist touches that build the male client up to an overwhelming and satisfying release.",
+                "success": "{worker_name} shows real skill with her hands. Perfect pressure, shifting rhythm, tension built with an artist's patience—touch by touch she carries the client up to an overwhelming, satisfying release.",
                 "critical_success": "{worker_name} gives the most breathtaking handjob the client has ever experienced. Her masterful technique, flawless timing, and sensual touch create an unforgettable crescendo of pleasure."
               },
               "consequences": {
@@ -435,7 +435,7 @@
               "failure_image": "prostitute_homo_client_male_failure",
               "descriptions": {
                 "failure": "{worker_name} feels uncomfortable with the gay encounter and it shows. The awkward hesitation and lack of genuine engagement kill the chemistry, leaving the male client feeling rejected and unsatisfied.",
-                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire of the gay service but without real passion. The client gets physical satisfaction but misses the authentic masculine connection and enthusiasm he was hoping for.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but without real fire. The client gets physical satisfaction but misses the authentic masculine connection he was hoping for.",
                 "success": "{worker_name} embraces the gay encounter with genuine enthusiasm. The masculine touches, passionate kisses, and skilled exploration of the client's body create an authentic and intensely satisfying man-to-man experience.",
                 "critical_success": "{worker_name} delivers an incredible gay experience that feels completely natural and passionate. The perfect masculine chemistry, expert technique, and genuine desire create such an intense connection that the client is completely blown away by the raw male energy."
               },
@@ -498,7 +498,7 @@
               "failure_image": "prostitute_homo_client_female_failure",
               "descriptions": {
                 "failure": "{worker_name} feels uncomfortable with the lesbian encounter and it shows. The awkward hesitation and lack of genuine engagement kill the chemistry, leaving the female client feeling rejected and unsatisfied.",
-                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire of the lesbian service but without real passion. The client gets physical satisfaction but misses the authentic feminine connection and enthusiasm she was hoping for.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but without real fire. The client gets physical satisfaction but misses the authentic feminine connection she was hoping for.",
                 "success": "{worker_name} embraces the lesbian encounter with genuine enthusiasm. The soft feminine touches, passionate kisses, and skilled exploration of the client's body create an authentic and intensely satisfying woman-to-woman experience.",
                 "critical_success": "{worker_name} delivers an incredible lesbian experience that feels completely natural and passionate. The perfect feminine chemistry, expert technique, and genuine desire create such an intense connection that the client is completely blown away by the tender yet wild female energy."
               },
@@ -1195,13 +1195,13 @@
                 "Sex"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
-                "failure": "{worker_name} forgets who's paying whom. Rushes through foreplay, grabs too hard, moves too fast — the client feels more like a prop than a patron. They finish unsatisfied and complain that the session felt selfish, not professional.",
-                "mediocre": "{worker_name} struggles to pace the session. The eagerness is obvious — flushed skin, ragged breathing before the client even undresses. It's functional but clumsy, and the client senses they weren't the focus. A middling tip and a raised eyebrow.",
-                "success": "{worker_name} channels the desperate energy into raw, convincing passion. The client believes every moan, every whispered plea for more. What should have been a routine booking becomes electric — the kind of session clients brag about to friends.",
-                "critical_success": "{worker_name} transforms unbearable need into the performance of a lifetime. Every touch drips with genuine hunger that makes the client feel like the most desired person alive. They leave trembling, overtip wildly, and book three more sessions before reaching the door."
+                "failure": "{worker_name} forgets who's paying whom. Foreplay is rushed, grips land too hard, the rhythm serves {worker_name}'s hunger and nobody else's — the client feels like a prop in someone else's orgasm. They finish unsatisfied and complain that the session felt selfish, not professional.",
+                "mediocre": "{worker_name} struggles to pace the session — flushed skin, ragged breathing before the client even undresses, sex rushed into before the client is ready. It's functional but lopsided, serving {worker_name}'s ache more than the patron, and the tip says so.",
+                "success": "{worker_name} stops fighting the ache and lets it into the work: clothes off early, sex taken greedily, hips chasing pleasure as much as pay. Every moan is real and the client can tell — they finish hard, shaking, convinced nobody has ever wanted them like this. Tonight, somebody actually did.",
+                "critical_success": "{worker_name}'s need turns the booking feral. The client is pulled onto the bed, straddled, and worked through one climax and into a second while {worker_name} chases their own between — sweat-slick, loud, utterly unfaked. They paid for a service and received an event: the client leaves trembling, overtips wildly, and books three more sessions before reaching the door."
               },
               "earnings": {
                 "success": "100 + skill",
@@ -1709,7 +1709,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name}'s hands drift where they shouldn't — inner thighs, the small of the back, lingering far too long on curves that aren't part of any therapeutic routine. The client stiffens and calls for the manager. The session ends in an apology and a refund.",
@@ -1813,7 +1813,7 @@
               "story_image": "ea_prostitute_vanilla_client",
               "failure_image": "ea_prostitute_vanilla_client_failure",
               "descriptions": {
-                "failure": "{worker_name} struggles to find the rhythm that should come naturally. The movements are awkward, each movement lacking the spark that transforms contact into passion. The client departs with disappointment weighing heavy in their eyes, complaining about the lack of passion.",
+                "failure": "{worker_name} struggles to find the rhythm that should come naturally. The movements are awkward, missing the spark that transforms contact into passion. The client departs with disappointment weighing heavy in their eyes, and does not promise to return.",
                 "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire. It's competent but uninspired sex - the client gets off, yet something essential remains missing—the spark that elevates pleasure to art.",
                 "success": "{worker_name} demonstrates the skill of a master craftsman. Teasing the client with soft touches before things get heated. Genuine moans and movements that flow like water given form guide the client toward heights of satisfaction they never knew existed.",
                 "critical_success": "{worker_name} turns this into a night the client will never forget. Perfect mix of tender and wild that drives the client crazy. Multiple orgasms and they're already dreaming of their return to this paradise."
@@ -2203,7 +2203,7 @@
               "descriptions": {
                 "failure": "{worker_name} doesn't know how to use her hands properly on a man. Too rough, wrong pace, or just awkward movements that kill the mood. The male client grows frustrated as their expectations crumble into disappointment and can't finish.",
                 "mediocre": "{worker_name} gives a competent but uninspired handjob that achieves the fundamental goal without creating magic. Mechanical movements that bring the client to a crescendo of pleasure but nothing memorable or exciting.",
-                "success": "{worker_name} shows real skill with her hands. Perfect pressure, rhythm changes, and building tension with the patience of an artist touches that build the male client up to an overwhelming and satisfying release.",
+                "success": "{worker_name} shows real skill with her hands. Perfect pressure, shifting rhythm, tension built with an artist's patience—touch by touch she carries the client up to an overwhelming, satisfying release.",
                 "critical_success": "{worker_name} gives the most breathtaking handjob the client has ever experienced. Her masterful technique, flawless timing, and sensual touch create an unforgettable crescendo of pleasure."
               },
               "consequences": {
@@ -2266,7 +2266,7 @@
               "failure_image": "ea_prostitute_homo_client_male_failure",
               "descriptions": {
                 "failure": "{worker_name} feels uncomfortable with the gay encounter and it shows. The awkward hesitation and lack of genuine engagement kill the chemistry, leaving the male client feeling rejected and unsatisfied.",
-                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire of the gay service but without real passion. The client gets physical satisfaction but misses the authentic masculine connection and enthusiasm he was hoping for.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but without real fire. The client gets physical satisfaction but misses the authentic masculine connection he was hoping for.",
                 "success": "{worker_name} embraces the gay encounter with genuine enthusiasm. The masculine touches, passionate kisses, and skilled exploration of the client's body create an authentic and intensely satisfying man-to-man experience.",
                 "critical_success": "{worker_name} delivers an incredible gay experience that feels completely natural and passionate. The perfect masculine chemistry, expert technique, and genuine desire create such an intense connection that the client is completely blown away by the raw male energy."
               },
@@ -2330,7 +2330,7 @@
               "failure_image": "ea_prostitute_homo_client_female_failure",
               "descriptions": {
                 "failure": "{worker_name} feels uncomfortable with the lesbian encounter and it shows. The awkward hesitation and lack of genuine engagement kill the chemistry, leaving the female client feeling rejected and unsatisfied.",
-                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but lacking fire of the lesbian service but without real passion. The client gets physical satisfaction but misses the authentic feminine connection and enthusiasm she was hoping for.",
+                "mediocre": "{worker_name} performs with mechanical precision, each gesture practiced but without real fire. The client gets physical satisfaction but misses the authentic feminine connection she was hoping for.",
                 "success": "{worker_name} embraces the lesbian encounter with genuine enthusiasm. The soft feminine touches, passionate kisses, and skilled exploration of the client's body create an authentic and intensely satisfying woman-to-woman experience.",
                 "critical_success": "{worker_name} delivers an incredible lesbian experience that feels completely natural and passionate. The perfect feminine chemistry, expert technique, and genuine desire create such an intense connection that the client is completely blown away by the tender yet wild female energy."
               },
@@ -3625,13 +3625,13 @@
                 "Sex"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} loses the thread completely mid-session. The restraints go too tight, the pacing collapses, and the careful choreography of an expert booking devolves into clumsy groping. The client — who paid for mastery, not mess — demands a refund and threatens to tell every noble in the district.",
                 "mediocre": "{worker_name} holds the scene together but only just. The commands come out breathless instead of commanding, the rope work is sloppy, and the client senses the expert's focus is elsewhere. It's passable, but a far cry from the premium experience they paid for.",
-                "success": "{worker_name} turns the inner fire into intensity the client never expected. Every command drips with barely-restrained hunger, every touch carries the weight of someone who needs this as much as the client does. The raw authenticity elevates the session from service to experience.",
-                "critical_success": "{worker_name} delivers a session that redefines what the brothel can offer. The desperation reads as total commitment — every gasp is real, every escalation feels earned, and the client is left convinced they just shared something private and dangerous with the most skilled attendant alive. They pay double and whisper the name to their most trusted friends."
+                "success": "{worker_name} lets the hunger into the scene instead of fighting it: commands growled with real heat, restraints cinched by hands trembling for their own reasons, sex driven hard inside every agreed limit. The client booked expert domination and receives it from someone who needs this as badly as they do — and the climax at the end of it is real for both.",
+                "critical_success": "{worker_name} runs the scene on the edge of their own need and never once drops it. Orders, rope, slow deliberate sex, a climax granted only when the client begs — and every gasp between is genuine, because tonight the attendant's hunger is as real as the craft. The client pays double and whispers the name to their most trusted friends."
               },
               "earnings": {
                 "success": "100 + skill",
@@ -3715,10 +3715,10 @@
               "story_image": "stripper_regular_client",
               "failure_image": "stripper_regular_client_failure",
               "descriptions": {
-                "failure": "{worker_name} stumbles through the routine on stage. The moves are clumsy and can't create that sexy atmosphere. The client loses interest fast and barely tips.",
-                "mediocre": "{worker_name} does a basic strip routine that's pretty predictable. Gets naked but there's no real tease or seduction - just going through the motions.",
-                "success": "{worker_name} knows how to work the stage. Every piece of clothing comes off with purpose, mixing sultry looks with hypnotic hip movements that keep the client glued to their seat.",
-                "critical_success": "{worker_name} turns stripping into pure art. The moves are a perfect mix of sensual and wild, every gesture designed to drive the client crazy with desire. They're completely hooked."
+                "failure": "{worker_name} loses the rhythm two songs in and never finds it again. The routine becomes undressing with an audience, the client's attention wanders to their drink, and the tip is the polite minimum.",
+                "mediocre": "{worker_name} runs the standard routine at standard speed — clothes off on schedule, no tease, no story. The client watches, nods along, pays the standard rate. Nobody's night is ruined; nobody's night is made.",
+                "success": "{worker_name} works the stage like the song was written for it. Every garment comes off a beat later than the client expects, every look lands exactly where it's aimed, and by the final chorus the tip has already been decided — generously.",
+                "critical_success": "{worker_name} makes the client forget there is a routine at all. The show slows time — a single glove taking a full verse, eye contact held past the edge of comfortable — until the client is leaning forward like the stage is tilting. They pay the way people pay when they've stopped counting."
               },
               "consequences": {
                 "failure": {
@@ -3776,10 +3776,10 @@
               "story_image": "stripper_private_dance",
               "failure_image": "stripper_private_dance_failure",
               "descriptions": {
-                "failure": "{worker_name} feels awkward getting so close and personal. Stiff and avoiding eye contact, creating distance instead of intimacy. The client feels ripped off.",
-                "mediocre": "{worker_name} gives an okay lap dance but nothing special. Moving close and stripping down but lacking that personal connection that makes private dances worth the extra cash.",
-                "success": "{worker_name} creates the perfect intimate vibe. The dance is personal just for them, mixing close contact with slow, teasing touches that build serious sexual tension without crossing lines.",
-                "critical_success": "{worker_name} masters the art of the lap dance. Every move is a promise, every touch a tease. The client is completely captivated by the ability to create pure desire and intimacy."
+                "failure": "{worker_name} can't close the distance a private dance is priced on. Stiff shoulders, dodged eye contact, choreography performed at the client rather than for them — they leave feeling they paid intimacy prices for something visible from the bar.",
+                "mediocre": "{worker_name} delivers a competent lap dance with the personality filed off — close enough, skin enough, but the client never once feels like the only person in the building, which is the thing the private room is supposed to sell.",
+                "success": "{worker_name} makes the small room feel smaller. The dance is built around this client — their breathing, their nerve, the exact distance that makes their hands grip the chair — close enough to promise, never quite settling the question. The tension does the selling.",
+                "critical_success": "{worker_name} turns twenty minutes in the private room into something the client will spend a week failing to describe to their friends. Every touch is timed to a held breath, every retreat pulls them further forward, and when it ends they book the next dance before their pulse settles."
               },
               "consequences": {
                 "failure": {
@@ -3837,10 +3837,10 @@
               "story_image": "stripper_vip_client",
               "failure_image": "stripper_vip_client_failure",
               "descriptions": {
-                "failure": "{worker_name} can't deliver the class that VIP clients expect. The performance is too crude instead of elegant, disappointing the high-paying customer who expected premium entertainment.",
-                "mediocre": "{worker_name} puts on a technically decent show but lacks that special something that justifies VIP prices. It's competent but not the exclusive experience they paid for.",
-                "success": "{worker_name} shows why they deserve elite clientele. The strip show combines elegance with sensuality, creating a refined experience that satisfies the VIP's sophisticated tastes.",
-                "critical_success": "{worker_name} delivers a world-class performance that exceeds all expectations. The perfect blend of class, technique, and magnetic charisma creates such a memorable show that the VIP is already booking their next exclusive session."
+                "failure": "{worker_name} plays the VIP room like the main floor — louder, faster, cruder. The client wanted a performance that felt expensive; what they got could be seen downstairs for a tenth the price, and the disappointment finds words on the way out.",
+                "mediocre": "{worker_name} gives the VIP a polished, professional show that would satisfy any regular — which is precisely the problem. The client paid exclusive prices for something no one else gets, and can't shake the sense of having watched the standard set with better lighting.",
+                "success": "{worker_name} understands what the VIP rate actually buys: restraint. The show runs slower, quieter, tailored to the client's tells, elegant right up to the edge of indecent. The client leaves satisfied that the price was the point.",
+                "critical_success": "{worker_name} delivers the kind of performance VIPs describe to other VIPs in confidence. Every choice reads as bespoke — the music, the pacing, the exact moment the elegance finally breaks — and the client books a standing appointment before asking, delicately, what more would cost."
               },
               "consequences": {
                 "failure": {
@@ -3886,13 +3886,13 @@
               "excluded_traits": ["Gay", "Lesbian"],
               "weight": 1,
               "report": "Lapdance Escalated",
-              "description": "{worker_name} turned a lapdance into sex with the client when they offered triple pay.",
+              "description": "A lapdance client offered {worker_name} triple pay to make the dance more than a dance.",
               "nsfw_only": true,
               "descriptions": {
-                "success": "{worker_name} controlled the pace and had sex with the client for a lucrative payment.",
-                "failure": "The client pushed too hard, and {worker_name} refused to have sex and cut the session early with no gain.",
-                "mediocre": "{worker_name} took the risk and had sex with the client for a modest payment.",
-                "critical_success": "{worker_name} had sex with the client in a high-end session and earned premium tips."
+                "success": "{worker_name} set the terms before the last garment fell — the price, the pace, and who was in charge. The sex was unhurried and expensive, and the client paid the triple rate smiling, already asking what next week costs.",
+                "failure": "The offer came with grabbing hands and no patience. {worker_name} shoved the client off, ended the session on the spot, and walked away with nothing — no triple pay, no base fee, and a mood the next three dances couldn't shake.",
+                "mediocre": "{worker_name} took the coin and got it over with — quick, functional, about as intimate as the transaction it was. The client paid the promised rate and not a coin over, and both parties left feeling they'd bought exactly what was on the label.",
+                "critical_success": "{worker_name} made the client earn every escalation — the dance drawn out until triple pay became quadruple, then a session that emptied their purse a coin at a time and left them convinced it was a bargain. The tips alone outweighed the fee."
               },
               "skill_options": [
                 "Striptease",
@@ -3955,13 +3955,13 @@
               "worker_gender_requirement": "male",
               "weight": 1,
               "report": "Lapdance Escalated",
-              "description": "{worker_name} turned a lapdance into sex with a male client when he offered triple pay.",
+              "description": "A male client offered {worker_name} triple pay to make the lapdance more than a dance.",
               "nsfw_only": true,
               "descriptions": {
-                "success": "{worker_name} controlled the pace and had sex with the male client for a lucrative payment.",
-                "failure": "The male client pushed too hard, and {worker_name} refused to have sex and cut the session early with no gain.",
-                "mediocre": "{worker_name} took the risk and had sex with the male client for a modest payment.",
-                "critical_success": "{worker_name} had sex with the male client in a high-end session and earned premium tips."
+                "success": "{worker_name} set the terms before the last garment fell — the price, the pace, and who was in charge. The sex was unhurried and expensive, and the man paid the triple rate smiling, already asking what next week costs.",
+                "failure": "His offer came with grabbing hands and no patience. {worker_name} shoved him off, ended the session on the spot, and walked away with nothing — no triple pay, no base fee, and a mood the next three dances couldn't shake.",
+                "mediocre": "{worker_name} took his coin and got it over with — quick, functional, about as intimate as the transaction it was. He paid the promised rate and not a coin over, and both left feeling they'd bought exactly what was on the label.",
+                "critical_success": "{worker_name} made him earn every escalation — the dance drawn out until triple pay became quadruple, then a session that emptied his purse a coin at a time and left him convinced it was a bargain. The tips alone outweighed the fee."
               },
               "skill_options": [
                 "Striptease",
@@ -4024,13 +4024,13 @@
               "worker_gender_requirement": "female",
               "weight": 1,
               "report": "Lapdance Escalated",
-              "description": "{worker_name} turned a lapdance into sex with a female client when she offered triple pay.",
+              "description": "A female client offered {worker_name} triple pay to make the lapdance more than a dance.",
               "nsfw_only": true,
               "descriptions": {
-                "success": "{worker_name} controlled the pace and had sex with the female client for a lucrative payment.",
-                "failure": "The female client pushed too hard, and {worker_name} refused to have sex and cut the session early with no gain.",
-                "mediocre": "{worker_name} took the risk and had sex with the female client for a modest payment.",
-                "critical_success": "{worker_name} had sex with the female client in a high-end session and earned premium tips."
+                "success": "{worker_name} set the terms before the last garment fell — the price, the pace, and who was in charge. The sex was unhurried and expensive, and the lady paid the triple rate smiling, already asking what next week costs.",
+                "failure": "Her offer came with grabbing hands and no patience. {worker_name} pushed her away, ended the session on the spot, and walked away with nothing — no triple pay, no base fee, and a mood the next three dances couldn't shake.",
+                "mediocre": "{worker_name} took her coin and got it over with — quick, functional, about as intimate as the transaction it was. She paid the promised rate and not a coin over, and both left feeling they'd bought exactly what was on the label.",
+                "critical_success": "{worker_name} made her earn every escalation — the dance drawn out until triple pay became quadruple, then a session that emptied her purse a coin at a time and left her convinced it was a bargain. The tips alone outweighed the fee."
               },
               "skill_options": [
                 "Striptease",
@@ -4098,7 +4098,7 @@
                 "Striptease"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} loses all composure on stage. The choreography dissolves into awkward, needy writhing that makes the front row uncomfortable. A lap dance turns into desperate grinding that crosses the line. The bouncer has to step in and the show ends early to scattered boos.",
@@ -4240,7 +4240,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} drops a tray trying to flirt with three tables at once. The flushed cheeks and wandering eyes read as unprofessional, not charming. Regulars raise eyebrows and the shift ends in a lecture from management.",
@@ -4374,7 +4374,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} abandons the ledgers entirely to 'supervise' the floor, spending an hour watching sessions through half-open doors instead of balancing accounts. Supply orders go unsigned, a delivery is missed, and the evening shift starts without clean linens. The staff notices the manager was nowhere useful all day.",
@@ -4462,10 +4462,10 @@
               "id": "rest_nsfw_relief_brothel",
               "weight": 1,
               "report": "Private Relief",
-              "description": "{worker_name} took private time to release tension and returned calmer for the next shift.",
+              "description": "{worker_name} takes an empty room on the rest day — off the clock, door locked — and masturbates to a long, shuddering climax with no client to perform for. The ache of the working week finally lets go, and the next shift gets a calmer, steadier worker.",
               "nsfw_only": true,
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "consequences": {
                 "success": {
@@ -4476,6 +4476,7 @@
                 }
               },
               "story_image": "rest_libido",
+              "story_image_fallback_patterns": ["rest_brothel"],
               "trait_roll_modifiers": {}
             }
           ]
@@ -4523,10 +4524,10 @@
               "story_image": "service_story1_restaurant",
               "failure_image": "service_story1_restaurant_failure",
               "descriptions": {
-                "failure": "{worker_name} struggles to handle multiple tables of regulars. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the dining experience for several groups of customers.",
-                "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",
-                "success": "{worker_name} provides excellent service to all the regular customers. Remembers their preferences, keeps all tables happy, and the friendly attitude makes the regulars feel like they're dining at their favorite spot.",
-                "critical_success": "{worker_name} turns serving regulars into an art form. Anticipates every table's needs, provides personalized attention to each group, and creates such a welcoming atmosphere that the regulars feel like family."
+                "failure": "{worker_name} loses the thread of the dining room by the second seating. The soup arrives after the roast, the widow at table three gets the merchant's brandy, and an apology delivered to the wrong table entirely turns one bad meal into four.",
+                "mediocre": "{worker_name} keeps every plate moving and nobody waits long enough to complain, but the service never rises above competent. The regulars get fed. They do not get greeted by name, and they notice.",
+                "success": "{worker_name} runs the room the way the regulars like it — the corner table's order started before they've sat down, wine topped up without a word, the kitchen's delays covered with easy conversation. People linger over dessert, which is where the profit lives.",
+                "critical_success": "{worker_name} gives the regulars a night that feels rehearsed for each of them. The old clerk's fish arrives boneless without his asking, the anniversary couple find their first-visit table candlelit, and by closing the reservation book has grown three names for every satisfied guest."
               },
               "consequences": {
                 "failure": {
@@ -4567,15 +4568,15 @@
               "id": "service_clumsy_paperwork_recovery",
               "weight": 2,
               "report": "Order Ledger Disaster",
-              "description": "{worker_name} dropped and mixed up order slips, then tried to charm the guests to salvage the service.",
+              "description": "{worker_name} dropped a full tray of order slips between courses and had to charm the dining room while the kitchen guessed.",
               "required_traits": [
                 "Clumsy"
               ],
               "descriptions": {
-                "success": "{worker_name} recovered with quick charm and clear apologies; most guests stayed and tipped anyway.",
-                "failure": "The order chaos spiraled and several tables left irritated.",
-                "mediocre": "{worker_name} fixed part of the mess, but the shift still ended in complaints.",
-                "critical_success": "{worker_name} turned the blunder into a funny moment and won over the whole room."
+                "success": "{worker_name} recovered with quick charm and honest apologies — most guests stayed, and a comped soup or two bought back the room's patience along with its tips.",
+                "failure": "The guessing went badly. Wrong dishes reached wrong tables through an entire seating, and several parties left before dessert with opinions they intend to share.",
+                "mediocre": "{worker_name} untangled most of the orders from memory, but the night ran on apologies and comped desserts, and the kitchen isn't speaking to anyone.",
+                "critical_success": "{worker_name} turned the disaster into dinner theater, announcing each mystery dish with mock ceremony until guessing the orders became the game. The room laughed, stayed late, and tipped like an audience."
               },
               "skill_options": [
                 "Charm",
@@ -4835,7 +4836,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} openly flirts with a table of merchants, ignoring the rest of the dining room. Orders pile up, food goes cold, and a noble couple storms out when their wine is served to the wrong table. The head chef throws a ladle.",
@@ -5090,7 +5091,7 @@
                 "Service"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} burns two courses staring at the server who keeps bending to clear low tables. The sauce breaks, the roast chars, and the kitchen fills with smoke and swearing. Plates go out late and wrong.",
@@ -5283,7 +5284,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} spends the entire shift hovering around a particular server instead of managing. Reservations get double-booked, a VIP table receives the wrong wine pairing, and the kitchen runs out of stock for the evening special because nobody placed the afternoon order. The head chef threatens to quit.",
@@ -5371,10 +5372,10 @@
               "id": "rest_nsfw_relief_restaurant",
               "weight": 1,
               "report": "Private Relief",
-              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "description": "{worker_name} spends the rest day behind a locked pantry door, masturbating in unhurried privacy for once. The climax takes the edge off, and the next service gets a steady hand instead of a coiled spring.",
               "nsfw_only": true,
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "consequences": {
                 "success": {
@@ -5385,6 +5386,7 @@
                 }
               },
               "story_image": "rest_libido",
+              "story_image_fallback_patterns": ["rest_restaurant"],
               "trait_roll_modifiers": {}
             }
           ]
@@ -5507,10 +5509,10 @@
                 "failure": "-(roll - skill)"
               },
               "descriptions": {
-                "failure": "{worker_name} gets lost in the dungeon's twisting passages and deadly traps. Poor navigation and combat skills lead to a dangerous retreat from the depths, returning empty-handed and badly wounded from the failed expedition.",
-                "mediocre": "{worker_name} manages to explore some of the dungeon's upper levels but struggles with the challenges. Avoids the worst traps, fights off some monsters, but only secures minor treasures before deciding to retreat safely.",
-                "success": "{worker_name} successfully delves deep into the dungeon's dangerous depths. Navigates traps skillfully, defeats guardian monsters, and emerges with valuable treasures and ancient artifacts from the expedition.",
-                "critical_success": "{worker_name} becomes a master dungeon delver with this expedition. Conquers the deepest chambers, outsmarts ancient magical defenses, and returns with legendary treasures that make them famous throughout the guild."
+                "failure": "{worker_name} loses the light three levels down and the dungeon closes in — wrong turns, sprung traps, something large keeping pace in the dark. The retreat is a running fight up stairs {worker_name} doesn't remember descending, and the surface is reached empty-handed and bleeding.",
+                "mediocre": "{worker_name} clears the upper halls competently — a few skirmishes won, the obvious pressure plates stepped around — but the sounds rising from the lower stairwell argue persuasively against heroics. Minor loot, whole skin, and the long walk home spent rehearsing how to phrase it.",
+                "success": "{worker_name} goes down floor by floor and comes back up the same way, which is the entire trick. Guardians put down, traps read before they trigger, and saddlebags of grave-gold and old steel set on the guild clerk's counter.",
+                "critical_success": "{worker_name} bottoms out the dungeon — the actual bottom, the chamber the guild maps mark with a question. Whatever kept every previous party above the third floor is dead or outwitted, and the haul takes two trips to carry. The guild redraws the map and puts {worker_name}'s name on it."
               },
               "story_image": "adventurer_story2",
               "failure_image": "adventurer_story2_failure",
@@ -5725,7 +5727,7 @@
                 "Agility"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} fights with reckless abandon, throwing themselves at every threat without regard for safety. The distraction proves nearly fatal — a wolf pack exploit the careless openings and {worker_name} barely escapes, bloodied, bruised, and still burning.",
@@ -5821,10 +5823,10 @@
                 "failure": "-(roll - skill)"
               },
               "descriptions": {
-                "failure": "{worker_name} struggles with the tomb's ancient traps and mechanisms. Poor navigation and timing lead to triggering multiple traps, forcing a hasty retreat empty-handed and exhausted from the failed exploration.",
-                "mediocre": "{worker_name} manages to explore some chambers of the tomb but struggles with the challenges. Avoids the worst traps and finds a few minor treasures, but the cautious approach means limited rewards from the expedition.",
-                "success": "{worker_name} successfully navigates the tomb's dangerous passages. Skillfully avoids traps, disarms mechanisms, and emerges with valuable ancient artifacts and treasures from the forgotten burial site.",
-                "critical_success": "{worker_name} becomes a master tomb raider with this expedition. Perfectly navigates every trap, discovers hidden chambers, and returns with legendary treasures and artifacts that make them famous among treasure hunters."
+                "failure": "{worker_name} gets the third pressure plate wrong and spends the rest of the visit learning what the tomb's architect thought of visitors. Darts, a dropped ceiling, a corridor slowly filling with sand — the tomb keeps its dead and its gold, and {worker_name} keeps the bruises.",
+                "mediocre": "{worker_name} reads the antechamber correctly and works two rooms with slow, careful hands, but the inner door's counterweights are beyond untangling in a single visit. The take is grave-goods from the servants' niches — honest coin, nothing storied.",
+                "success": "{worker_name} walks the tomb in a way its builders never intended — plates weighted with sandbags, dart tracks chalked, the sarcophagus lid levered up without waking anything. The burial hoard comes out in ordered bundles, catalogued before the dust settles.",
+                "critical_success": "{worker_name} finds what the tomb was actually built to hide — a masons' seam behind the sarcophagus, and past it a second burial richer than the first. Every trap along the way is disarmed so cleanly the mechanisms could be reset. Hunters buy {worker_name} drinks for a month just to hear the sequence."
               },
               "story_image": "treasure_hunter_story1",
               "failure_image": "treasure_hunter_story1_failure",
@@ -5895,10 +5897,10 @@
                 "failure": "-(roll - skill)"
               },
               "descriptions": {
-                "failure": "{worker_name} gets overwhelmed by the temple's ancient defenses and magical traps. The complex mechanisms prove too difficult to navigate, forcing a retreat with no treasures and exhaustion from the failed raid.",
-                "mediocre": "{worker_name} manages to explore some areas of the abandoned temple but struggles with the magical traps and guardians. Finds a few minor artifacts but the cautious approach limits the rewards from the expedition.",
-                "success": "{worker_name} successfully raids the abandoned temple. Skillfully avoids magical traps, outmaneuvers ancient guardians, and emerges with valuable relics and treasures from the forgotten sanctuary.",
-                "critical_success": "{worker_name} becomes a legendary temple raider with this expedition. Perfectly navigates all magical defenses, discovers secret chambers, and returns with rare artifacts and treasures that make them renowned among treasure hunters."
+                "failure": "{worker_name} misjudges the temple's wards and the temple takes it personally. Sigils flare, a stone guardian unfolds from its alcove, and the sprint back through the nave leaves no time to grab so much as a candlestick. The gods keep their silver.",
+                "mediocre": "{worker_name} slips the outer wards and works the side chapels, but the sanctum's guardians never break their circuit and never offer an opening. A satchel of votive offerings is real profit — it just isn't the altar gold.",
+                "success": "{worker_name} treats the temple like a conversation — reading the wards, stepping only where the geometry permits, waiting out each guardian's patrol before crossing. The sanctum opens without a spark, and the relics come away clean.",
+                "critical_success": "{worker_name} does what the guild's oldest hands call impossible: crosses the entire sanctum without waking a single sigil and lifts the altar reliquary from under a guardian's gaze. The temple never learns it was robbed. Collectors bid on the relics; other hunters bid on the route."
               },
               "story_image": "treasure_hunter_story2",
               "failure_image": "treasure_hunter_story2_failure",
@@ -5970,10 +5972,10 @@
                 "failure": "-(roll - skill)"
               },
               "descriptions": {
-                "failure": "{worker_name} discovers an ancient crypt but struggles with its complex defenses. The traps and mechanisms prove too advanced, forcing a retreat with exhaustion and no treasures from the failed discovery.",
-                "mediocre": "{worker_name} manages to explore parts of the ancient crypt but finds it heavily trapped. Carefully navigates some areas and finds moderate treasures, but the difficulty limits the full potential of the discovery.",
-                "success": "{worker_name} successfully explores the ancient crypt. Skillfully navigates all traps, solves complex mechanisms, and emerges with valuable ancient treasures and artifacts from the forgotten burial site.",
-                "critical_success": "{worker_name} becomes a master crypt explorer with this discovery. Perfectly navigates every trap, unlocks secret chambers, and returns with legendary treasures and artifacts that make them famous among treasure hunters."
+                "failure": "{worker_name} finds the crypt, which turns out to be the easy part. The entry gallery's puzzle-lock jams on a mistake, the dark comes down close and airless, and the way out costs every candle carried in. The discovery is real — the profit now belongs to whoever tries next.",
+                "mediocre": "{worker_name} maps the first galleries and cracks two of the lesser locks — solid, patient work. But the deep vault's mechanism wants tools nobody thought to bring, so the trip pays out in burial trinkets and a very valuable sketch of what still waits below.",
+                "success": "{worker_name} works the crypt lock by lock, gallery by gallery, chalking each row of the dead to keep the map honest. The vault at the bottom gives up coffers untouched since the sealing, and the site goes into the guild registry under {worker_name}'s claim.",
+                "critical_success": "{worker_name} doesn't just open the crypt — {worker_name} understands it. The locks follow the funeral liturgy carved over the door; solved in that order, every gallery opens as if expected. The lowest vault holds the founder's hoard, intact and inventoried by morning. The guild names the site after its discoverer."
               },
               "story_image": "treasure_hunter_story3",
               "failure_image": "treasure_hunter_story3_failure",
@@ -6110,7 +6112,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} skips the usual trap checks and charges straight into a burial chamber. A pressure plate triggers a volley of poisoned darts, and the desperate scramble to escape brings down a section of ceiling. Crawls out empty-handed, bleeding, and still burning.",
@@ -6398,7 +6400,7 @@
                 "Agility"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} charges the legendary beast head-on, ignoring every tactical opening. The creature barely has to try — a single swipe sends {worker_name} tumbling down a ravine. Crawling back to the guild battered and empty-handed, the healers mutter about a death wish.",
@@ -6501,6 +6503,7 @@
               "story_image": "monster_taming_combat",
               "failure_image": "monster_taming_combat_failure",
               "image_fallback_patterns": ["beast", "extreme"],
+              "profile_before_image_fallback_patterns": ["extreme"],
               "consequences": {
                 "failure": {
                   "energy": -4,
@@ -6698,7 +6701,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name}'s pheromone-drenched approach confuses a territorial drake into a mating display that ends with {worker_name} pinned under three hundred pounds of amorous scales. The handlers have to pry them apart, and the creature is more agitated than before. No taming today.",
@@ -6835,7 +6838,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} accepts a contract from a suspiciously generous client without reading the kill clause. The guild sends a team into a nest that turns out to be three times the reported size. Casualties, compensation claims, and a furious guild master. {worker_name} spends the evening being yelled at instead of doing anything about the ache.",
@@ -6923,10 +6926,10 @@
               "id": "rest_nsfw_relief_adventurers_guild",
               "weight": 1,
               "report": "Private Relief",
-              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "description": "{worker_name} waits for the bunkroom to empty on the rest day and masturbates the restlessness out, biting down on the finish from habit. The climax burns off the edge that had been creeping into their aim.",
               "nsfw_only": true,
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "consequences": {
                 "success": {
@@ -6937,6 +6940,7 @@
                 }
               },
               "story_image": "rest_libido",
+              "story_image_fallback_patterns": ["rest_adventurer"],
               "trait_roll_modifiers": {}
             }
           ]
@@ -7296,7 +7300,7 @@
                 "Service"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name}'s lack of restraint causes disruptions at the bar. Drinks slosh, orders vanish, and the heated flirting that was meant to charm a table of soldiers instead starts a jealous argument. Management steps in before fists fly.",
@@ -7775,7 +7779,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} tries to channel the heat into the performance but it comes across as desperate rather than daring. The ballad turns into an awkward overshare, the dance is more stumble than sway, and patrons shift in their seats. A few walk out.",
@@ -7969,7 +7973,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} snaps at a server for no reason, over-pours the complimentary round for a table of mercenaries, and approves a bard's set list without listening to it — the bard plays four love ballads in a row that clear the room. The tavern empties early and the staff avoid eye contact for the rest of the night.",
@@ -8058,10 +8062,10 @@
               "story_image": "service_story1_tavern_server",
               "failure_image": "service_story1_tavern_server_failure",
               "descriptions": {
-                "failure": "{worker_name} struggles to handle multiple crowded tables. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the night experience for several groups of customers.",
-                "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",
-                "success": "{worker_name} provides excellent service to all the regulars. Remembers their preferences, keeps all tables happy, and the friendly attitude makes the regulars feel right at home in their favorite spot.",
-                "critical_success": "{worker_name} turns serving regulars into an art form. Anticipates every table's needs, provides personalized attention to each group, and creates such a welcoming atmosphere that the regulars feel like family."
+                "failure": "{worker_name} loses control of the floor before the second round. Ale ends up in laps, the wrong tabs get shouted across the room, and a mixed-up order sets two tables arguing over who drank whose whiskey. The bartender ends the night short-handed and short-tempered.",
+                "mediocre": "{worker_name} keeps the mugs full and the tabs roughly honest, but that's all it is — pouring, not hosting. The regulars drink their usual in peace and drift out early. Nobody's unhappy. Nobody stays for one more, either.",
+                "success": "{worker_name} works the floor like a good song — mugs refilled on the downbeat, jokes traded table to table, the rowdy corner cooled with a grin instead of a threat. The regulars settle in the way they only do when someone is watching the room for them.",
+                "critical_success": "{worker_name} turns an ordinary night into the kind the regulars will exaggerate for years. Every mug lands full at the right elbow, every story finds a better audience for {worker_name}'s laughing at it, and when a stranger picks a fight, the whole room sides with the house. The till and the goodwill both run over."
               },
               "consequences": {
                 "failure": {
@@ -8102,15 +8106,15 @@
               "id": "service_clumsy_paperwork_tavern_server",
               "weight": 2,
               "report": "Order Ledger Disaster",
-              "description": "{worker_name} dropped and mixed up order slips, then tried to charm the patrons to salvage the service.",
+              "description": "{worker_name} dropped the tab slips into a puddle of ale and had to rebuild half the room's orders from memory and charm.",
               "required_traits": [
                 "Clumsy"
               ],
               "descriptions": {
-                "success": "{worker_name} recovered with quick charm and clear apologies; most guests stayed and tipped anyway.",
-                "failure": "The order chaos spiraled and several tables left irritated.",
-                "mediocre": "{worker_name} fixed part of the mess, but the shift still ended in complaints.",
-                "critical_success": "{worker_name} turned the blunder into a funny moment and won over the whole room."
+                "success": "{worker_name} recovered with a grin and a round on the house, rebuilding the tabs from memory while trading jokes about it. Most patrons stayed, drank more, and tipped for the entertainment.",
+                "failure": "Memory lost the fight. Drinkers got charged for rounds they never had, the argument spread bar-wide, and several regulars walked out on tabs nobody could prove either way.",
+                "mediocre": "{worker_name} sorted out most of the tabs by asking, table by table, who was sober enough to remember. The shift ended square but joyless, with grumbling on both sides of the bar.",
+                "critical_success": "{worker_name} turned the soggy slips into the night's running joke, auctioning the unclaimed drinks to the loudest bidder. The room roared, the extra rounds sold themselves, and the bartender kept a ruined slip as a souvenir."
               },
               "skill_options": [
                 "Charm",
@@ -8173,7 +8177,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} drops a full tray of ale into a merchant's lap while watching the swordsman at table six flex. The merchant demands compensation, the swordsman leaves, and {worker_name} spends the rest of the shift mopping the floor under the bartender's withering glare.",
@@ -8262,10 +8266,10 @@
               "id": "rest_nsfw_relief_tavern",
               "weight": 1,
               "report": "Private Relief",
-              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "description": "{worker_name} claims the quiet of the cask cellar on the rest day and masturbates slowly, with nowhere to be and no one to hear. The climax unknots a week of jitters, and the next shift pours steady.",
               "nsfw_only": true,
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "consequences": {
                 "success": {
@@ -8276,6 +8280,7 @@
                 }
               },
               "story_image": "rest_libido",
+              "story_image_fallback_patterns": ["rest_tavern"],
               "trait_roll_modifiers": {}
             }
           ]
@@ -8698,7 +8703,7 @@
                 "Service"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name}'s hands shake so badly they misdeal three times in a row. The flirting that was meant to smooth things over lands as awkward desperation. A high-roller accuses them of cheating and security has to escort {worker_name} off the floor.",
@@ -8965,7 +8970,7 @@
                 "Combat"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} overreacts to a minor dispute between card players, slamming a patron against the wall when a firm word would have sufficed. The casino pays damages and {worker_name} spends the rest of the shift cooling off in the back room, still vibrating with unspent tension.",
@@ -9159,7 +9164,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} approves a VIP's request to raise the table limit without checking their credit, comps an entire bottle of aged brandy to a stranger who smiles the right way, and forgets to rotate the dealers — the house loses a fortune at one table before anyone notices. The pit boss is livid.",
@@ -9248,10 +9253,10 @@
               "story_image": "service_story1_casino_server",
               "failure_image": "service_story1_casino_server_failure",
               "descriptions": {
-                "failure": "{worker_name} struggles to handle multiple slots and tables. Spills drinks, mixes up orders between tables, and the unprofessional attitude ruins the evening out for several groups of customers.",
-                "mediocre": "{worker_name} manages to serve all the regular tables but nothing special. Gets everyone fed but lacks the personal touch that would make the regulars feel valued and welcome.",
-                "success": "{worker_name} provides excellent service to all the guests. Remembers their preferences, keeps all tables happy, and the friendly attitude makes the regulars feel like they're dining at their favorite spot.",
-                "critical_success": "{worker_name} turns serving regulars into an art form. Anticipates every table's needs, provides personalized attention to each group, and creates such a welcoming atmosphere that the regulars feel like family."
+                "failure": "{worker_name} loses track of who ordered what somewhere between the card tables and the slots. Drinks land in front of the wrong gamblers mid-hand, a spilled cocktail stains the felt of the high table, and the pit boss spends the night making apologies that come out of the tips.",
+                "mediocre": "{worker_name} keeps the drinks coming at a steady, forgettable pace. Gamblers get their refills without looking up from their hands — which is the problem. Nobody remembers the service, nobody orders past their thirst, and the floor drinks less than it bets.",
+                "success": "{worker_name} learns the floor's rhythm fast — who drinks when they're winning, who drinks when they're losing, who needs coffee before they wager the deed to something. Glasses arrive just as they empty, and the guests play longer because nothing ever interrupts them.",
+                "critical_success": "{worker_name} makes the whole floor feel lucky. The right drink appears at every winning streak like an omen, losers get their consolation poured with enough charm to keep them seated, and the high-rollers start tipping in chips just to keep {worker_name} in orbit. The house wins it all back at the tables, of course."
               },
               "consequences": {
                 "failure": {
@@ -9292,15 +9297,15 @@
               "id": "service_clumsy_paperwork_casino_server",
               "weight": 2,
               "report": "Order Ledger Disaster",
-              "description": "{worker_name} dropped and mixed up order slips, then tried to charm the guests to salvage the service.",
+              "description": "{worker_name} dropped and shuffled the drink chits mid-shift and had to charm the gamblers while sorting out who ordered what.",
               "required_traits": [
                 "Clumsy"
               ],
               "descriptions": {
-                "success": "{worker_name} recovered with quick charm and clear apologies; most guests stayed and tipped anyway.",
-                "failure": "The order chaos spiraled and several tables left irritated.",
-                "mediocre": "{worker_name} fixed part of the mess, but the shift still ended in complaints.",
-                "critical_success": "{worker_name} turned the blunder into a funny moment and won over the whole room."
+                "success": "{worker_name} recovered with quick charm and a steady tray, comping the mixed-up drinks before anyone could sour on the table. The gamblers took it for a lucky accident and played on.",
+                "failure": "The confusion reached the tables at the worst moment — a VIP's lucky bourbon went to a stranger mid-streak, and superstition did the rest. The complaints reached the pit boss before the drinks reached anyone.",
+                "mediocre": "{worker_name} straightened out most of the chits between hands, but the delays showed. Gamblers drink on rhythm, and a broken rhythm on a casino floor gets noticed and remembered.",
+                "critical_success": "{worker_name} turned the mix-up into a superstition — the house's shuffle, a wrong drink as the omen of a right hand. Half the floor started ordering blind on purpose, and the tips came in chips."
               },
               "skill_options": [
                 "Charm",
@@ -9507,7 +9512,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} spills champagne down a VIP's silk sleeve while staring at the dealer's forearms. The fumbled apology involves too much touching, the VIP's companion takes offense, and security escorts {worker_name} off the floor. The table cashes out early.",
@@ -9595,10 +9600,10 @@
               "id": "rest_nsfw_relief_casino",
               "weight": 1,
               "report": "Private Relief",
-              "description": "{worker_name} took private time to release tension and returned calmer for the next day.",
+              "description": "{worker_name} locks the upstairs staff room on the rest day and masturbates with a hand over their own mouth, mindful of thin walls. The climax leaves them composed enough to face the floor again with a straight face.",
               "nsfw_only": true,
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "consequences": {
                 "success": {
@@ -9609,6 +9614,7 @@
                 }
               },
               "story_image": "rest_libido",
+              "story_image_fallback_patterns": ["rest_casino"],
               "trait_roll_modifiers": {}
             }
           ]
@@ -9658,10 +9664,10 @@
               "story_image": "ambassador_negotiate_trade",
               "failure_image": "ambassador_negotiate_trade_failure",
               "descriptions": {
-                "failure": "{worker_name} fails to secure favorable terms in the trade negotiations. Poor diplomatic skills and lack of understanding of economic matters result in a weak agreement that benefits the other party more than the castle.",
-                "mediocre": "{worker_name} manages to reach a basic trade agreement but fails to secure optimal terms. The deal is functional but lacks the advantages that skilled negotiation could have achieved.",
-                "success": "{worker_name} successfully negotiates a favorable trade agreement that benefits the castle significantly. Through diplomatic finesse and clever bargaining, secures advantageous terms that strengthen the castle's economic position.",
-                "critical_success": "{worker_name} achieves an exceptional trade agreement through masterful negotiation. The deal secures highly favorable terms, exclusive trade rights, and creates such valuable economic partnerships that the castle's influence and prosperity grow substantially."
+                "failure": "{worker_name} sits down opposite merchants who have done this for thirty years and shows them every card by the second course. The agreement that emerges taxes the castle's goods coming and going, and the other delegation signs it quickly, before anyone can read it twice.",
+                "mediocre": "{worker_name} brings home a workable agreement — grain moves, tariffs hold, nobody is insulted. But the exclusive clauses went unclaimed, and the other party's smiles at the signing suggest they know exactly what they didn't have to give up.",
+                "success": "{worker_name} negotiates like someone who read the other side's ledgers first. Every concession is traded for two, the tariff schedule lands in the castle's favor, and the foreign merchants leave believing the terms were their own idea — the mark of a deal that will hold.",
+                "critical_success": "{worker_name} walks out with terms the castle's own clerks double-check in disbelief: exclusive rights on the river trade, tariffs fixed for a decade, and a partner kingdom convinced it owes the castle a favor besides. Merchant houses start sending envoys before the ink dries."
               },
               "consequences": {
                 "failure": {
@@ -9717,10 +9723,10 @@
               "story_image": "ambassador_diplomatic_alliance",
               "failure_image": "ambassador_diplomatic_alliance_failure",
               "descriptions": {
-                "failure": "{worker_name} fails to establish a diplomatic alliance with the foreign delegation. Poor understanding of political dynamics and awkward handling of sensitive matters create distrust and damage the castle's diplomatic standing.",
-                "mediocre": "{worker_name} makes some progress in alliance negotiations but fails to secure a formal agreement. The discussions are cordial but lack the depth needed to overcome political obstacles.",
-                "success": "{worker_name} successfully forges a diplomatic alliance with the foreign kingdom. Through careful negotiation, mutual understanding, and diplomatic skill, creates a valuable partnership that strengthens the castle's political position.",
-                "critical_success": "{worker_name} achieves a landmark diplomatic alliance that transforms the castle's political standing. The exceptional negotiation skills and strategic vision create such a strong partnership that the castle gains significant influence and protection from a powerful ally."
+                "failure": "{worker_name} misreads the delegation from the first toast — the wrong noble seated below the salt, a border grievance raised as small talk. The envoys withdraw behind flawless courtesies, and the report they carry home paints the castle as clumsy and the alliance as unnecessary.",
+                "mediocre": "{worker_name} keeps the talks warm through three days of banquets and careful phrasing, but warm is all they get. The delegation departs with gifts, compliments, and no signature — a friendship declared, an alliance postponed.",
+                "success": "{worker_name} finds the thing the foreign kingdom actually wants — not the trade terms they argued over, but the assurance underneath them — and builds the treaty around it. The seals go on before witnesses, and the castle's name is spoken differently in that court from now on.",
+                "critical_success": "{worker_name} forges the kind of alliance other courts convene councils to discuss. Mutual defense, favored trade, a foreign prince's standing invitation — all arranged so gracefully that both sides claim the credit. The castle now has a powerful friend and, more useful still, a reputation for making them."
               },
               "consequences": {
                 "failure": {
@@ -9775,10 +9781,10 @@
               "story_image": "ambassador_resolve_conflict",
               "failure_image": "ambassador_resolve_conflict_failure",
               "descriptions": {
-                "failure": "{worker_name} fails to resolve the political conflict between feuding nobles. Poor mediation skills and inability to find common ground allow the dispute to escalate, damaging the castle's reputation as a neutral arbiter.",
-                "mediocre": "{worker_name} makes some progress in conflict resolution but fails to achieve a lasting solution. The parties agree to a temporary truce but underlying tensions remain unresolved.",
-                "success": "{worker_name} successfully mediates the political conflict, finding a solution that satisfies both parties. Through diplomatic skill and careful negotiation, prevents escalation and maintains the castle's reputation for fair arbitration.",
-                "critical_success": "{worker_name} achieves a masterful resolution of the political conflict, creating a comprehensive agreement that addresses all concerns. The exceptional mediation skills and strategic thinking not only resolve the immediate dispute but also strengthen relationships, earning widespread recognition for the castle's diplomatic excellence."
+                "failure": "{worker_name} tries to mediate between the feuding houses and manages to unite them in one thing only: irritation with the castle. A misjudged compromise reads as favoritism, an old insult resurfaces at the table, and the dispute leaves the room larger than it entered.",
+                "mediocre": "{worker_name} talks the feuding nobles down from open threats to a sullen truce. Nobody withdraws a claim and nobody draws steel — the quarrel is not resolved so much as adjourned, and everyone at court knows the session will reconvene.",
+                "success": "{worker_name} takes the feud apart the way a clockmaker takes apart a jammed clock — finding the actual grievance beneath the stated ones. The settlement gives each house something it can call a victory, and the castle quietly collects a reputation as the place where quarrels go to end.",
+                "critical_success": "{worker_name} not only ends the feud but leaves the two houses bound by a betrothal, a shared border commission, and a genuine, slightly bewildered respect for the mediator who managed it. Nobles with grievances now request the castle's arbitration by name — an influence no army could purchase."
               },
               "consequences": {
                 "failure": {
@@ -9832,10 +9838,10 @@
               "story_image": "ambassador_cultural_exchange",
               "failure_image": "ambassador_cultural_exchange_failure",
               "descriptions": {
-                "failure": "{worker_name} fails to organize a meaningful cultural exchange with the visiting delegation. Poor understanding of cultural differences and lack of organizational skill result in a disappointing event that fails to build bridges.",
-                "mediocre": "{worker_name} manages to organize a basic cultural exchange but lacks the depth needed to create lasting connections. The event is pleasant but fails to achieve the diplomatic goals intended.",
-                "success": "{worker_name} successfully organizes a rich cultural exchange that brings together artists, scholars, and nobles from different kingdoms. The well-planned event creates mutual understanding and strengthens cultural ties between regions.",
-                "critical_success": "{worker_name} creates an exceptional cultural exchange that becomes a landmark event. The comprehensive program of art, music, literature, and scholarly discussions creates such profound connections that the castle becomes known as a center of cultural diplomacy, earning widespread recognition."
+                "failure": "{worker_name} plans the exchange around what the castle finds impressive rather than what the guests find respectful. A recital runs long, a translated toast lands as an insult, and the visiting delegation spends the final evening being politely, pointedly tired.",
+                "mediocre": "{worker_name} hosts a pleasant week of music and shared meals that everyone enjoys and no one remembers. The guests leave with favorable impressions and empty hands — goodwill established, nothing built on it.",
+                "success": "{worker_name} pairs the visiting scholars with the castle's own, sets the musicians of both courts to stealing each other's melodies, and lets the exchange do its real work at the dinner tables. The delegation leaves with copied manuscripts, standing invitations, and reasons to return.",
+                "critical_success": "{worker_name} orchestrates an exchange that outgrows its diplomacy — a joint archive, apprenticeships crossing both borders, a suite composed for the closing night that both courts now claim as their own. Within the season, kingdoms that ignored the castle are asking to attend the next one."
               },
               "consequences": {
                 "failure": {
@@ -9882,7 +9888,7 @@
                 "Clever"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} can't focus through the haze of want. Fumbles a key treaty clause while staring at the foreign envoy's collarbone, agrees to unfavourable terms without reading them, and the delegation leaves with the better deal and a knowing smirk.",
@@ -10467,7 +10473,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} loses the thread of polite conversation when the lord's hand rests on their knee. The ensuing silence stretches too long, the flush too obvious. The noble withdraws, offended by the lack of composure expected from a court courtesan.",
@@ -10607,7 +10613,7 @@
                 "Service"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} spills wine down the lord's sleeve while staring at the visiting diplomat's décolletage. The ensuing scramble — dabbing too eagerly at noble clothing, stammered apologies, a dropped tray — is the kind of disaster that gets servants reassigned to the kitchens.",
@@ -10899,7 +10905,7 @@
                 "Charm"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} loses all the careful refinement a pleasure servant is expected to maintain. What should be an artful seduction becomes a clumsy, needy display that makes the visiting noble recoil. The courtly veneer cracks and the noble sees someone desperate rather than desirable. A complaint is filed with the chamberlain.",
@@ -11208,7 +11214,7 @@
                 "Combat"
               ],
               "stat_requirements": {
-                "libido": 20
+                "libido": 15
               },
               "descriptions": {
                 "failure": "{worker_name} is so wound up that a startled servant gets slammed against the wall and pinned before {worker_name} realises the mistake. The incident reaches the chamberlain, who docks pay and assigns extra shifts as punishment. The corridor whispers for days.",

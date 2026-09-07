@@ -1,0 +1,659 @@
+{
+  "_comment": "Relationship daily stories (Masseuse). Follows the contract fixed in relationship_brothel_prostitute.json: stat-gated dailies (romance/relationship/rebelliousness) roll normally with stat feedback; 'Loves you' rolls normally with forgiven zero-earnings failure; Best Friends / Harem Member / House Servant are no_fail and anchored on the bond with the MANAGER. Flavor: massage parlor shading into intimacy; the tenderness clients pay for is the tenderness being kept for the manager; a skill of touch learned from wanting someone. PROSE: gender-neutral for worker AND manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "brothel",
+  "profession_id": "masseuse",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "brothel_masseuse_romance_oil_and_elsewhere",
+      "weight": 2,
+      "report": "Hands Elsewhere",
+      "skill_options": [
+        "Hand"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": true,
+      "story_image": "masseuse_hand_oil_edge",
+      "failure_image": "masseuse_hand_oil_edge_failure",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The client is on the table, but {worker_name}'s hands are thinking of you. The oil runs lower, the massage turns intimate, and slick fingers masturbate the client to a hard orgasm with the touch {worker_name} has been saving for your body. The client pays well over the rate.",
+        "critical_success": "Wanting you sharpens every stroke. {worker_name} works the naked client from slow massage to manual climax without breaking rhythm, practicing the pressure and patience meant for you. The client rebooks the same hour for a month, never learning who taught those hands to hunger.",
+        "mediocre": "{worker_name} keeps drifting toward your office between strokes, and the rhythm drifts with it. The client gets a decent rub, a distracted finish, and tips like it.",
+        "failure": "Your footsteps pass the curtain mid-session and {worker_name}'s hands simply forget the client exists. The rhythm dies, the oil goes tacky, and the client dresses in offended silence while the evening's coin walks out the door."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_romance_borrowed_shoulders",
+      "weight": 2,
+      "report": "Borrowed Shoulders",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "failure_image": "masseuse_charm_companionship_after_rub_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A merchant with your build takes the last slot, and {worker_name} spends the hour on shoulders that could almost be yours, careful and unhurried, working out knots as if tenderness could be kneaded into someone else's back and still somehow reach you. The merchant, mistaking longing for luxury, pays the full premium.",
+        "critical_success": "The resemblance turns the session into devotion by proxy. The merchant leaves swearing no hands in the city pay attention like these, books a standing appointment, and sends two friends before the week is out. None of them will ever know whose shoulders those hands were really reading.",
+        "mediocre": "Halfway through, the likeness cuts the other way; the differences pile up and the tenderness drains out of the session. Competent work, ordinary tip.",
+        "failure": "Halfway down the spine the illusion collapses, this back is not yours and never will be, and {worker_name} finishes the hour hollow and mechanical. The merchant senses being a stand-in for someone and does not care for it at all."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_friend_bruise_claim",
+      "weight": 2,
+      "report": "A Staged Injury",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "failure_image": "masseuse_charm_companionship_after_rub_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A client limps off the table shouting that the massage wrenched something, angling for a refund and hush money on top. {worker_name} has seen the act before and, because your ledger might as well be a shared one, calmly points out the week-old bruises the towel had been covering. The scam dies on the spot and the client pays in full to escape the embarrassment.",
+        "critical_success": "{worker_name} does better than killing the claim: names the two other houses the schemer has bled with the same performance, loud enough for the whole waiting room. The room applauds the theatre, the story travels, and by evening your parlor is known as the one house in the district you cannot cheat.",
+        "mediocre": "{worker_name} smells the act but cannot prove it, and settles for waiving the tip instead of paying out. The house limps away roughly even.",
+        "failure": "The performance is good, and {worker_name} second-guesses the instinct one breath too long. You end up covering a refund for an injury that never happened, and what gnaws at {worker_name} all evening is not the coin, it is your face when you signed it over."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_friend_watered_oils",
+      "weight": 2,
+      "report": "Watered Oils",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "failure_image": "masseuse_charm_companionship_after_rub_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The new amphora of almond oil sits wrong on {worker_name}'s palms, too thin, too quick to vanish into the skin, and a friend does not let that slide. One visit to the supplier with the evidence still glistening on one hand, and the month's order arrives replaced, apologized for, and discounted. The clients get the real thing and your house keeps its name.",
+        "critical_success": "{worker_name} goes further and audits three months of deliveries against the stockroom, uncovering a pattern of shortweighting older than the cut oil. Rather than see that ledger reach the guild, the supplier settles the difference on the spot and hands over the good pressing at cost for a season. It gets brought to you like a trophy.",
+        "mediocre": "The oil is off but the proof is thin, and the supplier shrugs it into a dispute about storage. {worker_name} quietly swaps the batch for house stock and the day earns what it earns.",
+        "failure": "{worker_name} storms the supplier's stall on a wrong hunch, the batch tests clean, and the accusation burns the goodwill discount you spent a year earning. The walk back to the parlor is long, most of it spent rehearsing how to tell you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_rebel_free_hours",
+      "weight": 2,
+      "report": "Free Hours Given",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "failure_image": "masseuse_charm_companionship_after_rub_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "{worker_name} runs a private loyalty scheme on your clock: favorite clients get the half hour quietly stretched to a full one, no charge, and repay it in tips that never touch the book. Today the sleight of hand holds; the room hums, the favorites glow, and the ledger looks almost honest.",
+        "critical_success": "One of the freeloaded favorites turns out to be a magistrate who remembers generosity. A word in the right ear sends a knot of wealthy new clients to your door asking for {worker_name} by name, and not even skimmed arithmetic can ruin a day like this.",
+        "mediocre": "The free extension runs long and the tip runs short. The favorite floats out delighted; the day's totals do not.",
+        "failure": "Two paying clients wait past their hour while a favorite dozes through a free second one, and both walk out loudly, taking a regular with them. The hole in the day's take is yours to absorb, and {worker_name} shrugs it off as the cost of being adored."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 5
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_rebel_missing_oils",
+      "weight": 2,
+      "report": "The Missing Oils",
+      "skill_options": [
+        "Hand"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": true,
+      "story_image": "masseuse_hand_oil_edge",
+      "failure_image": "masseuse_hand_oil_edge_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "The imported oil drops faster than the bookings explain because {worker_name} uses it for off-book sexual finishes after hours. Tonight slick fingers masturbate a client to orgasm, and the extra fee goes into the wrong pocket while your ledger records only an ordinary massage.",
+        "critical_success": "The private trade lands a wealthy patron who pays triple for secrecy and an unhurried handjob with your finest imported oil. {worker_name} draws out the orgasm, pockets the hidden fee, then feeds enough coin into the legitimate book to keep every eyebrow in the house down.",
+        "mediocre": "The flask runs dry mid-appointment and the switch to house oil is anything but smooth. The client finishes, frowning at the difference, and the side fee shrivels in the awkwardness.",
+        "failure": "Your best-paying regular books the premium oil service and gets the watered house blend, because the good bottle is empty again. The friction is literal, the complaint is loud, and the refund comes out of your till while the missing oil stays missing."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_lovesyou_studied_hands",
+      "weight": 3,
+      "report": "Studied Hands",
+      "skill_options": [
+        "Hand"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "masseuse_hand_oil_edge",
+      "failure_image": "masseuse_hand_oil_edge_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Nobody taught {worker_name} to touch like this. The technique was learned alone while imagining your naked body: massage flowing into masturbation, pressure building without hurry, release delayed until the client begs. The resulting orgasm earns your house a heavy tip, though every practiced stroke was really meant for you.",
+        "critical_success": "The client asks where anyone learns hands like these. {worker_name} smiles and says nothing, using oil-slick fingers to work one climax into a second with the slow care invented while fantasizing about you. The client leaves triple coin and a standing booking, buying the echo of a desire that remains yours.",
+        "mediocre": "The wanting sits too close to the surface today, and the craft keeps slipping into remembering. The client gets flashes of something extraordinary between long ordinary stretches, and tips only for the flashes.",
+        "failure": "Halfway through, the hands go honest. They stop performing, settle still and warm on the client's back, and {worker_name} says quietly that this tenderness belongs to someone. The client lies there a long moment, then dresses, presses {worker_name}'s hand in both of theirs, and leaves without paying and without anger. Whoever it is, they say from the door, is luckier than they know."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_lovesyou_sold_the_copy",
+      "weight": 3,
+      "report": "Sold the Copy",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "failure_image": "masseuse_charm_companionship_after_rub_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "What the clients buy from {worker_name} is a copy: the warmth, the undivided attention, the sense of being the only body in the world, all of it drafted from an original kept for you. The copy is still finer than anything the competition sells. {worker_name} works the full board for the house you are building and hands over the take like it is a letter.",
+        "critical_success": "A grieving client books quiet company after the rub, and {worker_name} lends out the borrowed tenderness so faithfully that the client weeps, pays double, and endows a weekly slot. Crossing the room afterward, {worker_name} glances at you once, and you understand exactly whose warmth was on loan tonight.",
+        "mediocre": "Keeping the original and selling the copy takes bookkeeping of the heart, and today the accounts wobble. The client senses the attention arriving secondhand and pays accordingly.",
+        "failure": "The client asks, kindly, who the tenderness is really for, and the hands stop pretending. {worker_name} answers with the truth, or enough of it, and the client nods like someone recognizing an old ailment, waves off the unfinished hour, and forgives it on one condition: that {worker_name} tell that person someday. Nothing lands in the till, and {worker_name} walks lighter anyway."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_bestfriends_loose_tongues",
+      "weight": 3,
+      "report": "Loose Tongues",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "People tell a masseuse things they would never tell a partner; something about good hands unlocks the jaw. {worker_name} listens all shift with a friend's ears tuned to your interests and brings you the useful sediment at close: which rival is short on coin, which official is buying, which regular is circling a deal. The rub money is good. The intelligence is better.",
+        "critical_success": "A rival house's steward, boneless and unguarded on the table, talks through an entire scheme to poach your best clients with a week of free services. {worker_name} keeps the pressure soothing and the questions innocent until the whole plan is laid out along with the steward, then brings it to you the way friends bring warnings: before it costs anything."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_bestfriends_your_turn",
+      "weight": 3,
+      "report": "Your Turn on the Table",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "positive_traits": {
+        "Charming": 5,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} runs a flawless book all day, then bolts the door at close and points at the table: your turn. All week you have been rolling your neck over the ledgers, and a friend keeps count of things like that. Ten minutes into the best massage in the house you finally admit how heavy the season has been, and when you get up, the ledgers seem smaller.",
+        "critical_success": "With your face in the headrest and your shoulders finally unlocking, {worker_name} talks through the whole roster from memory, who is fading, who is ready for harder shifts, which client is not worth the trouble, and by the time the knots are gone you have next month planned better than any meeting ever managed. The day's take was the best this week; the half hour after close was worth more."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_harem_marked_premium",
+      "weight": 3,
+      "report": "The Marked Masseuse",
+      "skill_options": [
+        "Oral"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "masseuse_oral_steam_and_mouth",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your mark sits unmistakable at {worker_name}'s throat, and the steam-room clients know what it means. They pay a premium for massage followed by oral sex from someone who belongs to you. {worker_name} brings each client to orgasm inside the limits you set, wearing your mark and its price with equal pride.",
+        "critical_success": "Two regulars bid against each other for the marked masseuse's last session. {worker_name} follows your boundaries exactly, works the winner loose with oil, then uses lips and tongue until the client climaxes twice. The obscene fee is laid in your palm uncounted; your rules, not the coin, made the service satisfying."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_harem_your_pressure_map",
+      "weight": 3,
+      "report": "Your Pressure Map",
+      "skill_options": [
+        "Hand"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "masseuse_hand_oil_edge",
+      "positive_traits": {
+        "Graceful": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You composed the session yourself: oils first, full-body massage, then masturbation at the precise pace that keeps an orgasm just out of reach. {worker_name} performs your pressure map stroke for stroke until the client climaxes hard enough to shake the table, never guessing whose hands authored the whole hour.",
+        "critical_success": "A jaded client goes silent two minutes into your routine. {worker_name} massages every marked point, undresses the client at your chosen moment, and follows your masturbation pattern through a long, broken climax. The largest tip the house has seen is left for whoever composed that, and the compliment comes straight to you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_servant_no_gaps",
+      "weight": 3,
+      "report": "No Gaps in the Book",
+      "skill_options": [
+        "Hand"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "masseuse_hand_oil_edge",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You look at the overbooked board and say one word: manage. {worker_name} massages client after client, then uses oil-slick hands to masturbate each one to orgasm, with no gaps between naked bodies. Wrists burn by dusk, but the board is cleared because you ordered it.",
+        "critical_success": "The other rooms have gone dark and {worker_name} is still working, giving the fourteenth naked client the same careful massage and unhurried handjob as the first. The last orgasm clears the board and doubles the take. {worker_name} reports to you with a towel over one arm, ready for tomorrow's orders."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_masseuse_servant_hard_bodies",
+      "weight": 3,
+      "report": "The Dreaded Tables",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "masseuse_charm_companionship_after_rub",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Every parlor has its dreaded list, the dock workers with backs like ship's rope, the complainers, the ones who bathe optionally, and yours goes to {worker_name} without discussion, because you assigned it. Each one is worked with the same unhurried respect a paying noble would get, and the difficult tables leave paid, calmed, and oddly loyal.",
+        "critical_success": "The worst of them, a quarry overseer other houses have banned outright for temper, goes quiet under {worker_name}'s patient hands and books a standing weekly slot at double rate, on the sole condition of the same masseuse every time. You dreaded that list; obedience just turned it into the steadiest coin on your books."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

@@ -23,7 +23,7 @@
             },
             {
                 "option": "Offer access to your records and a writing desk in exchange for steadier wages. (Potential: Discount, Relationship, Scholar's Joy)",
-                "message": "You sweeten the arrangement with the use of your private records and a corner desk of his own, settling on [actual_cost] per day. [event_worker]'s composure thaws by a fraction. 'You understand what you are offering. That is rare.' He sets the satchel down by his foot, as though he has decided something. He works at a reduced daily cost ([actual_cost]) (20% discount), starts with a stronger bond to you (+18 Relationship), and gains the 'Scholar's Joy' trait for 90 days.",
+                "message": "You sweeten the arrangement with the use of your private records and a corner desk of his own, settling on [actual_cost] per day. [event_worker]'s composure thaws by a fraction. 'You understand what you are offering. That is rare.' He sets the satchel down by his foot, as though he has decided something. He works at a 20% discount, starts with a stronger bond to you (+18 Relationship), and gains the 'Scholar's Joy' trait for 90 days.",
                 "effect": {
                     "recruit_worker": true,
                     "cost_modifier": 0.8,
@@ -37,7 +37,7 @@
             },
             {
                 "option": "Propose a trial month at reduced pay. (Potential: Discount, Trial Worker)",
-                "message": "You propose a trial month at [actual_cost] per day, with full terms thereafter if both of you remain content. [event_worker] tilts his head a fraction, as if turning the offer over in good light. 'A reasonable test of a reasonable offer. Agreed.' He works at a reduced daily cost ([actual_cost]) (25% discount) and gains the 'Trial Worker' trait for 30 days.",
+                "message": "You propose a trial month at [actual_cost] per day, with full terms thereafter if both of you remain content. [event_worker] tilts his head a fraction, as if turning the offer over in good light. 'A reasonable test of a reasonable offer. Agreed.' He works at a 25% discount and gains the 'Trial Worker' trait for 30 days.",
                 "effect": {
                     "recruit_worker": true,
                     "cost_modifier": 0.75,

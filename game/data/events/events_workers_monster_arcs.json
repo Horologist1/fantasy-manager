@@ -1,0 +1,923 @@
+[
+  {
+    "id": "amanita_personal_stage_1_rattle_in_the_rafters",
+    "arc_id": "amanita_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "amanita_personal_stage_1_at",
+    "description": "Amanita has been with you long enough to learn every loose board and blind corner in the establishment. Tonight she strings bells through the rafters, steals the master key from your belt, and announces a house-wide game: catch her before midnight or the patrons get to choose what scandalous dare she performs from the chandelier. The staff are exasperated, the crowd is already laying wagers, and Amanita is visibly thrilled that her new home finally has enough people in it to make trouble worthwhile.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Amanita",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "has_worker:Amanita"
+    },
+    "excluded_flags": {
+      "amanita_personal_stage_1_done": true
+    },
+    "choices": [
+      {
+        "option": "Turn the chase into a ticketed rooftop race. (Requires Agility 40+)",
+        "condition": "Agility",
+        "threshold": 40,
+        "message_success": "Amanita streaks over beams, awnings, and drainpipes while the crowd follows from the courtyard below. She lands every impossible jump, returns the key with a theatrical bow, and discovers that disciplined chaos earns louder cheers than random breakage. (+3 Agility, +220 gold, +4 reputation)",
+        "message_failure": "The route is one jump too ambitious. Amanita crashes through a linen awning, unharmed and laughing, but the repairs consume most of the evening's wagers. She returns the key only after you promise not to remove the drainpipe. (+1 Agility, -120 gold)",
+        "effect": {
+          "success": {
+            "money": 220,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Agility": 3
+            },
+            "event_flags": {
+              "amanita_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -120,
+            "skill_modifiers": {
+              "Agility": 1
+            },
+            "event_flags": {
+              "amanita_personal_stage_1_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let her make the losing dare into an adults-only midnight spectacle. (Requires Extreme 40+)",
+        "condition": "Extreme",
+        "threshold": 40,
+        "message_success": "Nobody catches her. At midnight Amanita delivers a brazen, gleefully indecent chandelier show that turns every threatened dare into part of the act. She keeps control of the room without sanding one edge off her wildness, and the patrons pay generously for the privilege of being shocked. (+3 Extreme, +300 gold, +3 reputation)",
+        "message_failure": "Amanita begins with fearless enthusiasm but mistakes escalation for rhythm. Half the crowd cannot follow the game and the other half argues over the rules. You close the curtains before the chandelier joins the repair ledger. (+1 Extreme, -80 gold, -1 reputation)",
+        "effect": {
+          "success": {
+            "money": 300,
+            "reputation": 3,
+            "skill_modifiers": {
+              "Extreme": 3
+            },
+            "event_flags": {
+              "amanita_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -80,
+            "reputation": -1,
+            "skill_modifiers": {
+              "Extreme": 1
+            },
+            "event_flags": {
+              "amanita_personal_stage_1_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "amanita_personal_stage_2_old_burrow_rules",
+    "arc_id": "amanita_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "amanita_personal_stage_2_at",
+    "description": "Five days after the rafters game, three goblins from Amanita's old burrow arrive through the kitchen window. They call her new work captivity dressed in velvet and challenge her to prove she has not gone tame by helping them rob your own strongbox. Amanita palms the practice key you once gave her and looks to you—not for permission to be herself, but to see whether you understand the difference between mischief chosen and loyalty betrayed.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Amanita",
+    "worker_progress": {
+      "any_skills": {
+        "Agility": 55,
+        "Extreme": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:amanita_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "amanita_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Amanita stage a perfect fake robbery and steal the thieves' boots instead. (Requires Agility 55+)",
+        "condition": "Agility",
+        "threshold": 55,
+        "message_success": "Amanita guides the trio through false locks, weighted sacks, and a window that drops them into the laundry yard. By dawn the strongbox is untouched, their boots hang from your sign, and the whole district is laughing at the story. Amanita admits that defending a home can be much more entertaining than robbing one. (+4 Agility, +350 gold, +6 reputation)",
+        "message_failure": "The false robbery works until one cousin panics and throws a real brick. Nothing is stolen, but a window and two shelves are lost. Amanita drives the trio off herself and spends the morning sweeping glass in chastened silence. (+1 Agility, -220 gold)",
+        "effect": {
+          "success": {
+            "money": 350,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Agility": 4
+            },
+            "event_flags": {
+              "amanita_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -220,
+            "skill_modifiers": {
+              "Agility": 1
+            },
+            "event_flags": {
+              "amanita_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have her answer the challenge with a fearless private dare-night on her own terms. (Requires Extreme 55+)",
+        "condition": "Extreme",
+        "threshold": 55,
+        "message_success": "Amanita converts the insult into an invitation. Behind closed doors she runs an outrageous sequence of consensual dares so inventive that her cousins forget the strongbox entirely. By dawn they concede that she is neither captive nor tame—she has simply found a larger playground and learned to set its rules. (+4 Extreme, +500 gold, +4 reputation)",
+        "message_failure": "The dare-night becomes a competition no one wants to lose. Amanita ends it before anyone is hurt, but not before furniture, pride, and a costly bottle are broken. Her cousins leave impressed; your ledger is less so. (+1 Extreme, -300 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 500,
+            "reputation": 4,
+            "skill_modifiers": {
+              "Extreme": 4
+            },
+            "event_flags": {
+              "amanita_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -300,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Extreme": 1
+            },
+            "event_flags": {
+              "amanita_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "amanita_personal_stage_3_no_cage_can_keep_her",
+    "arc_id": "amanita_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "A week later, the matriarch of Amanita's old burrow arrives with a rusted crown and an ultimatum: return belowground or be named house-pet before the whole clan. Amanita's grin never slips, but her hand closes hard around the key to your front door. She does not want rescue. She wants a declaration so unmistakably hers that neither clan nor customer will ever confuse belonging with being owned again.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Amanita",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Agility": 85,
+        "Extreme": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:amanita_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "amanita_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Give Amanita the rooftops and let her win the burrow crown without being touched. (Requires Agility 85+)",
+        "condition": "Agility",
+        "threshold": 85,
+        "message_success": "Amanita leads the clan across every roof in the district, steals the matriarch's crown in mid-leap, and hangs it above your door before any pursuer reaches the street. Then she returns it. 'I don't need your hole,' she tells them. 'I picked my own.' The clan roars approval despite itself, and the rafters of your house gain a queen. (New trait, +900 gold, +10 reputation)",
+        "message_failure": "A loose tile ends the race early. Amanita lands safely but loses the crown and the clean victory she wanted. She still faces the matriarch and chooses your house aloud; the clan leaves jeering, unable to make the choice less real. (-250 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 10,
+            "add_trait": "Amanita, Queen of the Rafters",
+            "event_flags": {
+              "amanita_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -250,
+            "reputation": -2,
+            "event_flags": {
+              "amanita_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let her claim the stage with a scandalous act no owner could have commanded. (Requires Extreme 85+)",
+        "condition": "Extreme",
+        "threshold": 85,
+        "message_success": "Amanita writes every dare herself, invites only consenting adults, and turns the matriarch's insult into the most infamous show your house has hosted. At its climax she snaps a ceremonial collar, keeps the key, and names herself before a roaring room. The burrow cannot call that tame. Nobody watching mistakes the performance for anyone's will but hers. (New trait, +1200 gold, +8 reputation)",
+        "message_failure": "The act reaches for too many shocks at once and loses its point beneath the noise. Amanita stops the show, tears up the script, and gives the matriarch a simpler answer: 'I stay because I said so.' It earns no legend, but it is enough. (-400 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 1200,
+            "reputation": 8,
+            "add_trait": "Amanita, The Unshockable",
+            "event_flags": {
+              "amanita_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -400,
+            "reputation": -3,
+            "event_flags": {
+              "amanita_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "moss_personal_stage_1_weight_without_noise",
+    "arc_id": "moss_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "moss_personal_stage_1_at",
+    "description": "A table of mercenaries spends the evening testing Moss's patience: comments about tusks, wagers on how many chairs he can break, then a hand shoved hard against his chest. Moss does not move. He looks at you instead, calm as a gatehouse wall. 'I can end this loudly,' he says. 'Or I can teach them why I don't need to.' The room has gone quiet enough to hear the mercenary's courage draining away.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Moss",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "has_worker:Moss"
+    },
+    "excluded_flags": {
+      "moss_personal_stage_1_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Moss disarm their champion without throwing a punch. (Requires Combat 45+)",
+        "condition": "Combat",
+        "threshold": 45,
+        "message_success": "The champion reaches for a knife. Moss turns the wrist, removes the blade, and seats the man back in his chair with his cup still upright. Not one blow is struck. The mercenaries pay, apologize, and depart under the gaze of a room that now understands exactly how much force Moss chose not to use. (+3 Combat, +5 reputation)",
+        "message_failure": "The disarm succeeds, but a rotten chair collapses beneath the mercenary and starts the brawl Moss meant to prevent. He ends it quickly and without serious injury, though the splintered furniture tells a louder story than he wanted. (+1 Combat, -180 gold)",
+        "effect": {
+          "success": {
+            "reputation": 5,
+            "skill_modifiers": {
+              "Combat": 3
+            },
+            "event_flags": {
+              "moss_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -180,
+            "skill_modifiers": {
+              "Combat": 1
+            },
+            "event_flags": {
+              "moss_personal_stage_1_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Moss demonstrate controlled dominance for the mercenaries who wagered on it. (Requires BDSM 40+)",
+        "condition": "BDSM",
+        "threshold": 40,
+        "message_success": "With the loudest mercenary's explicit agreement, Moss turns the wager into a lesson in restraint. A length of rope, three quiet instructions, and one immovable hand reduce the swaggering challenger to respectful silence without leaving a bruise. The adults in the room pay well for the demonstration; Moss never once raises his voice. (+3 BDSM, +280 gold, +3 reputation)",
+        "message_failure": "Moss's control is sound, but the challenger treats the agreed signal as another joke. Moss releases him immediately and ends the exhibition. The room respects the boundary even if the wagers have to be returned. (+1 BDSM, -100 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 280,
+            "reputation": 3,
+            "skill_modifiers": {
+              "BDSM": 3
+            },
+            "event_flags": {
+              "moss_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -100,
+            "reputation": 1,
+            "skill_modifiers": {
+              "BDSM": 1
+            },
+            "event_flags": {
+              "moss_personal_stage_1_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "moss_personal_stage_2_the_old_banner",
+    "arc_id": "moss_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "moss_personal_stage_2_at",
+    "description": "Five days later, Moss's former shieldmate pins an old war-banner to your door. She says the warrior she knew would never spend his strength on drunks, safe words, and broken wagons. Moss listens without anger, then rolls the banner around its spear. 'She thinks calm is what happened after I stopped fighting,' he tells you. 'Calm is the harder thing I learned to do.' His former comrade demands proof in a form she can understand.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Moss",
+    "worker_progress": {
+      "any_skills": {
+        "Combat": 55,
+        "BDSM": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:moss_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "moss_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Arrange a first-blood bout and let Moss win through patience. (Requires Combat 55+)",
+        "condition": "Combat",
+        "threshold": 55,
+        "message_success": "His former shieldmate attacks like a storm. Moss gives ground one measured step at a time, reads the old habits, and taps her shoulder with the practice blade the instant anger opens her guard. The crowd sees a veteran who has lost none of his edge and gained control enough to choose its depth. (+4 Combat, +400 gold, +6 reputation)",
+        "message_failure": "Moss reads the attack correctly but the old banner stirs memories a fraction too late. He wins by strength instead of patience and hates the dent left in the yard wall. His shieldmate accepts the result; Moss knows it was not the proof he meant to give. (+1 Combat, -200 gold)",
+        "effect": {
+          "success": {
+            "money": 400,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Combat": 4
+            },
+            "event_flags": {
+              "moss_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -200,
+            "skill_modifiers": {
+              "Combat": 1
+            },
+            "event_flags": {
+              "moss_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Invite her to witness the discipline of one of Moss's private sessions. (Requires BDSM 55+)",
+        "condition": "BDSM",
+        "threshold": 55,
+        "message_success": "Every participant agrees before the door closes. Moss builds the scene from posture, voice, restraint, and exact attention, holding power without confusing it for permission. His former shieldmate watches the same battlefield instincts become care rather than conquest. When it ends, she returns the banner hilt-first. (+4 BDSM, +550 gold, +5 reputation)",
+        "message_failure": "The session is safe, but his former shieldmate sneers until Moss's attention splits between proving a point and caring for the participants. He stops rather than let pride direct the room. The choice costs coin, yet demonstrates more control than continuing would have. (+1 BDSM, -250 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 550,
+            "reputation": 5,
+            "skill_modifiers": {
+              "BDSM": 4
+            },
+            "event_flags": {
+              "moss_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -250,
+            "reputation": 2,
+            "skill_modifiers": {
+              "BDSM": 1
+            },
+            "event_flags": {
+              "moss_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "moss_personal_stage_3_the_strength_he_keeps",
+    "arc_id": "moss_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days after the old banner is put away, a protection gang comes to collect from your staff. Their leader assumes Moss is hired muscle and offers him a larger purse to step aside. Moss places the coins back in the man's palm one by one. 'Strength rented to the highest bidder is only another kind of weakness,' he says. The gang blocks every exit. Moss asks you how visible you want the lesson to be.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Moss",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Combat": 85,
+        "BDSM": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:moss_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "moss_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Open the doors and let Moss break the gang's claim in public combat. (Requires Combat 85+)",
+        "condition": "Combat",
+        "threshold": 85,
+        "message_success": "Moss opens the doors wide enough for the street to watch. He dismantles the gang with shield-work, empty hands, and terrifying economy, protecting every bystander while leaving the leader conscious to hear the district refuse him. By sunset three neighboring businesses ask Moss to teach their guards. Your house has found its shield. (New trait, +800 gold, +12 reputation)",
+        "message_failure": "The gang scatters into the crowd and turns a clean stand into a costly chase. Moss drives them from the district, but stalls are damaged and one extortionist escapes. He remains at the door until every frightened worker gets home safely. (-500 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 800,
+            "reputation": 12,
+            "add_trait": "Moss, The House Shield",
+            "event_flags": {
+              "moss_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -500,
+            "reputation": 2,
+            "event_flags": {
+              "moss_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let Moss make the leader submit without granting him the fight he wants. (Requires BDSM 85+)",
+        "condition": "BDSM",
+        "threshold": 85,
+        "message_success": "Moss closes distance before the leader can draw steel, pins him against his own table, and controls the room with a voice quieter than a whisper. Rope secures every weapon hand; precise pressure turns swagger into surrender. He makes the gang repeat the terms of restitution and release each other on his command. The district remembers an iron hand that never became a cruel one. (New trait, +1000 gold, +10 reputation)",
+        "message_failure": "The leader mistakes restraint for hesitation and signals an ambush. Moss ends the confrontation safely, but only after the common room is wrecked. He refuses to take his frustration out on captives and turns them over to the watch. (-650 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 1000,
+            "reputation": 10,
+            "add_trait": "Moss, The Measured Hand",
+            "event_flags": {
+              "moss_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -650,
+            "reputation": 1,
+            "event_flags": {
+              "moss_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "nuphar_personal_stage_1_bells_for_every_piece",
+    "arc_id": "nuphar_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "nuphar_personal_stage_1_at",
+    "description": "A sack of bath salts tears open beside Nuphar's pool. She recoils so quickly that her body divides into a dozen translucent streams, each fleeing under a different door. None of the pieces seems hurt, but each imitates the nearest person and forgets that it belongs to a larger whole. Nuphar's face forms briefly in a washbasin and asks, with simple alarm, 'Which one is me?' The staff begin closing drains while you search for a way to call every wandering piece home.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Nuphar",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "has_worker:Nuphar"
+    },
+    "excluded_flags": {
+      "nuphar_personal_stage_1_done": true
+    },
+    "choices": [
+      {
+        "option": "Ring a steady bell and teach every piece the same path back. (Requires Agility 40+)",
+        "condition": "Agility",
+        "threshold": 40,
+        "message_success": "Nuphar learns to move toward the bell through pipes, cracks, and floorboards without losing another drop. The streams meet in the central pool and rise together, her smile reappearing last. She spends the evening separating and returning on purpose until 'all of me' becomes a game instead of a fear. (+3 Agility, +3 reputation)",
+        "message_failure": "The bell echoes differently through every corridor. Two streams collide, three take wrong drains, and the final recovery requires half the staff and every clean bucket in the house. Nuphar reforms safely, exhausted but proud that no piece was abandoned. (+1 Agility, -140 gold)",
+        "effect": {
+          "success": {
+            "reputation": 3,
+            "skill_modifiers": {
+              "Agility": 3
+            },
+            "event_flags": {
+              "nuphar_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -140,
+            "skill_modifiers": {
+              "Agility": 1
+            },
+            "event_flags": {
+              "nuphar_personal_stage_1_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Give each piece a role, then let Nuphar recombine them by choice. (Requires Special 40+)",
+        "condition": "Special",
+        "threshold": 40,
+        "message_success": "You name one stream her listening, one her laughter, one her hunger, and ask Nuphar which belong. She gathers every answer—yes, yes, yes—until her body rises whole around them. The strange exercise teaches her that changing shape need not mean losing herself. (+3 Special, +180 gold, +2 reputation)",
+        "message_failure": "Nuphar takes the roles literally. Her laughter refuses to merge with her patience, and her curiosity keeps escaping its basin. It takes hours to undo the confusion, but she finally reforms and declares every part 'Nuphar' with stubborn certainty. (+1 Special, -100 gold)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Special": 3
+            },
+            "event_flags": {
+              "nuphar_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -100,
+            "skill_modifiers": {
+              "Special": 1
+            },
+            "event_flags": {
+              "nuphar_personal_stage_1_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "nuphar_personal_stage_2_the_shape_she_chooses",
+    "arc_id": "nuphar_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "nuphar_personal_stage_2_at",
+    "description": "Five days after the salt accident, wealthy guests request a private exhibition of Nuphar's mutable body. Each describes a different fantasy and speaks as though the slime between them were clay without an opinion. Nuphar tries to satisfy all of them at once, her form flickering from shape to shape until her face disappears entirely. Then the little bell you gave her rings from inside her chest. She stops, reforms, and asks a question nobody expected: 'What shape do I want?'",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Nuphar",
+    "worker_progress": {
+      "any_skills": {
+        "Agility": 55,
+        "Special": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:nuphar_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "nuphar_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Help Nuphar hold one form she designed for herself. (Requires Agility 55+)",
+        "condition": "Agility",
+        "threshold": 55,
+        "message_success": "Nuphar chooses broad hips for balance, long arms because she likes reaching, and a face that is recognizably hers even when it ripples. She holds the form through the whole session and changes only when she decides to. The guests leave impressed by mastery rather than novelty, and Nuphar sketches tomorrow's shape in spilled water. (+4 Agility, +400 gold, +5 reputation)",
+        "message_failure": "The chosen form is ambitious and slips whenever the guests crowd too close. You end the session early rather than let their impatience decide for her. Nuphar practices privately until she can hold her own face, even if the rest still wavers. (+1 Agility, -180 gold, +1 reputation)",
+        "effect": {
+          "success": {
+            "money": 400,
+            "reputation": 5,
+            "skill_modifiers": {
+              "Agility": 4
+            },
+            "event_flags": {
+              "nuphar_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -180,
+            "reputation": 1,
+            "skill_modifiers": {
+              "Agility": 1
+            },
+            "event_flags": {
+              "nuphar_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let her create a fluid adults-only performance controlled by her bell. (Requires Special 55+)",
+        "condition": "Special",
+        "threshold": 55,
+        "message_success": "Nuphar establishes a simple rule: one ring means she wants to change, two means stop. The sensual exhibition becomes an astonishing conversation of liquid limbs, enveloping curves, and deliberate withdrawals, every transformation initiated by her. For the first time, applause makes her hold her own shape more proudly. (+4 Special, +600 gold, +6 reputation)",
+        "message_failure": "The guests understand the rule, but Nuphar becomes so excited by their applause that the signals blur together. She rings twice, you clear the room immediately, and the disappointed patrons are refunded. Nuphar learns that stopping still counts even when an audience wants more. (+1 Special, -260 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 600,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Special": 4
+            },
+            "event_flags": {
+              "nuphar_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Special": 1
+            },
+            "event_flags": {
+              "nuphar_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "nuphar_personal_stage_3_the_unbroken_whole",
+    "arc_id": "nuphar_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days later, an alchemist arrives with a brass containment vessel and papers claiming Nuphar is escaped laboratory stock: a batch number, not a person. He scatters drying powder across the exits and calls her resilience proof that no lasting harm can be done to property. Nuphar reads none of the papers, but she recognizes the vessel. Her bell sounds once inside her chest. 'I choose Nuphar,' she says, and waits for you to help her make the choice undeniable.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Nuphar",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Agility": 85,
+        "Special": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:nuphar_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "nuphar_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Nuphar flow through every trap and stamp her own name across his papers. (Requires Agility 85+)",
+        "condition": "Agility",
+        "threshold": 85,
+        "message_success": "Nuphar divides finer than rain, slips between grains of drying powder, and pours through the vessel's keyhole from the inside out. She absorbs the alchemist's blue seal, then presses a perfect watery handprint over every batch number and writes NUPHAR beneath it. The watch sees a thinking woman no jar can hold. (New trait, +700 gold, +11 reputation)",
+        "message_failure": "The powder catches more of her than expected. You flood the floor to free her, ruining the alchemist's papers along with half your stock. Nuphar reforms slowly but refuses the offered vessel, repeating her name until the watch removes him. (-550 gold, +3 reputation)",
+        "effect": {
+          "success": {
+            "money": 700,
+            "reputation": 11,
+            "add_trait": "Nuphar, The Uncatchable Tide",
+            "event_flags": {
+              "nuphar_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -550,
+            "reputation": 3,
+            "event_flags": {
+              "nuphar_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have Nuphar demonstrate that every divided piece returns to the self she chose. (Requires Special 85+)",
+        "condition": "Special",
+        "threshold": 85,
+        "message_success": "Before witnesses, Nuphar lets the vessel divide her into a hundred luminous globes. Each rings the same tiny note. Each carries one letter of the name she chose. They surge together, re-form around the alchemist's empty cage, and leave it locked inside her harmlessly before she sets it down. No claim of mindless property survives the demonstration. (New trait, +900 gold, +10 reputation)",
+        "message_failure": "The old vessel disrupts the rhythm she learned. Several pieces return frightened and out of sequence, and the demonstration ends in confusion. Still, every piece refuses the alchemist's call and gathers around the sound of Nuphar's own bell. The claim fails, though the recovery is costly. (-650 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 10,
+            "add_trait": "Nuphar, The Unbroken Whole",
+            "event_flags": {
+              "nuphar_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -650,
+            "reputation": 2,
+            "event_flags": {
+              "nuphar_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "lotus_personal_stage_2_ink_beneath_the_silk",
+    "arc_id": "lotus_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "lotus_personal_stage_2_at",
+    "description": "Five days after the Stellara Company departs, Maren sends back a scorched page found beneath their old stage. Lotus recognizes the handwriting before she touches it: an appendix to the pact that bound her, awakened by her recent performance. The clause demands a tithe from every audience she moves and defines applause itself as consent to the old patron's ownership. Gold script begins crawling over your account books. Lotus smooths the page with perfectly steady hands. 'I was trained to make chains look elegant,' she says. 'I would rather learn how they are made.'",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Lotus",
+    "worker_progress": {
+      "any_skills": {
+        "Charm": 55,
+        "Craft": 55
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:lotus_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "lotus_personal_stage_2_done": true
+    },
+    "choices": [
+      {
+        "option": "Let Lotus dissect the sigil and forge a counter-clause into its design. (Requires Craft 55+)",
+        "condition": "Craft",
+        "threshold": 55,
+        "message_success": "Lotus works through the night with silver wire, archive ink, and a dancer's understanding of repeated patterns. She finds where the sigil confuses attention with agreement and replaces that stroke with a mark meaning freely chosen. The crawling script releases your ledgers, and the patron receives nothing but a page that now contradicts him. (+4 Craft, +450 gold, +6 reputation)",
+        "message_failure": "The sigil is layered more deeply than it appears. Lotus breaks the tithe but scorches three ledgers and binds one month's receipts into unreadable gold knots. She keeps the ruined page as a lesson rather than pretending the chain is gone. (+1 Craft, -320 gold)",
+        "effect": {
+          "success": {
+            "money": 450,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Craft": 4
+            },
+            "event_flags": {
+              "lotus_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -320,
+            "skill_modifiers": {
+              "Craft": 1
+            },
+            "event_flags": {
+              "lotus_personal_stage_2_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Summon the patron's envoy and make him admit the clause before witnesses. (Requires Charm 55+)",
+        "condition": "Charm",
+        "threshold": 55,
+        "message_success": "Lotus receives the infernal envoy as though he were an honored guest, leads him through every flattering assumption, and lets him boast that the clause claims audiences who never agreed to it. Only then does she reveal the magistrate, Maren, and your scribes behind the screen. His own words void the appendix under mortal and infernal custom alike. (+4 Charm, +350 gold, +8 reputation)",
+        "message_failure": "The envoy recognizes the trap and speaks only in rehearsed courtesies. Lotus cannot secure an admission, but she refuses every seductive bargain he offers and sends him away empty-handed. Lawyers and wards cost dearly; her refusal does not. (+1 Charm, -400 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 350,
+            "reputation": 8,
+            "skill_modifiers": {
+              "Charm": 4
+            },
+            "event_flags": {
+              "lotus_personal_stage_2_done": true
+            }
+          },
+          "failure": {
+            "money": -400,
+            "reputation": 2,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "lotus_personal_stage_2_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "lotus_personal_stage_3_the_last_command",
+    "arc_id": "lotus_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Seven days after the appendix is broken, every mirror in the establishment darkens at once. Lotus's original patron steps through the largest, dressed for the private court where her service began. He invokes the first command in the pact: return, kneel, perform. Lotus's body remembers before her will agrees; one knee bends, then stops a finger's breadth above the floor. She lifts her eyes to you. 'A pact survives by repetition,' she says through clenched teeth. 'So does a new truth.' The final page hangs between them, waiting to be remade or publicly refused.",
+    "weight": 2,
+    "event_probability": 25,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Lotus",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Charm": 85,
+        "Craft": 85
+      }
+    },
+    "worker_selection": "random",
+    "background_image": "worker_private_talk",
+    "nsfw": true,
+    "conditions": {
+      "start_when": "after_days_from_flag:lotus_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "lotus_personal_stage_3_done": true
+    },
+    "choices": [
+      {
+        "option": "Give Lotus the ink and let her rewrite the pact in her own hand. (Requires Craft 85+)",
+        "condition": "Craft",
+        "threshold": 85,
+        "message_success": "Lotus traces the pact's structure as if learning one final choreography. She moves obligation out of the patron's name and into a covenant with herself: service may be offered, never seized; skill may be enjoyed, never owned. The page accepts her authorship and folds into a silk flower that burns without ash. The patron is expelled through a mirror that no longer knows him. (New trait, +900 gold, +12 reputation)",
+        "message_failure": "The old name resists the new ink and the page tears before the final clause settles. Lotus cannot rewrite the pact cleanly, so she burns every fragment and accepts the magical backlash. The patron is driven away, but shattered mirrors and warding fees fill your ledger. (-700 gold, +3 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 12,
+            "add_trait": "Lotus, The Pactweaver",
+            "event_flags": {
+              "lotus_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -700,
+            "reputation": 3,
+            "event_flags": {
+              "lotus_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Open the doors and let Lotus turn the commanded performance into a public refusal. (Requires Charm 85+)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "Lotus completes the first commanded step, then changes the second. Before staff, patrons, and Stellara witnesses, the old erotic choreography becomes a devastating satire of the patron who mistook mastery for ownership. Every laugh weakens his title; every cheer answers Lotus rather than him. She ends standing, names herself unbound, and the mirrors blaze clear. (New trait, +1200 gold, +10 reputation)",
+        "message_failure": "The patron twists the first notes against her and the audience falls uncertainly silent. Lotus stops the music herself. There is no perfect performance, only a woman refusing to take the next commanded step. The simple refusal breaks his entrance, though the disrupted night costs dearly. (-850 gold, +2 reputation)",
+        "effect": {
+          "success": {
+            "money": 1200,
+            "reputation": 10,
+            "add_trait": "Lotus, The Unbound Star",
+            "event_flags": {
+              "lotus_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -850,
+            "reputation": 2,
+            "event_flags": {
+              "lotus_personal_stage_3_done": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

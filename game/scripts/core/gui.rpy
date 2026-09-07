@@ -465,11 +465,12 @@ init python:
         gui.button_text_size = 45
         gui.label_text_size = 51
 
-        ## Adjust the location of the textbox.
+        ## Adjust the location of the textbox. The parchment textbox art is
+        ## inset ~340px per side, so keep the desktop x-geometry instead of
+        ## the full-bleed template values (135/1650) that push text off the
+        ## frame; only the height grows for the larger touch fonts.
         gui.textbox_height = 360
-        gui.name_xpos = 120
-        gui.dialogue_xpos = 135
-        gui.dialogue_width = 1650
+        gui.dialogue_width = 1116
 
         ## Change the size and spacing of various things.
         gui.slider_size = 54

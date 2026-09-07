@@ -1,0 +1,658 @@
+{
+  "_comment": "Relationship daily stories for Guard (casino). Follows the contract fixed in relationship_brothel_prostitute.json: 2x romance>=75 / 2x relationship>=75 / 2x rebelliousness>=60 (normal roll, stat feedback, rebellion failures cost money), 2x 'Loves you' (normal roll, failure forgiven -> earnings 0), 2x Best Friends + 2x Harem Member + 2x House Servant (no_fail). Prose gender-neutral for worker and manager. story_image reuses existing casino guard art as placeholder.",
+  "building_id": "casino",
+  "profession_id": "guard",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "casino_guard_romance_sightline",
+      "weight": 2,
+      "report": "In Every Sweep",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "failure_image": "guard_story1_casino_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Determined": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has quietly rebuilt the patrol route so every sweep of the floor ends where you are. The habit pays: a cutpurse working the roulette crowd steps into that sightline mid-lift, and the coin goes back to the table before its owner even feels the tug.",
+        "critical_success": "Watching over you has taught {worker_name} to read the whole room through where you stand. Tonight that reading catches a three-hand team the moment they fan out, and the pit closes around them like a fist. The tables run honest and heavy until dawn.",
+        "mediocre": "Half of {worker_name}'s attention is on the doors and half of it is on you, and neither half is quite enough. The shift passes without incident, but nothing is caught either.",
+        "failure": "{worker_name} lingers too long on the way you lean over the cage ledger, and a lifted purse crosses the floor unchallenged. The victim is loud about it, and {worker_name} spends the rest of the night furious at what wanting you just cost your house."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "casino_guard_romance_crossed_the_floor",
+      "weight": 2,
+      "report": "Crossed the Floor",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "failure_image": "guard_story1_casino_failure",
+      "positive_traits": {
+        "Strong": 5,
+        "Confident": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A drunk high roller raises a voice at you by the cage, and {worker_name} is across the floor before the second sentence lands, close enough to block the light. No blow, no shout, just presence with an edge on it. The guest apologizes to you, buys a fresh rack of chips to save face, and loses it politely.",
+        "critical_success": "The whole room watches {worker_name} arrive at your shoulder like weather changing, and the drunk guest folds so completely that two nearby tables toast the house. Word travels: the casino where insulting the owner is a bad bet. Bookings for the private tables climb by midnight.",
+        "mediocre": "{worker_name} arrives a breath late and a touch too stiff, and the moment resolves itself before the intervention matters. You are fine, the guest is fine, and the night earns what it earns.",
+        "failure": "The raised voice belongs to your best-losing whale, celebrating badly. {worker_name} reads it wrong and takes a collar in each fist before you can speak. The whale cashes out on the spot, and what stings {worker_name} most is not the ledger but the look you give on the way past."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "casino_guard_friend_walked_the_takings",
+      "weight": 2,
+      "report": "Walked the Takings",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guard_theft_attempt_casino",
+      "failure_image": "guard_theft_attempt_casino_failure",
+      "positive_traits": {
+        "Tough": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "After close, without being asked and without pay for it, {worker_name} shoulders in beside the strongbox for the walk to the vault. Two loiterers in the alley take one look at who is carrying it and discover urgent business elsewhere. The night's full take arrives intact, and {worker_name} shrugs off the thanks. Friends walk friends home.",
+        "critical_success": "{worker_name} clocks the tail two streets before it commits, reroutes through the fish market where a follower stands out like a lit torch, and delivers the box without a scratch. Then comes back with a name and a description for you. That is not guard work; that is a friend closing a door before trouble knocks.",
+        "mediocre": "The long safe route {worker_name} insists on adds half an hour to everyone's night. Nothing happens on it, which was the point, but nothing is gained either beyond sore feet.",
+        "failure": "The clever shortcut {worker_name} swears by runs through the one alley with actual footpads in it tonight. The box stays held through the scuffle, but a side purse of loose coin is torn free in the dark. {worker_name} insists on covering it and you refuse, and the argument hurts worse than the bruises."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "casino_guard_friend_bleeding_table",
+      "weight": 2,
+      "report": "Watch on Your Worries",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guard_story2_casino",
+      "failure_image": "guard_story2_casino_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} catches you frowning over the pit ledger and asks nothing, just quietly moves the night's patrol to the table that has been bleeding chips all week. By the third hand the signal game between a dealer and a regular is plain as daylight, and both are out the door before the deck is reshuffled. The frown was all the briefing a friend needed.",
+        "critical_success": "Not only is the crooked pair caught clean, {worker_name} lets them play one more documented hand first, so when they protest there is a table full of witnesses and a palmed card still warm. The story does the rounds and every dealer on your floor sits a little straighter. The bleeding table becomes your most profitable one.",
+        "mediocre": "{worker_name} haunts the suspect table all night and the cheating simply does not happen while a guard stands there breathing on it. The leak stops for one evening and will be back tomorrow.",
+        "failure": "{worker_name} calls it wrong and accuses an honest dealer in front of a full table. The dealer walks out mid-shift, the players go quiet in the bad way, and you spend the evening smoothing feathers. {worker_name} was trying to carry your worry and dropped it instead."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -7
+        }
+      }
+    },
+    {
+      "id": "casino_guard_rebel_happy_fists",
+      "weight": 2,
+      "report": "Happy Fists",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "failure_image": "guard_story1_casino_failure",
+      "negative_traits": {
+        "Aggressive": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "House policy says warn twice, then escort out. {worker_name} skips straight to a short right hand that puts a rowdy guest on the carpet, and is entirely too happy about it. By luck the guest had it coming three times over, and the floor settles into a respectful hush that the serious gamblers tip well for.",
+        "critical_success": "The guest {worker_name} flattens without a warning turns out to be the sneak-thief two rival houses have been hunting for a month, with a pocketful of marked chips to prove it. The bounty is real, the gratitude is real, and {worker_name} grins through your entire lecture about procedure.",
+        "mediocre": "The punch lands, the guest leaves, and the nearby tables go quiet in a way that empties two seats. Nobody complains. Nobody stays late either.",
+        "failure": "The rowdy guest {worker_name} drops so cheerfully is a magistrate's nephew celebrating a birthday too loudly. You pay for the cracked tooth, the ruined coat, and a very expensive dinner of apology, while {worker_name} maintains, unrepentant, that it was still worth it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "casino_guard_rebel_velvet_rope",
+      "weight": 2,
+      "report": "Past the Velvet Rope",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "failure_image": "guard_story1_casino_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "The VIP room sits empty, so {worker_name} unhooks the rope and waves in half a tavern's worth of friends, none of whom are on any list. It should be a scandal. Instead the room fills with noise and card play, the friends lose enthusiastically, and two genuine high rollers drift in because full rooms draw money the way empty ones never do.",
+        "critical_success": "One of the smuggled friends hits an outrageous heater at the high table and, being the kind of person {worker_name} befriends, tips half the winnings straight back across the felt. The VIP room posts its best night of the month, and you decide not to ask a single question about the guest list.",
+        "mediocre": "The friends nurse their drinks, play small, and leave the room looking pleasantly busy without leaving much behind. No harm done, no fortune made, and the rope goes back on its hook.",
+        "failure": "{worker_name}'s friends treat the reserve shelf like a personal cellar and settle the bill in stories and promises. Meanwhile a genuine whale finds the VIP room full of strangers, turns on a heel, and takes a famous purse to the house across the street. The rope, it turns out, was holding up more than velvet."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": 1,
+          "reputation": 6
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "casino_guard_lovesyou_house_that_holds_you",
+      "weight": 3,
+      "report": "Guarding What Holds You",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "guard_theft_attempt_casino",
+      "failure_image": "guard_theft_attempt_casino_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} guards your casino the way soldiers guard a border, and the reason is simple arithmetic: you are inside it more nights than not. Every door gets tried twice, every stranger gets weighed, and the professional trouble that scouts your floor reads the intensity correctly and takes its business somewhere less loved.",
+        "critical_success": "A distraction crew has been rehearsing your floor for a week, and {worker_name}, who memorizes everything that happens within thirty feet of you, has been watching them rehearse. When the staged argument kicks off, the real thief walks into a waiting grip at the cage. The vault never even feels the breeze. All of it, every patient hour, was for you.",
+        "mediocre": "The watch is fierce but lopsided, bent around wherever you happen to be standing. The far corners of the floor go thin, and a sharp-eyed pit boss quietly plugs the gaps.",
+        "failure": "Across the crowded floor, a figure turns with exactly your way of turning, and {worker_name} leaves the post between one heartbeat and the next. It is not you. Nothing is stolen in the gap; the only casualty is one jostled VIP, who takes in the stricken face doing the apologizing, decides some things matter more than a spilled drink, and accepts a comped glass with unexpected gentleness."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "casino_guard_lovesyou_your_hours",
+      "weight": 3,
+      "report": "Your Hours",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "failure_image": "guard_story1_casino_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} knows your hours the way sailors know tides, and stands the post hardest when you are in the counting room. Tonight that vigilance walks a would-be chip palmer to the door before the scheme finishes forming, done crisply and quietly, in the exact window when you might look up and see it done well.",
+        "critical_success": "A cardsharp who has skinned three houses this season picks the wrong evening, the one when {worker_name} is performing for an audience of one. The catch is textbook, the confiscated winnings are heavy, and when you glance up at the commotion, {worker_name} is already looking at you. That look was the whole point of the shift.",
+        "mediocre": "You are away tonight, and it shows. The patrols are honest but the fire is banked; {worker_name} keeps checking the entrance for a silhouette that never arrives, and the floor gets a competent, absent-hearted watch.",
+        "failure": "Two guests square up over a split pot, and as {worker_name} moves in, a laugh rings out from the bar that sounds exactly like yours. The guard simply stops, arm half-raised, heart visibly elsewhere. Confronted with that undefended face, the would-be brawlers lose their appetite, mutter something about the pot not mattering, and shake hands. The floor calms itself; no coin changes hands; {worker_name} walks the rest of the shift a little too carefully."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "casino_guard_bestfriends_closing_walk",
+      "weight": 3,
+      "report": "The Closing Walk",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guard_theft_attempt_casino",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "After the last guest leaves, {worker_name} walks the dark floor with you out of pure habit, trading the night's stories while trying locks that are not on any duty list. Tonight the habit finds a cellar grate worked loose from its frame, a week of patient filing by someone planning a quiet visit. It gets bolted, plated, and laughed about over the last of the coffee. That is what the walk is for.",
+        "critical_success": "The closing walk turns into a war council. Between the two of you, the oddities of the past month suddenly line up: the new cleaner nobody hired properly, the chip stacks that migrate overnight, the delivery cart that keeps arriving empty. It is a con half-built, and you dismantle it together before the mortar sets, then split the last bottle worth opening. Partners in everything but the paperwork."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_guard_bestfriends_ear_to_the_ground",
+      "weight": 3,
+      "report": "Ear to the Ground",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guard_theft_attempt_casino",
+      "positive_traits": {
+        "Clever": 5,
+        "Tough": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A generous stranger keeps buying {worker_name} drinks at the end of shift and steering the talk toward vault doors and delivery times. {worker_name} plays the slow-witted bruiser beautifully, drinks the stranger's coin dry, invents a delivery schedule out of whole cloth, and brings you every question word for word before the glass is even washed. Your blind side has a friend standing on it.",
+        "critical_success": "Laid out on your desk in {worker_name}'s blunt handwriting, the stranger's questions add up to something cold: a planned hit on the takings run, dated and routed. The run changes, the watch doubles on the right night, and the crew that shows up to an empty alley gets to explain itself to the city watch instead. {worker_name} waves off the bonus you try to press over it. Friends do not invoice."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "casino_guard_harem_your_mark_on_duty",
+      "weight": 3,
+      "report": "Your Mark on Duty",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "positive_traits": {
+        "Strong": 5,
+        "Obedient": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your token sits visible at {worker_name}'s throat, just above the uniform collar, and the regulars have learned what it means: this guard answers to one voice and cannot be bought, rented, or talked around. Your standing orders get carried out to the letter, without improvisation, and the floor runs with the calm of a room where everyone knows exactly whose house it is.",
+        "critical_success": "A rival house sends a smooth agent with an offer of double pay and better hours. {worker_name} lets the whole pitch finish, touches the token at the collar once, and goes back to watching the floor without a word of reply. The story crosses the district by morning, and guests who hear it decide that a house holding loyalty like that is a safe place to bring a heavy purse."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_guard_harem_the_post_you_chose",
+      "weight": 3,
+      "report": "The Post You Chose",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "positive_traits": {
+        "Obedient": 5,
+        "Tough": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You point at the spot by the cage and say stand there, and {worker_name} stands there, all night, without a step of drift, while lesser guards wander and gossip. There is a quiet pleasure in it that has nothing to do with wages: being placed by your hand, holding the exact ground you named, and earning the small nod you give at closing time.",
+        "critical_success": "The post you chose turns out to be the precise square of carpet where the night's trouble arrives, a palming crew working the cage queue. Because {worker_name} never drifted, never got bored, never went for a stretch, the crew walks straight into an immovable object wearing your colors. Afterward {worker_name} does not ask how you knew. You placed the post; that was answer enough."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_guard_servant_double_watch",
+      "weight": 3,
+      "report": "The Double Watch",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "positive_traits": {
+        "Robust": 4,
+        "Hardworking": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You mention the house is short-handed and {worker_name} takes the double watch without being asked twice, open to close, no complaint filed and none felt. Every door gets tried on every round, every drunk gets walked out gently, and the floor never once stands unguarded. It is not stamina holding the line through the small hours. It is whose house this is.",
+        "critical_success": "{worker_name} outlasts two full shift changes and is still sharp enough at dawn to catch the sneak who has been slipping in through the delivery door during the changeover gap, the one moment every other guard misses. Sixteen hours on aching feet, ended with an arrest and a shrug in your direction: you asked, so it was done."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "casino_guard_servant_ugly_jobs",
+      "weight": 3,
+      "report": "The Ugly Jobs",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guard_story1_casino",
+      "positive_traits": {
+        "Hardworking": 4,
+        "Meek": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The list you hand {worker_name} is the one no guard wants: the guest who fouled the card room, the beggars crowding the kitchen door, the weeping loser who needs walking to a coach at four in the morning. All of it gets done, silently and without a face pulled, because you assigned it. The paying floor never sees any of the night's ugliness, which is exactly why the paying floor keeps paying.",
+        "critical_success": "{worker_name} turns your worst duties into something like grace: the ruined card room is aired and reset before the smell can spread, the loser is talked out of a ledge-dark mood on the coach ride, the kitchen door crowd disperses fed instead of furious. By morning the house looks as if the bad night never happened. It did happen. It just happened to {worker_name}, who carried it so your name would not have to."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

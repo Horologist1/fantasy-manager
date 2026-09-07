@@ -1,0 +1,660 @@
+{
+  "_comment": "Relationship daily stories (Entertainer). Follows the contract fixed in relationship_brothel_prostitute.json: stat-gated dailies (romance>=75 x2, relationship>=75 x2, rebelliousness>=60 x2) roll normally with stat feedback; 'Loves you' x2 rolls normally (failure = the room is moved, earnings 0, gentle consequences); Best Friends / Harem Member / House Servant x2 each are no_fail and anchored on the bond with the MANAGER. Flavor: longing fuels the act; every ballad lands true because it is about someone real at the edge of the room. PROSE: gender-neutral for worker AND manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "tavern",
+  "profession_id": "entertainer",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "tavern_entertainer_romance_every_song_yours",
+      "weight": 2,
+      "report": "Every Song Aimed",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "failure_image": "entertainer_story1_tavern_failure",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Charming": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Every ballad {worker_name} sings tonight is pointed at one spot in the room: the stretch of bar where you count the till. The crowd cannot name what makes the songs land so hard, but they feel the truth in them, and the hat goes around three times.",
+        "critical_success": "{worker_name} sings the old courting song straight past the crowd to where you stand, and the whole taproom turns to follow the line of it. Strangers buy rounds for sweethearts they have not spoken to in years. The hat comes back too heavy to lift one-handed.",
+        "mediocre": "{worker_name} keeps glancing toward the bar mid-verse, losing the thread each time. The songs are pretty and forgettable, and the crowd tips like it.",
+        "failure": "Halfway through the love song {worker_name}'s eyes find you, and the next line simply is not there. The silence stretches a beat too long, the crowd coughs into its ale, and the set limps to a close with {worker_name} wondering if you noticed exactly where the song broke."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_romance_refused_serenade",
+      "weight": 2,
+      "report": "The Refused Serenade",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "entertainer_story2_tavern",
+      "failure_image": "entertainer_story2_tavern_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A wealthy patron pays for a private serenade and makes it clear the song is meant as a courtship. {worker_name} sings it flawlessly and hands the coin over at the bar without a flicker of temptation, because the only serenade that would mean anything already has an audience of one, and it is you.",
+        "critical_success": "{worker_name} turns the suitor's proposition into theater, singing the refusal as a comic lament that has the whole room howling. The patron laughs hardest of all, doubles the fee for the privilege of being turned down beautifully, and the story sells ale all week.",
+        "mediocre": "{worker_name} sings the commissioned piece stiffly, neither refusing the patron nor charming them, and the evening ends in polite disappointment on both sides.",
+        "failure": "{worker_name} hesitates over the suitor's offer one breath too long, and the whole room reads the wobble. The patron storms out feeling toyed with, the fee goes with them, and {worker_name} spends the last set staring at the bar, wondering why loyalty to you never seems to be noticed by you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_friend_rumor_verses",
+      "weight": 2,
+      "report": "A Rumor Buried in Song",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "entertainer_heckler_tavern",
+      "failure_image": "entertainer_heckler_tavern_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A voice near the fire starts the old slander that your tavern waters its ale, and {worker_name} smothers it in verse before it can cross the room, improvising a song about a rival landlord so stingy the rats moved out. The crowd takes up the chorus, the rumor dies laughing, and nobody remembers who started it.",
+        "critical_success": "{worker_name} does not just kill the rumor, but flips it, spinning verses about how your cellar is the last honest one in the district until patrons are toasting the house by name. By closing, three tables from the rival tavern have decided to drink at yours instead, and {worker_name} finds you afterward to report which one of them started the whisper.",
+        "mediocre": "{worker_name} drowns the rumor in noise rather than wit; the slander stalls but so does the set, and the night earns what a night earns.",
+        "failure": "{worker_name}'s counter-verse lands crooked, and instead of burying the rumor it repeats it to fifty people who had not heard it yet. The chorus about watered ale follows patrons out the door, and {worker_name} cannot meet your eye at closing, knowing the damage wears your name."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_friend_dead_room",
+      "weight": 2,
+      "report": "Sang a Room Alive",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "failure_image": "entertainer_story1_tavern_failure",
+      "positive_traits": {
+        "Energetic": 5,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A brawl at sundown leaves the taproom sour and half-empty, the kind of night that bleeds a ledger dry. {worker_name} sees you counting the empty stools and refuses to let the room die, dragging it back one table at a time with drinking songs until the place sounds like a tavern again and the taps stay open past midnight.",
+        "critical_success": "{worker_name} turns the wrecked evening into an event, pulling the very brawlers who soured the room into a mock singing contest that packs the benches with people who came in off the street to watch. You end the worst-starting night of the month with the best take of the week, and {worker_name} just shrugs: could not stand seeing that look on your face.",
+        "mediocre": "{worker_name} coaxes a little warmth back into the room, enough to keep the regulars seated but not enough to make the night matter.",
+        "failure": "{worker_name} pushes the crowd too hard too fast, and the forced cheer curdles what goodwill was left. The room empties by ten, and {worker_name} sits on the stage edge amid the empty tankards, stung less by the silence than by having promised you a save and delivered a shrug."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_rebel_banned_songbook",
+      "weight": 2,
+      "report": "The Banned Songbook",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "entertainer_heckler_tavern",
+      "failure_image": "entertainer_heckler_tavern_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "Without asking you, {worker_name} closes the night with the satires the magistrate proscribed last spring, the ones about tax collectors and the governor's dinner table. The room packs shoulder to shoulder for the thrill of hearing them aloud, and the coin is real even if your license shivered the whole set.",
+        "critical_success": "Word spreads mid-evening that the forbidden verses are being sung at your place, and by the last chorus there are patrons standing in the doorway paying full price for no seat at all. {worker_name} takes three encores and a standing ovation, and somehow no uniform darkens the door.",
+        "mediocre": "{worker_name} loses nerve two verses in and swerves back to safe material; the crowd that came for danger drinks one round and drifts out.",
+        "failure": "There is an informer in the crowd. The magistrate's fine arrives before the last verse ends, made out to the house and not to the singer, and {worker_name} shrugs it off with a grin while you count out coin for the privilege of someone else's defiance."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_rebel_door_encores",
+      "weight": 2,
+      "report": "Encores at the Door",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "failure_image": "entertainer_story1_tavern_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has quietly invented a second show: after your taps close, the door opens again for an encore set with its own admission, collected by hand and never rung through your till. Tonight the private purse fattens and the official ledger shows a normal evening, nothing more.",
+        "critical_success": "The secret encore has become the fashionable hour, and tonight it runs longer than the licensed show did. {worker_name} pockets door coin from half the merchant quarter while your books record a quiet night, and is generous enough to let a little of the surplus wash back over your bar.",
+        "mediocre": "A draper's clerk balks at paying twice for one singer and argues loudly at the door; the encore breaks up early and the skim barely covers the candles.",
+        "failure": "Two regulars compare notes at your bar and realize one of them paid an admission your house never charged. The shouting draws the whole room, you refund both on the spot to save the tavern's name, and {worker_name} watches you pay for the scheme without a flicker of apology."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_lovesyou_ballads_land_true",
+      "weight": 3,
+      "report": "Ballads That Land True",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "failure_image": "entertainer_story1_tavern_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Other singers perform love songs; {worker_name} means them. Every ballad tonight is about someone real standing at the edge of the room with a bar rag over one shoulder, and the crowd, without knowing why, believes every word. Believing makes them generous, and the take is yours, which was always the point.",
+        "critical_success": "{worker_name} pours the whole ache into one unrehearsed song, and the room forgets to drink. When it ends there is that rarest of tavern sounds, a full second of silence before the roar, and the hat comes back so heavy that patrons are still pressing coins on {worker_name} at the door. All of it lands in your till, carried there by a feeling with your name on it.",
+        "mediocre": "The longing sits too close to the surface tonight, and {worker_name} keeps the songs safe and shallow to avoid touching it. The crowd gets craft without blood and pays accordingly.",
+        "failure": "Three verses into the love song, {worker_name}'s voice cracks on a line that was too true to sing, and stops. The room goes tender instead of cruel; somebody sets a drink on the stage, the fiddler in the corner picks up the tune, and nobody asks for coin back. The hat comes home light and nobody minds. You collect nothing, and {worker_name} leaves through the back, still full of the song that broke."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_lovesyou_kept_your_room_full",
+      "weight": 3,
+      "report": "A Full Room for You",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "entertainer_story2_tavern",
+      "failure_image": "entertainer_story2_tavern_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} saw you frowning over the ledger this morning, and tonight that frown gets answered the only way a singer can answer anything. The set runs long past the agreed hour, every closer becomes another opener, and the room that should have emptied at eleven is still buying rounds at one. The extra take goes into your hand without a word about why it was earned.",
+        "critical_success": "{worker_name} decides your slow week ends tonight and performs like the room owes you money, learning requests on the spot, singing traveler tables into staying the night, charming the cook into one more round of hot food at midnight. It is the best single evening your taproom has logged this season, fueled entirely by wanting to see the worry leave your face.",
+        "mediocre": "{worker_name} plays the long set as promised, but the heart keeps drifting from the room to wherever you are in it, and the crowd thins on schedule despite the effort.",
+        "failure": "Mid-set, {worker_name} swaps the planned drinking song for something quieter, and the quiet thing turns out to be true. The voice frays on the second chorus and the song ends unfinished. The room, gone soft, keeps its coins and gives applause instead; an old carter presses a drink into {worker_name}'s hands and says nothing. The till stays empty of it, and {worker_name} forgives you for being the reason, since you will never know you were."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_bestfriends_second_pair_of_eyes",
+      "weight": 3,
+      "report": "A Second Pair of Eyes",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the stage the way you work the bar: watching everything. A table going restless gets a song aimed straight at it, a birthday gets announced before its own party remembers, and every set break ends exactly when the taps need the crowd thirsty. It is a performance and a shift of floor management in one, and the take shows both.",
+        "critical_success": "Between songs {worker_name} clocks what you missed: the cask of southern red you overbought gathering dust behind the bar. Two verses later there is a brand-new drinking song about that exact vintage, and by closing the cask is dry and patrons are asking when more arrives. Your dead stock, sung into profit, as a favor between friends."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_bestfriends_poachers_gambit",
+      "weight": 3,
+      "report": "The Poacher's Gambit",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "entertainer_story2_tavern",
+      "positive_traits": {
+        "Clever": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A stranger with soft hands and pointed questions buys {worker_name} drinks all evening, hunting for your supplier terms and a singer willing to switch houses. {worker_name} plays along beautifully, learns which rival sent them and what they are offering, performs a full paying set on top of it, and delivers the whole picture to you over the last candle of the night.",
+        "critical_success": "{worker_name} does not just decline the poacher, but performs the set of a lifetime at them, then names, with a friendly smile, a hiring price so absurd the rival house will choke on the report. The scout leaves converted, drinks at your bar until close, and the story of the singer who could not be bought does your reputation more good than a month of handbills."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_harem_audience_of_one",
+      "weight": 3,
+      "report": "An Audience of One",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "entertainer_story2_tavern",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The regulars have worked it out by now: whatever corner of the room you occupy is where {worker_name}'s whole performance points. The crowd pays to sit inside someone else's devotion for an evening, close enough to warm their hands on it, and the fact that the singer belongs to the house's master only drives the price of a good seat higher.",
+        "critical_success": "You cross the taproom mid-song, and {worker_name} turns with you, unhurried, never dropping a note, the entire ballad tracking you like a compass needle finding north. The room actually gasps. Two merchants argue over who gets to fund an encore of something that was never for sale to either of them, and the take reaches the kind of number that starts rumors."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_harem_setlist_you_chose",
+      "weight": 3,
+      "report": "The Set You Chose",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You scrawled tonight's setlist on a scrap of ledger paper, and {worker_name} performs it to the letter, in your order, at your tempo, cutting off the crowd's favorite exactly where you marked it. The obedience is invisible to the room and everything to the singer, and your programme, it turns out, sells more ale than the old one ever did.",
+        "critical_success": "A silk-collared patron waves heavy gold for a request, and the whole room watches {worker_name} look past the coin to you, waiting for the nod. You give it; the song happens; the patron pays triple for what the pause revealed, that in this house even the music answers to a single voice. Yours."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_servant_sang_until_close",
+      "weight": 3,
+      "report": "Sang Until Close",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "entertainer_story1_tavern",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The evening singer quits at dusk, and you ask {worker_name} to cover both shows. No sigh, no bargaining, just a nod, and then five straight hours of song, the voice husky by the end but never once faltering. The double crowd drinks double, and the coin from all of it lands in your box because you asked and asking was enough.",
+        "critical_success": "{worker_name} sings from the first pour to the last snuffed candle and somehow saves the best for the end, closing the marathon with a piece that has the late crowd pounding tables for more. Two shows' takings in one obedient throat, and when you offer thanks, {worker_name} only asks what time to start tomorrow."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "tavern_entertainer_servant_graveyard_hours",
+      "weight": 3,
+      "report": "The Graveyard Hours",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "entertainer_story2_tavern",
+      "positive_traits": {
+        "Charming": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "No performer wants the grey afternoon slot, three carters and a sleeping dog for an audience, so you assign it, and {worker_name} takes it without a word. By the time the evening crowd arrives the room is already warm, already singing, already spending, and nobody upstairs ever learns that the night's good take was built in the empty hours by someone who simply does as you say.",
+        "critical_success": "{worker_name} treats the dead slot like a royal command performance, and the handful of afternoon drifters becomes a crowd that stays through supper and into the night, dragging friends in off the street to hear the singer who performs the empty hours as if they were full. The slot every entertainer refuses turns into the most profitable stretch of your week, because you assigned it and refusal was never on the table."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

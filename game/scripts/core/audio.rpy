@@ -9,18 +9,15 @@
 # Cues:
 #   ui_click   - any button activation (global style)
 #   day_chime  - day transition (main_flow: label next_day)
-#   success    - random-event resolved in the player's favor (events.rpy)
-#   failure    - random-event resolved against the player (events.rpy)
 #   coin       - reserved for shop/economy hooks
 #   notify     - reserved for notification hooks
 #
 # Channel routing (audit note): BGM is on the "music" channel; per-event music
 # is on the "sound" channel (main_flow). play_ui_sound() uses renpy.play(),
-# whose default channel is "audio" - so the day-chime and the success/failure
-# stingers do NOT collide with event music even when fired at event resolution.
+# whose default channel is "audio", keeping the day chime independent of music.
 # The button click (style activate_sound) is a 60ms, peak-0.15, pop-free clip
 # (fade-in + near-zero tail, verified) so rapid overlapping clicks neither pop
-# nor clip; its brief overlap with the (1s, non-looped) event clip is negligible.
+# nor clip.
 
 init python:
     def play_ui_sound(name):

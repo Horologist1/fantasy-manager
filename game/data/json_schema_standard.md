@@ -17,7 +17,7 @@ Default neutral values:
 - `worker_name` — string or list of strings; restricts event to workers with those names. OR'd with `specific_worker_images`.
 - `specific_worker_images` — list of worker folder names (matches `worker["folder"]`); lets mods share events across any worker using a given image pack. OR'd with `worker_name`.
 - `worker_selection`
-- `worker_gender_requirement` — **ignored** by random/building event pool; use daily story / interaction fields for worker gender. Validator warns if set.
+- `worker_gender_requirement` — optional `male`/`female`; filters eligible workers everywhere (availability check AND resolution-time picker via `filter_workers_for_event_progress`). `null`/`"any"` = no gate. Use it to duplicate an event into per-gender variants when the scene's imagery depends on worker gender (pair with per-choice `image_skill`, e.g. `"gay"` for an M/M pairing — see `brothel_body_oil_session` / `_m`).
 - `player_gender_requirement` — optional `male`/`female`/`lord`/`lady`; Lord title → male, else female; filters `select_possible_events`.
 - `requires_assigned_worker`, `required_building_worker_traits`
 - `required_active_professions`, `forbidden_active_professions` (profession ids from `servant_jobs`, not `rest`/`unassigned`)

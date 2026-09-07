@@ -1,0 +1,647 @@
+{
+  "_comment": "Relationship daily stories (Courtesan, Governor's Castle). Follows the exemplar contract: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 (normal roll, stat feedback), 2x 'Loves you' (normal roll, failure forgiven -> earnings 0), 2x Best Friends / Harem Member / House Servant (no_fail). Flavor: court politics; the untouchable heart is billable; love reports home. Prose gender-neutral for worker and manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "governor_castle",
+  "profession_id": "courtesan",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "governor_castle_courtesan_romance_performed_for_you",
+      "weight": 2,
+      "report": "For an Empty Chair",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "failure_image": "courtesan_noble_entertainment_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The recital hall is full of silk and titles, but {worker_name} plays the whole evening to an empty chair, the one you would have taken. The room only knows that the performance aches, and aching is this season's fashion. The purse that follows is half again the usual rate.",
+        "critical_success": "A visiting margrave demands to know who taught {worker_name} to perform like that. No answer comes, and the mystery starts a bidding war over tomorrow's engagement. Every note of it was aimed at you, and the court just paid a fortune to overhear.",
+        "mediocre": "A figure in the gallery wears a coat like yours, and {worker_name} keeps glancing up until the phrasing goes ordinary. Polite applause, standard fee, and a long walk back to quarters.",
+        "failure": "Midway through the second piece {worker_name} looks for you in the crowd, knowing you are not there, and the thread of the performance snaps in front of forty nobles. The evening ends with the old question aching again: whether any of this ever reaches you at all."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_romance_borrowed_night",
+      "weight": 2,
+      "report": "A Borrowed Night",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": true,
+      "story_image": "courtesan_vip_private_chamber",
+      "failure_image": "courtesan_vip_private_chamber_failure",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "In the private chamber, {worker_name} closes both eyes during sex and gives the patron your voice. Every kiss, thrust, and shudder is driven by wanting you instead. The patron climaxes believing coin bought genuine passion, then pays accordingly, never guessing whose place they occupied in the bed.",
+        "critical_success": "The substitution holds through naked foreplay, penetration, and a final shared orgasm. The patron leaves shaking, convinced nobody has ever wanted them so completely. Nobody did. {worker_name} banks the tripled fee and keeps the truth: every explicit pleasure in that bed was rehearsing a night with you.",
+        "mediocre": "The substitution keeps slipping, your face refusing to settle on a stranger's shoulders, and what the patron gets is competent and cool. They pay for competent.",
+        "failure": "Halfway through, the patron laughs, and the laugh is wrong, nothing like yours, and {worker_name}'s whole body goes honest at once. The patron leaves stung and unsatisfied, the fee walks out with them, and the distance between that chamber and your door has never felt longer."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_friend_court_map",
+      "weight": 2,
+      "report": "The Court Charted",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "courtesan_diplomatic_soiree",
+      "failure_image": "courtesan_diplomatic_soiree_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Between toasts {worker_name} works the soiree like a surveyor, noting which chamberlain owes which magistrate and where the Governor's favor is quietly rotting. By midnight you hold a map of the court that nobody else has, drawn free of charge by someone who calls your business home.",
+        "critical_success": "One overheard remark clicks the whole map into place: a treasury post falls vacant next week, and nobody outside the inner circle knows. {worker_name} brings it to you before the rumor's ink is dry, and being first at that door is worth a season of ordinary evenings.",
+        "mediocre": "The room is guarded tonight, all fans and closed faces. {worker_name} comes home with gossip you already had and an apology you did not need.",
+        "failure": "A count catches {worker_name} listening at the wrong circle and takes loud, theatrical offense. Smoothing the insult over costs the evening's fee, and the walk home is heavy with having handed you an embarrassment instead of a map."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_friend_old_debt",
+      "weight": 2,
+      "report": "An Old Debt Collected",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "failure_image": "courtesan_noble_entertainment_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A baron has owed you for two seasons and answers no letters. {worker_name} simply arranges to be seated beside the baron at cards and spends an hour being charming about memory, how it fails, how it can be restored. The debt arrives at your door by morning, with interest, without one voice raised.",
+        "critical_success": "The baron, mortified into generosity, settles the debt in full and adds a standing engagement to sweeten your opinion. {worker_name} accepts on your behalf with a graciousness that somehow costs the baron double, and reports back grinning.",
+        "mediocre": "The baron deflects with hunting anecdotes all evening and leaves the table still owing. The seed is planted, but tonight it is only a seed.",
+        "failure": "{worker_name} raises the matter one glass of wine too late, and the baron elects to be insulted rather than indebted. Now the debt is a feud, and {worker_name} carries home the particular weight of having made your ledger worse while trying to mend it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 9
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_rebel_two_counts",
+      "weight": 2,
+      "report": "Spy for Both Counts",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "courtesan_diplomatic_soiree",
+      "failure_image": "courtesan_diplomatic_soiree_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "Two rival counts each believe {worker_name} spies on the other for them alone. Both pay retainers, neither learns anything that matters, and none of that coin ever touches your books. Tonight the double game runs clean, and the private purse under the floorboard grows.",
+        "critical_success": "The counts start bidding against each other, each terrified of the other's advantage, and {worker_name}'s side income swells on manufactured panic. Even your official fee gets fatter in the crossfire, which is convenient, since you will never hear about the rest.",
+        "mediocre": "One count turns suspicious and pays late and light. The double game is getting harder to run, and {worker_name} knows it, and runs it anyway.",
+        "failure": "The counts compare notes over brandy, and the double game detonates in front of half the court. Both houses cancel their standing engagements with the castle, and the steward bills the breach to you, since the courtesan who caused it is yours."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_rebel_private_salon",
+      "weight": 2,
+      "report": "The Private Salon",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "failure_image": "courtesan_noble_entertainment_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "The palace expects {worker_name} at the evening reception. {worker_name} sends regrets, invents a fever, and spends the night at a private salon courting patrons who appear on no list of yours. The absence goes unremarked. The new names go into a book you will never be shown.",
+        "critical_success": "The salon turns out to be the better room, richer and hungrier and entirely off the books. {worker_name} leaves with three private engagements arranged and slips back through the servants' gate before the castle notices the empty chair.",
+        "mediocre": "The salon is thin, four minor merchants and a bored poet, and the invented fever now needs maintaining for two more days. A risky evening spent on nothing.",
+        "failure": "The Governor's steward counts chairs. The invented fever is checked on and found to be miraculous, and the palace fines your house for a broken commitment, in writing, with seals. {worker_name} shrugs it off; the salon contacts were worth it, to {worker_name}."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -1,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_lovesyou_untouchable",
+      "weight": 3,
+      "report": "The Untouchable Heart",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "failure_image": "courtesan_noble_entertainment_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Half the court has laid siege to {worker_name}'s heart and all of it has failed, and the failing has become the entertainment. Nobles pay a premium to dine beside the famous impossibility, never guessing the heart is not locked at all, only already given, and that the person keeping it signs the wages.",
+        "critical_success": "A court poet publishes verses about the courtesan no title can touch, and the price of an evening doubles overnight. The whole court is paying tribute to a devotion it cannot name, and the whole take lands in your ledger, which is the only place the devotion ever wanted to go.",
+        "mediocre": "An earnest young noble mistakes the mystique for a challenge and spends the entire dinner laying siege. {worker_name} endures the campaign with professional patience, and the fee stays stubbornly ordinary.",
+        "failure": "A duke waits for the last dance to offer everything: estates, a ring, a future carved in stone. {worker_name} answers with a single look, and the look says taken, and the duke, to the astonishment of the room, bows and withdraws with perfect grace, intrigued to the bone. Nothing was performed, so nothing is owed, and the heart that ruined the sale is at your door within the hour."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 7
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 13
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_lovesyou_reports_home",
+      "weight": 3,
+      "report": "Triumphs Carried Home",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "courtesan_diplomatic_soiree",
+      "failure_image": "courtesan_diplomatic_soiree_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} is flawless at the reception, witty in three languages, tireless past midnight, and none of it is for the room. Every laugh won and every coin earned gets gathered up like cut flowers to be carried home, and the last stop of the night, after the palace, is always your door.",
+        "critical_success": "The Governor's own table asks for {worker_name} by name, the highest shelf the castle has, and the fee is obscene. It lands in your hand within the hour, still warm, because the point of climbing that high was always to bring you the view.",
+        "mediocre": "The evening runs long and hollow, all protocol and no play, and the thought of your door is the only part {worker_name} enjoys. The take is thin, the report thinner.",
+        "failure": "Mid-toast, a minister's compliment lands too near the truth, something about the luck of whoever holds this courtesan's contract, and the whole performance stalls under the weight of wanting you. The table, watching {worker_name} turn briefly transparent, is moved to a tact rare at court: the evening is quietly excused, unbilled and unresented, and the walk home is spent rehearsing what will never be said at your door."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_bestfriends_which_door",
+      "weight": 3,
+      "report": "Which Doors to Open",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "courtesan_diplomatic_soiree",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "Over a nightcap after the reception, {worker_name} walks you through the week's invitations like a taster checking your food: this one is genuine, this one is a trap in gold leaf, this alliance dies within the month, do not be holding it when it does. The advice is worth more than the evening's fee, and you collect both.",
+        "critical_success": "One warning proves surgical. The partnership {worker_name} told you to refuse collapses days later and drags two houses down with it, and yours is not among them. Over cards afterward {worker_name} declines all credit for it, observing only that a good hand is worth nothing without knowing when to fold, and deals you the next round."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_bestfriends_your_name_at_court",
+      "weight": 3,
+      "report": "Your Name at Court",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "positive_traits": {
+        "Elegant": 5,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "{worker_name} tends your reputation like a shared garden, seeding your name into every conversation that matters: a word dropped in the chancellor's circle, a story told just loud enough at supper. Court opinion of you rises degree by degree, cultivated by someone who counts your ambitions as half theirs.",
+        "critical_success": "The tending pays off in full. An invitation arrives bearing the Governor's seal, the kind of door money cannot open and {worker_name}'s friendship just did. Nobody at the castle can quite trace how your standing rose so fast. You can, and so can the friend who refuses to be thanked for it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_harem_your_mark",
+      "weight": 3,
+      "report": "Your Mark at Court",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "Under the court silks, at the throat, {worker_name} wears a small token everyone at the castle recognizes as yours. Wandering hands stop an inch short all evening, turned back by it, and the nobles pay a premium for supper beside the one thing in the room that is already spoken for.",
+        "critical_success": "A visiting prince, warned that no offer will move the courtesan with the token, doubles the evening's fee just for the pleasure of confirming it in person. {worker_name} delivers the coin and the story to you together, and visibly prefers the story."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_harem_by_your_leave",
+      "weight": 3,
+      "report": "By Your Leave",
+      "skill_options": [
+        "Sex",
+        "Oral"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "courtesan_vip_private_chamber",
+      "positive_traits": {
+        "Graceful": 5,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "The patron thinks the private chamber is theirs to direct, but every sexual act was approved by you in advance. {worker_name} follows your list through undressing, oral pleasure, and penetration, refusing each forbidden touch without breaking rhythm. The patron climaxes inside boundaries you controlled and pays full rate for the privilege.",
+        "critical_success": "Past midnight the patron understands that your rules are present in the bed. With every limit negotiated, {worker_name} turns obedience into exquisite sex, using mouth, hands, and slow penetration until the patron begs through a final orgasm. The obscene tip is laid in your hand with a quiet report: following your rules was the deepest pleasure."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_servant_full_season",
+      "weight": 3,
+      "report": "The Full Season",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "courtesan_diplomatic_soiree",
+      "positive_traits": {
+        "Energetic": 4,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "You book {worker_name} into a recital, a card room, and a late reception in a single day, and all three get carried without one word of protest. The last engagement receives the same unhurried grace as the first. It is what you asked for, and so it is done, and the castle pays for all of it.",
+        "critical_success": "Three engagements become five when two other companions fall ill, and {worker_name} absorbs those too, immaculate to the final bow of the night. The castle pays for five and gets excellence in each. You get the whole purse, and a servant who never once asked why."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_courtesan_servant_dreaded_guests",
+      "weight": 3,
+      "report": "The Dreaded Guests",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "courtesan_noble_entertainment",
+      "positive_traits": {
+        "Charming": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "The list you hand {worker_name} is the one the whole castle dreads: the margrave who drinks, the chancellor whose hands wander, the envoy who complains in verse. Every name gets an evening of impeccable patience, because the list came from you, and every name leaves satisfied and rebooked.",
+        "critical_success": "By month's end the dreaded list has become a profitable one, difficult guests turned into steady contracts by sheer disciplined courtesy. The steward asks how you manage it. You do not explain that it is not management at all, but obedience, given gladly and to you alone."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

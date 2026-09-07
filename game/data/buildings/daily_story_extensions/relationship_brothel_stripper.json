@@ -1,0 +1,660 @@
+{
+  "_comment": "Relationship daily stories (Stripper). Follows the exemplar contract in relationship_brothel_prostitute.json. Profession flavor: stage work, intimacy at a distance. 'Loves you' is net-strong-positive here: longing FUELS the show, every dance is for one absent person and the room feels it; failure = scans the crowd for your face mid-number and loses the thread, charming, no harm, no take. Harem: the collar as part of the act, privates at double rate under your rules. Rebellion: unapproved numbers, privates sold outside the house. PROSE: gender-neutral for worker AND manager; story_image reuses existing profession art as placeholder.",
+  "building_id": "brothel",
+  "profession_id": "stripper",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "brothel_stripper_romance_shadow_table",
+      "weight": 2,
+      "report": "The Shadow Table",
+      "skill_options": [
+        "Striptease"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "failure_image": "stripper_regular_client_failure",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "There is a table in the shadows where you sometimes sit, and {worker_name} aims the whole set at it whether you are there or not. The room notices a dancer performing at someone and cranes to see who. A show with a target always outsells one without, and the tips say so.",
+        "critical_success": "Tonight you are actually there. Knowing it turns the routine molten, every pause held one breath longer, and the crowd, caught in a heat meant for one person, spends like each of them might be the one it was for.",
+        "mediocre": "The shadow table sits empty all night, and without its target the set sags into competence. Clean, forgettable, tipped accordingly.",
+        "failure": "You are there, and the weight of your eyes does what no packed house ever could. {worker_name} misses the hook, rushes the reveal, and finishes the number staring at the floorboards. The tips are thin, and the walk past your table afterward is the longest of the night."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_romance_refused_patron",
+      "weight": 2,
+      "report": "Refused a Keeper",
+      "skill_options": [
+        "Striptease"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "stripper_vip_client",
+      "failure_image": "stripper_vip_client_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A silver-haired patron offers {worker_name} a private stage in a gilded townhouse: no crowds, no smoke, one audience forever. {worker_name} declines before the sentence ends. There is already one audience that matters, and it runs this house. The patron, wanting whatever money apparently cannot move, pays double for one more ordinary dance.",
+        "critical_success": "The refusal travels the floor inside a song. Nothing sells dances like a dancer nobody could buy, and by closing the whole room has paid to test whether the rumor is true.",
+        "mediocre": "{worker_name} takes a beat too long to answer, and the offer curdles into a negotiation. The patron leaves half-charmed, half-insulted, and tips like it.",
+        "failure": "For one weak moment the gilded townhouse wins, and the yes is halfway out of {worker_name}'s mouth before it dies. The patron sees the hesitation for what it is and withdraws the offer with a thin smile. The shame of having wavered, of what you would think of it, sours every number that follows."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_friend_saved_the_floor",
+      "weight": 2,
+      "report": "Saved a Dead Night",
+      "skill_options": [
+        "Striptease"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "failure_image": "stripper_regular_client_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The floor is dead by the second set, and {worker_name}, who counts your margins like a partner, tears up the running order. Slow numbers moved to the front, the crowd-pleaser held for the turn of the evening, drinks pushed hard in the gap. The night ends decent instead of disastrous, and the new set list lands on your desk with a note: worked once, might work twice.",
+        "critical_success": "The rebuilt order saves the night and finds a rhythm the club has been missing for months. The bar runs dry twice before closing, and {worker_name} spends the walk home planning next week's sets with you in mind.",
+        "mediocre": "The reshuffle helps a little. The night limps up to average, and nobody can quite say whether the tinkering did anything at all.",
+        "failure": "The gamble misfires. Reshuffled sets collide, two dancers walk out in the same costume in the same hour, and the crowd thins early. The ledger will recover; the thought of explaining the mess to you is the part that stings."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_friend_duet_rescue",
+      "weight": 2,
+      "report": "An Improvised Duet",
+      "skill_options": [
+        "Striptease"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "failure_image": "stripper_regular_client_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A first-nighter freezes in the wings, one heartbeat from bolting, and {worker_name} knows exactly what a lost recruit costs you. So the solo becomes a duet on the spot, the newcomer folded into the choreography as if it had always been written for two, and the crowd never learns how close the stage came to standing empty.",
+        "critical_success": "The improvised duet lands so well the room demands it again the same night. You gain a keeper of a recruit and a new act in one evening, and {worker_name} waves off the credit: the house needed it.",
+        "mediocre": "The rescue keeps the newcomer on stage, but the number never quite gels. The crowd claps politely and goes back to its drinks.",
+        "failure": "The duet stumbles, and instead of hiding the newcomer's terror it doubles it: two dancers out of step in front of a muttering room. The recruit quits before closing, and {worker_name} carries it home as a thing done badly for you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -3
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_rebel_unapproved_number",
+      "weight": 2,
+      "report": "The Unapproved Number",
+      "skill_options": [
+        "Striptease"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "failure_image": "stripper_regular_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "{worker_name} swaps the sanctioned routine for one you have never seen: slower, darker, a knife's width past what the house allows. The room forgets to drink. It works, this time, and the take says so, but the set list exists for a reason and you both know it.",
+        "critical_success": "The forbidden number becomes the story everyone tells about your club this week. The take spikes, the requests pour in, and {worker_name} accepts the scolding with a grin that promises it will happen again.",
+        "mediocre": "The unsanctioned routine confuses more than it thrills. Half the room leans in; the other half orders another drink and looks away.",
+        "failure": "The number crosses a line the house license cannot. A magistrate's clerk in the crowd files a complaint by morning, and the fine, plus the soothing of two offended regulars, comes straight out of your strongbox."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_rebel_outside_privates",
+      "weight": 2,
+      "report": "Dances Off the Books",
+      "skill_options": [
+        "Striptease"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "stripper_private_dance",
+      "failure_image": "stripper_private_dance_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has been booking private performances in parlors across town: your training, your costumes, none of your cut. Tonight the outside coin is quiet and the story airtight, and only the aching feet know a double shift happened.",
+        "critical_success": "One outside booking turns out to be a noble's salon, and the fee is obscene. {worker_name} banks all of it privately and still makes the house set on time, glowing faintly with somebody else's champagne.",
+        "mediocre": "The parlor client haggles, the hired room costs more than planned, and the freelance evening barely breaks even. Twice the work for one wage.",
+        "failure": "A parlor client swaggers into your club waving a handbill with {worker_name}'s name on it and demands the outside rate at your bar. The unraveling costs refunds, hushing coin, and a public scene, every bit of it billed to your ledger."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_lovesyou_every_dance",
+      "weight": 3,
+      "report": "Every Dance for You",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "failure_image": "stripper_regular_client_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} dances for one person tonight, and that person is not in the room. The longing pours into every held pause and slow turn, and the crowd feels aimed at, each of them borrowing a heat that belongs to you. They pay well for the borrowing. The take is yours twice over: earned for you, and about you.",
+        "critical_success": "The room cannot look away from a dancer burning for someone absent. Strangers tip like confessors, the private bookings fill through tomorrow night, and {worker_name} banks every coin for your ledger, the only love letter on offer.",
+        "mediocre": "The longing sits heavy tonight, more sorrow than fire, and the set reads as sad instead of smoldering. The crowd tips gently, the way people do at funerals.",
+        "failure": "Halfway through the number {worker_name} catches a silhouette by the door and thinks: you. It is not you, but the thread of the routine is already gone, the searching look laid bare in front of everyone. The crowd finds the blush enchanting, applauds warmly, and buys nothing. No harm done, no coin taken, and one dancer walks home wondering when you will finally see the show that has always been yours."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_lovesyou_borrowed_fire",
+      "weight": 3,
+      "report": "Borrowed Fire",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "stripper_vip_client",
+      "failure_image": "stripper_vip_client_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "A VIP books the special show and gets something coin does not usually buy: a performance charged with real wanting. {worker_name} simply lets the thought of you into the room and dances everything that cannot be said out loud. The VIP, sitting in the chair that should be yours, pays for the seat accordingly, and the whole fee goes home to your strongbox.",
+        "critical_success": "The VIP comes back the next night, and the next, chasing a fire that is not for them and never will be. {worker_name} lets them chase it at premium rates and hands you the mounting total with a look that says: this is what wanting you is worth.",
+        "mediocre": "Tonight the substitution will not hold. The VIP in the chair keeps being merely the VIP in the chair, and the show comes out skilled and hollow. The tip is polite.",
+        "failure": "Mid-show {worker_name} imagines it is you in the chair, and the performance stops dead, suddenly too honest to continue for anyone else. The VIP watches the color climb the dancer's face and, disarmed by something so plainly real, waves off the fee and leaves smiling. Nothing earned, nothing broken; one heart worn openly on an empty stage."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_bestfriends_reads_the_room",
+      "weight": 3,
+      "report": "Reading the Room",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "From the stage {worker_name} reads the room the way you read the books: which table is celebrating, which is flush, which is one drink from walking. Between numbers the intelligence flows to the bar, the flush table gets the attention, and the take climbs like the floor had a manager on it. It did. It just happened to be dancing.",
+        "critical_success": "{worker_name} spots a shipping magnate slumming it in plain clothes, tips off nobody but you, and builds the whole evening around that one table. The magnate leaves lighter by a small fortune and delighted about it, and {worker_name} splits the credit down the middle: your house, our night."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_bestfriends_eyes_from_stage",
+      "weight": 3,
+      "report": "Eyes from the Stage",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Nobody watches a room like the person on stage. Mid-routine {worker_name} clocks a pickpocket drifting through your crowd and, without dropping a beat, steers the spotlight one way and a nod to the bouncer the other. The thief is walked out between songs, the marks never know, and your club's name for safe pockets keeps earning its repeat business.",
+        "critical_success": "The light fingers turn out to belong to a crew casing the club for a bigger job. {worker_name} pieces the pattern together from the stage across three sets, lays it all out for you at closing, and the plot dies before it draws breath. That is not an employee's vigilance. That is a friend guarding the door."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_harem_collar_act",
+      "weight": 3,
+      "report": "The Collar Act",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The collar is not hidden under the costume tonight; it is the costume. {worker_name} builds the whole number around it, every look thrown to a point just offstage as if waiting for permission, and the room pays a premium to watch someone owned. They can buy the dance. What the collar means stays yours.",
+        "critical_success": "By the final song the crowd is bidding up private dances just to sit nearer to it, the little band of leather that says one voice rules this dancer. {worker_name} keeps to your limits without being reminded, and the night's take comes to you the way everything else does: willingly."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_harem_double_rate_privates",
+      "weight": 3,
+      "report": "Double-Rate Privates",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "stripper_private_dance",
+      "positive_traits": {
+        "Graceful": 5,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Private dances with the owned one run at double rate, your price, your terms: look all you like, touch nothing, the dancer answers to a voice that is not in the room. Clients pay the double gladly, because commanding an hour of what belongs to someone else is the closest most of them will ever come to power. {worker_name} enforces every rule of yours like a vow.",
+        "critical_success": "A merchant prince tries to buy an exception to the no-touch rule and is refused so serenely that the refusal itself becomes the luxury. Word spreads of the one private dance money cannot corrupt, the bookings triple, and every doubled fee arrives in your strongbox uncounted, because counting would imply doubt."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_servant_every_slot",
+      "weight": 3,
+      "report": "Every Slot Danced",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "stripper_regular_client",
+      "positive_traits": {
+        "Energetic": 4,
+        "Robust": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The dead afternoon set, the graveyard closer, the birthday party nobody wants: {worker_name} takes every slot on the board because you posted them, and gives the empty hours the same finish as the full ones. By closing the stage has not gone dark once all day, and the steady trickle of coin adds up to more than one good night.",
+        "critical_success": "{worker_name} dances open to close without one word of complaint, and the regulars begin timing their visits around the performer who is always on. Reliability becomes its own attraction; the week's bookings thicken because your word alone was enough to keep a stage lit all day."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_stripper_servant_hard_rooms",
+      "weight": 3,
+      "report": "The Rooms Nobody Wants",
+      "skill_options": [
+        "Striptease"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "stripper_private_dance",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You hand {worker_name} the rooms the rest of the roster dodges: the drunken send-off party, the silent staring loner, the table that heckles every act. Each one gets danced for without a flicker of reluctance, and each one pays in full, because obedience done this well looks exactly like grace.",
+        "critical_success": "The rowdiest party of the season leaves tamed, tipping in fistfuls and singing your club's praises into the street. {worker_name} takes the worst of the work as a form of service to you and turns it, room by room, into the house's most dependable coin."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

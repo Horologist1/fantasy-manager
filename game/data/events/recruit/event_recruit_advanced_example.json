@@ -20,7 +20,7 @@
       },
       {
         "option": "Negotiate a lower wage. (Potential: Discount)",
-        "message": "After a measured back-and-forth, you settle at [actual_cost]. [event_worker] accepts the cut with grace; they'll manage at a daily cost of [actual_cost] (one point below their preferred level). The reduced daily cost reflects your negotiation skills (20% discount).",
+        "message": "After a measured back-and-forth, you settle at [actual_cost] per day, a 20% cut below their preferred rate. [event_worker] accepts with grace.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8
@@ -57,14 +57,13 @@
         "Human"
       ],
       "traits_excluded": [
-        "Sick",
-        "Injured"
+        "Sick"
       ]
     },
     "choices": [
       {
         "option": "Offer them a trial period with reduced pay. (Potential: Discount, Trial Worker)",
-        "message": "You outline a short trial at [actual_cost] (50% discount). [event_worker] nods - during the 30-day trial period they'll keep to daily cost of [actual_cost] while proving their worth. The reduced daily cost reflects your negotiation skills (50% discount). They gain the 'Trial Worker' trait, which will last for 30 days.",
+        "message": "You outline a short trial at [actual_cost] per day (50% discount). [event_worker] nods - for the 30-day trial they'll work at that rate while proving their worth. They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.5,
@@ -77,7 +76,7 @@
       },
       {
         "option": "Try to negotiate a lower wage. (50% chance: 25% discount)",
-        "message_success": "Your persuasive words and reasonable arguments convince [event_worker] that steady work and good treatment are worth more than high pay. 'You make a good point about job security,' they admit. They agree to work for [actual_cost] (25% discount). The reduced daily cost reflects your negotiation skills (25% discount).",
+        "message_success": "Your persuasive words and reasonable arguments convince [event_worker] that steady work and good treatment are worth more than high pay. 'You make a good point about job security,' they admit. They agree to work for [actual_cost] per day (25% discount).",
         "message_failure": "Your negotiation attempt comes across as cheap and insulting. [event_worker]'s expression hardens. 'I know my worth. If you want me, you'll pay full price.' They still accept the position at [actual_cost] (full price), but their rebelliousness increases by +8.",
         "effect": {
           "success_chance": 0.5,
@@ -149,7 +148,7 @@
       },
       {
         "option": "Offer them access to your private library in exchange for reduced wages. (Potential: Discount, Relationship, Scholar's Joy)",
-        "message": "You sweeten the offer with library access and settle on [actual_cost] (20% discount). [event_worker]'s eyes brighten; they'll work at a daily cost of [actual_cost] in exchange for knowledge. Their relationship starts higher (+15 bonus), and they gain the 'Scholar's Joy' trait (90 days). You sense a stronger bond forming between you and Violet (+15 Relationship). The reduced daily cost reflects your negotiation skills (20% discount). They gain the 'Scholar's Joy' trait, which will last for 90 days.",
+        "message": "You sweeten the offer with library access and settle on [actual_cost] per day (20% discount). [event_worker]'s eyes brighten; knowledge is a currency they value above coin. You sense a stronger bond forming between you and Violet (+15 Relationship), and they gain the 'Scholar's Joy' trait for 90 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,

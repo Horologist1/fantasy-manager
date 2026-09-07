@@ -1,0 +1,648 @@
+{
+  "_comment": "Relationship daily stories (Guards, Governor's Castle). Follows the contract: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 roll normally, 2x 'Loves you' normal roll (failure earns 0), 2x Best Friends + 2x Harem Member + 2x House Servant with no_fail. Narration is concrete, consequence-driven, gender-neutral, and non-repetitive.",
+  "building_id": "governor_castle",
+  "profession_id": "guards",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "governor_castle_guards_romance_gate_at_dawn",
+      "weight": 2,
+      "report": "The Gate at Dawn",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guards_patrol_secure",
+      "failure_image": "guards_patrol_secure_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Determined": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A courier approaches the east gate at first light with an urgent seal only three houses should hold. {worker_name} checks every mark, refuses the first false rider, and only opens the gate long enough for the true envoy to pass. The city keeps calm and the captain notes the gate never wavered.",
+        "critical_success": "{worker_name} calls the rider by gait before the rider speaks, sends that rider back across the lane, and turns the whole gate moment into controlled practice. The second rider never reaches the inner ward, and the gate captain sends a short note praising your household's discipline.",
+        "mediocre": "{worker_name} catches the first rider, but another messenger arrives at the same moment. The envoy reaches the gate anyway, and your reward arrives with a small delay in ritual, not in loyalty.",
+        "failure": "A real envoy is turned once too late while the false rider is still being checked. The rider must circle back and delays an important delivery, and your unit files a polite apology for a cost all of you could feel at dawn."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_romance_patrol_with_you_in_mind",
+      "weight": 2,
+      "report": "Patrol on Your Standard",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guards_capture_intruder",
+      "failure_image": "guards_capture_intruder_failure",
+      "positive_traits": {
+        "Determined": 5,
+        "Confident": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "115 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A rumor spreads that the tower watch is under test; {worker_name} replaces every relay lamp by hand and keeps an extra round at each stair for the rest of the night. The tower wakes no sooner than needed, and your household keeps its composure.",
+        "critical_success": "A snapped ladder line near the west bastion signals a real risk. {worker_name} secures the line, shifts two sentries without exposing the gate, and forces two intruders to retreat before they can complete their approach. The night ends with a report packet marked for your review.",
+        "mediocre": "Fog thickens by the third watch and one segment of line is difficult. {worker_name} holds steady, but the timing slips and one shift is postponed until the weather clears.",
+        "failure": "The line gives way under fog while the tower is short-staffed. The section is patched by the hour, and your captain spends the morning defending why the city waited for your gate to clear."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_relationship_riot_watch",
+      "weight": 2,
+      "report": "The Riot Watch",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guards_capture_criminal",
+      "failure_image": "guards_capture_criminal_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Determined": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "140 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A street shout in the lower quarter is close to a riot, and {worker_name} places three guards at the fountain before any stone is thrown. Merchants are escorted out by the river gate, and the square returns to trade before noon.",
+        "critical_success": "{worker_name} catches the same instigator at three crossroads before the crowd gathers and sends that instigator into quiet custody. The quarter remains open, the bell never rings a warning, and your name is spoken as steadiness in hard weather.",
+        "mediocre": "The commotion softens but not before a crate breaks glass and a witness records a complaint. The rest of the lane holds, and your fee is still paid, though with a slower bow.",
+        "failure": "The crowd outnumbers your first line by one step. A small fight breaks, one lamp falls dark, and the quarter closes early to breathe before dawn returns."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_relationship_gate_draft",
+      "weight": 2,
+      "report": "Calmed the Draft Queue",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "guards_patrol_secure",
+      "failure_image": "guards_patrol_secure_failure",
+      "positive_traits": {
+        "Charming": 4,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A supply caravan is halted over disputed seals. {worker_name} holds both captains calm, checks the wax and signatures in the rain, and sends the caravan through with a single verified escort. The route keeps moving before the first whisper reaches the market.",
+        "critical_success": "{worker_name} notices a forged stamp before it leaves the gatehouse and reroutes the caravan to a covered dock under cover of your routine. The forged plan is seized and the goods remain safe, with a cleaner route left behind for future arrivals.",
+        "mediocre": "Paperwork is resolved after a delay, and the caravan waits under canvas for part of the noon hour. Trade resumes cleanly, but the ward mood stays taut through the day.",
+        "failure": "A forged stamp slips through the first check and a wagon leaves with an empty manifest. The books are corrected by noon, but the event adds your gate's name to the audit ledger."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 11
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_rebellion_barter_path",
+      "weight": 2,
+      "report": "The Barter Path",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "guards_patrol_secure",
+      "failure_image": "guards_patrol_secure_failure",
+      "negative_traits": {
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "95 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "A smuggler asks for a night path through a side lane. {worker_name} shifts a few patrol rounds and keeps one lane free while another remains visibly sealed, so the city receives no panic and your unit keeps its night discipline.",
+        "critical_success": "The smuggler tries a second route with different faces. {worker_name} handles each in sequence, leaving no repeat map to rivals and returning the full levy route to honest timing.",
+        "mediocre": "The detour works once and then strains against a second call. The lane yields extra coin, but risk rises faster than reward and your patrol remains uneasy before dawn.",
+        "failure": "Another gate house tracks the altered route and your unit answers an unexpected inspection. A noon of questions follows, and your ledgers absorb a fine for the delay and the confusion."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 1,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 4
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_rebellion_false_halt",
+      "weight": 2,
+      "report": "A False Halt",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "guards_capture_criminal",
+      "failure_image": "guards_capture_criminal_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "At midnight a convoy is delayed for a staged maintenance drill. {worker_name} sets a controlled hold, checks every crate, and releases only once seals are clean. The convoy moves after the check with your signature calm still in place.",
+        "critical_success": "The second inspection finds a forged pass inside the fourth crate. {worker_name} removes it before the line sees the lane again and hands the issue to investigators, while the convoy proceeds with no broken axle and no raised hands.",
+        "mediocre": "The convoy is checked, cleared, and delayed longer than expected. Your men hold the bridge, and a buyer complains through all the lamps before dusk.",
+        "failure": "One crate is opened before the fourth bell and the delay grows sharp. A dispute erupts in front of the guard ring, and the lane needs a temporary revocation to settle it back into order."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 1,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 5
+        },
+        "mediocre": {
+          "energy": -2,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -9
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_lovesyou_flood_pass",
+      "weight": 3,
+      "report": "The Flooded Gate",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "guards_patrol_secure",
+      "failure_image": "guards_patrol_secure_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Rain climbs the moat and a gate valve sticks in one watchtower. {worker_name} stays on the inner line where you may be in the palace hall and shifts extra hands to the stair and drawbridge. The flood never reaches your gate, and the city praises your calm preparedness.",
+        "critical_success": "A stronger surge tears loose barriers near the river gate, and {worker_name} stations two squads before dawn, sends you an update through the ward captain, and keeps every wing of the palace protected. No panic reaches the courtyards, and the house is spoken of for its steadiness.",
+        "mediocre": "Water slows the watch and one rider waits at the turn for a little too long. Everyone arrives safely, and the ledger records only a brief damp delay.",
+        "failure": "A runner shouts that you were hurt inside the palace, and {worker_name} panics the formation into a full defensive knot before the truth is known. The captain restores order once the rumor is denied and sends a gentle order: stand down and know this is forgiven for devotion. No bonus is paid for that night, and you collect nothing."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_lovesyou_town_watch",
+      "weight": 3,
+      "report": "The Spared Patrol",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "guards_capture_intruder",
+      "failure_image": "guards_capture_intruder_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Your carriage is due from the river road after dusk. {worker_name} stretches a patrol along the route without thinning the gates, meets you at the last bridge, and brings both carriage and evening traffic home safely. Merchants praise the watch; only the captain knows the route was guarded for one traveler above all.",
+        "critical_success": "The escort spots riders shadowing your carriage and folds them between the bridge patrol and the outer gate. {worker_name} brings you home untouched, exposes a planned robbery, and turns private vigilance into a public victory for the watch.",
+        "mediocre": "The whisper cools, flares, and cools again. {worker_name} keeps order and there is no true breach, but the watch ends with more hands spent than planned.",
+        "failure": "Your carriage runs late and a ferryman claims it was attacked beyond the bridge. {worker_name} strips two posts to search the river road before the report is checked. You arrive safely through another gate; the captain recognizes fear for what it was and forgives the broken formation once. No patrol bonus is paid."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_bestfriends_wall_patrol_report",
+      "weight": 3,
+      "report": "The Wall Report",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guards_capture_criminal",
+      "positive_traits": {
+        "Clever": 5,
+        "Determined": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "At dawn, {worker_name} remembers the blind angle you pointed out during a walk on the wall last spring. Three watch points shift before the sun clears, closing a weakness everyone else had learned to overlook.",
+        "critical_success": "Fresh boot marks below that blind angle reveal a planned climb. Using the shorthand you devised together on old inspections, {worker_name} sends updates without raising an alarm and closes the trap before the first grappling hook reaches stone."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_bestfriends_signal_tent",
+      "weight": 3,
+      "report": "The False Signal",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guards_capture_intruder",
+      "positive_traits": {
+        "Sharp-Eyed": 8
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "A rival unit probes the signal pattern at the second bell. {worker_name} answers with the false lantern code you invented together during a rain-soaked watch, drawing the intruders toward an empty gully while your own line braces unseen.",
+        "critical_success": "The false signal splits the intruders into two gullies; {worker_name} locks both lanes before dawn and resolves the probe with no alarm to the court. City clerks still call it a routine drill; everyone in your watch knows the difference."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 9
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 15
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_harem_invisible_shift",
+      "weight": 3,
+      "report": "The Blind Gate",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guards_patrol_secure",
+      "positive_traits": {
+        "Confident": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "A private gathering fills your inner wing after dark. {worker_name} doubles the stair watch without exposing a single guest to the outer court, keeping your household safe and its comings and goings discreet.",
+        "critical_success": "A second visitor appears with a forged pass minutes later. {worker_name} isolates both gates, keeps the approach covered for your route inside the palace, and turns what could have been a breach into a clean inspection."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_harem_quiet_entry",
+      "weight": 3,
+      "report": "The West Post",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guards_patrol_secure",
+      "positive_traits": {
+        "Determined": 4,
+        "Charming": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "A guest summoned to your private wing arrives after the public gates close. {worker_name} recognizes the small token used only inside your household, verifies it by hand, and escorts the visitor through the west post without feeding the court a whisper.",
+        "critical_success": "A shadow follows the guest toward the west post. {worker_name} admits the right visitor, closes the quiet route behind them, and catches the spy with a forged token before anyone in your wing knows there was danger."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 7
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 13
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_houseservant_three_posts_same_night",
+      "weight": 3,
+      "report": "Three Posts, One Order",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guards_capture_criminal",
+      "positive_traits": {
+        "Energetic": 5,
+        "Hardworking": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "You assign three posts for one night and {worker_name} binds them into a single breathing pattern: inner gate, outer dock, and lantern tower. Each post answers on time, and no guest waits for a message that never arrives.",
+        "critical_success": "At the final bell, weather and noise strike two posts at once. {worker_name} links both hands to a single improvised map and the whole line holds without visible strain by dawn."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_guards_houseservant_watchhouse_drift",
+      "weight": 3,
+      "report": "The Watchhouse Drift",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "guards_capture_intruder",
+      "positive_traits": {
+        "Sharp-Eyed": 8
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "Wind shifts the lantern pattern above the north watchhouse, and {worker_name} stays on post relighting every beam. Your routes return to timing before the first hour passes, and no one in the city notices the strain.",
+        "critical_success": "The roof tile tears free over the second tower and {worker_name} redirects the line before it can crush the stairrail. The watch keeps its line, your palace stays dry, and the captain sends praise for a calm hand in bad weather."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

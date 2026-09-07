@@ -1,7 +1,7 @@
 [
     {
-        "name": "The Lanista",
-        "folder": "lanista",
+        "name": "Varro",
+        "folder": "varro",
         "cost": 0,
         "nsfw": true,
         "unique": true,
@@ -29,9 +29,14 @@
         },
         "names_list": "western_male",
         "traits": [
-            "Human"
+            "Human",
+            "Strong",
+            "Tall",
+            "Tough",
+            "Great Figure",
+            "Cool Scars"
         ],
-        "description": "The Master of the Sands. A scarred Arena champion who runs the fighting pits by day and answers to your house by arrangement.",
+        "description": "The Master of the Sands. Six seasons unbeaten before a Nordmark's last swing took the knee and the crown together; he has run the fighting pits ever since. He answers to your house by arrangement, and keeps that arrangement the way he keeps a card - to the second, and without a word of complaint you will ever hear.",
         "gender": "male",
         "comfort_desired": 2
     }

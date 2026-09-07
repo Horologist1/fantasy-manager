@@ -24,10 +24,10 @@ def remap_image_skill(skill_name_for_search, gender, marker):
 
     skill_name_for_search: lowercase name from get_skill_name_for_images.
     gender: worker gender ("male"/"female", any casing).
-    marker: worker.get("orientation_forced") - None/""/falsy means unmarked.
-    Identity for unmarked workers and non-remapped skills.
+    marker: worker.get("orientation_forced") - only "force"/"rolled" are valid.
+    Identity for unmarked/unknown markers and non-remapped skills.
     """
-    if not marker or not skill_name_for_search:
+    if marker not in (MARKER_FORCE, MARKER_ROLLED) or not skill_name_for_search:
         return skill_name_for_search
     skill = str(skill_name_for_search).lower()
     if skill == "homo":
@@ -45,10 +45,13 @@ def toggle_action(mode, has_trait, marker):
     has_trait: worker currently has the orientation trait.
     marker: None | "force" | "rolled" (worker.get("orientation_forced")).
     Returns "add" (grant trait + force marker), "remove" (drop toggle-granted
-    trait + clear marker), or None (no change). "rolled" is never removed.
+    trait + clear marker), "clear_marker" (stale rolled provenance), or None.
+    A consistent "rolled" trait is never removed.
     """
     if mode == "force" and not has_trait:
         return "add"
     if marker == MARKER_FORCE and mode != "force":
         return "remove"
+    if marker == MARKER_ROLLED and not has_trait:
+        return "clear_marker"
     return None

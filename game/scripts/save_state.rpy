@@ -73,8 +73,12 @@ init -1 python:
                     continue
                 if new_key not in cn:
                     cn[new_key] = cn[old_key]
+                    migrated.append("custom_names: '%s' -> '%s'" % (old_key, new_key))
+                else:
+                    # Both keys name the same building. The canonical value is
+                    # authoritative; two distinct display names cannot be merged.
+                    migrated.append("custom_names: discarded legacy '%s'; canonical '%s' retained" % (old_key, new_key))
                 del cn[old_key]
-                migrated.append("custom_names: '%s' -> '%s'" % (old_key, new_key))
 
         # 4. worker["assigned_building"]
         workers = getattr(store, "workers", None) or []
@@ -167,10 +171,16 @@ init -1 python:
             # Loaded workers never pass through ensure_worker_defaults otherwise.
             try:
                 if hasattr(store, 'ensure_worker_defaults'):
-                    for worker in getattr(store, 'workers', []):
-                        store.ensure_worker_defaults(worker)
-                    for worker in getattr(store, 'available_workers', []):
-                        store.ensure_worker_defaults(worker)
+                    for _roster_name, _roster in (
+                        ("workers", getattr(store, 'workers', [])),
+                        ("available_workers", getattr(store, 'available_workers', [])),
+                    ):
+                        for worker in _roster:
+                            try:
+                                store.ensure_worker_defaults(worker)
+                            except Exception as worker_error:
+                                _name = worker.get("name", "?") if hasattr(worker, "get") else "?"
+                                renpy.log(f"SAVE_STATE: ensure_worker_defaults failed for {_roster_name}/{_name}: {worker_error}")
                     renpy.log("SAVE_STATE: Applied ensure_worker_defaults to all workers after load")
                 else:
                     renpy.log("SAVE_STATE: WARNING - ensure_worker_defaults not found")

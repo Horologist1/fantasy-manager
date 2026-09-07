@@ -1,0 +1,691 @@
+{
+  "_comment": "Relationship daily stories for Treasure Hunter (adventurers_guild). Follows the relationship_brothel_prostitute.json contract: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 (all roll normally; romance/relationship raise the gate stat on success and lower it on failure, rebellion costs real money on failure), 2x 'Loves you' (normal roll, failure = forgiven -> earnings 0), 2x Best Friends + 2x Harem Member + 2x House Servant (no_fail). Prose gender-neutral for worker and manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "adventurers_guild",
+  "profession_id": "treasure_hunter",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "adventurers_guild_treasure_hunter_romance_matched_pair",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Haggling for Two",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story2",
+      "failure_image": "treasure_hunter_story2_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The temple cache gives up a matched pair of moon-silver combs. {worker_name} argues the first one up to a price the broker calls robbery, fighting every point of provenance, and the twin never reaches the table at all. It rides home wrapped in a glove, meant for a certain desk in your office.",
+        "critical_success": "{worker_name} talks the broker to triple the opening offer, patient as a siege, because tonight the number is for someone. The broker pays it and asks what has gotten into the guild's hunter lately. {worker_name} just smiles, pockets the twin comb, and carries both prizes back to you.",
+        "mediocre": "{worker_name} keeps drifting mid-haggle, rehearsing what to say when handing you the takings, and the broker smells the softness. The lot sells at list price, not a copper better.",
+        "failure": "The broker lowballs the comb and {worker_name}, head full of you instead of numbers, takes the offer. An hour later the same comb sits in a rival shop window at four times the price, and the walk back to your office has never felt longer."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_romance_home_by_dark",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Home by Dark",
+      "skill_options": [
+        "Agility"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story1",
+      "failure_image": "treasure_hunter_story1_failure",
+      "positive_traits": {
+        "Energetic": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the tomb at double tempo, clean and quick through the dart galleries, because there is a lamp in your window worth reaching before it goes out. The satchel comes back full and the knock on your door comes an hour early, grave dust still in the seams.",
+        "critical_success": "The hurry sharpens instead of slurring. {worker_name} reads the pressure plates at a run, lifts the burial trove intact, and is standing in your doorway before the appraiser has even closed, haul sold, coin counted, the whole evening rescued for you.",
+        "mediocre": "Split between the tomb and the thought of you, {worker_name} sweeps only the antechamber and calls it early. The haul is honest and thin, and the walk home is faster than it should be.",
+        "failure": "Rushing the last corridor to get back to you sooner, {worker_name} clips a tripline. The scramble out costs the satchel, a jade idol goes rattling down a shaft, and what finally reaches your office is an apology and a torn sleeve."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_friend_forgery_caught",
+      "weight": 2,
+      "report": "The Forgery Caught",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_trap_kit_tuneup",
+      "failure_image": "treasure_hunter_trap_kit_tuneup_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A dealer offers you a dwarven reliquary at a once-only price, and {worker_name}, who knows exactly how hard that purse gets earned, turns the piece under the lamp first. The patina stops inside the hinge, where three centuries would not. Your coin stays home, and the afternoon goes into a genuine lot that resells at a clean profit instead.",
+        "critical_success": "One fake unravels the dealer's whole case. Pulled apart thread by thread, four forgeries reveal the same solder hand, and by evening the story of the guild that cannot be fooled is bringing honest sellers to your door.",
+        "mediocre": "Something about the reliquary bothers {worker_name}, nothing provable, just a wrongness in the weight. You pass on the lot to be safe. No loss, no gain, a flat gray day at the counter.",
+        "failure": "{worker_name} calls fake on a piece that turns out true, loudly, in front of the seller's best customers. The insulted dealer pulls every lot from your reach, the genuine bargain goes to a rival house, and the apology owed to you weighs more than the coin that walked."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_friend_private_map",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Private Lead Shared",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story3",
+      "failure_image": "treasure_hunter_story3_failure",
+      "positive_traits": {
+        "Charming": 4,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has been sitting on a map to an unlisted crypt for a year, a private retirement fund folded in oilcloth. Tonight it lands on your desk instead. Your newer hunters work the site by week's end, and the guild banks a haul it was never owed, given freely because the guild is yours.",
+        "critical_success": "The map comes with its own guide: {worker_name} leads the trip and walks two green hunters through their first pressure plates without a scratch. The crypt pays out clean, and you come away with a site, a haul, and two hunters who suddenly believe in this work.",
+        "mediocre": "The map is honest but old. Half the marked chambers have been worked since it was drawn, and the trip brings back just enough to cover its own candles.",
+        "failure": "The crypt on the private map has been picked to the bare walls, and the crew {worker_name} vouched for comes home muddy and empty. Nobody blames the map's owner except the map's owner, who spends the whole evening not quite able to look at you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_rebel_sold_map_copies",
+      "weight": 2,
+      "report": "Maps Sold in Copies",
+      "skill_options": [
+        "Craft"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_trap_kit_tuneup",
+      "failure_image": "treasure_hunter_trap_kit_tuneup_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "By lamplight {worker_name} inks a careful copy of one of your route maps and sells it to a rival crew across town. The route is a season old, the coin is quiet, and your ledger never hears about either.",
+        "critical_success": "The copy sells twice, to two crews who each believe the map is exclusive. {worker_name} pockets both fees and even seeds a wrong turn into the second copy, out of something that is almost loyalty.",
+        "mediocre": "The rival crew haggles the copy down to a handful of silver, barely worth the ink, the candle, and the risk of the thing.",
+        "failure": "The rival crew reads the copy faster than {worker_name} expected. Your team arrives at the marked ruin to fresh boot prints and stripped chambers, and the season's best site is simply gone. The loss lands on your books, not on the private purse that caused it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_rebel_one_gem_light",
+      "weight": 2,
+      "report": "One Gem Light",
+      "skill_options": [
+        "Agility"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story1",
+      "failure_image": "treasure_hunter_story1_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "Somewhere between the burial chamber and the guild counter, a thumb-sized garnet migrates into {worker_name}'s boot. No manifest was ever written, the appraiser counts only what arrives, and the arithmetic stays comfortable for everyone.",
+        "critical_success": "{worker_name} lifts the best stone and leaves a paste replica so clean the appraiser certifies it without a squint. The real gem sells privately for more than your whole lot, and nobody's tally so much as twitches.",
+        "mediocre": "Nerve fails halfway across the counting room. The stone goes back into the crate at the last moment, unsold and sweated over, and the whole exercise buys nothing but a racing heart.",
+        "failure": "This run had a manifest. The appraiser counts the crate against it twice, announces the lot one gem light in front of witnesses, and you cover the difference on the spot to keep the guild's name clean. Questions start circulating that {worker_name} very much does not want asked."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_lovesyou_maps_the_way_home",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Careful Route Home",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story3",
+      "failure_image": "treasure_hunter_story3_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} plots the crypt run the long way, every gallery scouted twice, every floor tested before it is trusted, because there is a door in this city worth walking back through. The careful route pays anyway: a full satchel, no blood, and the whole take set in your hands before supper, the way it was always going to be.",
+        "critical_success": "Caution turns out to be genius. The slow route around the flooded gallery leads through a servant's stair no looter ever bothered with, and the untouched cache behind it sells for more than the crypt's famous chambers ever did. {worker_name} carries it home to you without a scratch, which was the entire point of the exercise.",
+        "mediocre": "{worker_name} triple-checks corridors other hunters would stroll through whistling, and dusk arrives before the deep rooms do. The haul is thin, but the walk home is whole, and that was the trade being made all along.",
+        "failure": "At the last gallery something about the floor reads wrong, exactly the kind of risk you would forbid if you were there to forbid it. {worker_name} turns around. The broker who commissioned the run listens to the reason, and to the reason underneath the reason, and quietly tears up the penalty clause. No coin today, and a hunter who comes home to you in one piece."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_lovesyou_first_pick_set_aside",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Best Piece Saved",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story1",
+      "failure_image": "treasure_hunter_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The tomb pays out in silver wire and grave amber, and before the appraiser sees any of it, {worker_name} lifts the prettiest small thing from the pile and wraps it in clean cloth. The rest sells briskly and the coin is yours. So is the wrapped piece, in a different way.",
+        "critical_success": "A collector notices the habit, the hunter who always keeps one piece back, and finds the idea irresistible. The remaining lot goes for a devoted premium because the story sells the silver, and the story, though the collector will never learn this, is you.",
+        "mediocre": "{worker_name} spends so long weighing which piece deserves you that the appraiser's window closes. Half the lot sells; the other half spends the night in careful cloth, waiting for morning.",
+        "failure": "In the middle of the lot sits a silver locket, and something about it, the clasp, the weight, the warmth it holds, brings you so suddenly to mind that {worker_name} pockets it instead of selling it. The appraiser eyes the shortened tray, shrugs, and closes the book. No sale today. No loss either, just a locket that was never going to belong to anyone else."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_bestfriends_counting_table",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Counting Table",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_trap_kit_tuneup",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} spreads the day's haul across your counting table before the appraiser ever sees it and sorts it the way a partner would: this pile sells now, this pile waits for the autumn caravans, this piece goes to the collector who overpays for temple silver. The advice is worth more than the haul, and both of them are yours.",
+        "critical_success": "{worker_name} taps the reliquary and tells you to sit on it for three weeks, no explanation offered beyond a look. Three weeks later a northern collector arrives hunting exactly that and pays double the appraiser's first number. When you try to split the difference, {worker_name} waves it off. Partners do not invoice each other for good sense."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_bestfriends_guildhall_ears",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Guildhall Ears",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story2",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Over watered wine in the guildhall, a rival crew talks too loudly about the ruin your team is set to work next month. {worker_name} nurses a single cup, memorizes names and dates, and carries the whole plot straight to your desk instead of into the gossip mill, then still logs an honest day's haul on top of it.",
+        "critical_success": "The loose talk turns out to be bigger than a poached site: a broker plotting to corner your best buyer with undercut lots. Armed a month early, you lock that buyer into a season contract before the trap can close. {worker_name} shrugs off the thanks. Watching your blind side is simply what the friendship pays."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_harem_uncounted_to_your_hand",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Uncounted, to Your Hand",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story1",
+      "positive_traits": {
+        "Graceful": 4,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Other hunters count their take twice before the guild ever sees it. {worker_name} empties the satchel into your hands unsorted, every coin and cameo of it, and waits, eyes on your face, for you to decide what comes back. The waiting is not servility. The waiting is the point.",
+        "critical_success": "A rival guildmaster, watching that little ritual at your counter, offers {worker_name} double rates on the spot. The refusal is instant, public, and faintly amused, and by nightfall half the district knows your hunters cannot be bought. That story is worth more than the haul it interrupted."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_harem_walks_your_line",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Line You Drew",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story3",
+      "positive_traits": {
+        "Graceful": 4,
+        "Energetic": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You traced the route across the crypt map with one finger, and {worker_name} walks that line and no other, past two tempting side doors, back at the exact hour you named. The take is laid out on your desk in the order you like it, and the obedience is worn openly, like the mark it is.",
+        "critical_success": "The line you drew cuts through a chamber every other crew skips out of superstition. {worker_name} does not break stride, your line is your line, and comes back hauling an untouched shrine hoard. Trusting you over fear pays out in old gold, and proves something neither of you needs to say aloud."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_servant_catalogued_the_backlog",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Vault Backlog",
+      "skill_options": [
+        "Craft"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_trap_kit_tuneup",
+      "positive_traits": {
+        "Robust": 4,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You mentioned once, in passing, that the guild vault was a midden of uncatalogued finds. Once was enough. {worker_name} comes back from the dig and spends the evening in the vault unasked, cleaning, labeling, shelving, until the backlog is a saleable inventory. Buyers pay noticeably better for treasure they can actually find.",
+        "critical_success": "Deep in the backlog, under a crate of temple brass, {worker_name} turns up a mislabeled signet ring worth fifty times its ticket. It goes straight to your desk with the label corrected in a steady hand, because in this house nothing worth having gets pocketed on the stairs."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 10
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_treasure_hunter_servant_took_the_flooded_shaft",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Flooded Shaft",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "treasure_hunter_story2",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The flooded shaft below the old temple has hung on the guild board for a month, refused by every hunter with options. You ask once. {worker_name} goes down the same morning, wades the black water, clears the nesting stirges with a short blade, and comes up with a satchel of offering bowls nobody believed were still down there.",
+        "critical_success": "The reason the shaft stayed on the board is the reason it pays: nobody has worked it in a generation. Behind the vermin and the waist-deep water waits an offertory niche untouched since the temple drowned, and {worker_name} hands you the richest haul of the month from the job nobody wanted, without one word about the smell."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

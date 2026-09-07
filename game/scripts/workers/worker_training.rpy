@@ -588,7 +588,7 @@ init python:
                     tdef = get_tdef(name)
                 except Exception:
                     tdef = None
-            if tdef and tdef.get("nsfw") and not getattr(persistent, "nsfw_enabled", False):
+            if tdef and content_object_is_restricted(tdef) and not getattr(persistent, "nsfw_enabled", False):
                 continue
             if hasattr(entry, "__contains__") and "duration" in entry:
                 try:
@@ -788,6 +788,35 @@ init python:
         elif hasattr(store, "update_skill_levels"):
             store.update_skill_levels()
 
+    def begin_training_repeat_candidate(interaction_id):
+        """Clear the session-only completion marker for one Training runner."""
+        try:
+            renpy.session.pop("_completed_training_repeat_interaction_id", None)
+        except Exception:
+            return False
+        return isinstance(interaction_id, (str, int, float, bool))
+
+    def mark_training_outcome_complete(interaction_id):
+        """Mark one terminal Training outcome without retaining an interaction object."""
+        if not isinstance(interaction_id, (str, int, float, bool)):
+            return False
+        try:
+            renpy.session["_completed_training_repeat_interaction_id"] = interaction_id
+        except Exception:
+            return False
+        return True
+
+    def consume_completed_training_repeat(worker, interaction):
+        """Consume a matching terminal marker and record Repeat provenance safely."""
+        try:
+            completed_id = renpy.session.pop("_completed_training_repeat_interaction_id", None)
+            interaction_id = interaction.get("id") if hasattr(interaction, "get") else None
+            if completed_id != interaction_id:
+                return False
+            return bool(remember_last_interaction_for_worker(worker, interaction))
+        except Exception:
+            return False
+
     def training_apply_outcome(worker, interaction, logical_key, skill_name=None):
         """
         Apply training_results[logical_key]: skill_uses on interaction.training_skill (usually +1 on trained paths).
@@ -815,6 +844,7 @@ init python:
         training_try_trait_chances(worker, training_coerce_trait_roll_list(_tc), stat_changes)
         _trc = block.get("trait_remove_chance") if block and hasattr(block, "get") else None
         training_try_trait_remove_chances(worker, training_coerce_trait_roll_list(_trc), stat_changes)
+        mark_training_outcome_complete(interaction.get("id") if hasattr(interaction, "get") else None)
         return stat_changes
 
     def training_apply_insist_cost(worker, interaction, branch, stat_changes):
@@ -1059,6 +1089,7 @@ init python:
 # training_interaction_menu_runner: enter via renpy.call_in_new_context from interaction_category (see screens.rpy).
 label training_interaction_menu_runner(worker, interaction):
     # Black base first (stays under all training screens), then peel UI — only new layers stack on top.
+    $ begin_training_repeat_candidate(interaction.get("id") if hasattr(interaction, "get") else None)
     $ store._training_interaction_result_active = False
     $ renpy.show_screen("training_cutscene_backdrop")
     $ renpy.hide_screen("interaction_category")
@@ -1066,6 +1097,7 @@ label training_interaction_menu_runner(worker, interaction):
     $ renpy.hide_screen("worker_details")
     $ renpy.hide_screen("training_branch_menu")
     call training_interaction_run(worker, interaction) from _call_training_interaction_run
+    $ consume_completed_training_repeat(worker, interaction)
     $ training_restore_ui_after_result(getattr(store, "_training_flow_worker", None) or worker)
     return
 

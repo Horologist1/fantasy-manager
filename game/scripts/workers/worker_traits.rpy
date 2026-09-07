@@ -3,6 +3,11 @@ init python:
     import renpy.store as store
     import json
     import os
+    from fm_orientation.rules import (
+        MARKER_FORCE,
+        MARKER_ROLLED,
+        toggle_action as fm_orientation_toggle_action,
+    )
 
     def _extract_traits_from_data(traits_data, source_name):
         """Normalize a JSON payload into a list of trait dicts."""
@@ -91,7 +96,7 @@ init python:
                 seen_names.add(trait_name)
                 raw_traits.append(trait)
                 raw_cache[trait_name] = trait
-                if nsfw_enabled or not trait.get("nsfw", False):
+                if nsfw_enabled or not content_object_is_restricted(trait):
                     filtered_traits.append(trait)
                     filtered_cache[trait_name] = trait
 
@@ -107,7 +112,7 @@ init python:
                 seen_names.add(trait_name)
                 raw_traits.append(trait)
                 raw_cache[trait_name] = trait
-                if nsfw_enabled or not trait.get("nsfw", False):
+                if nsfw_enabled or not content_object_is_restricted(trait):
                     filtered_traits.append(trait)
                     filtered_cache[trait_name] = trait
 
@@ -119,24 +124,36 @@ init python:
         return filtered_traits
 
     def refresh_traits_cache(force=False):
-        """Reload and cache traits list + lookup map."""
+        """Reload canonical traits plus a separate presentation-only visible cache."""
         global traits_list
         raw_traits, filtered_traits, raw_cache, filtered_cache = _build_trait_caches()
-        traits_list = filtered_traits
-        store._trait_name_set = set(filtered_cache.keys())
-        store._trait_def_cache = filtered_cache
+        # Simulation and existing workers must always resolve against the complete
+        # catalog. Filtering this list would silently remove modifiers/caps in SFW.
+        traits_list = raw_traits
+        store._trait_name_set = set(raw_cache.keys())
+        store._trait_def_cache = raw_cache
         store._trait_def_raw_cache = raw_cache
         store._trait_list_raw = raw_traits
+        store._trait_def_visible_cache = filtered_cache
+        store._trait_list_visible = filtered_traits
         if traits_list:
-            renpy.log(f"TRAITS: Cache loaded with {len(traits_list)} traits (filtered), {len(raw_traits)} raw")
+            renpy.log(f"TRAITS: Cache loaded with {len(raw_traits)} canonical, {len(filtered_traits)} visible")
         return traits_list
 
     def get_all_traits():
-        """Return trait definitions from cache. Use store (not globals) so ensure_worker_defaults sees it."""
+        """Return the complete canonical catalog used by simulation and save logic."""
         cached = getattr(store, "_trait_def_cache", None)
         if hasattr(cached, "get") and cached:
             return list(cached.values())
         return refresh_traits_cache(force=True) or []
+
+    def get_visible_traits():
+        """Return only definitions allowed by the current presentation policy."""
+        cached = getattr(store, "_trait_def_visible_cache", None)
+        if cached is None:
+            refresh_traits_cache(force=True)
+            cached = getattr(store, "_trait_def_visible_cache", {})
+        return list(cached.values()) if hasattr(cached, "values") else []
 
     def get_trait_definition(trait_name):
         """Return trait definition by name."""
@@ -151,13 +168,35 @@ init python:
 
         return cache.get(trait_name) or raw_cache.get(trait_name)
 
+    def get_worker_trait_match_names(worker):
+        """Return stored trait keys plus definition aliases for story matching."""
+        names = set()
+        if not hasattr(worker, "get"):
+            return names
+        for trait_name in worker.get("traits", []) or []:
+            normalized_name = str(trait_name).strip()
+            if not normalized_name:
+                continue
+            names.add(normalized_name)
+            trait_def = get_trait_definition(normalized_name)
+            aliases = trait_def.get("aliases", []) if hasattr(trait_def, "get") else []
+            if isinstance(aliases, str):
+                aliases = [aliases]
+            for alias in aliases or []:
+                normalized_alias = str(alias).strip()
+                if normalized_alias:
+                    names.add(normalized_alias)
+        return names
+
     # Lazy load: don't load at init (renpy.file/open can fail during init phase).
     # First get_all_traits/refresh call will load - happens when load_workers runs (runtime).
     traits_list = []
     store.load_traits = load_traits
     store.refresh_traits_cache = refresh_traits_cache
     store.get_all_traits = get_all_traits
+    store.get_visible_traits = get_visible_traits
     store.get_trait_definition = get_trait_definition
+    store.get_worker_trait_match_names = get_worker_trait_match_names
 
     def get_trait_desc(trait_name):
         """Get the description of a trait by name."""
@@ -354,6 +393,11 @@ init python:
         # Recalculate trait modifiers
         recalculate_trait_modifiers(worker)
 
+    def _clear_orientation_marker_for_trait(worker, trait_name):
+        if not worker or str(trait_name or "").strip().lower() not in ("gay", "lesbian"):
+            return False
+        return worker.pop("orientation_forced", None) is not None
+
     def remove_trait(worker, trait_name):
         """Remove a trait from the worker."""
         if not worker:
@@ -366,6 +410,7 @@ init python:
         worker_traits = worker.get("traits", [])
         if trait_name in worker_traits:
             worker["traits"].remove(trait_name)
+            _clear_orientation_marker_for_trait(worker, trait_name)
             renpy.log(f"Removed trait '{trait_name}' from worker '{worker.get('name', 'Unknown')}'. Remaining traits: {len(worker['traits'])}")
             
             # Remove duration if it exists
@@ -398,6 +443,7 @@ init python:
                 if isinstance(key, str) and key.lower() == str(trait_name).lower():
                     del worker["trait_durations"][key]
                     removed_any = True
+        _clear_orientation_marker_for_trait(worker, trait_name)
         if removed_any:
             _sanitize = getattr(store, "sanitize_worker_trait_state", None)
             if callable(_sanitize):
@@ -411,6 +457,8 @@ init python:
         """
         workers = getattr(store, "workers", []) or []
         for worker in workers:
+            if worker_is_in_franchise(worker):
+                continue
             durations = worker.get("trait_durations") or {}
             if not durations:
                 continue
@@ -675,25 +723,58 @@ init python:
             # Recalculate modifiers after deduplication
             recalculate_trait_modifiers(worker)
 
+    def _apply_orientation_toggle(worker):
+        """Add/remove the toggle-granted orientation trait per current modes.
+
+        Marked workers carry worker["orientation_forced"] ("force"/"rolled") so the
+        image system remaps them to homo/les art. Authored traits never get a marker
+        (we only mark when WE add), so removal can never touch authored content.
+        Returns True when the worker changed.
+        """
+        if not getattr(persistent, "nsfw_enabled", False):
+            return False
+        if not hasattr(worker, "get"):
+            return False
+        _wgender = str(worker.get("gender", "")).strip().lower()
+        if _wgender not in ("male", "female"):
+            return False
+        _omode_attr = "orientation_gay_mode" if _wgender == "male" else "orientation_lesbian_mode"
+        _otrait = "Gay" if _wgender == "male" else "Lesbian"
+        _omode = getattr(persistent, _omode_attr, "off")
+        if not worker.get("traits"):
+            worker["traits"] = []
+        _marker = worker.get("orientation_forced")
+        _marker_sanitized = False
+        if _marker not in (None, MARKER_FORCE, MARKER_ROLLED):
+            worker.pop("orientation_forced", None)
+            _marker = None
+            _marker_sanitized = True
+        _oaction = fm_orientation_toggle_action(
+            _omode, _otrait in worker["traits"], _marker
+        )
+        if _oaction == "add":
+            worker["traits"].append(_otrait)
+            worker["orientation_forced"] = "force"
+        elif _oaction == "remove":
+            if _otrait in worker["traits"]:
+                worker["traits"].remove(_otrait)
+            worker.pop("orientation_forced", None)
+        elif _oaction == "clear_marker":
+            worker.pop("orientation_forced", None)
+            return True
+        else:
+            return _marker_sanitized
+        recalculate_trait_modifiers(worker)
+        renpy.log(f"Orientation toggle: {_oaction} '{_otrait}' on {worker.get('name', 'Unknown')}")
+        return True
+
     def ensure_minimum_traits(worker, min_traits=3, max_traits=5):
         """Ensure worker has minimum number of traits, adding random ones if needed."""
         # Worker Orientation options (More Options): "force" gives the orientation trait
         # to every worker of the matching gender - unique story workers INCLUDED (player
         # choice; narrative works everywhere, images depend on each worker's folder). NSFW-only.
-        if getattr(persistent, "nsfw_enabled", False):
-            _wgender = str(worker.get("gender", "")).strip().lower()
-            _forced_trait = None
-            if _wgender == "male" and getattr(persistent, "orientation_gay_mode", "off") == "force":
-                _forced_trait = "Gay"
-            elif _wgender == "female" and getattr(persistent, "orientation_lesbian_mode", "off") == "force":
-                _forced_trait = "Lesbian"
-            if _forced_trait:
-                if not worker.get("traits"):
-                    worker["traits"] = []
-                if _forced_trait not in worker["traits"]:
-                    worker["traits"].append(_forced_trait)
-                    recalculate_trait_modifiers(worker)
-                    renpy.log(f"Orientation force: added '{_forced_trait}' to {worker.get('name', 'Unknown')}")
+        # Also reverts force-granted traits when the toggle drops (spec 2026-08-24).
+        _apply_orientation_toggle(worker)
 
         # Unique story workers (Yvara, the Lanista, Aelis...) must keep exactly their
         # authored traits: random backfill contradicted the design (the Lanista ships
@@ -734,7 +815,7 @@ init python:
             if (not t.get("only_assigned", False)
                 or (_gay_random and t["name"] == "Gay")
                 or (_les_random and t["name"] == "Lesbian"))
-            and (persistent.nsfw_enabled or not t.get("nsfw", False))
+            and (persistent.nsfw_enabled or not content_object_is_restricted(t))
             and t["name"] not in worker["traits"]
             and (not only_no_reqs or not t.get("gender_restriction"))
             and worker_meets_trait_requirements(t, worker["traits"])
@@ -775,7 +856,15 @@ init python:
                 worker["traits"].append(trait_name)
                 added_count += 1
                 renpy.log(f"Added trait '{trait_name}' to {worker.get('name', 'Unknown')}")
-                
+                # Worker Orientation "enable": the trait entered the pool only via the
+                # toggle bypass (only_assigned) - remember it so images remap to homo/les.
+                if (
+                    trait.get("only_assigned", False)
+                    and ((trait_name == "Gay" and _gay_random) or (trait_name == "Lesbian" and _les_random))
+                    and "orientation_forced" not in worker
+                ):
+                    worker["orientation_forced"] = "rolled"
+
                 # Remove from possible traits to avoid duplicates
                 possible_traits = [t for t in possible_traits if t["name"] != trait_name]
         
@@ -786,5 +875,33 @@ init python:
         else:
             renpy.log(f"Could not add any traits to {worker.get('name', 'Unknown')} - no suitable traits available")
 
+    def reconcile_orientation_toggle():
+        """Immediate sweep when the Worker Orientation toggle changes (Options screen).
+
+        Applies the same add/remove rules as ensure_minimum_traits to the live roster
+        and the recruit pool. Safe no-op from the main menu (no game loaded). A generic
+        worker left below the trait minimum after a removal is topped up by the normal
+        backfill on the next load - deliberate (no surprise mid-session rerolls).
+        """
+        _changed = False
+        for _roster in (getattr(store, "workers", None), getattr(store, "available_workers", None)):
+            if not _roster:
+                continue
+            for _w in _roster:
+                try:
+                    _changed = _apply_orientation_toggle(_w) or _changed
+                except Exception as e:
+                    _name = _w.get("name", "?") if hasattr(_w, "get") else "?"
+                    renpy.log(f"Orientation toggle worker failed ({_name}): {e}")
+        if _changed:
+            try:
+                _clear = getattr(store, "clear_image_cache", None)
+                if callable(_clear):
+                    _clear()
+                renpy.restart_interaction()
+            except Exception as e:
+                renpy.log(f"Orientation toggle cache refresh failed: {e}")
+
     store.ensure_minimum_traits = ensure_minimum_traits
+    store.reconcile_orientation_toggle = reconcile_orientation_toggle
 

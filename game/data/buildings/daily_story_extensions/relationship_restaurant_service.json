@@ -1,0 +1,658 @@
+{
+  "_comment": "Relationship daily stories (Restaurant server). CONTRACT: (1) stat-gated dailies (romance>=75 x2, relationship>=75 x2, rebelliousness>=60 x2) roll normally; romance/relationship stories RAISE the gating stat on success and LOWER it on failure; rebellion stories cost real money on failure. (2) 'Loves you' x2 rolls normally: success = the love is channeled into working for YOU and your business; failure = too in love to perform, the counterpart is MOVED and forgives -> earnings 0 (you collect nothing; the worker still draws salary), gentle consequences. (3) Best Friends / Harem Member / House Servant x2 each are no_fail (success/critical only), anchored on the bond with the MANAGER. STYLE: stories are about what happens BECAUSE of the bond (consequence, not declaration; being explicit about love is fine). PROSE: gender-neutral for worker AND manager - use {worker_name}, 'you', 'the client/they'; never she/her/he/his. story_image reuses existing profession art as placeholder.",
+  "building_id": "restaurant",
+  "profession_id": "service",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "restaurant_service_romance_best_table",
+      "weight": 2,
+      "report": "The Best Table Held",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "All night {worker_name} keeps the window table dressed the way you like it, glass polished, candle fresh, on the half-hope you might sit down. A courting couple pays double for the seat because it is the only table in the room that looks loved.",
+        "critical_success": "By the second seating the window table has a waiting list. {worker_name} sells the room's best seat three times over without ever explaining why it shines, and every coin rings into your till while your name stays quietly out of it.",
+        "mediocre": "{worker_name} spends more care on one empty table than on the six full ones. The candle burns down unwatched and the tips come in thin.",
+        "failure": "{worker_name} holds the window table all evening for someone who never comes, waving off two paying parties in the meantime. Closing the book on the empty seat feels like closing it on you, and the whole shift sours."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_romance_deflected_flirt",
+      "weight": 2,
+      "report": "Flirt into a Tasting",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A silver-tongued guest spends the evening flirting across the bread basket. {worker_name}, whose heart is spoken for even if you have never asked to hold it, turns every compliment into a course, and the flirt ends the night paying for a full tasting menu instead of a kiss.",
+        "critical_success": "The guest mistakes devotion for availability and keeps raising the stakes. {worker_name} keeps banking them, another bottle, the good cheese, the cellar vintage, until the flirtation has bought out half the board. The heart being courted belongs elsewhere; the coin lands in your drawer.",
+        "mediocre": "The compliments use words {worker_name} wishes came from you, and the wanting makes the service wobble. The guest senses the distance and tips accordingly.",
+        "failure": "One compliment lands too close to the thing {worker_name} actually wants to hear from you. The tray tips, the cellar vintage soaks the tablecloth, and the guest leaves wearing the house wine and a grudge."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_friend_common_jar",
+      "weight": 2,
+      "report": "The Common Jar",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A festival crowd leaves {worker_name}'s apron heavy with personal tips, and every coin of it goes into the common jar at the pass, because that is what you would do. The kitchen notices. For the rest of the night plates come up faster for {worker_name}'s tables than for anyone else's.",
+        "critical_success": "The gesture rewires the whole shift. Cooks, runner and dishwasher start moving like one crew around {worker_name}, covers turn at a pace the room has never managed, and at close the jar splits fat for everyone, your till fattest of all.",
+        "mediocre": "The tips go in the jar and earn a nod from the pass, but the night is too slow for the goodwill to buy much.",
+        "failure": "Someone counts the jar short and says so loudly, and the accusation lands on the one who fed it most. The floor bickers through the last seating, service drags, and {worker_name} goes home stung at having brought trouble into your house instead of keeping it out."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_friend_dine_and_dash",
+      "weight": 2,
+      "report": "The Dasher Seated",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} clocks a table of four easing toward the door with the bill unpaid, and instead of shouting, arrives with the dessert trolley and a smile that leaves no exit. They sit back down, pay in full, and order the tart. Your ledger never feels the wobble.",
+        "critical_success": "Not only does the bill get settled, the would-be dashers are so disarmed by being caught kindly that they book the corner table for next week. Afterward {worker_name} finds you at the till to walk through the tells, feet angled to the door, coats on too early, so the whole floor can spot the next ones.",
+        "mediocre": "{worker_name} intercepts the party at the door and recovers the bill, though the scene costs the room some of its hum.",
+        "failure": "{worker_name} reads the wrong table. An honest family gets stopped at the door over a bill already paid, apologies eat ten minutes, and in the confusion the actual dashers slip into the street. What stings most is the thought of your face at the count."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_rebel_pocket_tips",
+      "weight": 2,
+      "report": "Tips Off the Book",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "House rule says tips are declared at the count. {worker_name} has a different rule and a seam in the apron for it. Tonight the skim is modest, the declared take looks plausible, and nobody squints at the arithmetic.",
+        "critical_success": "A merchant party drinks deep and tips like sailors, and most of it vanishes into the apron seam before the coins stop ringing. Even the declared remainder makes a good night on paper, so the count sails through unquestioned.",
+        "mediocre": "A sharp-eyed colleague works the same section all night, and the skimming window never opens. The private purse stays thin and the mood stays sour.",
+        "failure": "A tipsy regular claps {worker_name} on the shoulder within your earshot and toasts 'the finest pockets in the city.' The count comes up short, the shortfall lands on your books, and the apron seam suddenly has witnesses."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_rebel_ghost_reservations",
+      "weight": 2,
+      "report": "Ghost Reservations",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_noble_dinner_restaurant",
+      "failure_image": "service_noble_dinner_restaurant_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "Half the names in tonight's reservation book are invented, and behind them sit {worker_name}'s friends, installed at the window table like minor nobility. They order just enough to blur into the crowd and tip their host directly, and the book balances if nobody reads it too closely.",
+        "critical_success": "The friends bring friends of their own, moneyed ones. The ghost table turns into the loudest, thirstiest corner of the room, real coin follows the noise, and {worker_name} banks private tips off a party your book never knew it hosted.",
+        "mediocre": "The friends nurse one bottle for three hours at the best table in the house while paying custom eats by the kitchen door. Nothing breaks, nothing earns.",
+        "failure": "A 'Lord Vell', invented, holds the window table all night while {worker_name} turns away three real parties in the ghost's name. The friends never show, the table earns nothing, and the walkaways carry their coin down the street and tell the story as they go."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_lovesyou_till_is_yours",
+      "weight": 3,
+      "report": "The Till Is Yours",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the room like the rent depends on it, because the till it feeds is yours. Extra covers squeezed in, the good wine praised until it sells out, tables turned with a smile that never thins. Every ring of the drawer is a small gift with your name on it.",
+        "critical_success": "The floor has never moved like this. {worker_name} runs the whole shift on pure devotion, upselling, turning, charming, and closes the best night the room has logged in months, then insists on handing you the count personally, just to watch your face while you weigh it.",
+        "mediocre": "Between courses {worker_name} keeps drifting toward the window where your office light burns, and the drifting costs a table or two their timing. The night earns its keep and nothing more.",
+        "failure": "Somewhere between the pass and table six, {worker_name} starts daydreaming about you and comps the plum tart without ever writing a ticket. The table, treated to free dessert and the sight of someone luminously elsewhere, applauds the house's romantic streak and spreads the story kindly. The coin is gone, but nothing else is."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_lovesyou_your_favorite_dish",
+      "weight": 3,
+      "report": "Your Favorite Dish",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "failure_image": "service_story1_restaurant_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Asked what is good tonight, {worker_name} describes your favorite dish, and the description comes out the way people talk about things they love. The table orders it to a plate, then the next table does, and the kitchen sells out of it by the second seating, all that unspoken feeling converted neatly into covers.",
+        "critical_success": "The dish becomes an event. Word crosses the room that the server describes it like a love letter, strangers order it just to hear the telling, and the chef sends a runner to market for more. Your favorite carries the whole night's takings on its back.",
+        "mediocre": "The telling wanders. Somewhere in describing the dish, {worker_name} is really describing you, and the table, faintly embarrassed on everyone's behalf, orders the soup.",
+        "failure": "Halfway through the telling, {worker_name} forgets the order pad entirely and simply talks, about the dish, about the person it always brings to mind, and sends out a portion on the house without a ticket. The table listens the way people listen to confessions, forgives the chaos completely, and leaves warm. Nothing rings into the till, and nobody minds but the ledger."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_bestfriends_co_owner",
+      "weight": 3,
+      "report": "Like a Co-Owner",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} runs the book like a co-owner, collapsing two half-empty sections into one, walking a stranded birthday party into the private room, sliding the big spenders into prime hours. At close the till gets counted twice, once for the ledger and once for the pleasure of showing you the number.",
+        "critical_success": "Mid-shift {worker_name} catches the wine merchant's runner padding the invoice at the back door, settles it with a raised eyebrow, and still keeps the floor humming. Later the two of you rework the specials board over the last of the coffee, partners in everything but the paperwork."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_bestfriends_fed_the_snoop",
+      "weight": 3,
+      "report": "Soup for the Snoop",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_noble_dinner_restaurant",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A diner with soft hands and hard questions keeps steering the chat toward your suppliers and your margins. {worker_name} serves three flawless courses of cheerful nonsense, wrong farm, wrong vintner, wrong numbers, and comes to find you at close with the snoop's real name and a full account.",
+        "critical_success": "By dessert the curious diner is the one answering questions. {worker_name} walks away with the rival house's winter menu, its staffing troubles and the name of the backer bankrolling it, and delivers the lot to you with the last clean fork. You know their plans before their own cooks do."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_harem_your_favor",
+      "weight": 3,
+      "report": "Your Favor Worn",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_noble_dinner_restaurant",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the floor with your token knotted at the wrist and makes no secret of what it means. The regulars orbit the devoted one all night, half-charmed and half-envious of whoever commands loyalty like that, and pay gladly for the privilege of being near it.",
+        "critical_success": "A noble party requests {worker_name} by name, having heard of the server who belongs, openly and happily, to the house's owner. They stay four courses past their booking just to ask questions about you, and reserve the private room for the month on the way out."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_harem_your_design",
+      "weight": 3,
+      "report": "Served to Your Design",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You set tonight's service before the doors opened, the pacing, the pairings, which wine to praise and which to let sit, and {worker_name} executes it to the letter, taking a private pleasure in being your instrument. The room feels a single guiding hand behind every plate and eats better for it.",
+        "critical_success": "The choreography runs so exact that a traveling gourmet stops {worker_name} to ask who trained this floor. The answer is a single glance toward your office. The gourmet dines twice in one evening, taking notes between courses, and pays for both sittings like an apology."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_servant_double_section",
+      "weight": 3,
+      "report": "Two Sections Covered",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "positive_traits": {
+        "Energetic": 4,
+        "Robust": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A runner goes home sick at the first seating. You ask, once, and {worker_name} takes both sections without a word, working the length of the room until the candles gutter. No dropped plate, no missed course, no complaint. Twice the ground covered, because you asked.",
+        "critical_success": "{worker_name} carries two sections through a full house and never once loses the room's rhythm, ending the night steadier than servers who worked half as much. The double take goes into your drawer along with something rarer, the certainty that one word from you is enough."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "restaurant_service_servant_worst_tables",
+      "weight": 3,
+      "report": "Tables Nobody Wanted",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1_restaurant",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You point {worker_name} at the tables nobody wants, the drunk merchants, the family with the shrieking twins, the guest who sends every plate back twice. Each one gets worked with the same unhurried courtesy until the room's roughest corners sit quiet and paying.",
+        "critical_success": "The guest who sends everything back, the terror of three seasons of servers, finishes a full meal for the first time in the house's memory and leaves a tip the size of the bill, with a note requesting {worker_name} by name next week. The hard list becomes the profitable list, because you assigned it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

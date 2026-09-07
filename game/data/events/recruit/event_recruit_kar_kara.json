@@ -1,0 +1,124 @@
+[
+  {
+    "id": "event_recruit_kara",
+    "description": "A tall woman crosses your floor with a fighter's economy of motion, chalk dust still on her boots and old scars laddering her forearms. Something in the set of her jaw, the particular stillness of her, is strangely familiar.",
+    "dialogue": "\"Kara. Arena blood, Arena training. I hear you changed the fate of the sands, and I came to see what sort of future your house offers another fighter. I fight, I work, I do not complain. Give me honest wages and you will have one of the best blades the Arena ever taught.\"",
+    "weight": 1,
+    "unlimited": true,
+    "random_worker": false,
+    "worker_name": "Kara",
+    "nsfw": false,
+    "required_store_value": [
+      {
+        "var": "lanista_gender",
+        "equals": "male"
+      },
+      {
+        "var": "lanista_ending_done",
+        "equals": true
+      }
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Hire her at a full wage. The Arena's fight is yours too. ([COST] per day)",
+        "message": "You offer the full wage without haggling. Kara takes your hand with a grip like a gate hinge. 'The Arena's people said you were fair. I will enjoy confirming it.' Word that you stood by the Arena's kin travels fast (+3 Reputation).",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Negotiate: steady work at a lower wage - more left over for the sands. ([COST] per day)",
+        "message": "'Less coin, steady work... a purse built over a season beats one fat night.' She runs the sum with an Arena clerk's precision, and nods once. 'Done.' She accepts a reduced daily cost ([actual_cost], a 20% discount), and the fair dealing still speaks well of your house (+2 Reputation).",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 2,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Turn her away.",
+        "message": "Kara takes the refusal without a flicker - the family face. 'Fair enough. The sand teaches patience.' She leaves the way she came, unhurried, and you suspect this is not the last you will see of her.",
+        "effect": {
+          "recruit_worker": false,
+          "reputation": 0,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "event_recruit_kar",
+    "description": "A broad-shouldered man crosses your floor with a fighter's economy of motion, chalk dust still on his boots and old scars laddering his forearms. Something in the set of his jaw, the particular stillness of him, is strangely familiar.",
+    "dialogue": "\"Kar. Arena blood, Arena training. I hear you changed the fate of the sands, and I came to see what sort of future your house offers another fighter. I fight, I work, I do not complain. Give me honest wages and you will have one of the best blades the Arena ever taught.\"",
+    "weight": 1,
+    "unlimited": true,
+    "random_worker": false,
+    "worker_name": "Kar",
+    "nsfw": false,
+    "required_store_value": [
+      {
+        "var": "lanista_gender",
+        "equals": "female"
+      },
+      {
+        "var": "lanista_ending_done",
+        "equals": true
+      }
+    ],
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Hire him at a full wage. The Arena's fight is yours too. ([COST] per day)",
+        "message": "You offer the full wage without haggling. Kar takes your hand with a grip like a gate hinge. 'The Arena's people said you were fair. I will enjoy confirming it.' Word that you stood by the Arena's kin travels fast (+3 Reputation).",
+        "effect": {
+          "recruit_worker": true,
+          "reputation": 3,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Negotiate: steady work at a lower wage - more left over for the sands. ([COST] per day)",
+        "message": "'Less coin, steady work... a purse built over a season beats one fat night.' He runs the sum with an Arena clerk's precision, and nods once. 'Done.' He accepts a reduced daily cost ([actual_cost], a 20% discount), and the fair dealing still speaks well of your house (+2 Reputation).",
+        "effect": {
+          "recruit_worker": true,
+          "cost_modifier": 0.8,
+          "reputation": 2,
+          "success_chance": 0,
+          "joy": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Turn him away.",
+        "message": "Kar takes the refusal without a flicker - the family face. 'Fair enough. The sand teaches patience.' He leaves the way he came, unhurried, and you suspect this is not the last you will see of him.",
+        "effect": {
+          "recruit_worker": false,
+          "reputation": 0,
+          "success_chance": 0,
+          "joy": 0,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ]
+  }
+]

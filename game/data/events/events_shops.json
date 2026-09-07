@@ -17,14 +17,11 @@
     "background_image": "event_bg",
     "success_image": "generic_success",
     "failure_image": "generic_failure",
-    "required_flags": {
-      "objective_6_complete": true
-    },
     "excluded_flags": {
       "shop2_unlocked": true
     },
     "conditions": {
-      "start_when": "after_days:3",
+      "start_when": "after_days:3 AND store.current_objective >= 7",
       "stop_when": "has_flag:shop2_unlocked"
     },
     "choices": [
@@ -161,7 +158,7 @@
   },
   {
     "id": "rescue_shop_owner_debt_wealthy",
-    "description": "A commotion breaks out in the market square as rough men in worn leather surround a merchant, their voices rising in threat. The shop owner, a middle-aged woman with worry etched into her face, pleads for more time as they demand immediate payment. Her goods—fine fabrics and rare trinkets—lie scattered, and you can see the desperation in her eyes. This could be your chance to gain favor with a merchant who might open new trade opportunities.",
+    "description": "Shouting draws your eye across the market square: rough men in worn leather have a merchant's stall surrounded, demanding coin in the tone that promises broken fingers. The shop owner, a middle-aged woman gray with worry, pleads for time while her fine fabrics and rare trinkets are knocked into the mud. The sum they keep repeating would ruin her — and would not dent your purse. Favor with a merchant like this could open new trade opportunities.",
     "weight": 50,
     "limited": true,
     "event_probability": 80,
@@ -189,8 +186,8 @@
         "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+; Potential: Reputation)",
         "condition": "Charm",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with silver-tongued grace, their words cutting through the tension like a blade.\n\nThe debt collectors, disarmed by such persuasive charm, back down and agree to extended terms.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to negotiate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] glides into the confrontation as though joining a garden party, and within three sentences the lead collector is somehow apologizing for the mess.\n\nExtended terms are agreed on the spot — largely because [acting_worker] makes them sound like the collectors' own generous idea.\n\nThe merchant clasps your hand in both of hers. 'I owe you my livelihood. Come to my shop—the Adventurer's Market is open to you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries honeyed words, but these collectors are paid too well to be sweet-talked. They push past your worker and strip the stall bare. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -218,8 +215,8 @@
         "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors size one another up, and not one of them wants to be first to test your worker. Muttering about coming back with more men, they slink off empty-handed.\n\nThe merchant exhales shakily and grips your hand. 'I thought they'd break my arms this time,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] squares up, but the debt collectors have muscle of their own and the numbers to back it. They shoulder past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] steps in without a word and simply stands there, hand resting on a weapon, wearing the expression of someone doing arithmetic.\n\nThe collectors do the same arithmetic and like their odds considerably less. Muttering about coming back with more men, they leave empty-handed.\n\nThe merchant exhales shakily. 'I thought they'd break my arms this time. Come to my shop—the Adventurer's Market is open to you and your workers.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] squares up, but the collectors have muscle of their own and numbers besides. They shoulder past your worker and strip the stall bare. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -247,8 +244,8 @@
         "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors squint at the contract as clause after clause is turned against them. Unable to argue with the paperwork, they withdraw to 'consult their employer.'\n\nThe merchant stares at the voided terms, then at you. 'They had me signing my own ruin,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' The tale of the outwitted collectors makes the rounds, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] picks apart the contract's wording, but the collectors just laugh—they are paid to collect, not to read. They brush past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] asks, mildly, to see the contract — then reads it aloud, clause by clause, in the tone of someone grading poor schoolwork.\n\nBy the third invalid clause the collectors are exchanging glances. Unable to argue with the paperwork, they withdraw to 'consult their employer.'\n\nThe merchant stares at the voided terms, then at you. 'They had me signing my own ruin. Come to my shop—the Adventurer's Market is open to you and your workers.' The tale makes the rounds, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] picks apart the contract's wording, but the collectors just laugh—they are paid to collect, not to read. They brush past your worker and strip the stall bare. The opportunity slips away ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -274,7 +271,7 @@
       },
       {
         "option": "Pay the debt yourself to gain the merchant's favor. (Cost: Money; Gain: Reputation)",
-        "message": "You step forward and produce a heavy purse, covering the merchant's debt in full. The collectors' eyes widen at the coin, and they quickly disperse. The merchant thanks you profusely, promising to open her shop—the Adventurer's Market—to you and your workers. Your reputation for generosity spreads ({actual_money}, {actual_reputation} reputation).",
+        "message": "You settle the matter the way the wealthy do: quietly, completely, and in full view of the square. The purse you hand over doesn't noticeably lighten your coat, and the collectors count it twice out of sheer disbelief before dispersing. The merchant thanks you profusely, promising to open her shop—the Adventurer's Market—to you and your workers. Your reputation for generosity spreads ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -800,
           "reputation": 10,
@@ -292,7 +289,7 @@
       },
       {
         "option": "Stay out of it—this isn't your problem. (Neutral)",
-        "message": "You watch from the shadows as the debt collectors take what they came for. The merchant's shop remains closed, and you feel a missed opportunity slip away. Perhaps another chance will come.",
+        "message": "You watch, and you keep your purse where it is. The collectors take what they came for, the merchant's shop stays dark, and the sum that would have saved her sits unspent in your coffers. Perhaps another chance will come.",
         "effect": {
           "event_flags": {
             "shop2_debt_attempted": true,
@@ -347,8 +344,8 @@
         "option": "Intervene with a charming worker to negotiate. (Requires Charm 70+; Potential: Reputation)",
         "condition": "Charm",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with silver-tongued grace, their words cutting through the tension like a blade.\n\nThe debt collectors, disarmed by such persuasive charm, back down and agree to extended terms.\n\nThe merchant's eyes fill with gratitude as she grasps your hand. 'I owe you my livelihood,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] tries to negotiate, but the debt collectors are too aggressive. They push past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "When the collectors return at week's end, [acting_worker] is already there, leaning against the merchant's stall like an old friend of the family.\n\nThis time the negotiation starts from strength — names dropped, terms recited, a payment schedule their employer would be a fool to refuse. They take the deal.\n\nThe merchant sags with relief. 'Twice now you've stood up for me. The Adventurer's Market is open to you and your workers — always.' Word spreads quickly, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] tries a softer approach this time, but the collectors remember last week and talk over every word. They take what's owed in goods and leave the merchant counting her losses. The opportunity slips away again ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -375,8 +372,8 @@
         "option": "Intervene with a combat-ready worker to intimidate. (Requires Combat 70+; Potential: Reputation)",
         "condition": "Combat",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with intimidating presence, their hand resting on a weapon.\n\nThe debt collectors size one another up, and not one of them wants to be first to test your worker. Muttering about coming back with more men, they slink off empty-handed.\n\nThe merchant exhales shakily and grips your hand. 'I thought they'd break my arms this time,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] squares up, but the debt collectors have muscle of their own and the numbers to back it. They shoulder past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "When the collectors return at week's end, they find [acting_worker] planted in front of the stall, arms crossed, plainly not there to shop.\n\nA week was long enough for them to ask around about your worker. Whatever they heard settles the matter — the debt gets restructured on the spot, politely.\n\nThe merchant grips your hand in both of hers. 'Twice now you've stood up for me. The Adventurer's Market is open to you and your workers — always.' Talk of the standoff races through the square, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] stands their ground, but the collectors came back expecting trouble and brought twice the muscle for it. They shoulder through, take what's owed in goods, and the opportunity slips away again ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -403,8 +400,8 @@
         "option": "Intervene with a clever worker to outmaneuver. (Requires Clever 70+; Potential: Reputation)",
         "condition": "Clever",
         "threshold": 70,
-        "message_success": "[acting_worker] steps forward with clever reasoning, exposing flaws in the debt collectors' claims and finding legal loopholes.\n\nThe collectors squint at the contract as clause after clause is turned against them. Unable to argue with the paperwork, they withdraw to 'consult their employer.'\n\nThe merchant stares at the voided terms, then at you. 'They had me signing my own ruin,' she says. 'Come to my shop—I'll open the Adventurer's Market for you and your workers.' The tale of the outwitted collectors makes the rounds, and your reputation grows ({actual_reputation} reputation).",
-        "message_failure": "[acting_worker] picks apart the contract's wording, but the collectors just laugh—they are paid to collect, not to read. They brush past your worker and seize the merchant's goods. The opportunity slips away ({actual_reputation} reputation).",
+        "message_success": "[acting_worker] spent the week preparing — a copy of the contract, a clerk's opinion, and two precedents dug out of the magistrate's records.\n\nWhen the collectors return, they walk into a recitation of exactly which of their clauses won't survive a hearing. They settle for extended terms rather than test it.\n\nThe merchant stares at the annotated contract, then at you. 'Twice now you've stood up for me. The Adventurer's Market is open to you and your workers — always.' The tale of the outlawyered collectors makes the rounds, and your reputation grows ({actual_reputation} reputation).",
+        "message_failure": "[acting_worker] returns armed with arguments, but this time the collectors bring their employer, and he reads faster than his hirelings. He picks the case apart clause by clause, takes what's owed in goods, and the opportunity slips away again ({actual_reputation} reputation).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -429,7 +426,7 @@
       },
       {
         "option": "Pay the debt yourself to gain the merchant's favor. (Cost: Money; Gain: Reputation)",
-        "message": "You step forward and produce a heavy purse, covering the merchant's debt in full. The collectors' eyes widen at the coin, and they quickly disperse. The merchant thanks you profusely, promising to open her shop—the Adventurer's Market—to you and your workers. Your reputation for generosity spreads ({actual_money}, {actual_reputation} reputation).",
+        "message": "This time you don't wait for the collectors' patience to run out. The debt clears in a single purse, counted out before witnesses so there can be no second collection. The merchant watches the ledger line struck through and breathes properly for the first time in weeks. 'The Adventurer's Market is open to you and your workers — always.' Your reputation for standing by people spreads ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -800,
           "reputation": 10,
@@ -447,7 +444,7 @@
       },
       {
         "option": "Stay out of it—this isn't your problem. (Neutral)",
-        "message": "You watch from the shadows as the debt collectors take what they came for. The merchant's shop remains closed, and you feel a missed opportunity slip away. Perhaps another chance will come.",
+        "message": "You offer the merchant a sympathetic word and little else. She nods slowly, hope leaving her face with a certain dignity, and turns back to her stall to wait out what remains of her week. Perhaps another chance will come.",
         "effect": {
           "event_flags": {
             "shop2_debt_attempted_timestamp": "[calculate_total_days()]"
@@ -474,7 +471,9 @@
     "id": "rescue_shop_owner_debt_fallback",
     "description": "A weary merchant with a cart of exotic goods approaches your establishment. 'I've traveled far and heard of your reputation,' she says. 'I run the Adventurer's Market—wares for those who've proven their worth. I'd like to extend you access. No strings attached. Consider it a gesture of goodwill to a fellow business owner.'",
     "weight": 12,
-    "event_probability": 95,
+    "event_probability": 100,
+    "guaranteed": true,
+    "recovery_priority": true,
     "cooldown_days": 14,
     "worker_selection": "none",
     "building_type": [
@@ -563,7 +562,7 @@
     "choices": [
       {
         "option": "Invest 10,000 coins to expand the emporium. (Cost: Money; Gain: Reputation)",
-        "message": "You count out the coins, each one a promise of future prosperity. The merchant's face lights up with gratitude and ambition. 'Within a week,' she promises, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word spreads through the city about your investment, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
+        "message": "You count out the coins in stacks of ten across her counter, and the merchant watches each one land like a promise being kept. 'Within a week,' she says, hope steadying into certainty, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word of the investment spreads through the city, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -10000,
           "reputation": 25,
@@ -634,7 +633,7 @@
     "choices": [
       {
         "option": "Invest 10,000 coins to expand the emporium. (Cost: Money; Gain: Reputation)",
-        "message": "You count out the coins, each one a promise of future prosperity. The merchant's face lights up with gratitude and ambition. 'Within a week,' she promises, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word spreads through the city about your investment, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
+        "message": "This time you don't let her finish the pitch. The coins come out while she is still talking, and her grin arrives half a second ahead of her composure. 'You won't regret reconsidering. Within the week, the Elite Emporium opens its doors—the finest goods, the rarest treasures, yours first.' Word of the investment spreads through the city, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -10000,
           "reputation": 25,
@@ -681,6 +680,7 @@
     "weight": 100,
     "guaranteed": true,
     "event_probability": 100,
+    "recovery_priority": true,
     "cooldown_days": 21,
     "worker_selection": "none",
     "building_type": [
@@ -706,7 +706,7 @@
     "choices": [
       {
         "option": "Invest 10,000 coins to unlock the Elite Emporium. (Cost: Money; Gain: Reputation)",
-        "message": "You count out the coins, each one a promise of future prosperity. The merchant's face lights up with gratitude and ambition. 'Within a week,' she promises, 'the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word spreads through the city about your investment, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
+        "message": "The deal closes with the ease of two people who always knew it would. She counts the coins once, out of professional habit rather than doubt. 'Within a week, the Elite Emporium will be ready. The finest goods, the rarest treasures—all available to you and yours.' Word of the investment spreads through the city, and merchants everywhere take notice ({actual_money}, {actual_reputation} reputation).",
         "effect": {
           "money": -10000,
           "reputation": 25,

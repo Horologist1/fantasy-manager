@@ -1,0 +1,660 @@
+{
+  "_comment": "Relationship daily stories (Cook). CONTRACT: (1) stat-gated dailies (romance>=75 x2, relationship>=75 x2, rebelliousness>=60 x2) roll normally; romance/relationship stories RAISE the gating stat on success and LOWER it on failure; rebellion stories cost real money on failure. (2) 'Loves you' x2 rolls normally: success = the love is channeled into working for YOU and your business; failure = too in love to perform, the counterpart is MOVED and forgives -> earnings 0, gentle consequences. (3) Best Friends / Harem Member / House Servant x2 each are no_fail (success/critical only), anchored on the bond with the MANAGER. PROSE: gender-neutral for worker AND manager - use {worker_name}, 'you', 'the client/they'. story_image reuses existing profession art as placeholder.",
+  "building_id": "restaurant",
+  "profession_id": "cook",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "restaurant_cook_romance_plate_for_you",
+      "weight": 2,
+      "report": "Built Around Your Taste",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "failure_image": "cook_story1_restaurant_failure",
+      "positive_traits": {
+        "Charming": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The evening special is new to the menu but not to {worker_name}, who has been composing it for weeks: your favorite cut, your preferred heat, the sauce you once praised in passing. The dining room orders it blind and cleans every plate, tasting a devotion no one at the tables can name.",
+        "critical_success": "The special sells out before the second seating, and a table of merchants demands to meet the cook who made it. {worker_name} takes the applause at the pass while looking straight past the crowd, checking whether you saw.",
+        "mediocre": "{worker_name} keeps adjusting the seasoning against an absent palate, yours, and the dish lands somewhere between two tastes. Diners finish it without asking about it.",
+        "failure": "{worker_name} builds the whole service around a dish meant for you, and you never come through the door. The disappointment leaks into the cooking; plates go out careless and cold, and two tables send them back."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_romance_poaching_offer",
+      "weight": 2,
+      "report": "Refused a Rival Kitchen",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "cook_story2_restaurant",
+      "failure_image": "cook_story2_restaurant_failure",
+      "positive_traits": {
+        "Elegant": 4,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A rival owner dines twice in one week, then slides a folded offer across the pass: head of a bigger kitchen, double the pay. {worker_name} pushes it back unread. The reason is standing in your office with the ledgers, and the rival, understanding perfectly, pays the bill with a tip fit for a lost bidding war.",
+        "critical_success": "The refusal travels. By the weekend half the district knows someone tried to buy your cook and failed, and curious diners book tables to taste what money could not move. {worker_name} shrugs off every question about it, which only feeds the legend.",
+        "mediocre": "{worker_name} declines the offer but chews on it all through service, and the food comes out distracted: correct, joyless, forgettable.",
+        "failure": "For one long moment over the folded paper, {worker_name} imagines a kitchen without you in it, and the imagining shows. Service wobbles, a sauce breaks, and the night ends with the offer still sitting on the shelf above the station, unburned."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_friend_supplier_scale",
+      "weight": 2,
+      "report": "Thumb on the Scale",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "failure_image": "cook_story1_restaurant_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} hefts the morning fish crate and knows the weight is wrong before the scale does. Because your margins are a shared worry now, the shortage becomes a quiet renegotiation at the back door, and the dealer leaves having thrown in a week of free greens to keep your business.",
+        "critical_success": "The light fish crate opens a larger audit. Over one pot of coffee, you and {worker_name} uncover three padded invoices, and the corrected contracts save you more in a morning than the kitchen earns in a week.",
+        "mediocre": "The dealer denies everything and {worker_name} cannot prove the crate ran light; the standoff buys a small discount and a much cooler handshake.",
+        "failure": "{worker_name} accuses the wrong supplier, loudly, at the busiest hour of the market. The honest dealer walks, the replacement costs more, and what stings worst is having made your house look petty in front of the whole square."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_friend_fire_that_never_was",
+      "weight": 2,
+      "report": "The Fire That Never Was",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "cook_fire_crisis_restaurant",
+      "failure_image": "cook_fire_crisis_restaurant_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Robust": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} smells hot grease where no pan is working and pulls the line dark for ten minutes, mid-service, to scrape a smoldering flue. Diners grumble at the pause. They would have grumbled more at the building burning, and {worker_name} did that arithmetic in your favor without being asked.",
+        "critical_success": "The flue comes apart to reveal a scorch mark one bad night away from catching. {worker_name} turns the near-miss into a new closing routine for the whole kitchen and walks you through it after hours, because your building and this cook's line have become the same thing.",
+        "mediocre": "{worker_name} shuts the line down on a hunch that finds only ordinary soot. The caution costs a slow hour and earns a week of ribbing from the dish pit.",
+        "failure": "{worker_name} notices the smell and decides it can wait until close. It cannot. The grease catches at the peak of service, the pans come off, and though the flames die fast, the evening dies with them. Facing you afterward is the worst part of the night."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_rebel_chalkboard_coup",
+      "weight": 2,
+      "report": "The Chalkboard Coup",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "failure_image": "cook_story1_restaurant_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "{worker_name} wipes your printed menu off the chalkboard an hour before opening and writes a new one, no permission sought. The gamble cooks well tonight: the room takes to the strange dishes, and the till does not suffer for the mutiny.",
+        "critical_success": "The stolen menu turns out to be the best service of the month. Diners ask whether the kitchen has a new chef, and {worker_name} answers that the kitchen has new rules, leaving you to decide later how much of that to allow.",
+        "mediocre": "Half the room orders the old dishes that no longer exist. The kitchen spends the night apologizing and improvising, and breaks roughly even on the chaos.",
+        "failure": "Your regulars arrive for the braise they have ordered every week for a year, and it is gone because {worker_name} decided so. Three tables walk, two more get comped to keep the peace, and the reprinted menus come straight out of the night's take."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 6
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_rebel_supplier_feud",
+      "weight": 2,
+      "report": "The Supplier Feud",
+      "skill_options": [
+        "Service"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "cook_story2_restaurant",
+      "failure_image": "cook_story2_restaurant_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has hated your poultry dealer since the day you signed the contract, and today the standing order goes, unauthorized, to a back-lane farmer instead. The birds arrive smaller, fresher, cheaper, and the roast tastes like {worker_name} was right, which is the most dangerous outcome of all.",
+        "critical_success": "The back-lane birds are so good that a food-obsessed regular demands to know the farm. The switch, made behind your back, quietly becomes the best sourcing decision on your books, and {worker_name} makes sure the whole kitchen knows whose idea it was.",
+        "mediocre": "The new farmer shorts the delivery and the old dealer, snubbed, is in no hurry to help. The kitchen limps through service on yesterday's stock.",
+        "failure": "Your dealer arrives to find the standing order cancelled without your signature and tears up the contract on the spot, penalty clause and all. You pay it. {worker_name} maintains, unhelpfully, that the birds were always too small."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1,
+          "reputation": 5
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_lovesyou_every_plate",
+      "weight": 3,
+      "report": "Every Plate for You",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "failure_image": "cook_story1_restaurant_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} has one way of cooking now: as if every plate were crossing the pass to your table. The strangers who actually receive them cannot say what makes the food taste cared-for, but they pay for it, and they come back, and the margin creeps up plate by devoted plate.",
+        "critical_success": "Word of mouth does what advertising cannot. A table of first-timers, sent by friends of friends, asks what the secret in the kitchen is. {worker_name} says only that everything here is cooked for one particular person, and lets the room wonder which of them it might be. The bookings double.",
+        "mediocre": "{worker_name} spends the night cooking at you rather than for the room, chasing your imagined verdict, and the plates land a shade too precious for a crowd that just wants dinner.",
+        "failure": "Somewhere between the stock and the saute, {worker_name} starts composing your favorite dish from memory and over-salts an entire pan of the evening's special. The table it was bound for gets the meal comped with apologies, takes one look at the cook staring at the doorway you might walk through, and forgives everything. The whole kitchen smells the reason and says nothing."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_lovesyou_one_compliment",
+      "weight": 3,
+      "report": "One Compliment",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "cook_story2_restaurant",
+      "failure_image": "cook_story2_restaurant_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "You once said, in passing, that the stew wanted more thyme. {worker_name} has rebuilt half the menu around that sentence, testing every dish against the memory of your voice, and the room reaps the harvest: tighter flavors, cleaner plates, a cook working toward a standard no critic could impose.",
+        "critical_success": "The rebuilt menu catches a traveling gourmand, who declares the cooking the most personal in the district and promises to write as much. {worker_name} accepts the praise politely and files it away as second-best; the only review that matters is the look on your face at month's end.",
+        "mediocre": "{worker_name} second-guesses one sauce four times against what you might prefer, and service slows while perfection gets litigated. The food is good. The timing is not.",
+        "failure": "Mid-service, {worker_name} abandons the ticket queue to perfect a dish you mentioned once, months ago, and a full pan of the special scorches while the memory gets seasoned. One table eats free tonight. They watch {worker_name} plate your unordered dish with absolute tenderness, and not one of them has the heart to complain."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_bestfriends_critic_at_nine",
+      "weight": 3,
+      "report": "The Critic at Nine",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "cook_story2_restaurant",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} clocks the food critic at table nine before the bread lands: dining alone, ordering the two hardest dishes on the menu, asking the server nothing. The whole order gets quietly re-fired to perfection, and word goes to your office so the two of you can watch the verdict together from the pass. The review will be good; the point was that you both knew it first.",
+        "critical_success": "The critic abandons professional distance and asks to see the kitchen. {worker_name} handles the tour like a co-owner, credits you for the menu twice without being prompted, and the writeup that follows names your restaurant the reason to cross the city. Bookings triple by the weekend."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_bestfriends_margin_leak",
+      "weight": 3,
+      "report": "The Margin Leak",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "After close, {worker_name} appears at your office door with the month's numbers under one arm and the dregs of the coffee pot in the other, and goes through them with you like a shared hobby. The waste bin tells the story the ledger would not: portions have drifted heavy for weeks. By morning every station has a marked ladle, and the difference is pure margin, handed to you over cold coffee.",
+        "critical_success": "The audit turns up more than drift: a case of wine has been walking out the back door on delivery days. {worker_name} sets a quiet trap, catches the porter mid-theft, and never once lets it become your embarrassment. When you start to say something across the pass, {worker_name} hands you a spoon of tomorrow's stock to taste, and that is the end of the subject."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_harem_to_the_gram",
+      "weight": 3,
+      "report": "To the Gram",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "positive_traits": {
+        "Graceful": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your spec cards hang above the station and {worker_name} cooks them like scripture: the sauce to the gram, the sear to the second, nothing improvised, nothing withheld. The plates that leave the pass are your will made edible, and the room pays for a consistency no other kitchen in the district can touch.",
+        "critical_success": "A rival chef dines incognito, hunting for the flaw, and finds fourteen identical, faultless plates instead. Pressed for the secret, {worker_name} says only that this kitchen cooks exactly what its owner wants, and the answer unsettles the rival far more than the food does."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_harem_your_palate",
+      "weight": 3,
+      "report": "Your Palate Alone",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "cook_story2_restaurant",
+      "positive_traits": {
+        "Charming": 4,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} calibrates the tasting menu to a single palate: yours. Salt where you like it, heat where you would want it, and the strange truth is that a menu cooked in devotion to one person tastes better to everyone. Diners stop ordering and let the kitchen decide, which is to say, let you decide.",
+        "critical_success": "A private party pays an obscene fixed price for whatever the owner would eat, no menu shown. {worker_name} serves your tastes course by course to a table of strangers who leave declaring it the meal of the year, never knowing they dined as your guests in everything but the bill."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_servant_brigade_of_one",
+      "weight": 3,
+      "report": "A Brigade of One",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Two cooks call in sick and you only have to say the word once. {worker_name} takes the grill, the saute, and the cold station together, a brigade of one moving between the flames without complaint, and the full dining room never learns how close tonight came to a locked door.",
+        "critical_success": "Not one ticket dies. {worker_name} works all three stations through a full house at full speed, plates the last dessert with steady hands, and starts breaking the kitchen down before you can even ask. The night's take is whole and the salary is unchanged, which seems to be the point."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "restaurant_cook_servant_market_to_mop",
+      "weight": 3,
+      "report": "Market to Mop",
+      "skill_options": [
+        "Service"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "cook_story1_restaurant",
+      "positive_traits": {
+        "Robust": 4,
+        "Energetic": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You mention the banquet booking once, in passing. {worker_name} is at the market before dawn, preps the entire function alone, cooks it through the regular service on top, and is still there at midnight scrubbing the plancha, because the instruction was to make it work and the instruction was yours.",
+        "critical_success": "The banquet host corners you afterward to ask what a kitchen like that costs to keep, and does not believe the answer. A standing monthly booking follows, on the sole condition that the same cook works it. {worker_name} takes the news like a duty roster, nods once, and asks what time you want the doors open."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

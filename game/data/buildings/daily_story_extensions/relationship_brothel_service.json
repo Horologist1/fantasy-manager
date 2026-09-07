@@ -1,0 +1,647 @@
+{
+  "_comment": "Relationship daily stories (Service: brothel housekeeping). CONTRACT: (1) stat-gated dailies (romance>=75 x2, relationship>=75 x2, rebelliousness>=60 x2) roll normally; romance/relationship stories RAISE the gating stat on success and LOWER it on failure; rebellion stories cost real money on failure. (2) 'Loves you' x2 rolls normally: love is poured into the MANAGER'S SPACES (office polished first, the house kept gleaming); failure = daydreams, a booked turnover is missed, one refund, the guest is moved and forgives -> earnings 0, gentle consequences. (3) Best Friends / Harem Member / House Servant x2 each are no_fail (success/critical only), anchored on the bond with the MANAGER. STYLE: consequence of the bond, never a mere declaration; SFW text, the setting may wink. PROSE: gender-neutral for worker AND manager - {worker_name}, 'you', 'the client/guest/they'; never she/her/he/his. story_image reuses existing profession art as placeholder.",
+  "building_id": "brothel",
+  "profession_id": "service",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "brothel_service_romance_room_you_praised",
+      "weight": 2,
+      "report": "The Room You Praised",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "positive_traits": {
+        "Hardworking": 4,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "You once said, in passing, that the blue room was the finest in the house. {worker_name} has kept it flawless ever since: sheets pressed to a knife edge, brass burning like morning. Tonight it books first and at a premium, the way it always does now.",
+        "critical_success": "A traveled client stops in the doorway of the blue room and asks who keeps it, because no expense was spared on this. {worker_name} keeps quiet about the reason, and the client pays double for the best-tended room between here and the capital.",
+        "mediocre": "The blue room is perfect and the rest of the corridor pays for it. {worker_name} polishes one door handle to a mirror while three other rooms wait on linens.",
+        "failure": "A booked party stands fuming outside an unturned room while {worker_name} kneels in the blue one at midnight, oiling hinges nobody asked about. The house comps the wait, and {worker_name} spends the walk to the servants' stair wondering if you even remember saying it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_service_romance_entry_glow",
+      "weight": 2,
+      "report": "Dressed for Your Eyes",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "positive_traits": {
+        "Elegant": 4,
+        "Graceful": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} dresses the entry each dusk as if you might pause on the stair to look: fresh flowers, candles trimmed to an even flame, the runner brushed until the pattern shows. Walk-ins slow at the door, then come inside. On evenings like this, the house sells itself.",
+        "critical_success": "Tonight the front of house glows like a festival, and a knot of passersby drifts in just to see what kind of place keeps itself this beautifully. Three of them become paying guests. All of it was staged for an audience of one, and that audience is you.",
+        "mediocre": "Half the candles are trimmed and half are guttering, because {worker_name} keeps drifting toward the window that overlooks your office. The entry looks fine. Fine does not fill rooms.",
+        "failure": "Your laugh carries from the parlor, answering somebody else's joke, and the tray in {worker_name}'s hands hits the floor with every glass on it. The shards get swept in silence, and the replacements come out of the night's take."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "brothel_service_friend_ears_on_the_floor",
+      "weight": 2,
+      "report": "What the Walls Heard",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Nobody watches the person changing the lamps. {worker_name} moves through the evening invisible and finds you after close with a folded list: which regular is paying in shaved coin, which door no longer locks, who has been asking oddly detailed questions about your ledger. The shaved coin alone pays for a month of soap.",
+        "critical_success": "While gathering glasses, {worker_name} overhears two strangers rehearsing the story they plan to tell you tomorrow. An investment, they will call it. Warned tonight, you are politely unavailable all week, and the pair moves on to fleece some other house. A small fortune, saved with a dustpan in hand.",
+        "mediocre": "The night's harvest is mostly chaff: who is feuding with the cook, which client snores loud enough to rattle the sconces. {worker_name} hands it over anyway. Friends report even the boring days.",
+        "failure": "{worker_name} mishears half a conversation through a wall and brings you a warning about your most loyal regular. You nearly make the accusation before the mistake surfaces, and the round of apology drinks comes out of the till."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "brothel_service_friend_quiet_repairs",
+      "weight": 2,
+      "report": "Quiet Repairs",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "positive_traits": {
+        "Hardworking": 4,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} notices the water stain spreading across the best room's ceiling and spends a slow hour on the roof with tar and rags, unasked. A joiner would have charged you a week's takings once the plaster came down. Your friend charges you a mug of tea and the good chair by the fire.",
+        "critical_success": "The loose baluster on the grand stair has been loose for a month. Tonight {worker_name} rebuilds it properly before the drunk hour, and when the drunk hour arrives, a heavy client swings full weight on it and it holds. The broken neck that never happens is the largest sum your house earns all week.",
+        "mediocre": "The sticking door gets planed, the drip gets a bucket. Small mendings, honestly done, nothing that will ever show in the books.",
+        "failure": "The ambitious repair of the laundry pump gets away from {worker_name}, and by the time the shutoff valve is found, the floor is a pond and two mattresses are soaked past saving. Facing you with the bill hurts your friend worse than the bill does."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 3
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -3
+        }
+      }
+    },
+    {
+      "id": "brothel_service_rebel_not_my_mess",
+      "weight": 2,
+      "report": "Not My Mess",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "{worker_name} has drawn a private border through your house: these rooms are mine, that filth belongs to somebody else. Tonight the somebody else, shamed by a corridor of pointed neatness ending exactly at their door, finally does their own scrubbing. The house sparkles, and you never learn what the standoff nearly cost.",
+        "critical_success": "The one-person strike works better than any lecture you have ever given. Faced with {worker_name}'s spotless half of the corridor, the whole staff quietly raises its game rather than be the obvious slob. Discipline, and you did not have to pay a copper for it.",
+        "mediocre": "The border holds and the mess sits in disputed territory all evening: a bucket of cold ash in the hallway that everyone steps around and nobody will own.",
+        "failure": "A booked room turns out to be somebody else's job, which means it is nobody's job, which means the client walks into stale air and a stripped bed. The refund and the hush-it-up bottle both come out of your purse, and {worker_name} does not apologize."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 1,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": 1,
+          "reputation": 4
+        },
+        "mediocre": {
+          "energy": -3,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "brothel_service_rebel_borrowed_supplies",
+      "weight": 2,
+      "report": "Borrowed Supplies",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "Good soap, lamp oil, a fistful of candles: things that walk out in {worker_name}'s bag on the theory that the house will never miss them. Tonight the house does not miss them. The rooms still turn on time, which is exactly how the habit survives.",
+        "critical_success": "{worker_name} runs the linen count with a conjurer's confidence, and the shift itself is flawless: rooms turned early, guests glowing, compliments at the door. Whatever left in the bag tonight, the ledger looks too healthy for you to go digging.",
+        "mediocre": "A guest asks for the good soap and there is none to be found. {worker_name} improvises with the cheap tallow stuff and a smile that almost carries it.",
+        "failure": "A full house, and the candle box is empty. The runner sent to the chandler at midnight pays triple the day rate, and the chandler mentions, helpfully, that somebody from your house already bought candles this week with house coin. All of it lands on your bill."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "brothel_service_lovesyou_office_first",
+      "weight": 3,
+      "report": "Your Office First",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Before the house wakes, {worker_name} does your office first: desk oiled, window flung open to the cold air, yesterday's cups gone as if they never existed. What remains of the morning goes into the rest of the house at the same impossible standard, because all of it is yours, and guests pay extra to sit in rooms that feel loved. They are.",
+        "critical_success": "A wealthy guest, kept waiting for you, spends ten minutes alone in your gleaming office and decides that anyone who runs a house this exactly can be trusted with a bigger contract. The deal signs before lunch. {worker_name} just cleaned it, is all, the way you clean something you cannot say aloud.",
+        "mediocre": "Your office is immaculate. The guest rooms run a step behind all day, because the first two hours of the morning went where the heart is.",
+        "failure": "The cloth stops moving over your desk and an hour disappears into the middle distance. Downstairs, a booked couple is shown into a room still wearing last night, and nothing saves it but a refund. Then the couple takes in {worker_name}'s stricken, tumbling apology and softens completely: nobody grieves a missed turnover like that without loving this house, or someone in it. They promise to come back. You collect nothing tonight."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_service_lovesyou_house_you_built",
+      "weight": 3,
+      "report": "The House You Built",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "failure_image": "service_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} cleans the way other people write poetry, and the subject is you. The stair you paid for with the first year's profit gets waxed to honey; the crack in the parlor wall, the one you hate, disappears under careful plaster. Guests keep saying the house feels cared for, and they pay for the feeling without ever finding its source.",
+        "critical_success": "An innkeeper visiting from the coast walks the halls twice and offers, flatly, to hire away whoever keeps this house. Name a price. {worker_name} laughs, says there is no price, and means it in a way the innkeeper will never decode. The story of the refusal travels, and a house that cannot be bought out of turns out to be its own advertisement.",
+        "mediocre": "Everything of yours gets tended, straightened, dusted twice over. The paying rooms get whatever attention is left, which today is not much.",
+        "failure": "Behind the linen press {worker_name} finds your old coat, the one from before the house was anything at all, and sits down with it and forgets the world. The forgotten world includes a booked room; the guest arrives to unturned sheets and takes the night refunded. But the apology that follows is so raw, so plainly about more than sheets, that the guest ends up patting {worker_name}'s shoulder and asking to book again next week."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "brothel_service_bestfriends_true_state",
+      "weight": 3,
+      "report": "The Honest Report",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "After close, over the last of the mop water, {worker_name} gives you the report nobody else will: which room smells of damp underneath the perfume, which regular's coin rings wrong on the counter, which of your workers is one bad week from bolting. You fix two of the three by morning. That kind of truth never appears in a ledger, and it comes free with the friendship.",
+        "critical_success": "On a last round, {worker_name} finds a candle wedged smoldering where a curtain hem touches the wainscot and stands over it with a wet rag until the danger is a black smear and a story. Then the two of you walk every room and every flame in the house together. You go to bed a little shaken and still owning a brothel, which was not guaranteed tonight."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_service_bestfriends_penny_wars",
+      "weight": 3,
+      "report": "Penny Wars",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "positive_traits": {
+        "Clever": 5,
+        "Hardworking": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "{worker_name} treats your expenses like a personal enemy: haggles the chandler down a copper a pound, turns worn sheets into pillow slips, decants cheap wax into the good holders where nobody ever looks. None of it shows. All of it adds up, and at week's end the surplus lands on your desk with a grin that says we are winning.",
+        "critical_success": "Armed with three months of quietly kept notes, {worker_name} corners the laundry contractor over short counts and walks out with a fat refund and a better rate, then waves off any cut of it. What are friends for, if not going to war over your linen bill."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 8
+        }
+      }
+    },
+    {
+      "id": "brothel_service_harem_kept_to_your_standard",
+      "weight": 3,
+      "report": "Kept to Your Standard",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "positive_traits": {
+        "Graceful": 4,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "Everyone in the house knows whose {worker_name} is, and the housekeeping says it plainer than the collar does: every room finished to your written standard, corners squared, lamps trimmed to the height you specified once and never had to repeat. Guests feel the discipline in the place without being able to name it, and they pay what a disciplined house asks.",
+        "critical_success": "A famously difficult guest inspects the suite like an officer, hunting for the flaw that justifies a discount, and instead finds a house kept to the letter of a single will. Yours. The discount dies unasked; the guest books the good suite for a month, wanting to sleep somewhere that runs this tight."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_service_harem_your_rooms_first",
+      "weight": 3,
+      "report": "Your Rooms First",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "positive_traits": {
+        "Graceful": 4,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "{worker_name} keeps your private rooms the way the devout keep a shrine, not because you check, but because belonging to you means nothing of yours is ever less than perfect. The habit spills outward through the house, and the rest of the staff, watching, quietly lifts its own work to match. Standards you never had to order into being.",
+        "critical_success": "You mention, once and offhand, preferring the east rooms aired by noon. It is done by ten, every day after, without another word passing between you, and the guests in those rooms begin asking for them by name. Obedience this complete turns out to be something people can smell in the linen, and pay for."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 10
+        }
+      }
+    },
+    {
+      "id": "brothel_service_servant_the_list",
+      "weight": 3,
+      "report": "The Finished List",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "positive_traits": {
+        "Hardworking": 5,
+        "Robust": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "You leave the morning list where {worker_name} will find it, longer than is strictly fair: every room turned, both stairs scrubbed, the cellar racked and swept before the doors open. It is all done by dusk, without a word said or a corner shaved, because you asked and that is the whole of the reason.",
+        "critical_success": "The list was written for two people. {worker_name} finishes it alone with an hour to spare, then spends the hour on the things you did not think to ask for: the sconces, the cellar hinges, the mat nobody admits to tripping on. The house opens gleaming to its bones, and the evening's guests treat it accordingly. All you did was write a list."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "brothel_service_servant_worst_room",
+      "weight": 3,
+      "report": "The Worst Room",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "service_story1",
+      "positive_traits": {
+        "Robust": 4,
+        "Hardworking": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2"
+      },
+      "descriptions": {
+        "success": "After the merchants' party, the green room is a disaster nobody on the floor will claim, and you do not even have to finish the sentence. {worker_name} carries the wreckage out bucket by bucket, silent and thorough, and by evening the room smells of lavender and takes a paying guest as if the night before never happened.",
+        "critical_success": "The green room comes back from the dead so completely that the evening's guest calls it the finest room in the house and pays for the whole week. Nobody else knows what it looked like at dawn. {worker_name} does not mention it either: you asked, it was handled, that is the arrangement."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,657 @@
+{
+  "_comment": "Relationship daily stories (Ambassador). Follows the contract fixed in relationship_brothel_prostitute.json: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 (all roll normally, stat feedback on success/failure, rebellion failures cost real money); 2x 'Loves you' (normal roll, failure forgiven -> earnings 0); 2x Best Friends / Harem Member / House Servant (no_fail). Flavor: love as incorruptibility - bribes and honey-traps slide off a heart already taken. Prose gender-neutral for worker AND manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "governor_castle",
+  "profession_id": "ambassador",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "governor_castle_ambassador_romance_favor_at_the_wrist",
+      "weight": 2,
+      "report": "Your Favor at the Wrist",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "ambassador_diplomatic_alliance",
+      "failure_image": "ambassador_diplomatic_alliance_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} goes into the border talks with a small thing of yours knotted at the wrist and negotiates like someone with nothing left to prove. The steadiness reads as strength; the other delegation stops testing and starts trading, and the terms settle a full tariff band in the castle's favor.",
+        "critical_success": "Halfway through, the opposing envoy asks, idly, who the token is from. {worker_name} answers with a look instead of a name, and the delegation spends the rest of the session negotiating against someone visibly fighting for more than a salary. They concede the river clause just to end the day with dignity.",
+        "mediocre": "{worker_name} keeps touching the knot at the wrist between clauses. The talks land where talks usually land; part of the mind stayed home with you.",
+        "failure": "A silver-tongued counterpart notices the token and needles at it, calling sentiment a poor advisor. {worker_name} rises to the bait, the session curdles into pride on both sides, and the ride back is spent composing arguments not for the treaty but for you, none of which arrive kindly."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_romance_clause_for_two",
+      "weight": 2,
+      "report": "A Clause for Two",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "ambassador_negotiate_trade",
+      "failure_image": "ambassador_negotiate_trade_failure",
+      "positive_traits": {
+        "Clever": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Deep in a trade annex, between salt tariffs and river tolls, {worker_name} secures an import license for the southern wine you two once shared and files it under castle provisions. The pact is sound, the clause is invisible, and the first case arrives addressed to you both.",
+        "critical_success": "The counterpart delegate spots the wine clause, laughs, and trades it away for nothing, charmed by an envoy who negotiates empires and still remembers evenings. Word of the exchange makes the castle's diplomacy suddenly fashionable, and two stalled treaties reopen on the strength of it.",
+        "mediocre": "The annex closes clean but crowded; the private clause gets bargained out in the first hour, and {worker_name} signs the rest with a small, contained sigh.",
+        "failure": "A rival clerk flags the wine clause as irregular and reads it aloud to the room. Explaining it means explaining you, and {worker_name} chooses to lose leverage rather than do that. The castle ends a concession poorer, and {worker_name} rides home wondering whether wanting two things at once means holding neither."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_friend_smelled_the_decree",
+      "weight": 2,
+      "report": "Killed the Decree",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "ambassador_resolve_conflict",
+      "failure_image": "ambassador_resolve_conflict_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "In a committee anteroom {worker_name} overhears two clerks drafting a levy on private enterprises, yours among them, and spends the recess turning the right three shoulders. When the decree is finally read aloud it carries an exemption nobody remembers proposing, and your ledgers never learn what they were spared.",
+        "critical_success": "{worker_name} goes further: the levy dies in committee entirely, and the clerk who drafted it now owes {worker_name} a favor besides. You find out weeks later, secondhand, because a friend who guards your back does not invoice for it.",
+        "mediocre": "The exemption survives in a narrower form; some of your holdings slip through, others will feel a pinch come quarter-day. {worker_name} calls it a draw and keeps listening at doors.",
+        "failure": "The carve-out is noticed. A treasury officer asks pointed questions about why an ambassador is amending tax schedules, and {worker_name} has to spend real goodwill just to end the conversation. The levy passes untouched, and the walk to your door to break the news is the longest part of the day."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_friend_cleared_your_name",
+      "weight": 2,
+      "report": "Cleared Your Name",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "ambassador_cultural_exchange",
+      "failure_image": "ambassador_cultural_exchange_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Elegant": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A rival merchant spends a court reception seeding doubts about your businesses into important ears. {worker_name} follows one table behind, retelling each story straight, and by the last course the room has decided the rival is jealous and you are interesting. Two of the important ears place orders before the candles burn down.",
+        "critical_success": "{worker_name} corners the rival by the cloakroom, all courtesy, and explains what an ambassador can do to a trading license without ever raising a voice. The slander stops at its source, and the note of apology that reaches you the next morning is very nearly sincere.",
+        "mediocre": "The counter-stories land unevenly across the tables; your name comes out of the evening dented but upright, and the rival learns nothing except caution.",
+        "failure": "{worker_name} defends you a shade too hotly, and the room hears not an ambassador correcting a record but a friend guarding a friend, which to court ears proves the rumor. The whispering doubles, and {worker_name} spends the ride home rehearsing how to tell you it got worse."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_rebel_freelance_clause",
+      "weight": 2,
+      "report": "The Freelance Clause",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "ambassador_negotiate_trade",
+      "failure_image": "ambassador_negotiate_trade_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "Somewhere in the treaty's ninth schedule sits a warehousing exemption no one at the castle asked for, and a merchant syndicate paid {worker_name} handsomely to put it there. The treaty is otherwise sound. The purse is otherwise private.",
+        "critical_success": "Two syndicates discover they are bidding for the same paragraph, and {worker_name} runs a quiet auction between them, then drafts the winner's version so cleanly that the castle's own clerks praise the workmanship. Nobody thinks to ask who commissioned it.",
+        "mediocre": "The buyer haggles the fee down after the ink is already dry, and the whole arrangement ends up earning less than the risk deserved. {worker_name} files the grudge for later.",
+        "failure": "A junior clerk with fresh eyes reads the ninth schedule aloud and asks, reasonably, who benefits. The clause is struck, the treaty reopens, and the cost of the extra week of talks lands on your books while {worker_name} practices looking puzzled."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_rebel_borrowed_seal",
+      "weight": 2,
+      "report": "The Borrowed Seal",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "ambassador_resolve_conflict",
+      "failure_image": "ambassador_resolve_conflict_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 10)"
+      },
+      "descriptions": {
+        "success": "After hours, the ambassadorial seal comes down on three letters of safe passage for friends whose cargo prefers not to be inspected. The wax cools, the coin changes hands, and the ledger of official correspondence stays exactly one page short.",
+        "critical_success": "One of the letters walks its bearer through a checkpoint that has turned back everyone for a month, and word moves through the right taverns that {worker_name}'s wax is worth its weight. By the weekend the asking price has doubled and there is a waiting list.",
+        "mediocre": "A nervous buyer backs out at the very last moment, half a payment already spent. The evening yields more risk than revenue, and the seal goes back to its shelf unamused.",
+        "failure": "A border captain with a good memory forwards one of the letters back to the castle with a polite query attached. Making the query go away takes a bribe, a favor, and a donation to the garrison fund, all of it out of your coffers, while {worker_name} nudges the seal an innocent inch back into place."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_lovesyou_unbribable",
+      "weight": 3,
+      "report": "Unbribable",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "ambassador_negotiate_trade",
+      "failure_image": "ambassador_negotiate_trade_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "A merchant house tests {worker_name} the traditional way: a purse left carelessly on the table, heavy enough to buy most signatures. It goes back across the wood unopened. There is no counteroffer that improves on being in love with the person the money would betray, and the delegation, recalculating fast, drops the games and gives the castle honest terms. The honest terms turn out to be excellent.",
+        "critical_success": "Word crosses the trade quarter that the castle's envoy cannot be bought at any price, and nobody can work out why. Merchants who deal in leverage hate facing a person without a price; three houses give up probing and simply sign at full rate in a single afternoon, and every signature is carried back to you like something won in your name.",
+        "mediocre": "The purse goes back, but the message is delivered clumsily, and the merchants spend the rest of the session hunting for the price that must surely exist. The treaty closes narrow and late.",
+        "failure": "Midway through the summit {worker_name} stops on a clause about joint ventures, because something in the wording is suddenly about you, and loses the thread long enough to concede a point that was winnable. The opposing envoy, watching an ambassador be briefly and completely human, closes the folder without pressing the advantage. We resume tomorrow, they say, almost gently. Nothing is lost that a night's sleep will not recover."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_lovesyou_honeytrap",
+      "weight": 3,
+      "report": "The Failed Honey-Trap",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "ambassador_diplomatic_alliance",
+      "failure_image": "ambassador_diplomatic_alliance_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The foreign court sends its very best: a companion trained through years of state dinners, seated beside {worker_name} for five courses with instructions to come home holding secrets. Every practiced touch slides off a heart that is already spoken for. By dessert the charmer is the one doing the talking, and {worker_name} leaves with more of the foreign brief than anyone got of the castle's.",
+        "critical_success": "The charmer reports back that the envoy is unturnable, and the foreign minister, out of moves, resorts to honesty. The treaty that follows is the cleanest the castle has signed in years, negotiated between two parties who have entirely given up lying to each other, and the minister sends compliments addressed, curiously, to whoever holds the envoy's heart.",
+        "mediocre": "{worker_name} deflects the performance politely but stiffly, and the dinner ends with both sides aware a game was played to a draw. The talks survive; the wine is wasted.",
+        "failure": "Between the third course and the fourth, some gesture of the charmer's, a laugh, a tilt of the head, is briefly, unbearably like yours, and {worker_name} goes quiet in the middle of a sentence. The charmer, professional enough to know the real thing on sight, sets down the script and simply keeps company instead. Nothing is gained, nothing is given away, and the last thing the charmer says at the door is: take care of that."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_bestfriends_countermove",
+      "weight": 3,
+      "report": "The Counter-Move",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ambassador_negotiate_trade",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} hears at the embassy that a shipping cartel means to squeeze your supply lines next season, and arrives at your door with the plan already drafted: which port to lease, which clerk to befriend, which cargo to move early. The squeeze arrives on schedule and finds nothing to squeeze. Dinner afterward is on {worker_name}, who insists that winning together counts as a celebration.",
+        "critical_success": "The counter-move is so thorough that the cartel mistakes your preparedness for a leak at its own table, turns on itself hunting the traitor, and limps to you a month later asking for terms. {worker_name} sits in on that meeting, ostensibly as protocol, actually to enjoy it, and kicks you under the table at the good parts."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_bestfriends_trade_corridor",
+      "weight": 3,
+      "report": "A Corridor Bent Home",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ambassador_diplomatic_alliance",
+      "positive_traits": {
+        "Elegant": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Negotiating the new caravan route, {worker_name} argues persuasively that it should water at the town nearest your holdings. On the merits, of course; entirely on the merits. The route is signed, the merits are even real, and your storefronts now sit beside a river of passing coin that a friend quietly redirected without ever being asked.",
+        "critical_success": "{worker_name} gets the waystation itself chartered on land you happen to hold, then spends the evening at your table sketching what to build there, talking through a mouthful of your bread, planning your fortune like a shared hobby. Because by now it is one."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_harem_unbiddable",
+      "weight": 3,
+      "report": "Unbiddable",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ambassador_diplomatic_alliance",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Foreign courts probe every envoy for the price of their loyalty; with {worker_name} they keep striking the same strange bedrock. The devotion is total, and it is yours. Negotiators who cannot corrupt what they face are forced to negotiate properly, the castle's terms improve accordingly, and every signed page is carried home and laid before you like tribute.",
+        "critical_success": "A rival kingdom makes a formal offer for {worker_name}'s service: titles, estates, a delegation to command. The refusal is instant and serene, and does more for the castle's standing than any treaty this season. What cannot be bought becomes, overnight, what every court wants, and only you know it was never for sale in the first place."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_harem_your_words",
+      "weight": 3,
+      "report": "Your Words at Court",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ambassador_resolve_conflict",
+      "positive_traits": {
+        "Graceful": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You set the limits before the summit, what to give, what to hold, where to stop, and {worker_name} executes them to the letter, taking a fierce private pleasure in being your voice in a room you never enter. The delegation believes it spent the day reading the envoy. It spent the day reading you.",
+        "critical_success": "Working from nothing but your instructions, {worker_name} closes terms the castle's council spent a month calling impossible, then reports back the same evening, kneeling formality and shining eyes, asking only one question: whether you are pleased."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_servant_six_embassies",
+      "weight": 3,
+      "report": "Six Embassies",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ambassador_cultural_exchange",
+      "positive_traits": {
+        "Charming": 4,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You hand {worker_name} a schedule with six audiences nobody wanted and no gaps between them, and it is worked start to finish without one word of complaint: the prickly consul soothed, the tedious attache flattered, the grieving envoy sat with past the appointed hour. By evening, six halls think better of the castle, because you willed it and one servant carried it.",
+        "critical_success": "Somewhere in that impossible day {worker_name} finds an opening nobody briefed: the sixth audience, meant as a courtesy call, ends with a supply contract signed on the spot. It is presented to you at day's end without ceremony, the way a servant presents anything. This is yours."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_ambassador_servant_grievance_ledger",
+      "weight": 3,
+      "report": "The Grievance Ledger",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "ambassador_resolve_conflict",
+      "positive_traits": {
+        "Clever": 4,
+        "Sharp-Eyed": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The grievance ledger, years of border complaints, stalled petitions and protocol disputes no ambassador wants, goes to {worker_name} because you said so, and that is reason enough. Worked steadily, petition by petition, the backlog shrinks, and it turns out settled grievances pay: in fees, in fines recovered, in petitioners so relieved they thank the castle in goodwill and coin alike.",
+        "critical_success": "Deep in the backlog {worker_name} finds a duty on castle goods that was repealed eight years ago and collected ever since, files the claim the same day, and recovers a small fortune in over-payments. The windfall is placed in your hands with the ledger balanced beneath it, duty done because it was yours to give."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

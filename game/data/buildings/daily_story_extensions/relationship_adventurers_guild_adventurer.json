@@ -1,0 +1,679 @@
+{
+  "_comment": "Relationship daily stories (Adventurer). Follows the contract fixed in relationship_brothel_prostitute.json: 2x romance>=75, 2x relationship>=75, 2x rebelliousness>=60 (all roll normally; romance/relationship raise the gating stat on success, lower it on failure; rebellion costs real money on failure), 2x 'Loves you' (normal roll, failure = forgiven -> 0), 2x each Best Friends / Harem Member / House Servant (no_fail). Flavor: 'Loves you' = the comes-home motive - picks the contract that pays over the one that impresses, fights carefully because someone is waiting; failure = hesitates at the cave mouth, contract postponed, comes back whole. Prose gender-neutral for worker and manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "adventurers_guild",
+  "profession_id": "adventurer",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "adventurers_guild_adventurer_romance_token",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Your Ribbon in the Fight",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "adventurer_story1",
+      "failure_image": "adventurer_story1_failure",
+      "positive_traits": {
+        "Strong": 4,
+        "Determined": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} rides out with something of yours knotted under the vambrace, a ribbon lifted from your desk that nobody asked about. The marsh troll is met with clean footwork and a cold head, because dying has consequences now, and the bounty comes home along with everyone who went to earn it.",
+        "critical_success": "The kill is textbook, and afterward the client asks why an adventurer of that caliber fights so carefully. {worker_name} touches the vambrace where the ribbon sits, says nothing, and lets the client call it discipline. The fee is doubled for the caliber; the truth stays yours.",
+        "mediocre": "{worker_name} spends too much of the fight aware of the ribbon and not enough aware of the troll. The contract closes, barely, with nothing to spare and nothing worth telling you about.",
+        "failure": "Mid-swing {worker_name} glances at the knot of ribbon and the troll makes the glance expensive. The retreat is upright but empty-handed, and worse than the bruises is rehearsing how any of this gets explained to you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -5,
+          "health": -3,
+          "joy": -2,
+          "romance": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_romance_relic_for_your_desk",
+      "weight": 2,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Trophy for Your Desk",
+      "skill_options": [
+        "Agility"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "adventurer_story2",
+      "failure_image": "adventurer_story2_failure",
+      "positive_traits": {
+        "Agile": 5,
+        "Determined": 3
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "115 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The contract only asked for the nest cleared, but the posting mentioned a relic down in the roots and {worker_name} goes back for it, thinking of your face and not the guild ranking. It lands on your desk before dawn with the dirt still on it, worth a second fee, and {worker_name} watches you turn it over while pretending the climb was nothing.",
+        "critical_success": "The relic turns out to matter: a collector pays absurdly for it within the day and the guild logs it as a triumph. {worker_name} shrugs off the applause and keeps the only part that counted, which was setting it in your hands first.",
+        "mediocre": "The extra dig costs more hours than the trinket repays. {worker_name} presents you a mud-caked disappointment, an honest base fee, and a look that asks you to see the intention anyway.",
+        "failure": "The roots give way over the relic hollow and {worker_name} climbs out with torn palms and nothing. The long walk back is spent rehearsing how to tell you, and every version sounds like someone trying too hard to be noticed."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -2
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_friend_talked_you_up",
+      "weight": 2,
+      "report": "Talked Your Guild Up",
+      "skill_options": [
+        "Clever"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "adventurer_guild_monster_study",
+      "failure_image": "adventurer_guild_monster_study_failure",
+      "positive_traits": {
+        "Smooth Talker": 5,
+        "Charming": 3
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "{worker_name} drinks where the rival companies drink and spends the evening telling the plain truth about your guild: contracts honored, wages on time, nobody left behind in a hole. By closing bell a bored veteran from a bigger outfit asks whether your board has room for one more, and {worker_name} walks the recruit to your door personally.",
+        "critical_success": "The stories land so well that a whole delving party comes over together, sick of a captain who skims the loot tally. Recruiters spend fortunes for less than what one loyal advocate just handed you across a taproom table.",
+        "mediocre": "The pitch is warm but the room is cold; a few adventurers nod politely and stay where they are. At least your guild's name got said out loud in the right company, which is worth something over time.",
+        "failure": "A rival captain needles the pitch until it turns into an argument, then retells it everywhere as your guild begging for bodies. The story does the rounds for a week, and {worker_name} brings you the apology in person before you can hear it from anyone else."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_friend_route_map",
+      "weight": 2,
+      "report": "The Private Map Filed",
+      "skill_options": [
+        "Craft"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "adventurer_guild_monster_study",
+      "failure_image": "adventurer_guild_monster_study_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 4,
+        "Hardworking": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Two seasons of {worker_name}'s own margins went into that hand-drawn map: safe camps, troll fords, which bridge tolls can be argued down. A rival quartermaster offers good coin for a copy. {worker_name} files it with your board instead and runs the first contract off it the same day, because the guild that gets the shortcut should be the one that feels like home.",
+        "critical_success": "Your crews cut a full day off the eastern routes with the map, cheaper runs and faster bounties all season, and a quartermaster across town is still wondering what the refusal was about. {worker_name} waves off the thanks; friends do not sell each other's advantage.",
+        "mediocre": "The map helps less than hoped, half the fords have shifted since it was inked. Still, it was offered to you first and to nobody else, and that part holds.",
+        "failure": "One copied route is a season out of date and the shortcut dead-ends a cargo run at a washed-out crossing. The client bills the delay to your guild, and {worker_name} takes it hard: the one gift offered, and it cost you money."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -3,
+          "reputation": -5
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_rebel_undeclared_loot",
+      "weight": 2,
+      "report": "Undeclared Loot",
+      "skill_options": [
+        "Agility"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "adventurer_story2",
+      "failure_image": "adventurer_story2_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 20)"
+      },
+      "descriptions": {
+        "success": "Guild rule says every find crosses the tally table. {worker_name} decides the two garnets that fit inside a boot cuff count as a finder's fee, and the fence two streets over asks no questions. The declared haul still looks respectable on your ledger.",
+        "critical_success": "The boot-cuff garnets turn out to be the best stones in the hoard, and the fence pays like it. On paper the delve reads as a solid, honest day for your guild. Only the boots know otherwise.",
+        "mediocre": "The palmed stones are paste and the fence laughs {worker_name} out of the shop. The declared haul is thin and the private one is worthless; not a story anyone tells twice.",
+        "failure": "The client's appraiser inventories the hoard against an old record and two garnets are missing. You make up the difference from your own purse while {worker_name} stands there performing surprise, and neither the performance nor the ledger recovers quickly."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_rebel_moonlighting",
+      "weight": 2,
+      "report": "Moonlighting",
+      "skill_options": [
+        "Combat"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "adventurer_story3",
+      "failure_image": "adventurer_story3_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "There is a bounty on a rival guild's board that yours never posted, and {worker_name} works it under a borrowed name on what was supposed to be a rest day. The coin comes home quiet, and the borrowed name gets retired before anyone connects it to your roster.",
+        "critical_success": "The side job goes so cleanly the rival guildmaster tries to recruit the mysterious freelancer on the spot. {worker_name} pockets a premium, declines the offer with a stranger's shrug, and strolls back onto your roster looking suspiciously well rested.",
+        "mediocre": "The rival's bounty turns out overhunted, three other freelancers already on the same trail. {worker_name} comes back with sore feet, pocket change, and a new respect for your board's pricing.",
+        "failure": "The rival guildmaster recognizes the borrowed name and posts the signed side contract where every client in the district reads it. Your biggest patron pulls a standing bounty over the insult, and that hole in the ledger has {worker_name}'s handwriting on it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_lovesyou_pay_over_glory",
+      "weight": 3,
+      "report": "Pay Over Glory",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "adventurer_story1",
+      "failure_image": "adventurer_story1_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "Two postings hang side by side: a wyvern that would put {worker_name}'s name in the songs, and a caravan escort that pays flat and boring. {worker_name} takes the escort without a second look, because songs do not fill your ledger and dead heroes do not come home to anyone. The caravan arrives intact and the fee arrives in your hand.",
+        "critical_success": "Bandits test the caravan at the ford and meet an adventurer who fights like someone with an appointment to keep: no flourishes, no chances taken, five in the shallows and not one scratch coming home. The merchant doubles the fee on the spot and asks for {worker_name} by name next season. All of it lands on your desk.",
+        "mediocre": "The escort is uneventful and pays its flat, boring rate. {worker_name} spends most of the road wondering what you are doing right now, which at least makes the miles go.",
+        "failure": "This one is a cave posting, and at the mouth of it {worker_name} stops. The dark ahead is ordinary; what is new is having something to lose, and the first step will not come. The client reads whatever is written on {worker_name}'s face and moves the contract to next week without a word about penalty. No coin comes home tonight, but everything else does."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_lovesyou_fights_to_return",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "A Door to Come Back To",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": false,
+      "story_image": "adventurer_story3",
+      "failure_image": "adventurer_story3_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "125 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "The old {worker_name} would have jumped the gorge to shave an hour off the hunt. The one who loves you takes the long bridge, checks the wind twice, and puts the beast down with the patient, unglamorous shot. The bounty pays the same either way; the difference is the adventurer who walks back through your door still owning both ankles.",
+        "critical_success": "Halfway through, the hunt goes wrong in the way that kills the reckless: a second beast, upwind, unannounced. {worker_name}, fighting with everything to lose, turns out to be exactly the wrong target, braced and unhurried and ruthless. Two bounties come home instead of one, carried by someone who never once forgot the way back to you.",
+        "mediocre": "Caution costs speed, and the beast leads {worker_name} on a two-day chase a braver fool would have ended in one. The bounty pays out; the boots are done for.",
+        "failure": "A routine escort takes a shallow cut at the first ambush. {worker_name} sees your face in the blood and orders the caravan back despite the merchant's protests. Once that fear is named, the merchant softens and postpones the run without penalty. The fee is lost, but nobody is punished and {worker_name} returns to you alive."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -5,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_bestfriends_reads_the_board",
+      "weight": 3,
+      "report": "Reading the Board",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "adventurer_guild_monster_study",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} reads your contract board the way you do, spots the escort job priced two seasons out of date, and marches back to the client to renegotiate in your name before signing on. The fee comes back corrected and the job comes back done, and the wink that arrives with the coin says we, not you.",
+        "critical_success": "{worker_name} bundles three underpriced contracts that share a road, clears them in one brutal loop, and logs the best single-day take your board has seen all season. Then stays up past midnight helping you re-price the whole board so no client ever tries it again."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_bestfriends_rival_table",
+      "weight": 3,
+      "report": "Drinks with Rivals",
+      "skill_options": [
+        "Clever"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "adventurer_guild_monster_study",
+      "positive_traits": {
+        "Smooth Talker": 4,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "A rival company invites the well-known sword to their table and spends the night fishing for the terms your guild pays. {worker_name} drinks their wine, learns more than gets told, and lays the whole picture on your desk over breakfast: which contracts they mean to underbid, and which of their veterans is one bad payday from walking. Then works a normal bounty in the afternoon, just to keep the day honest.",
+        "critical_success": "The rival table talks too much. {worker_name} comes home with the exact figure they plan to undercut your caravan bid by, and you take the season contract by a margin thin as a knife blade. At the morning fire {worker_name} just asks what the next job is, as if season contracts fell into everybody's lap."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_harem_your_colors",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Under Your Colors",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "adventurer_story1",
+      "positive_traits": {
+        "Strong": 4,
+        "Confident": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} rides out with your colors tied at the shoulder and never pretends they mean less than they do. Clients pay a premium for the adventurer who belongs to a guildmaster, the blade with a single hand on its leash, and the whole fee comes home uncounted, because counting it would imply it was ever anyone's but yours.",
+        "critical_success": "After the hunt, a lordling tries to buy your marked adventurer away with triple wages. {worker_name} lets the offer die of boredom, and word of the refusal sells your guild harder than the hunt itself: two new clients sign within the week, wanting whatever it is that commands loyalty like that."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_harem_the_contract_you_chose",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Contract You Chose",
+      "skill_options": [
+        "Agility"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "adventurer_story2",
+      "positive_traits": {
+        "Obedient": 5,
+        "Agile": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You tap one posting on the board and {worker_name} takes it without reading the fee, because the choosing is yours and that is the point. The job is done to your letter, no detours and no improvisations, and the reward is carried back and set in your hand still sealed in the client's purse.",
+        "critical_success": "Halfway down the road a richer contract offers itself, a lord's steward waving double pay for a day's diversion. {worker_name} declines without breaking stride: you chose the errand, so the errand is what happens. The client, told of it afterward, adds a bonus out of pure awe at obedience that expensive."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_servant_two_contracts",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "Two Contracts Cleared",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "adventurer_story2",
+      "positive_traits": {
+        "Hardworking": 5,
+        "Tough": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You slide two postings across the desk instead of one and {worker_name} takes both without comment: a bounty at dawn, an escort by dusk, twenty miles between them. Both stamps land on your ledger by midnight, brought in by someone who never once asked whether it was too much.",
+        "critical_success": "Between the dawn bounty and the dusk escort, {worker_name} clears a third job off the board on the way past, unasked, because the road went by it anyway. Three fees in one day, delivered with a small bow and a single question: what needs doing tomorrow."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "adventurers_guild_adventurer_servant_unwanted_list",
+      "weight": 3,
+      "loot": {
+        "rolls": 1
+      },
+      "report": "The Unwanted Contracts",
+      "skill_options": [
+        "Combat"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "adventurer_story3",
+      "positive_traits": {
+        "Tough": 4,
+        "Hardworking": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "The bottom of your board holds the jobs no adventurer bids on: sewer culls, bog retrievals, a farmer's well with something living in it. You hand {worker_name} the list and it is simply accepted, worked through in order, and returned complete, each grim receipt stacked square on your desk by someone who treats your worst chores as an honor.",
+        "critical_success": "The well job turns out to be a nest, and clearing it before it spread saves the district a plague of vermin the town council can actually put a price on. They place your guild on retainer for every foul job in the ward, and {worker_name} accepts the standing list with something close to pride."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

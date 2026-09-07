@@ -1,0 +1,94 @@
+[
+  {
+    "name": "Kar",
+    "folder": "varro",
+    "cost": 0,
+    "nsfw": true,
+    "unique": true,
+    "recruitment_locked": false,
+    "event_recruit_only": true,
+    "required_store_value": [
+      {"var": "lanista_gender", "equals": "female"},
+      {"var": "lanista_ending_done", "equals": true}
+    ],
+    "encounter_only": false,
+    "monster": false,
+    "procedural": false,
+    "skills": {
+      "Sex": 48,
+      "Anal": 32,
+      "BDSM": 38,
+      "Hand": 42,
+      "Oral": 42,
+      "Homo": 38,
+      "Special": 28,
+      "Group": 36,
+      "Extreme": 34,
+      "Striptease": 56,
+      "Combat": 76,
+      "Clever": 30,
+      "Charm": 44,
+      "Service": 28,
+      "Agility": 58,
+      "Craft": 24
+    },
+    "names_list": "western_male",
+    "traits": [
+      "Human",
+      "Strong",
+      "Tall",
+      "Tough",
+      "Great Figure",
+      "Cool Scars"
+    ],
+    "description": "Kin to the Master of the Sands, and a fighter still in his fighting years. Kar has the family stillness and the family scars, but his knees are sound and his seasons are ahead of him. With the Arena's future settled, he takes work in your house to build a purse and reputation of his own, and he is not particular about which trade pays best.",
+    "gender": "male",
+    "comfort_desired": 2
+  },
+  {
+    "name": "Kar",
+    "folder": "varro",
+    "cost": 0,
+    "nsfw": false,
+    "unique": true,
+    "recruitment_locked": false,
+    "event_recruit_only": true,
+    "required_store_value": [
+      {"var": "lanista_gender", "equals": "female"},
+      {"var": "lanista_ending_done", "equals": true}
+    ],
+    "encounter_only": false,
+    "monster": false,
+    "procedural": false,
+    "skills": {
+      "Sex": 48,
+      "Anal": 32,
+      "BDSM": 38,
+      "Hand": 42,
+      "Oral": 42,
+      "Homo": 38,
+      "Special": 28,
+      "Group": 36,
+      "Extreme": 34,
+      "Striptease": 56,
+      "Combat": 76,
+      "Clever": 30,
+      "Charm": 44,
+      "Service": 28,
+      "Agility": 58,
+      "Craft": 24
+    },
+    "names_list": "western_male",
+    "traits": [
+      "Human",
+      "Strong",
+      "Tall",
+      "Tough",
+      "Great Figure",
+      "Cool Scars"
+    ],
+    "description": "Kin to the Master of the Sands, and a fighter still in his fighting years. Kar has the family stillness and the family scars, but his knees are sound and his seasons are ahead of him. With the Arena's future settled, he takes work in your house to build a purse and reputation of his own.",
+    "gender": "male",
+    "comfort_desired": 2
+  }
+]

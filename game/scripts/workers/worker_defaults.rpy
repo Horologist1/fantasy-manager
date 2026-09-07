@@ -2,6 +2,36 @@
 
 init python:
 
+    def migrate_lanista_exhibitionist_trait(worker):
+        """Move old Lanista saves off the globally shared Exhibitionist key."""
+        if not hasattr(worker, "get"):
+            return False
+
+        lanista_ids = {
+            str(worker.get("folder", "")).strip().lower(),
+            str(worker.get("template_id", "")).strip().lower(),
+        }
+        if not ({"lanista_female", "lanista_male"} & lanista_ids):
+            return False
+
+        traits = list(worker.get("traits", []) or [])
+        if "Exhibitionist" not in traits:
+            return False
+
+        migrated = []
+        for trait_name in traits:
+            replacement = "Arena Exhibitionist" if trait_name == "Exhibitionist" else trait_name
+            if replacement not in migrated:
+                migrated.append(replacement)
+        worker["traits"] = migrated
+
+        durations = worker.get("trait_durations")
+        if hasattr(durations, "pop"):
+            old_duration = durations.pop("Exhibitionist", None)
+            if old_duration is not None and "Arena Exhibitionist" not in durations:
+                durations["Arena Exhibitionist"] = old_duration
+        return True
+
     def ensure_worker_defaults(worker):
         """
         Ensure all required worker attributes are initialized with default values,
@@ -184,6 +214,12 @@ init python:
             normalized_traits = []
         worker["traits"] = normalized_traits
 
+        if migrate_lanista_exhibitionist_trait(worker):
+            renpy.log(
+                "TRAITS: Migrated old Lanista Exhibitionist key for %s"
+                % worker.get("name", "Unknown")
+            )
+
         # Enforce trait validity on existing worker data (requirements/conflicts/gender restrictions).
         _sanitize_traits = getattr(store, "sanitize_worker_trait_state", None)
         if callable(_sanitize_traits):
@@ -265,6 +301,7 @@ init python:
         worker.setdefault("auto_equip", _def_auto_equip)
         worker.setdefault("auto_rest", _def_auto_rest)
         worker.setdefault("auto_rest_entry_pct", _def_rest_pct)
+        worker.setdefault("important_moments", [])
         _narp = getattr(store, "normalize_auto_rest_entry_pct_for_worker", None)
         if callable(_narp):
             worker["auto_rest_entry_pct"] = _narp(worker)

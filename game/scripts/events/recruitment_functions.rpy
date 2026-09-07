@@ -2,6 +2,130 @@
 # Python functions for the recruitment system
 
 init python:
+    def select_weighted_specific_recruit(available_events, candidate_workers):
+        """Select one eligible specific event by weight, then one matching worker."""
+        identity_match = getattr(store, "_worker_matches_event_identity", None)
+        has_identity_filter = getattr(store, "_event_has_identity_filters", None)
+        if not callable(identity_match) or not callable(has_identity_filter):
+            return (None, None)
+
+        eligible = []
+        for event in available_events or []:
+            if event.get("random_worker", True) or not has_identity_filter(event):
+                continue
+            matching_workers = [
+                worker
+                for worker in (candidate_workers or [])
+                if identity_match(worker, event)
+            ]
+            if not matching_workers:
+                continue
+            try:
+                weight = max(0.0, float(event.get("weight", 1)))
+            except (TypeError, ValueError):
+                weight = 1.0
+            eligible.append((event, matching_workers, weight))
+
+        if not eligible:
+            return (None, None)
+
+        total_weight = sum(entry[2] for entry in eligible)
+        if total_weight <= 0:
+            selected_event, matching_workers, _weight = random.choice(eligible)
+        else:
+            roll = random.random() * total_weight
+            selected_event, matching_workers, _weight = eligible[-1]
+            current_weight = 0.0
+            for event, workers, weight in eligible:
+                current_weight += weight
+                if roll < current_weight:
+                    selected_event, matching_workers = event, workers
+                    break
+
+        return (random.choice(matching_workers), selected_event)
+
+    def recruitment_context_is_visible(event, worker):
+        """Revalidate serialized recruitment state against the current content policy."""
+        if getattr(persistent, "nsfw_enabled", False):
+            return True
+        return bool(
+            event_is_visible_for_content_filter(event)
+            and event_worker_is_visible_for_content_filter(worker)
+        )
+
+    def clear_restricted_recruitment_context(reason="content_filter"):
+        """Clear only transient recruitment state; roster/save entities remain untouched."""
+        store.current_recruitment_event = None
+        store.current_recruitment_worker = None
+        store.in_recruitment = False
+        renpy.log("RECRUITMENT: cleared transient context (%s)" % reason)
+
+    def suspend_restricted_recruitment_context(event=None, worker=None, reason="content_filter"):
+        """Preserve a blocked recruitment for reversible restoration when NSFW returns."""
+        event = event or getattr(store, "current_recruitment_event", None)
+        worker = worker or getattr(store, "current_recruitment_worker", None)
+        if event:
+            store._content_filter_suspended_recruitment_context = {
+                "event": event,
+                "worker": worker,
+            }
+        clear_restricted_recruitment_context(reason)
+
+    def _recruitment_worker_already_hired(worker):
+        """True when this recruitment context's worker is already on the roster."""
+        name = worker.get("name") if hasattr(worker, "get") else None
+        if not name:
+            return False
+        return any(
+            hasattr(w, "get") and w.get("name") == name
+            for w in (getattr(store, "workers", None) or [])
+        )
+
+    def purge_recruitment_transients(reason="stale_context"):
+        """Unconditionally drop every serialized recruitment transient.
+
+        Covers both the active slot (current_recruitment_event/worker,
+        in_recruitment) and the label-scope leaks that python blocks in
+        start_recruitment_system write into the store (selected_worker,
+        specific_event), plus the content-filter suspension slot.
+        """
+        clear_restricted_recruitment_context(reason)
+        for attr in (
+            "selected_worker",
+            "specific_event",
+            "temp_recruitment_worker",
+            "_content_filter_suspended_recruitment_context",
+        ):
+            if getattr(store, attr, None) is not None:
+                setattr(store, attr, None)
+
+    def clear_stale_recruitment_after_load(reason="after_load"):
+        """Purge serialized recruitment context whose worker is already hired.
+
+        Once a recruitment opens, the script stays parked on
+        recruitment_choice_loop for the rest of the in-game day, so saves made
+        later that day carry the finished recruitment in their roots forever.
+        Loading such a save must not re-offer the hired worker, and the NSFW
+        toggle must not be able to suspend-and-resurrect that context.
+        Genuine mid-recruitment saves (worker not on the roster) are left
+        untouched. Returns True when something stale was purged.
+        """
+        candidates = [
+            getattr(store, "current_recruitment_worker", None),
+            getattr(store, "selected_worker", None),
+        ]
+        suspended = getattr(store, "_content_filter_suspended_recruitment_context", None)
+        if suspended and hasattr(suspended, "get"):
+            candidates.append(suspended.get("worker"))
+        if not any(
+            candidate is not None and _recruitment_worker_already_hired(candidate)
+            for candidate in candidates
+        ):
+            return False
+        purge_recruitment_transients(reason)
+        renpy.log("RECRUITMENT: purged stale post-load recruitment context (%s)" % reason)
+        return True
+
     def sanitize_text(text):
         """Normalize curly quotes and dashes to ASCII to avoid font fallback boxes."""
         if not text:
@@ -40,6 +164,8 @@ init python:
         Returns a renpy-loadable path (or "images/event_bg.png" if all fail).
         """
         event = event or {}
+        if not recruitment_context_is_visible(event, worker):
+            return "images/event_bg.png"
         DEFAULT_PLACEHOLDERS = {"generic_success", "generic_failure", "event_bg", None, ""}
         TRAIT_FILE_PREFIXES = ("pregnant_", "futa_", "transformed_", "magical_")
 
@@ -266,6 +392,8 @@ init python:
             # from traits/equipment are not wrongly excluded.
             eligible_workers = []
             for roster_worker in store.workers:
+                if worker_is_in_franchise(roster_worker):
+                    continue
                 try:
                     effective_skill = calculate_skill_with_traits(roster_worker, condition)
                 except Exception:
@@ -434,14 +562,19 @@ init python:
             rep_change = int(effect_dict["reputation"])
             # For recruitment events, apply to Building 1 (main building) as default
             target_building_name = "Building 1"
-            target_building = available_buildings.get(target_building_name)
+            target_building, resolved_building_name = _resolve_building_by_name(target_building_name)
             
             if target_building is not None:
-                new_rep = target_building.get("reputation", 0) + rep_change
+                old_rep = int(target_building.get("reputation", 0) or 0)
+                new_rep = old_rep + rep_change
                 # Cap reputation between 0 and 1000
                 target_building["reputation"] = max(0, min(new_rep, 1000))
-                applied_values["actual_reputation"] = rep_change
-                applied_values["reputation_building"] = store.custom_names.get(target_building_name, target_building_name)
+                applied_values["actual_reputation"] = target_building["reputation"] - old_rep
+                custom_names = getattr(store, "custom_names", {}) or {}
+                applied_values["reputation_building"] = custom_names.get(
+                    resolved_building_name,
+                    resolved_building_name or target_building_name,
+                )
             else:
                 renpy.log("Recruitment: Building 1 not found; skipping reputation effect.")
         
@@ -466,6 +599,21 @@ init python:
 
         # Handle worker recruitment
         if effect_dict.get("recruit_worker", False) and worker:
+            if worker.get("monster", False):
+                renpy.log(f"Blocked recruitment-event path for monster worker: {worker.get('name', 'Unknown')}")
+                applied_values["recruitment_blocked"] = True
+                return applied_values
+            # Duplicate guard: a stale serialized context (or any path that skips
+            # the roster filter in load_recruit_workers) must never add a second
+            # copy of an already-rostered worker. Mirrors the simple-flow check.
+            _rec_name = worker.get("name", "")
+            if _rec_name and any(
+                hasattr(w, "get") and w.get("name") == _rec_name for w in (getattr(store, "workers", []) or [])
+            ):
+                renpy.log(f"Blocked duplicate recruitment of already-rostered worker: {_rec_name}")
+                applied_values["recruitment_blocked"] = True
+                applied_values["duplicate_worker"] = True
+                return applied_values
             # Apply cost modifier if present.
             # Legacy event data often uses 0 as "no modifier", so normalize
             # non-positive values to 1.0 instead of treating them as discounts.
@@ -497,7 +645,10 @@ init python:
             # Add the worker to the roster using recruit_worker for proper tutorial tracking
             ensure_worker_defaults(worker)
             worker["is_servant"] = False
-            store.recruit_worker(worker)
+            if not store.recruit_worker(worker):
+                renpy.log(f"Recruitment blocked for {worker.get('name', 'Unknown')}; skipping recruit effects")
+                applied_values["recruitment_blocked"] = True
+                return applied_values
             
             # Apply attribute changes after recruitment (so they affect the recruited worker)
             if "add_attribute" in effect_dict:

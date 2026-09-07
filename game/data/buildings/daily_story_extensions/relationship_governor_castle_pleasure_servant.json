@@ -1,0 +1,662 @@
+{
+  "_comment": "Relationship daily stories (Pleasure Servant, Governor's Castle). Follows the exemplar contract: 2x romance>=75 + 2x relationship>=75 + 2x rebelliousness>=60 roll normally (romance/relationship feedback loop; rebellion failures cost real money); 2x 'Loves you' roll normally (success = the love works for YOU as your envoy to the palace; failure = a noble sees the look of someone in love and releases the night unpaid -> earnings 0, gentle consequences); Best Friends / Harem Member / House Servant x2 each are no_fail, anchored on the bond with the MANAGER. Prose gender-neutral for worker and manager. story_image reuses existing profession art as placeholder.",
+  "building_id": "governor_castle",
+  "profession_id": "pleasure_servant",
+  "merge_mode": "upsert",
+  "daily_stories": [
+    {
+      "id": "governor_castle_pleasure_servant_romance_behind_the_silk",
+      "weight": 2,
+      "report": "Under Palace Silk",
+      "skill_options": [
+        "Sex"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "positive_traits": {
+        "Beautiful": 5,
+        "Sexy Air": 4
+      },
+      "earnings": {
+        "success": "100 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Under the silk canopy, {worker_name} has sex with the noble while imagining your voice at the bedside. Every kiss and thrust carries the hunger being saved for you, and the client climaxes inside a passion no title could buy. The fee reaches your books, though the desire behind it belongs to you.",
+        "critical_success": "Wanting you turns oral foreplay and slow penetration into something dangerously genuine. The noble orgasms twice, books the rest of the week, and pays a sealed purse above the castle rate. {worker_name} carries every coin home to the person whose imagined touch set the bed alight.",
+        "mediocre": "{worker_name}'s body keeps the appointment but the rest of {worker_name} is back wherever you are. The noble senses the vacancy and pays the posted rate, nothing over.",
+        "failure": "Tonight the pretending fails. The noble notices being a stand-in for somebody else and turns cold as marble, and word of a distracted courtesan travels fast through a small court. {worker_name} leaves the castle wondering whether wanting you is going to cost the house everything."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 5
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_romance_refused_the_east_wing",
+      "weight": 2,
+      "report": "Refused the East Wing",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "romance": 75
+      },
+      "nsfw_only": false,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "120 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "A noble of the inner circle offers {worker_name} an apartment in the east wing, a stipend, and a ring of office: a kept life above the snow line of the court. {worker_name} declines with perfect courtesy and one unspoken reason, which is you. The noble, fascinated by the refusal, pays for the evening twice over.",
+        "critical_success": "The refusal is so graceful the story crosses the castle by morning: somewhere out in the city is a person worth more than the east wing. Half the court requests {worker_name} that week just to look at devotion up close, and the bookings come home to your ledger.",
+        "mediocre": "{worker_name} asks for a night to think the offer over, and the hesitation costs the evening its shine. The answer is still no, but it arrives sounding like arithmetic instead of loyalty.",
+        "failure": "For one long moment above the castle gardens {worker_name} almost says yes, and knows it, and comes home shaken. The near-yes sits between you like a third person at the table, and the noble's withdrawn favor costs the house besides."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "romance": 2,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "romance": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -3,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -3,
+          "romance": -3,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_friend_contract_review",
+      "weight": 2,
+      "report": "The Contract Guarded",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "130 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "Your house's concession at the castle comes up for renewal, and a rival house has spent all winter buying the steward's ear. {worker_name} spends the appointment doing quiet work between the pleasantries, a doubt seeded there, a compliment placed there, because your contract is half a home now. The renewal is signed by the end of the week.",
+        "critical_success": "{worker_name} does better than defend the contract: the steward, thoroughly charmed, extends it two seasons and adds the winter feasts to the schedule. Afterward {worker_name} finds you to plan how to staff it, partner to partner.",
+        "mediocre": "The lobbying lands soft. The contract survives on its own merits, and {worker_name}'s effort neither helps nor hurts the outcome.",
+        "failure": "{worker_name} pushes the house's case one sentence too far, and the steward wonders aloud why a pleasure servant is talking terms. The overstep costs a fine and a season of frost, and what stings {worker_name} most is having made your position worse while trying to help."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "relationship": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "relationship": 3,
+          "reputation": 10
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -6
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_friend_protocol_drill",
+      "weight": 2,
+      "report": "The Protocol Drill",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "relationship": 75
+      },
+      "nsfw_only": false,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "positive_traits": {
+        "Charming": 5,
+        "Clever": 3
+      },
+      "earnings": {
+        "success": "90 + skill",
+        "critical_success": "110 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll - skill)"
+      },
+      "descriptions": {
+        "success": "The castle returns workers for a wrong bow the way other clients return cold soup. Knowing what a wasted hire costs you, {worker_name} spends the carriage ride drilling your newest recruit: which titles, which doors, which silences. The newcomer passes the doorward's inspection and earns a first night instead of a dismissal.",
+        "critical_success": "The coaching takes so well that the newcomer draws a repeat request from a senior courtier on the very first evening. {worker_name} hands you a second castle earner inside a week and shrugs off the thanks, pleased mostly by the look on your face.",
+        "mediocre": "The drilling helps a little. The newcomer survives the doors but earns only the minimum, nerves eating most of the polish.",
+        "failure": "Half-learned protocol proves worse than none. The newcomer mangles a dignitary's title at the threshold and both workers are sent home before the first candle burns down, and the castle bills your house for the empty chamber. {worker_name} takes it hard, certain of having failed you and the recruit both."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 2,
+          "reputation": 4
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 3,
+          "reputation": 8
+        },
+        "mediocre": {
+          "energy": -3
+        },
+        "failure": {
+          "energy": -3,
+          "joy": -2,
+          "relationship": -2,
+          "reputation": -4
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_rebel_courtier_gift",
+      "weight": 2,
+      "report": "The Courtier's Gift",
+      "skill_options": [
+        "Hand"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "70 + skill",
+        "critical_success": "90 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 25)"
+      },
+      "descriptions": {
+        "success": "After an oil-slick handjob brings the courtier to orgasm, a gold pin appears under the sheet as a private reward. {worker_name} sends the booked fee to your ledger, then slips the pin into a boot. The palace records the service; neither the steward nor you records the gift.",
+        "critical_success": "{worker_name} edges the courtier with slow hands until one climax breaks into a second. A jeweled clasp joins the fee on the bedside table, but only the fee reaches your books. The clasp disappears beneath {worker_name}'s clothes, a profitable little rebellion hidden behind immaculate service.",
+        "mediocre": "The gift turns out to be plated tin, hardly worth the risk of pocketing it, and the evening's honest earnings are ordinary.",
+        "failure": "The steward inventories everything, including what courtiers wear into a chamber and do not wear out of it. The missing pin surfaces by morning, the questions land on your house, and the fine for smuggled favors comes out of your strongbox."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -4,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -10
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_rebel_reshuffled_list",
+      "weight": 2,
+      "report": "The Reshuffled List",
+      "skill_options": [
+        "Charm"
+      ],
+      "stat_requirements": {
+        "rebelliousness": 60
+      },
+      "nsfw_only": false,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "negative_traits": {
+        "Rebellious": 4
+      },
+      "earnings": {
+        "success": "80 + skill",
+        "critical_success": "100 + skill * 2",
+        "mediocre": "skill",
+        "failure": "-(roll + 15)"
+      },
+      "descriptions": {
+        "success": "The evening's list says the treasury minister, dull as ledger paper, at the ninth bell. {worker_name} quietly trades the slot for a livelier young courtier, protocol unconsulted and you unconsulted too. The courtier pays cheerfully, and the minister, this once, never learns of it.",
+        "critical_success": "The swapped-in courtier arrives with two friends and a purse apiece, and the reshuffled evening outearns the official list by half. {worker_name} regrets nothing, which worries you a little.",
+        "mediocre": "The trade gains nothing. The substitute client is pleasant, pays the standard rate, and the risk buys no reward at all.",
+        "failure": "Treasury ministers keep accounts of everything, including slights. The formal complaint reaches the Governor's office by morning, and the penalty for a broken appointment, plus the cost of soothing the minister, comes straight out of your season's profit."
+      },
+      "consequences": {
+        "success": {
+          "energy": -2,
+          "joy": 2,
+          "rebelliousness": 1
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": 1
+        },
+        "mediocre": {
+          "energy": -2,
+          "rebelliousness": 1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": -2,
+          "rebelliousness": 2,
+          "reputation": -8
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_lovesyou_envoy",
+      "weight": 3,
+      "report": "Your Envoy in the Beds",
+      "skill_options": [
+        "Sex"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "125 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} enters the noble's bed as an envoy for the house you are building. Love for you sharpens the sex: patient foreplay, deep thrusts, and a climax timed with practiced care. The noble praises your service, and {worker_name} brings the full fee home like a tribute laid at your feet.",
+        "critical_success": "Every kiss, stroke, and thrust becomes an argument for your house. {worker_name} keeps thinking of your future while bringing the noble through one orgasm and then another, never letting private longing break the performance. The delighted client books a month ahead, and every advance goes straight into your vault.",
+        "mediocre": "The heart keeps drifting home mid-appointment, and the noble notices only half a companion in the room. The fee is the fee; there is no tip.",
+        "failure": "Midway through the evening the noble goes still, tilts {worker_name}'s chin toward the candle, and studies what is written there. A look like that has an owner, the noble says, and it is not anyone in this castle. The night is released unpaid, discreet and oddly gentle, and {worker_name} walks home to you with empty hands and no regrets."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_lovesyou_dread_appointment",
+      "weight": 3,
+      "report": "The Dreaded Name Taken",
+      "skill_options": [
+        "BDSM"
+      ],
+      "required_traits": [
+        "Loves you"
+      ],
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "failure_image": "pleasure_servant_noble_client_failure",
+      "earnings": {
+        "success": "110 + skill",
+        "critical_success": "125 + skill * 2",
+        "mediocre": "skill",
+        "failure": "0"
+      },
+      "descriptions": {
+        "success": "{worker_name} takes the dreaded appointment because every coin will come home to you. The cuffs, commands, oral service, and hard penetration stay inside limits agreed before the door closed. Thinking of your face steadies every response until the client climaxes, satisfied, and pays without complaint.",
+        "critical_success": "The old tyrant tests every edge of the negotiated scene, from the blindfold to anal sex, but {worker_name} never loses the safe word or the thought of you. That devotion carries the session through a brutal final climax. The client pays double; {worker_name} returns intact and proud to your door.",
+        "mediocre": "{worker_name} gets through the appointment on discipline alone, mind fixed somewhere across the city, and the client senses the absence and withholds the customary bonus.",
+        "failure": "Between one command and the next, the thought of you arrives so hard that {worker_name} simply stops, kneeling there full of somewhere else. The old tyrant, who has broken workers for less, unbuckles the straps in silence and says only: go home to them. No fee, no punishment, and the strangest mercy the castle has ever shown."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 2,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 3,
+          "reputation": 12
+        },
+        "mediocre": {
+          "energy": -4,
+          "joy": -1
+        },
+        "failure": {
+          "energy": -2,
+          "joy": 1,
+          "romance": 1
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_bestfriends_court_map",
+      "weight": 3,
+      "report": "The Court on Your Desk",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "pleasure_servant_noble_client",
+      "positive_traits": {
+        "Clever": 5,
+        "Sharp-Eyed": 3
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "{worker_name} works the appointment, then comes home and sits on the corner of your desk with a bottle of borrowed palace wine, mapping the court for you: which faction is rising, which steward can be flattered, which contracts open at midsummer. The nobles pay for {worker_name}'s evenings; you get the part of them that matters.",
+        "critical_success": "Tonight's pillow talk includes the castle's entertainment budget for next season, doubling, unannounced. You bid on the tender three days before your rivals know it exists and win it at leisure. {worker_name} refuses any cut of it, on the grounds that watching your rivals lose was payment enough."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_bestfriends_rumor_killed",
+      "weight": 3,
+      "report": "A Rumor Strangled",
+      "skill_options": [
+        "Charm"
+      ],
+      "required_traits": [
+        "Best Friends"
+      ],
+      "no_fail": true,
+      "nsfw_only": false,
+      "story_image": "pleasure_servant_noble_client",
+      "positive_traits": {
+        "Sharp-Eyed": 5,
+        "Clever": 4
+      },
+      "earnings": {
+        "success": "120 + skill",
+        "critical_success": "150 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Somebody has been feeding the chamberlain a story about your house's discretion, the kind of story that ends castle contracts. {worker_name} spends the evening dismantling it laugh by laugh, three well-placed anecdotes and one perfectly timed silence, and by the last candle the rumor is a joke instead of a threat.",
+        "critical_success": "{worker_name} does not just kill the rumor but follows it upstream, and comes home with the name of the rival house that started it, written on the back of a stolen invitation. You now owe your best friend a very good dinner, and you both know it."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "relationship": 1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "relationship": 2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_harem_palace_jewel",
+      "weight": 3,
+      "report": "The Palace Jewel",
+      "skill_options": [
+        "Sex"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "positive_traits": {
+        "Sexy Air": 5,
+        "Beautiful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Your collar stays visible while {worker_name} undresses for the noble. That reminder turns ordinary sex into a borrowed privilege: the client may enjoy the mouth, the thrusts, and the climax, but cannot own what gives them meaning. The palace pays a premium for an hour that still belongs to you.",
+        "critical_success": "Two nobles bid for an evening with the one who wears your collar. {worker_name} gives the winner oral pleasure and slow, measured sex within the limits you set, drawing out the orgasm until the client begs. The winning purse comes home untouched, along with the collar no fortune can loosen."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 3,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 4,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_harem_not_for_sale",
+      "weight": 3,
+      "report": "Not for Any Fortune",
+      "skill_options": [
+        "Sex",
+        "Anal"
+      ],
+      "required_traits": [
+        "Harem Member"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "positive_traits": {
+        "Elegant": 5,
+        "Graceful": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "After an hour of oral and anal sex leaves the noble spent, a chest of gold is pushed across the bed to buy your collar and everything it binds. {worker_name} refuses without glancing inside. The client can purchase another orgasm, never the allegiance behind it, and pays the normal fee.",
+        "critical_success": "The noble returns with more gold and a second offer. {worker_name} serves another explicit night of sex within your rules, draws out two climaxes, then closes the chest and sends it back. Word crosses the guest wing by dawn: your marked servant can be hired by the hour, but never bought away from you."
+      },
+      "consequences": {
+        "success": {
+          "energy": -3,
+          "joy": 2,
+          "rebelliousness": -1,
+          "reputation": 8
+        },
+        "critical_success": {
+          "joy": 3,
+          "rebelliousness": -2,
+          "reputation": 14
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_servant_no_name_refused",
+      "weight": 3,
+      "report": "No Name Refused",
+      "skill_options": [
+        "Sex",
+        "BDSM"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "positive_traits": {
+        "Graceful": 4,
+        "Robust": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "You set the list, and {worker_name} works every name on it without complaint. Every chamber asks for something different from the last, and every request is met unhurried within the house rules, the demanding brought to climax with the same patience as the shy. The castle pays extra for obedience that begins with your order and never becomes careless.",
+        "critical_success": "The resident every other servant refuses is last on your list. Because you assigned the room, {worker_name} accepts the negotiated restraints and hard sex, controls every thrust, and brings the client to a shattering orgasm without surrendering a boundary. A standing weekly booking rewards service disciplined enough to obey you safely."
+      },
+      "consequences": {
+        "success": {
+          "energy": -4,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    },
+    {
+      "id": "governor_castle_pleasure_servant_servant_festival_bells",
+      "weight": 3,
+      "report": "The Festival Bells",
+      "skill_options": [
+        "Sex",
+        "Oral",
+        "Hand"
+      ],
+      "required_traits": [
+        "House Servant"
+      ],
+      "no_fail": true,
+      "nsfw_only": true,
+      "story_image": "pleasure_servant_noble_client",
+      "positive_traits": {
+        "Energetic": 5,
+        "Robust": 4
+      },
+      "earnings": {
+        "success": "130 + skill",
+        "critical_success": "160 + skill * 2",
+        "mediocre": "skill",
+        "failure": "skill"
+      },
+      "descriptions": {
+        "success": "Because you ordered every festival summons answered, {worker_name} moves from chamber to chamber without letting the palace see fatigue. Each door opens on a different appetite, and each noble is brought to climax as though theirs were the only summons of the night, and every fee reaches your house. By dawn, your line dominates the guest ledger.",
+        "critical_success": "The bells keep ringing until sunrise, and {worker_name} keeps answering for you. Even after a night of mouths, hands, and thrusting bodies, the final noble receives patient sex and a hard orgasm rather than a hurried finish. The castellan adds a bonus, astonished that your servant sustained the entire ward."
+      },
+      "consequences": {
+        "success": {
+          "energy": -5,
+          "joy": 1,
+          "rebelliousness": -1,
+          "reputation": 6
+        },
+        "critical_success": {
+          "energy": -4,
+          "joy": 2,
+          "rebelliousness": -2,
+          "reputation": 12
+        }
+      }
+    }
+  ]
+}

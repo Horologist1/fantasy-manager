@@ -387,12 +387,15 @@
     },
     {
         "name": "Nuphar",
+        "template_id": "monster_unique_slime",
         "folder": "nuphar",
         "cost": 1500,
         "nsfw": true,
         "unique": true,
         "encounter_only": true,
         "monster": true,
+        "monster_archetype": "slime",
+        "recruitment_locked": true,
         "procedural": false,
         "skills": {
             "Sex": 45,

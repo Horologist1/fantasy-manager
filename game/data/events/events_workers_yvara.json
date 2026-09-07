@@ -1,12 +1,28 @@
 [
   {
     "id": "yvara_post_arc_intimate_visit_lord",
+    "event_probability": 25,
     "description": "You are wiping down the bar when the side door opens. Yvara, in the long coat she keeps for after-Academy galas — formal enough to suggest something, committed to nothing. The Academy seal hangs from the brass key in her fingers; she sets it on the polished wood with the same precision she uses for placing books on a high shelf. She has come from a fundraising dinner that ran two hours longer than it should have. You can read all of this in the line of her jaw before she has said a word.\n\nYvara: 'I have spent the last three hours listening to the Marquis of Vellan discuss the proper pronunciation of his own surname. I would like to spend the next hour doing absolutely nothing of academic significance.'\n\nShe unhooks the top button of the coat and waits, watching you with the patience of someone who already knows how this ends.",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_night.png",
+        "text": "You are wiping down the bar when the side door opens. Yvara, in the long coat she keeps for after-Academy galas — formal enough to suggest something, committed to nothing. The Academy seal hangs from the brass key in her fingers; she sets it on the polished wood with the same precision she uses for placing books on a high shelf. She has come from a fundraising dinner that ran two hours longer than it should have. You can read all of this in the line of her jaw before she has said a word."
+      },
+      {
+        "image": "images/yvara/cg_after_tour_before.png",
+        "text": "Yvara: 'I have spent the last three hours listening to the Marquis of Vellan discuss the proper pronunciation of his own surname. I would like to spend the next hour doing absolutely nothing of academic significance.'\n\nShe unhooks the top button of the coat and waits, watching you with the patience of someone who already knows how this ends."
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_post_arc_intimate_lord.png",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_night.png",
     "nsfw": true,
     "player_gender_requirement": "lord",
     "conditions": {
@@ -14,12 +30,19 @@
     },
     "choices": [
       {
-        "option": "Lock the door behind her. (Cost: a slow night; Gain: Reputation, Joy)",
-        "message": "You turn the bolt. The room exhales. She is on you before the lock has finished clicking — the coat sliding from her shoulders, your hand at her waist, her teeth at your jaw. Whatever the Marquis of Vellan said, Yvara is making a thorough rebuttal of it on the bar top.\n\nAfterwards she sits on the wood in your shirt and her own boots, eating cold bread from the kitchen with her fingers, telling you what the Marquis really meant when he said it. She corrects an arithmetic error on page four of your ledger without commenting on it. The neighbourhood notices her dawn departures from your house now and again. It does the place no harm at all. ({actual_money}, {actual_reputation} reputation, +6 Joy).",
+        "option": "Lock the door behind her. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_yvara_post_arc_intimate_lord.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_yvara_post_arc_intimate_lord.png",
+            "text": "You turn the bolt. The room exhales. She is on you before the lock has finished clicking — the coat sliding from her shoulders, your hand at her waist, her teeth at your jaw. Whatever the Marquis of Vellan said, Yvara is making a thorough rebuttal of it on the bar top.\n\nAfterwards she sits on the wood in your shirt and her own boots, eating cold bread from the kitchen with her fingers, telling you what the Marquis really meant when he said it. She corrects an arithmetic error on page four of your ledger without commenting on it. The neighbourhood notices her dawn departures from your house now and again. It does the place no harm at all."
+          }
+        ],
+        "message": "You turn the bolt. The room exhales. She is on you before the lock has finished clicking — the coat sliding from her shoulders, your hand at her waist, her teeth at your jaw. Whatever the Marquis of Vellan said, Yvara is making a thorough rebuttal of it on the bar top.\n\nAfterwards she sits on the wood in your shirt and her own boots, eating cold bread from the kitchen with her fingers, telling you what the Marquis really meant when he said it. She corrects an arithmetic error on page four of your ledger without commenting on it. The neighbourhood notices her dawn departures from your house now and again. It does the place no harm at all.",
         "effect": {
-          "money": -120,
           "reputation": 8,
           "joy": 6,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -27,59 +50,23 @@
         }
       },
       {
-        "option": "Tell her you have to finish closing first.",
-        "message": "She raises an eyebrow. Sets the key down with care. Settles onto a stool with the precise resignation of a woman watching a competent person do tedious work.\n\nBy the time you have wiped the last table she has located the bottle in your reserves you forgot you owned, identified it correctly as the better of the two, and is reading your ledger upside down with mild academic interest. She refills the glass at your elbow without being asked. She has not put the coat back on. The night becomes something quieter, and entirely hers. ({actual_reputation} reputation, +3 Joy).",
+        "option": "Pour the good bottle first — the night is long. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_s6_devotion_setup.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_s6_devotion_setup.png",
+            "text": "She raises an eyebrow. Sets the key down with care. Settles onto a stool with the precise resignation of a woman watching a competent person do tedious work.\n\nBy the time you have wiped the last table she has located the bottle in your reserves you forgot you owned, identified it correctly as the better of the two, and is reading your ledger upside down with mild academic interest. She refills the glass at your elbow without being asked. She has not put the coat back on."
+          },
+          {
+            "image": "images/workers/yvara/romance_perfect_night_lord_female.jpg",
+            "text": "When the last lamp is out she takes the bottle in one hand and your wrist in the other, and leads you upstairs to finish the argument the coat started. She wins it slowly, and more than once."
+          }
+        ],
+        "message": "She raises an eyebrow. Sets the key down with care. Settles onto a stool with the precise resignation of a woman watching a competent person do tedious work.\n\nBy the time you have wiped the last table she has located the bottle in your reserves you forgot you owned, identified it correctly as the better of the two, and is reading your ledger upside down with mild academic interest. She refills the glass at your elbow without being asked. She has not put the coat back on.\n\nWhen the last lamp is out she takes the bottle in one hand and your wrist in the other, and leads you upstairs to finish the argument the coat started. She wins it slowly, and more than once.",
         "effect": {
-          "reputation": 3,
-          "joy": 3,
-          "success_chance": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
-        }
-      }
-    ],
-    "event_type": null,
-    "worker_name": null,
-    "dialogue": null,
-    "unlimited": false,
-    "random_worker": false,
-    "always_available": false,
-    "worker_filter": {}
-  },
-  {
-    "id": "yvara_post_arc_intimate_visit_lady",
-    "description": "You are wiping down the bar when the side door opens. Yvara, in the long coat she keeps for after-Academy galas — formal enough to suggest something, committed to nothing. The Academy seal hangs from the brass key in her fingers; she sets it on the polished wood with the same precision she uses for placing books on a high shelf. She has come from a fundraising dinner that ran two hours longer than it should have. You can read all of this in the line of her jaw before she has said a word.\n\nYvara: 'I have spent the last three hours listening to the Marquis of Vellan discuss the proper pronunciation of his own surname. I would like to spend the next hour doing absolutely nothing of academic significance.'\n\nShe unhooks the top button of the coat and waits, watching you with the patience of someone who already knows how this ends.",
-    "weight": 6,
-    "cooldown_days": 14,
-    "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_post_arc_intimate_lady.png",
-    "nsfw": true,
-    "player_gender_requirement": "lady",
-    "conditions": {
-      "start_when": "has_flag:yvara_ending_devotion OR has_flag:yvara_ending_mixed"
-    },
-    "choices": [
-      {
-        "option": "Lock the door behind her. (Cost: a slow night; Gain: Reputation, Joy)",
-        "message": "You turn the bolt. The room exhales. She is on you before the lock has finished clicking — the coat sliding from her shoulders, your hands at her waist, her teeth at your jaw. Whatever the Marquis of Vellan said, Yvara is making a thorough rebuttal of it on the bar top.\n\nAfterwards she lies tangled with you on the cleared wood, sharing cold bread from the kitchen between bites, telling you what the Marquis really meant when he said it. She corrects an arithmetic error on page four of your ledger without commenting on it. The neighbourhood notices her dawn departures from your house now and again. It does the place no harm at all. ({actual_money}, {actual_reputation} reputation, +6 Joy).",
-        "effect": {
-          "money": -120,
-          "reputation": 8,
-          "joy": 6,
-          "success_chance": 0,
-          "recruit_worker": false,
-          "cost_modifier": 0,
-          "relationship_bonus": 0
-        }
-      },
-      {
-        "option": "Tell her you have to finish closing first.",
-        "message": "She raises an eyebrow. Sets the key down with care. Settles onto a stool with the precise resignation of a woman watching a competent person do tedious work.\n\nBy the time you have wiped the last table she has located the bottle in your reserves you forgot you owned, identified it correctly as the better of the two, and is reading your ledger upside down with mild academic interest. She refills the glass at your elbow without being asked. She has not put the coat back on. The night becomes something quieter, and entirely hers. ({actual_reputation} reputation, +3 Joy).",
-        "effect": {
-          "reputation": 3,
-          "joy": 3,
+          "reputation": 4,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -97,12 +84,24 @@
   },
   {
     "id": "yvara_post_arc_office_recess_lord",
+    "event_probability": 25,
     "description": "Mid-afternoon. You are in the back office balancing the ledger when one of your staff knocks twice and steps aside without comment. Yvara is in the doorway in her formal robes, her glasses on a chain around her neck — she has come straight from an oral examination.\n\nYvara: 'I have ninety minutes before a faculty meeting. I had two options for what to do with them. The other one was to grade dissertations.'\n\nShe closes the office door behind her with the heel of her boot. The lock turns under her thumb without her looking at it.",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_day.png",
+        "text": "Mid-afternoon. You are in the back office balancing the ledger when one of your staff knocks twice and steps aside without comment. Yvara is in the doorway in her formal robes, her glasses on a chain around her neck — she has come straight from an oral examination.\n\nYvara: 'I have ninety minutes before a faculty meeting. I had two options for what to do with them. The other one was to grade dissertations.'\n\nShe closes the office door behind her with the heel of her boot. The lock turns under her thumb without her looking at it."
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_post_arc_office_recess_lord.png",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_day.png",
     "nsfw": true,
     "player_gender_requirement": "lord",
     "conditions": {
@@ -110,12 +109,19 @@
     },
     "choices": [
       {
-        "option": "Make use of the ninety minutes. (Cost: closed office; Gain: Reputation, Joy)",
-        "message": "You have her on the desk before the lock has finished settling — papers scattering, the inkwell rocking on its pedestal, her robes pushed up around her hips. The robes do not wrinkle. Yvara does not let them.\n\nForty minutes later she is putting herself back together with the same precision she uses for closing arguments. The ledger has a fresh ink stain across page seven that you will not be able to remove. She does not apologise for it. 'I will see you tonight.' She is gone before the next bell. Your staff exchange the look they have been exchanging for weeks now. You ignore it. ({actual_money}, {actual_reputation} reputation, +6 Joy).",
+        "option": "Make use of the ninety minutes. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/special (3).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/special (3).jpg",
+            "text": "She has you on the desk before the lock has finished settling — papers scattering, the inkwell rocking on its pedestal, the formal robes folded over the chair with two exact fingers, because there are limits to what Yvara will improvise. She conducts the rest astride you, with the delighted precision of a scholar proving a thesis she has spent all week composing.\n\nForty minutes later she is putting herself back together with the same precision she uses for closing arguments. The ledger has a fresh ink stain across page seven that you will not be able to remove. She does not apologise for it. 'I will see you tonight.' She is gone before the next bell. Your staff exchange the look they have been exchanging for weeks now. You ignore it."
+          }
+        ],
+        "message": "She has you on the desk before the lock has finished settling — papers scattering, the inkwell rocking on its pedestal, the formal robes folded over the chair with two exact fingers, because there are limits to what Yvara will improvise. She conducts the rest astride you, with the delighted precision of a scholar proving a thesis she has spent all week composing.\n\nForty minutes later she is putting herself back together with the same precision she uses for closing arguments. The ledger has a fresh ink stain across page seven that you will not be able to remove. She does not apologise for it. 'I will see you tonight.' She is gone before the next bell. Your staff exchange the look they have been exchanging for weeks now. You ignore it.",
         "effect": {
-          "money": -120,
           "reputation": 8,
           "joy": 6,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -123,12 +129,103 @@
         }
       },
       {
-        "option": "Tell her you actually need the ninety minutes to finish the books. (Gain: Money, Reputation; small Joy loss)",
-        "message": "She looks at you for a long moment. Then she removes her gloves with deliberate care, sets them on the corner of the desk, and pulls a chair across from you. 'Then I will spend my ninety minutes auditing your accounts. Show me.'\n\nShe finds two arithmetic errors and a vendor entry you have been double-paying for the better part of a month. She does not gloat. She does not need to. By the time the bells ring for her faculty meeting your books are cleaner than they have been in a year, and you have been thoroughly rebuked without a single sharp word being spoken. ({actual_money}, {actual_reputation} reputation, -1 Joy).",
+        "option": "Let her audit the books — she did offer, in her way. (Gain: Money, Reputation, Joy)",
+        "success_image": "images/workers/yvara/clever (1).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/clever (1).jpg",
+            "text": "She looks at you for a long moment. Then she removes her gloves with deliberate care, sets them on the corner of the desk, and pulls a chair across from you. 'Then I will spend my ninety minutes auditing your accounts. Show me.'\n\nShe finds two arithmetic errors and a vendor entry you have been double-paying for the better part of a month. She does not gloat. She does not need to. By the time your books are cleaner than they have been in a year, twenty minutes remain — and she claims every one of them, in the armchair, with your collar wrapped once around her fist. 'Efficiency,' she says afterwards, straightening the chain of her glasses, 'is knowing which minutes matter.'"
+          }
+        ],
+        "message": "She looks at you for a long moment. Then she removes her gloves with deliberate care, sets them on the corner of the desk, and pulls a chair across from you. 'Then I will spend my ninety minutes auditing your accounts. Show me.'\n\nShe finds two arithmetic errors and a vendor entry you have been double-paying for the better part of a month. She does not gloat. She does not need to. By the time your books are cleaner than they have been in a year, twenty minutes remain — and she claims every one of them, in the armchair, with your collar wrapped once around her fist. 'Efficiency,' she says afterwards, straightening the chain of her glasses, 'is knowing which minutes matter.'",
         "effect": {
           "money": 80,
           "reputation": 4,
-          "joy": -1,
+          "joy": 4,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_intimate_visit_lady",
+    "event_probability": 25,
+    "description": "You are wiping down the bar when the side door opens. Yvara, in the long coat she keeps for after-Academy galas — formal enough to suggest something, committed to nothing. The Academy seal hangs from the brass key in her fingers; she sets it on the polished wood with the same precision she uses for placing books on a high shelf. She has come from a fundraising dinner that ran two hours longer than it should have. You can read all of this in the line of her jaw before she has said a word.\n\nYvara: 'I have spent the last three hours listening to the Marquis of Vellan discuss the proper pronunciation of his own surname. I would like to spend the next hour doing absolutely nothing of academic significance.'\n\nShe unhooks the top button of the coat and waits, watching you with the patience of someone who already knows how this ends.",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_night.png",
+        "text": "You are wiping down the bar when the side door opens. Yvara, in the long coat she keeps for after-Academy galas — formal enough to suggest something, committed to nothing. The Academy seal hangs from the brass key in her fingers; she sets it on the polished wood with the same precision she uses for placing books on a high shelf. She has come from a fundraising dinner that ran two hours longer than it should have. You can read all of this in the line of her jaw before she has said a word."
+      },
+      {
+        "image": "images/yvara/cg_after_tour_before.png",
+        "text": "Yvara: 'I have spent the last three hours listening to the Marquis of Vellan discuss the proper pronunciation of his own surname. I would like to spend the next hour doing absolutely nothing of academic significance.'\n\nShe unhooks the top button of the coat and waits, watching you with the patience of someone who already knows how this ends."
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_night.png",
+    "nsfw": true,
+    "player_gender_requirement": "lady",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_devotion OR has_flag:yvara_ending_mixed"
+    },
+    "choices": [
+      {
+        "option": "Lock the door behind her. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/discipline_cunnilingus (2).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/discipline_cunnilingus (2).jpg",
+            "text": "You turn the bolt. The room exhales. She is on you before the lock has finished clicking — the coat sliding from her shoulders, your hands at her waist, her teeth at your jaw. Whatever the Marquis of Vellan said, Yvara is making a thorough rebuttal of it on the bar top.\n\nAfterwards she lies tangled with you on the cleared wood, sharing cold bread from the kitchen between bites, telling you what the Marquis really meant when he said it. She corrects an arithmetic error on page four of your ledger without commenting on it. The neighbourhood notices her dawn departures from your house now and again. It does the place no harm at all."
+          }
+        ],
+        "message": "You turn the bolt. The room exhales. She is on you before the lock has finished clicking — the coat sliding from her shoulders, your hands at her waist, her teeth at your jaw. Whatever the Marquis of Vellan said, Yvara is making a thorough rebuttal of it on the bar top.\n\nAfterwards she lies tangled with you on the cleared wood, sharing cold bread from the kitchen between bites, telling you what the Marquis really meant when he said it. She corrects an arithmetic error on page four of your ledger without commenting on it. The neighbourhood notices her dawn departures from your house now and again. It does the place no harm at all.",
+        "effect": {
+          "reputation": 8,
+          "joy": 6,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Pour the good bottle first — the night is long. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_s6_devotion_setup.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_s6_devotion_setup.png",
+            "text": "She raises an eyebrow. Sets the key down with care. Settles onto a stool with the precise resignation of a woman watching a competent person do tedious work.\n\nBy the time you have wiped the last table she has located the bottle in your reserves you forgot you owned, identified it correctly as the better of the two, and is reading your ledger upside down with mild academic interest. She refills the glass at your elbow without being asked. She has not put the coat back on."
+          },
+          {
+            "image": "images/workers/yvara/romance_perfect_night_lady_female.jpg",
+            "text": "When the last lamp is out she takes the bottle in one hand and your wrist in the other, and leads you upstairs to finish the argument the coat started. She wins it slowly, and more than once."
+          }
+        ],
+        "message": "She raises an eyebrow. Sets the key down with care. Settles onto a stool with the precise resignation of a woman watching a competent person do tedious work.\n\nBy the time you have wiped the last table she has located the bottle in your reserves you forgot you owned, identified it correctly as the better of the two, and is reading your ledger upside down with mild academic interest. She refills the glass at your elbow without being asked. She has not put the coat back on.\n\nWhen the last lamp is out she takes the bottle in one hand and your wrist in the other, and leads you upstairs to finish the argument the coat started. She wins it slowly, and more than once.",
+        "effect": {
+          "reputation": 4,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -146,12 +243,24 @@
   },
   {
     "id": "yvara_post_arc_office_recess_lady",
+    "event_probability": 25,
     "description": "Mid-afternoon. You are in the back office balancing the ledger when one of your staff knocks twice and steps aside without comment. Yvara is in the doorway in her formal robes, her glasses on a chain around her neck — she has come straight from an oral examination.\n\nYvara: 'I have ninety minutes before a faculty meeting. I had two options for what to do with them. The other one was to grade dissertations.'\n\nShe closes the office door behind her with the heel of her boot. The lock turns under her thumb without her looking at it.",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_day.png",
+        "text": "Mid-afternoon. You are in the back office balancing the ledger when one of your staff knocks twice and steps aside without comment. Yvara is in the doorway in her formal robes, her glasses on a chain around her neck — she has come straight from an oral examination.\n\nYvara: 'I have ninety minutes before a faculty meeting. I had two options for what to do with them. The other one was to grade dissertations.'\n\nShe closes the office door behind her with the heel of her boot. The lock turns under her thumb without her looking at it."
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_post_arc_office_recess_lady.png",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_day.png",
     "nsfw": true,
     "player_gender_requirement": "lady",
     "conditions": {
@@ -159,12 +268,19 @@
     },
     "choices": [
       {
-        "option": "Make use of the ninety minutes. (Cost: closed office; Gain: Reputation, Joy)",
-        "message": "You have her on the desk before the lock has finished settling — papers scattering, the inkwell rocking on its pedestal, her robes pushed up to her waist. The robes do not wrinkle. Yvara does not let them.\n\nForty minutes later she is putting herself back together with the same precision she uses for closing arguments. The ledger has a fresh ink stain across page seven that you will not be able to remove. She does not apologise for it. 'I will see you tonight.' She is gone before the next bell. Your staff exchange the look they have been exchanging for weeks now. You ignore it. ({actual_money}, {actual_reputation} reputation, +6 Joy).",
+        "option": "Make use of the ninety minutes. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/discipline_cunnilingus (3).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/discipline_cunnilingus (3).jpg",
+            "text": "She has you on the desk before the lock has finished settling — papers scattering, the inkwell rocking on its pedestal, your ledger for a pillow and her mouth putting the ninety minutes to thorough, scholarly use. The robes do not wrinkle. Yvara does not let them.\n\nForty minutes later she is putting herself back together with the same precision she uses for closing arguments. The ledger has a fresh ink stain across page seven that you will not be able to remove. She does not apologise for it. 'I will see you tonight.' She is gone before the next bell. Your staff exchange the look they have been exchanging for weeks now. You ignore it."
+          }
+        ],
+        "message": "She has you on the desk before the lock has finished settling — papers scattering, the inkwell rocking on its pedestal, your ledger for a pillow and her mouth putting the ninety minutes to thorough, scholarly use. The robes do not wrinkle. Yvara does not let them.\n\nForty minutes later she is putting herself back together with the same precision she uses for closing arguments. The ledger has a fresh ink stain across page seven that you will not be able to remove. She does not apologise for it. 'I will see you tonight.' She is gone before the next bell. Your staff exchange the look they have been exchanging for weeks now. You ignore it.",
         "effect": {
-          "money": -120,
           "reputation": 8,
           "joy": 6,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -172,12 +288,20 @@
         }
       },
       {
-        "option": "Tell her you actually need the ninety minutes to finish the books. (Gain: Money, Reputation; small Joy loss)",
-        "message": "She looks at you for a long moment. Then she removes her gloves with deliberate care, sets them on the corner of the desk, and pulls a chair across from you. 'Then I will spend my ninety minutes auditing your accounts. Show me.'\n\nShe finds two arithmetic errors and a vendor entry you have been double-paying for the better part of a month. She does not gloat. She does not need to. By the time the bells ring for her faculty meeting your books are cleaner than they have been in a year, and you have been thoroughly rebuked without a single sharp word being spoken. ({actual_money}, {actual_reputation} reputation, -1 Joy).",
+        "option": "Let her audit the books — she did offer, in her way. (Gain: Money, Reputation, Joy)",
+        "success_image": "images/workers/yvara/clever (1).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/clever (1).jpg",
+            "text": "She looks at you for a long moment. Then she removes her gloves with deliberate care, sets them on the corner of the desk, and pulls a chair across from you. 'Then I will spend my ninety minutes auditing your accounts. Show me.'\n\nShe finds two arithmetic errors and a vendor entry you have been double-paying for the better part of a month. She does not gloat. She does not need to. By the time your books are cleaner than they have been in a year, twenty minutes remain — and she claims every one of them, in the armchair, with your collar wrapped once around her fist. 'Efficiency,' she says afterwards, straightening the chain of her glasses, 'is knowing which minutes matter.'"
+          }
+        ],
+        "message": "She looks at you for a long moment. Then she removes her gloves with deliberate care, sets them on the corner of the desk, and pulls a chair across from you. 'Then I will spend my ninety minutes auditing your accounts. Show me.'\n\nShe finds two arithmetic errors and a vendor entry you have been double-paying for the better part of a month. She does not gloat. She does not need to. By the time your books are cleaner than they have been in a year, twenty minutes remain — and she claims every one of them, in the armchair, with your collar wrapped once around her fist. 'Efficiency,' she says afterwards, straightening the chain of her glasses, 'is knowing which minutes matter.'",
         "effect": {
           "money": 80,
           "reputation": 4,
-          "joy": -1,
+          "joy": 4,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -195,11 +319,23 @@
   },
   {
     "id": "yvara_post_arc_market_walk",
+    "event_probability": 25,
     "description": "Morning. The bells of the third hour have just sounded. She is at your door in a coat too plain for a Director and a satchel with no Academy seal on it.\n\nYvara: 'There is a stall that opens once a fortnight in the lower market. The bookseller deals in things she should not deal in. I have been told she has a copy of Vesna's third treatise.'\n\nShe does not say it like a request. The satchel has space in it for two.",
+    "description_pages": [
+      {
+        "image": "images/yvara/cg_yvara_post_arc_market_walk.png",
+        "text": "Morning. The bells of the third hour have just sounded. She is at your door in a coat too plain for a Director and a satchel with no Academy seal on it.\n\nYvara: 'There is a stall that opens once a fortnight in the lower market. The bookseller deals in things she should not deal in. I have been told she has a copy of Vesna's third treatise.'\n\nShe does not say it like a request. The satchel has space in it for two."
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
     "background_image": "images/yvara/cg_yvara_post_arc_market_walk.png",
     "nsfw": false,
     "conditions": {
@@ -207,12 +343,19 @@
     },
     "choices": [
       {
-        "option": "Walk with her. (Cost: Money; Gain: Reputation, Joy)",
-        "message": "You go. The streets are crowded with the early traders — fishmongers shouting prices at each other, a glass-blower setting up his stall, two children chasing a chicken between the legs of the crowd. Yvara walks beside you in companionable silence, occasionally pointing out things only she would notice — a misspelled sign, a forged guild stamp on a barrel of olives, a particular variety of lavender she has not seen since her own student days.\n\nThe bookseller has the treatise. Yvara haggles in three languages. She wins. On the walk back she lets you carry the book. People notice the Director of the Academy laughing at something you have said. The afternoon belongs entirely to neither of you. ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "option": "Walk with her. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/friendship_perfect (2).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/friendship_perfect (2).jpg",
+            "text": "You go. The streets are crowded with the early traders — fishmongers shouting prices at each other, a glass-blower setting up his stall, two children chasing a chicken between the legs of the crowd. Yvara walks beside you in companionable silence, occasionally pointing out things only she would notice — a misspelled sign, a forged guild stamp on a barrel of olives, a particular variety of lavender she has not seen since her own student days.\n\nThe bookseller has the treatise. Yvara haggles in three languages. She wins. On the walk back she lets you carry the book. People notice the Director of the Academy laughing at something you have said. The afternoon belongs entirely to neither of you."
+          }
+        ],
+        "message": "You go. The streets are crowded with the early traders — fishmongers shouting prices at each other, a glass-blower setting up his stall, two children chasing a chicken between the legs of the crowd. Yvara walks beside you in companionable silence, occasionally pointing out things only she would notice — a misspelled sign, a forged guild stamp on a barrel of olives, a particular variety of lavender she has not seen since her own student days.\n\nThe bookseller has the treatise. Yvara haggles in three languages. She wins. On the walk back she lets you carry the book. People notice the Director of the Academy laughing at something you have said. The afternoon belongs entirely to neither of you.",
         "effect": {
-          "money": -80,
           "reputation": 6,
           "joy": 5,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -220,10 +363,19 @@
         }
       },
       {
-        "option": "Tell her you cannot leave the establishment unattended. (Loss: Joy)",
-        "message": "She nods. Just once. The way she does when she is choosing not to argue about something that is not worth it.\n\n'Of course.' She adjusts the satchel. 'I will go alone, then.'\n\nShe returns four hours later with the book under her arm and a smaller bundle of paper-wrapped pastries from a stall you have never heard of. She places one of the pastries on your desk without comment. She does not stay to watch you eat it. (-3 Joy).",
+        "option": "Walk with her — and take the long way back through the lamplight. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/romance_private.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/romance_private.jpg",
+            "text": "You go, and you do not hurry back. The treatise is found and haggled for by noon; the rest of the day finds its own uses. A bench above the mill race. A wine seller who claims his cask is Vellan and is lying, which she proves to him gently, in front of his other customers, and buys a bottle anyway.\n\nThe lamplighters are working the long street when you finally turn for home, and somewhere between one lamp and the next her hand finds the crook of your arm and stays there the rest of the way. At the Academy door she reclaims it, unhurried. 'Next fortnight,' she says — not a question — and the satchel with space in it for two goes up the steps looking, somehow, well used."
+          }
+        ],
+        "message": "You go, and you do not hurry back. The treatise is found and haggled for by noon; the rest of the day finds its own uses. A bench above the mill race. A wine seller who claims his cask is Vellan and is lying, which she proves to him gently, in front of his other customers, and buys a bottle anyway.\n\nThe lamplighters are working the long street when you finally turn for home, and somewhere between one lamp and the next her hand finds the crook of your arm and stays there the rest of the way. At the Academy door she reclaims it, unhurried. 'Next fortnight,' she says — not a question — and the satchel with space in it for two goes up the steps looking, somehow, well used.",
         "effect": {
-          "joy": -3,
+          "reputation": 4,
+          "joy": 6,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -240,25 +392,49 @@
     "worker_filter": {}
   },
   {
-    "id": "yvara_post_arc_romantic_dinner",
-    "description": "A quiet evening. The crowd thins early. Your staff exchange the look they have been exchanging for weeks — the one that means the Director is here again, by the side door, with another basket from the Academy kitchen.\n\nShe has set a table by the window with the practised authority of a woman who has done this before and intends to keep doing it. Roast lamb still steaming in its dish, dark bread torn rather than cut, a wedge of sheep cheese, a bottle of something old enough that the original label has been replaced with one she wrote herself in archive ink. Two glasses already poured. Two plates already filled.\n\nShe sees you and gestures at the chair across from her — not as a question.\n\nYvara: 'I had two cancellations and a free hour. I considered grading papers. I decided against it.'",
+    "id": "yvara_post_arc_romantic_dinner_lord",
+    "event_probability": 25,
+    "description": "A quiet afternoon, shading toward evening. The crowd thins early. Your staff exchange the look they have been exchanging for weeks — the one that means the Director is here again, by the side door, with another basket from the Academy kitchen.\n\nShe has set a table by the window with the practised authority of a woman who has done this before and intends to keep doing it. Roast lamb still steaming in its dish, dark bread torn rather than cut, a wedge of sheep cheese, a bottle of something old enough that the original label has been replaced with one she wrote herself in archive ink. Two glasses already poured. Two plates already filled.\n\nShe sees you and gestures at the chair across from her — not as a question.\n\nYvara: 'I had two cancellations and a free hour. I considered grading papers. I decided against it.'",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_day.png",
+        "text": "A quiet afternoon, shading toward evening. The crowd thins early. Your staff exchange the look they have been exchanging for weeks — the one that means the Director is here again, by the side door, with another basket from the Academy kitchen."
+      },
+      {
+        "image": "images/workers/yvara/romance_intimate_dinner.jpg",
+        "text": "She has set a table by the window with the practised authority of a woman who has done this before and intends to keep doing it. Roast lamb still steaming in its dish, dark bread torn rather than cut, a wedge of sheep cheese, a bottle of something old enough that the original label has been replaced with one she wrote herself in archive ink. Two glasses already poured. Two plates already filled.\n\nShe sees you and gestures at the chair across from her — not as a question.\n\nYvara: 'I had two cancellations and a free hour. I considered grading papers. I decided against it.'"
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_romantic_dinner.png",
-    "nsfw": false,
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_day.png",
+    "nsfw": true,
+    "player_gender_requirement": "lord",
     "conditions": {
       "start_when": "has_flag:yvara_ending_devotion OR has_flag:yvara_ending_mixed"
     },
     "choices": [
       {
-        "option": "Sit down and let the world wait. (Cost: Money; Gain: Reputation, Joy)",
-        "message": "You sit. She tells you about a doctoral candidate caught forging citations because the forged authors had been arranged alphabetically — 'real scholars are never that organised.' She tells you about a lecture she is rewriting because a younger colleague made a fair point she has been resisting for almost a year. She refills your glass twice without asking, and her own once.\n\nBy the time the meal is gone you have lost an hour of work and no part of it feels lost. A patron at the far end of the bar quietly toasts the both of you and pretends not to. The story of the Director laughing in your house makes the rounds before sunrise. ({actual_money}, {actual_reputation} reputation, +5 Joy).",
+        "option": "Sit down — and let the evening end upstairs. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/romance_passionate_night_lord_female.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/romance_passionate_night_lord_female.jpg",
+            "text": "You sit. She tells you about a doctoral candidate caught forging citations because the forged authors had been arranged alphabetically — 'real scholars are never that organised.' She tells you about a lecture she is rewriting because a younger colleague made a fair point she has been resisting for almost a year. She refills your glass twice without asking, and her own once.\n\nWhen the bottle is finished she reads the label she wrote in archive ink, sets it down, and looks at you across the ruin of the meal with an expression that has stopped being difficult to translate. The stairs take longer than usual; she keeps stopping you against the banister to make points that require both hands. The story of the Director laughing in your house makes the rounds before sunrise. What kept the lamp in your window burning until the small hours does not, because your staff, whatever else can be said of them, know which stories are theirs to tell."
+          }
+        ],
+        "message": "You sit. She tells you about a doctoral candidate caught forging citations because the forged authors had been arranged alphabetically — 'real scholars are never that organised.' She tells you about a lecture she is rewriting because a younger colleague made a fair point she has been resisting for almost a year. She refills your glass twice without asking, and her own once.\n\nWhen the bottle is finished she reads the label she wrote in archive ink, sets it down, and looks at you across the ruin of the meal with an expression that has stopped being difficult to translate. The stairs take longer than usual; she keeps stopping you against the banister to make points that require both hands. The story of the Director laughing in your house makes the rounds before sunrise. What kept the lamp in your window burning until the small hours does not, because your staff, whatever else can be said of them, know which stories are theirs to tell.",
         "effect": {
-          "money": -200,
           "reputation": 10,
-          "joy": 5,
+          "joy": 6,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -266,11 +442,446 @@
         }
       },
       {
-        "option": "Apologise — the books are not done. (Loss: Reputation, Joy)",
-        "message": "Her expression does not change. She sets her fork down with the unhurried care of a woman who has decided not to make a scene about something that hurts.\n\nShe corks the bottle. Folds both napkins. Replaces the cover on the lamb with the clean, deliberate motion she uses for closing books that have disappointed her. 'Tomorrow, then.' She is gone before you have finished closing the ledger.\n\nYou eat the food cold at midnight, alone, and conclude — not for the first time — that your priorities are negotiable. ({actual_reputation} reputation, -5 Joy).",
+        "option": "Sit down — then walk her home through the lamplit streets, and stay. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_evening_devotion_lord.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_evening_devotion_lord.png",
+            "text": "You sit, and you let the meal take the hour it wants. Afterwards she does not ask you to walk her back; she simply fails to say goodnight, and you fall into step beside her through the cooling streets, the empty basket swinging from her hand like a censer.\n\nHer rooms above the Academy smell of paper and cedar. There is exactly one chair, because she has never needed a second, and the second glass she produces from the cabinet has a fine ring of dust on its rim that she wipes away without meeting your eye. You are the first thing she has kept in these rooms that is not filed under a system. It takes her until morning to stop treating that like a problem, and she solves it the way she solves everything — thoroughly, and more than once."
+          }
+        ],
+        "message": "You sit, and you let the meal take the hour it wants. Afterwards she does not ask you to walk her back; she simply fails to say goodnight, and you fall into step beside her through the cooling streets, the empty basket swinging from her hand like a censer.\n\nHer rooms above the Academy smell of paper and cedar. There is exactly one chair, because she has never needed a second, and the second glass she produces from the cabinet has a fine ring of dust on its rim that she wipes away without meeting your eye. You are the first thing she has kept in these rooms that is not filed under a system. It takes her until morning to stop treating that like a problem, and she solves it the way she solves everything — thoroughly, and more than once.",
         "effect": {
-          "reputation": -3,
-          "joy": -5,
+          "reputation": 6,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_lab_gift_lord",
+    "event_probability": 25,
+    "description": "She arrives between lectures, still chalk-dusted at one cuff, carrying a stoppered vial wrapped in waxed cloth as though it were a small prisoner being transferred under guard.\n\nYvara: 'The third distillation finally held. Eleven weeks of failed reductions, and this morning it simply — held.' She sets it on your counter with two fingers. 'I found I had no one I particularly wished to tell. And then I found that I did, and that he keeps a tavern, which the faculty would consider a waste of the discovery.'\n\nIt is, as nearly as Yvara comes to such things, a gift. She is already pretending to read the specials board.",
+    "description_pages": [
+      {
+        "image": "images/buildings/academy.png",
+        "text": "She arrives between lectures, still chalk-dusted at one cuff, carrying a stoppered vial wrapped in waxed cloth as though it were a small prisoner being transferred under guard.\n\nYvara: 'The third distillation finally held. Eleven weeks of failed reductions, and this morning it simply — held.' She sets it on your counter with two fingers. 'I found I had no one I particularly wished to tell. And then I found that I did, and that he keeps a tavern, which the faculty would consider a waste of the discovery.'\n\nIt is, as nearly as Yvara comes to such things, a gift. She is already pretending to read the specials board."
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 10,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/academy.png",
+    "nsfw": false,
+    "player_gender_requirement": "lord",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_mixed OR has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Accept it — and give her the evening in return. (Gain: Item, Reputation, Joy)",
+        "success_image": "images/workers/yvara/friendship_confidants.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/friendship_confidants.jpg",
+            "text": "You take the vial with the ceremony it deserves, which is more than she expected and exactly as much as she wanted. Then you hang your apron on the hook and inform her that discoveries of this magnitude are toasted, not shelved.\n\nShe protests for the length of one sentence. The evening goes to a corner table and a bottle nobody pays for, and she explains the distillation twice — once properly, and once again with the glassware from the bar standing in for her apparatus, the salt cellar playing the part of the condenser. Your staff have never seen the Director talk with her hands before. Neither, you suspect, has the Director."
+          },
+          {
+            "image": "images/workers/yvara/friendship_joy_gift_lord.jpg",
+            "text": "At the door, you press a wrapped box into her hands — the kitchen's best, packed while she was drawing condensers in spilled wine. 'A trade,' you tell her. 'Discovery for discovery.' She examines the knot in the ribbon as though it were a rival's proof, fails entirely to keep the corner of her mouth still, and does not let go of the box once on the whole walk home."
+          }
+        ],
+        "message": "You take the vial with the ceremony it deserves, which is more than she expected and exactly as much as she wanted. Then you hang your apron on the hook and inform her that discoveries of this magnitude are toasted, not shelved.\n\nShe protests for the length of one sentence. The evening goes to a corner table and a bottle nobody pays for, and she explains the distillation twice — once properly, and once again with the glassware from the bar standing in for her apparatus, the salt cellar playing the part of the condenser. Your staff have never seen the Director talk with her hands before. Neither, you suspect, has the Director.\n\nAt the door, you press a wrapped box into her hands — the kitchen's best, packed while she was drawing condensers in spilled wine. 'A trade,' you tell her. 'Discovery for discovery.' She examines the knot in the ribbon as though it were a rival's proof, fails entirely to keep the corner of her mouth still, and does not let go of the box once on the whole walk home.",
+        "effect": {
+          "reputation": 4,
+          "joy": 4,
+          "joy_worker_name": "Yvara",
+          "custom": "give_item",
+          "item_id": "potion_energetic",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Trade her a drink for it and talk shop until the small hours. (Gain: Item, Joy)",
+        "success_image": "images/workers/yvara/friendship_heart.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/friendship_heart.jpg",
+            "text": "You set the vial behind the bar where the good bottles live, and set a glass in front of her by way of receipt. She examines the exchange rate, finds it acceptable, and stays.\n\nThe conversation runs long past the last patron — her distillation, your suppliers, the economics of reagents, a theory she has about the governor's cellar master that would be slander if it were not so obviously correct. Two professionals talking their trades across a counter, and something underneath it that neither trade has a word for. She leaves a page of notes behind, weighted under the empty glass. The handwriting is much less careful than usual."
+          }
+        ],
+        "message": "You set the vial behind the bar where the good bottles live, and set a glass in front of her by way of receipt. She examines the exchange rate, finds it acceptable, and stays.\n\nThe conversation runs long past the last patron — her distillation, your suppliers, the economics of reagents, a theory she has about the governor's cellar master that would be slander if it were not so obviously correct. Two professionals talking their trades across a counter, and something underneath it that neither trade has a word for. She leaves a page of notes behind, weighted under the empty glass. The handwriting is much less careful than usual.",
+        "effect": {
+          "reputation": 2,
+          "joy": 3,
+          "joy_worker_name": "Yvara",
+          "custom": "give_item",
+          "item_id": "potion_robust",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_romantic_dinner_lady",
+    "event_probability": 25,
+    "description": "A quiet afternoon, shading toward evening. The crowd thins early. Your staff exchange the look they have been exchanging for weeks — the one that means the Director is here again, by the side door, with another basket from the Academy kitchen.\n\nShe has set a table by the window with the practised authority of a woman who has done this before and intends to keep doing it. Roast lamb still steaming in its dish, dark bread torn rather than cut, a wedge of sheep cheese, a bottle of something old enough that the original label has been replaced with one she wrote herself in archive ink. Two glasses already poured. Two plates already filled.\n\nShe sees you and gestures at the chair across from her — not as a question.\n\nYvara: 'I had two cancellations and a free hour. I considered grading papers. I decided against it.'",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_day.png",
+        "text": "A quiet afternoon, shading toward evening. The crowd thins early. Your staff exchange the look they have been exchanging for weeks — the one that means the Director is here again, by the side door, with another basket from the Academy kitchen."
+      },
+      {
+        "image": "images/workers/yvara/romance_intimate_dinner.jpg",
+        "text": "She has set a table by the window with the practised authority of a woman who has done this before and intends to keep doing it. Roast lamb still steaming in its dish, dark bread torn rather than cut, a wedge of sheep cheese, a bottle of something old enough that the original label has been replaced with one she wrote herself in archive ink. Two glasses already poured. Two plates already filled.\n\nShe sees you and gestures at the chair across from her — not as a question.\n\nYvara: 'I had two cancellations and a free hour. I considered grading papers. I decided against it.'"
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_day.png",
+    "nsfw": true,
+    "player_gender_requirement": "lady",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_devotion OR has_flag:yvara_ending_mixed"
+    },
+    "choices": [
+      {
+        "option": "Sit down — and let the evening end upstairs. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/romance_passionate_night_lady_female.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/romance_passionate_night_lady_female.jpg",
+            "text": "You sit. She tells you about a doctoral candidate caught forging citations because the forged authors had been arranged alphabetically — 'real scholars are never that organised.' She tells you about a lecture she is rewriting because a younger colleague made a fair point she has been resisting for almost a year. She refills your glass twice without asking, and her own once.\n\nWhen the bottle is finished she reads the label she wrote in archive ink, sets it down, and looks at you across the ruin of the meal with an expression that has stopped being difficult to translate. The stairs take longer than usual; she keeps stopping you against the banister to make points that require both hands. The story of the Director laughing in your house makes the rounds before sunrise. What kept the lamp in your window burning until the small hours does not, because your staff, whatever else can be said of them, know which stories are theirs to tell."
+          }
+        ],
+        "message": "You sit. She tells you about a doctoral candidate caught forging citations because the forged authors had been arranged alphabetically — 'real scholars are never that organised.' She tells you about a lecture she is rewriting because a younger colleague made a fair point she has been resisting for almost a year. She refills your glass twice without asking, and her own once.\n\nWhen the bottle is finished she reads the label she wrote in archive ink, sets it down, and looks at you across the ruin of the meal with an expression that has stopped being difficult to translate. The stairs take longer than usual; she keeps stopping you against the banister to make points that require both hands. The story of the Director laughing in your house makes the rounds before sunrise. What kept the lamp in your window burning until the small hours does not, because your staff, whatever else can be said of them, know which stories are theirs to tell.",
+        "effect": {
+          "reputation": 10,
+          "joy": 6,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Sit down — then walk her home through the lamplit streets, and stay. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_evening_devotion_lady.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_evening_devotion_lady.png",
+            "text": "You sit, and you let the meal take the hour it wants. Afterwards she does not ask you to walk her back; she simply fails to say goodnight, and you fall into step beside her through the cooling streets, the empty basket swinging from her hand like a censer.\n\nHer rooms above the Academy smell of paper and cedar. There is exactly one chair, because she has never needed a second, and the second glass she produces from the cabinet has a fine ring of dust on its rim that she wipes away without meeting your eye. You are the first thing she has kept in these rooms that is not filed under a system. It takes her until morning to stop treating that like a problem, and she solves it the way she solves everything — thoroughly, and more than once."
+          }
+        ],
+        "message": "You sit, and you let the meal take the hour it wants. Afterwards she does not ask you to walk her back; she simply fails to say goodnight, and you fall into step beside her through the cooling streets, the empty basket swinging from her hand like a censer.\n\nHer rooms above the Academy smell of paper and cedar. There is exactly one chair, because she has never needed a second, and the second glass she produces from the cabinet has a fine ring of dust on its rim that she wipes away without meeting your eye. You are the first thing she has kept in these rooms that is not filed under a system. It takes her until morning to stop treating that like a problem, and she solves it the way she solves everything — thoroughly, and more than once.",
+        "effect": {
+          "reputation": 6,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_lab_gift_lady",
+    "event_probability": 25,
+    "description": "She arrives between lectures, still chalk-dusted at one cuff, carrying a stoppered vial wrapped in waxed cloth as though it were a small prisoner being transferred under guard.\n\nYvara: 'The third distillation finally held. Eleven weeks of failed reductions, and this morning it simply — held.' She sets it on your counter with two fingers. 'I found I had no one I particularly wished to tell. And then I found that I did, and that she keeps a tavern, which the faculty would consider a waste of the discovery.'\n\nIt is, as nearly as Yvara comes to such things, a gift. She is already pretending to read the specials board.",
+    "description_pages": [
+      {
+        "image": "images/buildings/academy.png",
+        "text": "She arrives between lectures, still chalk-dusted at one cuff, carrying a stoppered vial wrapped in waxed cloth as though it were a small prisoner being transferred under guard.\n\nYvara: 'The third distillation finally held. Eleven weeks of failed reductions, and this morning it simply — held.' She sets it on your counter with two fingers. 'I found I had no one I particularly wished to tell. And then I found that I did, and that she keeps a tavern, which the faculty would consider a waste of the discovery.'\n\nIt is, as nearly as Yvara comes to such things, a gift. She is already pretending to read the specials board."
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 10,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/academy.png",
+    "nsfw": false,
+    "player_gender_requirement": "lady",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_mixed OR has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Accept it — and give her the evening in return. (Gain: Item, Reputation, Joy)",
+        "success_image": "images/workers/yvara/friendship_confidants.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/friendship_confidants.jpg",
+            "text": "You take the vial with the ceremony it deserves, which is more than she expected and exactly as much as she wanted. Then you hang your apron on the hook and inform her that discoveries of this magnitude are toasted, not shelved.\n\nShe protests for the length of one sentence. The evening goes to a corner table and a bottle nobody pays for, and she explains the distillation twice — once properly, and once again with the glassware from the bar standing in for her apparatus, the salt cellar playing the part of the condenser. Your staff have never seen the Director talk with her hands before. Neither, you suspect, has the Director."
+          },
+          {
+            "image": "images/workers/yvara/friendship_joy_gift_lady.jpg",
+            "text": "At the door, you press a wrapped box into her hands — the kitchen's best, packed while she was drawing condensers in spilled wine. 'A trade,' you tell her. 'Discovery for discovery.' She examines the knot in the ribbon as though it were a rival's proof, fails entirely to keep the corner of her mouth still, and does not let go of the box once on the whole walk home."
+          }
+        ],
+        "message": "You take the vial with the ceremony it deserves, which is more than she expected and exactly as much as she wanted. Then you hang your apron on the hook and inform her that discoveries of this magnitude are toasted, not shelved.\n\nShe protests for the length of one sentence. The evening goes to a corner table and a bottle nobody pays for, and she explains the distillation twice — once properly, and once again with the glassware from the bar standing in for her apparatus, the salt cellar playing the part of the condenser. Your staff have never seen the Director talk with her hands before. Neither, you suspect, has the Director.\n\nAt the door, you press a wrapped box into her hands — the kitchen's best, packed while she was drawing condensers in spilled wine. 'A trade,' you tell her. 'Discovery for discovery.' She examines the knot in the ribbon as though it were a rival's proof, fails entirely to keep the corner of her mouth still, and does not let go of the box once on the whole walk home.",
+        "effect": {
+          "reputation": 4,
+          "joy": 4,
+          "joy_worker_name": "Yvara",
+          "custom": "give_item",
+          "item_id": "potion_energetic",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Trade her a drink for it and talk shop until the small hours. (Gain: Item, Joy)",
+        "success_image": "images/workers/yvara/friendship_heart.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/friendship_heart.jpg",
+            "text": "You set the vial behind the bar where the good bottles live, and set a glass in front of her by way of receipt. She examines the exchange rate, finds it acceptable, and stays.\n\nThe conversation runs long past the last patron — her distillation, your suppliers, the economics of reagents, a theory she has about the governor's cellar master that would be slander if it were not so obviously correct. Two professionals talking their trades across a counter, and something underneath it that neither trade has a word for. She leaves a page of notes behind, weighted under the empty glass. The handwriting is much less careful than usual."
+          }
+        ],
+        "message": "You set the vial behind the bar where the good bottles live, and set a glass in front of her by way of receipt. She examines the exchange rate, finds it acceptable, and stays.\n\nThe conversation runs long past the last patron — her distillation, your suppliers, the economics of reagents, a theory she has about the governor's cellar master that would be slander if it were not so obviously correct. Two professionals talking their trades across a counter, and something underneath it that neither trade has a word for. She leaves a page of notes behind, weighted under the empty glass. The handwriting is much less careful than usual.",
+        "effect": {
+          "reputation": 2,
+          "joy": 3,
+          "joy_worker_name": "Yvara",
+          "custom": "give_item",
+          "item_id": "potion_robust",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_bathhouse_lord",
+    "event_probability": 25,
+    "description": "The note is waiting on your counter at midday, sealed with the Academy's own wax — she has stopped pretending the seal is for official business only. 'The old bathing hall, below the east wing. Faculty privilege; I have reserved the hour after last lecture. Bring nothing. Tell no one.'\n\nThe east stair smells of warm stone and cedar oil, and somewhere below, water is already moving.\n\nShe is in the water when you arrive, hip-deep in the sunlit pool with her arms folded behind her back — composed as ever, and wearing nothing at all, not so much as her chain of office.\n\nYvara: 'The Directrice's hour. The one privilege of this office I have never once used.' A measured pause. 'It seemed a waste to go on not using it alone.'",
+    "description_pages": [
+      {
+        "image": "images/buildings/academy.png",
+        "text": "The note is waiting on your counter at midday, sealed with the Academy's own wax — she has stopped pretending the seal is for official business only. 'The old bathing hall, below the east wing. Faculty privilege; I have reserved the hour after last lecture. Bring nothing. Tell no one.'\n\nThe east stair smells of warm stone and cedar oil, and somewhere below, water is already moving."
+      },
+      {
+        "image": "images/yvara/cg_yvara_bath.jpg",
+        "text": "She is in the water when you arrive, hip-deep in the sunlit pool with her arms folded behind her back — composed as ever, and wearing nothing at all, not so much as her chain of office.\n\nYvara: 'The Directrice's hour. The one privilege of this office I have never once used.' A measured pause. 'It seemed a waste to go on not using it alone.'"
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/academy.png",
+    "nsfw": true,
+    "player_gender_requirement": "lord",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_devotion"
+    },
+    "choices": [
+      {
+        "option": "Join her — and let the water take its time. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_yvara_bath.jpg",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_yvara_bath.jpg",
+            "text": "The water is blood-warm and the hour is entirely yours. You join her, and she washes the day off you with the same unhurried thoroughness she gives everything that matters — and some things simply stop existing: the ledger, the Academy, the year of carefully maintained distances. The Directrice's hour, it turns out, was never really about the bathing."
+          },
+          {
+            "image": "images/workers/yvara/romance_confess_feelings_lord_female.jpg",
+            "text": "Afterwards, robed and damp-haired in the antechamber, she takes your hand before you can reach for the lamp — deliberately, the way she signs her name to a thing.\n\n'I have audited the year,' she says, quietly. 'Every entry since the day you first walked into my Academy asking impertinent questions. The conclusion is that I love you. I have checked the arithmetic twice.'"
+          },
+          {
+            "image": "images/workers/yvara/romance_perfect_night_lord_female.jpg",
+            "text": "The walk to her rooms above the east wing is short, and even so her hair is barely drier by the time it reaches the pillow. What follows is unhurried, and certain, and entirely unguarded — the one version of Yvara that exists nowhere else in the world, on loan to no one, filed under nothing. The Academy, for once, waits its turn."
+          }
+        ],
+        "message": "The water is blood-warm and the hour is entirely yours. You join her, and she washes the day off you with the same unhurried thoroughness she gives everything that matters — and some things simply stop existing: the ledger, the Academy, the year of carefully maintained distances. The Directrice's hour, it turns out, was never really about the bathing.\n\nAfterwards, robed and damp-haired in the antechamber, she takes your hand before you can reach for the lamp — deliberately, the way she signs her name to a thing.\n\n'I have audited the year,' she says, quietly. 'Every entry since the day you first walked into my Academy asking impertinent questions. The conclusion is that I love you. I have checked the arithmetic twice.'\n\nThe walk to her rooms above the east wing is short, and even so her hair is barely drier by the time it reaches the pillow. What follows is unhurried, and certain, and entirely unguarded — the one version of Yvara that exists nowhere else in the world, on loan to no one, filed under nothing. The Academy, for once, waits its turn.",
+        "effect": {
+          "reputation": 6,
+          "joy": 7,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Take the soap and wash her hair first. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_yvara_bath.jpg",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_yvara_bath.jpg",
+            "text": "You take the soap out of her hand and turn her by the shoulders, and the Director of the Academy goes quiet under your hands in a way no faculty meeting has ever achieved. You wash her hair the way nobody has washed it since she was a scholarship girl with ink-stained cuffs. The talk, when it comes, is small and unimportant and completely without footnotes."
+          },
+          {
+            "image": "images/workers/yvara/romance_passionate_night_lord_female.jpg",
+            "text": "It is Yvara who breaks the truce — turning in your arms, wet to the collarbone, and announcing, in the tone she reserves for irrevocable rulings: 'The hour is not over.' She spends what remains of it against the warm stone with her fingers laced through yours, and the evening that follows in her rooms above the east wing is slower, and considerably louder, than the east wing has ever been given cause to expect. Her hair never does get properly dry. Her verdict, delivered against your collarbone on the edge of sleep: 'We are doing this every week. I have already amended the schedule.'"
+          }
+        ],
+        "message": "You take the soap out of her hand and turn her by the shoulders, and the Director of the Academy goes quiet under your hands in a way no faculty meeting has ever achieved. You wash her hair the way nobody has washed it since she was a scholarship girl with ink-stained cuffs. The talk, when it comes, is small and unimportant and completely without footnotes.\n\nIt is Yvara who breaks the truce — turning in your arms, wet to the collarbone, and announcing, in the tone she reserves for irrevocable rulings: 'The hour is not over.' She spends what remains of it against the warm stone with her fingers laced through yours, and the evening that follows in her rooms above the east wing is slower, and considerably louder, than the east wing has ever been given cause to expect. Her hair never does get properly dry. Her verdict, delivered against your collarbone on the edge of sleep: 'We are doing this every week. I have already amended the schedule.'",
+        "effect": {
+          "reputation": 4,
+          "joy": 6,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_bathhouse_lady",
+    "event_probability": 25,
+    "description": "The note is waiting on your counter at midday, sealed with the Academy's own wax — she has stopped pretending the seal is for official business only. 'The old bathing hall, below the east wing. Faculty privilege; I have reserved the hour after last lecture. Bring nothing. Tell no one.'\n\nThe east stair smells of warm stone and cedar oil, and somewhere below, water is already moving.\n\nShe is in the water when you arrive, hip-deep in the sunlit pool with her arms folded behind her back — composed as ever, and wearing nothing at all, not so much as her chain of office.\n\nYvara: 'The Directrice's hour. The one privilege of this office I have never once used.' A measured pause. 'It seemed a waste to go on not using it alone.'",
+    "description_pages": [
+      {
+        "image": "images/buildings/academy.png",
+        "text": "The note is waiting on your counter at midday, sealed with the Academy's own wax — she has stopped pretending the seal is for official business only. 'The old bathing hall, below the east wing. Faculty privilege; I have reserved the hour after last lecture. Bring nothing. Tell no one.'\n\nThe east stair smells of warm stone and cedar oil, and somewhere below, water is already moving."
+      },
+      {
+        "image": "images/yvara/cg_yvara_bath.jpg",
+        "text": "She is in the water when you arrive, hip-deep in the sunlit pool with her arms folded behind her back — composed as ever, and wearing nothing at all, not so much as her chain of office.\n\nYvara: 'The Directrice's hour. The one privilege of this office I have never once used.' A measured pause. 'It seemed a waste to go on not using it alone.'"
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/academy.png",
+    "nsfw": true,
+    "player_gender_requirement": "lady",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_devotion"
+    },
+    "choices": [
+      {
+        "option": "Join her — and let the water take its time. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_yvara_bath.jpg",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_yvara_bath.jpg",
+            "text": "The water is blood-warm and the hour is entirely yours. You join her, and she washes the day off you with the same unhurried thoroughness she gives everything that matters — and some things simply stop existing: the ledger, the Academy, the year of carefully maintained distances. The Directrice's hour, it turns out, was never really about the bathing."
+          },
+          {
+            "image": "images/workers/yvara/romance_confess_feelings_lady_female.jpg",
+            "text": "Afterwards, robed and damp-haired in the antechamber, she takes your hand before you can reach for the lamp — deliberately, the way she signs her name to a thing.\n\n'I have audited the year,' she says, quietly. 'Every entry since the day you first walked into my Academy asking impertinent questions. The conclusion is that I love you. I have checked the arithmetic twice.'"
+          },
+          {
+            "image": "images/workers/yvara/romance_perfect_night_lady_female.jpg",
+            "text": "The walk to her rooms above the east wing is short, and even so her hair is barely drier by the time it reaches the pillow. What follows is unhurried, and certain, and entirely unguarded — the one version of Yvara that exists nowhere else in the world, on loan to no one, filed under nothing. The Academy, for once, waits its turn."
+          }
+        ],
+        "message": "The water is blood-warm and the hour is entirely yours. You join her, and she washes the day off you with the same unhurried thoroughness she gives everything that matters — and some things simply stop existing: the ledger, the Academy, the year of carefully maintained distances. The Directrice's hour, it turns out, was never really about the bathing.\n\nAfterwards, robed and damp-haired in the antechamber, she takes your hand before you can reach for the lamp — deliberately, the way she signs her name to a thing.\n\n'I have audited the year,' she says, quietly. 'Every entry since the day you first walked into my Academy asking impertinent questions. The conclusion is that I love you. I have checked the arithmetic twice.'\n\nThe walk to her rooms above the east wing is short, and even so her hair is barely drier by the time it reaches the pillow. What follows is unhurried, and certain, and entirely unguarded — the one version of Yvara that exists nowhere else in the world, on loan to no one, filed under nothing. The Academy, for once, waits its turn.",
+        "effect": {
+          "reputation": 6,
+          "joy": 7,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Take the soap and wash her hair first. (Gain: Reputation, Joy)",
+        "success_image": "images/yvara/cg_yvara_bath.jpg",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_yvara_bath.jpg",
+            "text": "You take the soap out of her hand and turn her by the shoulders, and the Director of the Academy goes quiet under your hands in a way no faculty meeting has ever achieved. You wash her hair the way nobody has washed it since she was a scholarship girl with ink-stained cuffs. The talk, when it comes, is small and unimportant and completely without footnotes."
+          },
+          {
+            "image": "images/workers/yvara/romance_passionate_night_lady_female.jpg",
+            "text": "It is Yvara who breaks the truce — turning in your arms, wet to the collarbone, and announcing, in the tone she reserves for irrevocable rulings: 'The hour is not over.' She spends what remains of it against the warm stone with her fingers laced through yours, and the evening that follows in her rooms above the east wing is slower, and considerably louder, than the east wing has ever been given cause to expect. Her hair never does get properly dry. Her verdict, delivered against your collarbone on the edge of sleep: 'We are doing this every week. I have already amended the schedule.'"
+          }
+        ],
+        "message": "You take the soap out of her hand and turn her by the shoulders, and the Director of the Academy goes quiet under your hands in a way no faculty meeting has ever achieved. You wash her hair the way nobody has washed it since she was a scholarship girl with ink-stained cuffs. The talk, when it comes, is small and unimportant and completely without footnotes.\n\nIt is Yvara who breaks the truce — turning in your arms, wet to the collarbone, and announcing, in the tone she reserves for irrevocable rulings: 'The hour is not over.' She spends what remains of it against the warm stone with her fingers laced through yours, and the evening that follows in her rooms above the east wing is slower, and considerably louder, than the east wing has ever been given cause to expect. Her hair never does get properly dry. Her verdict, delivered against your collarbone on the edge of sleep: 'We are doing this every week. I have already amended the schedule.'",
+        "effect": {
+          "reputation": 4,
+          "joy": 6,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -288,12 +899,24 @@
   },
   {
     "id": "yvara_post_arc_dominion_evening_report",
+    "event_probability": 25,
     "description": "The side door opens at the hour it always opens now. Yvara enters with the day's ledger under one arm and the Academy's evening figures copied out in her own hand — you never asked for the copy; she concluded that your ownership extended to the information and has not revisited the question since.\n\nYvara: 'Receipts, expenditures, and the enrollment numbers that bear on the discount you enjoy. I have flagged three entries for your attention. I will wait while you read.'\n\nShe stands while you sit. She has never once taken the chair without being told. It is the precision of the arrangement that unsettles your staff — nothing in her manner asks for pity, and nothing in it invites conversation.",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_night.png",
+        "text": "The side door opens at the hour it always opens now. Yvara enters with the day's ledger under one arm and the Academy's evening figures copied out in her own hand — you never asked for the copy; she concluded that your ownership extended to the information and has not revisited the question since.\n\nYvara: 'Receipts, expenditures, and the enrollment numbers that bear on the discount you enjoy. I have flagged three entries for your attention. I will wait while you read.'\n\nShe stands while you sit. She has never once taken the chair without being told. It is the precision of the arrangement that unsettles your staff — nothing in her manner asks for pity, and nothing in it invites conversation."
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_post_arc_dominion_report.png",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_night.png",
     "nsfw": false,
     "conditions": {
       "start_when": "has_flag:yvara_ending_dominion"
@@ -301,11 +924,19 @@
     "choices": [
       {
         "option": "Keep her at the desk until the books balance. (Gain: Money, Reputation)",
-        "message": "You point at the chair. She sits. For two hours she works your accounts the way she once worked doctoral examinations — without haste, without error, without a single wasted word. She finds the vendor you have been double-paying, a delivery signed for and never received, and an arithmetic slip that has been compounding quietly since spring. The books have not been this clean in a year.\n\nWhen it is done she squares the pages, sets your pen back in its stand at the exact angle she found it, and rises. 'Will there be anything else?' She means every word of it, and that is precisely the trouble. You dismiss her, and the room is somehow colder for the next hour than the fire can account for. ({actual_money}, {actual_reputation} reputation, -1 Joy).",
+        "success_image": "images/workers/yvara/clever (1).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/clever (1).jpg",
+            "text": "You point at the chair. She sits. For two hours she works your accounts the way she once worked doctoral examinations — without haste, without error, without a single wasted word. She finds the vendor you have been double-paying, a delivery signed for and never received, and an arithmetic slip that has been compounding quietly since spring. The books have not been this clean in a year.\n\nWhen it is done she squares the pages, sets your pen back in its stand at the exact angle she found it, and rises. 'Will there be anything else?' She means every word of it. Being used well is the one shape of the arrangement she has made entirely her own."
+          }
+        ],
+        "message": "You point at the chair. She sits. For two hours she works your accounts the way she once worked doctoral examinations — without haste, without error, without a single wasted word. She finds the vendor you have been double-paying, a delivery signed for and never received, and an arithmetic slip that has been compounding quietly since spring. The books have not been this clean in a year.\n\nWhen it is done she squares the pages, sets your pen back in its stand at the exact angle she found it, and rises. 'Will there be anything else?' She means every word of it. Being used well is the one shape of the arrangement she has made entirely her own.",
         "effect": {
           "money": 100,
           "reputation": 4,
-          "joy": -1,
+          "joy": 1,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -313,11 +944,19 @@
         }
       },
       {
-        "option": "Take the report and dismiss her for the night.",
-        "message": "You take the pages from her hand and tell her the rest of the evening is her own. She inclines her head — the exact, economical nod she gives to any instruction — and gathers her coat.\n\nAt the door she pauses. A heartbeat, no more. 'Thank you.' The words are as precise as everything else she gives you, and as unreadable. You listen to her footsteps fade down the lane toward the Academy and find you cannot say whether you have been kind, or merely efficient with an asset. The flagged entries, when you read them, are of course correct. ({actual_reputation} reputation, +1 Joy).",
+        "option": "Take the report and dismiss her for the night. (Gain: Reputation, Joy)",
+        "success_image": "images/workers/yvara/rest (1).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/rest (1).jpg",
+            "text": "You take the pages from her hand and tell her the rest of the evening is her own. She inclines her head — the exact, economical nod she gives to any instruction — and gathers her coat.\n\nAt the door she pauses. A heartbeat, no more. 'Thank you.' The words are as precise as everything else she gives you, and as unreadable. You listen to her footsteps fade down the lane toward the Academy and find you cannot say whether you have been kind, or merely efficient with an asset. The flagged entries, when you read them, are of course correct."
+          }
+        ],
+        "message": "You take the pages from her hand and tell her the rest of the evening is her own. She inclines her head — the exact, economical nod she gives to any instruction — and gathers her coat.\n\nAt the door she pauses. A heartbeat, no more. 'Thank you.' The words are as precise as everything else she gives you, and as unreadable. You listen to her footsteps fade down the lane toward the Academy and find you cannot say whether you have been kind, or merely efficient with an asset. The flagged entries, when you read them, are of course correct.",
         "effect": {
           "reputation": 2,
-          "joy": 1,
+          "joy": 3,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -334,25 +973,45 @@
     "worker_filter": {}
   },
   {
-    "id": "yvara_post_arc_dominion_ninth_bell",
+    "id": "yvara_post_arc_dominion_ninth_bell_lord",
+    "event_probability": 25,
     "description": "A note arrives from the Academy in the afternoon, in Yvara's hand — formal as a summons, though the summons only runs in one direction between you now: 'My last lecture concludes at the ninth bell. My evening, as ever, is yours to allocate. Instructions may be left with your doorman.'\n\nShe arrives at the ninth bell exactly. She stands in your office with her coat folded over one arm and her hair still pinned for the lecture hall, composed and unhurried and entirely without expectation, waiting for you to decide what she is for tonight.\n\nYvara: 'Well, [player_title]?'",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_night.png",
+        "text": "A note arrives from the Academy in the afternoon, in Yvara's hand — formal as a summons, though the summons only runs in one direction between you now: 'My last lecture concludes at the ninth bell. My evening, as ever, is yours to allocate. Instructions may be left with your doorman.'\n\nShe arrives at the ninth bell exactly. She stands in your office with her coat folded over one arm and her hair still pinned for the lecture hall, composed and unhurried and entirely without expectation, waiting for you to decide what she is for tonight.\n\nYvara: 'Well, [player_title]?'"
+      }
+    ],
     "weight": 6,
     "cooldown_days": 14,
     "worker_selection": "none",
-    "building_type": ["tavern", "restaurant", "casino", "brothel"],
-    "background_image": "images/yvara/cg_yvara_post_arc_dominion_ninth_bell.png",
-    "nsfw": false,
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_night.png",
+    "nsfw": true,
+    "player_gender_requirement": "lord",
     "conditions": {
       "start_when": "has_flag:yvara_ending_dominion"
     },
     "choices": [
       {
-        "option": "Keep her for yourself — wine, quiet, her hair down because you prefer it. (Cost: Money; Gain: Joy)",
-        "message": "You tell her the evening is spent here, with you. She hangs the coat herself, pours the wine you indicate — the better of the two bottles, identified at a glance — and, at a word, unpins her hair, because you prefer it down and she has never once made you say so twice.\n\nShe reads to you from the treatise on your desk, her voice low and exact in the lamplight, pausing where you tell her to pause. It is a beautiful hour and an obedient one, and she gives you every minute of it with the same flawless competence she gives your ledgers. Whatever she keeps behind the compliance, she keeps it; you own her evenings, and she has decided that is all the question you are owed. ({actual_money}, {actual_reputation} reputation, +4 Joy).",
+        "option": "Keep her for yourself — wine, quiet, her hair down because you prefer it. (Gain: Joy)",
+        "success_image": "images/yvara/cg_evening_dominion_lord.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_evening_dominion_lord.png",
+            "text": "You tell her the evening is spent here, with you. She hangs the coat herself, pours the wine you indicate — the better of the two bottles, identified at a glance — and, at a word, unpins her hair, because you prefer it down and she has never once made you say so twice.\n\nShe reads to you from the treatise on your desk, her voice low and exact in the lamplight, pausing where you tell her to pause. When the reading is done she sets the treatise aside, and asks — precisely, the way she asks everything — what else the evening requires of her. It requires a great deal, as it turns out, and she meets all of it with the same flawless, unhurried thoroughness she gives your ledgers. Whatever she keeps behind the compliance, she keeps it; you own her evenings, and she has decided that is all the question you are owed."
+          }
+        ],
+        "message": "You tell her the evening is spent here, with you. She hangs the coat herself, pours the wine you indicate — the better of the two bottles, identified at a glance — and, at a word, unpins her hair, because you prefer it down and she has never once made you say so twice.\n\nShe reads to you from the treatise on your desk, her voice low and exact in the lamplight, pausing where you tell her to pause. When the reading is done she sets the treatise aside, and asks — precisely, the way she asks everything — what else the evening requires of her. It requires a great deal, as it turns out, and she meets all of it with the same flawless, unhurried thoroughness she gives your ledgers. Whatever she keeps behind the compliance, she keeps it; you own her evenings, and she has decided that is all the question you are owed.",
         "effect": {
-          "money": -80,
           "reputation": 2,
-          "joy": 4,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,
@@ -361,11 +1020,261 @@
       },
       {
         "option": "Send her to the floor — the Director waits tables tonight. (Gain: Money, Reputation)",
-        "message": "You send her out front. The room goes quiet by degrees as the patrons recognise her — the Director of the Academy, sleeves pinned back, carrying a tray through your common room with the same unbending correctness she carries into a lecture hall. She is faultless. She remembers every order, corrects a merchant's arithmetic on his own bar tab, and thanks no one for staring.\n\nThe takings run high and the story runs further: there is nothing, the district concludes, that your house does not command. Yvara reports the night's totals to you at close, to the copper, and asks whether her service was satisfactory. You are not entirely sure either of you wants to hear the honest answer. ({actual_money}, {actual_reputation} reputation, -2 Joy).",
+        "success_image": "images/workers/yvara/service (1).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/service (1).jpg",
+            "text": "You send her out front. The room goes quiet by degrees as the patrons recognise her — the Director of the Academy, sleeves pinned back, carrying a tray through your common room with the same unbending correctness she carries into a lecture hall. She is faultless. She remembers every order, corrects a merchant's arithmetic on his own bar tab, and thanks no one for staring.\n\nThe takings run high and the story runs further: there is nothing, the district concludes, that your house does not command. Yvara reports the night's totals to you at close, to the copper, and asks whether her service was satisfactory. You are not entirely sure either of you wants to hear the honest answer."
+          }
+        ],
+        "message": "You send her out front. The room goes quiet by degrees as the patrons recognise her — the Director of the Academy, sleeves pinned back, carrying a tray through your common room with the same unbending correctness she carries into a lecture hall. She is faultless. She remembers every order, corrects a merchant's arithmetic on his own bar tab, and thanks no one for staring.\n\nThe takings run high and the story runs further: there is nothing, the district concludes, that your house does not command. Yvara reports the night's totals to you at close, to the copper, and asks whether her service was satisfactory. You are not entirely sure either of you wants to hear the honest answer.",
         "effect": {
           "money": 120,
           "reputation": 6,
-          "joy": -2,
+          "joy": 1,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_dominion_private_hour_lord",
+    "event_probability": 25,
+    "description": "She arrives unannounced, which she never does. That alone would tell you something was different, even without the notebook — the clinical one, from her observation days at your establishment — held against her chest like a shield being formally surrendered.\n\nYvara: 'I have been reviewing my notes from our former consultations. There are gaps. Points where observation alone proved... insufficient to the methodology.'\n\nShe sets the notebook on your desk, closed, and stands very straight, the way she stands when a thing has cost her a great deal to say and she intends to pretend otherwise.\n\nYvara: 'I am here for the practical component, [player_title].'",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_day.png",
+        "text": "She arrives unannounced, which she never does. That alone would tell you something was different, even without the notebook — the clinical one, from her observation days at your establishment — held against her chest like a shield being formally surrendered.\n\nYvara: 'I have been reviewing my notes from our former consultations. There are gaps. Points where observation alone proved... insufficient to the methodology.'\n\nShe sets the notebook on your desk, closed, and stands very straight, the way she stands when a thing has cost her a great deal to say and she intends to pretend otherwise.\n\nYvara: 'I am here for the practical component, [player_title].'"
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_day.png",
+    "nsfw": true,
+    "player_gender_requirement": "lord",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Give her the practical component. (Gain: Joy)",
+        "success_image": "images/workers/yvara/obedience.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/obedience.jpg",
+            "text": "You give the lesson she came for, and it begins the way her own notes say it must: with the removal of choice. She presents her wrists without being asked twice, and watches the knot as you tie it with the focus of a scholar committing a technique to memory."
+          },
+          {
+            "image": "images/workers/yvara/discipline_blowjob (2).jpg",
+            "text": "What follows is exact, unhurried, nothing wasted, nothing repeated — the methodology she observed at your establishment, applied at last to its own author. She is a flawless student. Of course she is. She anticipates, adjusts, obeys; the only sounds she permits herself are the ones you instruct her not to hold."
+          },
+          {
+            "image": "images/workers/yvara/discipline_bdsm_lord (2).jpg",
+            "text": "The final chapter is the one her notebook could never capture from the back row, and she passes it the way she has passed every examination of her life — bound, breathless, and word-perfect.\n\nAfterwards she dresses with her usual precision, reclaims the notebook from the desk, and pauses at the door. 'The gaps in my notes,' she says, not turning around, 'were not gaps of understanding. I find I wanted the instruction regardless.' It is the closest thing to a confession the arrangement has ever produced, and you both let it leave the room unexamined."
+          }
+        ],
+        "message": "You give the lesson she came for, and it begins the way her own notes say it must: with the removal of choice. She presents her wrists without being asked twice, and watches the knot as you tie it with the focus of a scholar committing a technique to memory.\n\nWhat follows is exact, unhurried, nothing wasted, nothing repeated — the methodology she observed at your establishment, applied at last to its own author. She is a flawless student. Of course she is. She anticipates, adjusts, obeys; the only sounds she permits herself are the ones you instruct her not to hold.\n\nThe final chapter is the one her notebook could never capture from the back row, and she passes it the way she has passed every examination of her life — bound, breathless, and word-perfect.\n\nAfterwards she dresses with her usual precision, reclaims the notebook from the desk, and pauses at the door. 'The gaps in my notes,' she says, not turning around, 'were not gaps of understanding. I find I wanted the instruction regardless.' It is the closest thing to a confession the arrangement has ever produced, and you both let it leave the room unexamined.",
+        "effect": {
+          "reputation": 2,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Tonight, no methodology. Come here. (Gain: Joy)",
+        "success_image": "images/workers/yvara/romance_quality_time_lord_female.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/romance_quality_time_lord_female.jpg",
+            "text": "You leave the notebook where it lies and tell her that tonight there is no curriculum. For a moment she does not know where to put that — you can watch her reach for a category and find the shelf empty.\n\nWhat happens instead is slower and quieter and entirely without instruction, and she is far worse at it than she is at obedience, which is to say she is human at it. Somewhere in the middle of the night she stops performing competence altogether, and the woman underneath the arrangement holds on to you like a first-year who has not yet learned that the Director is not supposed to need anything. By morning the composure is back, buttoned to the collar. The notebook leaves with her, unopened. She does not enter the evening in it."
+          }
+        ],
+        "message": "You leave the notebook where it lies and tell her that tonight there is no curriculum. For a moment she does not know where to put that — you can watch her reach for a category and find the shelf empty.\n\nWhat happens instead is slower and quieter and entirely without instruction, and she is far worse at it than she is at obedience, which is to say she is human at it. Somewhere in the middle of the night she stops performing competence altogether, and the woman underneath the arrangement holds on to you like a first-year who has not yet learned that the Director is not supposed to need anything. By morning the composure is back, buttoned to the collar. The notebook leaves with her, unopened. She does not enter the evening in it.",
+        "effect": {
+          "reputation": 1,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_dominion_ninth_bell_lady",
+    "event_probability": 25,
+    "description": "A note arrives from the Academy in the afternoon, in Yvara's hand — formal as a summons, though the summons only runs in one direction between you now: 'My last lecture concludes at the ninth bell. My evening, as ever, is yours to allocate. Instructions may be left with your doorman.'\n\nShe arrives at the ninth bell exactly. She stands in your office with her coat folded over one arm and her hair still pinned for the lecture hall, composed and unhurried and entirely without expectation, waiting for you to decide what she is for tonight.\n\nYvara: 'Well, [player_title]?'",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_night.png",
+        "text": "A note arrives from the Academy in the afternoon, in Yvara's hand — formal as a summons, though the summons only runs in one direction between you now: 'My last lecture concludes at the ninth bell. My evening, as ever, is yours to allocate. Instructions may be left with your doorman.'\n\nShe arrives at the ninth bell exactly. She stands in your office with her coat folded over one arm and her hair still pinned for the lecture hall, composed and unhurried and entirely without expectation, waiting for you to decide what she is for tonight.\n\nYvara: 'Well, [player_title]?'"
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_night.png",
+    "nsfw": true,
+    "player_gender_requirement": "lady",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Keep her for yourself — wine, quiet, her hair down because you prefer it. (Gain: Joy)",
+        "success_image": "images/yvara/cg_evening_dominion_lady.png",
+        "message_pages": [
+          {
+            "image": "images/yvara/cg_evening_dominion_lady.png",
+            "text": "You tell her the evening is spent here, with you. She hangs the coat herself, pours the wine you indicate — the better of the two bottles, identified at a glance — and, at a word, unpins her hair, because you prefer it down and she has never once made you say so twice.\n\nShe reads to you from the treatise on your desk, her voice low and exact in the lamplight, pausing where you tell her to pause. When the reading is done she sets the treatise aside, and asks — precisely, the way she asks everything — what else the evening requires of her. It requires a great deal, as it turns out, and she meets all of it with the same flawless, unhurried thoroughness she gives your ledgers. Whatever she keeps behind the compliance, she keeps it; you own her evenings, and she has decided that is all the question you are owed."
+          }
+        ],
+        "message": "You tell her the evening is spent here, with you. She hangs the coat herself, pours the wine you indicate — the better of the two bottles, identified at a glance — and, at a word, unpins her hair, because you prefer it down and she has never once made you say so twice.\n\nShe reads to you from the treatise on your desk, her voice low and exact in the lamplight, pausing where you tell her to pause. When the reading is done she sets the treatise aside, and asks — precisely, the way she asks everything — what else the evening requires of her. It requires a great deal, as it turns out, and she meets all of it with the same flawless, unhurried thoroughness she gives your ledgers. Whatever she keeps behind the compliance, she keeps it; you own her evenings, and she has decided that is all the question you are owed.",
+        "effect": {
+          "reputation": 2,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Send her to the floor — the Director waits tables tonight. (Gain: Money, Reputation)",
+        "success_image": "images/workers/yvara/service (1).jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/service (1).jpg",
+            "text": "You send her out front. The room goes quiet by degrees as the patrons recognise her — the Director of the Academy, sleeves pinned back, carrying a tray through your common room with the same unbending correctness she carries into a lecture hall. She is faultless. She remembers every order, corrects a merchant's arithmetic on his own bar tab, and thanks no one for staring.\n\nThe takings run high and the story runs further: there is nothing, the district concludes, that your house does not command. Yvara reports the night's totals to you at close, to the copper, and asks whether her service was satisfactory. You are not entirely sure either of you wants to hear the honest answer."
+          }
+        ],
+        "message": "You send her out front. The room goes quiet by degrees as the patrons recognise her — the Director of the Academy, sleeves pinned back, carrying a tray through your common room with the same unbending correctness she carries into a lecture hall. She is faultless. She remembers every order, corrects a merchant's arithmetic on his own bar tab, and thanks no one for staring.\n\nThe takings run high and the story runs further: there is nothing, the district concludes, that your house does not command. Yvara reports the night's totals to you at close, to the copper, and asks whether her service was satisfactory. You are not entirely sure either of you wants to hear the honest answer.",
+        "effect": {
+          "money": 120,
+          "reputation": 6,
+          "joy": 1,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      }
+    ],
+    "event_type": null,
+    "worker_name": null,
+    "dialogue": null,
+    "unlimited": false,
+    "random_worker": false,
+    "always_available": false,
+    "worker_filter": {}
+  },
+  {
+    "id": "yvara_post_arc_dominion_private_hour_lady",
+    "event_probability": 25,
+    "description": "She arrives unannounced, which she never does. That alone would tell you something was different, even without the notebook — the clinical one, from her observation days at your establishment — held against her chest like a shield being formally surrendered.\n\nYvara: 'I have been reviewing my notes from our former consultations. There are gaps. Points where observation alone proved... insufficient to the methodology.'\n\nShe sets the notebook on your desk, closed, and stands very straight, the way she stands when a thing has cost her a great deal to say and she intends to pretend otherwise.\n\nYvara: 'I am here for the practical component, [player_title].'",
+    "description_pages": [
+      {
+        "image": "images/buildings/study_day.png",
+        "text": "She arrives unannounced, which she never does. That alone would tell you something was different, even without the notebook — the clinical one, from her observation days at your establishment — held against her chest like a shield being formally surrendered.\n\nYvara: 'I have been reviewing my notes from our former consultations. There are gaps. Points where observation alone proved... insufficient to the methodology.'\n\nShe sets the notebook on your desk, closed, and stands very straight, the way she stands when a thing has cost her a great deal to say and she intends to pretend otherwise.\n\nYvara: 'I am here for the practical component, [player_title].'"
+      }
+    ],
+    "weight": 6,
+    "cooldown_days": 14,
+    "worker_selection": "none",
+    "building_type": [
+      "tavern",
+      "restaurant",
+      "casino",
+      "brothel"
+    ],
+    "background_image": "images/buildings/study_day.png",
+    "nsfw": true,
+    "player_gender_requirement": "lady",
+    "conditions": {
+      "start_when": "has_flag:yvara_ending_dominion"
+    },
+    "choices": [
+      {
+        "option": "Give her the practical component. (Gain: Joy)",
+        "success_image": "images/workers/yvara/obedience.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/obedience.jpg",
+            "text": "You give the lesson she came for, and it begins the way her own notes say it must: with the removal of choice. She presents her wrists without being asked twice, and watches the knot as you tie it with the focus of a scholar committing a technique to memory."
+          },
+          {
+            "image": "images/workers/yvara/discipline_cunnilingus (2).jpg",
+            "text": "What follows is exact, unhurried, nothing wasted, nothing repeated — the methodology she observed at your establishment, applied at last to its own author. She is a flawless student. Of course she is. She anticipates, adjusts, obeys; the only sounds she permits herself are the ones you instruct her not to hold."
+          },
+          {
+            "image": "images/workers/yvara/discipline_bdsm_lady.jpg",
+            "text": "The final chapter is the one her notebook could never capture from the back row, and she passes it the way she has passed every examination of her life — bound, breathless, and word-perfect.\n\nAfterwards she dresses with her usual precision, reclaims the notebook from the desk, and pauses at the door. 'The gaps in my notes,' she says, not turning around, 'were not gaps of understanding. I find I wanted the instruction regardless.' It is the closest thing to a confession the arrangement has ever produced, and you both let it leave the room unexamined."
+          }
+        ],
+        "message": "You give the lesson she came for, and it begins the way her own notes say it must: with the removal of choice. She presents her wrists without being asked twice, and watches the knot as you tie it with the focus of a scholar committing a technique to memory.\n\nWhat follows is exact, unhurried, nothing wasted, nothing repeated — the methodology she observed at your establishment, applied at last to its own author. She is a flawless student. Of course she is. She anticipates, adjusts, obeys; the only sounds she permits herself are the ones you instruct her not to hold.\n\nThe final chapter is the one her notebook could never capture from the back row, and she passes it the way she has passed every examination of her life — bound, breathless, and word-perfect.\n\nAfterwards she dresses with her usual precision, reclaims the notebook from the desk, and pauses at the door. 'The gaps in my notes,' she says, not turning around, 'were not gaps of understanding. I find I wanted the instruction regardless.' It is the closest thing to a confession the arrangement has ever produced, and you both let it leave the room unexamined.",
+        "effect": {
+          "reputation": 2,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
+          "success_chance": 0,
+          "recruit_worker": false,
+          "cost_modifier": 0,
+          "relationship_bonus": 0
+        }
+      },
+      {
+        "option": "Tonight, no methodology. Come here. (Gain: Joy)",
+        "success_image": "images/workers/yvara/romance_quality_time_lady_female.jpg",
+        "message_pages": [
+          {
+            "image": "images/workers/yvara/romance_quality_time_lady_female.jpg",
+            "text": "You leave the notebook where it lies and tell her that tonight there is no curriculum. For a moment she does not know where to put that — you can watch her reach for a category and find the shelf empty.\n\nWhat happens instead is slower and quieter and entirely without instruction, and she is far worse at it than she is at obedience, which is to say she is human at it. Somewhere in the middle of the night she stops performing competence altogether, and the woman underneath the arrangement holds on to you like a first-year who has not yet learned that the Director is not supposed to need anything. By morning the composure is back, buttoned to the collar. The notebook leaves with her, unopened. She does not enter the evening in it."
+          }
+        ],
+        "message": "You leave the notebook where it lies and tell her that tonight there is no curriculum. For a moment she does not know where to put that — you can watch her reach for a category and find the shelf empty.\n\nWhat happens instead is slower and quieter and entirely without instruction, and she is far worse at it than she is at obedience, which is to say she is human at it. Somewhere in the middle of the night she stops performing competence altogether, and the woman underneath the arrangement holds on to you like a first-year who has not yet learned that the Director is not supposed to need anything. By morning the composure is back, buttoned to the collar. The notebook leaves with her, unopened. She does not enter the evening in it.",
+        "effect": {
+          "reputation": 1,
+          "joy": 5,
+          "joy_worker_name": "Yvara",
           "success_chance": 0,
           "recruit_worker": false,
           "cost_modifier": 0,

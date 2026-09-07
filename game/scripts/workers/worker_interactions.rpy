@@ -75,7 +75,7 @@ init python:
                     else:
                         # NSFW disabled: only show SFW interactions
                         filtered_interactions = [inter for inter in file_interactions
-                                               if not inter.get("nsfw", False)]
+                                               if not content_object_is_restricted(inter)]
                         interactions.extend(filtered_interactions)
                     loaded_files = True
                     renpy.log(f"Successfully loaded {len(filtered_interactions)} interactions from {file}")
@@ -595,6 +595,8 @@ init python:
     
     def can_interact_with_worker(worker):
         """Check if the manager can perform more interactions today (limit not reached)."""
+        if worker_is_in_franchise(worker):
+            return False
         current_count = get_worker_interaction_count(worker)
         max_interactions = get_max_daily_interactions()
         return current_count < max_interactions
@@ -673,6 +675,39 @@ init python:
             f"{old_libido} -> {new_libido} ({new_libido - old_libido:+d})"
         )
 
+    def _repeat_interaction_worker_key(worker):
+        """Stable session key for one roster worker's Repeat Interaction history."""
+        if not hasattr(worker, "get"):
+            return None
+        worker_name = str(worker.get("name", "")).strip()
+        return worker_name or None
+
+    def remember_last_interaction_for_worker(worker, interaction):
+        """Remember one interaction independently for this worker."""
+        worker_key = _repeat_interaction_worker_key(worker)
+        interaction_id = interaction.get("id") if hasattr(interaction, "get") else None
+        if not worker_key or not interaction_id:
+            return False
+        history = renpy.session.get("last_interaction_info_by_worker")
+        if not hasattr(history, "get"):
+            history = {}
+            renpy.session["last_interaction_info_by_worker"] = history
+        history[worker_key] = {
+            "worker_name": worker_key,
+            "category": (interaction.get("categories") or [None])[0],
+            "interaction_id": interaction_id,
+            "interaction_name": interaction.get("name", ""),
+        }
+        return True
+
+    def get_last_interaction_info_for_worker(worker):
+        """Return only the currently viewed worker's Repeat Interaction entry."""
+        worker_key = _repeat_interaction_worker_key(worker)
+        history = renpy.session.get("last_interaction_info_by_worker")
+        if not worker_key or not hasattr(history, "get"):
+            return None
+        return history.get(worker_key)
+
     def apply_interaction_effects(worker, interaction, apply_costs=True, skip_daily_limit=False):
         """Apply the effects of an interaction to a worker.
         
@@ -685,6 +720,10 @@ init python:
         Returns:
             dict: Dictionary with stat changes (e.g., {"relationship": 5, "joy": 3})
         """
+        if not getattr(persistent, "nsfw_enabled", False) and content_object_is_restricted(interaction):
+            renpy.log("INTERACTION: blocked restricted serialized interaction in SFW mode")
+            return {}
+
         # Ensure we update the canonical worker in store.workers so flags/levels persist
         if worker is not None and hasattr(store, "workers"):
             worker_name = worker.get("name") if hasattr(worker, "get") else None
@@ -699,15 +738,9 @@ init python:
         # Increment manager's daily interaction count (unless skipping limit, e.g. Take a Walk)
         if not skip_daily_limit:
             increment_manager_interaction_count()
-            # QoL "Repeat last interaction": record the player-launched interaction.
-            # renpy.session is session-only (not saved, not rolled back) on purpose.
+            # QoL "Repeat Interaction": session-only history, independently per worker.
             try:
-                renpy.session["last_interaction_info"] = {
-                    "worker_name": worker.get("name") if hasattr(worker, "get") else None,
-                    "category": (interaction.get("categories") or [None])[0] if hasattr(interaction, "get") else None,
-                    "interaction_id": interaction.get("id") if hasattr(interaction, "get") else None,
-                    "interaction_name": interaction.get("name", "") if hasattr(interaction, "get") else "",
-                }
+                remember_last_interaction_for_worker(worker, interaction)
             except Exception:
                 pass
         # Apply stat changes
@@ -917,6 +950,8 @@ init python:
         for worker in getattr(store, "workers", []):
             if not hasattr(worker, "get"):
                 continue
+            if worker_is_in_franchise(worker):
+                continue
             flags = worker.get("flags")
             if not flags or not hasattr(flags, "get"):
                 continue
@@ -953,6 +988,10 @@ init python:
         Returns:
             Ruta a la imagen de la interacción
         """
+        if not getattr(persistent, "nsfw_enabled", False):
+            if content_object_is_restricted(interaction) or not worker_media_is_visible(worker):
+                return None
+
         worker_name = worker.get("name", "unknown") if hasattr(worker, "get") else "unknown"
         interaction_id = interaction.get("id", "unknown") if hasattr(interaction, "get") else "unknown"
         cache_key = f"{worker_name}_{interaction_id}_interaction_image"
@@ -1065,7 +1104,7 @@ init python:
         available_interactions = get_available_interactions_for_worker(canonical_worker)
         available_interactions = [i for i in available_interactions if not is_training_interaction(i)]
         # Take a walk is always a SFW pool (city stroll), even when persistent.nsfw_enabled is True.
-        available_interactions = [i for i in available_interactions if not (hasattr(i, "get") and i.get("nsfw", False))]
+        available_interactions = [i for i in available_interactions if not content_object_is_restricted(i)]
         # Restrict Take a walk to friendship interactions only.
         available_interactions = categorize_interactions(available_interactions).get("Friendship", [])
         

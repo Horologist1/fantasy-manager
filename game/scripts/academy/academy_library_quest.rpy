@@ -159,7 +159,7 @@ label academy_library_quest:
 
 label academy_lib_prologue:
     narrator "The academy library smells of dust, varnish, and that particular brand of arrogance."
-    narrator "It is the kind ink develops when it outlives the people who wrote it."
+    narrator "It is the kind that ink develops when it outlives the hands that wrote it."
 
     narrator "You are not here for the atmosphere. The card catalog lists a circulating codex — a sealed manual of practical manager training."
     narrator "It covers drills, forms, and the exact phrasing senior stewards use."

@@ -2,7 +2,7 @@
   {
     "id": "violet_special",
     "name": "Violet's Special Performance",
-    "description": "Violet performs a unique dance routine that showcases her exceptional talents, creating an unforgettable moment.",
+    "description": "Violet clears a space, sets a single chair at the center of it, and tells you to sit. The dance that follows is nothing she uses on the common floor — slow, exact, more withheld than revealed, and all the more distracting for it. By the end you understand two things: the performance was for an audience of one, and the audience was being studied as closely as the dancer.",
     "cost_energy": 0,
     "effect": {
       "romance": 3,
@@ -34,7 +34,7 @@
   {
     "id": "charming_beauty",
     "name": "Enchanting Presence",
-    "description": "You spend time with this exceptionally charming and beautiful worker, creating a unique and captivating atmosphere.",
+    "description": "An hour in this worker's company rearranges the room: conversations tilt toward their table, drinks arrive that nobody ordered, even the regulars sit straighter. You claim the hour for yourself instead, and it passes the way their admirers always insist it does — too quickly, and with the firm conviction that you were the most interesting person in it. That last part is the craft. Knowing so changes nothing.",
     "cost_energy": 0,
     "effect": {
       "romance": 3,

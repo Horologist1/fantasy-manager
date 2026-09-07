@@ -63,6 +63,7 @@ default yvara_academy_discount_active = False  # All endings: 50% off Academy la
 default yvara_lab_access = False               # Devotion ending: weekly potion gift in laboratory
 default yvara_lab_gift_last_day = None         # Last day Yvara left potions in the lab (devotion only)
 default yvara_post_arc_talk_index = 0          # Cycles through post-arc Talk variants
+default yvara_post_arc_talks_seen = []         # Post-arc talk IDs told in full (repeat = short callback variant)
 default yvara_arrangement_change_count = 0     # Times the player has reshaped the post-arc arrangement
 
 ################################################################################
@@ -123,6 +124,10 @@ init python:
 
     def yvara_is_devotion_route():
         return not yvara_is_dominion_route()
+
+    def yvara_personal_content_is_enabled():
+        """Keep Yvara's relationship arc absent in restrictive mode."""
+        return bool(getattr(persistent, "nsfw_enabled", False))
 
     def yvara_s4_finance_track_complete():
         """Route-specific Stage 4 finance completion check.
@@ -288,7 +293,10 @@ label academy_tuition_dialogue:
             xanchor 1.0
             yanchor 1.0
             yoffset 40
-    academy_director "Welcome, traveller. I am Yvara. I direct this Academy. Our institution offers structured courses in Academics, Amatory Arts, Hospitality, and Artisan Studies. Your workers may attend and gain experience under our teachers."
+    if yvara_personal_content_is_enabled():
+        academy_director "Welcome, traveller. I am Yvara. I direct this Academy. Our institution offers structured courses in Academics, Amatory Arts, Hospitality, and Artisan Studies. Your workers may attend and gain experience under our teachers."
+    else:
+        academy_director "Welcome, traveller. I am Yvara. I direct this Academy. Our institution offers structured courses in Academics, Hospitality, and Artisan Studies. Your workers may attend and gain experience under our teachers."
     $ yvara_known_name = True
     yvara "To enrol your establishment and gain access to our curriculum, the tuition is fifteen thousand coins. Pay once, and your workers may study under our teachers whenever you send them."
     jump academy_tuition_menu
@@ -338,7 +346,17 @@ label academy_tuition_menu:
             $ renpy.show_screen("map_screen")
             jump tavern_screen
 
+label yvara_sfw_academy_handoff:
+    hide yvara_bust
+    hide yvara_bg_dim
+    window hide
+    $ renpy.show_screen("map_screen")
+    $ renpy.show_screen("academy_menu")
+    jump tavern_screen
+
 label yvara_visit:
+    if not yvara_personal_content_is_enabled():
+        jump yvara_sfw_academy_handoff
     $ maybe_show_intro_popup("yvara_visit")
     $ _academy_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     $ _yvara_bust = "images/yvara/yvara_formal_neutral.png" if renpy.loadable("images/yvara/yvara_formal_neutral.png") else None
@@ -406,6 +424,8 @@ label yvara_visit:
     jump yvara_visit_menu
 
 label yvara_visit_menu:
+    if not yvara_personal_content_is_enabled():
+        jump yvara_sfw_academy_handoff
     call yvara_restore_visit_scene from _call_yvara_restore_visit_scene
     $ _total_days = calculate_total_days()
     if not yvara_s4_gate_fired and len(yvara_s4_talks_done) >= 3 and yvara_affection >= 80 and yvara_s4_finance_track_complete():
@@ -440,14 +460,21 @@ label yvara_visit_menu:
     $ _s4_finance_favor_route = yvara_is_dominion_route()
     $ _s4_finance_track_complete = yvara_s4_finance_track_complete()
     $ _support_available = yvara_s4_gate_fired and not yvara_s5_gate_fired and yvara_academy_investment_tier < 5
-    $ _evening_available = yvara_s4_gate_fired and (_total_days - (yvara_evening_academy_last_day or 0)) >= 3
+    # Evening cooldown shortens once the arc is resolved: post-ending the visit is
+    # mostly about her, so 2 days instead of 3 keeps the late game from feeling gated.
+    $ _evening_cooldown = 2 if yvara_ending_done else 3
+    $ _evening_available = yvara_s4_gate_fired and (_total_days - (yvara_evening_academy_last_day or 0)) >= _evening_cooldown
     # Off-camera mechanics (devotion/dominion engines; also the third tie-break
-    # in yvara_is_dominion_route). Gates: stage 2+ (she has to already regard you
-    # as a fixture for the prose to read right), at least one worker on the roster
-    # (both mechanics send/involve one), once per day each, and hidden once the
-    # S6 gate locks the route (devotion/dominion no longer move the outcome).
-    $ _good_word_available = yvara_stage >= 2 and not yvara_s6_gate_fired and yvara_good_word_last_day != _total_days and len(getattr(store, "workers", [])) > 0
-    $ _observed_lesson_available = yvara_stage >= 2 and not yvara_s6_gate_fired and yvara_observed_last_day != _total_days and len(getattr(store, "workers", [])) > 0
+    # in yvara_is_dominion_route) live in the yvara_academy_work_menu submenu.
+    # Gates: stage 2+ (she has to already regard you as a fixture for the prose
+    # to read right), at least one worker on the roster (both mechanics
+    # send/involve one), and hidden once the S6 gate locks the route
+    # (devotion/dominion no longer move the outcome). The once-per-day limits
+    # are enforced inside the submenu so the player gets feedback on them.
+    $ _academy_work_available = yvara_stage >= 2 and not yvara_s6_gate_fired and len(getattr(store, "workers", [])) > 0
+    # Do not let the click/tap that dismisses the final dialogue line also choose
+    # an option when this menu appears on the same interaction boundary.
+    $ renpy.pause(0.15, hard=True)
     menu:
         yvara "..."
 
@@ -518,10 +545,8 @@ label yvara_visit_menu:
             narrator "It has not been long enough since the last time. A few more days."
             jump yvara_visit_menu
 
-        "Send a worker for tutoring." if _good_word_available:
-            jump yvara_good_word
-        "Ask her to observe a session. (200 coins)" if _observed_lesson_available:
-            jump yvara_observed_lesson
+        "About your work at the Academy." if _academy_work_available:
+            jump yvara_academy_work_menu
 
         "Bring a gift." if yvara_last_gift_total_days != _total_days:
             jump yvara_gift
@@ -1651,6 +1676,29 @@ label yvara_visit_after_hours:
     narrator "She knew you would understand what after hours meant."
     jump yvara_s3_gate_scene
 
+# -- Off-camera mechanics submenu ---------------------------------------------
+label yvara_academy_work_menu:
+    $ _total_days = calculate_total_days()
+    $ _good_word_used_today = yvara_good_word_last_day == _total_days
+    $ _observed_used_today = yvara_observed_last_day == _total_days
+    menu:
+        yvara "The Academy's business. What did you have in mind?"
+
+        "Send a worker for tutoring." if not _good_word_used_today:
+            jump yvara_good_word
+        "Send a worker for tutoring." if _good_word_used_today:
+            narrator "You have already sent someone today. A second would look less like tutoring and more like a delegation."
+            jump yvara_academy_work_menu
+
+        "Ask her to observe a session. (200 coins)" if not _observed_used_today:
+            jump yvara_observed_lesson
+        "Ask her to observe a session. (200 coins)" if _observed_used_today:
+            narrator "One session a day. Her schedule does not bend further than that."
+            jump yvara_academy_work_menu
+
+        "Back.":
+            jump yvara_visit_menu
+
 # -- Off-Camera Mechanic A: The Good Word -------------------------------------
 label yvara_good_word:
     $ _total_days = calculate_total_days()
@@ -1661,6 +1709,7 @@ label yvara_good_word:
     $ yvara_good_word_last_day = _total_days
     $ yvara_devotion += 3
     $ yvara_affection += 1
+    narrator "{i}(Her devotion to you grows.){/i}"
     if yvara_good_word_count == 1:
         narrator "The next time you visit, she mentions it in passing."
         yvara "Your worker spoke of you. Favourably."
@@ -1687,12 +1736,18 @@ label yvara_observed_lesson:
         yvara "The consultation fee is two hundred coins. Come back when you can meet it."
         jump yvara_visit_menu
     $ money -= 200
-    narrator "You have mentioned a worker who requires firmer handling. As an educator, you ask her to come and observe — purely as a professional consultation. She agrees."
-    narrator "She arrives at your establishment at the arranged hour. She takes a seat at the back and opens her notebook."
-    narrator "She watches what you do. She takes notes. She says nothing during the session."
+    if yvara_lesson_absorbed:
+        narrator "There is no pretext anymore. You name an hour; she arranges to be free at it."
+        narrator "She takes her usual seat at the back. The notebook stays closed."
+        narrator "She watches the session in silence. Whatever she is studying now, it is not methodology."
+    else:
+        narrator "You have mentioned a worker who requires firmer handling. As an educator, you ask her to come and observe — purely as a professional consultation. She agrees."
+        narrator "She arrives at your establishment at the arranged hour. She takes a seat at the back and opens her notebook."
+        narrator "She watches what you do. She takes notes. She says nothing during the session."
     $ yvara_observed_sessions += 1
     $ yvara_observed_last_day = _total_days
     $ yvara_dominion += 4
+    narrator "{i}(Your dominion over her grows.){/i}"
     if yvara_observed_sessions == 1:
         narrator "Afterward, she sends written notes to the Academy. The language is clinical, precise."
         narrator "It is also, word for word, the language you used during the session."
@@ -1710,6 +1765,10 @@ label yvara_observed_lesson:
         narrator "When you ask why:"
         yvara "I believe I have absorbed sufficient... methodology."
         narrator "The pause before the last word is long."
+    elif yvara_lesson_absorbed:
+        narrator "She leaves without commentary. But she waits, briefly, at the door — as if to be dismissed."
+    else:
+        narrator "Afterward, her notes arrive at the Academy as before. Each set reads a little less like observation and a little more like practice."
     jump yvara_visit_menu
 
 # -- Stage 4 talk router -------------------------------------------------------
@@ -2214,7 +2273,7 @@ label yvara_s4_donate_tier_4:
     yvara "Lie down."
     narrator "The massage begins at your shoulders and neck. It travels down your back. Her hands pause at the small of your back a moment before they continue."
     narrator "The rhythm changes. It is no longer only gratitude."
-    narrator "When her hand finds what it is looking for, there is no question. Only a decision already made."
+    narrator "When her hand finally slides lower, it does not hesitate. She decided how this would end somewhere between the coin and the glasses coming off."
     narrator "Afterward, she washes her hands at the basin in the corner with the same composure she brings to her paperwork."
     yvara "That was not part of any arrangement."
     narrator "There is color in her cheeks and no real distance left in her eyes."
@@ -2497,7 +2556,7 @@ label yvara_s4_gate_dominion:
     $ _cg_02b = "images/yvara/cg_storm_02b_common.png" if renpy.loadable("images/yvara/cg_storm_02b_common.png") else None
     $ _cg_03 = "images/yvara/cg_storm_03_dominion_lady.png" if _title == "lady" else "images/yvara/cg_storm_03_dominion_lord.png"
     $ _cg_03 = _cg_03 if renpy.loadable(_cg_03) else None
-    narrator "She has been professional all evening — which is to say that she has been performing the idea of professional, and the performance is visible to both of them."
+    narrator "She has been professional all evening — which is to say that she has been performing the idea of professional, and you can both see it."
     if yvara_s4_favors_total > 0:
         narrator "Small bargains have been accumulating between you for days. Each one left something unsettled in the room. Tonight there is nowhere for that unfinished tension to go except forward."
     narrator "At some point she stops. Not suddenly. She simply stops maintaining the distance, and what was behind it is raw and undeniable."
@@ -3169,7 +3228,7 @@ label yvara_evening_dom_t4:
             pause
             window show
         narrator "She takes you in her mouth. The ribbon presses against her lips as she goes deep — past it, around it, her throat opening."
-        narrator "Deepthroat. The Director of the Academy, on her knees by the fireplace, choking on your cock with her own ribbon tied around it."
+        narrator "The Director of the Academy, on her knees by the fireplace, taking you to the root with her own ribbon tied around you."
         narrator "Her eyes water. She does not stop. Her tongue works against the silk, feeling the texture of the knot against her lips."
         narrator "Your hand finds the back of her head. Not pushing — holding. She pushes herself. Deeper. Her nose presses against your stomach."
         narrator "She gags once. Pulls back. Takes a breath. Goes deeper."
@@ -3181,8 +3240,8 @@ label yvara_evening_dom_t4:
         narrator "She takes it. Folds it carefully. Puts it in her pocket."
         yvara "I will need a new one for tomorrow."
         narrator "Her voice is hoarse. She is not smiling. She is something beyond smiling."
-        narrator "You untie her wrists. The silk has left faint marks. She turns them over, examining them."
-        yvara "I will need long sleeves tomorrow."
+        narrator "She rises, taking your offered hand. Her knees bear the print of the hearthstones, red and precise. She examines them without hurry."
+        yvara "I will need a longer hem tomorrow."
         narrator "When she looks up, there is the ghost of a smile at the corner of her mouth."
     else:
         # Dedicated CG with fallback
@@ -4300,7 +4359,7 @@ label yvara_s5_remark_2:
 
     narrator "She walks past the leak without looking at it. Past the peeling paint. Past the paper window."
     narrator "She says nothing about any of it."
-    narrator "That says everything."
+    narrator "From a woman who misses nothing, the silence is its own report."
 
     if yvara_is_devotion_route():
         narrator "You reach out and touch the wall where the paint is worst. Flakes come away on your fingers."
@@ -5387,7 +5446,7 @@ label yvara_s6_gate_mixed:
         narrator "You enter her from behind. She gasps, her fingers tightening on the desk edge."
         narrator "The rhythm is urgent. Her hips push back to meet you. The desk creaks and shifts an inch with every thrust."
         narrator "Her blouse slides off one shoulder. She does not fix it. Academy Director from the waist down, something else entirely from the waist up."
-        narrator "Her moans are low, honest. She stops trying to muffle them. The library has never heard her like this."
+        narrator "Her moans are low, honest. She stops trying to muffle them. Her office has never heard her like this."
         narrator "You come inside her. She follows seconds later, shuddering, her forehead pressed against the desk."
         narrator "She is breathing hard. Her hair is a mess. She looks destroyed and alive."
 
@@ -5402,7 +5461,7 @@ label yvara_s6_gate_mixed:
             pause
             window show
 
-        narrator "The library floor. She pulls you down onto the rug between the reading tables."
+        narrator "The office floor. She pulls you down onto the rug between the desk and the bookshelves."
         narrator "Her blouse is open. Her skirt is gone. She is naked from the waist down and does not care."
         narrator "You are too. She undressed you while you were still kissing her. Efficient, even now."
         narrator "She lies back. You settle over her — not on top, but against. Hip to hip. Your thighs find hers."
@@ -5416,7 +5475,7 @@ label yvara_s6_gate_mixed:
             pause
             window show
         narrator "She looks down at where your bodies press together. Then up at you. Her expression is raw — no composure, no distance."
-        narrator "The friction builds. Wet, slick, the sound of skin on skin filling the quiet library."
+        narrator "The friction builds. Wet, slick, the sound of skin on skin filling the quiet office."
         narrator "Her hips roll against yours. Harder. Her breath comes in short, ragged bursts."
         yvara "Right there— do not move—"
         narrator "You hold the angle. Press harder. Her thighs tremble."
@@ -5534,18 +5593,8 @@ label yvara_ending_dominion:
         # and plain Python dicts/lists from json.loads fail the check.
         _yw = None
         try:
-            import json as _json
-            with renpy.file("data/workers/yvara.json") as _f:
-                _raw = _f.read()
-            _text = _raw.decode("utf-8") if hasattr(_raw, "decode") else _raw
-            _data = _json.loads(_text)
-            if hasattr(_data, "get"):
-                _yw = _data
-            elif hasattr(_data, "__iter__"):
-                for _entry in _data:
-                    if hasattr(_entry, "get"):
-                        _yw = _entry
-                        break
+            # I/O is function-local; binding a file here would poison later saves.
+            _yw = _load_worker_json_entry("data/workers/yvara.json")
         except Exception as _e:
             renpy.log("Yvara dominion: failed to load yvara.json - %s" % str(_e))
 
@@ -5587,6 +5636,21 @@ label yvara_ending_dominion:
                     _stid(_yw)
                 store.workers.append(_yw)
                 renpy.store.workers = store.workers
+                # Finalize like a normal recruit (recruit_worker in script.rpy):
+                # a worker appended straight to the roster otherwise misses the
+                # fields the recruit flow sets, and reads as "not recruited".
+                _yw["is_servant"] = False
+                _yw["source"] = "recruited"
+                _yw.setdefault("assigned_building", "Unassigned")
+                renpy.notify("%s has joined your roster." % _yw["name"])
+                # Seed the relationship so the recruited Yvara already "knows" you,
+                # scaled to the route. Set AFTER ensure_worker_defaults so the
+                # defaults (rebelliousness 50 / romance 0 / relationship 10+comfort)
+                # do not overwrite these. Dominion: owned and obedient — high
+                # relationship, low romance, near-zero rebelliousness.
+                _yw["relationship"] = 100
+                _yw["romance"] = 50
+                _yw["rebelliousness"] = 10
                 add_trait_with_duration(_yw, "Yvara, Bound to Service", 0)
             except Exception as _e:
                 renpy.log("Yvara dominion: append failed - %s" % str(_e))
@@ -5643,18 +5707,8 @@ label yvara_ending_mixed:
         # and plain Python dicts/lists from json.loads fail the check.
         _yw = None
         try:
-            import json as _json
-            with renpy.file("data/workers/yvara.json") as _f:
-                _raw = _f.read()
-            _text = _raw.decode("utf-8") if hasattr(_raw, "decode") else _raw
-            _data = _json.loads(_text)
-            if hasattr(_data, "get"):
-                _yw = _data
-            elif hasattr(_data, "__iter__"):
-                for _entry in _data:
-                    if hasattr(_entry, "get"):
-                        _yw = _entry
-                        break
+            # I/O is function-local; binding a file here would poison later saves.
+            _yw = _load_worker_json_entry("data/workers/yvara.json")
         except Exception as _e:
             renpy.log("Yvara mixed: failed to load yvara.json - %s" % str(_e))
 
@@ -5696,6 +5750,21 @@ label yvara_ending_mixed:
                     _stid(_yw)
                 store.workers.append(_yw)
                 renpy.store.workers = store.workers
+                # Finalize like a normal recruit (recruit_worker in script.rpy):
+                # a worker appended straight to the roster otherwise misses the
+                # fields the recruit flow sets, and reads as "not recruited".
+                _yw["is_servant"] = False
+                _yw["source"] = "recruited"
+                _yw.setdefault("assigned_building", "Unassigned")
+                renpy.notify("%s has joined your roster." % _yw["name"])
+                # Seed the relationship so the recruited Yvara already "knows" you,
+                # scaled to the route. Set AFTER ensure_worker_defaults so the
+                # defaults (rebelliousness 50 / romance 0 / relationship 10+comfort)
+                # do not overwrite these. Mixed: freely chosen partner-of-sorts —
+                # high relationship, high romance, low rebelliousness.
+                _yw["relationship"] = 100
+                _yw["romance"] = 80
+                _yw["rebelliousness"] = 20
                 add_trait_with_duration(_yw, "Yvara, Academy Duties", 0)
             except Exception as _e:
                 renpy.log("Yvara mixed: append failed - %s" % str(_e))
@@ -5732,7 +5801,6 @@ label yvara_lab_gift_scene:
             yoffset 40
 
     python:
-        import random
         _gift_pool = [
             "potion_strong", "potion_tough", "potion_transformed", "potion_magical",
             "potion_robust", "potion_energetic", "potion_agile",
@@ -5774,9 +5842,11 @@ label yvara_lab_gift_scene:
     jump academy_laboratory_dialogue_post_gift
 
 # ── Post-Arc Talk ───────────────────────────────────────────────────────────
-# Repeatable, route-aware. Cycles through 3 variants per route.
+# Repeatable, route-aware. Cycles through 5 variants per route. Each variant is
+# told in full the first time (id appended to yvara_post_arc_talks_seen) and as a
+# short callback afterward — mirrors Varra's lanista_fillers_seen pattern.
 label yvara_talk_post_arc:
-    $ _idx = int(getattr(store, "yvara_post_arc_talk_index", 0) or 0) % 3
+    $ _idx = int(getattr(store, "yvara_post_arc_talk_index", 0) or 0) % 5
     $ store.yvara_post_arc_talk_index = _idx + 1
     $ yvara_last_talk_total_days = calculate_total_days()
     $ _route = getattr(store, "yvara_ending_route", "") or "mixed"
@@ -5786,18 +5856,40 @@ label yvara_talk_post_arc:
             jump yvara_talk_post_arc_dev_0
         elif _idx == 1:
             jump yvara_talk_post_arc_dev_1
-        else:
+        elif _idx == 2:
             jump yvara_talk_post_arc_dev_2
+        elif _idx == 3:
+            jump yvara_talk_post_arc_dev_3
+        else:
+            jump yvara_talk_post_arc_dev_4
     else:
         # mixed (dominion has no visit)
         if _idx == 0:
             jump yvara_talk_post_arc_mix_0
         elif _idx == 1:
             jump yvara_talk_post_arc_mix_1
-        else:
+        elif _idx == 2:
             jump yvara_talk_post_arc_mix_2
+        elif _idx == 3:
+            jump yvara_talk_post_arc_mix_3
+        else:
+            jump yvara_talk_post_arc_mix_4
 
 label yvara_talk_post_arc_dev_0:
+    if "dev_0" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_amused.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The weak section of the curriculum is redrafted. The younger lecturer has it now, and half his margin notes are wrong in interesting ways."
+        yvara "You are getting the abridged version this time. My voice does the same thing regardless."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["dev_0"]
     $ _emote = "images/yvara/yvara_formal_warm.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5817,9 +5909,22 @@ label yvara_talk_post_arc_dev_0:
             $ yvara_affection += 1
             narrator "She catches your eye. Smiles, briefly."
             yvara "Noted."
-    jump yvara_visit_menu
+    jump yvara_post_arc_exit
 
 label yvara_talk_post_arc_dev_1:
+    if "dev_1" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_amused.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The marketplace has decided we are married. I have stopped correcting them. It is less effort than the truth and closer to it than 'sister' was."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["dev_1"]
     $ _emote = "images/yvara/yvara_formal_amused.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5835,15 +5940,28 @@ label yvara_talk_post_arc_dev_1:
         "What did you say to that?":
             $ yvara_affection += 2
             yvara "I told them I was the Director of the Academy. They went very quiet."
-            narrator "She allows herself a small, dry smile."
+            narrator "She inclines her head a fraction — her version of taking a bow."
         "And what would you prefer to be called?":
             $ yvara_devotion += 2
             $ yvara_affection += 2
             narrator "A pause. The pen stops moving."
             yvara "I do not require a label. But I do not object to yours."
-    jump yvara_visit_menu
+    jump yvara_post_arc_exit
 
 label yvara_talk_post_arc_dev_2:
+    if "dev_2" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_warm.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The hour I set aside last time was not enough. I have set aside two, and cleared the afternoon around them. Consider yourself notified rather than invited."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["dev_2"]
     $ _emote = "images/yvara/yvara_formal_neutral.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5864,10 +5982,23 @@ label yvara_talk_post_arc_dev_2:
             $ yvara_devotion += 1
             $ yvara_affection += 2
             yvara "I will bring the books."
-            narrator "She does not look up. She is already smiling."
-    jump yvara_visit_menu
+            narrator "She does not look up. The pen, however, has stopped moving."
+    jump yvara_post_arc_exit
 
 label yvara_talk_post_arc_mix_0:
+    if "mix_0" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_neutral.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "Six hours last night. An improvement. The line between the Academy and your house is no clearer, but I have stopped expecting it to be."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["mix_0"]
     $ _emote = "images/yvara/yvara_formal_neutral.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5889,9 +6020,22 @@ label yvara_talk_post_arc_mix_0:
             yvara "..."
             yvara "Yes. All right."
             narrator "She does not argue, which is its own kind of admission."
-    jump yvara_visit_menu
+    jump yvara_post_arc_exit
 
 label yvara_talk_post_arc_mix_1:
+    if "mix_1" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_yielding.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The deputies have stopped asking if I am ill. Either I look better, or they have learned not to. I have eaten today, before you ask."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["mix_1"]
     $ _emote = "images/yvara/yvara_formal_yielding.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5900,7 +6044,7 @@ label yvara_talk_post_arc_mix_1:
             xanchor 1.0
             yanchor 1.0
             yoffset 40
-    yvara "Two of my deputies asked if I was ill today. They were polite about it. They were also wrong; I am not ill, I am simply running on inadequate sleep and a great deal of caffeine."
+    yvara "Two of my deputies asked if I was ill today. They were polite about it. They were also wrong; I am not ill, I am simply running on inadequate sleep and far too much strong tea."
     narrator "She lifts her tea cup as evidence."
     yvara "I should probably eat something solid before tonight."
     menu:
@@ -5913,9 +6057,22 @@ label yvara_talk_post_arc_mix_1:
             $ yvara_affection += 2
             yvara "..."
             yvara "Yes. Better that I eat where I can be seen working afterward."
-    jump yvara_visit_menu
+    jump yvara_post_arc_exit
 
 label yvara_talk_post_arc_mix_2:
+    if "mix_2" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_amused.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The two wardrobes have become three, if you count the coat I have abandoned at the laboratory. My belongings have colonised the whole city. I have decided not to fight it."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["mix_2"]
     $ _emote = "images/yvara/yvara_formal_amused.png"
     if renpy.loadable(_emote):
         show expression _emote as yvara_bust:
@@ -5937,6 +6094,187 @@ label yvara_talk_post_arc_mix_2:
             $ yvara_dominion += 1
             $ yvara_affection += 2
             yvara "Practical. I accept."
+    jump yvara_post_arc_exit
+
+label yvara_talk_post_arc_dev_3:
+    if "dev_3" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_neutral.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The brilliant, unteachable boy sat his examination this morning. Passed it, badly, and hated that he had to. That is the whole education, really. The rest is footnotes."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["dev_3"]
+    $ _emote = "images/yvara/yvara_formal_amused.png"
+    if renpy.loadable(_emote):
+        show expression _emote as yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    yvara "I have a student who will not be taught. Fourteen, genuinely brilliant, and convinced that brilliance excuses the work. I recognise the error precisely. I made it once myself."
+    narrator "She does not often admit to having been young and wrong. She says it plainly, the way she says everything that has cost her something."
+    yvara "I could break the habit out of him in a single term. I have chosen the slower way instead — let the work humble him before I do. It is more expensive of my patience. It leaves more of him intact at the end."
+    menu:
+        "You have grown patient.":
+            $ yvara_affection += 2
+            yvara "I have grown something. Patience is as serviceable a name for it as any."
+        "What changed your method?":
+            $ yvara_devotion += 1
+            $ yvara_affection += 2
+            narrator "She considers you over the rim of her glasses."
+            yvara "You would like me to say it was you. I will say only that I have less to prove now than I did — and a student benefits from a teacher with nothing left to prove."
+    jump yvara_post_arc_exit
+
+label yvara_talk_post_arc_dev_4:
+    if "dev_4" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_neutral.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The capital wrote a third time. A larger number, the same chair. My reply is the same word as before, spelled more courteously. Some correspondence is simply a formality of refusal."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["dev_4"]
+    $ _emote = "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote as yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    yvara "A letter came from the capital this morning. A chair at the Royal Athenaeum — endowed, tenured, a laboratory twice the size of the one I have. They have wanted me for years."
+    narrator "She slides the letter across the desk with one finger, face-down, the way you set aside a matter already decided."
+    yvara "I built this place out of a leaking hall and a ruinous lease. They are offering me the finished version of someone else's ambition. It is a generous offer. It is not mine, and I have learned the difference matters."
+    menu:
+        "You are staying, then.":
+            $ yvara_affection += 3
+            yvara "I am staying. This is the work — and the work is no longer the only thing that keeps me in this city."
+        "The capital's loss.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 2
+            narrator "A dry breath that is very nearly a laugh."
+            yvara "Their loss is a matter of public record. Mine, had I gone, would have been the greater one — and it would not have appeared in any ledger."
+    jump yvara_post_arc_exit
+
+label yvara_talk_post_arc_mix_3:
+    if "mix_3" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_neutral.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "The two-column ledger balanced tonight on the third attempt. Duty and here, one book, one hand. The numbers do not care that I am tired. They balanced regardless."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["mix_3"]
+    $ _emote = "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote as yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    yvara "I have started keeping the Academy's hours and your house's hours in the same book. It is not orthodox bookkeeping. It is the only way I can see the whole of what I have agreed to at a single glance."
+    narrator "She turns the ledger toward you. Two columns in one hand. The line dividing them is drawn in her own ink, and it is not quite straight."
+    yvara "Some weeks the column tilts toward duty. Some weeks toward here. I had fully expected to resent whichever won out. I find I resent neither — which was not accounted for anywhere in my calculations."
+    menu:
+        "You do not have to balance it alone.":
+            $ yvara_devotion += 1
+            $ yvara_affection += 2
+            yvara "No. I suppose I do not. That is a newer entry in the book than the others, and I am still learning to read it."
+        "The arrangement can change whenever you want.":
+            $ yvara_affection += 2
+            narrator "She closes the ledger, unhurried."
+            yvara "I know. You have made that abundantly clear. For now the arrangement suits me — which is, I suspect, the answer you were fishing for."
+    jump yvara_post_arc_exit
+
+label yvara_talk_post_arc_mix_4:
+    if "mix_4" in yvara_post_arc_talks_seen:
+        $ _emote = "images/yvara/yvara_formal_amused.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        yvara "Past midnight in the laboratory again. Old habit. That room keeps a different quiet than your house does, and some nights I need the particular one it keeps."
+        $ yvara_affection += 1
+        jump yvara_post_arc_exit
+    $ yvara_post_arc_talks_seen = list(yvara_post_arc_talks_seen) + ["mix_4"]
+    $ _emote = "images/yvara/yvara_formal_neutral.png"
+    if renpy.loadable(_emote):
+        show expression _emote as yvara_bust:
+            xpos 1.03
+            ypos 1.0
+            xanchor 1.0
+            yanchor 1.0
+            yoffset 40
+    yvara "I worked in the laboratory until the lamps guttered last night. I did not need to. The distillation could have waited a week. I wanted the room, and the dark, and the smell of the burners."
+    narrator "She says it almost to herself, testing whether the admission survives being spoken aloud in daylight."
+    yvara "There was a time I believed that room was the whole of what I had. Then the arrangement, then your house — and now I have two places to be alone in, and choose to be alone in neither for very long."
+    menu:
+        "The lab will always be yours.":
+            $ yvara_affection += 2
+            yvara "It will. That is a comfort I do not hold lightly. Few things in this trade stay yours once someone else has decided they want them."
+        "Come home before the lamps gutter next time.":
+            $ yvara_dominion += 1
+            $ yvara_affection += 2
+            yvara "..."
+            yvara "A fair enough claim on my hours. I will keep it — most nights. I make no promises about the distillations."
+    jump yvara_post_arc_exit
+
+# ── Post-Arc: Organic Evening Invitation ────────────────────────────────────
+# Shared close for every post-arc talk (full + short callback variants, both
+# routes). Mirrors Varra's lanista_filler_exit: when the Evening at the Academy
+# is available tonight — under the *exact* same gate the visit menu uses, dynamic
+# cooldown included — Yvara folds an invitation into the goodbye so the late-game
+# evening can begin organically rather than only from the menu button. Declining
+# never touches the Evening cooldown; jumping into yvara_evening_academy lets that
+# label set its own cooldown/scene marks (we do not duplicate them here).
+label yvara_post_arc_exit:
+    $ _total_days = calculate_total_days()
+    $ _evening_cooldown = 2 if yvara_ending_done else 3
+    $ _evening_available = yvara_s4_gate_fired and (_total_days - (yvara_evening_academy_last_day or 0)) >= _evening_cooldown
+    if _evening_available:
+        $ _route = getattr(store, "yvara_ending_route", "") or "mixed"
+        $ _emote = "images/yvara/yvara_formal_warm.png" if _route == "devotion" else "images/yvara/yvara_formal_neutral.png"
+        if renpy.loadable(_emote):
+            show expression _emote as yvara_bust:
+                xpos 1.03
+                ypos 1.0
+                xanchor 1.0
+                yanchor 1.0
+                yoffset 40
+        if _route == "devotion":
+            yvara "The halls will be empty within the hour. Stay, if the evening has no better claim on you. I find I would rather not spend this one working alone."
+        else:
+            yvara "The lamps go down soon and the deputies lock up behind us. There is an hour owed to no one before the night reclaims me. Spend it here, if you like."
+        menu:
+            "Stay for the evening.":
+                jump yvara_evening_academy
+            "Not tonight.":
+                if _route == "devotion":
+                    yvara "Another night, then. The offer does not expire."
+                else:
+                    yvara "As you wish. The hour keeps for a better one."
+                jump yvara_visit_menu
     jump yvara_visit_menu
 
 # ── Post-Arc: Reshape the Arrangement (Mixed only) ──────────────────────────

@@ -1,6 +1,7 @@
 init python:
     import os
-    
+    from fm_orientation.rules import remap_image_skill as fm_orientation_remap_image_skill
+
     image_selection_cache = {}
     store.image_selection_cache = image_selection_cache
     _image_selection_instance = 0
@@ -287,6 +288,8 @@ init python:
         """
         special_patterns = {
             "homo": ["hetero", "les", "gay", "homo"],   # Homosexual busca "hetero", "les", "gay" u "homo" (hetero: alias para stories de cliente fuera de preferencia en workers Gay/Lesbian)
+            "gay": ["gay", "homo"],  # image_skill "gay" (escena M/M): ficheros gay_* u homo_* (nunca hetero)
+            "les": ["les", "homo"],  # image_skill "les" / remap F marcada (escena F/F): ficheros les_* u homo_* (nunca hetero)
             "service": ["wait", "service", "maid"],      # Service busca "wait", "service" o "maid"
             "special": ["special", "titty"],  # Special busca "special" o "titty"
             "striptease": ["strip", "striptease"],  # Striptease busca "strip" o "striptease"
@@ -298,6 +301,23 @@ init python:
             return special_patterns[skill_lower]
         else:
             return [skill_name]
+
+    def _orientation_image_skill(worker, skill_name_for_search):
+        """Remap sexual-skill image lookups to homo/les art for toggle-marked workers.
+
+        Marked = worker["orientation_forced"] present ("force"/"rolled"), i.e. the
+        Gay/Lesbian trait came from the Worker Orientation toggle, so the folder art
+        was NOT authored for that orientation. Identity for unmarked workers and for
+        non-remapped skills (striptease, combat, service...). Skill "homo" -> "sex"
+        (hetero-client story shows the folder's real hetero art).
+        """
+        if not worker or not hasattr(worker, "get"):
+            return skill_name_for_search
+        return fm_orientation_remap_image_skill(
+            skill_name_for_search,
+            worker.get("gender", ""),
+            worker.get("orientation_forced"),
+        )
 
     def _resolve_event_image_skill_name(event, skill_name):
         """
@@ -334,6 +354,8 @@ init python:
         """
         if not worker or not event:
             return None
+        if hasattr(worker, "get") and not worker_media_is_visible(worker):
+            return None
 
         skill_name = _resolve_event_image_skill_name(event, skill_name)
         
@@ -361,7 +383,32 @@ init python:
         # search uses these patterns IN ORDER instead of the rolled skill's patterns. Lets monster
         # capture stories fall back JSON image -> beast -> extreme. Events without the field are unchanged.
         event_image_fallback_patterns = event.get("image_fallback_patterns") if hasattr(event, "get") else None
-        
+        story_image_fallback_patterns = list(event.get("story_image_fallback_patterns") or []) if hasattr(event, "get") else []
+        profile_before_fallback_patterns = set(
+            str(pattern).lower()
+            for pattern in (event.get("profile_before_image_fallback_patterns") or [])
+            if pattern
+        ) if hasattr(event, "get") else set()
+
+        # Worker Orientation remap (spec 2026-08-24): toggle-marked workers search
+        # homo/les art for sexual skills; "homo" -> "sex" (hetero-client story).
+        # When same-sex-remapped (gay/les), default-folder art is skipped below (profile first) so a
+        # marked worker never shows wrong-orientation default art. Unmarked workers,
+        # non-sexual skills, and events with an explicit image_fallback_patterns
+        # override take the exact same path as before.
+        _orientation_locked = False
+        if skill_name is not None and not event_image_fallback_patterns:
+            _osk_search = get_skill_name_for_images(skill_name)
+            _osk_remapped = _orientation_image_skill(worker, _osk_search)
+            if _osk_remapped != _osk_search:
+                # Lock (skip default-folder art) only for same-sex remaps; the
+                # "homo" -> "sex" hetero-client remap keeps the normal order because
+                # default sex_* art IS the correct orientation for that scene.
+                _orientation_locked = _osk_remapped in ("gay", "les")
+                # get_skill_name_for_images is identity on lowercase names, so all
+                # downstream recomputations resolve to the remapped name.
+                skill_name = _osk_remapped
+
         # Debug the actual outcome value - matching outcome_key format from event_daily_exec.rpy
         is_success = outcome in ["success", "critical_success"]
         is_failure = outcome in ["failure", "mediocre"]  # Both "failure" and "mediocre" should look for failure images
@@ -370,6 +417,21 @@ init python:
         
         # Get trait prefixes for the worker
         trait_prefixes = get_trait_prefixes(worker)
+
+        def _event_worker_profile_fallback(cache_tag):
+            """Resolve this worker's own profile without crossing into default art."""
+            matches = get_pattern_matches_flexible(base_folder, "profile")
+            matches = [f for f in matches if _worker_allows_profile_variant(worker, f)]
+            if trait_prefixes and matches:
+                trait_matches = [
+                    f for f in matches
+                    if any(os.path.basename(f).lower().startswith(pp + "_") for pp in trait_prefixes)
+                ]
+                if trait_matches:
+                    return get_cached_choice(trait_matches, f"{worker.get('name', 'unknown')}_{cache_tag}_trait_profile")
+            if matches:
+                return get_cached_choice(matches, f"{worker.get('name', 'unknown')}_{cache_tag}_profile")
+            return None
         
         # PRIORITY 1: Worker folder with traits (for event-specific images)
         if trait_prefixes and story_image:
@@ -414,6 +476,17 @@ init python:
                         selected = get_cached_choice(success_matches, cache_key)
                         renpy.log(f"Found trait-specific story success image: {selected}")
                         return selected
+
+                    # A story can declare venue-aware fallbacks such as
+                    # rest_libido -> rest_adventurer/rest_tavern.
+                    for fallback_story_image in story_image_fallback_patterns:
+                        fallback_pattern = f"{prefix}_{fallback_story_image}"
+                        fallback_matches = get_pattern_matches_flexible(base_folder, fallback_pattern, exclude_failure=True)
+                        if fallback_matches:
+                            cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{fallback_story_image}_{outcome}_event_story_fallback"
+                            selected = get_cached_choice(fallback_matches, cache_key)
+                            renpy.log(f"Found trait-specific story fallback image: {selected}")
+                            return selected
                 
                 # Try general story image with trait (flexible extension matching)
                 general_pattern = f"{prefix}_{story_image}"
@@ -479,9 +552,11 @@ init python:
                 # Try story_image without _failure suffix (flexible extension matching)
                 # For rest images, use pattern matching with fallback to generic "rest"
                 if story_image and story_image.startswith("rest_"):
-                    success_matches = get_pattern_matches_flexible(base_folder, story_image)
-                    if not success_matches:
-                        success_matches = get_pattern_matches_flexible(base_folder, "rest")
+                    success_matches = []
+                    for rest_pattern in [story_image] + story_image_fallback_patterns + ["rest"]:
+                        success_matches = get_pattern_matches_flexible(base_folder, rest_pattern)
+                        if success_matches:
+                            break
                     # Filter out failure images manually
                     success_matches = [f for f in success_matches if "failure" not in os.path.basename(f).lower()]
                 else:
@@ -495,12 +570,12 @@ init python:
             # Try general story image (flexible extension matching)
             # For rest images, first try the specific name, then fallback to generic "rest"
             if story_image and story_image.startswith("rest_"):
-                # First try the specific rest image name (e.g., "rest_brothel")
-                general_matches = get_pattern_matches_flexible(base_folder, story_image)
-                if not general_matches:
-                    # If not found, try generic "rest" pattern
-                    renpy.log(f"Specific rest image '{story_image}' not found, trying generic 'rest' pattern")
-                    general_matches = get_pattern_matches_flexible(base_folder, "rest")
+                general_matches = []
+                for rest_pattern in [story_image] + story_image_fallback_patterns + ["rest"]:
+                    general_matches = get_pattern_matches_flexible(base_folder, rest_pattern)
+                    if general_matches:
+                        renpy.log(f"Using rest image pattern '{rest_pattern}' for story '{story_image}'")
+                        break
             else:
                 general_matches = get_image_matches_flexible(base_folder, story_image)
             if general_matches:
@@ -533,6 +608,11 @@ init python:
             skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
             
             for skill_pattern_name in skill_patterns:
+                if str(skill_pattern_name).lower() in profile_before_fallback_patterns:
+                    selected = _event_worker_profile_fallback("event_pattern")
+                    if selected:
+                        renpy.log(f"Using worker profile before image fallback pattern '{skill_pattern_name}': {selected}")
+                        return selected
                 for prefix in trait_prefixes:
                     if is_failure:
                         skill_failure_pattern = f"{prefix}_{skill_pattern_name}_failure"
@@ -574,7 +654,7 @@ init python:
                             selected = get_cached_choice(filtered_matches, cache_key)
                             renpy.log(f"Found trait-specific skill image (filtered): {selected}")
                             return selected
-                        else:
+                        elif not event_image_fallback_patterns or not (is_success or is_failure):
                             # If no filtered matches, use any match as fallback
                             cache_key = f"{worker.get('name', 'unknown')}_{prefix}_{skill_pattern_name}_{outcome}_skill_general_fallback"
                             selected = get_cached_choice(skill_matches, cache_key)
@@ -589,6 +669,11 @@ init python:
             trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
             
             for skill_pattern_name in skill_patterns:
+                if str(skill_pattern_name).lower() in profile_before_fallback_patterns:
+                    selected = _event_worker_profile_fallback("event_pattern")
+                    if selected:
+                        renpy.log(f"Using worker profile before image fallback pattern '{skill_pattern_name}': {selected}")
+                        return selected
                 if is_failure:
                     skill_failure_pattern = f"{skill_pattern_name}_failure"
                     skill_failure_matches = get_pattern_matches_flexible(base_folder, skill_failure_pattern)
@@ -630,15 +715,37 @@ init python:
                         selected = get_cached_choice(filtered_matches, cache_key)
                         renpy.log(f"Found worker folder skill image (filtered): {selected}")
                         return selected
-                    else:
+                    elif not event_image_fallback_patterns or not (is_success or is_failure):
                         # If no filtered matches, use any match as fallback
                         cache_key = f"{worker.get('name', 'unknown')}_{skill_pattern_name}_{outcome}_skill_general_fallback"
                         selected = get_cached_choice(skill_matches, cache_key)
                         renpy.log(f"Found worker folder skill image (fallback): {selected}")
                         return selected
         
+        # Missing worker-authored rest variants must fall back to that worker's
+        # profile before any gender-default art. Otherwise a unique worker such
+        # as Florian can display Guy's rest image when rest_libido is absent.
+        if story_image and story_image.startswith("rest_") and base_folder != default_folder:
+            profile_matches = get_pattern_matches_flexible(base_folder, "profile")
+            profile_matches = [f for f in profile_matches if _worker_allows_profile_variant(worker, f)]
+            if trait_prefixes and profile_matches:
+                trait_profile_matches = [
+                    f for f in profile_matches
+                    if any(os.path.basename(f).lower().startswith(pp + "_") for pp in trait_prefixes)
+                ]
+                if trait_profile_matches:
+                    cache_key = f"{worker.get('name', 'unknown')}_rest_trait_profile_fallback"
+                    selected = get_cached_choice(trait_profile_matches, cache_key)
+                    renpy.log(f"Found worker trait-priority profile for missing rest variant: {selected}")
+                    return selected
+            if profile_matches:
+                cache_key = f"{worker.get('name', 'unknown')}_rest_profile_fallback"
+                selected = get_cached_choice(profile_matches, cache_key)
+                renpy.log(f"Found worker profile for missing rest variant: {selected}")
+                return selected
+
         # PRIORITY 5: Default folder with traits (for event-specific images)
-        if trait_prefixes and story_image:
+        if trait_prefixes and story_image and not _orientation_locked:
             renpy.log(f"No worker folder images found, trying default folder with traits for event: {story_image}")
             for prefix in trait_prefixes:
                 if is_failure:
@@ -704,7 +811,7 @@ init python:
                         return selected
         
         # PRIORITY 6: Default folder without traits (for event-specific images)
-        if story_image:
+        if story_image and not _orientation_locked:
             renpy.log(f"No worker folder images found, trying default folder without traits for event: {story_image}")
             
             # For failure outcomes
@@ -783,7 +890,7 @@ init python:
                     return selected
         
         # PRIORITY 7: Default folder with traits (for skill-based images)
-        if trait_prefixes and skill_name is not None:
+        if trait_prefixes and skill_name is not None and not _orientation_locked:
             renpy.log(f"No worker folder images found, trying default folder with traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
             skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
@@ -834,7 +941,7 @@ init python:
                             return selected
         
         # PRIORITY 8: Default folder without traits (for skill-based images)
-        if skill_name is not None:
+        if skill_name is not None and not _orientation_locked:
             renpy.log(f"No worker folder images found, trying default folder without traits for skill: {skill_name}")
             skill_name_for_search = get_skill_name_for_images(skill_name)
             skill_patterns = event_image_fallback_patterns or get_skill_search_patterns(skill_name_for_search)
@@ -922,7 +1029,27 @@ init python:
             selected = get_cached_choice(profile_matches, cache_key)
             renpy.log(f"Found worker profile image: {selected}")
             return selected
-        
+
+        # Orientation-locked: default-folder art was skipped above. After the worker's
+        # own profile failed, try the REMAPPED skill patterns in the default folder as a
+        # last resort before the default profile (never wrong-orientation default art).
+        if _orientation_locked and skill_name is not None:
+            for skill_pattern_name in get_skill_search_patterns(get_skill_name_for_images(skill_name)):
+                _locked_matches = get_pattern_matches_flexible(default_folder, skill_pattern_name)
+                _locked_matches = [f for f in _locked_matches if not should_exclude_interaction_file(f)]
+                _locked_filtered = []
+                for f in _locked_matches:
+                    basename = os.path.basename(f).lower()
+                    if is_failure and "failure" not in basename:
+                        continue
+                    if is_success and "failure" in basename:
+                        continue
+                    _locked_filtered.append(f)
+                if _locked_filtered:
+                    selected = renpy.random.choice(_locked_filtered)
+                    renpy.log(f"Found default remapped skill image (orientation-locked): {selected}")
+                    return selected
+
         # Try default profile image (flexible extension matching)
         default_profile_matches = get_pattern_matches_flexible(default_folder, "profile")
         default_profile_matches = [f for f in default_profile_matches if _worker_allows_profile_variant(worker, f)]
@@ -1035,6 +1162,9 @@ init python:
         is_failure = outcome in ("failure", "mediocre")
 
         skill_name_for_search = get_skill_name_for_images(skill_name)
+        # Worker Orientation remap (spec 2026-08-24). Worker-folder-only resolver:
+        # no default-folder stages here, so the remap alone is enough.
+        skill_name_for_search = _orientation_image_skill(worker, skill_name_for_search)
         skill_patterns = get_skill_search_patterns(skill_name_for_search)
         trait_prefixes = get_trait_prefixes(worker)
         trait_file_prefixes = ("pregnant_", "futa_", "transformed_", "magical_")
@@ -1129,7 +1259,7 @@ init python:
             media_name = event.get("background_image")
 
         # When a selected worker exists, prefer worker-folder media first.
-        if worker and hasattr(worker, "get"):
+        if worker and hasattr(worker, "get") and worker_media_is_visible(worker):
             worker_media = _resolve_worker_media_name(worker, media_name)
             if worker_media:
                 return worker_media

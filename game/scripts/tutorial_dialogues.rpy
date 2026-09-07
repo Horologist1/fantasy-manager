@@ -21,7 +21,7 @@ label tutorial_start:
     
     "The governor made sure to destroy everything else. Seized our holdings, called in our debts, turned our allies against us..."
     
-    "My reflection in the window glass shows my parent's eyes, filled with the same determination."
+    "My reflection in the window glass shows my parents' eyes, filled with the same determination."
     
     "But they made a mistake leaving me this. From here, I'll rebuild what was lost."
     

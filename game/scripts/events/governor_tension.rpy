@@ -11,14 +11,14 @@ init python:
         """
         if not text:
             return
+        cleaned = str(text).strip()
+        if not cleaned:
+            return
+        chunks = []
         try:
             import re
-            cleaned = str(text).strip()
-            if not cleaned:
-                return
             # First split by sentence boundaries, then merge up to limit.
             parts = [p.strip() for p in re.split(r"(?<=[.!?])\s+", cleaned) if p and p.strip()]
-            chunks = []
             current = ""
             for part in parts:
                 if not current:
@@ -31,14 +31,16 @@ init python:
                     current = part
             if current:
                 chunks.append(current)
-            if not chunks:
-                chunks = [cleaned]
-            who = speaker if speaker is not None else narrator
-            for chunk in chunks:
-                renpy.say(who, chunk)
         except Exception:
-            who = speaker if speaker is not None else narrator
-            renpy.say(who, str(text))
+            chunks = []
+        if not chunks:
+            chunks = [cleaned]
+        # renpy.say stays OUTSIDE the try: Ren'Py control flow (rollback,
+        # interaction restarts) travels as exceptions, and swallowing one
+        # here used to re-say the whole text in a single overflowing box.
+        who = speaker if speaker is not None else narrator
+        for chunk in chunks:
+            renpy.say(who, chunk)
 
 # ==========================================
 # GOVERNOR'S RETALIATION - One-time event
@@ -60,7 +62,6 @@ label governor_retaliation:
     
     # Apply poison to 1-2 random workers
     python:
-        import random
         num_victims = min(len(store.workers), random.choice([1, 2]))
         available_workers = [w for w in store.workers if "Poisoned" not in w.get("traits", [])]
         victims = random.sample(available_workers, min(num_victims, len(available_workers))) if available_workers else []
@@ -141,7 +142,8 @@ label governor_poison_event:
     
     if store._tension_victim:
         $ vname = store._tension_victim
-        $ say_governor_text(f"{vname} collapses, clutching their stomach. The water had a strange taste. You recognize the symptoms - the Governor's agents have struck again. {vname} has been poisoned and will suffer health and energy penalties until it wears off.")
+        "[vname] collapses, clutching their stomach. The water had a strange taste. You recognize the symptoms - the Governor's agents have struck again."
+        "[vname] has been poisoned and will suffer health and energy penalties until it wears off."
     else:
         "When you check on them, they seem fine. Perhaps it was just fatigue. You remain vigilant."
     
@@ -162,7 +164,9 @@ label governor_sabotage_event:
     
     if store._tension_building:
         $ bname = store._tension_building
-        $ say_governor_text(f"You hear a commotion. When you arrive at {bname}, you find the place in disarray - equipment tampered with, supplies spoiled. A guard reports a stranger seen leaving last night. It has the Governor's mark all over it. {bname} has been sabotaged; its building skill bonus is temporarily reduced.")
+        "You hear a commotion. When you arrive at [bname], you find the place in disarray - equipment tampered with, supplies spoiled."
+        "A guard reports a stranger seen leaving last night. It has the Governor's mark all over it."
+        "[bname] has been sabotaged; its building skill bonus is temporarily reduced."
     else:
         "You hear a commotion from one of your buildings, but when you investigate, everything seems in order. You remain on guard."
     
@@ -183,7 +187,9 @@ label governor_spy_event:
     
     if store._tension_stolen and store._tension_stolen > 0:
         $ amount = store._tension_stolen
-        $ say_governor_text(f"Something feels wrong when you count the day's earnings. The ledgers have been tampered with. A trusted accountant - a \"new hire\" with access to your books - vanished during the night, along with {amount} coins. The Governor had placed a spy in your counting-house. Be careful; he has eyes everywhere.")
+        "Something feels wrong when you count the day's earnings. The ledgers have been tampered with."
+        "A trusted accountant - a \"new hire\" with access to your books - vanished during the night, along with [amount] coins."
+        "The Governor had placed a spy in your counting-house. Be careful; he has eyes everywhere."
     else:
         "Something feels wrong when you count the earnings, but after careful counting everything is in order. You can't shake the feeling of being watched."
     

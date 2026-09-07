@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Varra",
+        "folder": "varra",
+        "cost": 0,
+        "nsfw": true,
+        "unique": true,
+        "recruitment_locked": true,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 60,
+            "Anal": 38,
+            "BDSM": 48,
+            "Hand": 46,
+            "Oral": 46,
+            "Homo": 40,
+            "Special": 35,
+            "Group": 42,
+            "Extreme": 40,
+            "Striptease": 62,
+            "Combat": 68,
+            "Clever": 38,
+            "Charm": 50,
+            "Service": 30,
+            "Agility": 55,
+            "Craft": 25
+        },
+        "names_list": "western_female",
+        "traits": [
+            "Human",
+            "Strong",
+            "Tall",
+            "Tough",
+            "Great Figure",
+            "Cool Scars"
+        ],
+        "description": "The Master of the Sands. Six seasons unbeaten before a Nordmark's last swing took the knee and the crown together; she has run the fighting pits ever since. She answers to your house by arrangement, and keeps that arrangement the way she keeps a card - to the second, and without a word of complaint you will ever hear.",
+        "gender": "female",
+        "comfort_desired": 2
+    }
+]

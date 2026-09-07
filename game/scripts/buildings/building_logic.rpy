@@ -3,6 +3,18 @@
 
 init python:
 
+    # Arena and Academy are map-only systems with dedicated interfaces. They
+    # remain owned for save/state logic but never belong to generic building UI.
+    SPECIAL_MAP_ONLY_BUILDING_TYPES = frozenset(("arena", "academy"))
+
+    def is_standard_managed_building(building_name, building=None):
+        """Return whether a building belongs in generic management lists."""
+        normalized_name = str(building_name or "").strip().lower().replace(" ", "_")
+        type_id = ""
+        if hasattr(building, "get"):
+            type_id = str(building.get("type", "") or "").strip().lower()
+        return normalized_name not in SPECIAL_MAP_ONLY_BUILDING_TYPES and type_id not in SPECIAL_MAP_ONLY_BUILDING_TYPES
+
     def get_building(worker):
         """Returns the building object for a worker, or None if unassigned."""
         building_name = worker.get("assigned_building", "Unassigned")
@@ -48,6 +60,195 @@ init python:
     # sync_assigned_servants_for_building, validate_and_sync_buildings,
     # sync_building_assignments_from_workers all live in script.rpy.
 
+    def content_object_is_restricted(value):
+        """Classify one data object without consulting or mutating runtime state."""
+        if not value or not hasattr(value, "get"):
+            return False
+        if value.get("nsfw", False) or value.get("nsfw_only", False) or value.get("nsfw_content", False):
+            return True
+        # Recurse only through explicit provenance containers. Traversing arbitrary
+        # children would incorrectly classify mixed events by one restricted choice.
+        for metadata_key in ("metadata", "content_metadata", "provenance"):
+            metadata = value.get(metadata_key)
+            if hasattr(metadata, "get") and content_object_is_restricted(metadata):
+                return True
+            if metadata and not hasattr(metadata, "strip") and hasattr(metadata, "__iter__"):
+                if any(content_object_is_restricted(entry) for entry in metadata):
+                    return True
+        return False
+
+    def building_type_is_visible(btype):
+        """True when a building type may be exposed by the current content filter."""
+        if not btype or not hasattr(btype, "get"):
+            return True
+        return bool(getattr(persistent, "nsfw_enabled", False) or not content_object_is_restricted(btype))
+
+    def profession_is_visible(profession, btype=None):
+        """True when both the parent building and profession are visible."""
+        if not building_type_is_visible(btype):
+            return False
+        if not profession or not hasattr(profession, "get"):
+            return True
+        return bool(getattr(persistent, "nsfw_enabled", False) or not content_object_is_restricted(profession))
+
+    def building_type_display_name(btype, fallback="Unassigned"):
+        if not btype or not hasattr(btype, "get"):
+            return fallback
+        if not building_type_is_visible(btype):
+            return "Restricted Business"
+        return btype.get("name", fallback)
+
+    def building_skill_display_name(btype, fallback="Skill"):
+        if not btype or not hasattr(btype, "get") or not building_type_is_visible(btype):
+            return fallback
+        return btype.get("skill_name", fallback)
+
+    def profession_display_name(profession, btype=None, fallback="Unassigned"):
+        if not profession or not hasattr(profession, "get"):
+            return fallback
+        if not profession_is_visible(profession, btype):
+            return "Hidden Role"
+        return profession.get("name", fallback)
+
+    def _resolve_report_content_context(report):
+        """Resolve old report building aliases and infer profession ownership after type changes."""
+        building_name = report.get("building") if hasattr(report, "get") else None
+        building, _actual_key = _resolve_building_by_name(building_name) if building_name else (None, None)
+        building = building or {}
+        stored_btype_id = report.get("building_type_id") if hasattr(report, "get") else None
+        btype_id = stored_btype_id or (building.get("type") if hasattr(building, "get") else None)
+        btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+        stored_profession_id = report.get("profession_id") if hasattr(report, "get") else None
+        raw_name = str(stored_profession_id or report.get("profession", "")).strip().lower() if hasattr(report, "get") else ""
+        matches = []
+        story_matches = []
+        event = (report.get("event_data", {}) or {}) if hasattr(report, "get") else {}
+        event_id = str(event.get("id", "")).strip().lower() if hasattr(event, "get") else ""
+        event_report = str(event.get("report", "")).strip().lower() if hasattr(event, "get") else ""
+        candidate_types = [btype] if stored_btype_id and btype else building_types_json.get("building_types", [])
+        for candidate_btype in candidate_types:
+            for profession in candidate_btype.get("professions", []) or []:
+                if raw_name and (str(profession.get("id", "")).strip().lower() == raw_name or str(profession.get("name", "")).strip().lower() == raw_name):
+                    matches.append((candidate_btype, profession))
+                for story in profession.get("daily_stories", []) or []:
+                    story_id = str(story.get("id", "")).strip().lower()
+                    story_report = str(story.get("report", "")).strip().lower()
+                    if (event_id and story_id == event_id) or (event_report and story_report == event_report):
+                        story_matches.append((candidate_btype, profession))
+        return btype, matches, story_matches
+
+    def _report_context_is_visible(report, btype, matches, story_matches):
+        if not building_type_is_visible(btype):
+            return False
+        if report.get("building_type_id"):
+            return not matches or any(profession_is_visible(profession, owner_btype) for owner_btype, profession in matches)
+        evidence = story_matches if story_matches else matches
+        if evidence:
+            return all(profession_is_visible(profession, owner_btype) for owner_btype, profession in evidence)
+        raw_name = str(report.get("profession", "")).strip().lower()
+        return raw_name in ("", "n/a", "rest", "unassigned")
+
+    def _resolve_report_worker(report):
+        """Resolve a report's canonical worker without mutating legacy report data."""
+        if not hasattr(report, "get"):
+            return None
+        embedded = report.get("worker")
+        if hasattr(embedded, "get") and embedded:
+            return embedded
+        worker_name = str(report.get("worker_name", "") or "").strip()
+        if not worker_name:
+            return None
+        for candidate in (getattr(store, "workers", []) or []):
+            if hasattr(candidate, "get") and str(candidate.get("name", "")).strip() == worker_name:
+                return candidate
+        return None
+
+    def get_report_profession_display(report):
+        """Mask profession names in stored reports when their content is currently hidden."""
+        raw_name = report.get("profession", "N/A") if hasattr(report, "get") else "N/A"
+        if not hasattr(report, "get"):
+            return raw_name
+        if getattr(persistent, "nsfw_enabled", False):
+            return raw_name
+        if content_object_is_restricted(report) or report.get("worker_nsfw", False):
+            return "Hidden Role"
+        if content_object_is_restricted(_resolve_report_worker(report)):
+            return "Hidden Role"
+        btype, matches, story_matches = _resolve_report_content_context(report)
+        if not _report_context_is_visible(report, btype, matches, story_matches):
+            return "Hidden Role"
+        return raw_name
+
+    def get_report_building_display(report):
+        """Prefer the immutable building label captured with the report; keep legacy fallback lazy."""
+        if not hasattr(report, "get"):
+            return str(report or "Unknown Building")
+        if not getattr(persistent, "nsfw_enabled", False):
+            if content_object_is_restricted(report):
+                return "Restricted Business"
+        archived_type_id = report.get("building_type_id")
+        archived_type = next((entry for entry in building_types_json.get("building_types", []) if entry.get("id") == archived_type_id), None)
+        if archived_type and not building_type_is_visible(archived_type):
+            return "Restricted Business"
+        archived_display = report.get("building_display_name")
+        if archived_display:
+            return str(archived_display)
+        building_name = report.get("building", "Unknown Building")
+        building, actual_key = _resolve_building_by_name(building_name)
+        building = building or {}
+        resolved_name = actual_key or building_name
+        btype_id = report.get("building_type_id") or building.get("type")
+        btype = next((entry for entry in building_types_json.get("building_types", []) if entry.get("id") == btype_id), None)
+        type_name = building_type_display_name(btype, "Unassigned" if btype_id is None else btype_id)
+        parts = str(resolved_name).replace("_", " ").split()
+        default_name = "Building %s" % parts[1] if len(parts) > 1 and parts[0].lower() == "building" else str(resolved_name).replace("_", " ")
+        custom_names = getattr(store, "custom_names", {}) or {}
+        display_name = custom_names.get(resolved_name, custom_names.get(building_name, default_name))
+        return "%s: %s" % (type_name, display_name)
+
+    def report_content_is_visible(report):
+        """Protect stored daily reports when the content filter changes after generation."""
+        if not hasattr(report, "get") or getattr(persistent, "nsfw_enabled", False):
+            return True
+        if content_object_is_restricted(report) or report.get("worker_nsfw", False):
+            return False
+        if content_object_is_restricted(_resolve_report_worker(report)):
+            return False
+        btype, matches, story_matches = _resolve_report_content_context(report)
+        if not _report_context_is_visible(report, btype, matches, story_matches):
+            return False
+        event = report.get("event_data", {}) or {}
+        if content_object_is_restricted(event):
+            return False
+        return True
+
+    def report_worker_details_allowed(report):
+        """Prevent a restricted report from becoming a navigation leak."""
+        return bool(report_content_is_visible(report))
+
+    def get_report_worker_display(report):
+        """Return a neutral worker label while retaining the canonical reference."""
+        if not hasattr(report, "get"):
+            return "Unknown"
+        if not report_worker_details_allowed(report):
+            return "Hidden Worker"
+        worker = report.get("worker", {}) or {}
+        if hasattr(worker, "get") and worker.get("name"):
+            return str(worker.get("name"))
+        return str(report.get("worker_name", "Unknown"))
+
+    store.content_object_is_restricted = content_object_is_restricted
+    store.building_type_is_visible = building_type_is_visible
+    store.profession_is_visible = profession_is_visible
+    store.building_type_display_name = building_type_display_name
+    store.building_skill_display_name = building_skill_display_name
+    store.profession_display_name = profession_display_name
+    store.get_report_profession_display = get_report_profession_display
+    store.get_report_building_display = get_report_building_display
+    store.report_content_is_visible = report_content_is_visible
+    store.get_report_worker_display = get_report_worker_display
+    store.report_worker_details_allowed = report_worker_details_allowed
+
     def resolve_profession_for_job(btype, job_id):
         """Match profession by id case-insensitively. Returns (display_name, profession_dict_or_None).
         Rest is recognized even when the building type omits a rest profession (e.g. Arena)."""
@@ -57,6 +258,9 @@ init python:
         jlow = jid.lower()
         if jlow in ("", "unassigned"):
             return ("Unassigned", None)
+        if btype and not building_type_is_visible(btype):
+            profession = next((p for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == jlow), None)
+            return ("Hidden Role", profession)
         if jlow == "rest":
             return ("Rest", None)
         if not btype:
@@ -64,7 +268,7 @@ init python:
         for p in btype.get("professions", []) or []:
             pid = p.get("id")
             if pid is not None and str(pid).strip().lower() == jlow:
-                return (p.get("name", jid), p)
+                return (profession_display_name(p, btype, jid), p)
         return (jid, None)
 
     store.resolve_profession_for_job = resolve_profession_for_job
@@ -94,7 +298,7 @@ init python:
         default_name = "Building " + parts[1] if len(parts) > 1 else building_name
         custom_names = getattr(store, 'custom_names', {}) or {}
         display_name = custom_names.get(building_name, default_name)
-        type_name = btype.get("name", btype_id)
+        type_name = building_type_display_name(btype, btype_id)
         building_display = type_name + ": " + display_name
         jobs = building.get("servant_jobs", {})
         job_id = jobs.get(worker.get("name", ""), "")
@@ -114,7 +318,8 @@ init python:
                 "reputation": 0,
                 "type": None,
                 "max_workers": {},
-                "costs": 0
+                "costs": 0,
+                "autofill_quotas": {}  # per-profession auto-fill plan is type-specific
             })
             
             # Unassign all workers
@@ -242,6 +447,30 @@ init python:
                 return pid
         return None
 
+    def _autorest_target_has_capacity(building, jobs, workers_here, profession_id):
+        """Check active occupancy only; the resting worker already owns a reservation."""
+        btype_id = (building or {}).get("type")
+        btype = next(
+            (bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id),
+            None,
+        )
+        profession = next(
+            (
+                prof for prof in ((btype or {}).get("professions", []) or [])
+                if str(prof.get("id", "")).strip().lower() == str(profession_id or "").strip().lower()
+            ),
+            None,
+        )
+        if not profession:
+            return False
+        from fm_autorest.capacity import can_restore_reserved_job
+        return can_restore_reserved_job(
+            jobs,
+            workers_here,
+            profession_id,
+            get_max_daily_workers(building, profession),
+        )
+
     def process_manager_auto_rest(restore_only=False):
         """Sistema robusto: Usa store.workers como única fuente de verdad."""
         _norm_pct = getattr(store, "normalize_auto_rest_entry_pct_for_worker", None)
@@ -332,16 +561,21 @@ init python:
                         can_restore = energy >= restore_threshold_e
 
                     if can_restore:
-                        prev = w.get("previous_profession")
-                        if prev:
+                        prev = w.get("previous_profession") or w.get("previous_job")
+                        if not prev:
+                            # Old saves and the former manual-Rest path could lose
+                            # this field. Preserve the historical fallback, but
+                            # migrate it into a reservation before restoring.
+                            prev = _get_first_profession_id_for_building(building)
+                            if prev:
+                                w["previous_profession"] = prev
+                        if prev and _autorest_target_has_capacity(building, jobs, workers_here, prev):
                             jobs[name] = prev
-                            w["previous_profession"] = None
+                            w.pop("previous_profession", None)
+                            w.pop("previous_job", None)
                             renpy.log(f"AUTOREST: {name} vuelve a {jobs[name]} (Energía {energy}/{max_e}, Salud {health}/{max_h if max_h > 0 else 'N/A'})")
-                        else:
-                            first_prof = _get_first_profession_id_for_building(building)
-                            if first_prof:
-                                jobs[name] = first_prof
-                                renpy.log(f"AUTOREST: {name} sin previous_profession -> restaurado a {first_prof} (Energía {energy}/{max_e})")
+                        elif prev:
+                            renpy.log(f"AUTOREST: {name} sigue descansando; {prev} está completo")
 
     # clear_worker_autorest_state and set_worker_job live in script.rpy.
 
