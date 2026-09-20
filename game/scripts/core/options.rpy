@@ -234,6 +234,11 @@ init python:
     # Dev-only content: a $1 item that raises Manager level on purchase.
     build.classify('game/data/items/test_items.json', None)
 
+    # Internal editorial delivery (audit reports, review notes, patches):
+    # working material for the developer, never part of a player build.
+    build.classify('editorial_delivery/**', None)
+    build.classify('editorial_delivery/', None)
+
     ## Exclude local AI/tooling metadata and debug artifacts from releases.
     build.classify('AGENTS.md', None)
     build.classify('**/AGENTS.md', None)
