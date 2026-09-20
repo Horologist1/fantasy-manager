@@ -1,0 +1,58 @@
+ M .gitignore
+ M game/data/events/events_character_arcs_nsfw.json
+ M game/data/events/events_character_arcs_sfw.json
+ M game/data/events/events_common.json
+ M game/data/events/events_workers_aelis.json
+ M game/data/events/events_workers_monster_arcs.json
+ M game/data/traits/traits_core.json
+ M game/python-packages/fm_roster/autofill.py
+ M game/scripts/core/gameplay_improvements.rpy
+ M game/scripts/core/manager_inventory_helpers.rpy
+ M game/scripts/core/options.rpy
+ M game/scripts/core/python_package_preload.rpy
+ M game/scripts/core/screens.rpy
+ M game/scripts/events/event_daily_exec.rpy
+ M game/scripts/events/events.rpy
+ M game/scripts/events/recruitment_flow.rpy
+ M game/scripts/events/recruitment_functions.rpy
+ M game/scripts/lanista/lanista_complete.rpy
+ M game/scripts/save_snapshot.rpy
+ M game/scripts/script.rpy
+ M game/scripts/workers/worker_management.rpy
+ M game/scripts/yvara/yvara_complete.rpy
+ M tests/test_repeat_storage_save_runtime.py
+ M tests/test_save_pickle_safety.py
+ M user_docs/guides/modding_guide.md
+?? .github/
+?? devkit_web/
+?? docs/
+?? editorial_delivery/
+?? game/data/items/alchemy_ingredients.json
+?? game/gui/map/church.png
+?? game/gui/map/church_wall_mask.svg
+?? game/python-packages/fm_alchemy/
+?? game/python-packages/fm_lifecycle/
+?? game/python-packages/fm_mods/
+?? game/scripts/academy/alchemy_recipes.rpy
+?? game/scripts/church/
+?? game/scripts/mods/
+?? tests/fixtures/
+?? tests/test_alchemy_materials.py
+?? tests/test_alchemy_recipes.py
+?? tests/test_android_mod_import.py
+?? tests/test_assignment_ui_runtime.py
+?? tests/test_character_mods.py
+?? tests/test_death_resurrection.py
+?? tests/test_event_choice_safety.py
+?? tests/test_event_presentation_contracts.py
+?? tests/test_event_text_names.py
+?? tests/test_general_save_runtime.py
+?? tests/test_json_overrides.py
+?? tests/test_location_tutorial_runtime.py
+?? tests/test_management_automation.py
+?? tests/test_snapshot_recovery.py
+?? tests/test_snapshot_state_coverage.py
+?? tests/test_temple_exploration.py
+?? tools/
+?? user_docs/guides/devkit_guia_es.md
+?? user_docs/guides/devkit_user_guide.md

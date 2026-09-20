@@ -213,6 +213,7 @@ init python:
         else:
             normalized_traits = []
         worker["traits"] = normalized_traits
+        _traits_before_migrations = list(normalized_traits)
 
         if migrate_lanista_exhibitionist_trait(worker):
             renpy.log(
@@ -241,6 +242,16 @@ init python:
                     f"TRAITS: Removed invalid 'Arena Champion' from {worker.get('name', 'Unknown')} "
                     f"(special_match_victories={_arena_wins})"
                 )
+
+        # The migrations above edit the trait list directly. On an already
+        # initialised worker apply_trait_secondary_modifiers_once is a no-op, so
+        # force a recalculation whenever they changed anything; otherwise the
+        # swapped trait's modifiers are never applied (or never reverted).
+        if list(worker.get("traits") or []) != _traits_before_migrations and worker.get("_secondary_attributes_initialized", False):
+            try:
+                recalculate_trait_modifiers(worker)
+            except Exception as _recalc_error:
+                renpy.log(f"TRAITS: recalculation after migration failed for {worker.get('name', 'Unknown')}: {_recalc_error}")
 
         if has_trait_catalog:
             missing_definitions = [t for t in worker["traits"] if t not in known_trait_names]

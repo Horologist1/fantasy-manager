@@ -1,0 +1,15 @@
+eventos que ensenan una habilidad sexual: 12
+
+ climax explicito  gate     otorga                   id
+      0         0  Sex      Fortune's Favorite       worker_fern_quiet_ledger   <<< sin climax
+      0         0  Special  Nuphar, The Unbroken Whole nuphar_personal_stage_3_the_unbroken_whole   <<< sin climax
+      1         0  Anal     Desire Whisperer         worker_aspen_unlocked_door
+      1         0  Extreme  Amanita, The Unshockable amanita_personal_stage_3_no_cage_can_keep_her
+      1         0  Sex      Courtesan's Grace        legendary_courtesan_visit
+      1         2  Sex      Sacred Touch             worker_holly_room_kept_warm
+      1         3  Oral     Desire Whisperer         desire_whisperer_arrives
+      1         3  Sex      Desire Whisperer         worker_lily_garden_in_bloom
+      1         3  Sex      Desire Whisperer         worker_violet_last_secret
+      2         0  BDSM     Moss, The Measured Hand  moss_personal_stage_3_the_strength_he_keeps
+      2         1  Striptease Courtesan's Grace        worker_rose_cranes_at_dawn
+      3         0  Hand     Sacred Touch             sacred_pleasure_teacher

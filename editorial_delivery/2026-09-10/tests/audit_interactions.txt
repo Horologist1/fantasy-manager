@@ -1,0 +1,37 @@
+==========================================================================
+interactions\interactions_special.json  -  2 entradas, 2 campos, 139 palabras
+  1. construcciones con barra (lord/lady): 0
+  2. 7-gramas repetidos 4+ veces: 0
+  3. registro arcaico: 0
+  4. placeholders usados: ninguno
+  5. campos con segunda persona ('you'): 2 de 2
+
+==========================================================================
+interactions\interactions_structured.json  -  48 entradas, 48 campos, 3881 palabras
+  1. construcciones con barra (lord/lady): 1
+       lord/lady          1
+  2. 7-gramas repetidos 4+ veces: 69
+        4x  'when we are alone i speak plainly'  (4 entradas)
+        4x  'what has been growing between us for'  (4 entradas)
+        4x  'we have shared seems to gather into'  (4 entradas)
+        4x  'we are alone i speak plainly no'  (4 entradas)
+        4x  'wants it the air feels still as'  (4 entradas)
+        4x  'walk forward together i make it clear'  (4 entradas)
+  3. registro arcaico: 0
+  4. placeholders usados: ninguno
+  5. campos con segunda persona ('you'): 1 de 48
+
+==========================================================================
+interactions\interactions_training.json  -  26 entradas, 150 campos, 5341 palabras
+  1. construcciones con barra (lord/lady): 0
+  2. 7-gramas repetidos 4+ veces: 65
+       22x  'manager led skill training hands on timed'  (22 entradas)
+        4x  "you teach kink the way it's sold"  (4 entradas)
+        4x  "who tips for the tease shame doesn't"  (4 entradas)
+        4x  'whatever the premium room books pain and'  (4 entradas)
+        4x  "way it's sold hard limits safeword aftercare"  (4 entradas)
+        4x  'watcher who tips for the tease shame'  (4 entradas)
+  3. registro arcaico: 0
+  4. placeholders usados: {'{poss}': 82, '{obj}': 41, '{name}': 26, '{skill}': 25, '{subj}': 23}
+  5. campos con segunda persona ('you'): 112 de 150
+

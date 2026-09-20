@@ -1,0 +1,15 @@
+1. placeholder TYPES lost   : 3 [(('ea_prostitute_anal_client_male', 'mediocre'), ['{worker_name}']), (('ea_prostitute_hetero_client_lesbian', 'mediocre'), ['{worker_name}']), (('ea_prostitute_hetero_client_lesbian', 'critical_success'), ['{worker_name}'])]
+2. placeholder TYPES gained : 0 []
+   fields changed: 319 | stories touched: 84
+3. BEFORE: 7-grams repeated >=4x -> 94 across unrelated stories, 0 between variants of one story (both reader-visible)
+   distribucion por numero de historias distintas: 2 historias: 2537 n-gramas, 3 historias: 474 n-gramas, 4 historias: 94 n-gramas
+        8x  "grows frustrated as their expectations crumble into"  ['ea_prostitute_anal_client_female', 'ea_prostitute_hand_client_female', 'ea_prostitute_hand_client_gay', 'ea_prostitute_hand_client_male']
+        8x  "frustrated as their expectations crumble into disappointment"  ['ea_prostitute_anal_client_female', 'ea_prostitute_hand_client_female', 'ea_prostitute_hand_client_gay', 'ea_prostitute_hand_client_male']
+        8x  "client grows frustrated as their expectations crumble"  ['ea_prostitute_anal_client_female', 'ea_prostitute_hand_client_female', 'ea_prostitute_hand_client_gay', 'ea_prostitute_hand_client_male']
+        8x  "as their expectations crumble into disappointment and"  ['ea_prostitute_anal_client_female', 'ea_prostitute_hand_client_female', 'ea_prostitute_hand_client_gay', 'ea_prostitute_hand_client_male']
+        6x  "worker name performs with mechanical precision each"  ['ea_prostitute_homo_client_female', 'ea_prostitute_homo_client_male', 'ea_prostitute_vanilla_client', 'prostitute_homo_client_female']
+        6x  "worker name gives the male client a"  ['ea_prostitute_hand_client_gay', 'ea_prostitute_oral_client_gay', 'ea_prostitute_vanilla_client_gay', 'prostitute_hand_client_gay']
+        6x  "with mechanical precision each gesture practiced but"  ['ea_prostitute_homo_client_female', 'ea_prostitute_homo_client_male', 'ea_prostitute_vanilla_client', 'prostitute_homo_client_female']
+        6x  "their expectations crumble into disappointment and can't"  ['ea_prostitute_hand_client_female', 'ea_prostitute_hand_client_gay', 'ea_prostitute_hand_client_male', 'prostitute_hand_client_female']
+3. AFTER : 7-grams repeated >=4x -> 0 across unrelated stories, 2 between variants of one story (both reader-visible)
+   distribucion por numero de historias distintas: 2 historias: 837 n-gramas, 3 historias: 56 n-gramas, 4 historias: 2 n-gramas

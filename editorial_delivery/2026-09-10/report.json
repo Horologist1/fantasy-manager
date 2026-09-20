@@ -1,0 +1,4163 @@
+{
+ "schema_version": 1,
+ "status": "needs_review",
+ "scope": "Pase editorial completo 2026-09-10. Informe detallado y auditable en AUDIT_REPORT.md. Cubre las daily stories de building_types.json, eventos comunes y de edificio, reclutamiento, interacciones y training, Journal e intro, y un backreference sin ancla en el arco de Yvara. 708 filas de before/after, de las que 483 describen el texto actual y 225 fueron superadas por lotes posteriores. ATENCION: el repositorio contiene trabajo concurrente ajeno a este pase; ver seccion 9 del informe. LOTE 26 (2026-09-10, posterior): respuesta a EXTERNAL_REVIEW_CODEX.md. Seis de sus siete hallazgos aceptados; ver AUDIT_REPORT.md seccion 12. Se corrigieron en el juego los hallazgos 1, 2, 4, 5a, 5b y 5c, y se reescribieron 14 historias que eran la misma escena con los sustantivos cambiados. Se corrigieron ademas cuatro afirmaciones de este informe que la revision desmintio.",
+ "baseline_manifest": "backups/manifest_baseline.json",
+ "final_manifest": "backups/manifest_final.json",
+ "inventory_file": "inventory.json",
+ "before_after_file": "before_after.jsonl",
+ "units": [
+  {
+   "id": "ea_prostitute_anal_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "expert_attendant text was byte-identical to the prostitute story of the same name. Differentiated on the mechanical difference the data declares (hard, modifier -5, 50+skill against 100+skill).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_hand_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "expert_attendant text was byte-identical to the prostitute story of the same name. Differentiated on the mechanical difference the data declares (hard, modifier -5, 50+skill against 100+skill).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_hand_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "expert_attendant text was byte-identical to the prostitute story of the same name. Differentiated on the mechanical difference the data declares (hard, modifier -5, 50+skill against 100+skill).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_homo_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "expert_attendant text was byte-identical to the prostitute story of the same name. Differentiated on the mechanical difference the data declares (hard, modifier -5, 50+skill against 100+skill).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_noble_entertainment",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Highest-abstraction stories in the game (0.0 concrete detail per 1000 words).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_diplomatic_soiree",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Highest-abstraction stories in the game (0.0 concrete detail per 1000 words).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "servant_aristocratic_service",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Highest-abstraction stories in the game (0.0 concrete detail per 1000 words).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "guards_patrol_secure",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Highest-abstraction stories in the game (0.0 concrete detail per 1000 words).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "service_story1",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Orientation variant that inherited its base story's template verbatim, plus the two worst non-sexual brothel stories.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "manager_brothel",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Orientation variant that inherited its base story's template verbatim, plus the two worst non-sexual brothel stories.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_vip_private_chamber_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Orientation variant that inherited its base story's template verbatim, plus the two worst non-sexual brothel stories.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "pleasure_servant_noble_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Orientation variant that inherited its base story's template verbatim, plus the two worst non-sexual brothel stories.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vanilla_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vanilla_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_anal_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_oral_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_oral_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_hand_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_hand_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_hetero_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_hetero_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Completes the expert_attendant de-duplication.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "cook_story1_restaurant",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "cook_story2_restaurant",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "bartender_story1",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "entertainer_story1_tavern",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "entertainer_story2_tavern",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "dealer_story1",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "boss_hunting_story1",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "chamberlain_manage_castle",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "service_noble_dinner_restaurant",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Abstraction outside the NSFW gate: outcomes separated only by superlatives. Register unchanged; fixed for concreteness.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "stripper_libido20_too_real",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Removes repetition this pass itself introduced, plus one pre-existing phrase clash.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_vanilla_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_vanilla_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_anal_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_anal_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_oral_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_oral_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_hand_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_hand_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_homo_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_homo_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_vanilla_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_vanilla_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_anal_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_anal_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_oral_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_oral_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_hand_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_hand_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_hetero_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_hetero_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_libido20_too_eager_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "prostitute_libido20_too_eager_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for brothel/prostitute: both bodies are known after the gender split, so the prose names them.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_oral_steam_and_mouth_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_oral_steam_and_mouth_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_oral_steam_and_mouth_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_oral_steam_and_mouth_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_hand_oil_edge_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_hand_oil_edge_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_hand_oil_edge_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "masseuse_hand_oil_edge_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "monster_taming_seduction_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_seduction_nsfw_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_seduction_nsfw_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_vip_private_chamber_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_vip_private_chamber_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "pleasure_servant_noble_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "pleasure_servant_noble_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "pleasure_servant_libido20_overwhelming_desire_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "pleasure_servant_libido20_overwhelming_desire_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for masseuse, stripper, courtesan, pleasure_servant and monster_taming.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_seduction_nsfw_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for the castle's orientation variants, left at register 2 by an earlier batch.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_seduction_nsfw_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for the castle's orientation variants, left at register 2 by an earlier batch.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "courtesan_vip_private_chamber_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for the castle's orientation variants, left at register 2 by an earlier batch.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "pleasure_servant_noble_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for the castle's orientation variants, left at register 2 by an earlier batch.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vanilla_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vanilla_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_anal_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_anal_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_bdsm_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_bdsm_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_bdsm_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_bdsm_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_oral_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_oral_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_homo_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_group_clients_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_group_clients_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_group_clients_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_group_clients_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_extreme_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_extreme_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "expert_libido20_lost_control_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "expert_libido20_lost_control_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Register 3 for all 36 expert_attendant stories, kept distinct by the premium-clientele angle.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "stripper_lapdance_escalation_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Gender twins of one story were reading as the same paragraph; a mixed roster meets several over a campaign.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "stripper_lapdance_escalation_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Gender twins of one story were reading as the same paragraph; a mixed roster meets several over a campaign.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "stripper_lapdance_escalation_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Gender twins of one story were reading as the same paragraph; a mixed roster meets several over a campaign.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "stripper_lapdance_escalation_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Gender twins of one story were reading as the same paragraph; a mixed roster meets several over a campaign.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vip_client_male",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "VIP/Special: leaving the act unnamed had been over-applied into hiding the response. Orgasms and aftermath now named; the practice still is not.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vip_client_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "VIP/Special: leaving the act unnamed had been over-applied into hiding the response. Orgasms and aftermath now named; the practice still is not.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vip_client_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "VIP/Special: leaving the act unnamed had been over-applied into hiding the response. Orgasms and aftermath now named; the practice still is not.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ea_prostitute_vip_client_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "VIP/Special: leaving the act unnamed had been over-applied into hiding the response. Orgasms and aftermath now named; the practice still is not.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "guard_story1_casino",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Last generic daily stories still running on 'handles effectively / masterfully manages'.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "guards_capture_intruder",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Last generic daily stories still running on 'handles effectively / masterfully manages'.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "monster_taming_combat",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Last generic daily stories still running on 'handles effectively / masterfully manages'.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_aspen",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_cedar",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_florian",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_laurel",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_rose",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_primrose",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_iris",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_jasmine",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four pairs of named characters shared their introduction word for word, and the shared text often described the other one. Each of the 24 now has one written from its own sheet description.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "archmage_apprentice",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices/0/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Three 'legendary visitor' events ran the same scene with the noun swapped.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "high_priest_blessing",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices/0/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Three 'legendary visitor' events ran the same scene with the noun swapped.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "legendary_courtesan_visit",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices/0/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Three 'legendary visitor' events ran the same scene with the noun swapped.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_unique_generic_1",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four descriptions that stated they could not describe what they were describing.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_unique_generic_2",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four descriptions that stated they could not describe what they were describing.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "event_recruit_unique_generic_3",
+   "source_file": "game/data/events/recruit/event_recruit_unique_workers.json",
+   "locator": "game/data/events/recruit/event_recruit_unique_workers.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Four descriptions that stated they could not describe what they were describing.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "discipline_level4_submission_conditioning",
+   "source_file": "game/data/interactions/interactions_structured.json",
+   "locator": "game/data/interactions/interactions_structured.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "A second-person sentence pasted into five first-person descriptions, and two finales byte-identical despite applying different traits.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "discipline_level4_bdsm_conditioning_lord",
+   "source_file": "game/data/interactions/interactions_structured.json",
+   "locator": "game/data/interactions/interactions_structured.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "A second-person sentence pasted into five first-person descriptions, and two finales byte-identical despite applying different traits.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "discipline_level4_bdsm_conditioning_lady",
+   "source_file": "game/data/interactions/interactions_structured.json",
+   "locator": "game/data/interactions/interactions_structured.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "A second-person sentence pasted into five first-person descriptions, and two finales byte-identical despite applying different traits.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "discipline_level5_finale_harem_member",
+   "source_file": "game/data/interactions/interactions_structured.json",
+   "locator": "game/data/interactions/interactions_structured.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "A second-person sentence pasted into five first-person descriptions, and two finales byte-identical despite applying different traits.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "discipline_level5_finale_house_servant",
+   "source_file": "game/data/interactions/interactions_structured.json",
+   "locator": "game/data/interactions/interactions_structured.json :: description",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "A second-person sentence pasted into five first-person descriptions, and two finales byte-identical despite applying different traits.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "brothel_couples_fantasy_night",
+   "source_file": "game/data/events/events_building.json",
+   "locator": "game/data/events/events_building.json :: choices/0/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "brothel_couples_fantasy_night reached the act and substituted a simile.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "sacred_pleasure_teacher",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices/0/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "The mystical teachers named no climax. For the Whisperer this also explains its Oral gate (whisper - breath - mouth).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "desire_whisperer_arrives",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices/0/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "The mystical teachers named no climax. For the Whisperer this also explains its Oral gate (whisper - breath - mouth).",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "worker_violet_last_secret",
+   "source_file": "game/data/events/events_character_arcs_nsfw.json",
+   "locator": "game/data/events/events_character_arcs_nsfw.json :: choices/1/message_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Violet's finale is a sex scene whose theme is that she stops performing, and never said she came. Under the arc gate, so the review fixture was re-stamped after re-reading both branches.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "arena_challenge_visitor",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "bandit_shakedown",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "rooftop_chase_thief",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "collapsing_scaffold",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "escaped_beast_loose",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "underground_fight_ring",
+   "source_file": "game/data/events/events_common.json",
+   "locator": "game/data/events/events_common.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "guild_ancient_map_discovery",
+   "source_file": "game/data/events/events_building.json",
+   "locator": "game/data/events/events_building.json :: choices[0].message_failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Message announced -10 Health while effect.failure.health is -5. Text corrected to match the effect; no balance change.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "monster_taming_seduction_female",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Respuesta a EXTERNAL_REVIEW_CODEX.md; ver AUDIT_REPORT.md seccion 12.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "ambassador_diplomatic_alliance",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/mediocre",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "bartender_last_call_nsfw_tavern",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "bartender_last_call_nsfw_tavern_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "dealer_winners_reward_nsfw_casino",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "dealer_winners_reward_nsfw_casino_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "dealer_winners_reward_nsfw_casino_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "entertainer_private_performance_nsfw_tavern",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "entertainer_private_performance_nsfw_tavern_gay",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "entertainer_private_performance_nsfw_tavern_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "guard_libido20_tense_patrol",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "server_champagne_room_nsfw_casino",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "server_champagne_room_nsfw_casino_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "service_generous_tipper_nsfw_restaurant",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "service_generous_tipper_nsfw_restaurant_lesbian",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/critical_success",
+   "disposition": "edited",
+   "classification": "narrative_variant",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "tavern_server_libido20_spilled_ale",
+   "source_file": "game/data/buildings/building_types.json",
+   "locator": "game/data/buildings/building_types.json :: descriptions/failure",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "Familia de variantes que era la misma escena con los sustantivos cambiados y seguia en el registro retirado; ver AUDIT_REPORT.md seccion 12.2.",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_8_dialogue",
+   "source_file": "game/scripts/main_flow.rpy",
+   "locator": "game/scripts/main_flow.rpy :: dialogue:I possess what I require for now, yet this is me",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 8: 11 lineas de registro antiguo -> 8 en la voz modernizada",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_9_dialogue",
+   "source_file": "game/scripts/main_flow.rpy",
+   "locator": "game/scripts/main_flow.rpy :: dialogue:They are not mere killers—they are instruments o",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 9 (hoja): 'instruments of justice'",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_6_outro",
+   "source_file": "game/scripts/main_flow.rpy",
+   "locator": "game/scripts/main_flow.rpy :: dialogue:Excellent. The building can accommodate more sou",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "obj6 outro",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_ending_assassination",
+   "source_file": "game/scripts/main_flow.rpy",
+   "locator": "game/scripts/main_flow.rpy :: dialogue:Three of my most trusted souls stand ready at my",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "asesinato: equipo",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_ending_blackmail",
+   "source_file": "game/scripts/main_flow.rpy",
+   "locator": "game/scripts/main_flow.rpy :: dialogue:Three of my most cunning souls stand ready: [tea",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "chantaje: equipo",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "(sin label)",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:Progress: The path remains shrouded in mystery",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "journal: progreso obj 9",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_11_dialogue",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:Fifteen souls now serve beneath my banner — eyes",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 11",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_12_dialogue",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:The artifacts are mine. Three relics, and each a",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 12",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_13_dialogue",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:Three strongholds now fly my banner, and from th",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 13",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_14_dialogue",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:My elite guard stands assembled — the finest thi",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 14",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_objective_15_dialogue",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:Every coin is a testament — to the workers I hav",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "objetivo 15",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  },
+  {
+   "id": "show_tutorial_completion_message",
+   "source_file": "game/scripts/tutorial_system.rpy",
+   "locator": "game/scripts/tutorial_system.rpy :: dialogue:The vengeance is complete! My empire stands supr",
+   "disposition": "edited",
+   "classification": "shared",
+   "scores": {
+    "english": 3,
+    "clarity": 3,
+    "voice": 3,
+    "pacing": 3,
+    "repetition": 3,
+    "narrative_consistency": 3
+   },
+   "rationale": "mensaje de finalizacion",
+   "technical_integrity": "pass",
+   "mechanical_fidelity": "pass",
+   "evidence": [
+    "AUDIT_REPORT.md",
+    "EXTERNAL_REVIEW_CODEX.md",
+    "before_after.jsonl",
+    "tests/damage_check.txt"
+   ],
+   "unresolved": []
+  }
+ ],
+ "tests": [
+  {
+   "name": "contratos de contenido y variantes de genero",
+   "command": "python -m pytest tests/test_all_event_contracts.py tests/test_event_contracts.py tests/test_event_text_names.py tests/test_event_presentation_contracts.py tests/test_event_choice_safety.py tests/test_event_text_effect_fidelity.py tests/test_daily_story_gender_variants.py -q",
+   "scope": "contratos de contenido",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/contracts.txt"
+  },
+  {
+   "name": "danos introducidos por la edicion",
+   "command": "python tools/editorial_damage_check.py",
+   "scope": "JSON, placeholders, encoding, comillas rpy, deriva, EOL, restos",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/damage_check.txt"
+  },
+  {
+   "name": "abstraccion vs concrecion por capa",
+   "command": "python tools/editorial_layer_metrics.py",
+   "scope": "building_types y daily_story_extensions",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/metric_layers.txt"
+  },
+  {
+   "name": "renpy lint",
+   "command": "renpy.exe . lint",
+   "scope": "proyecto completo",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/renpy_lint.txt"
+  },
+  {
+   "name": "devkit: esquema, editor, export y reimportacion real",
+   "command": "cd devkit_web && npm test",
+   "scope": "devkit",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/devkit.txt"
+  },
+  {
+   "name": "suite python completa",
+   "command": "python -m pytest tests/ -q",
+   "scope": "repositorio",
+   "required": false,
+   "result": "fail",
+   "evidence": "tests/full_suite.txt"
+  },
+  {
+   "name": "recorrido nativo Ren'Py con guardado repetido",
+   "command": "RENPY_RUNTIME_REQUIRED=1 python -m pytest tests/test_repeat_storage_save_runtime.py",
+   "scope": "runtime de la ruta cambiada",
+   "required": false,
+   "result": "not_run",
+   "evidence": "tests/full_suite.txt"
+  },
+  {
+   "name": "repeticion literal contando variantes de orientacion",
+   "command": "python tools/editorial_text_metrics.py",
+   "scope": "herramienta corregida: ya no excluye las variantes. 7-gramas en >=4 historias 95 -> 2 (ambos, variantes de una misma historia; 0 entre historias no emparentadas); compartidos por 2 historias 2.536 -> 1.031",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/metric_repetition_placeholders.txt"
+  },
+  {
+   "name": "marcadores de registro: prueba de mutacion",
+   "command": "python tools/editorial_damage_check.py",
+   "scope": "los marcadores nuevos se inyectaron en los 3 ficheros vigilados y el checker los detecto en los 3",
+   "required": true,
+   "result": "pass",
+   "evidence": "tests/damage_check.txt"
+  },
+  {
+   "name": "barrido de los hallazgos externos sobre las 192 historias",
+   "command": "scratchpad/codex_scan.py",
+   "scope": "texto vs formula de ingresos, duraciones multi-dia, acto vs report visible, gramatica y construcciones compartidas",
+   "required": true,
+   "result": "pass",
+   "evidence": "AUDIT_REPORT.md#12"
+  }
+ ],
+ "blocking_issues": [],
+ "proposals": [
+  "proposals/expert_attendant_duplication.md",
+  "proposals/gender_split_register3.md",
+  "proposals/roster_duplicate_characters.md",
+  "proposals/vn_arcs_gaps.md"
+ ],
+ "limitations": [
+  "test_repeat_storage_save_runtime falla en su primera sentencia por un guard de entorno (RENPY_RUNTIME_REQUIRED) antes de leer dato alguno, y ese fichero ya estaba modificado en el worktree antes de empezar. No causado por este pase; no se declara PASS.",
+  "La direccion escenica no es auditable con analisis estatico: el estado de sprites depende del flujo de control. Tres intentos dieron tres resultados equivocados; ver seccion 5 del informe.",
+  "Las puntuaciones son autoevaluacion del ejecutor, no auditoria externa.",
+  "El repositorio contiene trabajo concurrente ajeno a este pase (monthly_conditions, fm_monthly y dos tests). El recuento de 369 tests incluye tests no escritos aqui.",
+  "Superficies no leidas linea a linea: capa de relaciones (44.642 palabras) y arcos VN (89.347). Ver tests/coverage_map.txt.",
+  "El ejecutor cometio 12 errores durante el pase, tres corregidos por el desarrollador. Estan listados en la seccion 5 del informe.",
+  "Las cifras de repeticion del informe original estaban mal contadas: la herramienta excluia las variantes de orientacion por confundir jugador con trabajador. Corregido en la herramienta y en el informe (seccion 12.2).",
+  "El maximo reescrito de 379 caracteres era solo de building_types.json; el de toda la entrega es 688, contra un maximo preexistente de 1.129 (seccion 12.3).",
+  "El informe afirmaba que las VIP/Special dejan el acto sin nombrar. No se cumplio en todas. El texto se conserva por decision del desarrollador; lo corregido es la afirmacion (seccion 12.1 y 12.3).",
+  "72 desenlaces de fallo narran que el cliente paga mientras la formula da perdida. Es convencion preexistente (34 de 174 historias en el baseline), no introducida por el pase, y se deja documentada sin tocar (seccion 12.4).",
+  "241 de las 820 filas de before_after describen ediciones superadas por lotes posteriores; llevan final:false y su texto ya no esta en el fichero."
+ ]
+}

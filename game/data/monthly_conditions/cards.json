@@ -1,0 +1,571 @@
+[
+  {
+    "id": "quiet_month",
+    "name": "Quiet month",
+    "weight": 2,
+    "description": "No special conditions this month.",
+    "effects": []
+  },
+  {
+    "id": "cold_spell",
+    "name": "Cold spell",
+    "weight": 4,
+    "image": "",
+    "description": "Frost on the inside of the windows. The dining room fills with people who mostly want to be somewhere warm, and the kitchen can do no wrong. Upstairs, nobody wants to take their clothes off in a draught.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 5,
+        "buildings": [
+          "restaurant"
+        ],
+        "professions": [
+          "cook"
+        ],
+        "skills": [
+          "Service"
+        ]
+      },
+      {
+        "type": "skill",
+        "value": -5,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "stripper"
+        ],
+        "skills": [
+          "Striptease"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "visitors",
+    "name": "Visitors in town",
+    "weight": 4,
+    "image": "",
+    "description": "A trade delegation, two wedding parties and a company of players, all arriving the same week. They do not know what anything should cost here, and they are not asking.",
+    "effects": [
+      {
+        "type": "earnings",
+        "value": 1.1,
+        "buildings": [
+          "tavern",
+          "casino"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "harvest",
+    "name": "Harvest abundance",
+    "weight": 4,
+    "image": "",
+    "description": "The carts come in loaded and the market goes soft by mid-morning. Your cooks have never had better to work with, and every customer in the city knows exactly how cheap turnips are this month.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 5,
+        "buildings": [
+          "restaurant"
+        ],
+        "professions": [
+          "cook"
+        ],
+        "skills": [
+          "Service"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 0.95,
+        "buildings": [
+          "restaurant"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "festival",
+    "name": "Festival season",
+    "weight": 3,
+    "image": "",
+    "description": "Three days of processions and eight nights of drinking. Every stage in the city has somebody on it and the taverns cannot pour fast enough, while the gaming tables sit half-empty because the whole district is out in the street.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 7,
+        "buildings": [
+          "tavern"
+        ],
+        "professions": [
+          "entertainer"
+        ],
+        "skills": [
+          "Charm",
+          "Striptease"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.12,
+        "buildings": [
+          "tavern"
+        ],
+        "professions": [],
+        "skills": []
+      },
+      {
+        "type": "earnings",
+        "value": 0.93,
+        "buildings": [
+          "casino"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "formal_visits",
+    "name": "Formal visits",
+    "weight": 3,
+    "image": "",
+    "description": "Two envoys, a bishop and somebody's difficult cousin, all quartered in the east wing at once, and every one of them dining out on somebody else's account. Every conversation is being reported somewhere, and the whole city is being judged on the folding of its napkins.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 6,
+        "buildings": [
+          "governor_castle"
+        ],
+        "professions": [
+          "ambassador"
+        ],
+        "skills": [
+          "Charm",
+          "Clever"
+        ]
+      },
+      {
+        "type": "skill",
+        "value": 4,
+        "buildings": [
+          "governor_castle"
+        ],
+        "professions": [
+          "servant"
+        ],
+        "skills": [
+          "Service"
+        ]
+      },
+      {
+        "type": "skill",
+        "value": 5,
+        "buildings": [
+          "restaurant"
+        ],
+        "professions": [
+          "service"
+        ],
+        "skills": [
+          "Charm",
+          "Service"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quiet_trade",
+    "name": "Quiet trade",
+    "weight": 3,
+    "image": "",
+    "description": "The big money is somewhere else this month. What is left are regulars who nurse one drink and play small stakes all evening, and who tip the floor staff better than the whales ever did.",
+    "effects": [
+      {
+        "type": "earnings",
+        "value": 0.94,
+        "buildings": [
+          "casino"
+        ],
+        "professions": [],
+        "skills": []
+      },
+      {
+        "type": "skill",
+        "value": 6,
+        "buildings": [
+          "casino"
+        ],
+        "professions": [
+          "casino_server"
+        ],
+        "skills": [
+          "Charm"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bounty_season",
+    "name": "Bounty season",
+    "weight": 3,
+    "image": "",
+    "description": "The council posts a full season of bounties and every board in the city fills up overnight. Good money for anyone who can hold a blade, and the taverns are half-empty, because everyone who drinks is out on the northern road.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 6,
+        "buildings": [
+          "adventurers_guild"
+        ],
+        "professions": [
+          "adventurer",
+          "boss_hunting"
+        ],
+        "skills": [
+          "Combat"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.1,
+        "buildings": [
+          "adventurers_guild"
+        ],
+        "professions": [],
+        "skills": []
+      },
+      {
+        "type": "earnings",
+        "value": 0.95,
+        "buildings": [
+          "tavern"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "long_rains",
+    "name": "The long rains",
+    "weight": 4,
+    "image": "",
+    "description": "Three weeks of it. The roads turn to soup, half the guild's contracts slip a month, and every room in this city with a fire in it is full by dusk.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": -5,
+        "buildings": [
+          "adventurers_guild"
+        ],
+        "professions": [
+          "adventurer",
+          "treasure_hunter"
+        ],
+        "skills": [
+          "Agility",
+          "Combat"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.08,
+        "buildings": [
+          "tavern",
+          "restaurant"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "watch_crackdown",
+    "name": "A new captain of the watch",
+    "weight": 2,
+    "image": "",
+    "description": "Somebody with something to prove has taken over the district watch. Patrols on the hour, licences checked twice, and a queue of respectable citizens explaining themselves. The castle, meanwhile, has a great many officials who need entertaining and reassuring.",
+    "effects": [
+      {
+        "type": "earnings",
+        "value": 0.92,
+        "buildings": [
+          "brothel",
+          "casino"
+        ],
+        "professions": [],
+        "skills": []
+      },
+      {
+        "type": "earnings",
+        "value": 1.08,
+        "buildings": [
+          "governor_castle"
+        ],
+        "professions": [],
+        "skills": []
+      },
+      {
+        "type": "skill",
+        "value": 5,
+        "buildings": [
+          "casino"
+        ],
+        "professions": [
+          "guard"
+        ],
+        "skills": [
+          "Combat",
+          "Clever"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fleet_in_port",
+    "name": "The fleet is in",
+    "weight": 3,
+    "image": "",
+    "nsfw": true,
+    "description": "Four ships docked in the same week and every crew paid off the same afternoon. The parlour is standing room only from noon, nobody upstairs is being asked for anything complicated, and nobody is counting. The restaurants get the ones too drunk to manage the stairs.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 6,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "prostitute"
+        ],
+        "skills": [
+          "Sex",
+          "Oral",
+          "Hand"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.12,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [],
+        "skills": []
+      },
+      {
+        "type": "earnings",
+        "value": 0.95,
+        "buildings": [
+          "restaurant"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "bathhouse_season",
+    "name": "The baths are shut",
+    "weight": 3,
+    "image": "",
+    "nsfw": true,
+    "description": "The public baths close for repairs and the whole district needs somewhere to be warm and unhurried. The oil room is booked three days deep, and the stage downstairs fills with people who came for a bath and stayed for everything else.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 6,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "masseuse"
+        ],
+        "skills": [
+          "Hand",
+          "Oral"
+        ]
+      },
+      {
+        "type": "skill",
+        "value": 5,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "stripper"
+        ],
+        "skills": [
+          "Striptease"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.08,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "carnival_of_masks",
+    "name": "Carnival of masks",
+    "weight": 2,
+    "image": "",
+    "nsfw": true,
+    "description": "For one month nobody in this city has a face. The masks are a formality and everybody knows exactly who is under them, but the formality is the entire point: people ask for things they would never put into words in daylight, and they pay for the privilege of not having to.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 7,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "expert_attendant"
+        ],
+        "skills": [
+          "Special",
+          "Group",
+          "Extreme"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.12,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "court_appetites",
+    "name": "The court in residence",
+    "weight": 2,
+    "image": "",
+    "nsfw": true,
+    "description": "The season brings the whole court into the castle for six weeks and the private wing runs at capacity. Discretion is expensive here, and nobody who can afford it is economising this month.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 6,
+        "buildings": [
+          "governor_castle"
+        ],
+        "professions": [
+          "pleasure_servant"
+        ],
+        "skills": [
+          "Sex",
+          "Anal",
+          "Oral"
+        ]
+      },
+      {
+        "type": "skill",
+        "value": 5,
+        "buildings": [
+          "governor_castle"
+        ],
+        "professions": [
+          "courtesan"
+        ],
+        "skills": [
+          "Charm",
+          "Sex"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.1,
+        "buildings": [
+          "governor_castle"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "private_tastes",
+    "name": "A word in the right company",
+    "weight": 2,
+    "image": "",
+    "nsfw": true,
+    "description": "Somebody influential said something kind about your house to exactly the right people, and the right people have particular tastes. The bookings that follow all month are specific, discreet, and extremely generous.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": 7,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "prostitute",
+          "expert_attendant"
+        ],
+        "skills": [
+          "Homo"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 1.08,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  },
+  {
+    "id": "bad_batch",
+    "name": "A bad batch of hag-brew",
+    "weight": 2,
+    "image": "",
+    "nsfw": true,
+    "description": "The month's supply came from a new merchant and half of it is coloured water. Until the good stock arrives everyone upstairs is being careful in ways that cost time, cost money, and are perfectly obvious to the clients.",
+    "effects": [
+      {
+        "type": "skill",
+        "value": -6,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [
+          "prostitute",
+          "expert_attendant"
+        ],
+        "skills": [
+          "Sex",
+          "Anal"
+        ]
+      },
+      {
+        "type": "earnings",
+        "value": 0.93,
+        "buildings": [
+          "brothel"
+        ],
+        "professions": [],
+        "skills": []
+      }
+    ]
+  }
+]

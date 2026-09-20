@@ -1,0 +1,26 @@
+vague/1k  conc/1k  words  event
+    12.9     43.1    232  events_common.json :: archmage_apprentice
+    12.4     16.6    241  events_building.json :: casino_whale_arrives
+    12.3     12.3    243  event_recruit_unique_workers.json :: event_recruit_unique_generic_3
+    11.0     25.7    272  events_special.json :: unique_florian_lore_event
+    11.0     11.0    273  event_recruit_unique_workers.json :: event_recruit_lily
+     9.1      4.5    220  events_common.json :: high_priest_blessing
+     9.0      0.0    221  events_building.json :: brothel_hidden_talent
+     8.9      8.9    225  events_common.json :: legendary_barkeep
+     7.9     23.7    253  events_building.json :: restaurant_unusual_ingredient
+     6.8      0.0    294  event_recruit_unique_workers.json :: event_recruit_poppy
+     6.5     32.5    154  events_common.json :: charming_patrons_request
+     5.8     23.1    173  events_building.json :: brothel_discreet_noble_party
+     5.5     16.4    183  events_shops.json :: shop_owner_expansion
+     4.9     39.5    405  events_workers_lanista.json :: lanista_post_arc_dominion_accounting_varro
+     4.9     39.5    405  events_workers_lanista.json :: lanista_post_arc_dominion_accounting_varra
+     4.8     19.0    210  events_building.json :: casino_counterfeit_chips
+     4.6      9.2    217  event_recruit_advanced_example.json :: event_recruit_mysterious_scholar
+     4.4     22.1    226  events_building.json :: restaurant_wine_merchant_deal
+     4.4     17.6    227  events_common.json :: sacred_pleasure_teacher
+     4.4     17.5    228  events_common.json :: peoples_hero_visit
+     4.4      4.4    456  events_workers_aelis.json :: aelis_final_tavern_star
+     4.4      4.4    228  event_recruit_unique_workers.json :: event_recruit_sage
+
+eventos puntuados: 269
+con abstraccion >= 8.0/1k: 8

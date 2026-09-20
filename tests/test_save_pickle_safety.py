@@ -110,6 +110,16 @@ def test_touched_runtime_blocks_have_no_pickle_hazards():
     assert hazards == []
 
 
+def test_all_production_screens_and_labels_have_no_pickle_hazards():
+    hazards = []
+    for path in sorted((ROOT / "game/scripts").rglob("*.rpy")):
+        source = path.read_text(encoding="utf-8")
+        screens = re.findall(r"(?m)^screen\s+(\w+)", source)
+        hazards.extend((str(path.relative_to(ROOT)), *row)
+                       for row in find_pickle_hazards(source, screen_names=screens))
+    assert hazards == []
+
+
 def test_init_python_helpers_are_not_misclassified_as_runtime_locals():
     source = HELPERS.read_text(encoding="utf-8")
     assert "init python:" in source

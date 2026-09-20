@@ -1,0 +1,9 @@
+1. JSON: 68 ficheros comprobados
+2/3. placeholders y encoding: 7943 campos de texto revisados
+4. Ren'Py: 3 ficheros de script comprobados
+5. estructura: 156 stories comunes, 0 con deriva
+6. campos vacios: comprobados
+7. finales de linea: comprobados
+8. restos del registro retirado: comprobados
+
+SIN ERRORES: ningun defecto introducido por la edicion

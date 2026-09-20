@@ -1,0 +1,19 @@
+eventos NSFW-gated con tema sexual: 14
+
+explicito   sexual  words  id
+        0        2    154  brothel_exotic_oils_merchant             events_building.json   <<< nada explicito
+        0        2    173  brothel_discreet_noble_party             events_building.json   <<< nada explicito
+        0        2    268  castle_treasure_exhibition               events_building.json   <<< nada explicito
+        0        3    227  sacred_pleasure_teacher                  events_common.json   <<< nada explicito
+        0        7    237  desire_whisperer_arrives                 events_common.json   <<< nada explicito
+        1        2    310  lotus_personal_stage_2_ink_beneath_the_silk events_workers_monster_arcs.json
+        1        6    383  worker_florian_unfinished_border         events_character_arcs_nsfw.json
+        2        3    257  brothel_couples_fantasy_night            events_building.json
+        2        5    406  worker_aspen_unlocked_door               events_character_arcs_nsfw.json
+        4        2    404  worker_iris_open_table                   events_character_arcs_nsfw.json
+        4        4    407  worker_violet_last_secret                events_character_arcs_nsfw.json
+        4        5    397  worker_holly_room_kept_warm              events_character_arcs_nsfw.json
+        5        6    368  worker_lily_garden_in_bloom              events_character_arcs_nsfw.json
+        7        6    359  worker_rose_cranes_at_dawn               events_character_arcs_nsfw.json
+
+sin una sola palabra explicita: 5 de 14

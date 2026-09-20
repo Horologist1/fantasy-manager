@@ -578,7 +578,7 @@
         }
       },
       {
-        "option": "Decline the investment for now. (Neutral)",
+        "option": "Decline the investment for now. (Neutral; the merchant returns in about three weeks)",
         "message": "You explain that such an investment is beyond your current means. The merchant nods understandingly, though disappointment flickers in her eyes. 'Perhaps another time,' she says, 'when fortune favors us both.' The opportunity remains, but the Elite Emporium will have to wait.",
         "effect": {
           "event_flags": {
@@ -650,7 +650,7 @@
         }
       },
       {
-        "option": "Still not ready to invest. (Neutral)",
+        "option": "Still not ready to invest. (Neutral; the merchant returns in about three weeks)",
         "message": "You explain that you still need more time to gather the funds. The merchant accepts this with a nod, though her shoulders slump slightly. 'I'll be waiting,' she says, 'when you're ready to make this dream a reality.'",
         "effect": {
           "event_flags": {
@@ -700,7 +700,7 @@
       "shop3_unlocked": true
     },
     "conditions": {
-      "start_when": "after_days:120",
+      "start_when": "after_days:120 AND after_days_from_flag:shop2_unlock_timestamp,20",
       "stop_when": "has_flag:shop3_unlocked OR store.unlocked_shops.get(\"shop3\", False)"
     },
     "choices": [
@@ -722,7 +722,7 @@
         }
       },
       {
-        "option": "Decline the investment. (Neutral)",
+        "option": "Decline the investment. (Neutral; the merchant returns in about three weeks)",
         "message": "You explain that such an investment is beyond your current means. The merchant accepts with a sigh. 'Very well. The offer stands should you change your mind—though I cannot promise it will always be available.'",
         "effect": {
           "success_chance": 0,

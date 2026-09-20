@@ -1,0 +1,2 @@
+antes: stories sexuales=68  sin genero=18  sin vocabulario explicito=26
+ahora: stories sexuales=86  sin genero=0  sin vocabulario explicito=3

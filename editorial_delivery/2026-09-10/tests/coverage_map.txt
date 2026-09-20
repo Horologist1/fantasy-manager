@@ -1,0 +1,32 @@
+superficie                    palabras  estado
+----------------------------------------------------------------------------
+Daily stories (nucleo)           34689  REESCRITO
+Journal: objetivos/titulos        6331  REESCRITO
+Intro / endgame                   4116  REESCRITO
+Reclutamiento                     7498  REVISADO + reescrito
+Eventos comunes                   8841  auditado + puntos reescritos
+Eventos de edificio              16593  auditado, prosa NO leida
+Eventos especiales                3901  auditado, prosa NO leida
+Eventos de tienda                 2188  auditado, prosa NO leida
+Eventos estacionales               914  auditado, prosa NO leida
+Capa de relaciones               44642  medida, conservada
+VN Yvara (.rpy)                  25427  NO REVISADO
+VN Yvara (JSON)                  12968  NO REVISADO
+VN Lanista (.rpy)                26828  NO REVISADO
+VN Lanista (JSON)                24124  NO REVISADO
+Arcos personaje SFW               5983  NO REVISADO
+Arcos personaje NSFW              7565  NO REVISADO
+Arcos de monstruo                 3192  NO REVISADO
+Academia / biblioteca             1454  NO REVISADO
+Iglesia                           1086  NO REVISADO
+Interacciones (worker)           12374  NO REVISADO
+Traits (tooltips)                 4270  NO REVISADO
+Items (tooltips)                  3114  NO REVISADO
+Bios de workers                   2454  NO REVISADO
+Edificios especiales              2033  NO REVISADO
+Aelis                             1130  solo comillas
+----------------------------------------------------------------------------
+cubierto o auditado             130843
+SIN REVISAR                     132872
+
+de lo pendiente, novela visual y arcos: 106087 palabras (80%)

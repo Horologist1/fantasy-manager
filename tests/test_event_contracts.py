@@ -78,6 +78,11 @@ def extract_init_function(path, function_name, namespace):
         ),
         len(lines),
     )
+    # Live attribute writers route through the trait-cap setter; give the
+    # isolated namespace the plain 0-100 behaviour unless a test overrides it.
+    def _plain_set_attribute_with_caps(worker, attribute, value):
+        worker[attribute] = max(0, min(100, int(value)))
+    namespace.setdefault("set_attribute_with_caps", _plain_set_attribute_with_caps)
     exec(textwrap.dedent("".join(lines[start:end])), namespace)
     return namespace[function_name]
 

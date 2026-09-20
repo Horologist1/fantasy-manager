@@ -208,6 +208,52 @@ init python:
             return True
         return bool(getattr(store, str(flag), False))
 
+    # (unlock flag, Arena profession it gates, program tier, legacy card tier)
+    LANISTA_PROGRAM_UNLOCKS = (
+        ("lanista_pinup_unlocked", "arena_pinup_barbarian", 1, 2),
+        ("lanista_oilchains_unlocked", "arena_oil_chains", 2, 3),
+        ("lanista_spectacle_unlocked", "arena_spectacle", 3, 4),
+    )
+
+    def lanista_reconcile_program_unlocks():
+        """Derive the Arena program unlock flags from older saves' state.
+
+        The erotic Arena formats used to be ungated ("Pin-up Barbarians" was
+        always assignable) and were later gated by lanista_card_tier; today
+        only lanista_*_unlocked is read (profession_is_unlocked). Saves that
+        progressed under the old rules never had the new flag set, so the job
+        stayed assigned to old workers but vanished from every selector. Any
+        state that implies the format exists sets the flag. Runs on load.
+        Returns the flags it turned on.
+        """
+        program_tier = int(getattr(store, "lanista_arena_program_tier", 0) or 0)
+        card_tier = int(getattr(store, "lanista_card_tier", 0) or 0)
+        # Conversation D (arc step 4) is the scene that unlocks Bikini Bouts.
+        if int(getattr(store, "lanista_spectacle_arc_step", 0) or 0) >= 4:
+            program_tier = max(program_tier, 1)
+        in_use = set()
+        buildings = getattr(store, "available_buildings", None)
+        for building in (buildings.values() if hasattr(buildings, "values") else ()):
+            if not hasattr(building, "get"):
+                continue
+            jobs = building.get("servant_jobs", {}) or {}
+            for job in (jobs.values() if hasattr(jobs, "values") else ()):
+                in_use.add(str(job or "").strip().lower())
+        for worker in (getattr(store, "workers", None) or ()):
+            if hasattr(worker, "get"):
+                in_use.add(str(worker.get("previous_profession") or worker.get("previous_job") or "").strip().lower())
+        changed = []
+        for flag, profession_id, tier, legacy_tier in LANISTA_PROGRAM_UNLOCKS:
+            if getattr(store, flag, False):
+                continue
+            if program_tier >= tier or card_tier >= legacy_tier or profession_id in in_use:
+                setattr(store, flag, True)
+                store.lanista_arena_program_tier = max(int(getattr(store, "lanista_arena_program_tier", 0) or 0), tier)
+                changed.append(flag)
+        if changed:
+            renpy.log("LANISTA: reconciled Arena program unlocks from legacy state: %s" % ", ".join(changed))
+        return changed
+
     def lanista_recalculate_stage():
         aff = int(getattr(store, "lanista_affection", 0) or 0)
         g3 = bool(getattr(store, "lanista_s3_gate_fired", False))
@@ -1441,7 +1487,9 @@ label lanista_buy_arena_permit:
         jump lanista_visit_menu
     $ money -= LANISTA_PERMIT_COST
     $ arena_lanista_paid = True
-    $ arena_trial_completed = False
+    # A permit bought again by an old save must not throw away a trial already fought.
+    if arena_trial_completed is None:
+        $ arena_trial_completed = False
     $ add_arena_building()
     lanista_npc "Done. The coin is received; the ledger is satisfied."
     lanista_npc "Paper opens the gate. The Arena is yours to use."
@@ -2996,8 +3044,12 @@ label lanista_arena_arc_d_dominion:
         narrator "You own every marker. You order the next layer removed as one more item in a column already transferred in full."
     elif _markers >= 3:
         narrator "Three markers answer to your hand. You invoke each one by name before ordering the next layer opened."
-    else:
+    elif _markers == 2:
         narrator "Two markers were enough to bring the house this far. You use their weight now and order the next layer opened."
+    elif _markers == 1:
+        narrator "One marker carries your name. You set it on the table between you and order the next layer opened."
+    else:
+        narrator "You hold no marker, only the deed to the sand itself. Ownership speaks for you, and you order the next layer opened."
     $ _bust = "images/lanista/lanista_{}_unbutton.png".format(_g)
     if renpy.loadable(_bust):
         show expression _bust as lanista_bust at lanista_bust_right
@@ -4943,7 +4995,7 @@ label lanista_ending_dominion:
         _lw["description"] = "The former Master of the Sands. A scarred Arena champion removed from the fighting pits and taken into your establishment as an owned worker."
         # Compare against the resolved sheet, never a hardcoded string, so the
         # guard cannot drift out of sync with the JSON again.
-        if not any(w.get("name") == _lw["name"] for w in store.workers):
+        if not is_worker_dead(_lw) and not any(w.get("name") == _lw["name"] for w in store.workers):
             try:
                 ensure_worker_defaults(_lw)
                 # Mirror Yvara's call, but skip random-trait backfill for this UNIQUE
@@ -5057,7 +5109,7 @@ label lanista_ending_mixed:
         _lw["names_list"] = "western_female" if _gen == "female" else "western_male"
         # Compare against the resolved sheet, never a hardcoded string, so the
         # guard cannot drift out of sync with the JSON again.
-        if not any(w.get("name") == _lw["name"] for w in store.workers):
+        if not is_worker_dead(_lw) and not any(w.get("name") == _lw["name"] for w in store.workers):
             try:
                 ensure_worker_defaults(_lw)
                 _emt = getattr(store, "_ensure_worker_min_traits", None)

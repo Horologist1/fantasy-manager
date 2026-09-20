@@ -224,10 +224,10 @@ init python:
         """
         if renpy.predicting():
             return
-        # Check if it's a new day - reset counter if so
-        if store.last_map_refill_day != store.current_day:
+        # Check if it's a new day - reset counter if so (total days: month rollover counts)
+        if store.last_map_refill_day != calculate_total_days():
             store.map_worker_refill_count = 0
-            store.last_map_refill_day = store.current_day
+            store.last_map_refill_day = calculate_total_days()
         # Only auto-refill if available_workers is empty
         if not getattr(store, "available_workers", None):
             load_buy_workers()
@@ -455,6 +455,49 @@ init python:
                 "{u}Decision loop{/u}: use this report to decide tomorrow's assignment, comfort, and investment changes.",
             ],
         },
+        "academy_menu": {
+            "title": "Welcome to the Academy",
+            "body": [
+                "Your tuition opens the Academy's services. Choose an activity from this menu.",
+                "{u}Train workers{/u}: review the courses, then use Manage Workers to assign workers to the Academy and select their lesson. They train when you advance the day.",
+                "{u}Set curriculum{/u}: choose the skills taught by your courses. To return a student to ordinary work, change their assignment in Manage Workers.",
+                "{u}Rent the Laboratory{/u}: unlock the laboratory with its own pass, then choose a worker and pay for each brewing session. Its first-visit help explains ingredients and results.",
+                "{u}Visit the library{/u}: explore its story through visits and clues. Read what you discover to work out the cipher.",
+                "{u}Visit director{/u}: when available, this opens the director's personal story, with its own introduction and progress.",
+            ],
+        },
+        "alchemy_laboratory": {
+            "title": "Welcome to the Laboratory",
+            "body": [
+                "The alchemist's pass unlocks access. Each brewing session then has its own cost, and the workspace needs time to restock between batches.",
+                "{u}Basic{/u}: produces batches of ordinary health and energy potions. {u}Quality{/u} and {u}Premium{/u}: use a two-ingredient mixture to choose a potion family.",
+                "{u}Ingredients{/u}: buy them at the Basic Shop or obtain them as extra loot from successful Adventurer's Guild expeditions. Ingredients carried by workers must be moved to Storage before brewing.",
+                "{u}Mixture cost{/u}: the recipe screen shows your stock, possible potions and total cost. Missing ingredients can be bought there at Basic Shop prices. Quality/Premium fees and ingredients are spent only when you choose a worker and begin brewing; cancelling beforehand spends nothing.",
+                "{u}Craft and heat{/u}: choose a skilled craftsperson and respond to two rounds of clues about the brew. Your fire choices improve or worsen the final roll.",
+                "{u}Quality/Premium results{/u}: success gives one/two potions from your chosen family. A critical keeps those potions and adds one bonus Troll Blood per batch. An imperfect result gives ordinary restoratives; failure loses the batch and its cost.",
+            ],
+        },
+        "arena_menu": {
+            "title": "Welcome to the Arena",
+            "body": [
+                "Your permit opens the Arena. The opening trial must be completed before ordinary Arena operations become available.",
+                "{u}Opening trial{/u}: select a worker for the debut fight. Combat skill and the encounter's conditions matter; a defeat can be fatal.",
+                "{u}Send gladiators to fight{/u}: after the trial, assign workers to available match types. Check their requirements and costs before sending a fighter.",
+                "{u}Special matches{/u}: pay for an individual bout and guide your fighter using the opponent's tells. Read each fight's conditions and rewards before committing.",
+                "{u}Visit the Lanista{/u}: when available, conversations develop the Lanista's story. That route has its own introduction.",
+            ],
+        },
+        "church_visit": {
+            "title": "Welcome to the Temple",
+            "body": [
+                "The priestess tends the cemetery and the Circle. Your first discovery begins a search for the ritual's missing seals.",
+                "{u}Explore{/u}: follow the clues on each seal to find the next step. The search advances by at most one discovery per game day; return after advancing the day normally.",
+                "{u}Review clues{/u}: you may revisit the temple and reread discovered clues on the same day. Once all seals are found, use those clues to solve the Circle. Trying an arrangement costs nothing.",
+                "{u}Cemetery{/u}: up to ten deceased workers can be preserved for resurrection. If all places are occupied, further deaths cannot be preserved. Existing graves are never replaced automatically.",
+                "{u}Resurrection{/u}: solving the Circle unlocks the paid rite. Its price increases with the worker's level. Returning workers keep their belongings and progress, are unassigned and need rest.",
+                "{u}Release remains{/u}: permanently gives up that worker and their belongings to free a place. The dead cannot simply be recruited again.",
+            ],
+        },
         "yvara_visit": {
             "title": "Yvara Romance Quest",
             "body": [
@@ -479,6 +522,8 @@ init python:
             store._intro_popup_current = None
 
     def get_intro_popup_entry(screen_id):
+        if screen_id == "monthly_conditions":
+            return monthly_intro_entry()
         return INTRO_POPUP_TEXTS.get(screen_id)
 
     # Screens whose simultaneous presence must block Tavern input. Most open on
@@ -488,6 +533,7 @@ init python:
         "Building_select_global",
         "Manager",
         "journal_panel",
+        "monthly_card",
         "manager_character_sheet",
         "screen_intro_popup",
     )
@@ -982,6 +1028,7 @@ screen choice(items):
     style_prefix "choice"
 
     vbox:
+        style "choice_vbox"
         for i in items:
             textbutton i.caption action i.action
 
@@ -1130,11 +1177,20 @@ screen main_menu():
     imagebutton auto "gui/main_menu/buttons/help_%s.png" xalign 0.5 ypos 675 focus_mask True action ShowMenu("help")
     imagebutton auto "gui/main_menu/buttons/quit_%s.png" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=True)
 
-    if gui.show_name:
+    vbox:
+        style "main_menu_vbox"
+        spacing 8
 
-        vbox:
-            style "main_menu_vbox"
+        textbutton _("Mods"):
+            id "main_menu_mods"
+            xalign 1.0
+            yminimum 70
+            text_size font_size(36)
+            text_color gui.journal_dark_color
+            text_hover_color gui.journal_hover_color
+            action ShowMenu("mods_menu")
 
+        if gui.show_name:
             text "Version [config.version]":
                 style "main_menu_version"
 
@@ -3224,17 +3280,42 @@ screen screen_intro_popup(screen_id):
     key "game_menu" action Function(close_intro_popup, screen_id)
     key "K_BACKSPACE" action Function(close_intro_popup, screen_id)
 
+# Event/recruitment choice lists: button skin only, never inherited placement.
+#
+# `style choice_vbox` (Ren'Py's menu style, defined above) carries an ABSOLUTE
+# `ypos 405 / yanchor 0.5`. Under `style_prefix "choice"` every box in the screen
+# resolves to that style, and a box inside another box is placed by
+# `Displayable.place()` as `slot_y + ypos - yanchor*height` — so each nested
+# container was drawn ~405 px BELOW its slot, on top of the other options. That
+# is what scrambled the locked options over the selectable ones in an event's
+# choice list. Containers here name their style explicitly (an explicit `style`
+# always beats the prefix, slast.py: `if ("style" not in keywords)`), so no
+# absolute placement can leak in again. See LA BIBLIA §15.
+style event_choice_vbox is vbox:
+    xalign 0.5
+    spacing gui.choice_spacing
+
+style event_choice_locked_vbox is vbox:
+    xalign 0.5
+    spacing 2
+
+style event_choice_side is side
+style event_choice_viewport is viewport
+style event_choice_scrollbar is vscrollbar:
+    unscrollable "hide"
+
 screen random_event_choice(event_choices):
     modal True
     zorder 99
-    
+
     default affected_building_info = ""
-    
+
     on "show" action Function(get_affected_building_info)
-    
-    # Use the same style as standard Ren'Py choices (Lord/Lady format)
+
+    # Use the same style as standard Ren'Py choices (Lord/Lady format).
+    # Buttons only: every container below sets its own style (see above).
     style_prefix "choice"
-    
+
     python:
         # Revalidate on every render so a hot toggle cannot retain a previously
         # prepared restricted choice in screen-local state.
@@ -3245,28 +3326,44 @@ screen random_event_choice(event_choices):
             and str(c.get("option", "")).strip()
         ]
         # Softlock escape: with every option locked (trait gates, dead-end skill
-        # checks) or filtered out, the modal needs an exit. Returning None takes
+        # checks) or filtered out, the modal needs an exit. Returning False takes
         # the existing "declined" path (event reappears after its pass cooldown).
         _all_choices_locked = (not display_choices) or all(c.get("_blocked", False) for c in display_choices)
 
-    vbox:
-        xalign 0.5
-        for choice in display_choices:
-            if choice.get("_blocked", False):
-                $ reason = choice.get("_blocked_reason", "Locked") or ""
-                vbox:
-                    xalign 0.5
-                    spacing 2
-                    textbutton "[choice['option']!q] (Locked)":
-                        xalign 0.5
-                        action NullAction()
-                        sensitive False
-                    if reason.strip():
-                        text "[reason!q]" size font_size(20) color "#cc8888" xalign 0.5 text_align 0.5
-            else:
-                textbutton "[choice['option']!q]" action Return(choice)
-        if _all_choices_locked:
-            textbutton "Let the moment pass." action Return(None)
+    side "c r":
+        style "event_choice_side"
+        align (0.5, 0.5)
+        spacing 10
+        viewport:
+            style "event_choice_viewport"
+            id "event_choices_viewport"
+            xsize gui.choice_button_width
+            ymaximum (config.screen_height - 80)
+            yfill False
+            mousewheel True
+            draggable renpy.variant("touch")
+            arrowkeys True
+            pagekeys True
+            vbox:
+                style "event_choice_vbox"
+                for choice in display_choices:
+                    if choice.get("_blocked", False):
+                        $ reason = str(choice.get("_blocked_reason", "Locked") or "")
+                        vbox:
+                            style "event_choice_locked_vbox"
+                            textbutton "[choice['option']!q] (Locked)":
+                                xalign 0.5
+                                action NullAction()
+                                sensitive False
+                            if reason.strip():
+                                text "[reason!q]" size font_size(28) color "#cc8888" xalign 0.5 text_align 0.5 xmaximum (gui.choice_button_width - 40)
+                    else:
+                        textbutton "[choice['option']!q]" action Return(choice)
+                if _all_choices_locked:
+                    textbutton "Let the moment pass." action Return(False)
+        vbar:
+            style "event_choice_scrollbar"
+            value YScrollValue("event_choices_viewport")
 
 # --- NEW SCREEN START ---
 screen choose_event_worker_screen(eligible_workers):
@@ -3375,7 +3472,7 @@ screen choose_event_worker_screen(eligible_workers):
                         text_size font_size(20)
                         text_color gui.journal_text_color
                         text_hover_color gui.journal_hover_color
-                        action Return(None)
+                        action Return(False)
                 else:
                     viewport:
                         scrollbars None  # No visible bar (matches journal_panel); scroll via wheel/drag
@@ -3411,13 +3508,13 @@ screen choose_event_worker_screen(eligible_workers):
         imagebutton:
             idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            action Return(None)
+            action Return(False)
             xalign 1.0
             yalign 0.0
             xoffset -40
             yoffset 5
 
-    key "K_BACKSPACE" action Return(None)
+    key "K_BACKSPACE" action Return(False)
 
 screen recruitment_event_screen(event, worker):
     modal True
@@ -3484,6 +3581,7 @@ screen recruitment_choice_screen(event_choices):
         display_choices = [
             choice for choice in event_choices
             if _recruitment_content_visible and choice_is_visible_for_content_filter(choice)
+            and choice.get("option") and str(choice.get("option", "")).strip()
         ]
 
     if not _recruitment_content_visible:
@@ -3492,18 +3590,34 @@ screen recruitment_choice_screen(event_choices):
             Jump("tavern_screen"),
         ]
 
-    vbox:
-        spacing 12
-
-        # Main event choices with normal Ren'Py style
-        for choice in display_choices:
-            textbutton "[choice['option']!q]" action Return(choice)
-
-        # Separator
-        null height 20
-
-        # Additional recruitment actions with normal choice style
-        textbutton "*Examine Worker*" action [SetVariable("in_recruit_examine", True), Show("worker_details", worker=store.current_recruitment_worker, in_roster=False, from_recruitment=True)] sensitive (_recruitment_content_visible and store.current_recruitment_worker is not None)
+    side "c r":
+        style "event_choice_side"
+        align (0.5, 0.5)
+        spacing 10
+        viewport:
+            style "event_choice_viewport"
+            id "recruitment_choices_viewport"
+            xsize gui.choice_button_width
+            ymaximum (config.screen_height - 80)
+            yfill False
+            mousewheel True
+            draggable renpy.variant("touch")
+            arrowkeys True
+            pagekeys True
+            vbox:
+                style "event_choice_vbox"
+                spacing 12
+                for choice in display_choices:
+                    textbutton "[choice['option']!q]" action Return(choice)
+                if not display_choices and _recruitment_content_visible:
+                    # None means "return from Examine" to the legacy caller.
+                    # Use a separate result so an empty menu cannot loop forever.
+                    textbutton "Let the moment pass." action Return({"_dismiss_recruitment": True})
+                null height 20
+                textbutton "*Examine Worker*" action [SetVariable("in_recruit_examine", True), Show("worker_details", worker=store.current_recruitment_worker, in_roster=False, from_recruitment=True)] sensitive (_recruitment_content_visible and store.current_recruitment_worker is not None)
+        vbar:
+            style "event_choice_scrollbar"
+            value YScrollValue("recruitment_choices_viewport")
 
 screen Building_select_global():
     zorder 3
@@ -3554,7 +3668,7 @@ screen Building_select_global():
                                     $ parts = building.split('_')
                                     $ default_name = f"Building {parts[1]}" if len(parts) > 1 else building
                                     $ display_name = store.custom_names.get(building, default_name)
-                                    textbutton "[type_name]: [display_name]":
+                                    textbutton "[type_name!q]: [display_name!q]":
                                         xsize 580  # Keep button width same
                                         text_size font_size(26)  # Larger font like journal
                                         text_color gui.journal_text_color  # Brown text like journal
@@ -3574,6 +3688,7 @@ screen Building_select_global():
     key "K_BACKSPACE" action [Hide("Building_select_global"), Show("tavern")]
 
 screen job_selection(worker):
+    predict False
     zorder 99
     modal True
     # Hover preview target (skills / bonus / estimated success of the hovered profession)
@@ -3602,11 +3717,7 @@ screen job_selection(worker):
                     spacing 10
                     xsize 580
                     yoffset 25
-                    $ building_name = worker.get("assigned_building", "Unassigned")
-                    if building_name != "Unassigned":
-                        $ building = available_buildings.get(building_name, {})
-                    else:
-                        $ building = None
+                    $ building, building_name = _resolve_building_by_name(worker.get("assigned_building"))
                     
                     # If worker has no building assigned, show building selection first
                     if building is None:
@@ -3614,12 +3725,15 @@ screen job_selection(worker):
                             xsize 500
                             xalign 0.0
                         null height 10
-                        for b_name in store.owned_buildings:
-                            $ b = available_buildings.get(b_name, {})
-                            if b and is_standard_managed_building(b_name, b):
+                        $ _job_building_count = 0
+                        for _owned_name in store.owned_buildings:
+                            $ b, b_name = _resolve_building_by_name(_owned_name)
+                            if b and b.get("owned", True) and is_standard_managed_building(b_name, b):
+                                $ _job_building_count += 1
                                 # !q: building display names are user-renamable (BIBLIA §9)
                                 $ b_disp = b.get('display_name', b_name)
                                 textbutton "[b_disp!q]":
+                                    id ("job_building_" + b_name)
                                     xsize 500
                                     text_size font_size(28)
                                     text_color gui.journal_text_color
@@ -3630,15 +3744,23 @@ screen job_selection(worker):
                                         Hide("job_selection"),
                                         Show("job_selection", worker=worker)
                                     ]
-                        null height 20
-                        text "{color=#5a3a1a}{size=18}After selecting a building, you can assign a job.{/size}{/color}":
-                            xsize 500
-                            xalign 0.0
+                        if _job_building_count:
+                            null height 20
+                            text "After selecting a building, you can assign a job." size font_size(20) color gui.journal_text_color xmaximum 500
+                        else:
+                            text "No owned business is available. Open Buildings to acquire or configure one." size font_size(22) color gui.journal_text_color xmaximum 500
                     
                     # Universal Unassign option (available for all buildings)
                     if building is not None:
                         vbox:
                             spacing 2
+                            $ _job_building_display = building.get("display_name", building_name)
+                            text "Building: [_job_building_display!q]" size font_size(22) color gui.journal_text_color xmaximum 500
+                            textbutton "Change building":
+                                text_size font_size(24)
+                                text_color gui.journal_text_color
+                                text_hover_color gui.journal_hover_color
+                                action [Hide("job_selection"), Show("building_selection", worker=worker, return_to_workers=False)]
                             textbutton "Unassign (No Role)":
                                 xsize 500
                                 text_size font_size(28)
@@ -3673,7 +3795,10 @@ screen job_selection(worker):
                                 null height 8
                             # Filter professions based on NSFW toggle and required_flag gating
                             # (a profession with no required_flag is always shown — safe for all buildings)
-                            for profession in [p for p in btype.get("professions", []) if building_type_is_visible(btype) and profession_is_visible(p, btype) and profession_is_unlocked(p)]:
+                            $ _job_professions = [p for p in btype.get("professions", []) if building_type_is_visible(btype) and profession_is_visible(p, btype) and profession_is_unlocked(p)]
+                            if not _job_professions:
+                                text "No roles are available for this building with the current content settings or story progress." size font_size(22) color gui.journal_text_color xmaximum 500
+                            for profession in _job_professions:
                                 $ prof_name = profession.get("name", "Unnamed Profession")
                                 $ prof_description = profession.get("description", "No description available.")
                                 $ skills_used = profession.get("skills", [])
@@ -3725,7 +3850,7 @@ screen job_selection(worker):
                                     _prof_id_lc = str(profession.get("id", "")).strip().lower()
                                     _workers_here = [
                                         w for w in store.workers
-                                        if w.get("assigned_building") == building_name
+                                        if _resolve_building_key(w.get("assigned_building")) == building_name
                                     ]
                                     if _prof_id_lc == "rest":
                                         _current_count = sum(
@@ -3756,13 +3881,19 @@ screen job_selection(worker):
                                             _active_count,
                                             max_limit,
                                         )[0]
+                                        # Show what limits the assignment: active
+                                        # workers only. Rest reservations never
+                                        # hold a slot, so "(6/7)" always means one
+                                        # worker can still be assigned.
+                                        _current_count = _active_count
                                     current_count = _current_count
                                 $ _mech_h = profession_mechanics_summary(profession)
-                                $ _prof_blurb = prof_description + (("\n\n" + _mech_h) if _mech_h else "")
+                                $ _prof_blurb = str(prof_description).replace("{", "{{") + (("\n\n" + _mech_h) if _mech_h else "")
                                 vbox:  # Wrap each profession entry in a vbox
                                     spacing 2  # Tight spacing between lines
                                     if _can_assign_profession:
-                                        textbutton "[prof_name]":
+                                        textbutton "[prof_name!q]":
+                                            id ("job_role_" + profession["id"])
                                             xsize 500  # Match shop_selection button width
                                             text_size font_size(28)
                                             text_color gui.journal_text_color
@@ -3791,11 +3922,11 @@ screen job_selection(worker):
                                             text "{size=20}{color=#7a4b2a}[_prof_blurb]{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
-                                            text "{color=#5a3a1a}{size=20}Skills Used: [required_skills]{/size}{/color}\n{size=19}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}":
+                                            text "{color=#5a3a1a}{size=20}Skills Used: [required_skills!q]{/size}{/color}\n{size=19}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
                                     else:
-                                        textbutton "[prof_name]":
+                                        textbutton "[prof_name!q]":
                                             xsize 500  # Match shop_selection button width
                                             text_size font_size(28)
                                             text_color gui.journal_text_color
@@ -3809,13 +3940,13 @@ screen job_selection(worker):
                                             text "{size=20}{color=#7a4b2a}[_prof_blurb]{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
-                                            text "{color=#5a3a1a}{size=20}Skills Used: [required_skills]{/size}{/color}\n{size=19}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}\n{size=19}{color=#ff0000}Role Full{/color}{/size}":
+                                            text "{color=#5a3a1a}{size=20}Skills Used: [required_skills!q]{/size}{/color}\n{size=19}{color=#6b6528}Average Skill: [avg_skill_display]{/color}{/size}\n{size=19}{color=#ff0000}Role Full{/color}{/size}":
                                                 xsize 500
                                                 xalign 0.0
                         else:
-                            text "No building type data found" size font_size(28) xalign 0.5
-                    else:
-                        text "No building assigned or building type not set" size font_size(28) xalign 0.5
+                            text "This building's type is unavailable. Check its content or mod, or choose another building." size font_size(22) color gui.journal_text_color xmaximum 500
+                    elif building is not None:
+                        text "This building has no business type yet. Open Buildings and choose its type before assigning a role." size font_size(22) color gui.journal_text_color xmaximum 500
         
         imagebutton:
             idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
@@ -3876,6 +4007,14 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
     default show_test_items = False  # Toggle to show/hide test items
     default trade_multiplier = 1  # x1, x10, x100 for buy/sell/transfer
     default item_search_text = ""  # Search filter for items by name
+    default _fm_search_input = ScreenVariableInputValue("item_search_text", default=False)
+    # Tapping anywhere outside the field puts the on-screen keyboard away.
+    # Sits first, so every real widget above it still gets its click.
+    button:
+        background None
+        xfill True
+        yfill True
+        action _fm_search_input.Disable()
     default left_sort_by_name = False  # False = arrival order, True = alphabetical
     default left_sort_by_price = False  # Left panel: price descending toggle
     default right_sort_by_name = False  # False = arrival order, True = alphabetical
@@ -3930,8 +4069,9 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
             background None
             hover_background None
 
-    # Toggle button for test items (discrete, bottom-right)
-    if shop_mode:
+    # Toggle button for test items (developer machines only; players could
+    # otherwise click it and buy test_money_50k for $1)
+    if shop_mode and store.dev_items_enabled():
         button:
             xpos 1615
             ypos 260
@@ -4000,6 +4140,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             "clothing": "Clothing",
                             "accessory": "Accessories",
                             "consumable": "Consumables",
+                            "ingredient": "Ingredients",
                             "gifts": "Gifts",
                             "currency": "Currency",
                             "quest_item": "Quest Items",
@@ -4207,12 +4348,20 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             ysize 30
                             background Solid("#d8bf9a")
                             padding (8, 4)
-                            input:
-                                value ScreenVariableInputValue("item_search_text")
-                                pixel_width 254
-                                size font_size(20)
-                                color gui.journal_dark_color
-                                allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
+                            button:
+                                # Tap to type, tap again to dismiss. The field used to
+                                # grab focus when the screen opened, so on Android the
+                                # keyboard came up by itself and covered Close.
+                                background None
+                                xfill True
+                                yfill True
+                                action _fm_search_input.Toggle()
+                                input:
+                                    value _fm_search_input
+                                    pixel_width 254
+                                    size font_size(20)
+                                    color gui.journal_dark_color
+                                    allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
                     null height 5
                     # Multiplier button (x1 / x10 / x100)
                     button:
@@ -4333,6 +4482,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     "clothing": "Clothing",
                                     "accessory": "Accessory",
                                     "consumable": "Consumable",
+                                    "ingredient": "Ingredient",
                                     "gift": "Gift",
                                     "currency": "Currency",
                                     "quest_item": "Quest Item",
@@ -4403,6 +4553,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             "clothing": "Clothing",
                             "accessory": "Accessories",
                             "consumable": "Consumables",
+                            "ingredient": "Ingredients",
                             "gifts": "Gifts",
                             "currency": "Currency",
                             "quest_item": "Quest Items",
@@ -4542,6 +4693,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                                     background None
                                                 button:
                                                     style "inv_trade_action_button"
+                                                    id ("shop_buy_" + item[0])
                                                     xsize 140
                                                     background None
                                                     text "{u}Buy{/u}" size font_size(24) hover_color gui.journal_hover_color xalign 0.0 yalign 0.5 yoffset 3
@@ -5084,12 +5236,13 @@ screen inventory_filter_popup(target_var="left_panel_filter_category", current_c
                     "clothing": "Clothing",
                     "accessory": "Accessories",
                     "consumable": "Consumables",
+                    "ingredient": "Ingredients",
                     "gifts": "Gifts",
                     "currency": "Currency",
                     "quest_item": "Quest Items",
                     "misc": "Misc"
                 }
-                option_ids = [None, "weapon", "armor", "clothing", "accessory", "consumable", "gifts", "currency", "quest_item", "misc"]
+                option_ids = [None, "weapon", "armor", "clothing", "accessory", "consumable", "ingredient", "gifts", "currency", "quest_item", "misc"]
             
             viewport:
                 scrollbars "vertical"
@@ -5130,7 +5283,7 @@ screen confirm_upgrade(building_name):
     python:
         building = available_buildings[building_name]
         current_level = building["base_level"]
-        upgrade_cost = current_level ** 2 * 1000  # Match the calculation in upgrade_building function
+        upgrade_cost = get_building_upgrade_cost(current_level)
 
     frame:
         style "confirm_frame"
@@ -5241,7 +5394,7 @@ screen confirm_change_type(building_name):
                 spacing 150
 
                 textbutton "Yes" action If(money >= 1000,
-                    [SetVariable("money", money - 1000), Function(change_building_type, building_name), Hide("confirm_change_type")],
+                    [Function(change_building_type_paid, building_name, 1000), Hide("confirm_change_type")],
                     Show("error_popup", message="Insufficient funds!")
                 )
                 textbutton "No" action Hide("confirm_change_type")
@@ -5392,7 +5545,7 @@ screen confirm_sell_worker(worker, return_screen=None):
             daily_cost = int(comfort_level * get_difficulty_comfort_mult())
         
         if worker.get("is_servant", False):
-            refund = worker.get("level", 1) * 500
+            refund = get_worker_sell_refund(worker)
             message = f"Sell {worker['name']} for ${refund}?\nYou will save ${daily_cost} per day."
         else:
             message = f"Fire {worker['name']}?\nYou will save ${daily_cost} per day.\nThis action cannot be undone."
@@ -5471,10 +5624,9 @@ screen adjust_skill_bonus(building_name):
                 $ total_skill = building["skill"] + building["skill_bonus"]
                 $ fixed_cost = get_building_base_maintenance_cost(building_name, building)
                 $ worker_costs = compute_worker_portion_daily_costs(building.get("assigned_servants") or [], building.get("base_level", 1))[0]
-                $ _skill_mult = get_difficulty_building_skill_mult()
-                $ current_bonus_cost = int(((building["skill_bonus"] // 10) * 100) * _skill_mult)
+                $ current_bonus_cost = get_building_skill_bonus_daily_cost(building["skill_bonus"])
                 $ current_total_cost = fixed_cost + worker_costs + current_bonus_cost
-                $ new_bonus_cost = int((((building["skill_bonus"] + 10) // 10) * 100) * _skill_mult) if building["skill_bonus"] < 50 else current_bonus_cost
+                $ new_bonus_cost = get_building_skill_bonus_daily_cost(building["skill_bonus"] + 10) if building["skill_bonus"] < MAX_BUILDING_SKILL_BONUS else current_bonus_cost
                 $ new_total_cost = fixed_cost + worker_costs + new_bonus_cost
                 
                 # Base and bonus display with buttons
@@ -5485,14 +5637,14 @@ screen adjust_skill_bonus(building_name):
                     hbox:
                         spacing 0
                         textbutton "+" style "game_menu_button":
-                            action [SetDict(available_buildings[building_name], "skill_bonus", min(50, building["skill_bonus"] + 10)), Function(lambda: setattr(store, 'building_skill_bonus_increased_tutorial', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective in [6] else None)]
+                            action [SetDict(available_buildings[building_name], "skill_bonus", min(MAX_BUILDING_SKILL_BONUS, building["skill_bonus"] + 10)), Function(lambda: setattr(store, 'building_skill_bonus_increased_tutorial', True) if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective == 6 else None), Function(lambda: check_objective_completion() if hasattr(store, 'tutorial_active') and store.tutorial_active and store.current_objective in [6] else None)]
                             xsize 25
                             text_size font_size(28)
                             text_color gui.journal_text_color
                             text_hover_color gui.journal_hover_color
                             text_bold True
                             text_font "gui/font/MorrisRomanAlternate-Black.ttf"
-                            sensitive building["skill_bonus"] < 50
+                            sensitive building["skill_bonus"] < MAX_BUILDING_SKILL_BONUS
                         textbutton "-" style "game_menu_button":
                             action SetDict(available_buildings[building_name], "skill_bonus", max(0, building["skill_bonus"] - 10))
                             xsize 25
@@ -5503,7 +5655,7 @@ screen adjust_skill_bonus(building_name):
                             text_font "gui/font/MorrisRomanAlternate-Black.ttf"
                             sensitive building["skill_bonus"] > 0
                 
-                if building["skill_bonus"] < 50:
+                if building["skill_bonus"] < MAX_BUILDING_SKILL_BONUS:
                     $ _adj_sk_bonus_tt = "Total/day preview = Fixed + Workers + Skill Bonus.\n\nFixed: $" + str(fixed_cost) + "\nWorkers: $" + str(worker_costs) + " (sum of comfort x " + str(get_difficulty_comfort_mult()) + "; building level does not multiply this)\nSkill Bonus upkeep (current): $" + str(current_bonus_cost) + "\nSkill Bonus upkeep (next): $" + str(new_bonus_cost)
                     button:
                         background None
@@ -5628,10 +5780,10 @@ screen Manager(building_name):
                 $ typical_bonus_stories = get_reputation_bonus_stories(_erep_for_stories, "reputation / 400")
                 hbox:
                     spacing 10
-                    text "[type_name]: [display_name]" size font_size(42) xalign 0.0 color gui.journal_text_color
+                    text "[type_name!q]: [display_name!q]" size font_size(42) xalign 0.0 color gui.journal_text_color
                 $ fixed_cost = get_building_base_maintenance_cost(building_name, building)
                 $ worker_costs = compute_worker_portion_daily_costs(manager_servants, building.get("base_level", 1))[0]
-                $ bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
+                $ bonus_cost = get_building_skill_bonus_daily_cost(building.get("skill_bonus", 0))
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
                 $ _mgr_cost_tt = "How daily costs are calculated:\n\nTotal/day = Fixed + Workers + Skill Bonus\nFixed: $" + str(fixed_cost) + " (scales with building level; Normal: $100, $300, $500, $700, $900 for levels 1-5)\nWorkers: $" + str(worker_costs) + " (sum of comfort x " + str(get_difficulty_comfort_mult()) + "; not multiplied by level)\nSkill Bonus upkeep: $" + str(bonus_cost) + "\n\nWorker Details shows per-worker comfort cost only."
                 $ event_limit = building.get("event_limit", 0)
@@ -5754,7 +5906,7 @@ screen Manager(building_name):
                             for profession in [p for p in building_type_entry.get("professions", []) if profession_is_visible(p, building_type_entry)]:
                                 $ current_count = len([s for s in _displayed_servants if _building_jobs_use.get(s["name"], "") == profession["id"]])
                                 $ max_limit = get_max_daily_workers(building, profession)
-                                text "[profession['name']] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color gui.journal_text_color
+                                text "[profession['name']!q] ([current_count]/[max_limit])" size font_size(26) xalign 0.0 color gui.journal_text_color
                                 $ _prof_mech = profession_mechanics_summary(profession)
                                 if _prof_mech:
                                     text "[_prof_mech]" size font_size(26) xalign 0.0 color "#9a8a6a"
@@ -5870,8 +6022,11 @@ screen Manager(building_name):
                                                         text_color "#ffffff"
                                                         text_hover_color gui.journal_hover_color
                                                         action Show("job_selection", worker=worker)
-                            # Unassigned: workers in building but with no profession or "unassigned"
-                            $ _unassigned = [w for w in _displayed_servants if str(_building_jobs_use.get(w["name"], "unassigned") or "").strip().lower() in ("", "unassigned")]
+                            # Unassigned: workers in building with no profession, or whose job is
+                            # not listed above (NSFW-hidden or locked role), so nobody vanishes
+                            # from the roster while still costing upkeep.
+                            $ _visible_job_ids = {str(p.get("id", "")).strip().lower() for p in (building_type_entry.get("professions", []) if building_type_entry is not None else []) if profession_is_visible(p, building_type_entry)}
+                            $ _unassigned = [w for w in _displayed_servants if str(_building_jobs_use.get(w["name"], "unassigned") or "").strip().lower() not in _visible_job_ids or str(_building_jobs_use.get(w["name"], "unassigned") or "").strip().lower() in ("", "unassigned")]
                             $ _unassigned = sorted(_unassigned, key=lambda _w: str(_w.get("name", "")).strip().lower())
                             if _unassigned:
                                 text "Unassigned ([len(_unassigned)])" size font_size(26) xalign 0.0 color gui.journal_text_color
@@ -6011,11 +6166,11 @@ screen Manager(building_name):
                 if building.get("type") is not None:
                     python:
                         current_level = building["base_level"]
-                        max_level = 5
+                        max_level = MAX_BUILDING_LEVEL
                         is_max_level = current_level >= max_level
-                        upgrade_cost = current_level ** 2 * 1000
+                        upgrade_cost = get_building_upgrade_cost(current_level)
                         if is_max_level:
-                            upgrade_tooltip = "This building is already at maximum level (5)."
+                            upgrade_tooltip = "This building is already at maximum level (%d)." % max_level
                         else:
                             upgrade_tooltip = f"Increase building level by 1. Cost: ${upgrade_cost}. Higher levels increase max workers per profession and improve reputation."
                     if is_max_level:
@@ -6175,7 +6330,7 @@ screen building_selection(worker, return_to_workers=True):
                         $ display_name = store.custom_names.get(building_name, default_name)
                         $ _assignment_allowed = building_accepts_worker_assignment(building_name)
                         if is_owned and building_type_is_visible(_assign_btype) and _assignment_allowed:
-                            textbutton "[type_name]: [display_name]":
+                            textbutton "[type_name!q]: [display_name!q]":
                                 xsize 500
                                 text_size font_size(28)
                                 text_color gui.journal_text_color
@@ -6189,14 +6344,14 @@ screen building_selection(worker, return_to_workers=True):
                                 ]
                                 sensitive True  # Always sensitive if owned
                         elif is_owned and building_type_is_visible(_assign_btype):
-                            textbutton "[type_name]: [display_name] (Opening Trial Required)":
+                            textbutton "[type_name!q]: [display_name!q] (Opening Trial Required)":
                                 xsize 500
                                 text_size font_size(28)
                                 text_color gui.journal_text_color
                                 text_hover_color gui.journal_hover_color
                                 sensitive False
                         else:
-                            textbutton "[type_name]: [display_name] (Not Available)":
+                            textbutton "[type_name!q]: [display_name!q] (Not Available)":
                                 xsize 500
                                 text_size font_size(28)
                                 text_color gui.journal_text_color
@@ -6218,6 +6373,14 @@ screen rename_building(building_name):
     modal True
     zorder 99
     default new_name = custom_names.get(building_name, building_name)
+    default _fm_search_input = ScreenVariableInputValue("new_name", default=False)
+    # Tapping anywhere outside the field puts the on-screen keyboard away.
+    # Sits first, so every real widget above it still gets its click.
+    button:
+        background None
+        xfill True
+        yfill True
+        action _fm_search_input.Disable()
     add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
@@ -6253,13 +6416,19 @@ screen rename_building(building_name):
                 # Input field
                 text "New Name:" size font_size(34) color gui.journal_text_color xalign 0.0
                 null height 10
-                input:
-                    id "new_name"
-                    value ScreenVariableInputValue("new_name")
-                    length 20
-                    # Keep interpolation-sensitive characters out of custom names (BIBLIA §9)
-                    exclude "{}[]"
-                    color gui.journal_text_color
+                button:
+                    # Tap to type, tap again to dismiss (Android keyboard).
+                    background None
+                    xfill True
+                    ysize 50
+                    action _fm_search_input.Toggle()
+                    input:
+                        id "new_name"
+                        value _fm_search_input
+                        length 20
+                        # Keep interpolation-sensitive characters out of custom names (BIBLIA §9)
+                        exclude "{}[]"
+                        color gui.journal_text_color
                 null height 60
                 
                 # Confirm button centered
@@ -6521,89 +6690,6 @@ screen manager_award_panel(title, body):
 
     key "K_BACKSPACE" action Return()
 
-screen buy_buildings():
-    modal True
-    zorder 99
-    add Transform("gui/Journalback.png", align=(0.5, 0.5))
-    frame:
-        xalign 0.5
-        yalign 0.5
-        background None
-        xsize 720
-        ysize 720
-        padding (40, 40)
-        # Close button in the top-right inside the panel
-        imagebutton:
-            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-            xalign 1.0
-            yalign 0.0
-            xoffset -15
-            yoffset 5
-            action Hide("buy_buildings")
-
-        vbox:
-            spacing 15
-            null height 15
-            label "Available Buildings" xalign 0.5 style "header_style"
-            null height 10
-            viewport:
-                scrollbars "vertical"
-                mousewheel True
-                draggable True
-                ysize 480
-                xsize 605
-                xoffset 25
-                yoffset -20
-                vbox:
-                    spacing 10
-                    xsize 580
-                    yoffset 25
-                    text "Purchase" xalign 0.0 size font_size(26) color "#5a3a1a"
-                    $ _slot = store.next_generic_building_slot() if callable(getattr(store, "next_generic_building_slot", None)) else None
-                    if _slot:
-                        $ building_name, price = _slot
-                        textbutton "[building_name] - $[price]":
-                            xsize 500
-                            text_size font_size(28)
-                            text_color gui.journal_text_color
-                            text_hover_color gui.journal_hover_color
-                            action If(money >= price,
-                                [
-                                    Function(add_new_building, building_name, price),
-                                    SetVariable("money", money - price),
-                                    Function(register_new_building, building_name),
-                                    Function(store.rebuild_assigned_servants),
-                                    SetVariable("buildings_owned", len(store.owned_buildings)),
-                                    Hide("buy_buildings"),
-                                ])
-                            sensitive (money >= price)
-                    else:
-                        text "No more building slots available to purchase." size font_size(24) xalign 0.0 color gui.journal_text_color
-
-                    null height 18
-                    text "Sell (Building 2+)" xalign 0.0 size font_size(26) color "#5a3a1a"
-                    text "You receive purchase price minus $5,000. Workers are unassigned." size font_size(20) xalign 0.0 color "#6a5a4a"
-                    $ _sellable = store.sellable_generic_building_names() if callable(getattr(store, "sellable_generic_building_names", None)) else []
-                    if not _sellable:
-                        text "No extra buildings to sell." size font_size(24) xalign 0.0 color gui.journal_text_color
-                    for bn in _sellable:
-                        $ sale, paid = store.building_sale_preview(bn)
-                        $ disp = store.custom_names.get(bn, bn)
-                        $ _sell_confirm = "Sell %s for $%s? All workers in this building will be unassigned." % (disp, sale)
-                        textbutton "Sell [disp] — receive $[sale] (paid $[paid])":
-                            xsize 500
-                            text_size font_size(24)
-                            text_color gui.journal_text_color
-                            text_hover_color gui.journal_hover_color
-                            action Confirm(
-                                _sell_confirm,
-                                Function(store.sell_building, bn),
-                                NullAction()
-                            )
-
-    key "K_BACKSPACE" action Hide("buy_buildings")
-
 screen in_development():
     modal True
     zorder 100
@@ -6676,7 +6762,7 @@ screen academy_first_dialogue():
                     text_color gui.journal_text_color
                     text_hover_color gui.journal_hover_color
                     action If(store.money >= 15000,
-                        [Function(store.add_academy_building), SetVariable("money", store.money - 15000), SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("academy_menu")],
+                        [Function(store.pay_academy_tuition, 15000), SetVariable("academy_director_intro_done", False), Hide("academy_first_dialogue"), Show("academy_menu")],
                         Show("error_popup", message="You need $15,000 to pay the tuition.")
                     )
                     sensitive (store.money >= 15000)
@@ -6757,6 +6843,7 @@ screen academy_menu():
     ## Academy main menu (after enrolled): Send workers / Visit director / Attend class.
     modal True
     zorder 101
+    on "show" action Function(maybe_show_intro_popup, "academy_menu")
     add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
@@ -7085,6 +7172,14 @@ screen academy_training_menu():
 # Arena: choose a worker for the trial by combat (any worker, show Combat skill).
 screen choose_worker_for_arena_trial():
     default _worker_search_text = ""
+    default _fm_search_input = ScreenVariableInputValue("_worker_search_text", default=False)
+    # Tapping anywhere outside the field puts the on-screen keyboard away.
+    # Sits first, so every real widget above it still gets its click.
+    button:
+        background None
+        xfill True
+        yfill True
+        action _fm_search_input.Disable()
     default _worker_page = 0
     default _worker_query_applied = ""
     modal True
@@ -7127,12 +7222,18 @@ screen choose_worker_for_arena_trial():
                     ysize 38
                     background Solid("#d8bf9a")
                     padding (8, 4)
-                    input:
-                        value ScreenVariableInputValue("_worker_search_text")
-                        pixel_width 450
-                        size font_size(20)
-                        color gui.journal_dark_color
-                        allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
+                    button:
+                        # Tap to type, tap again to dismiss (Android keyboard).
+                        background None
+                        xfill True
+                        yfill True
+                        action _fm_search_input.Toggle()
+                        input:
+                            value _fm_search_input
+                            pixel_width 450
+                            size font_size(20)
+                            color gui.journal_dark_color
+                            allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
             if not eligible_workers:
                 text "[_empty_message]" color "#a63c3c" xalign 0.5 text_align 0.5 size 20
                 textbutton "Back":
@@ -7200,6 +7301,14 @@ screen choose_worker_for_arena_trial():
 # Arena: choose a worker for the special match (5000 entry, 2 rounds + combat roll).
 screen choose_worker_for_arena_special_match():
     default _worker_search_text = ""
+    default _fm_search_input = ScreenVariableInputValue("_worker_search_text", default=False)
+    # Tapping anywhere outside the field puts the on-screen keyboard away.
+    # Sits first, so every real widget above it still gets its click.
+    button:
+        background None
+        xfill True
+        yfill True
+        action _fm_search_input.Disable()
     default _worker_page = 0
     default _worker_query_applied = ""
     modal True
@@ -7242,12 +7351,18 @@ screen choose_worker_for_arena_special_match():
                     ysize 38
                     background Solid("#d8bf9a")
                     padding (8, 4)
-                    input:
-                        value ScreenVariableInputValue("_worker_search_text")
-                        pixel_width 450
-                        size font_size(20)
-                        color gui.journal_dark_color
-                        allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
+                    button:
+                        # Tap to type, tap again to dismiss (Android keyboard).
+                        background None
+                        xfill True
+                        yfill True
+                        action _fm_search_input.Toggle()
+                        input:
+                            value _fm_search_input
+                            pixel_width 450
+                            size font_size(20)
+                            color gui.journal_dark_color
+                            allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
             if not eligible_workers:
                 text "[_empty_message]" color "#a63c3c" xalign 0.5 text_align 0.5 size 20
                 textbutton "Back":
@@ -7315,6 +7430,14 @@ screen choose_worker_for_arena_special_match():
 
 screen choose_worker_for_alchemy_craft():
     default _worker_search_text = ""
+    default _fm_search_input = ScreenVariableInputValue("_worker_search_text", default=False)
+    # Tapping anywhere outside the field puts the on-screen keyboard away.
+    # Sits first, so every real widget above it still gets its click.
+    button:
+        background None
+        xfill True
+        yfill True
+        action _fm_search_input.Disable()
     default _worker_page = 0
     default _worker_query_applied = ""
     modal True
@@ -7347,7 +7470,11 @@ screen choose_worker_for_alchemy_craft():
             spacing 15
             null height 15
             label "Choose a Laboratory worker" xalign 0.5 style "header_style" text_size font_size(30)
-            text "Investment paid. Choose who directs the brew. Two rounds of choices, then Craft decides the outcome." size font_size(20) color gui.journal_text_color xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
+            if _alchemy_material_quote:
+                $ _brew_total = _alchemy_material_quote.get("total", 0)
+                text "Start brewing for [_brew_total] coins, including missing ingredients. Uses one of each ingredient. Cancel spends nothing." size font_size(20) color gui.journal_text_color xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
+            else:
+                text "Investment paid. Choose who directs the brew. Two rounds of choices, then Craft decides the outcome." size font_size(20) color gui.journal_text_color xalign 0.5 text_align 0.5 xmaximum 480 xoffset 5
             hbox:
                 xalign 0.5
                 spacing 10
@@ -7357,12 +7484,18 @@ screen choose_worker_for_alchemy_craft():
                     ysize 38
                     background Solid("#d8bf9a")
                     padding (8, 4)
-                    input:
-                        value ScreenVariableInputValue("_worker_search_text")
-                        pixel_width 450
-                        size font_size(20)
-                        color gui.journal_dark_color
-                        allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
+                    button:
+                        # Tap to type, tap again to dismiss (Android keyboard).
+                        background None
+                        xfill True
+                        yfill True
+                        action _fm_search_input.Toggle()
+                        input:
+                            value _fm_search_input
+                            pixel_width 450
+                            size font_size(20)
+                            color gui.journal_dark_color
+                            allow "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'"
             if not eligible_workers:
                 text "[_empty_message]" color "#a63c3c" xalign 0.5 text_align 0.5 size 20
                 textbutton "Back":
@@ -7380,7 +7513,8 @@ screen choose_worker_for_alchemy_craft():
                     for worker in _page_workers:
                         $ worker_craft = calculate_skill_with_traits(worker, "Craft")
                         $ btn_text = worker["name"] + " (Craft: " + str(worker_craft) + ")"
-                        textbutton "[btn_text]":
+                        textbutton "[btn_text!q]":
+                            id ("alchemy_worker_" + worker["name"])
                             xsize 545  # match the Search row width so names left-align under "Search:"
                             ysize _row_h
                             text_size font_size(28)
@@ -7417,6 +7551,7 @@ screen choose_worker_for_alchemy_craft():
                                 sensitive _worker_page < _worker_page_count - 1
                                 action SetScreenVariable("_worker_page", _worker_page + 1)
         imagebutton:
+            id "alchemy_worker_cancel"
             idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
             action [SetVariable("_alchemy_chosen_worker", None), Return()]
@@ -7430,6 +7565,7 @@ screen choose_worker_for_alchemy_craft():
 screen arena_menu():
     modal True
     zorder 101
+    on "show" action Function(maybe_show_intro_popup, "arena_menu")
     add Solid(gui.surface_dark)
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
     frame:
@@ -7592,7 +7728,10 @@ screen buy_map_building(map_button_id):
                     yoffset 25
                     python:
                         available_businesses = get_available_businesses_for_map_button(map_button_id)
-                        num = len(owned_buildings)
+                        # The slot is allocated inside purchase_map_building (lowest free
+                        # slot). Naming it from len(owned_buildings) here overwrote a live
+                        # building whenever the numbering had a gap, e.g. after a sale.
+                        _free_slot = store.next_generic_building_slot()
                         if "Tavern" in map_button_id:
                             price = 15000
                         elif "Bluehouse" in map_button_id:
@@ -7603,9 +7742,8 @@ screen buy_map_building(map_button_id):
                             price = 30000
                         else:
                             price = 20000
-                        building_name = f"Building {str(num + 1)}"
-                    
-                    if num < max_building:
+
+                    if _free_slot:
                         if len(available_businesses) > 0:
                             for btype in available_businesses:
                                 textbutton "[btype['name']] - $[price]":
@@ -7615,16 +7753,9 @@ screen buy_map_building(map_button_id):
                                     text_hover_color gui.journal_hover_color
                                     action If(money >= price,
                                         [
-                                            Function(add_new_building, building_name, price),
-                                            SetVariable("money", money - price),
-                                            Function(lambda bn=building_name, bt=btype["id"]: available_buildings[bn].update({"type": bt}) if bn in available_buildings else None),
-                                            Function(register_new_building, building_name),
-                                            Function(store.map_button_buildings.__setitem__, map_button_id, building_name),
-                                            SetVariable("buildings_owned", len(store.owned_buildings)),
+                                            Function(store.purchase_map_building, map_button_id, btype["id"], price),
                                             Hide("buy_map_building"),
                                             Hide("map_screen"),
-                                            Function(renpy.notify, f"Purchased {building_name} as {btype['name']}!"),
-                                            Show("Manager", building_name=building_name)
                                         ],
                                         Show("error_popup", message=f"Not enough money. Cost: ${price}")
                                     )
@@ -7675,10 +7806,10 @@ screen buy_servants_table():
                 label "Buy Servants" xalign 0.5 yalign 0.5 style "header_style"
                 # Refresh button (right side)
                 python:
-                    # Check if it's a new day - reset counter if so
-                    if store.last_map_refill_day != store.current_day:
+                    # Check if it's a new day - reset counter if so (total days: month rollover counts)
+                    if store.last_map_refill_day != calculate_total_days():
                         store.map_worker_refill_count = 0
-                        store.last_map_refill_day = store.current_day
+                        store.last_map_refill_day = calculate_total_days()
                     
                     # Use store variable to ensure consistency
                     refresh_count = store.map_worker_refill_count
@@ -7907,6 +8038,11 @@ screen shop_selection():
                         text_color gui.journal_text_color
                         text_hover_color gui.journal_hover_color
                         sensitive "shop3" in unlocked_shops and unlocked_shops["shop3"]
+                    if not unlocked_shops.get("shop3", False):
+                        # After a declined offer the shop is waiting for the merchant, not broken.
+                        $ _shop3_hint = elite_emporium_return_hint(getattr(store, "event_flags", {}), getattr(store, "event_last_occurred", {}), getattr(store, "event_occurrences", {}), calculate_total_days())
+                        if _shop3_hint:
+                            text "[_shop3_hint!q]" size font_size(24) color gui.journal_text_color xmaximum 500
 
     key "K_BACKSPACE" action Hide("shop_selection")
 
@@ -8250,6 +8386,7 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
     # Romance finale choice overlay (same style as event/recruitment choices)
     if ir_img_only and is_romance_confess:
         vbox:
+            style "event_choice_vbox"
             style_prefix "choice"
             xalign 0.5
             yalign 0.85
@@ -8273,6 +8410,7 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
     # Friendship finale choice overlay (same style as event/recruitment choices)
     if ir_img_only and is_friendship_final:
         vbox:
+            style "event_choice_vbox"
             style_prefix "choice"
             xalign 0.5
             yalign 0.85
@@ -8288,6 +8426,7 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
 
     if ir_img_only and is_discipline_final:
         vbox:
+            style "event_choice_vbox"
             style_prefix "choice"
             xalign 0.5
             yalign 0.85
@@ -8310,6 +8449,7 @@ screen interaction_result(worker, interaction, message_index=0, show_image_only=
     # Discipline sale confirmation overlay (same style as event/recruitment choices). Only Confirm Sale or Cancel.
     if ir_img_only and is_discipline_sell:
         vbox:
+            style "event_choice_vbox"
             style_prefix "choice"
             xalign 0.5
             yalign 0.85
@@ -10383,6 +10523,14 @@ screen choose_worker_for_franchise(franchise_type):
     modal True
     zorder 122
     default _worker_search_text = ""
+    default _fm_search_input = ScreenVariableInputValue("_worker_search_text", default=False)
+    # Tapping anywhere outside the field puts the on-screen keyboard away.
+    # Sits first, so every real widget above it still gets its click.
+    button:
+        background None
+        xfill True
+        yfill True
+        action _fm_search_input.Disable()
     default _worker_query_applied = ""
     default _worker_page = 1
     add Transform("gui/Journalback.png", align=(0.5, 0.5))
@@ -10424,14 +10572,20 @@ screen choose_worker_for_franchise(franchise_type):
                 ysize 52
                 padding (12, 7)
                 background Solid("#3c1f14")
-                input:
-                    value ScreenVariableInputValue("_worker_search_text")
-                    length 40
-                    pixel_width 530
-                    size font_size(22)
-                    color "#f4e4c1"
-                    caret Solid("#d4a574", xsize=2, ysize=28)
-                    outlines [(1, "#1a0e09", 0, 0)]
+                button:
+                    # Tap to type, tap again to dismiss (Android keyboard).
+                    background None
+                    xfill True
+                    yfill True
+                    action _fm_search_input.Toggle()
+                    input:
+                        value _fm_search_input
+                        length 40
+                        pixel_width 530
+                        size font_size(22)
+                        color "#f4e4c1"
+                        caret Solid("#d4a574", xsize=2, ysize=28)
+                        outlines [(1, "#1a0e09", 0, 0)]
             if _fr_page_workers:
                 for _fr_worker in _fr_page_workers:
                     $ _fr_old_building = str(_fr_worker.get("assigned_building", "Unassigned") or "Unassigned")
@@ -10498,6 +10652,7 @@ screen map_screen():
     zorder 2
     modal True
     add map_bg
+    add church_map_path pos church_map_position
 
     # Map building buttons with focus_mask
     # Images are full map size with transparent areas, so they auto-position correctly
@@ -10534,7 +10689,7 @@ screen map_screen():
         hover "gui/map/PlazaFountainb.png"
         focus_mask True
         action If(
-            last_take_a_walk_day == current_day or take_a_walk_in_progress,
+            last_take_a_walk_day == calculate_total_days() or take_a_walk_in_progress,
             Show("error_popup", message="You've already taken a walk today. Come back tomorrow."),
             Function(renpy.call_in_new_context, "take_a_walk")
         )
@@ -10807,6 +10962,17 @@ screen map_screen():
         hovered ShowTransient("tooltip", message="Arena" if store.arena_unlocked else "Arena (visit the Lanista to unlock)")
         unhovered Hide("tooltip")
     
+    # Rural story location: the fixed wall mask also clips the hover and hit area.
+    imagebutton:
+        id "church_map_button"
+        pos church_map_position
+        idle church_map_idle
+        hover church_map_hover
+        focus_mask church_map_idle
+        action [Hide("tooltip"), Hide("map_screen"), Jump("church_visit")]
+        hovered ShowTransient("tooltip", message="Church of the Circle")
+        unhovered Hide("tooltip")
+
     # Castle - renders on top of N5 Tavern
     imagebutton:
         idle "gui/map/Castlea.png"
@@ -10871,7 +11037,14 @@ screen map_screen():
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month - 1]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color gui.journal_dark_color size 25 yalign 0.5
+            textbutton "[day_name], [store.current_day] [month_name] [store.current_year]":
+                id "monthly_calendar"
+                action Function(monthly_open)
+                text_color gui.journal_dark_color
+                text_size 25
+                text_underline True
+                yminimum 44
+                padding (0, 0)
         # Compact status strip: roster size and owned holdings (read-only)
         python:
             _tv_worker_count = len(store.workers)
@@ -10946,7 +11119,7 @@ screen map_screen():
                 text_hover_color gui.journal_hover_color
             textbutton "Take a Walk":
                 action If(
-                    last_take_a_walk_day == current_day or take_a_walk_in_progress,
+                    last_take_a_walk_day == calculate_total_days() or take_a_walk_in_progress,
                     Show("error_popup", message="You've already taken a walk today. Come back tomorrow."),
                     Function(renpy.call_in_new_context, "take_a_walk")
                 )
@@ -11088,15 +11261,12 @@ screen daily_report(report_data=None, report_title=None, return_action=None, rep
                                 if _dr_building_filter == "All Buildings" or daily_report_building_display(building_name, _dr_source_reports) == _dr_building_filter:
                                     daily_total_costs += int(archived_cost or 0)
                         else:
-                            for building_name, building in available_buildings.items():
-                                if not building.get("owned", False):
-                                    continue
+                            # Exactly what the ledger charged today (same buildings,
+                            # same amounts), never a recomputation that can drift.
+                            for building_name, charged_cost in daily_ledger_cost_map().items():
                                 if _dr_building_filter != "All Buildings" and daily_report_building_display(building_name, _dr_source_reports) != _dr_building_filter:
                                     continue
-                                fixed_cost = get_building_base_maintenance_cost(building_name, building)
-                                worker_costs = compute_worker_portion_daily_costs(building.get("assigned_servants") or [], building.get("base_level", 1))[0]
-                                bonus_cost = int(((building.get("skill_bonus", 0) // 10) * 100) * get_difficulty_building_skill_mult())
-                                daily_total_costs += fixed_cost + worker_costs + bonus_cost
+                                daily_total_costs += int(charged_cost or 0)
 
                         daily_net_profit = daily_total_earnings - daily_total_costs
 

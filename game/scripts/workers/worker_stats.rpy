@@ -262,7 +262,10 @@ init python:
         max_energy = base_energy + bonus_energy
         if energy_cap is not None:
             max_energy = min(max_energy, energy_cap)
-        return max(0, int(max_energy))
+        # Same invariant as calculate_max_health: a worker always has at least
+        # one point of max energy. A level-1 worker with a -5 energy trait
+        # (Pregnant) used to sit at 0/0 for the trait's whole duration.
+        return max(1, int(max_energy))
 
     def calculate_health_regeneration(worker):
         """Return effective health regeneration (base 1 plus trait bonus)."""

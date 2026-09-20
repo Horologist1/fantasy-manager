@@ -1,0 +1,420 @@
+{
+  "reviewed_on": "2026-09-09",
+  "scope": "All 46 transitions, all descriptions, choices and success/failure/decline messages. Editorial review; hashes detect changes, not English semantics.",
+  "transitions": [
+    {
+      "arc": "aspen_personal",
+      "from": "unique_aspen_lore_event",
+      "to": "worker_aspen_corvus_terms",
+      "previous_sha256": "e35092a743c640161526311485646e1df0b6fdfbbb1e0366cd6b060bc019e983",
+      "current_sha256": "6b41e8ac08abdf0c87f1f21cad2a9e4fa19a239c54234a65d6d49dfcdab32a87",
+      "premise": "Corvus and his threat are established by the first visit.",
+      "branches": "Renewed pressure is explicitly introduced; the text allows the watch trap, its failure, or hiding Aspen. It does not assume those precautions never worked."
+    },
+    {
+      "arc": "aspen_personal",
+      "from": "worker_aspen_corvus_terms",
+      "to": "worker_aspen_unlocked_door",
+      "previous_sha256": "6b41e8ac08abdf0c87f1f21cad2a9e4fa19a239c54234a65d6d49dfcdab32a87",
+      "current_sha256": "f6427ed896beae0403ed0216e08566c391fc551ef34a8d16e7564a3b61453c37",
+      "premise": "Corvus sends terms in the stage-two premise, before either response.",
+      "branches": "The crew moves and offers a temporary reprieve now. No tannery meeting is presumed when the player chose to question the runner; the warehouse remains a new target."
+    },
+    {
+      "arc": "florian_personal",
+      "from": "unique_florian_lore_event",
+      "to": "worker_florian_name_beneath_mask",
+      "previous_sha256": "072d93ba74666c616fcbd7c6f323fcf01d1d8f759ab33595a081f1804b8bd4d2",
+      "current_sha256": "538db6e65f362405e6d35424e131a1a64ef993f8ba8c2bafe2832f73e51b1fa3",
+      "premise": "Aldric's parcel and the noble genealogy are introduced before accepting or declining.",
+      "branches": "The salon is a new invitation. The note names Evren and announces his mask before all result messages use his name; no earlier masked affair is remembered."
+    },
+    {
+      "arc": "florian_personal",
+      "from": "worker_florian_name_beneath_mask",
+      "to": "worker_florian_unfinished_border",
+      "previous_sha256": "538db6e65f362405e6d35424e131a1a64ef993f8ba8c2bafe2832f73e51b1fa3",
+      "current_sha256": "d2e39a3180f4cbd72b0cd2800b57a4003d4792adafa553ff97dff5bfe2773612",
+      "premise": "Lady Merrow's chronicle and Evren are present before both salon choices.",
+      "branches": "Evren buys the page after the salon; it need not have been salvaged during a successful authentication. Public and private endings use the same newly acquired page."
+    },
+    {
+      "arc": "iris_personal",
+      "from": "unique_iris_lore_event",
+      "to": "worker_iris_language_of_petals",
+      "previous_sha256": "fd2d3213911a37055ae388bda73b0fc778d32adfee0763aec53d83023daf8397",
+      "current_sha256": "a0a0dd2cf47580f3695b9fd1a0fd4beda3b678710d6af39e19c0deb4a7910112",
+      "premise": "The black envelope and Silvered Table are the first-stage premise.",
+      "branches": "The florist plate, bouquet and decoding are introduced now. The cipher can be investigated after declining the original courier invitation; both new choices concern the same display."
+    },
+    {
+      "arc": "iris_personal",
+      "from": "worker_iris_language_of_petals",
+      "to": "worker_iris_open_table",
+      "previous_sha256": "a0a0dd2cf47580f3695b9fd1a0fd4beda3b678710d6af39e19c0deb4a7910112",
+      "current_sha256": "d2ffea9a609e374177dfba61d3fe0d97b4b18d741f5ef65b00e628a65b122815",
+      "premise": "The bouquet, its sender and the flower cipher appear before either investigation.",
+      "branches": "The Table makes a new invitation. The private broker is identified by ordering the bouquet, not by an encounter confined to one successful outcome."
+    },
+    {
+      "arc": "lily_personal",
+      "from": "unique_lily_lore_event",
+      "to": "worker_lily_garden_boundaries",
+      "previous_sha256": "3166abe1a016c40dfee9d6dd3ebc9a8f07c72f2288b89a7ad753b090a4f746c3",
+      "current_sha256": "4b7ee58f8e1267ccbbfa7c3072604c280cbda015c2fcf4f8715455b13542ad18",
+      "premise": "The tutor's contract is the actual first-stage premise.",
+      "branches": "The moonlit garden is a new rehearsal and the tutor history is explained here. No garden confession or successful court ruling is assumed."
+    },
+    {
+      "arc": "lily_personal",
+      "from": "worker_lily_garden_boundaries",
+      "to": "worker_lily_garden_in_bloom",
+      "previous_sha256": "4b7ee58f8e1267ccbbfa7c3072604c280cbda015c2fcf4f8715455b13542ad18",
+      "current_sha256": "e00f74f1df868a65521dfb6ba6c9c94ffe1ad8436d47761976d53a2cefe66017",
+      "premise": "The garden rehearsal, boundary card and learning to refuse are common to both stage-two options.",
+      "branches": "A host offers a new salon and accepts her rules now, even after the rehearsal ended early. Private outcomes do not require performing the stage-three public choice first."
+    },
+    {
+      "arc": "rose_personal",
+      "from": "unique_rose_lore_event",
+      "to": "worker_rose_second_fan",
+      "previous_sha256": "5dcdeaab3ba03adb64b9fb7ff0cdc73575e37b82075d9f6407e1e62b152c1773",
+      "current_sha256": "22453556bff25216ef563e88af0fef8e67a2798d612c86190ac4e649800fa7ba",
+      "premise": "The Crimson Petal handbill appears before either response to the imitator.",
+      "branches": "Sayo, her fan and the historical dance are introduced now. No recovered confidence or successful public show is presumed."
+    },
+    {
+      "arc": "rose_personal",
+      "from": "worker_rose_second_fan",
+      "to": "worker_rose_cranes_at_dawn",
+      "previous_sha256": "22453556bff25216ef563e88af0fef8e67a2798d612c86190ac4e649800fa7ba",
+      "current_sha256": "3536d0928e3213f78cba8c4e7516ea5f935052dcb543fda02258507f8a163c00",
+      "premise": "Sayo and the crane dance are introduced before either stage-two rehearsal.",
+      "branches": "Sayo offers a new booking. The old dance is attempted, rather than assumed fully restored after a failed rehearsal; the ban is explained in this new scene."
+    },
+    {
+      "arc": "violet_personal",
+      "from": "unique_violet_lore_event",
+      "to": "worker_violet_scented_reply",
+      "previous_sha256": "00104ffd496f93fc36092fbaa7675c9b189a9738e23d4f8ae69e48e14428e1c9",
+      "current_sha256": "d93517c010cf72616e5c2586b939480766b19a326255bd41793a283592206145",
+      "premise": "Rose, sandalwood and broker markers are introduced in the first premise.",
+      "branches": "A variation of that scent introduces Selene and the reply knot now. The smell is not replaced with an allegedly familiar perfume that was never shown."
+    },
+    {
+      "arc": "violet_personal",
+      "from": "worker_violet_scented_reply",
+      "to": "worker_violet_last_secret",
+      "previous_sha256": "d93517c010cf72616e5c2586b939480766b19a326255bd41793a283592206145",
+      "current_sha256": "02f7dad542e2798f6e9c92fe16777973de054fc72527a7a548b6c68eb71dcf4f",
+      "premise": "Selene and the recital appear in every stage-two outcome.",
+      "branches": "A new raid yields a separate informant ledger, so the cache ledger may remain destroyed. Two names distinguish the original informant from the later extorter in the alternative endings. Re-read 2026-09-10 after naming the climax in the Sex branch: the addition lands on the theme (the first sound she does not aim at anyone) and changes no participant, consent beat or reward. The failure branch is unchanged and still reachable."
+    },
+    {
+      "arc": "dahlia_personal",
+      "from": "worker_dahlia_empty_balcony",
+      "to": "worker_dahlia_stolen_applause",
+      "previous_sha256": "ede016bb59bb89372d83a01807799ec028b5d1ed2b0666e3b77a54c158a411ad",
+      "current_sha256": "082190193009aa17775b8fc4b6768fb7c4ff2040487aaf0344dc8338344f0f63",
+      "premise": "Marcella Vane, the theatre and audition are introduced before any stage-one choice.",
+      "branches": "A fresh one-night offer is delivered now, including after either failed audition. The opening-night action no longer relies on winning the earlier role."
+    },
+    {
+      "arc": "dahlia_personal",
+      "from": "worker_dahlia_stolen_applause",
+      "to": "worker_dahlia_closing_bow",
+      "previous_sha256": "082190193009aa17775b8fc4b6768fb7c4ff2040487aaf0344dc8338344f0f63",
+      "current_sha256": "ac76827db3becf63e490e87555049ba74537e07640ec6ab62b556437b34ba02b",
+      "premise": "Marcella is named in stage one and the theatre dispute continues in stage two.",
+      "branches": "Retirement and the permanent-lead offer are new developments. Neither a successful performance nor exposing the dresser is presumed."
+    },
+    {
+      "arc": "fern_personal",
+      "from": "worker_fern_unfinished_sentence",
+      "to": "worker_fern_green_awning",
+      "previous_sha256": "c453fd841471ad6765c2cbc8deb41475770aa64641d55aa862bb76a25921ba78",
+      "current_sha256": "12604aff5cd2baa5c20b953301691716b504de0af296fb8fc19a3a8a3efddb85",
+      "premise": "The Quiet Ledger and its owner are named in the first premise.",
+      "branches": "Pell is named upon meeting. His proposal is new and can follow either successful or failed attempt to trace/pressure him."
+    },
+    {
+      "arc": "fern_personal",
+      "from": "worker_fern_green_awning",
+      "to": "worker_fern_quiet_ledger",
+      "previous_sha256": "12604aff5cd2baa5c20b953301691716b504de0af296fb8fc19a3a8a3efddb85",
+      "current_sha256": "aba7dc9f83e20cf5df070416da76853828bb6ed0ff8aa36274156a1a2c415db4",
+      "premise": "Pell and the ledger's divided pages are introduced at the tea market.",
+      "branches": "Pell explicitly supplies a duplicate, including copies of destroyed folios. A registered destruction in one stage-two branch is not undone."
+    },
+    {
+      "arc": "holly_personal",
+      "from": "worker_holly_empty_cup",
+      "to": "worker_holly_bell_at_midnight",
+      "previous_sha256": "11e39b2cd04a65c724db62c1a545529347a678d556c55b97e845bbb12aaaf343",
+      "current_sha256": "49b652f6ea4950afd22d3830529a13c8a05ff46fbfd01fa036fcea8e2c50190b",
+      "premise": "Widow Bell is introduced in the first premise and appears in all outcomes.",
+      "branches": "The midnight visit is unscheduled; it does not pretend Holly successfully established a contract in a failed branch."
+    },
+    {
+      "arc": "holly_personal",
+      "from": "worker_holly_bell_at_midnight",
+      "to": "worker_holly_room_kept_warm",
+      "previous_sha256": "49b652f6ea4950afd22d3830529a13c8a05ff46fbfd01fa036fcea8e2c50190b",
+      "current_sha256": "4d8b42ad35f032c11be29363475540cea01fbead3f0c88d00fe379f3f23f2e95",
+      "premise": "Bell and her daughter appear in the stage-two premise.",
+      "branches": "Separate letters offer support while preserving disagreement. No reconciliation is presumed after failed mediation."
+    },
+    {
+      "arc": "cedar_personal",
+      "from": "unique_cedar_lore_event",
+      "to": "cedar_personal_stage_2",
+      "previous_sha256": "1da72b0fdf5b09fcce69fdd1de7134993395b1d064ae5858d86c824601b440a2",
+      "current_sha256": "3590eaed5a4733f6a23e7ff96b8e93ec109026a360a2f8453f3805b7e607b211",
+      "premise": "The collector's letter and old claim appear before arbitration/payment.",
+      "branches": "Selling copies is fresh fraud, even if the legitimate claim was already paid; no face-to-face confrontation is required."
+    },
+    {
+      "arc": "cedar_personal",
+      "from": "cedar_personal_stage_2",
+      "to": "cedar_personal_stage_3",
+      "previous_sha256": "3590eaed5a4733f6a23e7ff96b8e93ec109026a360a2f8453f3805b7e607b211",
+      "current_sha256": "25ddc82fd159aab5d41cb5fa8554b4d84a91087bcb12584b788d6fef40ef9172",
+      "premise": "The copied claims and creditors are present before both investigations.",
+      "branches": "A court clerk releases accounts for the auction now. The ledger need not have been recovered in the only stage-two branch that recovers it."
+    },
+    {
+      "arc": "laurel_personal",
+      "from": "unique_laurel_lore_event",
+      "to": "laurel_personal_stage_2",
+      "previous_sha256": "4ed075d4262b6a42ed6c1fed8b5cc038244ff66b67f36628017ef16e8c9edaef",
+      "current_sha256": "11204761792ee25197baa1ea4763537c2cb7be36367b7aa631623c502deda6c8",
+      "premise": "The former household, crest and surviving patron appear in the letter scene.",
+      "branches": "The footman brings a new threat; the patron need not have continued writing after withdrawal or the burned letter."
+    },
+    {
+      "arc": "laurel_personal",
+      "from": "laurel_personal_stage_2",
+      "to": "laurel_personal_stage_3",
+      "previous_sha256": "11204761792ee25197baa1ea4763537c2cb7be36367b7aa631623c502deda6c8",
+      "current_sha256": "1a4c67bf5b8c5bd950b1ab5f3fa6fce3427bd1a07040d9a301253e9a633b3575",
+      "premise": "The serving codes, footman and proposed magistrate inquiry are introduced in stage two.",
+      "branches": "The footman supplies a statement at the hearing. The performance does not require a successful staff reunion or a newfound confidence state."
+    },
+    {
+      "arc": "sage_personal",
+      "from": "unique_sage_lore_event",
+      "to": "sage_personal_stage_2",
+      "previous_sha256": "cd12c95a0fcfdaf2f70aef84a6c8c727f3756b900654b56ffc228e5a29d08cf4",
+      "current_sha256": "4234a956d6a1ac1396ab26826704197fae6628f55e7144c63185aa9744f694f0",
+      "premise": "The smuggler network and drop are established before interception/reporting.",
+      "branches": "Runners arrive on their own stated mission, without attributing a successful interception to a branch that missed the drop."
+    },
+    {
+      "arc": "sage_personal",
+      "from": "sage_personal_stage_2",
+      "to": "sage_personal_stage_3",
+      "previous_sha256": "4234a956d6a1ac1396ab26826704197fae6628f55e7144c63185aa9744f694f0",
+      "current_sha256": "1b9c38f277d295064f95e0af6a25621fd66e6f5a462461721e4af6d5a6eba1be",
+      "premise": "Both stage-two options and failures get the runners out safely.",
+      "branches": "Their delivery-order copies are supplied in the new scene. Evidence no longer depends on intercepting the stage-one shipment; witnesses remain available after either escape method."
+    },
+    {
+      "arc": "primrose_personal",
+      "from": "unique_primrose_lore_event",
+      "to": "primrose_personal_stage_2",
+      "previous_sha256": "04de37c27ee51242610c6021e86dab2464bb5f5e835bcf6d5447939d3b8b837b",
+      "current_sha256": "daeead99e383e303d594867ee20b4894d6521aa02863cb8dd5b0f66da98371da",
+      "premise": "The broadsheets and former employer are present in every first-stage branch.",
+      "branches": "The leaflets eventually stop in all outcomes. The exhibition is a new attack; the player need not have launched a counter-campaign."
+    },
+    {
+      "arc": "primrose_personal",
+      "from": "primrose_personal_stage_2",
+      "to": "primrose_personal_stage_3",
+      "previous_sha256": "daeead99e383e303d594867ee20b4894d6521aa02863cb8dd5b0f66da98371da",
+      "current_sha256": "583052a81a71acb560cefc97caccaf6cb0f47e1e5a8a2c11c30576b5a69e139d",
+      "premise": "Original cue cards are delivered by the apprentice before either stage-two choice.",
+      "branches": "The final hearing uses the original cards without falsely claiming authentication succeeded. Both final outcomes adjudicate ownership now."
+    },
+    {
+      "arc": "jasmine_personal",
+      "from": "unique_jasmine_lore_event",
+      "to": "jasmine_personal_stage_2",
+      "previous_sha256": "5492085c47217cc45b8dcae878e14cf8e9669149d63331fcdb89faea5dc83c8b",
+      "current_sha256": "21441a0c128ae1ebe50272526574ad3d9705769f382cb7242b87d16b888ed2ba",
+      "premise": "The Varenthi siblings and inheritance dispute are introduced before accepting/refusing mediation.",
+      "branches": "A clerk supplies the codicil lead now; no mediation is falsely remembered after turning both siblings away."
+    },
+    {
+      "arc": "jasmine_personal",
+      "from": "jasmine_personal_stage_2",
+      "to": "jasmine_personal_stage_3",
+      "previous_sha256": "21441a0c128ae1ebe50272526574ad3d9705769f382cb7242b87d16b888ed2ba",
+      "current_sha256": "9606a56d0d9af999d3c88cd9ab633e4c53a3c59cd2b5784138f3882f10dd9c1f",
+      "premise": "The clerk identifies the codicil in all stage-two outcomes, including the paid-protection and damaged-seal failures.",
+      "branches": "The assembly reveals its terms now. Prior difficulties changed cost/proof, not the existence of the document or its location."
+    },
+    {
+      "arc": "marigold_personal",
+      "from": "unique_daisy_lore_event",
+      "to": "marigold_personal_stage_2",
+      "previous_sha256": "c8ff61074d07e607fef89bb4c008200eba5f0ad039372e217f2939ecc77496a5",
+      "current_sha256": "2a67bae91b2eb2f4e8e30a133aa448127244fe7c0a95693ad35c9b8297fbd125",
+      "premise": "The forged seal and false contracts are introduced before chasing or buying copies.",
+      "branches": "A larger forgery operation is discovered now. The clerk need not have been caught in stage one."
+    },
+    {
+      "arc": "marigold_personal",
+      "from": "marigold_personal_stage_2",
+      "to": "marigold_personal_stage_3",
+      "previous_sha256": "2a67bae91b2eb2f4e8e30a133aa448127244fe7c0a95693ad35c9b8297fbd125",
+      "current_sha256": "343f259109d2c7df317b0d5bcb5f0f542341a18e87d50defe0b50bbae7973977",
+      "premise": "The foreman, print house and forged deliveries are known in the stage-two premise.",
+      "branches": "Warnings cause the closure threat even after the wagon escapes. The final investigation can establish the network and seize funds now."
+    },
+    {
+      "arc": "poppy_personal",
+      "from": "unique_poppy_lore_event",
+      "to": "poppy_personal_stage_2",
+      "previous_sha256": "ee48e6eafd6bc70057222e300e4cb68d1d5bd17463866ef226b2d18ccb857fe9",
+      "current_sha256": "a0524d92c52e2fc1ba95f4c8942079c1d3a286f44800b7b043e4dde85ae37a8c",
+      "premise": "Harwick and his lifetime leases are established before confrontation/payment.",
+      "branches": "Renewal notices to other workers are a fresh action; Harwick need not have withdrawn his claim after the failed legal challenge."
+    },
+    {
+      "arc": "poppy_personal",
+      "from": "poppy_personal_stage_2",
+      "to": "poppy_personal_stage_3",
+      "previous_sha256": "a0524d92c52e2fc1ba95f4c8942079c1d3a286f44800b7b043e4dde85ae37a8c",
+      "current_sha256": "d0b9b1e948b57de0ef5e494790a6a3ea980ae6938c503caec17a85d0fb8c04a6",
+      "premise": "The former workers and backdated registry exist in the second premise.",
+      "branches": "Statements, a certified copy and a fresh petition are gathered for this hearing. It never assumes both alternative investigations happened, or that a page was torn in a success branch."
+    },
+    {
+      "arc": "chestnut_personal",
+      "from": "chestnut_personal_stage_1",
+      "to": "chestnut_personal_stage_2",
+      "previous_sha256": "1472b321e0dda1756d93c9baf1b8b0b7347298d90c29ffe000e7d2d544b0ad1e",
+      "current_sha256": "490ddf63644a1e59c559e73146e6c7a072d4d5ebe9a401dc2b743eebafa64452",
+      "premise": "The ostler and the moved mile-bell are introduced in the first scene.",
+      "branches": "The ostler supplies the Wayhouse Nine lead now; it is available after losing the tracks or arranging a detour."
+    },
+    {
+      "arc": "chestnut_personal",
+      "from": "chestnut_personal_stage_2",
+      "to": "chestnut_personal_stage_3",
+      "previous_sha256": "490ddf63644a1e59c559e73146e6c7a072d4d5ebe9a401dc2b743eebafa64452",
+      "current_sha256": "d60e9c2286801cd88160d7a7a5a130b9ab30d97331d7cf0f5adb32d21ff927b9",
+      "premise": "The captain, repair fraud and routes are common stage-two premises.",
+      "branches": "The council makes a fresh challenge. The relay option uses nearby wayhouses without assuming the testimony-station choice succeeded."
+    },
+    {
+      "arc": "oak_personal",
+      "from": "oak_personal_stage_1",
+      "to": "oak_personal_stage_2",
+      "previous_sha256": "df73c6c3f3fa861a61d6742a6bda402246af3e46d8cce0f27323736c606a1b8f",
+      "current_sha256": "ce168d1938e01af8cc6f8010d648b649a36194c7b6b22c0a6f434ddfe8a06f37",
+      "premise": "The primer, forged signature and village grove are common first-stage premises.",
+      "branches": "Both failed investigations still recover a reference or narrow the search. The newer survey is a new obstruction rather than a prior success."
+    },
+    {
+      "arc": "oak_personal",
+      "from": "oak_personal_stage_2",
+      "to": "oak_personal_stage_3",
+      "previous_sha256": "ce168d1938e01af8cc6f8010d648b649a36194c7b6b22c0a6f434ddfe8a06f37",
+      "current_sha256": "c454aaad26e72b342b1a307195671c3b91c0ccce21e98d7f0b982804dce165bb",
+      "premise": "The charter, landmarks and survey dispute are the stage-two premise.",
+      "branches": "Every stage-two result retains or corrects evidence. The chapterhouse hearing and incoming pupils are introduced now."
+    },
+    {
+      "arc": "lotus_personal",
+      "from": "unique_lotus_lore_event",
+      "to": "lotus_personal_stage_2_ink_beneath_the_silk",
+      "previous_sha256": "95a65ee0865c8f119ccf5276734b7989767e25fb618bf644e6bc4d14f59ac489",
+      "current_sha256": "50907a350ea034c6bd0fb4d637f6c6347050b82e13a580f144d9a01740607733",
+      "premise": "Maren and the Stellara Company are introduced before accepting/declining their show.",
+      "branches": "Maren brings the appendix in person now and activates it by lifting the page. No player-authorized performance is presumed; her presence in the envoy outcome is established."
+    },
+    {
+      "arc": "lotus_personal",
+      "from": "lotus_personal_stage_2_ink_beneath_the_silk",
+      "to": "lotus_personal_stage_3_the_last_command",
+      "previous_sha256": "50907a350ea034c6bd0fb4d637f6c6347050b82e13a580f144d9a01740607733",
+      "current_sha256": "1eb3fdb96659e2e19898aab45dbecc0e8b6e54cf0e8bbe9707df5de56647c2ba",
+      "premise": "The appendix and Lotus rejecting its ownership terms are shared by both stage-two choices and failures.",
+      "branches": "The original patron responds to refusal, not a falsely guaranteed destruction of the appendix after the failed envoy trap."
+    },
+    {
+      "arc": "aelis_tavern_star",
+      "from": "aelis_first_busy_night",
+      "to": "aelis_noble_visitors",
+      "previous_sha256": "5b64e23a7464e7381255de96a4d3252c67ac3254c33e4b6169c166b5956e18a2",
+      "current_sha256": "19d9d7b4aa40449e1c30b99cb94eed2f5842042fd1b75bb2765420f445e4d0d7",
+      "premise": "The busy tavern and Aelis are established in every opening branch.",
+      "branches": "Nobles are newly curious; no successful dance is claimed after failed Charm or choosing Service."
+    },
+    {
+      "arc": "aelis_tavern_star",
+      "from": "aelis_noble_visitors",
+      "to": "aelis_final_tavern_star",
+      "previous_sha256": "19d9d7b4aa40449e1c30b99cb94eed2f5842042fd1b75bb2765420f445e4d0d7",
+      "current_sha256": "9875ac9d8bb50868b20d9512ee36e5889a310ddf06b69ad472ca7490ba8cd42d",
+      "premise": "The nobles' visit occurs regardless of the chosen service or dance outcome.",
+      "branches": "New guests have expectations, rather than treating Aelis as an acclaimed performer after two possible failures."
+    },
+    {
+      "arc": "amanita_personal",
+      "from": "amanita_personal_stage_1_rattle_in_the_rafters",
+      "to": "amanita_personal_stage_2_old_burrow_rules",
+      "previous_sha256": "e39d647b714a9e6da44e2a28c139a024fafc57e2fd53e9fa027c80181b644e6f",
+      "current_sha256": "54ff12b31257542a8d4a0f63a7b33171f8c640b2251abc75148a33aa426a95fc",
+      "premise": "The rafters game is the premise shared by both first-stage choices.",
+      "branches": "The spare key is taken from a hook now, not recalled as an unshown player gift. Neither race nor chandelier success is required."
+    },
+    {
+      "arc": "amanita_personal",
+      "from": "amanita_personal_stage_2_old_burrow_rules",
+      "to": "amanita_personal_stage_3_no_cage_can_keep_her",
+      "previous_sha256": "54ff12b31257542a8d4a0f63a7b33171f8c640b2251abc75148a33aa426a95fc",
+      "current_sha256": "f3d2517987c7c3103f77d934742dafb9b94be23a93e509ebc5c37cf9227a126d",
+      "premise": "The old burrow and its challenge appear before both stage-two choices.",
+      "branches": "The matriarch and crown are introduced in this visit. Either failed answer to the cousins can precede the ultimatum."
+    },
+    {
+      "arc": "moss_personal",
+      "from": "moss_personal_stage_1_weight_without_noise",
+      "to": "moss_personal_stage_2_the_old_banner",
+      "previous_sha256": "aa3a4c9c5cca8727f92d2d6c169d5e338c45ba612a6c0a63b01db04887d0907a",
+      "current_sha256": "35110037251ad3ffb1ed3f7640e114dfa9c681eb13098ba5ade8d41b4f459d26",
+      "premise": "Moss responds to mercenary provocation in every first-stage outcome.",
+      "branches": "The shieldmate and banner are introduced in this visit; her opinions do not require a successful earlier demonstration."
+    },
+    {
+      "arc": "moss_personal",
+      "from": "moss_personal_stage_2_the_old_banner",
+      "to": "moss_personal_stage_3_the_strength_he_keeps",
+      "previous_sha256": "35110037251ad3ffb1ed3f7640e114dfa9c681eb13098ba5ade8d41b4f459d26",
+      "current_sha256": "4a15cc0a890dfe19fa9624e3c25476df94947f58147df8ba5429014ae750da5f",
+      "premise": "The shieldmate visit and old banner are shared by all stage-two outcomes.",
+      "branches": "The protection gang is a fresh threat; the description does not require winning a particular bout or session."
+    },
+    {
+      "arc": "nuphar_personal",
+      "from": "nuphar_personal_stage_1_bells_for_every_piece",
+      "to": "nuphar_personal_stage_2_the_shape_she_chooses",
+      "previous_sha256": "bacc59a027abf841031b86087d0f0aaad3b8297850dfe6cfa8d5a5f3286b7caa",
+      "current_sha256": "b7ca00001b5658c478bb69594402a0f305a5dbe82826eee0097fbf79ae659fa2",
+      "premise": "The salt accident and reassembly occur in every first-stage branch.",
+      "branches": "A bell is provided in the second scene itself and Nuphar takes it into her chest, even when the player chose roles instead of the bell in stage one."
+    },
+    {
+      "arc": "nuphar_personal",
+      "from": "nuphar_personal_stage_2_the_shape_she_chooses",
+      "to": "nuphar_personal_stage_3_the_unbroken_whole",
+      "previous_sha256": "b7ca00001b5658c478bb69594402a0f305a5dbe82826eee0097fbf79ae659fa2",
+      "current_sha256": "a12270a59d6137e62ea75f9dd808d214a493edee7df16e388410902af3bd7240",
+      "premise": "Nuphar possesses the bell in the stage-two premise before either exhibition choice.",
+      "branches": "The alchemist and vessel are introduced now. Every ending can use the bell without assuming the exhibition succeeded."
+    }
+  ]
+}

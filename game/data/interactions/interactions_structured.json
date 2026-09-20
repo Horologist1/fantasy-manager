@@ -237,7 +237,7 @@
   {
     "id": "discipline_level4_submission_conditioning",
     "name": "Submission Conditioning",
-    "description": "At this stage, I stop correcting mistakes one by one. I correct the habit that produces them. I set routines that grind disobedience down: posture held until it is natural, commands followed until delay feels impossible, silence maintained until it is instinct. It is hard, and it is methodical. The point is not cruelty. The point is reliability. You put the servant's collar on them—they are yours.",
+    "description": "At this stage, I stop correcting mistakes one by one. I correct the habit that produces them. I set routines that grind disobedience down: posture held until it is natural, commands followed until delay feels impossible, silence maintained until it is instinct. It is hard, and it is methodical. The point is not cruelty. The point is reliability. When the collar goes on, it changes nothing they have not already accepted.",
     "interaction_level": 4,
     "cost_energy": 0,
     "cost_money": 100,
@@ -271,7 +271,7 @@
   {
     "id": "discipline_level4_bdsm_conditioning_lord",
     "name": "BDSM Conditioning",
-    "description": "I make the training explicit and controlled. Every restraint, every command, every moment of discomfort is used to shape the same outcome: obedience without bargaining. There can be intimacy in how close it is—breath, skin, the quiet certainty of my hands—but the purpose never changes. When I say stop, it stops. When I say endure, they endure. This is not play. This is conditioning. You put the servant's collar on them—they are yours.",
+    "description": "I make the training explicit and controlled. Every restraint, every command, every moment of discomfort is used to shape the same outcome: obedience without bargaining. There can be intimacy in how close it is — breath, skin, the quiet certainty of my hands — but the purpose never changes. When I say stop, it stops. When I say endure, they endure. This is not play. This is conditioning. I fasten the servant's collar myself, and they thank me for it.",
     "interaction_level": 4,
     "interaction_type": "discipline",
     "cost_energy": 0,
@@ -306,7 +306,7 @@
   {
     "id": "discipline_level4_bdsm_conditioning_lady",
     "name": "BDSM Conditioning",
-    "description": "I make the training explicit and controlled. Every restraint, every command, every moment of discomfort is used to shape the same outcome: obedience without bargaining. There can be intimacy in how close it is—breath, skin, the quiet certainty of my hands—but the purpose never changes. When I say stop, it stops. When I say endure, they endure. This is not play. This is conditioning. You put the servant's collar on them—they are yours.",
+    "description": "I make the training explicit and controlled. Every restraint, every command, every moment of discomfort is used to shape the same outcome: obedience without bargaining. There can be intimacy in how close it is — breath, skin, the quiet certainty of my hands — but the purpose never changes. When I say stop, it stops. When I say endure, they endure. This is not play. This is conditioning. I fasten the servant's collar myself, and they thank me for it.",
     "interaction_level": 4,
     "interaction_type": "discipline",
     "cost_energy": 0,
@@ -341,7 +341,7 @@
   {
     "id": "discipline_level5_finale_harem_member",
     "name": "Assign Their Place: Harem Member",
-    "description": "By now, their obedience is not an argument—it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. And some are kept only as long as they are profitable. I watch their face as they understand what this moment means. You put the servant's collar on them—they are yours. Then I decide where they belong.",
+    "description": "By now, their obedience is not an argument — it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. I watch their face while they work out which one this is. Then I fasten the collar myself and tell them they are kept for pleasure — mine, and nobody else's. My rooms, my hours, my company when I want it. They will not be sold and they will not be shared.",
     "interaction_level": 5,
     "cost_energy": 0,
     "effect": {
@@ -377,7 +377,7 @@
   {
     "id": "discipline_level5_finale_house_servant",
     "name": "Assign Their Place: House Servant",
-    "description": "By now, their obedience is not an argument—it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. And some are kept only as long as they are profitable. I watch their face as they understand what this moment means. You put the servant's collar on them—they are yours. Then I decide where they belong.",
+    "description": "By now, their obedience is not an argument — it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. I watch their face while they work out which one this is. Then I fasten the collar myself and hand them the keys. The accounts, the linens, the other servants, all of it theirs to run. It is not freedom. It is authority, and they understand the difference before I have finished speaking.",
     "interaction_level": 5,
     "cost_energy": 0,
     "effect": {

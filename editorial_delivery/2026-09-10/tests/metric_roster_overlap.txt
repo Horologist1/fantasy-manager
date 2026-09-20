@@ -1,0 +1,10 @@
+workers_sfw_unique : 12
+workers_nsfw_unique: 11  (marcados restringidos: 11)
+
+Roster visible en modo NSFW: 23
+Roster visible en modo SFW : 12
+
+Parejas mecanicamente IDENTICAS visibles a la vez en modo NSFW: 3
+   Fern / Violet   traits=['Clever', 'Elegant', 'Graceful', 'Human', 'Sexy Air']
+   Primrose / Rose   traits=['Clever', 'Elegant', 'Elf', 'Graceful', 'Sexy Air']
+   Jasmine / Iris   traits=['Charismatic', 'Confident', 'Exotic', 'Human', 'Optimist']

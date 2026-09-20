@@ -79,7 +79,7 @@ init python:
             return
         worker["template_id"] = folder
 
-    def load_workers(include_unique=False, include_encounter_only=False, for_events=False):
+    def load_workers(include_unique=False, include_encounter_only=False, for_events=False, include_procedural_templates=False):
         """
         Load all workers from multiple locations with optional filters.
         Loads from:
@@ -92,6 +92,11 @@ init python:
            Legacy files (workers_sfw.json, workers_nsfw.json) are also supported
         
         Ensures defaults are applied to every worker and avoids duplicates.
+
+        Procedural templates (the monster archetype recipes) are withheld unless
+        include_procedural_templates is set: they carry no "name", so any caller
+        that filters the catalog with worker["name"] would raise KeyError. Only
+        the monster capture path needs them.
         """
         # Preload trait cache so ensure_worker_defaults and _ensure_worker_min_traits
         # have the catalog available (avoids "Trait catalog unavailable" during load)
@@ -134,8 +139,12 @@ init python:
                         if worker.get("encounter_only", False) and not include_encounter_only and not for_events:
                             continue
                         
-                        # Procedural templates are recipes, not worker instances.
-                        if not worker.get("procedural_template", False):
+                        # Procedural templates are recipes, not worker instances:
+                        # unnamed, and only the capture path knows what to do with them.
+                        if worker.get("procedural_template", False):
+                            if not include_procedural_templates:
+                                continue
+                        else:
                             ensure_worker_defaults(worker)
                             _ensure_worker_min_traits(worker)
                             _stamp_template_id_from_json(worker)
@@ -189,8 +198,12 @@ init python:
                             if worker.get("encounter_only", False) and not include_encounter_only and not for_events:
                                 continue
                             
-                            # Procedural templates are recipes, not worker instances.
-                            if not worker.get("procedural_template", False):
+                            # Procedural templates are recipes, not worker instances:
+                            # unnamed, and only the capture path knows what to do with them.
+                            if worker.get("procedural_template", False):
+                                if not include_procedural_templates:
+                                    continue
+                            else:
                                 ensure_worker_defaults(worker)
                                 _ensure_worker_min_traits(worker)
                                 _stamp_template_id_from_json(worker)

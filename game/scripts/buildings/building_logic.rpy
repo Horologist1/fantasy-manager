@@ -308,7 +308,15 @@ init python:
         return prof_display + " - " + building_display
 
     def change_building_type(building_name):
-        building = available_buildings.get(building_name)
+        """Reset one building to an untyped slot. The caller has already charged
+        the fee, so resolve the key (saves carry both 'Building 2' and
+        'Building_2', LA BIBLIA §3) instead of silently doing nothing."""
+        resolved = _resolve_building_key(building_name) or building_name
+        building = available_buildings.get(resolved)
+        if not hasattr(building, "get"):
+            renpy.log(f"change_building_type: no building data for '{building_name}'")
+            renpy.notify(_("Building data is missing."))
+            return False
         if building:
             # Full reset to base state
             building.update({
@@ -323,11 +331,35 @@ init python:
             })
             
             # Unassign all workers
-            for worker in list(building["assigned_servants"]):
+            for worker in list(building.get("assigned_servants") or []):
                 unassign_worker(worker)
-            
+
             # Clear all servant jobs
-            building["servant_jobs"].clear()
+            jobs = building.get("servant_jobs")
+            if hasattr(jobs, "clear"):
+                jobs.clear()
+            else:
+                building["servant_jobs"] = {}
+            return True
+
+    def change_building_type_paid(building_name, cost=1000):
+        """Charge for a retype only if the retype actually happens.
+
+        The screen used to run SetVariable("money", money - 1000) next to this
+        call, so a building the key did not resolve to took the fee and changed
+        nothing. Money moves here or not at all (LA BIBLIA §19.3).
+        """
+        try:
+            cost = int(cost or 0)
+        except (TypeError, ValueError):
+            cost = 0
+        if int(getattr(store, "money", 0) or 0) < cost:
+            renpy.notify(_("Insufficient funds!"))
+            return False
+        if not change_building_type(building_name):
+            return False
+        store.money -= cost
+        return True
 
     def get_building_reputation_cap(building):
         """Cap = building level * 200 + manager level * 200 (additive, each max 1000).
@@ -471,6 +503,24 @@ init python:
             get_max_daily_workers(building, profession),
         )
 
+    def _autorest_previous_job_is_assignable(building, profession_id):
+        """A Rest reservation may only restore a real, unlocked, visible job of this building."""
+        pid = str(profession_id or "").strip().lower()
+        if not pid or pid in ("rest", "unassigned"):
+            return False
+        btype = next(
+            (bt for bt in building_types_json.get("building_types", []) if bt.get("id") == (building or {}).get("type")),
+            None,
+        )
+        profession = next(
+            (prof for prof in ((btype or {}).get("professions", []) or [])
+             if str(prof.get("id", "")).strip().lower() == pid),
+            None,
+        )
+        if not profession:
+            return False
+        return bool(profession_is_unlocked(profession) and profession_is_visible(profession, btype))
+
     def process_manager_auto_rest(restore_only=False):
         """Sistema robusto: Usa store.workers como única fuente de verdad."""
         _norm_pct = getattr(store, "normalize_auto_rest_entry_pct_for_worker", None)
@@ -553,28 +603,32 @@ init python:
                         )
 
                 elif "rest" in current_job_norm:
-                    if auto_on:
-                        energy_ok = energy >= restore_threshold_e
-                        health_ok = (restore_threshold_h is None) or (health >= restore_threshold_h)
-                        can_restore = energy_ok and health_ok
-                    else:
-                        can_restore = energy >= restore_threshold_e
+                    # Rest ends only when BOTH energy and health have recovered,
+                    # whether the worker rested automatically or the player put
+                    # them there (a manual Rest is often exactly to heal).
+                    energy_ok = energy >= restore_threshold_e
+                    health_ok = (restore_threshold_h is None) or (health >= restore_threshold_h)
+                    can_restore = energy_ok and health_ok
 
                     if can_restore:
                         prev = w.get("previous_profession") or w.get("previous_job")
+                        if prev and not _autorest_previous_job_is_assignable(building, prev):
+                            renpy.log(f"AUTOREST: {name} cannot return to {prev} (job hidden, locked or unknown); leaving Unassigned")
+                            prev = None
                         if not prev:
-                            # Old saves and the former manual-Rest path could lose
-                            # this field. Preserve the historical fallback, but
-                            # migrate it into a reservation before restoring.
-                            prev = _get_first_profession_id_for_building(building)
-                            if prev:
-                                w["previous_profession"] = prev
-                        if prev and _autorest_target_has_capacity(building, jobs, workers_here, prev):
+                            # No reservation (rested from Unassigned, or an old
+                            # save lost the field): never invent a job for the
+                            # player. Return the worker to Unassigned instead.
+                            jobs[name] = "unassigned"
+                            w.pop("previous_profession", None)
+                            w.pop("previous_job", None)
+                            renpy.log(f"AUTOREST: {name} recovered with no reserved job; now Unassigned")
+                        elif _autorest_target_has_capacity(building, jobs, workers_here, prev):
                             jobs[name] = prev
                             w.pop("previous_profession", None)
                             w.pop("previous_job", None)
                             renpy.log(f"AUTOREST: {name} vuelve a {jobs[name]} (Energía {energy}/{max_e}, Salud {health}/{max_h if max_h > 0 else 'N/A'})")
-                        elif prev:
+                        else:
                             renpy.log(f"AUTOREST: {name} sigue descansando; {prev} está completo")
 
     # clear_worker_autorest_state and set_worker_job live in script.rpy.

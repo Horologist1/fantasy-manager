@@ -2,6 +2,12 @@
 
 This guide describes how to create and modify content JSON safely using the canonical schema.
 
+For the current browser devkit and the in-game Mods installer, start with the
+[Devkit user guide](devkit_user_guide.md). It covers editable projects, character
+packs with images, whole-file JSON overrides, and installation on PC/Android.
+The file-editing recipes below describe the advanced manual PC workflow; newly
+named JSON files are not automatically valid targets for the override importer.
+
 ## 1) Source of truth
 
 - Canonical schema: `docs/json_schema_canonical.md`

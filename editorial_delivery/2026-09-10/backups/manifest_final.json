@@ -1,0 +1,46 @@
+{
+ "game/data/buildings/building_types.json": {
+  "sha256": "d66b8bb1f4da6bfaf847acaa012acb8415860e21f5ecce09124627593979a26f",
+  "bytes": 640267
+ },
+ "game/data/events/events_common.json": {
+  "sha256": "abf964b279e69fe4136082211898cb2aa25aa21fd0a6107c22b6924946b5622d",
+  "bytes": 139831
+ },
+ "game/data/events/events_building.json": {
+  "sha256": "ca061b3051c74f7daf66befba1da4309bfe7f0ecc64509b6ba09ae4d8cea9541",
+  "bytes": 227446
+ },
+ "game/data/events/events_character_arcs_nsfw.json": {
+  "sha256": "9096a9484ef4449c37064ef165cfc7f588c8e53133c54fa00ec5d982d746c14b",
+  "bytes": 97298
+ },
+ "game/data/events/recruit/event_recruit_aelis.json": {
+  "sha256": "cc3dd764934dc83546d8b1eb2b7e5883f836c0a0959c130b4548ff1f8a7666f8",
+  "bytes": 4310
+ },
+ "game/data/events/recruit/event_recruit_unique_workers.json": {
+  "sha256": "c530b07ff631d49d427a2d15659c8400dc30ce40e3a9671eb9bc42926a9faec6",
+  "bytes": 68460
+ },
+ "game/data/interactions/interactions_structured.json": {
+  "sha256": "5b0d451a7cad5ec3eb8a4f4f36c45829fd30ffcca27ca1e297dab741bc2cea9a",
+  "bytes": 55426
+ },
+ "game/scripts/main_flow.rpy": {
+  "sha256": "ac325b91e188048e66a921c9e3c0ed807d01703033b2ac095d709df6a89aeae7",
+  "bytes": 55266
+ },
+ "game/scripts/tutorial_system.rpy": {
+  "sha256": "4388c2cb569e4c82d92f51d180daf321436b12790912450022e4c0ea4adaf327",
+  "bytes": 102371
+ },
+ "game/scripts/yvara/yvara_complete.rpy": {
+  "sha256": "f77a013e20db7346429c61a4e959a874b0fc9fea17631ce14000161effa224b4",
+  "bytes": 352085
+ },
+ "tests/fixtures/event_arc_reviews.json": {
+  "sha256": "725026d1ca0bbff342cab14671dde9e3add6c0a01b98544b89648f27f8ff0c37",
+  "bytes": 27160
+ }
+}

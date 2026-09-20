@@ -101,6 +101,24 @@ init -1 python:
                     migrated.append("map_button_buildings[%s]: '%s' -> '%s'" % (btn_id, val, new_key))
                     mbb[btn_id] = new_key
 
+            # 5b. Repair saves hit by the map purchase overwriting a live slot:
+            # two locations end up pointing at the same building, so both hovers
+            # read blank and the old location can never be bought again. Keep the
+            # most recent link (it matches the building's current type) and free
+            # the older one; also drop links to buildings that no longer exist.
+            owner_of = {}
+            for btn_id in list(mbb.keys()):
+                owner_of[mbb[btn_id]] = btn_id
+            have_buildings = ab is not None and hasattr(ab, "keys") and len(ab) > 0
+            for btn_id in list(mbb.keys()):
+                val = mbb[btn_id]
+                if have_buildings and val not in ab:
+                    del mbb[btn_id]
+                    migrated.append("map_button_buildings: dropped '%s' -> missing building '%s'" % (btn_id, val))
+                elif owner_of.get(val) != btn_id:
+                    del mbb[btn_id]
+                    migrated.append("map_button_buildings: freed '%s', duplicate link to '%s'" % (btn_id, val))
+
         # Log results
         if migrated:
             renpy.log("_canonicalize_building_keys: migrated %d item(s):" % len(migrated))

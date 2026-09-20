@@ -5,9 +5,10 @@ skill list) and a pool of candidate workers, decide who fills what. Scoring is
 delegated to `skill_fn(worker, skill_name)` so the caller injects the real
 `calculate_skill_with_traits` while tests inject a simple stub.
 
-Greedy by design: professions are filled in the given order; each slot takes the
-highest-scoring remaining candidate (ties broken by case-insensitive name). A
-candidate is consumed once and never assigned twice. The caller is responsible
+The original priority order determines how many slots each profession receives.
+Within those quotas, compare the original greedy allocation with a scarcity-first
+allocation, then improve the team by bounded exchanges. This is a heuristic, not
+a guarantee of the global optimum. A candidate is never assigned twice. The caller is responsible
 for excluding Manager/Rest/locked professions and for building the candidate
 pool before calling.
 """
@@ -96,26 +97,81 @@ def plan_autofill(professions, candidates, skill_fn):
     `candidates`: iterable of worker dicts eligible for assignment/reassignment.
     `skill_fn`: callable(worker, skill_name) -> number.
     """
-    remaining = list(candidates)
+    workers = list(candidates)
+    roles = list(professions)
+    # Cache effective skill averages: a three-skill role must not count triple
+    # when comparing its contribution with a one-skill role.
+    scores = [[_score(w, p.get("skills", []), lambda worker, skill: max(0, skill_fn(worker, skill) + p.get("skill_adjustments", {}).get(skill, 0))) /
+               max(1, len(p.get("skills", []) or []))
+               if int(p.get("free_slots", 0) or 0) > 0 else 0.0
+               for p in roles] + [0.0] for w in workers]
+    bench = len(roles)
+    ranked = [sorted(range(len(workers)),
+                     key=lambda i: (-scores[i][r], _name_key(workers[i])))
+              for r in range(len(roles))]
+    original = [bench] * len(workers)
+    counts, empty = [], {}
+    for r, p in enumerate(roles):
+        free = max(0, int(p.get("free_slots", 0) or 0))
+        chosen = [i for i in ranked[r] if original[i] == bench][:free]
+        for i in chosen:
+            original[i] = r
+        counts.append(len(chosen))
+        empty[p.get("job_id")] = free - len(chosen)
+
+    def value(allocation):
+        return sum(scores[i][r] for i, r in enumerate(allocation))
+
+    # Fill the role with the largest loss if its best remaining candidate is
+    # used elsewhere. Keep original headcounts, including when understaffed.
+    scarce = [bench] * len(workers)
+    left = list(counts)
+    cursors = [0] * len(roles)
+    while any(left):
+        options = []
+        for r, count in enumerate(left):
+            if not count:
+                continue
+            ranking = ranked[r]
+            cursor = cursors[r]
+            while scarce[ranking[cursor]] != bench:
+                cursor += 1
+            cursors[r] = cursor
+            best = ranking[cursor]
+            runner = cursor + 1
+            while runner < len(ranking) and scarce[ranking[runner]] != bench:
+                runner += 1
+            fallback = scores[ranking[runner]][r] if runner < len(ranking) else 0.0
+            options.append((scores[best][r] - fallback, -r, best))
+        _gap, negative_role, worker = max(options)
+        role = -negative_role
+        scarce[worker] = role
+        left[role] -= 1
+    allocation = scarce if value(scarce) > value(original) else original
+
+    # Only accept strict improvements. Four sweeps bound the work for large
+    # rosters; equal-score assignments remain stable. Bench swaps are allowed.
+    if sum(n > 0 for n in counts) > 1:
+        for _ in range(4):
+            changed = False
+            for i in range(len(workers)):
+                a = allocation[i]
+                best_gain, partner = 1e-9, None
+                for j in range(i + 1, len(workers)):
+                    b = allocation[j]
+                    if a == b:
+                        continue
+                    gain = scores[i][b] + scores[j][a] - scores[i][a] - scores[j][b]
+                    if gain > best_gain:
+                        best_gain, partner = gain, j
+                if partner is not None:
+                    allocation[i], allocation[partner] = allocation[partner], a
+                    changed = True
+            if not changed:
+                break
+
     assignments = []
-    empty_slots = {}
-
-    for prof in professions:
-        job_id = prof.get("job_id")
-        skills = prof.get("skills", []) or []
-        free = int(prof.get("free_slots", 0) or 0)
-        filled = 0
-        while filled < free and remaining:
-            # Highest score first; ties -> alphabetically-first name. Sorting a
-            # fresh scored list each slot keeps the choice stable as the pool
-            # shrinks.
-            best = min(
-                remaining,
-                key=lambda w: (-_score(w, skills, skill_fn), _name_key(w)),
-            )
-            remaining.remove(best)
-            assignments.append({"worker": best.get("name"), "job_id": job_id})
-            filled += 1
-        empty_slots[job_id] = free - filled
-
-    return {"assignments": assignments, "empty_slots": empty_slots}
+    for r, p in enumerate(roles):
+        assignments.extend({"worker": workers[i].get("name"), "job_id": p.get("job_id")}
+                           for i in ranked[r] if allocation[i] == r)
+    return {"assignments": assignments, "empty_slots": empty}

@@ -1,0 +1,27 @@
+superficie                   palabras arcaico/1k  shall/1k
+------------------------------------------------------------
+intro / main_flow                3945        0.3       0.0
+arcos personaje NSFW             7565        0.1       0.0
+workers (bios)                   2454        0.0       0.0
+tutorial dialogos                 155        0.0       0.0
+traits                           4270        0.0       0.0
+reclutamiento                    7405        0.0       0.4
+items                            3114        0.0       0.0
+interacciones                    5096        0.0       0.0
+iglesia                          1086        0.0       0.9
+gobernador                        575        0.0       1.7
+eventos estacionales              914        0.0       0.0
+eventos especiales               3901        0.0       0.0
+eventos de tienda                2188        0.0       0.0
+eventos de edificio             16593        0.0       0.0
+eventos comunes                  8778        0.0       0.0
+edificios especiales             2033        0.0       0.0
+daily stories RELACIONES        44642        0.0       0.0
+daily stories NUCLEO            34689        0.0       0.0
+arcos personaje SFW              5983        0.0       0.0
+academia/biblioteca              1446        0.0       0.0
+Yvara (JSON)                    12968        0.0       0.0
+Yvara (.rpy)                    25121        0.0       0.0
+Lanista (JSON)                  24124        0.0       0.0
+Lanista (.rpy)                  26815        0.0       0.0
+JOURNAL / objetivos              5743        0.0       0.0

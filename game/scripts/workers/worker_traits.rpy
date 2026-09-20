@@ -332,6 +332,12 @@ init python:
 
             cleaned = next_traits
 
+        # A dropped trait must take its countdown with it, or check_trait_durations
+        # keeps decrementing an orphan entry forever.
+        durations = worker.get("trait_durations")
+        if hasattr(durations, "pop"):
+            for dropped in [t for t in normalized if t not in cleaned]:
+                durations.pop(dropped, None)
         worker["traits"] = cleaned
         return cleaned
 
@@ -384,6 +390,12 @@ init python:
             if "trait_durations" not in worker:
                 worker["trait_durations"] = {}
             worker["trait_durations"][trait_name] = duration
+        else:
+            # Granting the trait permanently must cancel any earlier countdown,
+            # otherwise the old timer still removes it later.
+            durations = worker.get("trait_durations")
+            if hasattr(durations, "pop"):
+                durations.pop(trait_name, None)
 
         # Keep dependency graph valid (e.g. remove traits that now fail requirements).
         _sanitize = getattr(store, "sanitize_worker_trait_state", None)
@@ -553,16 +565,27 @@ init python:
             renpy.log(f"Secondary attributes: primed _last for {worker.get('name', 'Unknown')} (old save, no changes)")
             return
 
+        # Record what each trait modifier REALLY changed, not its nominal value.
+        # A +20 joy trait applied at joy 90 only adds 10 (cap 100); remembering
+        # 20 made its later removal subtract 20 and leave the worker 10 points
+        # below where they started, permanently.
+        applied_total = {}
         for attr in new_total:
             old_val = last_applied.get(attr, 0)
             new_val = new_total[attr]
             delta = new_val - old_val
             if delta == 0:
+                applied_total[attr] = old_val
                 continue
             current_value = worker.get(attr, 0)
             set_attribute_with_caps(worker, attr, current_value + delta)
+            try:
+                realized = int(worker.get(attr, current_value)) - int(current_value)
+            except (TypeError, ValueError):
+                realized = delta
+            applied_total[attr] = old_val + realized
 
-        worker["_last_applied_trait_modifiers"] = dict(new_total)
+        worker["_last_applied_trait_modifiers"] = applied_total
         worker["_secondary_attributes_initialized"] = True
         renpy.log(f"Secondary attributes initialized for {worker.get('name', 'Unknown')}")
 
@@ -659,7 +682,10 @@ init python:
                 overflow_amount = abs(value)
                 current_rebelliousness = worker.get("rebelliousness", 50)
                 new_rebelliousness = current_rebelliousness + overflow_amount
-                worker["rebelliousness"] = min(100, new_rebelliousness)  # Cap at 100
+                # Same ceiling as every other rebelliousness write (trait caps,
+                # Servant Training), not a literal 100.
+                rebel_cap = get_attribute_cap(worker, "rebelliousness")
+                worker["rebelliousness"] = min(rebel_cap if rebel_cap is not None else 100, new_rebelliousness)
                 worker["libido"] = minimum if minimum is not None else 0
                 renpy.log(f"Libido overflow for {worker.get('name', 'Unknown')}: +{overflow_amount} rebelliousness, libido set to {worker['libido']}")
                 return  # Don't continue with normal processing

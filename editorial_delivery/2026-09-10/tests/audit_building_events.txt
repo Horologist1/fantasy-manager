@@ -1,0 +1,31 @@
+eventos: 72
+
+--- mas abstractos ---
+vague/1k  conc/1k  words  id
+    11.6     15.4    259  casino_whale_arrives
+     6.9     20.7    290  restaurant_unusual_ingredient
+     5.1     20.4    196  brothel_discreet_noble_party
+     4.1      4.1    243  brothel_hidden_talent
+     4.1     24.4    246  restaurant_wine_merchant_deal
+     3.3      6.6    303  guild_veteran_trainer
+     3.3     19.7    305  guild_cursed_artifact
+     3.2      9.7    310  casino_lucky_reputation
+     3.2     15.8    317  tavern_private_room_request
+     2.7     10.8    370  casino_nobles_debt
+     0.0     69.2    260  guild_cursed_sword_client
+     0.0     52.0    250  casino_card_counter_prodigy
+
+--- 7-gramas en 2+ eventos distintos, 3+ veces: 0 ---
+
+--- success y failure con la misma apertura: 1 ---
+   casino_last_hand_desperation :: choices[0]
+
+--- descripciones que abren igual: 1 ---
+   2x  'a repeat client sends word ahead'  ['brothel_body_oil_session', 'brothel_body_oil_session_m']
+eventos revisados: 72
+sin building_type: 0
+
+--- prosa dominada por el vocabulario de OTRO edificio: 3 ---
+   brothel_discreet_noble_party           tipo=brothel                      propio=2  ajeno=governor_castle:5
+   casino_nobles_debt                     tipo=casino                       propio=0  ajeno=brothel:4
+   casino_card_sharp_offer                tipo=casino                       propio=0  ajeno=brothel:3

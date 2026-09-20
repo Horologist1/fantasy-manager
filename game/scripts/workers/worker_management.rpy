@@ -15,6 +15,13 @@ init python:
                     return worker
             return None
 
+    def get_worker_sell_refund(worker):
+        """Single source for a servant's sale refund (shown in the confirm dialog, paid here)."""
+        try:
+            return max(1, int((worker or {}).get("level", 1) or 1)) * 500
+        except (TypeError, ValueError):
+            return 500
+
     def sell_worker(worker):
         """
         Sells (or fires) a worker.
@@ -25,7 +32,7 @@ init python:
             unassign_worker(worker)
             if worker in workers:
                 workers.remove(worker)
-            store.money += worker.get("level", 1) * 500
+            store.money += get_worker_sell_refund(worker)
         else:
             unassign_worker(worker)
             if worker in workers:
@@ -44,15 +51,13 @@ init python:
         """
         Add a worker's name to the dead_worker_names list if not already present.
         """
-        if worker_name not in store.dead_worker_names:
-            store.dead_worker_names.append(worker_name)
-            renpy.log(f"Added {worker_name} to dead worker list")
+        church_record_legacy_death_name(worker_name)
 
     def is_worker_dead(worker_name):
         """
         Check if a worker's name is in the dead_worker_names list.
         """
-        return worker_name in store.dead_worker_names
+        return church_worker_is_dead(worker_name)
 
     def worker_can_reform(worker):
         """True if any of the worker's traits declares reform_on_death (e.g. the Slime race)."""

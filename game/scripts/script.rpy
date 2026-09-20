@@ -29,6 +29,8 @@ init python:
     # Constants
     #############################
     SKILL_MAX = 100  # Cap for base worker skills (used by modify_base_skill, use_item, etc.)
+    MAX_BUILDING_LEVEL = 5  # Single ceiling for building level: upgrade_building, the Manage UI and the day-start clamp
+    MAX_BUILDING_SKILL_BONUS = 50  # Single ceiling for the purchasable building skill bonus
 
     #############################
     # Event Success Configuration
@@ -216,7 +218,7 @@ init python:
 
     def get_difficulty_loot_multiplier():
         """
-        Scales roll_loot effective rolls only. Daily-story bonus_items and monster_worker use raw JSON chances.
+        Scales ordinary loot and additional guild ingredients. Story bonus_items and monster_worker use raw JSON chances.
         """
         diff = getattr(persistent, "difficulty", "normal")
         if diff == "nightmare":
@@ -335,6 +337,7 @@ init python:
 
     def advance_date():
         """Advance the date by one day, updating month and year if needed."""
+        monthly_sync()  # Migrate legacy current month before advancing.
         store.current_day += 1
         if store.current_day > 28:  # Roll over to next month
             store.current_day = 1
@@ -342,6 +345,7 @@ init python:
             if store.current_month > 12:  # Roll over to next year (1-12, so >12)
                 store.current_month = 1
                 store.current_year += 1
+        monthly_sync()  # Activities below use the newly advanced date.
         # Sync persistent data
         sync_calendar()
         renpy.log(f"Date advanced to: {day_names[(store.current_day - 1) % 7]}, {store.current_day} {month_names[store.current_month - 1]} {store.current_year}")
@@ -1703,9 +1707,20 @@ init python:
         # This handles cases where there are multiple separate items with the same id
         remaining_to_remove = quantity
         items_to_remove = []
-        
-        # Work with a copy of indices to avoid modification during iteration
-        for i in range(len(inventory)):
+
+        # Unequipped stacks go first: an equipped unit is only consumed when
+        # nothing else is left (its bonuses would otherwise stay on the worker).
+        def _entry_equipped(e):
+            try:
+                v = e[2] if len(e) > 2 else False
+            except Exception:
+                return False
+            if isinstance(v, str):
+                return v.strip().lower() in ("true", "1", "yes", "y", "on")
+            return bool(v)
+        ordered_indices = [i for i in range(len(inventory)) if isinstance(inventory[i], tuple) and not _entry_equipped(inventory[i])]
+        ordered_indices += [i for i in range(len(inventory)) if isinstance(inventory[i], tuple) and _entry_equipped(inventory[i])]
+        for i in ordered_indices:
             entry = inventory[i]
             if isinstance(entry, tuple) and str(entry[0]) == str(item_id):
                 if remaining_to_remove > 0:
@@ -2125,20 +2140,9 @@ init python:
             remove_item_from_inventory(inv, item_id, 1)
             renpy.log(f"Auto-consume: {worker.get('name', '?')} used 1x {item_id} ({eff_type} below {threshold*100:.0f}%)")
 
-    def _get_first_profession_id_for_building(building):
-        """Return the first profession id for this building type (e.g. 'prostitute' for brothel), or None."""
-        if not building:
-            return None
-        btype_id = building.get("type")
-        if not btype_id:
-            return None
-        for bt in building_types_json.get("building_types", []):
-            if bt.get("id") == btype_id:
-                profs = bt.get("professions") or []
-                if profs and len(profs) > 0:
-                    return profs[0].get("id")
-                return None
-        return None
+    # _get_first_profession_id_for_building lives in building_logic.rpy (a
+    # duplicate here used to shadow it). Auto-rest no longer invents a job for
+    # a worker without a reservation, so it is kept only for compatibility.
 
     # process_manager_auto_rest: definido en building_logic.rpy (poner a descansar + restaurar).
 
@@ -2464,6 +2468,7 @@ init python:
             available_workers = [
                 w for w in store.available_workers
                 if w.get("name") not in hired_names
+                and not is_worker_dead(w)
                 and not w.get("procedural_template", False)
                 and not w.get("recruit_only", False)
                 and not w.get("unique", False)
@@ -2522,7 +2527,7 @@ init python:
             if w["name"] in hired_names:
                 filtered_out["hired"] += 1
                 continue
-            if is_worker_dead(w["name"]):
+            if is_worker_dead(w):
                 filtered_out["dead"] += 1
                 continue
             json_workers.append(w)
@@ -2635,10 +2640,10 @@ init python:
         
         renpy.log("BUY SERVANTS: refresh_buy_workers called")
         
-        # Check if it's a new day - reset counter if so
-        if store.last_map_refill_day != store.current_day:
+        # Check if it's a new day - reset counter if so (total days: month rollover counts)
+        if store.last_map_refill_day != calculate_total_days():
             store.map_worker_refill_count = 0
-            store.last_map_refill_day = store.current_day
+            store.last_map_refill_day = calculate_total_days()
             renpy.log(f"BUY SERVANTS: New day detected, reset counter")
         
         # Use store variable to ensure consistency
@@ -2693,6 +2698,8 @@ init python:
         Kar/Kara additionally share one canonical mode-aware rule across their
         sheets and events. LA BIBLIA S1: duck-typed, never isinstance."""
         recruit_name = ""
+        if is_worker_dead(obj):
+            return False
         if hasattr(obj, "get"):
             recruit_name = str(obj.get("worker_name") or obj.get("name") or "")
         if recruit_name in ("Kar", "Kara"):
@@ -2807,7 +2814,7 @@ init python:
             # For random workers in events, we want to include encounter_only workers
             available_workers = [w for w in all_workers
                                 if w["name"] not in recruited_names
-                                and not is_worker_dead(w["name"])
+                                and not is_worker_dead(w)
                                 and not w.get("monster", False)
                                 and not w.get("recruitment_locked", False)
                                 and not w.get("event_recruit_only", False)
@@ -2818,7 +2825,7 @@ init python:
         elif worker_name:
             worker = next((w for w in all_workers if w["name"] == worker_name), None)
             # Monsters should only be available in capture events, not in normal recruitment
-            if worker and worker["name"] not in recruited_names and not is_worker_dead(worker["name"]) and not worker.get("monster", False) and not worker.get("recruitment_locked", False) and worker_recruit_state_ok(worker):
+            if worker and worker["name"] not in recruited_names and not is_worker_dead(worker) and not worker.get("monster", False) and not worker.get("recruitment_locked", False) and worker_recruit_state_ok(worker):
                 return (True, worker)
             return (False, None)
         return (False, None)
@@ -2905,7 +2912,7 @@ init python:
         Returns the worker if successful, None if not.
         """
         filters = dict(filters or {"monster": True})
-        catalog = load_workers(include_unique=True, include_encounter_only=True)
+        catalog = load_workers(include_unique=True, include_encounter_only=True, include_procedural_templates=True)
         roster = list(getattr(store, "workers", []) or [])
         hired_names = {
             worker.get("name") for worker in roster
@@ -2917,6 +2924,7 @@ init python:
             and worker.get("unique", False)
             and not worker.get("procedural_template", False)
             and worker.get("name") not in hired_names
+            and not is_worker_dead(worker)
             and all(worker.get(key) == value for key, value in filters.items())
         ]
         procedural_templates = [
@@ -2971,7 +2979,7 @@ init python:
         filters = dict(filters or {"monster": True})
         if template is None:
             templates = [
-                worker for worker in load_workers(include_unique=True, include_encounter_only=True)
+                worker for worker in load_workers(include_unique=True, include_encounter_only=True, include_procedural_templates=True)
                 if worker.get("procedural_template", False)
                 and worker.get("monster", False)
                 and not worker.get("unique", False)
@@ -3264,6 +3272,9 @@ init python:
 
 
     def recruit_worker(worker):
+        if is_worker_dead(worker):
+            renpy.notify("This worker has died. Visit the church for resurrection.")
+            return False
         if worker and worker.get("monster", False):
             renpy.log(f"Blocked normal recruitment for monster worker: {worker.get('name', 'Unknown')}")
             renpy.notify("Monster workers can only join through the Monster Taming profession.")
@@ -3325,10 +3336,36 @@ init python:
             renpy.jump("tavern_screen")
         return True
 
+    def resolve_name_pool(names_list, gender=None):
+        """Return a usable procedural name pool, never a placeholder name.
+
+        A template can carry names_list: null (the web devkit and the WM
+        converter both emit it for hand-named characters) or a key this build's
+        names.json does not define (older or modded content). dict.get only
+        substitutes its default for a MISSING key, so those templates used to
+        fall through to a one-entry placeholder pool and put a servant called
+        "Unknown" (then "Unknown 1", ...) on the roster.
+        """
+        key = str(names_list or "").strip()
+        pool = name_lists.get(key) if key else None
+        if pool:
+            return list(pool)
+        gender_key = "male" if str(gender or "").strip().lower() == "male" else "female"
+        for fallback in (f"western_{gender_key}", f"fantasy_{gender_key}", "western_female"):
+            pool = name_lists.get(fallback)
+            if pool:
+                if key:
+                    renpy.log(f"NAMES: names_list '{key}' is not defined; using '{fallback}' instead")
+                return list(pool)
+        return [f"Recruit {random.randint(100, 999)}"]
+
     def generate_unique_name(name_pool, existing_names):
         """
         Generate a unique name from a pool, trying all unique names before adding numbers.
         """
+        # A grave belongs to an individual. Do not recycle a deceased name
+        # into a procedural recruit while that individual could be raised.
+        existing_names = set(existing_names) | set(church_dead_names())
         # Shuffle the name pool to randomize selection
         available_names = list(name_pool)
         random.shuffle(available_names)
@@ -3415,8 +3452,7 @@ init python:
         })
         
         # Use template's name list for appropriate names
-        names_list = template.get("names_list", "western_female")
-        name_pool = name_lists.get(names_list, ["Unknown"])
+        name_pool = resolve_name_pool(template.get("names_list"), template.get("gender"))
         
         final_name = generate_unique_name(name_pool, existing_names)
         
@@ -3489,7 +3525,7 @@ init python:
         name_category = random.choice(["western", "eastern", "fantasy"])
         
         # Get name from appropriate pool
-        name_pool = name_lists.get(f"{name_category}_{gender}", ["Unknown"])
+        name_pool = resolve_name_pool(f"{name_category}_{gender}", gender)
         
         # Generate unique name using improved algorithm
         existing_names = {w["name"] for w in store.workers}
@@ -3593,6 +3629,9 @@ init python:
             renpy.jump("tavern_screen")
 
     def buy_worker(worker):
+        if is_worker_dead(worker):
+            renpy.notify("This worker has died. Visit the church for resurrection.")
+            return False
         if store.money >= worker["cost"]:
             store.money -= worker["cost"]
             # Do not make a copy; use the original worker object.
@@ -3682,6 +3721,10 @@ init python:
 
     def add_worker_to_building(worker, building_name):
         """Assign worker to a building, ensuring no duplicates by name."""
+        # Saves carry both "Building 2" and "Building_2" (LA BIBLIA 3/19.5); the
+        # old building below was already resolved, the target was not, so the
+        # alternate spelling dropped the assignment without a word.
+        building_name = _resolve_building_key(building_name) or building_name
         if not building_name or building_name not in available_buildings:
             return
         if not building_accepts_worker_assignment(building_name):
@@ -3827,8 +3870,9 @@ init python:
 
     def set_worker_job(worker, building_name, job_id):
         """Set worker's job in the building. When setting to Rest, store current job as previous_job for auto-restore."""
+        building_name = _resolve_building_key(building_name) or building_name
         if not worker or not building_name or building_name not in available_buildings:
-            return
+            return False
         if not building_accepts_worker_assignment(building_name):
             renpy.notify("Complete the Arena opening trial before assigning fighters.")
             return False
@@ -3837,7 +3881,7 @@ init python:
             building["servant_jobs"] = {}
         worker_name = worker.get("name") if hasattr(worker, "get") else None
         if not worker_name:
-            return
+            return False
         canonical = next((w for w in store.workers if hasattr(w, "get") and w.get("name") == worker_name), worker)
         current_job = (building.get("servant_jobs") or {}).get(worker_name)
         job_id_str = str(job_id).strip().lower() if job_id else ""
@@ -3852,6 +3896,7 @@ init python:
             verify_assignment_integrity("set_worker_job")
         except Exception:
             pass
+        return True
 
     def clear_worker_autorest_state(worker):
         """Clear a stale reservation after leaving Rest or changing assignment."""
@@ -4376,6 +4421,8 @@ init python:
         """Fully remove worker from their building assignment."""
         remove_worker_from_building(worker)
         building_name = worker.get("assigned_building")
+        if building_name and building_name != "Unassigned":
+            building_name = _resolve_building_key(building_name) or building_name
         if building_name and building_name in available_buildings:
             building = available_buildings[building_name]
             _remove_worker_from_building_by_name(building, worker.get("name"))
@@ -4389,8 +4436,11 @@ init python:
             pass
 
     def remove_worker_from_building(worker):
-        if worker.get("assigned_building", "Unassigned") != "Unassigned" and worker["assigned_building"] in available_buildings:
-            building = available_buildings[worker["assigned_building"]]
+        _assigned_key = worker.get("assigned_building", "Unassigned")
+        if _assigned_key and _assigned_key != "Unassigned":
+            _assigned_key = _resolve_building_key(_assigned_key) or _assigned_key
+        if _assigned_key and _assigned_key != "Unassigned" and _assigned_key in available_buildings:
+            building = available_buildings[_assigned_key]
             _remove_worker_from_building_by_name(building, worker.get("name"))
             # Also clear job mapping from the old building.
             # Leaving this stale entry lets sync logic re-attach workers to the old building.
@@ -4442,6 +4492,15 @@ init python:
         return resolve_depleted_worker_health([worker for worker in workers if not worker_is_in_franchise(worker)])
 
     def add_new_building(name, price, reputation=0):
+        """Create one empty building slot. Never overwrites an occupied slot:
+        a caller that picks an already-used key (the map purchase used to name
+        the new building "Building len(owned_buildings)+1", which lands on a
+        live slot as soon as one has been sold or a gap exists) would otherwise
+        wipe that building's type, level, reputation and staff in place."""
+        existing = available_buildings.get(name)
+        if existing is not None and hasattr(existing, "get") and existing.get("owned", True):
+            renpy.log(f"add_new_building: refused to overwrite occupied slot '{name}'")
+            return False
         available_buildings[name] = {
             "price": price,
             "base_level": 1,
@@ -4457,6 +4516,7 @@ init python:
             "event_limit": 0  # Event limit: 0 = unlimited (with reputation bonus), 1 = limit to 1, 2 = limit to 2
         }
         calculate_reputation(name)  # Set initial value
+        return True
 
     def register_new_building(name):
         """Ensure new building is registered in owned_buildings and custom_names."""
@@ -4510,6 +4570,50 @@ init python:
             if not _generic_slot_occupied(n):
                 return ("Building %d" % n, n * 10000)
         return None
+
+    def purchase_map_building(map_button_id, building_type_id, price):
+        """Buy the building on one map location, as a new slot of its own.
+
+        The slot is allocated here with next_generic_building_slot() (lowest
+        free slot) instead of being guessed from len(owned_buildings): that
+        guess collides with a live building whenever the numbering has a gap,
+        which is what turned an existing brothel into the freshly bought tavern.
+        """
+        try:
+            price = int(price or 0)
+        except (TypeError, ValueError):
+            price = 0
+        if int(getattr(store, "money", 0) or 0) < price:
+            renpy.notify(_("Not enough money."))
+            return False
+        slot = next_generic_building_slot()
+        if not slot:
+            renpy.notify(_("No more buildings available to purchase."))
+            return False
+        name = slot[0]
+        if not add_new_building(name, price):
+            renpy.notify(_("That building slot is already taken."))
+            return False
+        store.money -= price
+        building = available_buildings.get(name)
+        if hasattr(building, "get"):
+            building["type"] = building_type_id
+        register_new_building(name)
+        if not hasattr(store, "map_button_buildings") or store.map_button_buildings is None:
+            store.map_button_buildings = {}
+        store.map_button_buildings[map_button_id] = name
+        store.buildings_owned = len(store.owned_buildings)
+        rebuild = getattr(store, "rebuild_assigned_servants", None)
+        if callable(rebuild):
+            rebuild()
+        btype = next(
+            (bt for bt in building_types_json.get("building_types", [])
+             if bt.get("id") == building_type_id),
+            None,
+        )
+        renpy.notify(f"Purchased {name} as {btype['name'] if btype else building_type_id}!")
+        renpy.show_screen("Manager", building_name=name)
+        return True
 
     def sell_building(building_name):
         """
@@ -4706,6 +4810,7 @@ init python:
             renpy.log("manager_sell_current_building_then_exit: %s" % ex)
 
     store.next_generic_building_slot = next_generic_building_slot
+    store.purchase_map_building = purchase_map_building
     store.sell_building = sell_building
     store.sellable_generic_building_names = sellable_generic_building_names
     store.building_sale_preview = building_sale_preview
@@ -4715,6 +4820,9 @@ init python:
     def add_academy_building():
         """Create the Academy in available_buildings (not in owned_buildings). Call when player pays tuition."""
         if "Academy" in available_buildings:
+            # Owning the Academy is enrolment; never let a lost flag make the
+            # player pay tuition again for nothing.
+            store.academy_enrolled = True
             return
         available_buildings["Academy"] = {
             "price": 0,
@@ -4742,11 +4850,47 @@ init python:
         store.alchemy_unlocked = True
         renpy.log("Alchemy pass purchased; laboratory unlocked.")
 
+    def pay_academy_tuition(cost=15000):
+        """Enrol in the Academy, charging only when the enrolment is new.
+
+        add_academy_building() already refuses to recreate an existing Academy
+        ("never let a lost flag make the player pay tuition again"), but the
+        screen charged outside that guard, so the refusal cost $15,000.
+        """
+        try:
+            cost = int(cost or 0)
+        except (TypeError, ValueError):
+            cost = 0
+        if "Academy" in available_buildings:
+            store.academy_enrolled = True
+            renpy.notify(_("You are already enrolled in the Academy."))
+            return False
+        if int(getattr(store, "money", 0) or 0) < cost:
+            renpy.notify(_("Insufficient funds!"))
+            return False
+        add_academy_building()
+        store.money -= cost
+        return True
+
+    def academy_library_quest_is_completed():
+        """True once the sealed manual was opened.
+
+        The stage number is the primary record, but 0.9.6/0.9.6.1 sidecars never
+        captured it, so every load reset it to 0 while event_flags kept the
+        completion flag. Trust either source so those saves are not locked out.
+        """
+        if int(getattr(store, "academy_lib_stage", 0) or 0) >= 3:
+            return True
+        flags = getattr(store, "event_flags", None)
+        if not hasattr(flags, "get"):
+            return False
+        return bool(flags.get("academy_lib_manual_found") or flags.get("academy_lib_decrypt_done"))
+
     def masters_elixir_is_available():
         """Master's Elixir gate: lab pass paid, library quest finished, award not yet granted."""
         if not getattr(store, "alchemy_unlocked", False):
             return False
-        if int(getattr(store, "academy_lib_stage", 0) or 0) < 3:
+        if not academy_library_quest_is_completed():
             return False
         return not getattr(store, "elixir_award_granted", False)
 
@@ -4930,9 +5074,9 @@ init python:
         if roll <= effective + 25:
             return "mediocre"
         return "failure"
-    def apply_alchemy_result(tier, outcome, inventory):
+    def apply_alchemy_result(tier, outcome, inventory, recipe_id="surprise"):
         """Apply alchemy result: give potions to manager_inventory by tier and outcome. Modifies inventory in place.
-        Quality/premium critical = Troll Blood (+1 Health, +1 Health Regen). Success = trait potions (SFW-only in SFW games)."""
+        Quality/premium success preserves the chosen family; a critical adds one bonus Troll Blood per batch."""
         import random
         if outcome == "failure":
             return []
@@ -4955,30 +5099,23 @@ init python:
                 add_item_to_inventory(inventory, "energy_potion", quantity=2)
                 given.extend(["energy_potion"] * 2)
         elif tier in ("quality", "premium"):
-            if outcome == "critical_success":
-                add_item_to_inventory(inventory, "potion_troll_blood")
-                given.append("potion_troll_blood")
-            elif outcome == "success":
-                success_potions = [
-                    "potion_strong", "potion_tough", "potion_transformed", "potion_magical",
-                    "potion_robust", "potion_energetic", "potion_agile",
-                    "potion_great_figure", "potion_long_legs", "potion_exotic", "potion_beautiful"
-                ]
-                if getattr(store.persistent, "nsfw_enabled", False):
-                    success_potions.extend([
-                        "potion_large_breasts", "potion_small_breasts",
-                        "potion_firm_ass", "potion_soft_ass", "potion_large_hips", "potion_deluxe_derriere",
-                        "potion_large_penis", "potion_tight", "potion_sensitive",
-                        "potion_high_libido", "potion_nympho", "potion_satyr", "potion_cum_addict"
-                    ])
+            quantity = 2 if tier == "premium" else 1
+            if outcome in ("success", "critical_success"):
+                from fm_alchemy.recipes import potion_pool
+                success_potions = potion_pool(recipe_id, bool(getattr(store.persistent, "nsfw_enabled", False)))
                 choice = random.choice(success_potions)
-                add_item_to_inventory(inventory, choice)
-                given.append(choice)
+                add_item_to_inventory(inventory, choice, quantity=quantity)
+                given.extend([choice] * quantity)
+                if outcome == "critical_success":
+                    # Keep the craft-only potion obtainable without replacing
+                    # the family the player spent ingredients to select.
+                    add_item_to_inventory(inventory, "potion_troll_blood", quantity=1)
+                    given.append("potion_troll_blood")
             else:  # mediocre
                 standard = ["health_potion", "energy_potion", "stamina_elixir"]
                 choice = random.choice(standard)
-                add_item_to_inventory(inventory, choice)
-                given.append(choice)
+                add_item_to_inventory(inventory, choice, quantity=quantity)
+                given.extend([choice] * quantity)
         return given
 
     def academy_try_haggle_and_continue():
@@ -5243,14 +5380,35 @@ init python:
         """
         # Get the original base value (stored when building_types_json was first loaded)
         original_max = profession.get("original_max_daily_workers", profession.get("max_daily_workers", 1))
+        try:
+            original_max = int(original_max)
+        except (TypeError, ValueError):
+            original_max = 1
+        # Single-seat roles (Manager, Chamberlain) never grow with the building
+        # level: one per building, as their descriptions promise.
+        if original_max <= 1:
+            return original_max
         # Calculate based on current building level
         base_level = building.get("base_level", 1)
         return original_max + (base_level - 1)
 
+    def get_building_upgrade_cost(current_level):
+        """Single source for the upgrade price shown by the UI and charged here."""
+        try:
+            level = max(1, int(current_level))
+        except (TypeError, ValueError):
+            level = 1
+        return level ** 2 * 1000
+
     def upgrade_building(building_name):
         building = available_buildings[building_name]
-        upgrade_cost = building["base_level"] ** 2 * 1000
-        
+        # The day-start clamp trims any level above the ceiling; paying for a
+        # level that is taken away next morning must be impossible here too.
+        if int(building.get("base_level", 1) or 1) >= MAX_BUILDING_LEVEL:
+            renpy.notify("This building is already at its maximum level.")
+            return
+        upgrade_cost = get_building_upgrade_cost(building["base_level"])
+
         if store.money < upgrade_cost:
             renpy.notify("Not enough money to upgrade!")
             return
@@ -5887,7 +6045,7 @@ init python:
             # Existing code to add worker
             all_workers = load_workers(include_unique=True, include_encounter_only=True)
             target_worker = next((w for w in all_workers if w["name"] == worker_name), None)
-            if target_worker and target_worker["name"] not in {w["name"] for w in store.workers}:
+            if target_worker and not is_worker_dead(target_worker) and target_worker["name"] not in {w["name"] for w in store.workers}:
                 to_append = target_worker.copy()
                 ensure_worker_defaults(to_append)
                 to_append["assigned_building"] = "Unassigned"  # Do not inherit template assignment
@@ -6002,7 +6160,8 @@ init python:
                 current_joy = int(target_worker.get("joy", 0) or 0)
             except (TypeError, ValueError):
                 current_joy = 0
-            target_worker["joy"] = max(0, min(100, current_joy + joy_delta))
+            # Trait caps and minimums apply here like everywhere else.
+            set_attribute_with_caps(target_worker, "joy", current_joy + joy_delta)
             affected_count += 1
 
         if not affected_count:
@@ -6140,7 +6299,16 @@ init python:
                     renpy.log(f"Building level {building_level} reputation multiplier: {reputation_multiplier:.1f}x ({effect_dict['reputation']} -> {reputation_change})")
                 
                 old_reputation = int(target_building.get("reputation", 0) or 0)
-                new_reputation = max(0, min(old_reputation + reputation_change, 1000))
+                # Same ceiling as daily stories (building level + manager level):
+                # a hard 1000 here turned "+5 reputation" into "-75" for any
+                # building already above 1000, and reported it as a loss.
+                try:
+                    reputation_cap = int(get_building_reputation_cap(target_building))
+                except Exception:
+                    reputation_cap = 1000
+                # A loss is never turned into a bigger loss by the ceiling.
+                ceiling = reputation_cap if reputation_change > 0 else max(reputation_cap, old_reputation)
+                new_reputation = max(0, min(old_reputation + reputation_change, ceiling))
                 target_building["reputation"] = new_reputation
                 reputation_change = new_reputation - old_reputation
                 
@@ -6332,6 +6500,7 @@ init python:
                     available_workers_list = [
                         w for w in all_workers
                         if w["name"] not in hired_worker_names
+                        and not is_worker_dead(w)
                         and not w.get("monster", False)
                         and not w.get("recruitment_locked", False)
                         and not w.get("procedural_template", False)
@@ -6365,7 +6534,9 @@ init python:
                         worker_name = _wn_list[0]  # Use first name for recruitment
                         all_workers = load_workers(include_unique=True, include_encounter_only=True)
                         target_worker = next((w for w in all_workers if w["name"] in _wn_list), None)
-                        if target_worker and target_worker.get("monster", False):
+                        if target_worker and is_worker_dead(target_worker):
+                            renpy.notify("This worker has died. Visit the church for resurrection.")
+                        elif target_worker and target_worker.get("monster", False):
                             renpy.log(f"Blocked custom recruit_worker path for monster: {target_worker.get('name', 'Unknown')}")
                             renpy.notify("Monster workers can only join through the Monster Taming profession.")
                         elif target_worker and target_worker["name"] not in {w["name"] for w in store.workers}:
@@ -6708,6 +6879,10 @@ init python:
             # Quest items are obtained via events/shops, never random loot (mirrors shop exclusion)
             if item.get("type") == "quest_item":
                 continue
+            # Ingredients have an additional guild roll; preserve ordinary
+            # loot odds instead of letting materials displace existing rewards.
+            if item.get("guild_ingredient", False):
+                continue
             filtered_items.append(item)
         
         if not filtered_items:
@@ -6745,6 +6920,22 @@ init python:
         renpy.log(f"roll_loot: Loot rolled using random.choices: {loot_ids} (requested_rolls={requested_rolls}, effective_rolls={effective_rolls}, loot_mult={loot_mult})")
         return loot_ids
 
+    def _is_dev_only_item(item):
+        """Test/debug fixtures shipped in data/items (same rule roll_loot uses)."""
+        item_id = str((item or {}).get("id", "")).lower()
+        return "test" in item_id or "debug" in item_id
+
+    def dev_items_enabled():
+        """True only on a developer machine.
+
+        config.developer is True in shipped builds too, so it cannot gate this.
+        Enable with FM_DEV_ITEMS=1 in the environment, or from the console:
+        `persistent.fm_dev_items = True`.
+        """
+        if os.environ.get("FM_DEV_ITEMS"):
+            return True
+        return bool(getattr(persistent, "fm_dev_items", False))
+
     def item_fits_shop_price_band(item, shop_mode):
         """Return whether an item belongs to a shop's non-overlapping price tier."""
         price_bands = {
@@ -6764,6 +6955,12 @@ init python:
     def is_item_available_in_shop(item, shop_mode):
         """Deterministic per-day availability check for shop listings."""
         if not item_content_is_visible(item):
+            return False
+        # Dev-only items must never reach a player's shelf. roll_loot already
+        # filtered them; shops relied on a "Toggle test items" button that was
+        # visible to everyone, so test_money_50k (+$50,000 for $1),
+        # test_manager_level and the shop unlocks were one click away.
+        if _is_dev_only_item(item) and not dev_items_enabled():
             return False
         if not item_fits_shop_price_band(item, shop_mode):
             return False
@@ -7350,10 +7547,11 @@ init python:
             return "Off"
         return "%d%%" % int(getattr(persistent, "default_auto_rest_entry_pct", 35))
 
-    def apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True):
+    def apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True, setting=None):
         """
         Apply persistent automation defaults to all current workers.
-        This intentionally overrides per-worker automation settings.
+        A global control overrides only its own per-worker policy. Omitted
+        setting retains the explicit legacy apply-all operation.
         """
         _normalize_persistent_worker_automation_defaults()
         workers = list(getattr(store, "workers", []) or [])
@@ -7366,25 +7564,29 @@ init python:
         for worker in workers:
             if not hasattr(worker, "get"):
                 continue
-            worker["auto_supply_potions"] = auto_supply_on
-            worker["auto_supply_potion_count"] = auto_supply_count
-            worker["auto_equip"] = auto_equip_on
-            worker["auto_rest"] = auto_rest_on
-            worker["auto_rest_entry_pct"] = auto_rest_pct
+            if setting in (None, "supply"):
+                worker["auto_supply_potions"] = auto_supply_on
+                worker["auto_supply_potion_count"] = auto_supply_count
+            if setting in (None, "equip"):
+                worker["auto_equip"] = auto_equip_on
+            if setting in (None, "rest"):
+                worker["auto_rest"] = auto_rest_on
+                worker["auto_rest_entry_pct"] = auto_rest_pct
 
-            if auto_supply_on:
+            if auto_supply_on and setting in (None, "supply"):
                 try:
                     run_worker_auto_supply_potions(worker)
                 except Exception as e:
                     renpy.log("apply defaults auto-supply error: " + str(e))
-            if auto_equip_on:
+            if auto_equip_on and setting in (None, "equip"):
                 try:
                     run_worker_auto_equip(worker)
                 except Exception as e:
                     renpy.log("apply defaults auto-equip error: " + str(e))
 
         renpy.log(
-            "AUTO_DEFAULTS_APPLY_ALL: workers=%d supply=%s x%d equip=%s rest=%s %d%%" % (
+            "AUTO_DEFAULTS_APPLY: setting=%s workers=%d supply=%s x%d equip=%s rest=%s %d%%" % (
+                setting or "all",
                 len(workers),
                 str(auto_supply_on),
                 int(auto_supply_count),
@@ -7416,13 +7618,13 @@ init python:
         nxt_on, nxt_count = cycle[(idx + 1) % len(cycle)]
         persistent.default_auto_supply_potions = bool(nxt_on)
         persistent.default_auto_supply_potion_count = int(nxt_count)
-        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True)
+        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True, setting="supply")
 
     def toggle_persistent_default_auto_equip():
         """Toggle global Auto Equip default and apply to all workers."""
         _normalize_persistent_worker_automation_defaults()
         persistent.default_auto_equip = not bool(getattr(persistent, "default_auto_equip", False))
-        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True)
+        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True, setting="equip")
 
     def cycle_persistent_default_auto_rest_compact():
         """Cycle global Auto-rest default: Off -> 15% -> 25% -> 35% -> 45% -> Off."""
@@ -7446,7 +7648,7 @@ init python:
         persistent.default_auto_rest = bool(nxt_on)
         if nxt_pct is not None:
             persistent.default_auto_rest_entry_pct = int(nxt_pct)
-        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True)
+        apply_persistent_worker_automation_defaults_to_all_workers(restart_ui=True, setting="rest")
 
     
     
@@ -7813,6 +8015,8 @@ define sfw_skills = [
 ]
 
 define SKILL_MAX = 100
+define MAX_BUILDING_LEVEL = 5
+define MAX_BUILDING_SKILL_BONUS = 50
 
 init python:
     def is_skill_visible(skill_name):
@@ -7954,8 +8158,8 @@ define FIRST_BUILDING_BASE_DAILY_DISCOUNT = 0  # Daily base maintenance discount
 default alchemy_unlocked = False  # True after player pays alchemist pass at Academy laboratory
 define ALCHEMY_PASS_COST = 6000  # One-time cost to unlock the Academy laboratory
 define ALCHEMY_COST_BASIC = 350  # Batch of basic potions (health/energy)
-define ALCHEMY_COST_QUALITY = 800  # Quality tier: trait or greater potions
-define ALCHEMY_COST_PREMIUM = 1400  # Premium tier: extraordinary potions on critical
+define ALCHEMY_COST_QUALITY = 400  # Lab fee; one of each mixture ingredient is required separately
+define ALCHEMY_COST_PREMIUM = 1000  # Lab fee; two potions from the same pair of ingredients
 define ALCHEMY_COST_ELIXIR = 2500  # Master's Elixir attempt (one-time award; retryable on failure)
 define ALCHEMY_ELIXIR_EXTRA_DIFFICULTY = 10  # Added on top of the round modifiers; harder than premium
 default elixir_award_granted = False  # True once the Master's Elixir granted its +1 manager level (one-time). Saved.
@@ -7979,7 +8183,19 @@ init python:
         state = getattr(store, "arena_trial_completed", None)
         if state is not None:
             return bool(state)
-        return bool(getattr(store, "arena_unlocked", False) and getattr(store, "last_arena_worker_name", None))
+        # Legacy saves (no explicit flag): any evidence of Arena operations
+        # having run proves the opening trial was fought.
+        if not getattr(store, "arena_unlocked", False):
+            return False
+        if getattr(store, "last_arena_worker_name", None):
+            return True
+        if getattr(store, "arena_champion_award_granted", False):
+            return True
+        if getattr(store, "last_special_match_total_days", None) is not None:
+            return True
+        arena = (getattr(store, "available_buildings", {}) or {}).get("Arena")
+        jobs = (arena.get("servant_jobs", {}) or {}) if hasattr(arena, "get") else {}
+        return any(str(job or "").strip().lower() not in ("", "rest", "unassigned") for job in jobs.values())
 
     def arena_operations_are_unlocked():
         """Return whether ordinary Arena assignments and matches may run."""
@@ -8199,6 +8415,7 @@ label academy_laboratory_dialogue_post_gift:
     hide yvara_bg_dim
     $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     scene expression _lab_bg
+    $ maybe_show_intro_popup("alchemy_laboratory")
     if not alchemy_unlocked:
         lab_director "The Academy's laboratory is open to those who pay the alchemist's pass. Here we work in batches—simple draughts in quantity—or risk coin and skill for rarer brews."
         lab_director "One payment of [ALCHEMY_PASS_COST] coins unlocks the laboratory for good. After that, you choose how much to invest each session. What will you do?"
@@ -8245,30 +8462,32 @@ label academy_laboratory_craft_menu:
     menu:
         lab_director "What will you do?"
         "Batch basic ([_cost_basic] coins)." if money >= _cost_basic:
+            $ set_save_blocked_context("alchemy_craft")
             $ _alchemy_investment_tier = "basic"
-            $ money -= _cost_basic
-            jump academy_alchemy_choose_worker
+            $ _alchemy_paid_cost = _cost_basic
+            $ money -= _alchemy_paid_cost
+            jump academy_alchemy_choose_recipe
         "Batch basic ([_cost_basic] coins)." if money < _cost_basic:
             lab_director "You need at least [_cost_basic] coins for a basic batch."
             jump academy_laboratory_craft_menu
-        "Quality ([_cost_quality] coins)." if money >= _cost_quality:
-            $ _alchemy_investment_tier = "quality"
-            $ money -= _cost_quality
-            jump academy_alchemy_choose_worker
-        "Quality ([_cost_quality] coins)." if money < _cost_quality:
+        "Quality ([_cost_quality] coins + ingredients, one potion)." if money >= _cost_quality:
+            $ alchemy_start_material_session("quality")
+            jump academy_alchemy_choose_recipe
+        "Quality ([_cost_quality] coins + ingredients, one potion)." if money < _cost_quality:
             lab_director "You need at least [_cost_quality] coins for a quality run."
             jump academy_laboratory_craft_menu
-        "Premium ([_cost_premium] coins)." if money >= _cost_premium:
-            $ _alchemy_investment_tier = "premium"
-            $ money -= _cost_premium
-            jump academy_alchemy_choose_worker
-        "Premium ([_cost_premium] coins)." if money < _cost_premium:
+        "Premium ([_cost_premium] coins + ingredients, two potions)." if money >= _cost_premium:
+            $ alchemy_start_material_session("premium")
+            jump academy_alchemy_choose_recipe
+        "Premium ([_cost_premium] coins + ingredients, two potions)." if money < _cost_premium:
             lab_director "You need at least [_cost_premium] coins for a premium run."
             jump academy_laboratory_craft_menu
         "Brew the Master's Elixir ([_cost_elixir] coins)." if _elixir_avail and money >= _cost_elixir:
+            $ set_save_blocked_context("alchemy_craft")
             $ _alchemy_investment_tier = "elixir"
-            $ money -= _cost_elixir
-            jump academy_alchemy_choose_worker
+            $ _alchemy_paid_cost = _cost_elixir
+            $ money -= _alchemy_paid_cost
+            jump academy_alchemy_choose_recipe
         "Brew the Master's Elixir ([_cost_elixir] coins)." if _elixir_avail and money < _cost_elixir:
             lab_director "The Master's Elixir asks [_cost_elixir] coins, and the cauldron does not haggle."
             jump academy_laboratory_craft_menu
@@ -8289,18 +8508,11 @@ label academy_laboratory_cooldown:
 
 label academy_alchemy_choose_worker:
     $ set_save_blocked_context("alchemy_craft")
+    $ _alchemy_chosen_worker = None
     $ renpy.call_screen("choose_worker_for_alchemy_craft")
     $ _worker = _alchemy_chosen_worker
     if _worker is None or not hasattr(_worker, "get") or not _worker.get("name"):
-        python:
-            _disc = getattr(store, "yvara_academy_discount_active", False)
-            _refund_base = {
-                "basic": ALCHEMY_COST_BASIC,
-                "quality": ALCHEMY_COST_QUALITY,
-                "premium": ALCHEMY_COST_PREMIUM,
-                "elixir": ALCHEMY_COST_ELIXIR,
-            }.get(_alchemy_investment_tier, ALCHEMY_COST_PREMIUM)
-            money += _refund_base // 2 if _disc else _refund_base
+        $ alchemy_refund_session()
         $ renpy.show_screen("map_screen")
         $ renpy.show_screen("academy_menu")
         jump tavern_screen
@@ -8312,7 +8524,10 @@ label academy_alchemy_craft_run:
     hide yvara_bg_dim
     $ _worker = _alchemy_chosen_worker
     $ _alchemy_chosen_worker = None
+    if not alchemy_commit_materials(_worker):
+        jump academy_alchemy_choose_recipe
     $ _tier = _alchemy_investment_tier
+    $ _alchemy_paid_cost = 0
     $ last_alchemy_worker_name = _worker["name"]
     $ _lab_bg = "images/buildings/academy.png" if renpy.loadable("images/buildings/academy.png") else ("images/events/academy_director.png" if renpy.loadable("images/events/academy_director.png") else "images/event_bg.png")
     scene expression _lab_bg
@@ -8371,7 +8586,7 @@ label academy_alchemy_craft_run:
         $ renpy.show_screen("academy_menu")
         jump tavern_screen
     $ _outcome = run_alchemy_craft_roll(_worker, craft_modifier)
-    $ _given = apply_alchemy_result(_tier, _outcome, manager_inventory)
+    $ _given = apply_alchemy_result(_tier, _outcome, manager_inventory, _alchemy_recipe_id)
     $ last_laboratory_use_total_days = calculate_total_days()
     if _outcome == "failure":
         $ renpy.say(narrator, "The mixture turns. The batch is lost.")
@@ -8388,7 +8603,7 @@ label academy_alchemy_craft_run:
                 _parts.append((str(_count) + " " + _name) if _count > 1 else _name)
             _craft_result_text = _worker["name"] + "'s steady hand yields " + ", ".join(_parts) + "."
             _craft_notify_text = "Craft successful! Obtained: " + ", ".join(_parts)
-        $ renpy.say(narrator, _craft_result_text)
+        $ renpy.say(narrator, "[_craft_result_text!q]")
         $ renpy.notify(_craft_notify_text)
     $ renpy.show_screen("map_screen")
     $ renpy.show_screen("academy_menu")
@@ -8456,8 +8671,12 @@ label arena_run_trial_and_result(worker_name=None):
         jump arena_open_menu
     else:
         $ _worker["health"] = 0
-        $ renpy.say(narrator, _worker["name"] + " fought with everything they had, but the sands are unforgiving. When the dust settled, they did not rise again.")
-        arena_lanista_npc "The sand keeps its dead. Your permit still stands; bring me someone who can leave it alive."
+        $ _arena_deaths = resolve_depleted_worker_health([_worker], "Arena opening trial")
+        if _arena_deaths:
+            $ renpy.say(narrator, _worker["name"] + " fought with everything they had, but the sands are unforgiving. When the dust settled, they did not rise again.")
+            arena_lanista_npc "Send word to the church. Your permit still stands; the trial remains unconquered."
+        else:
+            $ renpy.say(narrator, _worker["name"] + " loses their shape upon the sand, then slowly reforms. They survive, but the trial is lost.")
         $ renpy.say(narrator, "The Arena remains yours, but its opening trial is unconquered. You may send another combatant when ready.")
         jump arena_open_menu
 
@@ -8557,6 +8776,7 @@ label arena_special_match_run(worker_name=None):
     # Combat roll
     $ _won = run_arena_special_match_combat_roll(_worker, special_match_diff)
     if _won:
+        $ _worker["health"] = max(1, _worker.get("health", 0))
         $ victories = min(5, _worker.get("special_match_victories", 0) + 1)  # Cap at 5; same money bonus if they fight again with 5
         $ _worker["special_match_victories"] = victories
         $ _prize = 5000 + 5000 * victories
@@ -8588,19 +8808,24 @@ label arena_special_match_run(worker_name=None):
             $ renpy.notify("Special match won! +" + str(_prize) + " coins. Victories: " + str(victories) + "/5.")
     else:
         if "Arena Champion" in _worker.get("traits", []):
+            $ _worker["health"] = max(1, _worker.get("health", 0))
             $ remove_trait(_worker, "Arena Champion")
+            # The crown must be earned again: five fresh victories, not one.
+            $ _worker["special_match_victories"] = 0
             $ renpy.say(narrator, _worker["name"] + " falls before the " + _style["name"] + ". The crown is lost; the sands spare their life.")
             arena_lanista_npc "A crown is held only as long as the fighter can defend it. Take them below alive."
             $ renpy.notify("Arena Champion lost. " + _worker["name"] + " survived but lost the trait.")
         else:
             $ _death = renpy.random.random() < 0.5
             if _death:
-                $ renpy.say(narrator, _worker["name"] + " fought hard but the " + _style["name"] + " was merciless. They did not rise again.")
-                arena_lanista_npc "The sand has taken them. Mark the name and clear the ring."
-                $ renpy.say(narrator, "The sands have claimed another.")
-                $ store.workers[:] = [w for w in store.workers if w.get("name") != _worker["name"]]
-                $ rebuild_assigned_servants()
-                $ renpy.notify(_worker["name"] + " has died in the special match.")
+                $ _worker["health"] = 0
+                $ _arena_deaths = resolve_depleted_worker_health([_worker], "Arena special match")
+                if _arena_deaths:
+                    $ renpy.say(narrator, _worker["name"] + " fought hard but the " + _style["name"] + " was merciless. They did not rise again.")
+                    arena_lanista_npc "The sand has taken them. Mark the name and send word to the church."
+                    $ renpy.say(narrator, "The sands have claimed another.")
+                else:
+                    $ renpy.say(narrator, _worker["name"] + " collapses into a puddle, then slowly reforms. The match is lost, but they survive.")
             else:
                 $ add_trait_with_duration(_worker, "Scarred", 0)
                 $ _worker["health"] = 1
@@ -8613,4 +8838,3 @@ label arena_special_match_run(worker_name=None):
     $ renpy.show_screen("map_screen")
     $ renpy.show_screen("arena_menu")
     jump tavern_screen
-

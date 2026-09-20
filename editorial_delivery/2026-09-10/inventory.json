@@ -1,0 +1,2422 @@
+[
+ {
+  "id": "adventurer_guild_monster_study",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/adventurer/adventurer_guild_monster_study",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "adventurer_libido20_reckless_hunt",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/adventurer/adventurer_libido20_reckless_hunt",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "adventurer_story1",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/adventurer/adventurer_story1",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "adventurer_story2",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/adventurer/adventurer_story2",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "adventurer_story3",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/adventurer/adventurer_story3",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "ambassador_cultural_exchange",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/ambassador/ambassador_cultural_exchange",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "ambassador_diplomatic_alliance",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/ambassador/ambassador_diplomatic_alliance",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "ambassador_libido20_charged_diplomacy",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/ambassador/ambassador_libido20_charged_diplomacy",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "ambassador_negotiate_trade",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/ambassador/ambassador_negotiate_trade",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "ambassador_resolve_conflict",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/ambassador/ambassador_resolve_conflict",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "bartender_bar_fight_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/bartender/bartender_bar_fight_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "bartender_last_call_nsfw_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/bartender/bartender_last_call_nsfw_tavern",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "bartender_last_call_nsfw_tavern_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/bartender/bartender_last_call_nsfw_tavern_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "bartender_libido20_uninhibited_shift",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/bartender/bartender_libido20_uninhibited_shift",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "bartender_mysterious_stranger_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/bartender/bartender_mysterious_stranger_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "bartender_story1",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/bartender/bartender_story1",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "boss_hunting_approach_recon",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/boss_hunting/boss_hunting_approach_recon",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "boss_hunting_libido20_death_wish_charge",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/boss_hunting/boss_hunting_libido20_death_wish_charge",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "boss_hunting_story1",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/boss_hunting/boss_hunting_story1",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "casino_server_libido20_flushed_rounds",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/casino_server/casino_server_libido20_flushed_rounds",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "chamberlain_manage_castle",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/chamberlain/chamberlain_manage_castle",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "cook_fire_crisis_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/cook/cook_fire_crisis_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "cook_libido20_kitchen_steam",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/cook/cook_libido20_kitchen_steam",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "cook_story1_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/cook/cook_story1_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "cook_story2_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/cook/cook_story2_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_diplomatic_soiree",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_diplomatic_soiree",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_libido20_burning_audience",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_libido20_burning_audience",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "courtesan_noble_entertainment",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_noble_entertainment",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_seduction_nsfw_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_seduction_nsfw_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_seduction_nsfw_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_seduction_nsfw_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_seduction_nsfw_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_seduction_nsfw_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_seduction_nsfw_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_seduction_nsfw_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_vip_private_chamber_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_vip_private_chamber_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_vip_private_chamber_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_vip_private_chamber_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_vip_private_chamber_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_vip_private_chamber_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "courtesan_vip_private_chamber_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/courtesan/courtesan_vip_private_chamber_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "dealer_card_counter_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_card_counter_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "dealer_high_roller_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_high_roller_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "dealer_libido20_heated_table",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_libido20_heated_table",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "dealer_story1",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_story1",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "dealer_winners_reward_nsfw_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_winners_reward_nsfw_casino",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "dealer_winners_reward_nsfw_casino_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_winners_reward_nsfw_casino_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "dealer_winners_reward_nsfw_casino_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/dealer/dealer_winners_reward_nsfw_casino_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "ea_prostitute_anal_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_anal_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_anal_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_anal_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_anal_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_anal_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_anal_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_anal_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_bdsm_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_bdsm_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_bdsm_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_bdsm_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_bdsm_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_bdsm_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_bdsm_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_bdsm_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_extreme_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_extreme_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_extreme_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_extreme_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_group_clients_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_group_clients_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_group_clients_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_group_clients_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_group_clients_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_group_clients_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_group_clients_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_group_clients_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_hand_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_hand_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_hand_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_hand_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_hand_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_hand_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_hand_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_hand_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_hetero_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_hetero_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_hetero_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_hetero_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_homo_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_homo_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_homo_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_homo_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_oral_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_oral_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_oral_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_oral_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_oral_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_oral_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_oral_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_oral_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vanilla_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vanilla_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vanilla_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vanilla_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vanilla_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vanilla_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vanilla_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vanilla_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vip_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vip_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vip_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vip_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vip_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vip_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "ea_prostitute_vip_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/ea_prostitute_vip_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "entertainer_heckler_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_heckler_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "entertainer_libido20_provocative_show",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_libido20_provocative_show",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "entertainer_private_performance_nsfw_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_private_performance_nsfw_tavern",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "entertainer_private_performance_nsfw_tavern_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_private_performance_nsfw_tavern_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "entertainer_private_performance_nsfw_tavern_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_private_performance_nsfw_tavern_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "entertainer_story1_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_story1_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "entertainer_story2_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/entertainer/entertainer_story2_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "expert_libido20_lost_control_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/expert_libido20_lost_control_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "expert_libido20_lost_control_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/expert_attendant/expert_libido20_lost_control_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "guard_libido20_tense_patrol",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/guard/guard_libido20_tense_patrol",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guard_story1_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/guard/guard_story1_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guard_story2_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/guard/guard_story2_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guard_theft_attempt_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/guard/guard_theft_attempt_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guards_capture_criminal",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/guards/guards_capture_criminal",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guards_capture_intruder",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/guards/guards_capture_intruder",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guards_libido20_aggressive_patrol",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/guards/guards_libido20_aggressive_patrol",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "guards_patrol_secure",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/guards/guards_patrol_secure",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "manager_adventurers_guild",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/manager/manager_adventurers_guild",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_brothel",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/manager/manager_brothel",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "manager_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/manager/manager_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_health_inspection_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/manager/manager_health_inspection_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_libido20_heated_ledgers",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/manager/manager_libido20_heated_ledgers",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_libido20_heavy_handed_night",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/manager/manager_libido20_heavy_handed_night",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_libido20_rash_contracts",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/manager/manager_libido20_rash_contracts",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_libido20_restless_oversight",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/manager/manager_libido20_restless_oversight",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_libido20_risky_bets",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/manager/manager_libido20_risky_bets",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/manager/manager_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_rowdy_night_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/manager/manager_rowdy_night_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_tavern",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/manager/manager_tavern",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "manager_whale_negotiation_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/manager/manager_whale_negotiation_casino",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "masseuse_charm_companionship_after_rub",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_charm_companionship_after_rub",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "masseuse_hand_oil_edge_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_hand_oil_edge_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_hand_oil_edge_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_hand_oil_edge_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_hand_oil_edge_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_hand_oil_edge_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_hand_oil_edge_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_hand_oil_edge_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_libido20_wandering_hands",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_libido20_wandering_hands",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "masseuse_oral_steam_and_mouth_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_oral_steam_and_mouth_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_oral_steam_and_mouth_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_oral_steam_and_mouth_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_oral_steam_and_mouth_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_oral_steam_and_mouth_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "masseuse_oral_steam_and_mouth_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/masseuse/masseuse_oral_steam_and_mouth_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "monster_taming_capture_rig_prep",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/monster_taming/monster_taming_capture_rig_prep",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "monster_taming_combat",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/monster_taming/monster_taming_combat",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "monster_taming_libido20_wild_bond",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/monster_taming/monster_taming_libido20_wild_bond",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "monster_taming_seduction_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/monster_taming/monster_taming_seduction_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "monster_taming_seduction_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/monster_taming/monster_taming_seduction_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "pleasure_servant_libido20_overwhelming_desire_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/pleasure_servant/pleasure_servant_libido20_overwhelming_desire_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "pleasure_servant_libido20_overwhelming_desire_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/pleasure_servant/pleasure_servant_libido20_overwhelming_desire_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "pleasure_servant_noble_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/pleasure_servant/pleasure_servant_noble_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "pleasure_servant_noble_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/pleasure_servant/pleasure_servant_noble_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "pleasure_servant_noble_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/pleasure_servant/pleasure_servant_noble_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "pleasure_servant_noble_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/pleasure_servant/pleasure_servant_noble_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prisoner_obedience_training",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/prisoner/prisoner_obedience_training",
+  "nsfw_gated": true,
+  "outcomes": [
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "prostitute_anal_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_anal_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_anal_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_anal_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_anal_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_anal_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_anal_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_anal_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_hand_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_hand_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_hand_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_hand_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_hand_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_hand_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_hand_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_hand_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_hetero_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_hetero_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_hetero_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_hetero_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_homo_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_homo_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_homo_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_homo_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_libido20_too_eager_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_libido20_too_eager_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_libido20_too_eager_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_libido20_too_eager_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_oral_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_oral_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_oral_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_oral_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_oral_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_oral_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_oral_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_oral_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_vanilla_client_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_vanilla_client_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_vanilla_client_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_vanilla_client_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_vanilla_client_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_vanilla_client_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "prostitute_vanilla_client_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/prostitute/prostitute_vanilla_client_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "servant_aristocratic_service",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/servant/servant_aristocratic_service",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "servant_libido20_flustered_attendance",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/governor_castle/servant/servant_libido20_flustered_attendance",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "server_champagne_room_nsfw_casino",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/casino_server/server_champagne_room_nsfw_casino",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "server_champagne_room_nsfw_casino_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/casino_server/server_champagne_room_nsfw_casino_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_clumsy_paperwork_casino_server",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/casino_server/service_clumsy_paperwork_casino_server",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_clumsy_paperwork_recovery",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/service/service_clumsy_paperwork_recovery",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_clumsy_paperwork_tavern_server",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/tavern_server/service_clumsy_paperwork_tavern_server",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_generous_tipper_nsfw_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/service/service_generous_tipper_nsfw_restaurant",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_generous_tipper_nsfw_restaurant_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/service/service_generous_tipper_nsfw_restaurant_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_libido20_distracted_shift",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/service/service_libido20_distracted_shift",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_libido20_flirty_floor",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/service/service_libido20_flirty_floor",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_noble_dinner_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/service/service_noble_dinner_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "service_story1",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/service/service_story1",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "service_story1_casino_server",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/casino/casino_server/service_story1_casino_server",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_story1_restaurant",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/restaurant/service/service_story1_restaurant",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "service_story1_tavern_server",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/tavern_server/service_story1_tavern_server",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "stripper_lapdance_escalation_female",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_lapdance_escalation_female",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "stripper_lapdance_escalation_gay",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_lapdance_escalation_gay",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "stripper_lapdance_escalation_lesbian",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_lapdance_escalation_lesbian",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "stripper_lapdance_escalation_male",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_lapdance_escalation_male",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "stripper_libido20_too_real",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_libido20_too_real",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "stripper_private_dance",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_private_dance",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "stripper_regular_client",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_regular_client",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "stripper_vip_client",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/brothel/stripper/stripper_vip_client",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "tavern_server_libido20_spilled_ale",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/tavern/tavern_server/tavern_server_libido20_spilled_ale",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "treasure_hunter_libido20_fever_dig",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/treasure_hunter/treasure_hunter_libido20_fever_dig",
+  "nsfw_gated": true,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "treasure_hunter_story1",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/treasure_hunter/treasure_hunter_story1",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "treasure_hunter_story2",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/treasure_hunter/treasure_hunter_story2",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "treasure_hunter_story3",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/treasure_hunter/treasure_hunter_story3",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "treasure_hunter_trap_kit_tuneup",
+  "source_file": "game/data/buildings/building_types.json",
+  "locator": "building_types/adventurers_guild/treasure_hunter/treasure_hunter_trap_kit_tuneup",
+  "nsfw_gated": false,
+  "outcomes": [
+   "critical_success",
+   "failure",
+   "mediocre",
+   "success"
+  ],
+  "disposition": "kept"
+ },
+ {
+  "id": "arena_challenge_visitor",
+  "source_file": "game/data/events/events_common.json",
+  "locator": "events_common.json :: event id \"arena_challenge_visitor\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "bandit_shakedown",
+  "source_file": "game/data/events/events_common.json",
+  "locator": "events_common.json :: event id \"bandit_shakedown\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "collapsing_scaffold",
+  "source_file": "game/data/events/events_common.json",
+  "locator": "events_common.json :: event id \"collapsing_scaffold\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "escaped_beast_loose",
+  "source_file": "game/data/events/events_common.json",
+  "locator": "events_common.json :: event id \"escaped_beast_loose\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "guild_ancient_map_discovery",
+  "source_file": "game/data/events/events_building.json",
+  "locator": "events_building.json :: event id \"guild_ancient_map_discovery\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "rooftop_chase_thief",
+  "source_file": "game/data/events/events_common.json",
+  "locator": "events_common.json :: event id \"rooftop_chase_thief\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ },
+ {
+  "id": "underground_fight_ring",
+  "source_file": "game/data/events/events_common.json",
+  "locator": "events_common.json :: event id \"underground_fight_ring\" :: /choices/0/message_failure",
+  "nsfw_gated": false,
+  "outcomes": [
+   "message_failure"
+  ],
+  "disposition": "edited"
+ }
+]

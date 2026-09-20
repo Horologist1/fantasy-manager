@@ -246,7 +246,6 @@ init python:
             
             # Shop and building screens
             "shop_selection": Hide("shop_selection"),
-            "buy_buildings": Hide("buy_buildings"),
             "buy_servants_table": Hide("buy_servants_table"),
             
             # Worker details (conditional close based on context)
@@ -307,7 +306,7 @@ init python:
             "worker_building_filter_menu", "report_details", "worker_details", "manager_inventory",
             
             # Shop and building screens (HIGH PRIORITY - user wants these to close easily)
-            "shop_selection", "buy_buildings", "buy_servants_table",
+            "shop_selection", "buy_servants_table",
             
             # Sub-screens
             "job_selection", "building_selection",

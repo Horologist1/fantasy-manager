@@ -3864,7 +3864,7 @@
         "option": "Organize an expedition to the dungeon. (Requires Combat; Potential: Money, Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] leads a small party into the forgotten dungeon and returns three days later dusty, bruised, and grinning. The haul is real—old gold, enchanted trinkets, and a story that will draw adventurers to your guild for months. The map was worth more than anyone guessed ({actual_money}, {actual_reputation} reputation, +5 Joy).",
-        "message_failure": "[acting_worker] leads the expedition but the dungeon's defenses are worse than the map suggested. The party retreats after a bad encounter on the second level—no treasure secured, supplies wasted, and one worker nursing wounds that will take time to heal. The map goes back in the archive, this time deliberately ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] leads the expedition but the dungeon's defenses are worse than the map suggested. The party retreats after a bad encounter on the second level—no treasure secured, supplies wasted, and one worker nursing wounds that will take time to heal. The map goes back in the archive, this time deliberately ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 1500,
@@ -4051,7 +4051,7 @@
         "option": "Send someone who reads people. (Requires Group; Potential: Money, Reputation)",
         "condition": "Group",
         "threshold": 50,
-        "message_success": "[acting_worker] reads the couple within seconds—who's bold, who's shy, who needs eye contact and who needs permission. The night starts slow: wine, conversation, a hand on a knee that nobody pulls away from. When clothes come off, [acting_worker] moves between them like the third voice in a chord—never pushing, never absent. The wife cries afterward, not from sadness. They leave holding hands and whispering. The booking is one for the house ledger.",
+        "message_success": "[acting_worker] reads the couple within seconds—who's bold, who's shy, who needs eye contact and who needs permission. The night starts slow: wine, conversation, a hand on a knee that nobody pulls away from. Once the clothes are off [acting_worker] takes the wife first, with her husband's hand still in hers and a mouth between her thighs until she stops being careful about the noise. Only then is he drawn in—guided where to put his hands, then held inside her while [acting_worker] keeps her coming. Neither of them spends a moment watching from the outside. The wife cries afterward, not from sadness. They leave holding hands and whispering. The booking is one for the house ledger.",
         "message_failure": "[acting_worker] tries, but the dynamic never clicks. The husband freezes up, the wife overcompensates, and [acting_worker] can't find the rhythm that turns three strangers into something that works. The couple pays and leaves quietly. They won't be back.",
         "effect": {
           "success": {

@@ -13,10 +13,23 @@ local.properties
 .claude/
 .cursor/
 .hermes/
-/docs/
+/docs/*
+!/docs/AUDIT_event_verification_2026-09-09.md
+!/docs/JSON_OVERRIDES_2026-09-10.md
+!/docs/ANDROID_MOD_IMPORT_2026-09-10.md
+!/docs/AUDIT_general_2026-09-10.md
+!/docs/RENPY_DEVELOPMENT_NOTES.md
+!/docs/REVIEW_devkit_architecture_2026-09-10.md
+!/docs/DEVKIT_upgrade_2026-09-10.md
 
 # Developer maintenance scripts — offline JSON tooling, not needed at runtime
-/tools/
+/tools/*
+!/tools/qa_choice_layout.py
+!/tools/qa_choice_layout.rpy
+!/tools/qa_json_overrides.py
+!/tools/qa_json_overrides.rpy
+!/tools/build_android_mods.py
+!/tools/android/
 
 # Desktop devkit (compiled editor exe) — distributed separately
 devkit/
@@ -49,6 +62,7 @@ ui_probe/
 
 
 # Verification artifacts and runtime state (not source)
+/backups/
 ui_probe/
 game/saves/
 game/tl/None/*.rpymc

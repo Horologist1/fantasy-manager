@@ -7,6 +7,87 @@ init -2 python:
     SNAPSHOT_KEEP_LIMIT_PER_VERSION = 5
     SNAPSHOT_LOCK_STALE_SECONDS = 600
 
+    # Optional additions to v3: older snapshots remain loadable. Keep capture,
+    # restoration, native-save recovery and transactional rollback in sync.
+    _SNAPSHOT_PROGRESS_DEFAULTS = {
+        "monthly_condition_state": "",
+        "academy_lib_stage": 0,
+        "academy_lib_last_visit_total_days": None,
+        "academy_lib_seal_attempts_today": 0,
+        "character_event_last_day": None,
+        "academy_director_intro_done": False,
+        "vengeance_path_chosen": False,
+        "vengeance_path": "",
+        "monster_instance_counter": 0,
+        "tutorial_skipped": False,
+        # Deaths recorded before the cemetery (event_flags["church_life_cycle"])
+        # existed lived only in this native list, which the clean-store load
+        # reset to [] so dead workers came back as recruits. Captured and, for
+        # older snapshots, recovered from the native save like the fields above.
+        "dead_worker_names": [],
+    }
+
+    def _snapshot_progress_value_valid(field, value):
+        default = _SNAPSHOT_PROGRESS_DEFAULTS[field]
+        if field == "dead_worker_names":
+            # Duck-typed: inside Ren'Py code `list` is RevertableList, so a plain
+            # list parsed from the JSON sidecar would fail isinstance(value, list).
+            if isinstance(value, str) or hasattr(value, "get") or not hasattr(value, "__iter__"):
+                return False
+            return all(isinstance(name, str) for name in value)
+        if field == "monthly_condition_state":
+            from fm_monthly.conditions import valid_state
+            return valid_state(value)
+        if field == "vengeance_path":
+            return isinstance(value, str) and value in ("", "Blade", "Shadow")
+        if isinstance(default, bool):
+            return isinstance(value, bool)
+        if default is None and value is None:
+            return True
+        return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+    def _snapshot_with_legacy_progression(snap, native_progression):
+        """Recover only missing, whitelisted primitives from a trusted native save."""
+        result = _cp.deepcopy(snap)
+        for field in _SNAPSHOT_PROGRESS_DEFAULTS:
+            if field not in result and field in native_progression:
+                value = native_progression[field]
+                if _snapshot_progress_value_valid(field, value):
+                    result[field] = value
+        return result
+
+    def _restore_snapshot_progression(snap):
+        """Restore optional progress without inheriting another slot's state."""
+        values = dict(_SNAPSHOT_PROGRESS_DEFAULTS)
+        for field in values:
+            if field in snap:
+                if not _snapshot_progress_value_valid(field, snap[field]):
+                    raise ValueError("Invalid saved progression: " + field)
+                values[field] = snap[field]
+        flags = getattr(store, "event_flags", None)
+        if not hasattr(flags, "get"):
+            flags = {}
+        quest_done = any(flags.get(key) for key in ("academy_lib_decrypt_done", "academy_lib_manual_found"))
+        if "academy_lib_stage" not in snap:
+            if quest_done:
+                values["academy_lib_stage"] = 3
+                flags["academy_lib_migrated_v2"] = True
+            elif flags.get("academy_lib_ready_decrypt"):
+                values["academy_lib_stage"] = 2
+                flags["academy_lib_migrated_v2"] = True
+            elif any(flags.get(key) for key in ("academy_lib_started", "academy_lib_hint_a", "academy_lib_hint_b", "academy_lib_hint_c")):
+                values["academy_lib_stage"] = 1
+                flags["academy_lib_migrated_v2"] = True
+        # 0.9.6/0.9.6.1 sidecars never captured the stage: every canonical load
+        # reset it to 0 while event_flags kept the completion flag, and saves
+        # made afterwards persisted that 0. A found manual always means the
+        # quest finished (stage 3), which also gates the Master's Elixir.
+        if quest_done:
+            values["academy_lib_stage"] = max(int(values["academy_lib_stage"] or 0), 3)
+        for field, value in values.items():
+            # deepcopy: list defaults must never be shared with the defaults table
+            setattr(store, field, _cp.deepcopy(value))
+
     def _snap_log(message):
         if DEBUG_SNAPSHOT:
             renpy.log(message)
@@ -149,7 +230,7 @@ init -2 python:
             backup_path = _get_backup_file_path(slot_name)
             tmp_path = filepath + ".tmp"
             
-            for path in (filepath, backup_path, tmp_path):
+            for path in (filepath, backup_path, tmp_path, _previous_snapshot_backup_temp_path(slot_name)):
                 if path and os.path.exists(path):
                     try:
                         os.remove(path)
@@ -188,7 +269,7 @@ init -2 python:
         except Exception:
             pass
         filepath = _get_snapshot_file_path(slot_name)
-        if os.path.exists(filepath) or os.path.exists(_get_backup_file_path(slot_name)):
+        if any(os.path.exists(path) for path in (filepath, _get_backup_file_path(slot_name), _previous_snapshot_backup_temp_path(slot_name))):
             return True
         return bool(_future_snapshot_keep_paths(filepath))
 
@@ -698,6 +779,8 @@ init -2 python:
                 "elixir_intro_done": _safe_getattr(store, "elixir_intro_done", False),
                 "arena_champion_award_granted": _safe_getattr(store, "arena_champion_award_granted", False)
             }
+            for field, default in _SNAPSHOT_PROGRESS_DEFAULTS.items():
+                snapshot_result[field] = _cp.deepcopy(getattr(store, field, default))
             if DEBUG_SNAPSHOT:
                 renpy.log(f"SNAPSHOT: DEBUG - _build_snapshot returning type: {type(snapshot_result)}, is dict: {hasattr(snapshot_result, 'get')}, keys: {len(snapshot_result.keys()) if hasattr(snapshot_result, 'get') else 'N/A'}")
             return snapshot_result
@@ -969,6 +1052,7 @@ init -2 python:
                     if isinstance(key, str) and not key.startswith("_")
                 }
                 transaction_fields.update(_CANONICAL_SNAPSHOT_REQUIRED_KEYS)
+                transaction_fields.update(_SNAPSHOT_PROGRESS_DEFAULTS)
                 snapshot_state = {}
                 for field_name in transaction_fields:
                     if hasattr(store, field_name):
@@ -1386,6 +1470,8 @@ init -2 python:
                     failed_fields.append(field_name)
                     renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")
             
+            _restore_snapshot_progression(snap)
+
             # Manager character sheet
             for field_name, default_val in [
                 ("management_skills", {"business_acumen": 0, "whore_mastery": 0, "combat_instruction": 0, "servant_training": 0, "gang_leader": 0}),
@@ -1571,6 +1657,24 @@ init -2 python:
                 except Exception as e:
                     failed_fields.append(field_name)
                     renpy.log(f"SNAPSHOT: WARNING - Could not apply {field_name}: {e}")
+
+            # Older saves unlocked the erotic Arena formats through
+            # lanista_card_tier or before any gate existed; derive today's
+            # lanista_*_unlocked flags from that state (buildings and workers
+            # are already applied above).
+            try:
+                if callable(getattr(store, "lanista_reconcile_program_unlocks", None)):
+                    store.lanista_reconcile_program_unlocks()
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: WARNING - lanista program unlock reconciliation failed: {e}")
+            # Academy enrolment, Arena permit, Yvara finance, Lanista identity
+            # and tutorial objective flags: derive from the state that proves
+            # them (see legacy_progress.rpy).
+            try:
+                if callable(getattr(store, "reconcile_legacy_progress_on_load", None)):
+                    store.reconcile_legacy_progress_on_load()
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: WARNING - legacy progress reconciliation failed: {e}")
 
             # Apply arc list fields separately (must stay lists; deepcopy so the
             # store never aliases the transient snapshot dict)
@@ -2234,7 +2338,9 @@ init -2 python:
                     (name.startswith("tmp") and name.endswith(".json.tmp"))
                     or (
                         name.startswith("snapshot_")
-                        and name.endswith((".json.tmp", ".restore.tmp", ".fallback.tmp", ".bak.tmp", ".keep.tmp", ".previous.tmp"))
+                        # .previous.tmp is a durable recovery generation, not
+                        # garbage: it may be the only pair left after a crash.
+                        and name.endswith((".json.tmp", ".restore.tmp", ".fallback.tmp", ".bak.tmp", ".keep.tmp"))
                     )
                 )
                 if not is_ours:
@@ -2450,6 +2556,12 @@ init -2 python:
             if "money" not in snap or "workers" not in snap:
                 renpy.log(f"SNAPSHOT: CRITICAL ERROR - Snapshot missing critical fields for slot {slot_name}! Keys: {list(snap.keys())[:10]}")
                 return False  # Don't save invalid snapshot
+
+            # Validate the same contract the Load action requires, before
+            # replacing a usable slot with a snapshot that cannot be loaded.
+            if not _snapshot_is_complete_for_canonical_load(snap):
+                renpy.log(f"SNAPSHOT: ERROR - Refusing to write an unloadable snapshot for {slot_name}")
+                return False
             
             filepath = _get_snapshot_file_path(slot_name)
 
@@ -2721,17 +2833,23 @@ init -2 python:
         return _get_backup_file_path(slot_name) + ".previous.tmp"
 
     def _preserve_previous_snapshot_backup(slot_name, had_snapshot):
-        """Keep the previous sidecar pair until the native save commits."""
+        """Preserve the matching generation BEFORE either sidecar is replaced."""
         previous_path = _previous_snapshot_backup_temp_path(slot_name)
-        if os.path.exists(previous_path):
-            os.remove(previous_path)
         if not had_snapshot:
             return None
-        backup_path = _get_backup_file_path(slot_name)
-        if not os.path.exists(backup_path):
-            raise IOError(f"Previous snapshot backup is missing for {slot_name}")
-        shutil.copy2(backup_path, previous_path)
-        return previous_path
+        native_id = _read_native_snapshot_transaction_id(slot_name)
+        for source_name, source_path in _snapshot_load_candidates(slot_name):
+            snap = _read_snapshot_file(source_path) if os.path.exists(source_path) else None
+            if not _canonical_snapshot_matches_identity(snap, slot_name, native_id, _get_slot_guid(slot_name)):
+                continue
+            if os.path.normcase(source_path) != os.path.normcase(previous_path):
+                temp_path = previous_path + ".keep.tmp"
+                shutil.copy2(source_path, temp_path)
+                with open(temp_path, "r+b") as handle:
+                    os.fsync(handle.fileno())
+                os.replace(temp_path, previous_path)
+            return previous_path
+        raise IOError("Previous save has no matching snapshot; use another slot")
 
     def _cleanup_previous_snapshot_backup(previous_path):
         if previous_path and os.path.exists(previous_path):
@@ -2750,6 +2868,11 @@ init -2 python:
         except Exception as marker_error:
             renpy.log(f"SNAPSHOT: WARNING - could not inspect native save marker for {slot_name}: {marker_error}")
             return (None, None)
+
+    def _native_save_marker_advanced(before, after):
+        # A changed mtime alone does not prove Ren'Py wrote a new SaveRecord.
+        return (after[0] is not None and after[1] is not None
+                and after != before and after[1] != before[1])
 
     def _restore_snapshot_after_failed_native_save(slot_name, had_snapshot, previous_path=None):
         """Restore the previous sidecar pair when the native save does not commit."""
@@ -2794,6 +2917,12 @@ init -2 python:
             if not slot_name:
                 page = getattr(persistent, "_file_page", 1)
                 slot_name = f"{page}-{self.slot_num}"
+            if self.confirm and renpy.can_load(slot_name):
+                # Ask before touching either file. FileSave's own delayed
+                # confirmation would resume an unwrapped native-only save.
+                return renpy.store.Confirm(
+                    _("Overwrite this save?"), SnapshotFileSave(self.slot_num, confirm=False), None
+                )()
             lock_token = _acquire_snapshot_slot_lock(slot_name)
             if not lock_token:
                 renpy.log(f"SNAPSHOT: WARNING - save blocked because slot {slot_name} is busy")
@@ -2805,18 +2934,19 @@ init -2 python:
                 _release_snapshot_slot_lock(lock_token)
 
         def _run_locked(self, slot_name):
-            had_snapshot = os.path.exists(_get_snapshot_file_path(slot_name))
+            had_snapshot = renpy.can_load(slot_name) or any(
+                os.path.exists(path) for source, path in _snapshot_load_candidates(slot_name)
+            )
             previous_transaction_id = getattr(store, "snapshot_transaction_id", None)
             previous_backup_path = None
+            safe_to_cleanup = False
             native_marker_before = _native_save_commit_marker(slot_name)
             renpy.session["_fm_snapshot_pre_save_may_have_touched_main"] = False
             try:
+                previous_backup_path = _preserve_previous_snapshot_backup(slot_name, had_snapshot)
                 if snapshot_pre_save_slot(self.slot_num):
                     # Prepare the paired recovery sidecar before committing the
                     # native save. If this fails, the native slot is untouched.
-                    previous_backup_path = _preserve_previous_snapshot_backup(
-                        slot_name, had_snapshot
-                    )
                     _create_backup(_get_snapshot_file_path(slot_name), slot_name)
                     # snapshot_pre_save_slot stamps snapshot_transaction_id during
                     # this Action call. Seal that mutation into Ren'Py roots before
@@ -2825,19 +2955,15 @@ init -2 python:
                     # delta of the current rollback record; that is only safe while
                     # config.rollback_enabled is False.
                     renpy.python.store_dicts["store"].get_changes(True, None)
-                    result = renpy.store.FileSave(self.slot_num, confirm=self.confirm)()
+                    result = renpy.store.FileSave(self.slot_num, confirm=False)()
                     native_marker_after = _native_save_commit_marker(slot_name)
                     # A real FileSave writes a fresh SaveRecord whose JSON carries
                     # a new _ctime (renpy/loadsave.py:451), so both components of
                     # the marker must advance. Requiring only "tuple changed"
                     # would accept an mtime-only touch (os.utime) as a commit.
-                    if (
-                        native_marker_after[0] is None
-                        or native_marker_after[1] is None
-                        or native_marker_after == native_marker_before
-                        or native_marker_after[1] == native_marker_before[1]
-                    ):
+                    if not _native_save_marker_advanced(native_marker_before, native_marker_after):
                         raise RuntimeError("Ren'Py native save returned without committing the slot")
+                    safe_to_cleanup = True
                     renpy.session.pop("_fm_snapshot_pre_save_may_have_touched_main", None)
                     return result
                 store.snapshot_transaction_id = previous_transaction_id
@@ -2845,17 +2971,25 @@ init -2 python:
                     "_fm_snapshot_pre_save_may_have_touched_main", True
                 )
                 if may_have_touched_main:
-                    _restore_snapshot_after_failed_native_save(
+                    safe_to_cleanup = _restore_snapshot_after_failed_native_save(
                         slot_name, had_snapshot, previous_backup_path
                     )
                 renpy.notify(_("Save cancelled: snapshot stage failed (see log.txt)."))
             except Exception as e:
+                # A callback can fail AFTER Ren'Py committed. Restoring the old
+                # sidecars then would destroy the new native/JSON pairing.
+                if _native_save_marker_advanced(native_marker_before, _native_save_commit_marker(slot_name)):
+                    safe_to_cleanup = True
+                    renpy.session.pop("_fm_snapshot_pre_save_may_have_touched_main", None)
+                    renpy.log(f"SNAPSHOT: Native save committed, but a later action failed: {e}")
+                    renpy.notify(_("Save written, but a follow-up action failed (see log.txt)."))
+                    return
                 store.snapshot_transaction_id = previous_transaction_id
                 may_have_touched_main = renpy.session.pop(
                     "_fm_snapshot_pre_save_may_have_touched_main", True
                 )
                 if may_have_touched_main:
-                    _restore_snapshot_after_failed_native_save(
+                    safe_to_cleanup = _restore_snapshot_after_failed_native_save(
                         slot_name, had_snapshot, previous_backup_path
                     )
                 import traceback
@@ -2863,17 +2997,22 @@ init -2 python:
                 renpy.log(f"SNAPSHOT: traceback: {traceback.format_exc()}")
                 renpy.notify(_("Save cancelled: {} (see log.txt).").format(type(e).__name__))
             except BaseException:
+                if _native_save_marker_advanced(native_marker_before, _native_save_commit_marker(slot_name)):
+                    safe_to_cleanup = True
+                    renpy.session.pop("_fm_snapshot_pre_save_may_have_touched_main", None)
+                    raise
                 store.snapshot_transaction_id = previous_transaction_id
                 may_have_touched_main = renpy.session.pop(
                     "_fm_snapshot_pre_save_may_have_touched_main", True
                 )
                 if may_have_touched_main:
-                    _restore_snapshot_after_failed_native_save(
+                    safe_to_cleanup = _restore_snapshot_after_failed_native_save(
                         slot_name, had_snapshot, previous_backup_path
                     )
                 raise
             finally:
-                _cleanup_previous_snapshot_backup(previous_backup_path)
+                if safe_to_cleanup:
+                    _cleanup_previous_snapshot_backup(previous_backup_path)
         
         def get_sensitive(self):
             return save_is_allowed() and renpy.store.FileSave(self.slot_num, confirm=self.confirm).get_sensitive()
@@ -3213,6 +3352,9 @@ init -2 python:
             )
             if any(key not in candidate for key in required_keys):
                 return False
+            for field in _SNAPSHOT_PROGRESS_DEFAULTS:
+                if field in candidate and not _snapshot_progress_value_valid(field, candidate[field]):
+                    return False
             for key in (
                 "available_buildings",
                 "event_flags",
@@ -3242,14 +3384,22 @@ init -2 python:
             renpy.log(f"SNAPSHOT: canonical completeness validation failed: {validation_error}")
             return False
 
-    def _read_native_snapshot_transaction_id(slot_name):
+    def _read_native_snapshot_transaction_id(slot_name, progression=None):
         """Read only transaction identity; never unfreeze the saved context."""
         log_data = None
         roots = None
         rollback_log = None
         try:
-            log_data, _signature = renpy.loadsave.location.load(slot_name)
+            log_data, signature = renpy.loadsave.location.load(slot_name)
+            # Match Ren'Py's own load boundary BEFORE deserializing any pickle.
+            if not renpy.savetoken.check_load(log_data, signature):
+                raise ValueError("Native save trust check declined")
             roots, rollback_log = renpy.loadsave.loads(log_data)
+            if progression is not None:
+                for field in _SNAPSHOT_PROGRESS_DEFAULTS:
+                    key = "store." + field
+                    if key in roots and _snapshot_progress_value_valid(field, roots[key]):
+                        progression[field] = roots[key]
             return roots.get("store.snapshot_transaction_id")
         finally:
             log_data = None
@@ -3267,22 +3417,27 @@ init -2 python:
             return False
         return True
 
+    def _snapshot_load_candidates(slot_name):
+        return (
+            ("MAIN", _get_snapshot_file_path_for_reading(slot_name)),
+            ("BACKUP", _get_backup_file_path_for_reading(slot_name)),
+            ("RECOVERY", _previous_snapshot_backup_temp_path(slot_name)),
+        )
+
     def _prepare_canonical_snapshot_load(slot_num):
         """Validate one sidecar and persist a restart handoff without applying it."""
         slot_name = _get_current_slot_name(slot_num)
         if not slot_name:
             return False
+        legacy_progression = {}
         try:
-            native_transaction_id = _read_native_snapshot_transaction_id(slot_name)
+            native_transaction_id = _read_native_snapshot_transaction_id(slot_name, legacy_progression)
         except Exception as native_error:
             renpy.log(f"SNAPSHOT: canonical native identity read failed for {slot_name}: {native_error}")
             return False
 
         expected_guid = _get_slot_guid(slot_name)
-        candidates = (
-            ("MAIN", _get_snapshot_file_path_for_reading(slot_name)),
-            ("BACKUP", _get_backup_file_path_for_reading(slot_name)),
-        )
+        candidates = _snapshot_load_candidates(slot_name)
         for source_name, source_path in candidates:
             if not os.path.exists(source_path):
                 continue
@@ -3303,6 +3458,7 @@ init -2 python:
                 "source_name": source_name,
                 "snapshot_guid": snap.get("snapshot_guid"),
                 "snapshot_transaction_id": snap.get("snapshot_transaction_id"),
+                "legacy_progression": legacy_progression,
             }
             return True
         return False
@@ -3320,6 +3476,8 @@ init -2 python:
             source_path = _get_snapshot_file_path_for_reading(slot_name)
         elif source_name == "BACKUP":
             source_path = _get_backup_file_path_for_reading(slot_name)
+        elif source_name == "RECOVERY":
+            source_path = _previous_snapshot_backup_temp_path(slot_name)
         else:
             return False
 
@@ -3335,7 +3493,8 @@ init -2 python:
         store._snapshot_applied_slot_name = None
         store._snapshot_applied_source_path = None
         store._snapshot_load_alert = None
-        if not _apply_snapshot(_cp.deepcopy(snap)):
+        snap = _snapshot_with_legacy_progression(snap, pending.get("legacy_progression", {}))
+        if not _apply_snapshot(snap):
             return False
 
         # No native rollback rewind follows this path, so normalization runs
@@ -3479,14 +3638,25 @@ init -2 python:
                     selected_snap = _cp.deepcopy(backup_snap)
                     selected_path = backup_path
                     selected_label = "BACKUP"
+                else:
+                    recovery_path = _previous_snapshot_backup_temp_path(slot_name)
+                    recovery_snap = _read_snapshot_file(recovery_path) if os.path.exists(recovery_path) else None
+                    if (_snapshot_is_complete_for_canonical_load(recovery_snap)
+                            and _snapshot_matches_slot(recovery_snap, slot_name)):
+                        selected_snap = _cp.deepcopy(recovery_snap)
+                        selected_path = recovery_path
+                        selected_label = "RECOVERY"
 
                 if selected_snap is not None:
+                    native_progression = {field: getattr(store, field, default)
+                                          for field, default in _SNAPSHOT_PROGRESS_DEFAULTS.items()}
+                    selected_snap = _snapshot_with_legacy_progression(selected_snap, native_progression)
                     success = _apply_snapshot(selected_snap)
                     if success:
                         if selected_label == "MAIN":
                             store._snapshot_load_alert = None
                         else:
-                            store._snapshot_load_alert = f"Snapshot BACKUP loaded for {slot_name}. Save to a new slot."
+                            store._snapshot_load_alert = f"Snapshot {selected_label} loaded for {slot_name}. Save to a new slot."
                         _upgrade_legacy_snapshot_file(filepath, selected_snap, slot_name)
                         store._snapshot_applied_slot_name = slot_name
                         store._snapshot_applied_source_path = selected_path
@@ -3959,6 +4129,9 @@ label after_load:
             "choose_worker_for_arena_trial",
             "choose_worker_for_arena_special_match",
             "choose_worker_for_alchemy_craft",
+            "church_menu",
+            "monthly_card",
+            "monthly_transition",
             "arena_menu",
             "academy_menu",
             "map_screen",

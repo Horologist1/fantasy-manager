@@ -31,7 +31,7 @@
         "success": "{worker_name} has quietly rebuilt the patrol route so every sweep of the floor ends where you are. The habit pays: a cutpurse working the roulette crowd steps into that sightline mid-lift, and the coin goes back to the table before its owner even feels the tug.",
         "critical_success": "Watching over you has taught {worker_name} to read the whole room through where you stand. Tonight that reading catches a three-hand team the moment they fan out, and the pit closes around them like a fist. The tables run honest and heavy until dawn.",
         "mediocre": "Half of {worker_name}'s attention is on the doors and half of it is on you, and neither half is quite enough. The shift passes without incident, but nothing is caught either.",
-        "failure": "{worker_name} lingers too long on the way you lean over the cage ledger, and a lifted purse crosses the floor unchallenged. The victim is loud about it, and {worker_name} spends the rest of the night furious at what wanting you just cost your house."
+        "failure": "{worker_name} lingers too long on the way you lean over the cage ledger, and a lifted purse crosses the floor unchallenged. The victim is loud about it, and {worker_name} works out the night furious at what wanting you just cost your house."
       },
       "consequences": {
         "success": {

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "tavern",
+    "name": "Tavern",
+    "skill_name": "Service",
+    "professions": [
+      { "id": "waitress", "name": "Waitress" },
+      { "id": "bartender", "name": "Bartender" }
+    ]
+  }
+]

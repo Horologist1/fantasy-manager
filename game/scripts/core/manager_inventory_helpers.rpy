@@ -270,7 +270,7 @@ init python:
             label = "Use"
             action = Function(manager_inventory_use_item, item[0], worker)
             sensitive = True
-        elif item_type not in ["consumable", "currency", "misc"] and worker is not None and worker is not False:
+        elif item_type not in ["consumable", "currency", "misc", "ingredient"] and worker is not None and worker is not False:
             sensitive = True
             if is_equipped:
                 label = "Unequip"
@@ -598,15 +598,26 @@ init python:
         if item_info:
             sell_price = get_item_sell_price(item_info)  # 50% of buy price
             source_inventory = manager_inventory if left_worker is None else left_worker.get("inventory", [])
-            # Find item in inventory to check available quantity
-            item_entry = next((item for item in source_inventory if item[0] == item_id), None)
-            available_qty = item_entry[1] if item_entry else 0
+            # Only unequipped units are for sale (same rail as mass sell): selling
+            # an equipped weapon removed it while its bonuses stayed on the worker.
+            available_qty = 0
+            for item in source_inventory:
+                if not (hasattr(item, "__getitem__") and not isinstance(item, str) and not hasattr(item, "get")):
+                    continue
+                if len(item) < 2 or str(item[0]) != str(item_id) or store._is_equipped(item):
+                    continue
+                try:
+                    available_qty += max(0, int(item[1] or 0))
+                except (TypeError, ValueError):
+                    continue
             # Calculate actual sell quantity (limited by available)
             actual_qty = min(multiplier if quantity is None else quantity, available_qty)
             if actual_qty > 0:
                 store.money += sell_price * actual_qty
                 remove_item_from_inventory(source_inventory, item_id, actual_qty)
                 renpy.notify(f"Sold {actual_qty}x {item_info.get('name', 'Unknown')} for ${sell_price * actual_qty}")
+            else:
+                renpy.notify("Nothing to sell: unequip it first.")
             renpy.restart_interaction()
 
     def buy_item_from_shop(item_id):

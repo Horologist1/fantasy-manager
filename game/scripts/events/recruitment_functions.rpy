@@ -524,6 +524,11 @@ init python:
         except Exception:
             pass
 
+        if applied_values.get("recruitment_blocked"):
+            # A stale/invalid hire is not a resolved success. No occurrence or
+            # completion is recorded and the UI must not claim the worker joined.
+            return {"message": "This worker can no longer be recruited. No changes were made.", "outcome": "failure"}
+
         # Final sanitization for any typographic characters that the font can't render
         outcome_message = sanitize_text(outcome_message)
         
@@ -549,6 +554,21 @@ init python:
         
         if not effect_dict:
             return applied_values
+
+        # Validate the whole hire before applying money, reputation or attributes.
+        # Checking after these effects made duplicate callbacks pay out repeatedly.
+        if effect_dict.get("recruit_worker", False):
+            if not worker or worker.get("monster", False):
+                return {"recruitment_blocked": True}
+            if is_worker_dead(worker):
+                return {"recruitment_blocked": True, "dead_worker": True}
+            recruit_name = worker.get("name", "")
+            if recruit_name and any(
+                hasattr(w, "get") and w.get("name") == recruit_name
+                for w in (getattr(store, "workers", []) or [])
+            ):
+                renpy.log(f"Blocked duplicate recruitment of already-rostered worker: {recruit_name}")
+                return {"recruitment_blocked": True, "duplicate_worker": True}
         
         # Handle money effects
         if "money" in effect_dict:
@@ -567,8 +587,13 @@ init python:
             if target_building is not None:
                 old_rep = int(target_building.get("reputation", 0) or 0)
                 new_rep = old_rep + rep_change
-                # Cap reputation between 0 and 1000
-                target_building["reputation"] = max(0, min(new_rep, 1000))
+                # Same level-based ceiling as every other reputation writer.
+                try:
+                    rep_cap = int(get_building_reputation_cap(target_building))
+                except Exception:
+                    rep_cap = 1000
+                ceiling = rep_cap if rep_change > 0 else max(rep_cap, old_rep)
+                target_building["reputation"] = max(0, min(new_rep, ceiling))
                 applied_values["actual_reputation"] = target_building["reputation"] - old_rep
                 custom_names = getattr(store, "custom_names", {}) or {}
                 applied_values["reputation_building"] = custom_names.get(
@@ -599,21 +624,6 @@ init python:
 
         # Handle worker recruitment
         if effect_dict.get("recruit_worker", False) and worker:
-            if worker.get("monster", False):
-                renpy.log(f"Blocked recruitment-event path for monster worker: {worker.get('name', 'Unknown')}")
-                applied_values["recruitment_blocked"] = True
-                return applied_values
-            # Duplicate guard: a stale serialized context (or any path that skips
-            # the roster filter in load_recruit_workers) must never add a second
-            # copy of an already-rostered worker. Mirrors the simple-flow check.
-            _rec_name = worker.get("name", "")
-            if _rec_name and any(
-                hasattr(w, "get") and w.get("name") == _rec_name for w in (getattr(store, "workers", []) or [])
-            ):
-                renpy.log(f"Blocked duplicate recruitment of already-rostered worker: {_rec_name}")
-                applied_values["recruitment_blocked"] = True
-                applied_values["duplicate_worker"] = True
-                return applied_values
             # Apply cost modifier if present.
             # Legacy event data often uses 0 as "no modifier", so normalize
             # non-positive values to 1.0 instead of treating them as discounts.
@@ -640,7 +650,9 @@ init python:
             
             # Apply relationship bonus if present (relative to comfort)
             if "relationship_bonus" in effect_dict:
-                worker["relationship"] = max(10, 10 + worker.get("comfort_level", negotiated_comfort) + effect_dict["relationship_bonus"])
+                # Through the capped setter like every other relationship write; the
+                # daily minimum (10 + comfort) is re-enforced by the day loop.
+                set_attribute_with_caps(worker, "relationship", max(10, 10 + worker.get("comfort_level", negotiated_comfort) + effect_dict["relationship_bonus"]))
             
             # Add the worker to the roster using recruit_worker for proper tutorial tracking
             ensure_worker_defaults(worker)

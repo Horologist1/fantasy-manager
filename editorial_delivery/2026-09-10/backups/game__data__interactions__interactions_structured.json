@@ -1,0 +1,1615 @@
+[
+  {
+    "id": "discipline_level1_etiquette",
+    "name": "House Etiquette",
+    "description": "I do not raise my voice. I do not need to. I correct every detail—how they stand, where their eyes belong, how they speak, and when they are allowed to speak at all. I make them repeat the rules until the old habits disappear: a bowed head, a quiet \"Yes, my lord/lady,\" hands kept still, steps measured, and silence when silence is expected. Discipline in this house begins with control of the smallest things, because the smallest things are what betray disobedience.",
+    "interaction_level": 1,
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -2,
+      "joy": -1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_etiquette",
+    "nsfw": false,
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level1_private_inspection",
+    "name": "Private Inspection",
+    "description": "I summon them when the corridors are empty and the doors are closed. There is no audience—only judgment. I make them hold a posture that is uncomfortable on purpose, and I correct it again and again until their body learns faster than their pride. I check cleanliness, compliance, and the simple truth of ownership: whether they can endure scrutiny without excuses. The intimacy here is cold and controlled—close enough that they feel my presence, strict enough that they feel it as law.",
+    "interaction_level": 1,
+    "interaction_type": "discipline",
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -3,
+      "joy": -1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_inspection",
+    "nsfw": true,
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level2_corrective_discipline",
+    "name": "Corrective Discipline",
+    "description": "When rules are ignored, I respond with certainty—not anger. I make the correction brief, efficient, and memorable: a punishment measured to the offence, carried out without spectacle. I explain the standard once. Then I enforce it. They learn that in this house, obedience is not a suggestion and discretion is not a privilege—it is the price of being kept.",
+    "interaction_level": 2,
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -5,
+      "joy": -2,
+      "relationship": -1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "libido": 0,
+      "romance": 0,
+      "trait_remove_chance": [
+        {
+          "trait": "Tsundere",
+          "chance_percent": 1
+        }
+      ]
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_correction",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 80
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level2_private_punishment",
+    "name": "Private Punishment",
+    "description": "I keep it private. I always do. I correct them close enough that they cannot hide behind bravado, and I make them accept the lesson without unnecessary violence. There is a quiet intimacy in how controlled it is: my hand guiding their behavior, my voice low, my rules absolute. It is training—made personal so it leaves a mark in the mind as much as in the body.",
+    "interaction_level": 2,
+    "interaction_type": "discipline",
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -6,
+      "joy": -1,
+      "relationship": -1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_private_punishment",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 80
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_discretion_training",
+    "name": "Discretion Training",
+    "description": "Obedience is not only doing what I say. It is knowing what must never be said. I teach them the house rules of discretion: how to stand behind me without drawing eyes, how to answer without revealing, how to keep secrets even under pressure. I drill the small signals—when to speak, when to withdraw, when to pretend not to hear. A servant who cannot be discreet is a liability. I do not keep liabilities for long.",
+    "interaction_level": 3,
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -4,
+      "joy": -1,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_discretion",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 75
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_oral_discipline_lord",
+    "name": "Oral Discipline",
+    "description": "I make the lesson private, quiet, and unmistakably intimate. There is no performance here—no audience, no games—only obedience under my hand and my voice. I set the pace, the rules, and the boundaries. I watch the moment their pride gives way to compliance, and I do not stop until they understand what it means to serve without hesitation. The intimacy does not soften the discipline. It sharpens it.",
+    "interaction_level": 3,
+    "interaction_type": "discipline",
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "joy": -1,
+      "relationship": -1,
+      "libido": -3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "romance": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_blowjob",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 75
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level3_oral_discipline_lady",
+    "name": "Oral Discipline",
+    "description": "I make the lesson private, quiet, and unmistakably intimate. There is no performance here—no audience, no games—only obedience under my hand and my voice. I set the pace, the rules, and the boundaries. I watch the moment their pride gives way to compliance, and I do not stop until they understand what it means to serve without hesitation. The intimacy does not soften the discipline. It sharpens it.",
+    "interaction_level": 3,
+    "interaction_type": "discipline",
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -7,
+      "joy": -1,
+      "relationship": -1,
+      "libido": -3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "romance": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_cunnilingus",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 75
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_submission_conditioning",
+    "name": "Submission Conditioning",
+    "description": "At this stage, I stop correcting mistakes one by one. I correct the habit that produces them. I set routines that grind disobedience down: posture held until it is natural, commands followed until delay feels impossible, silence maintained until it is instinct. It is hard, and it is methodical. The point is not cruelty. The point is reliability. You put the servant's collar on them—they are yours.",
+    "interaction_level": 4,
+    "cost_energy": 0,
+    "cost_money": 100,
+    "effect": {
+      "rebelliousness": -8,
+      "relationship": -2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_conditioning",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 50
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_bdsm_conditioning_lord",
+    "name": "BDSM Conditioning",
+    "description": "I make the training explicit and controlled. Every restraint, every command, every moment of discomfort is used to shape the same outcome: obedience without bargaining. There can be intimacy in how close it is—breath, skin, the quiet certainty of my hands—but the purpose never changes. When I say stop, it stops. When I say endure, they endure. This is not play. This is conditioning. You put the servant's collar on them—they are yours.",
+    "interaction_level": 4,
+    "interaction_type": "discipline",
+    "cost_energy": 0,
+    "cost_money": 100,
+    "effect": {
+      "rebelliousness": -10,
+      "relationship": -2,
+      "libido": -3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 0,
+      "romance": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_bdsm_lord",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 50
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level4_bdsm_conditioning_lady",
+    "name": "BDSM Conditioning",
+    "description": "I make the training explicit and controlled. Every restraint, every command, every moment of discomfort is used to shape the same outcome: obedience without bargaining. There can be intimacy in how close it is—breath, skin, the quiet certainty of my hands—but the purpose never changes. When I say stop, it stops. When I say endure, they endure. This is not play. This is conditioning. You put the servant's collar on them—they are yours.",
+    "interaction_level": 4,
+    "interaction_type": "discipline",
+    "cost_energy": 0,
+    "cost_money": 100,
+    "effect": {
+      "rebelliousness": -10,
+      "relationship": -2,
+      "libido": -3,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 0,
+      "romance": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_bdsm_lady",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 50
+    },
+    "excluded_flags": {
+      "discipline_cooldown": true
+    }
+  },
+  {
+    "id": "discipline_level5_finale_harem_member",
+    "name": "Assign Their Place: Harem Member",
+    "description": "By now, their obedience is not an argument—it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. And some are kept only as long as they are profitable. I watch their face as they understand what this moment means. You put the servant's collar on them—they are yours. Then I decide where they belong.",
+    "interaction_level": 5,
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 0,
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_finale",
+    "nsfw": true,
+    "stat_requirements": {
+      "rebelliousness": 25
+    },
+    "excluded_flags": {
+      "discipline_final_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "discipline_level5_finale_house_servant",
+    "name": "Assign Their Place: House Servant",
+    "description": "By now, their obedience is not an argument—it is a pattern. I bring them to a quiet room where words carry weight and decisions do not get repeated. I lay out the truth plainly: in this house, everyone ends up with a place. Some are kept for pleasure. Some are kept for service. And some are kept only as long as they are profitable. I watch their face as they understand what this moment means. You put the servant's collar on them—they are yours. Then I decide where they belong.",
+    "interaction_level": 5,
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": -2,
+      "flags": {
+        "discipline_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 0,
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_finale",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 25
+    },
+    "excluded_flags": {
+      "discipline_final_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "discipline_level5_sell_specialty_buyer",
+    "name": "Sell to a Specialty Buyer",
+    "description": "This is not a threat. It is a transaction. I consider what they cost me, what they have become, and what the market will pay for a servant trained to obey. A specialty buyer does not care about excuses or feelings—only quality. If I proceed, the sale is final.",
+    "interaction_level": 5,
+    "cost_energy": 0,
+    "effect": {
+      "rebelliousness": 0,
+      "joy": 0,
+      "relationship": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Discipline"
+    ],
+    "image": "discipline_sell",
+    "nsfw": false,
+    "stat_requirements": {
+      "rebelliousness": 25
+    }
+  },
+  {
+    "id": "romance_level1_lord_female_romantic",
+    "name": "Playful Flirting",
+    "description": "I trade wit for wit and let a compliment land where it will do the most good. She answers in kind, and somewhere between her smile and the pause before it, the conversation stops being idle.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lord_male_romantic",
+    "name": "Playful Flirting",
+    "description": "I keep the banter easy and the compliments precise. He gives back as good as he gets, holding my gaze a beat longer each time, until neither of us is pretending the game is only a game.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lady_female_romantic",
+    "name": "Playful Flirting",
+    "description": "I keep the banter light and let a touch linger on her arm a moment past innocent. She notices — of course she notices — and her answering smile says she has decided to enjoy where this is going.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level1_lady_male_romantic",
+    "name": "Playful Flirting",
+    "description": "I let my glances say what work talk never quite manages, and a touch on his shoulder carries the rest. He straightens a little whenever I come near now. We both know what that means, and neither of us says it yet.",
+    "interaction_level": 1,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 1,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_flirt",
+    "nsfw": false,
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lord_female",
+    "name": "Intimate Dinner",
+    "description": "I clear the ledgers off the small table, set out the good wine, and let the kitchen show off for once. She arrives dressed for the evening rather than for work, which settles the question of what this dinner is. Between courses the talk drifts from business into everything I had been saving for someday, and when our hands meet across the table, neither of us moves first to end it. The candles burn low. We stop keeping track of the hour.",
+    "interaction_level": 2,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 25
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lord_male_romantic",
+    "name": "Intimate Dinner",
+    "description": "I book the private room, set two places, and open a bottle older than most of my staff. He arrives early — a tell I file away with some satisfaction. Dinner runs long because neither of us wants to reach the end of it; the confessions come out somewhere after the second glass, unplanned and unregretted. When our hands meet over the last of the wine, he does not pull back. The candles are guttering by the time either of us admits the hour.",
+    "interaction_level": 2,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 25
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lady_female_romantic",
+    "name": "Intimate Dinner",
+    "description": "I lay the table myself — the good plates, the wine I never open, candles enough to flatter us both. She arrives with her hair done differently, and that small effort undoes me more than the wine does. We talk past the food going cold, trading the truths that only ever come out by candlelight, and her fingers find mine across the table as if the reach were the most natural thing in the world. Perhaps by then it is.",
+    "interaction_level": 2,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 25
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level2_lady_male",
+    "name": "Intimate Dinner",
+    "description": "I arrange the dinner for the quiet hours after closing — the good wine, the last of the honey cakes, candlelight where lamplight would do. He arrives freshly shaved and slightly nervous, which I choose to find promising. The conversation starts careful and forgets to stay that way; by the time the bottle is empty, so is the space between our hands on the table. Neither of us hurries to reclaim them.",
+    "interaction_level": 2,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 20,
+    "effect": {
+      "romance": 5,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 2,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_intimate_dinner",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 25
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_female_nsfw",
+    "name": "Passionate Night",
+    "description": "Days of held glances come due at last. She barely lets the chamber door close before she is in my arms, and the careful distance we have kept dissolves against it. We undress each other badly — buttons, laces, impatience — and fall to the bed already tangled. She is not quiet, and I stop wanting her to be. When we finally still, she stays sprawled across me, tracing idle lines on my chest, wearing the smile of a woman who intends to be back.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_passionate_night_lord_female",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_female_sfw",
+    "name": "Intimate Escape",
+    "description": "I know a place the city forgets to watch — a walled garden gone half-wild, where the rooftops turn to copper at dusk. We slip away in the slow hours and leave our titles at the gate. She walks closer than she needs to, laughs more easily than she ever does under my roof, and somewhere between the stories we trade, her hand ends up in mine and stays there. Nothing happens that anyone could name. Everything happens that matters.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_male_romantic_nsfw",
+    "name": "Passionate Night",
+    "description": "The tension has been building for days, and tonight neither of us pretends otherwise. He kisses me at the door, hard, before I can offer him a drink — the drink was never the point. We take it out on each other half the night, urgent first and unhurried after, learning what makes the other's breath break. Afterward he lies with one arm thrown across me, heavy and unapologetic, and I find I have no complaints to file.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_passionate_night_lord_male",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lord_male_romantic_sfw",
+    "name": "Intimate Escape",
+    "description": "I know an overlook above the mill quarter where the whole city lays itself out like a map of things we no longer have to think about. We climb it in the late afternoon and stay past sundown. Away from staff and ledgers he talks differently — slower, truer — and I catch myself listening the way I usually listen only for profit. On the walk back our shoulders keep touching. Neither of us corrects it.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_female_romantic_nsfw",
+    "name": "Passionate Night",
+    "description": "It breaks at last, whatever we were calling it. She pulls the pins from my hair; I answer with the laces of her dress, and the firelight gets an education. Even in our hunger we take our time — hands and mouths, gasps traded like confidences, each of us determined the other will come undone first. We both win. She falls asleep with her leg thrown over mine, and I let the candle burn itself out rather than move.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_passionate_night_lady_female",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_female_romantic_sfw",
+    "name": "Intimate Escape",
+    "description": "There is a hidden garden behind the old chapel that I have never shown anyone. I show her. We spend the afternoon among the overgrown roses trading stories we have never let past our own teeth, and the quiet between the stories is somehow the better part. When she tucks a stray blossom behind my ear it is half a joke — and then her hand lingers, and it is not a joke at all. We walk back slowly. The city can wait.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_male_nsfw",
+    "name": "Passionate Night",
+    "description": "Days of pretending this was something else end at my chamber door. He is gentler than his hands suggest and less patient than his manners promised — a combination I intend to explore at length. Clothes land where they land; the bed takes the rest of the argument. He says my name at the end like it costs him something, and afterward, my ear against his heartbeat, I decide the sound was worth the price.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_passionate_night_lady_male",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level3_lady_male_sfw",
+    "name": "Intimate Escape",
+    "description": "I steal him away to a quiet overlook I found years ago, back when I had nothing to run from but my own thoughts. We watch the barges crawl the river and talk about everything that is not work — childhood, appetites, the lives we meant to live. He listens like the answers matter and stands close enough that the wind is no excuse. By the time the lamps come on below us, something has been agreed between us that neither of us said aloud.",
+    "interaction_level": 3,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 12,
+    "effect": {
+      "romance": 7,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_private",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 50
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_female",
+    "name": "Refined Romantic Evening",
+    "description": "An evening with no agenda but her. Wine we do not hurry, a fire kept fed, a game of cards she wins twice — once fairly. She reads aloud from whatever she pulls off my shelf and does the voices when she thinks I am too drowsy to tease her for it. We talk about the years behind us and the ones we intend to have, and midnight arrives without either of us noticing the hours filing past. It is the simplest thing I do all week, and the one I would defend with a blade.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_quality_time_lord_female",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_male_romantic",
+    "name": "Refined Romantic Evening",
+    "description": "We claim the evening for ourselves — the deep chairs, the good bottle, the fire built to last. He beats me at cards and is insufferable about it; I read to him until the insufferability subsides. Mostly we talk, the way only two people with nothing left to prove can talk, about old campaigns and older regrets and what we want the next years to hold. No urgency, no performance. Just his laugh across the firelight, which I have come to count among my holdings.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_quality_time_lord_male",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_female_romantic",
+    "name": "Refined Romantic Evening",
+    "description": "I bar the door to business and give the evening to her entirely. We share the long couch by the fire, her feet in my lap, a book passing back and forth whenever one of us finds a line too good to keep. The wine goes slowly; the talk does not — dreams, grudges, the futures we are no longer afraid to say out loud. Nothing in the night asks anything of us. That is the luxury, and we are rich in it.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_quality_time_lady_female",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_male",
+    "name": "Refined Romantic Evening",
+    "description": "An evening hoarded like coin. He mends the fire while I pour; we play cards for outrageous, imaginary stakes and pay our debts in stories — his past, mine, the versions of the future we are each quietly building around the other. The candles burn down at their own pace. When the clock finally embarrasses us both, neither of us can say where the hours went, only that they were spent well and in good company.",
+    "interaction_level": 4,
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 6,
+      "joy": 2,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_quality_time_lady_male",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_female_nsfw",
+    "name": "Perfect Night",
+    "description": "There is no hurry left in us — that is what the trust has bought. I undress her slowly by candlelight, unwrapping what I already know by heart and want anyway. We move together with the ease of long practice and none of its boredom: I know the sound she makes when I linger, and she knows exactly how to unmake my composure and does it twice. Her pleasure crests unhidden, my name somewhere in it, and mine follows close behind. Afterward she lies in the crook of my arm, tracing the scar she has never once asked about, and I think: this. This is the holding worth all the others.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 8,
+      "joy": 3,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_perfect_night_lord_female",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lord_male_romantic_nsfw",
+    "name": "Perfect Night",
+    "description": "No urgency tonight — urgency is for lovers still proving something. I take him to bed the way we drink the good vintage: slowly, with attention. We know each other's bodies as thoroughly as our tempers by now; he uses that knowledge without mercy, and I return the favor until neither of us can keep a steady breath. He finishes with my name low in his throat and pulls me over the edge after him. Afterward we lie tangled, his heartbeat slowing under my palm, and neither of us reaches for a single word. There is nothing left unproven.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 8,
+      "joy": 3,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_perfect_night_lord_male",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_female_romantic_nsfw",
+    "name": "Perfect Night",
+    "description": "We have long since stopped fumbling — what is left is fluency. I lay her down in the candlelight and take my time, because I know precisely what my patience does to her, and she suffers it beautifully for as long as she can bear before dragging me down to her. Every touch lands where it means to; every gasp is one I have earned before and want again. She comes apart with her fingers wound in my hair, and returns the ruin with interest. Later, tangled and warm, she hums something tuneless against my shoulder. It is the sound I would keep over any coin I own.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 8,
+      "joy": 3,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_perfect_night_lady_female",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "romance_level4_lady_male_nsfw",
+    "name": "Perfect Night",
+    "description": "Tonight there is nothing to negotiate and nothing to prove. He learned long ago what I want and — rarer — believes I mean it, so when I draw him to my bed he follows my lead without a flicker of pride. We move slowly, deliberately, wringing every note from the hours; he knows the exact moment to stop being gentle, and takes it. I finish with his name and start again with his help. Afterward he gathers me in without being asked, and sleep finds us mid-sentence, and I would not trade the interrupted thought for a finished empire.",
+    "interaction_level": 4,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "cost_money": 10,
+    "effect": {
+      "romance": 8,
+      "joy": 3,
+      "libido": -3,
+      "flags": {
+        "romance_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "relationship": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_perfect_night_lady_male",
+    "nsfw": true,
+    "stat_requirements": {
+      "romance": 75
+    },
+    "excluded_flags": {
+      "romance_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level1",
+    "name": "Friendly Lunch",
+    "description": "I invite them to share a meal with me—a proper lunch where we sit down together and talk over food and drink. I ask about their interests, dreams, and how their day has been. The conversation flows naturally as we eat, and they gradually open up, sharing stories and laughter that create a comfortable atmosphere between us. We discover common ground and mutual respect over the table, finding that we have more in common than we might have expected. These simple moments of connection lay the foundation for a true friendship, built on understanding and genuine care.",
+    "interaction_level": 1,
+    "cost_energy": 0,
+    "cost_money": 150,
+    "effect": {
+      "relationship": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "joy": 1,
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Friendship"
+    ],
+    "image": "friendly_lunch",
+    "nsfw": false,
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level2",
+    "name": "Have Fun Together",
+    "description": "I arrange some simple amusement for us—perhaps a game at the table, a leisurely walk through the city streets, or stories shared over a warm drink. Before long we are laughing far more than we intended, the sort of laughter that makes one's cheeks ache. For a little while the weight of work and duty lifts, and in that ease we grow more familiar with one another. Such shared merriment leaves behind memories, and the foundation of our friendship strengthens without either of us having to force it.",
+    "interaction_level": 2,
+    "cost_energy": 0,
+    "effect": {
+      "relationship": 5,
+      "joy": 2,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Friendship"
+    ],
+    "image": "friendship_heart",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 25
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level3_gift",
+    "name": "Thoughtful Gift",
+    "description": "I spend time observing their preferences, listening to their casual mentions of things they like, and paying attention to what brings them joy. Then, I carefully select a gift that I know will resonate with them - something that shows I've been paying attention, that I see them as an individual with unique tastes and interests. When I present it, their expression transforms from surprise to genuine delight, and I can see how touched they are by the gesture. This isn't just a gift; it's a message that I value them as a person, that our friendship means something real. The warmth in their eyes and the sincerity of their thanks creates a moment of connection that deepens the trust between us.",
+    "interaction_level": 3,
+    "cost_energy": 0,
+    "cost_money": 300,
+    "effect": {
+      "relationship": 7,
+      "joy": 14,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Friendship"
+    ],
+    "image": "friendship_joy_gift",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 50
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level3_conversation",
+    "name": "Supportive Conversation",
+    "description": "I create a quiet, comfortable space where we can have a genuine heart-to-heart conversation. I ask about their life, their dreams, and the challenges they face, and I listen with my full attention. As they begin to open up, sharing thoughts and concerns they might not voice elsewhere, I respond with empathy and understanding. I offer support and encouragement, not as a manager giving advice, but as a friend who truly cares. In these moments of vulnerability and trust, we build something deeper than mere acquaintance - a connection based on mutual respect and genuine care. This exchange reminds us both that we're not alone, that we have someone who sees us and accepts us for who we are.",
+    "interaction_level": 3,
+    "cost_energy": 0,
+    "effect": {
+      "relationship": 7,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Friendship"
+    ],
+    "image": "friendship_heart",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 50
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level4",
+    "name": "Make Memories",
+    "description": "I plan a perfect afternoon suited to what we both enjoy—perhaps wandering the market as the day is still bright, pausing at stalls that catch our eye, sharing a small treat, or simply letting the crowd carry us along while we trade stories. We speak of everything and nothing at once—past adventures, quiet hopes, and the little moments that make life feel less heavy. Now and then laughter escapes us, and before we notice it the hours have slipped away. There is no agenda, no duties to weigh us down—only the easy comfort of true friendship, and the simple pleasure of making memories together.",
+    "interaction_level": 4,
+    "cost_energy": 0,
+    "effect": {
+      "relationship": 6,
+      "joy": 3,
+      "flags": {
+        "friendship_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      },
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Friendship"
+    ],
+    "image": "friendship_perfect",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 75
+    },
+    "excluded_flags": {
+      "friendship_cooldown": true
+    }
+  },
+  {
+    "id": "friendship_level5",
+    "name": "Become Confidants",
+    "description": "I invite them to step away from noise and duties for a moment—no agenda, no requests. I speak honestly about what their presence has meant over time: the trust we have built, the small rituals that became familiar, and the quiet relief of knowing someone truly has our back. I make it clear that this bond is chosen, not owed. In that calm space, we share a promise: whatever happens in the house, we will treat each other with loyalty, respect, and care. It feels like closing a chapter and opening a new one—one where friendship is no longer something that happens by chance, but something we protect on purpose.",
+    "interaction_level": 5,
+    "cost_energy": 0,
+    "effect": {
+      "relationship": 8,
+      "joy": 5,
+      "rebelliousness": 0,
+      "libido": 0,
+      "romance": 0
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Friendship"
+    ],
+    "image": "friendship_confidants",
+    "nsfw": false,
+    "stat_requirements": {
+      "relationship": 80
+    },
+    "excluded_flags": {
+      "friendship_final_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "romance_level5_lord_female_confess",
+    "name": "Confess Feelings",
+    "description": "I ask for a quiet moment away from the noise of the house. When we are alone, I speak plainly—no games, no half-truths. I confess what has been growing between us for a long time: genuine affection, devotion, and the desire to walk forward together. I make it clear that this is not a demand, but an offer—an honest promise, if she wants it. The air feels still as she listens, and in that silence, everything we have shared seems to gather into one decisive moment.",
+    "interaction_level": 5,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 10,
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_confess_feelings_lord_female",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 80
+    },
+    "excluded_flags": {
+      "romance_confess_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "romance_level5_lord_male_confess",
+    "name": "Confess Feelings",
+    "description": "I ask for a quiet moment away from the noise of the house. When we are alone, I speak plainly—no games, no half-truths. I confess what has been growing between us for a long time: genuine affection, devotion, and the desire to walk forward together. I make it clear that this is not a demand, but an offer—an honest promise, if he wants it. The air feels still as he listens, and in that silence, everything we have shared seems to gather into one decisive moment.",
+    "interaction_level": 5,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 10,
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "male",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_confess_feelings_lord_male",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 80
+    },
+    "excluded_flags": {
+      "romance_confess_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "romance_level5_lady_female_confess",
+    "name": "Confess Feelings",
+    "description": "I ask for a quiet moment away from the noise of the house. When we are alone, I speak plainly—no games, no half-truths. I confess what has been growing between us for a long time: genuine affection, devotion, and the desire to walk forward together. I make it clear that this is not a demand, but an offer—an honest promise, if she wants it. The air feels still as she listens, and in that silence, everything we have shared seems to gather into one decisive moment.",
+    "interaction_level": 5,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 10,
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "female",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_confess_feelings_lady_female",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 80
+    },
+    "excluded_flags": {
+      "romance_confess_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "romance_level5_lady_male_confess",
+    "name": "Confess Feelings",
+    "description": "I ask for a quiet moment away from the noise of the house. When we are alone, I speak plainly—no games, no half-truths. I confess what has been growing between us for a long time: genuine affection, devotion, and the desire to walk forward together. I make it clear that this is not a demand, but an offer—an honest promise, if he wants it. The air feels still as he listens, and in that silence, everything we have shared seems to gather into one decisive moment.",
+    "interaction_level": 5,
+    "interaction_type": "romantic",
+    "cost_energy": 0,
+    "effect": {
+      "romance": 10,
+      "joy": 5,
+      "rebelliousness": 0,
+      "relationship": 0,
+      "libido": 0
+    },
+    "gender_filter": "female",
+    "worker_gender": "male",
+    "categories": [
+      "Romance"
+    ],
+    "image": "romance_confess_feelings_lady_male",
+    "nsfw": false,
+    "stat_requirements": {
+      "romance": 80
+    },
+    "excluded_flags": {
+      "romance_confess_done": {
+        "value": true,
+        "duration": -1
+      }
+    }
+  },
+  {
+    "id": "trait_cum_addict_feed",
+    "name": "Feed",
+    "description": "You indulge the worker's fixation and provide exactly what they crave. The act is controlled, intimate, and openly transactional, leaving them calmer and more compliant in the short term.",
+    "interaction_level": 1,
+    "interaction_type": "trait",
+    "cost_energy": 0,
+    "effect": {
+      "libido": -3,
+      "joy": 1,
+      "relationship": 0,
+      "romance": 0,
+      "rebelliousness": 0,
+      "flags": {
+        "trait_cum_addict_feed_cooldown": {
+          "value": true,
+          "duration": 0
+        }
+      }
+    },
+    "gender_filter": null,
+    "worker_gender": null,
+    "categories": [
+      "Trait"
+    ],
+    "image": "trait_cum_addict_feed",
+    "nsfw": true,
+    "stat_requirements": {
+      "relationship": 30
+    },
+    "required_traits": [
+      "Cum Addict"
+    ],
+    "excluded_flags": {
+      "trait_cum_addict_feed_cooldown": true
+    }
+  }
+]

@@ -1,0 +1,32 @@
+==========================================================================
+game/scripts/yvara/yvara_complete.rpy  -  1982 lineas de dialogo, 25598 palabras
+  1. 7-gramas repetidos 4+ veces: 14
+       12x  'yvara devotion dominion yvara dominion affection yvara'  (1 labels)
+       12x  'devotion yvara devotion dominion yvara dominion affection'  (1 labels)
+       12x  'devotion dominion yvara dominion affection yvara affection'  (1 labels)
+        9x  'yvara dominion affection yvara affection stage yvara'  (1 labels)
+        9x  'dominion yvara dominion affection yvara affection stage'  (1 labels)
+        9x  'dominion affection yvara affection stage yvara stage'  (1 labels)
+  2. lineas con registro arcaico: 0
+  3. placeholders usados: {'[yvara_devotion]': 12, '[yvara_dominion]': 12, '[yvara_affection]': 12, '[yvara_stage]': 9, '{b}': 5, '[yvara_academy_investment_tier]': 2, '{i}': 2, '[_route]': 1}
+  4. lineas que invocan un pasado concreto: 6
+       L545    [yvara_visit_menu] It has not been long enough since the last time. A few more days.
+       L645    [yvara_assess_feelings] The arrangement has been reshaped [_changes] time(s) since the storm.
+       L1338   [yvara_s3_talk_2] This evening, then. After the last class.
+       L1350   [yvara_s3_talk_2] This evening. After the last class closes.
+       L2405   [yvara_s4_favor_topless] She says it while remaining exactly where you told her to remain.
+       L5257   [yvara_s6_gate_dominion] She arrives at the time you specified. She is wearing what you told her to wear.
+
+==========================================================================
+game/scripts/lanista/lanista_complete.rpy  -  1166 lineas de dialogo, 26828 palabras
+  1. 7-gramas repetidos 4+ veces: 0
+  2. lineas con registro arcaico: 0
+  3. placeholders usados: {'[_ttl]': 104, '[_they]': 85, '[_them]': 71, '[lanista_name]': 49, '[_their]': 28, '[_theirs]': 5, '{b}': 5, '[player_title]': 4}
+  4. lineas que invocan un pasado concreto: 16
+       L1201   [arena_deliver_pending_feedback] [_standout] ruled the sand yesterday. That was not merely a win; the crowd will 
+       L1479   [lanista_s2_gate] You counted my scars as lessons, not prices. I remembered that.
+       L1481   [lanista_s2_gate] You called my scars a ledger and looked for the weak seam. I remembered that too
+       L1486   [lanista_s2_gate] But you keep coming back after the count is done. You watch the hands, the feet,
+       L1575   [lanista_s1_talk_3] ...I'll remember the offer, [_ttl]. That is not the same as taking it. But I'll 
+       L1816   [lanista_s4_talk_1] One name on that card shouldn't be there, and you both know it — a young fighter
+

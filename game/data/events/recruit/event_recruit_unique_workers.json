@@ -1,7 +1,7 @@
 [
   {
     "id": "event_recruit_aspen",
-    "description": "A sturdy figure approaches your establishment during the evening hours. Their build suggests years of physical labor, and their calm demeanor stands out among the usual crowd. They carry themselves with quiet confidence, as if they've seen enough to know their worth.",
+    "description": "A man comes in out of the weather and takes the seat with its back to the wall without appearing to think about it. He is lean and quick-eyed and never entirely still, one hand always resting somewhere useful. When he finally looks at you it is with the flat interest of somebody pricing a room. 'I hear you hire people who can handle themselves.'",
     "dialogue": "\"Evening. Name's [event_worker]. I've been working various jobs around town, but I'm looking for something more stable. I'm strong, reliable, and I don't cause trouble. What do you say?\"",
     "weight": 1,
     "unlimited": true,
@@ -74,7 +74,7 @@
   },
   {
     "id": "event_recruit_florian",
-    "description": "A somewhat effeminate young man enters your establishment with a playful, knowing smile. He moves with a graceful, almost coquettish air, and his eyes sparkle with mischief and intelligence. There's something roguish about him - the way he carries himself suggests he's used to getting what he wants through charm and wit rather than brute force.",
+    "description": "The young man who comes through your door is dressed better than the room deserves and knows it. He takes his gloves off one finger at a time while he looks the place over, and when he speaks it is quietly enough that you have to stop what you are doing to hear him. 'I was told you might appreciate somebody who does this properly.'",
     "dialogue": "\"Well, well, well... look what we have here.\"\n\n[event_worker] leans against the doorway with a coy smile, his voice carrying a hint of playful seduction. \"I'm [event_worker], and I've heard... interesting things about your establishment. I'm quite clever, you know. Good with people. And I have a certain... flexibility that might be valuable to you.\"\n\n\"I'm looking for work, but I'm not interested in just any job. I want something that appreciates my particular talents. What do you say?\"",
     "weight": 1,
     "unlimited": true,
@@ -141,7 +141,6 @@
     "worker_filter": {},
     "player_gender_requirement": null
   },
-
   {
     "id": "event_recruit_lily",
     "description": "A captivating performer enters your establishment, drawing every eye in the room. Their presence is magnetic, and they move with the confidence of someone who knows their effect on others. Dressed in dramatic, eye-catching attire, they seem to command the very air around them.",
@@ -217,7 +216,7 @@
   },
   {
     "id": "event_recruit_rose",
-    "description": "An elven figure approaches your establishment with ethereal grace. Their movements are fluid and precise, like a dancer's, and their eyes hold the ancient wisdom of their kind. Flowers seem to bloom in their presence, and there's an air of natural magic about them.",
+    "description": "An elf steps inside and stops just past the threshold, taking the room in without hurrying any part of it. Everything she does — setting down her case, folding her gloves, turning to face you — happens at exactly the speed she chooses. 'I am told you are expanding,' she says. 'I would like to hear the terms before I hear the flattery.'",
     "dialogue": "\"Greetings, mortal. I am [event_worker], of the elven folk.\"\n\n\"I seek employment that allows me to express my nature while contributing to your enterprise. My people are known for our grace, our connection to the mystical arts, and our... flexibility in many matters. Would you be interested in having an elf among your workers?\"",
     "weight": 1,
     "unlimited": true,
@@ -363,7 +362,7 @@
   },
   {
     "id": "event_recruit_iris",
-    "description": "A graceful figure enters your establishment with quiet confidence. They move with purpose, and their eyes seem to take in everything with sharp intelligence. There's something magnetic about their presence - people naturally turn to look, drawn by an indefinable quality.",
+    "description": "She comes in laughing at something that happened outside, and half the room looks up to find out what. Her accent belongs a long way from here and she makes no attempt to soften it. She reaches your table before you have decided whether to stand. 'You're the one who owns this. Good. I have a proposal and about four minutes.'",
     "dialogue": "\"Hello. I'm [event_worker]. I've been looking for the right opportunity, and your establishment caught my attention.\"\n\n\"I learn quickly, adapt well, and I have a way of... drawing people in. I think I could be valuable to your operation. What do you think?\"",
     "weight": 1,
     "unlimited": true,
@@ -508,7 +507,7 @@
   },
   {
     "id": "event_recruit_cedar",
-    "description": "A sturdy figure approaches your establishment during the evening hours. Their build suggests years of physical labor, and their calm demeanor stands out among the usual crowd. They carry themselves with quiet confidence, as if they've seen enough to know their worth.",
+    "description": "A young man arrives mid-sentence, apparently finishing a conversation he started with somebody outside. He has three ideas about your establishment before he has crossed the floor, and two of them are not bad. He grins at you as though you have already agreed to something. 'You look like a person who could use somebody with energy.'",
     "dialogue": "\"Evening. Name's [event_worker]. I've been working various jobs around town, but I'm looking for something more stable. I'm strong, reliable, and I don't cause trouble. What do you say?\"",
     "weight": 1,
     "unlimited": true,
@@ -546,7 +545,7 @@
       },
       {
         "option": "Negotiate for a trial period at reduced pay. (Potential: Discount, Trial Worker)",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this carefully. 'A trial's fair. I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost], a 30% discount) for the first month. They gain the 'Trial Worker' trait, which will last for 30 days.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] takes about a second over it. 'A month to show you? That's more than fair.' They agree to work at a reduced daily cost ([actual_cost], a 30% discount) for the first month. They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.7,
@@ -562,7 +561,7 @@
       },
       {
         "option": "Politely decline.",
-        "message": "You explain that you're not currently hiring. [event_worker] nods understandingly. 'No problem. If you change your mind, I'll be around.' They leave without any hard feelings.",
+        "message": "You explain that you're not currently hiring. [event_worker] takes it cheerfully. 'Then I'll come back when you are. You will be.' He is already talking to somebody else on his way out.",
         "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
@@ -580,7 +579,7 @@
   },
   {
     "id": "event_recruit_laurel",
-    "description": "A somewhat effeminate young man enters your establishment with a playful, knowing smile. He moves with a graceful, almost coquettish air, and his eyes sparkle with mischief and intelligence. There's something roguish about him - the way he carries himself suggests he's used to getting what he wants through charm and wit rather than brute force.",
+    "description": "He has been in the room ten minutes before you notice him, and by then he is on first-name terms with two of your regulars and has remembered what both of them drink. When he finally works his way over he is still talking to somebody over his shoulder. 'Sorry. You're the one I actually came to see.'",
     "dialogue": "\"Well, well, well... look what we have here.\"\n\n[event_worker] leans against the doorway with a coy smile, his voice carrying a hint of playful charm. \"I'm [event_worker], and I've heard... interesting things about your establishment. I'm quite clever, you know. Good with people. And I have a certain... adaptability that might be valuable to you.\"\n\n\"I'm looking for work, but I'm not interested in just any job. I want something that appreciates my particular talents. What do you say?\"",
     "weight": 1,
     "unlimited": true,
@@ -630,7 +629,7 @@
       },
       {
         "option": "Politely decline.",
-        "message": "You tell them there are no openings at the moment. [event_worker]'s smile doesn't falter, but his eyes show a flicker of something - disappointment, perhaps, or maybe just calculation. 'That's a shame. I had a feeling we'd work well together.' He gives you one last appraising look. 'Well, if you change your mind, you know where to find me. I have a way of... making opportunities appear.' He leaves with the same graceful, almost dancing step he entered with.",
+        "message": "You tell him there are no openings at the moment. [event_worker] does not miss a beat. 'Understood. For what it's worth, your man on the door is underselling this place.' He shakes your hand anyway and leaves knowing two more of your regulars than he did coming in.",
         "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
@@ -702,10 +701,9 @@
     "worker_filter": {},
     "player_gender_requirement": null
   },
-
   {
     "id": "event_recruit_primrose",
-    "description": "An elven figure approaches your establishment with ethereal grace. Their movements are fluid and precise, like a dancer's, and their eyes hold the ancient wisdom of their kind. Flowers seem to bloom in their presence, and there's an air of natural magic about them.",
+    "description": "An elf comes in with the particular composure of somebody who grew up being looked at. She does not perform the entrance; she simply arrives, and the room arranges itself around her. She waits for a lull rather than making one. 'I understand you have a stage,' she says. 'I would like to see it before we discuss money.'",
     "dialogue": "\"Greetings, mortal. I am [event_worker], of the elven folk.\"\n\n\"I seek employment that allows me to express my nature while contributing to your enterprise. My people are known for our grace, our connection to the mystical arts, and our... flexibility in many matters. Would you be interested in having an elf among your workers?\"",
     "weight": 1,
     "unlimited": true,
@@ -719,7 +717,7 @@
     "choices": [
       {
         "option": "Welcome them and offer [COST] per day. (Potential: Reputation)",
-        "message": "You extend a warm welcome and offer [COST] per day. [event_worker]'s eyes sparkle with approval. 'You show proper respect. I accept your offer.' They move with such grace that it's almost mesmerizing to watch. News of the handsome offer drifts through the taverns, burnishing your name (+6 Reputation).",
+        "message": "You extend a welcome and offer [COST] per day. [event_worker] considers the figure rather than your manner, which is its own kind of compliment. 'That is a serious offer. I accept.' Word of the terms travels through the taverns and burnishes your name (+6 Reputation).",
         "effect": {
           "recruit_worker": true,
           "reputation": 6,
@@ -743,7 +741,7 @@
       },
       {
         "option": "Offer them a position with accommodations for their elven nature. (Potential: Discount, Reputation, Nature's Blessing)",
-        "message": "You propose [COST] per day with special accommodations for their elven needs - perhaps access to gardens or natural spaces. [event_worker]'s expression softens. 'You understand that we require connection to nature. Very thoughtful.' They agree to work at a slightly reduced daily cost ([actual_cost], a 20% discount) in exchange for your consideration. Talk of the fair wage travels through the district, raising your standing (+7 Reputation). They gain the 'Nature's Blessing' trait, which will last for 90 days.",
+        "message": "You propose [COST] per day and offer her the run of the stage on quiet nights to work on her own material. [event_worker]'s expression shifts for the first time. 'You have thought about this.' She agrees to a slightly reduced daily cost ([actual_cost]) and gains Nature's Blessing.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -760,7 +758,7 @@
       },
       {
         "option": "Politely decline.",
-        "message": "You apologize and say the roster is full for now. [event_worker] nods gracefully. 'I understand. Should your needs change, the forest will know where to find me.' They depart with the same ethereal grace they arrived with, leaving a faint floral scent behind.",
+        "message": "You apologise and say the roster is full for now. [event_worker] accepts it without visible disappointment. 'Then I will look elsewhere, and you will hear how that went.' She is gone before you can decide whether that was a threat.",
         "outcome_override": "failure",
         "effect": {
           "success_chance": 0,
@@ -778,7 +776,7 @@
   },
   {
     "id": "event_recruit_jasmine",
-    "description": "A graceful figure enters your establishment with quiet confidence. They move with purpose, and their eyes seem to take in everything with sharp intelligence. There's something magnetic about their presence - people naturally turn to look, drawn by an indefinable quality.",
+    "description": "She arrives out of the weather and is comfortable inside a minute, shaking out her coat and looking the place over like she is deciding whether to keep it. Her accent is from somewhere warm and a long way off. By the time she reaches you she has worked out what you are going to ask. 'The answer is yes,' she says. 'Ask it anyway.'",
     "dialogue": "\"Hello. I'm [event_worker]. I've been looking for the right opportunity, and your establishment caught my attention.\"\n\n\"I learn quickly, adapt well, and I have a way of... drawing people in. I think I could be valuable to your operation. What do you think?\"",
     "weight": 1,
     "unlimited": true,
@@ -816,7 +814,7 @@
       },
       {
         "option": "Offer a trial period to prove their value. (Potential: Discount, Trial Worker)",
-        "message": "You suggest a trial period at [COST] per day. [event_worker] considers this. 'A trial's fair. I'm confident I'll prove my worth.' They agree to work at a reduced daily cost ([actual_cost], a 25% discount) for the first month, with the promise of better terms if they excel. They gain the 'Trial Worker' trait, which will last for 30 days.",
+        "message": "You suggest a trial period at [COST] per day. [event_worker] laughs once. 'A month? You'll know inside a week.' She agrees to a reduced daily cost ([actual_cost], a 25% discount) for the first month, with better terms if she excels. She gains the 'Trial Worker' trait.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.75,
@@ -995,7 +993,7 @@
   },
   {
     "id": "event_recruit_unique_generic_1",
-    "description": "A distinctive figure approaches your establishment, clearly not your average job seeker. There's something special about them - perhaps it's their bearing, their confidence, or the way they carry themselves. They've clearly had unique experiences that set them apart.",
+    "description": "Somebody comes in who has clearly been asked to wait outside somewhere else first. Good boots, no guild badge, and a letter of introduction they do not offer you. They wait until you are free instead of interrupting, which by itself puts them above most of this week's applicants.",
     "dialogue": "\"Hello. I'm [event_worker], and I'm looking for work.\"\n\n\"I'm not like most people you'll meet. I've had experiences that have shaped me in particular ways, and I believe those experiences could be valuable to your establishment. Would you be interested in hearing more?\"",
     "weight": 1,
     "unlimited": true,
@@ -1067,7 +1065,7 @@
   },
   {
     "id": "event_recruit_unique_generic_2",
-    "description": "An intriguing individual arrives at your establishment, their presence immediately noticeable. They carry themselves with a confidence that suggests they know their own worth, and there's an air of mystery or distinction about them that sets them apart from ordinary workers.",
+    "description": "A newcomer waits at the end of the bar until the rush is over, then comes across with the air of somebody who has done this before and did not enjoy it last time. Whatever their trade used to be, they have left it. They name a rate before you can ask for one.",
     "dialogue": "\"Good day. I am [event_worker]. I understand you might be looking for workers with... particular qualities.\"\n\n\"I have skills and experiences that aren't common. I believe I could bring something special to your establishment. Would you like to discuss the possibility?\"",
     "weight": 1,
     "unlimited": true,
@@ -1135,7 +1133,7 @@
   },
   {
     "id": "event_recruit_unique_generic_3",
-    "description": "A remarkable individual enters your establishment, immediately standing out from the crowd. Whether it's their bearing, their confidence, or something indefinable, they clearly possess qualities that make them exceptional. They approach you with purpose and self-assurance.",
+    "description": "Somebody arrives near closing, which is when the people who need work most tend to. They have carried their own bag a long way and they set it down carefully instead of dropping it. When they ask about a position they look at your ledger rather than at you.",
     "dialogue": "\"Hello. I'm [event_worker]. I've been told I have... particular talents.\"\n\n\"I'm looking for employment that recognizes and values what makes me different. I believe I could be an asset to your establishment. Are you interested in discussing the possibility?\"",
     "weight": 1,
     "unlimited": true,

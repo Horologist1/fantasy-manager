@@ -1,0 +1,252 @@
+historias analizadas: 192
+
+==============================================================================
+HALLAZGO 1 - texto vs formula de ingresos
+==============================================================================
+  AFIRMA-PAGO-EN-PERDIDA prostitute_vanilla_client_male     failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_vanilla_client_female   failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_anal_client_female      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_oral_client_male        failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_oral_client_female      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_hand_client_male        failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_hand_client_female      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_homo_client_female      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_vanilla_client_gay      failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_vanilla_client_lesbian  failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_anal_client_gay         failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_hand_client_gay         failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_hetero_client_lesbian   failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_libido20_too_eager_male failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA prostitute_libido20_too_eager_female failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_oral_steam_and_mouth_male failure          -(roll - skill)  <Base fee>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_oral_steam_and_mouth_female failure          -(roll - skill)  <Base fee>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_hand_oil_edge_male        failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_hand_oil_edge_female      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_oral_steam_and_mouth_gay  failure          -(roll - skill)  <Base fee>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_oral_steam_and_mouth_lesbian failure          -(roll - skill)  <Base fee>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_hand_oil_edge_gay         failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA masseuse_hand_oil_edge_lesbian     failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vanilla_client_male  failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vanilla_client_female failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_anal_client_male     failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_bdsm_client_male     failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_bdsm_client_female   failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_oral_client_male     failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_oral_client_female   failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_hand_client_female   failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_homo_client_male     failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_homo_client_female   failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vip_client_female    failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_extreme_client_male  failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_extreme_client_female failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vanilla_client_gay   failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vanilla_client_lesbian failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_anal_client_gay      failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_anal_client_lesbian  failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_bdsm_client_gay      failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_bdsm_client_lesbian  failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_oral_client_gay      failure          -(roll - skill)  <Base fee>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_oral_client_lesbian  failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_hand_client_gay      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_hand_client_lesbian  failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vip_client_gay       failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_vip_client_lesbian   failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_hetero_client_gay    failure          -(roll - skill)  <paying>
+  AFIRMA-PAGO-EN-PERDIDA ea_prostitute_hetero_client_lesbian failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA stripper_regular_client            failure          -(roll - skill)  <tip>
+  AFIRMA-PAGO-EN-PERDIDA stripper_private_dance             failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA stripper_lapdance_escalation_male  failure          -(roll - skill)  <base fee>
+  AFIRMA-PAGO-EN-PERDIDA stripper_lapdance_escalation_female failure          -(roll - skill)  <base fee>
+  AFIRMA-PAGO-EN-PERDIDA stripper_lapdance_escalation_lesbian failure          -(roll - skill)  <base fee>
+  AFIRMA-PAGO-EN-PERDIDA cook_story2_restaurant             failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA boss_hunting_approach_recon        failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA entertainer_private_performance_nsfw_tavern failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA entertainer_private_performance_nsfw_tavern_gay failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA entertainer_private_performance_nsfw_tavern_lesbian failure          -(roll - skill)  <paid>
+  AFIRMA-PAGO-EN-PERDIDA dealer_story1                      failure          -(roll - skill)  <pays>
+  AFIRMA-PAGO-EN-PERDIDA dealer_winners_reward_nsfw_casino_gay failure          -(roll - skill)  <tip>
+  AFIRMA-PAGO-EN-PERDIDA dealer_winners_reward_nsfw_casino_lesbian failure          -(roll - skill)  <tip>
+  AFIRMA-PAGO-EN-PERDIDA service_story1_casino_server       failure          -(roll - skill)  <tips>
+  AFIRMA-PAGO-EN-PERDIDA courtesan_seduction_nsfw_gay       failure          -(roll - skill)  <tips>
+  AFIRMA-PAGO-EN-PERDIDA servant_aristocratic_service       failure          -(roll - skill)  <tips>
+  AFIRMA-PAGO-EN-PERDIDA guards_libido20_aggressive_patrol  failure          -(roll - skill)  <pay>
+  total: 67  (graves: 0)
+
+==============================================================================
+HALLAZGO 2 - duraciones incompatibles con la resolucion diaria
+==============================================================================
+  stripper_libido20_too_real         critical_success three nights   (futuro, OK)
+  entertainer_story1_tavern          critical_success two days       (futuro, OK)
+  total: 2  (a revisar: 0)
+
+==============================================================================
+HALLAZGO 3 - acto narrado que el 'report' visible contradice
+==============================================================================
+  prostitute_vanilla_client_male         success          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  prostitute_vanilla_client_male         failure          report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  prostitute_vanilla_client_male         critical_success report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  prostitute_vanilla_client_male         critical_success report=Client paid for Sex        narra=Anal   skills=Sex
+      <behind with a fist in>
+  prostitute_vanilla_client_female       critical_success report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  prostitute_anal_client_male            success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  prostitute_anal_client_male            critical_success report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  prostitute_anal_client_male            mediocre         report=Client paid for Anal       narra=Sex    skills=Anal
+      <fucks>
+  prostitute_anal_client_male            success          report=Client paid for Anal       narra=Sex    skills=Anal
+      <fucks>
+  prostitute_anal_client_female          failure          report=Client paid for Anal       narra=Oral   skills=Anal
+      <mouth>
+  prostitute_anal_client_female          success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  prostitute_oral_client_male            success          report=Client paid for Oral       narra=Hand   skills=Oral
+      <fingers>
+  prostitute_oral_client_male            critical_success report=Client paid for Oral       narra=Hand   skills=Oral
+      <fingers>
+  prostitute_oral_client_male            success          report=Client paid for Oral       narra=Sex    skills=Oral
+      <inside her>
+  prostitute_hand_client_male            success          report=Client paid for Fingering  narra=Oral   skills=Hand
+      <mouth>
+  prostitute_hand_client_male            critical_success report=Client paid for Fingering  narra=Oral   skills=Hand
+      <mouth>
+  prostitute_hand_client_male            failure          report=Client paid for Fingering  narra=Sex    skills=Hand
+      <inside her>
+  prostitute_hand_client_female          success          report=Client paid for Handjob    narra=Oral   skills=Hand
+      <mouth>
+  prostitute_homo_client_male            mediocre         report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <mouth>
+  prostitute_homo_client_male            success          report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <mouth>
+  prostitute_homo_client_female          success          report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <Mouth>
+  prostitute_homo_client_female          critical_success report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <Tongue>
+  prostitute_homo_client_female          mediocre         report=Same-Sex Client Service    narra=Hand   skills=Homo
+      <fingers>
+  prostitute_homo_client_female          success          report=Same-Sex Client Service    narra=Hand   skills=Homo
+      <fingers>
+  prostitute_homo_client_female          critical_success report=Same-Sex Client Service    narra=Hand   skills=Homo
+      <fingers>
+  prostitute_vanilla_client_gay          success          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  prostitute_vanilla_client_lesbian      failure          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  prostitute_vanilla_client_lesbian      mediocre         report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  prostitute_vanilla_client_lesbian      success          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  prostitute_vanilla_client_lesbian      critical_success report=Client paid for Sex        narra=Oral   skills=Sex
+      <tongue>
+  prostitute_vanilla_client_lesbian      mediocre         report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  prostitute_vanilla_client_lesbian      success          report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  prostitute_vanilla_client_lesbian      critical_success report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  prostitute_anal_client_gay             success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  prostitute_anal_client_lesbian         success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  prostitute_oral_client_lesbian         success          report=Client paid for Oral       narra=Hand   skills=Oral
+      <fingers>
+  prostitute_hand_client_gay             success          report=Client paid for Handjob    narra=Oral   skills=Hand
+      <mouth>
+  prostitute_hand_client_gay             success          report=Client paid for Handjob    narra=Sex    skills=Hand
+      <fucking>
+  ea_prostitute_vanilla_client_male      success          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  ea_prostitute_vanilla_client_female    critical_success report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  ea_prostitute_anal_client_male         success          report=Client paid for Anal       narra=Sex    skills=Anal
+      <fucks>
+  ea_prostitute_anal_client_female       failure          report=Client paid for Anal       narra=Oral   skills=Anal
+      <mouth>
+  ea_prostitute_anal_client_female       success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  ea_prostitute_anal_client_female       success          report=Client paid for Anal       narra=Sex    skills=Anal
+      <inside her>
+  ea_prostitute_oral_client_male         success          report=Client paid for Oral       narra=Hand   skills=Oral
+      <fingers>
+  ea_prostitute_oral_client_male         success          report=Client paid for Oral       narra=Sex    skills=Oral
+      <riding>
+  ea_prostitute_hand_client_female       success          report=Client paid for Handjob    narra=Oral   skills=Hand
+      <mouth>
+  ea_prostitute_hand_client_female       success          report=Client paid for Handjob    narra=Sex    skills=Hand
+      <fucking>
+  ea_prostitute_homo_client_male         mediocre         report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <mouth>
+  ea_prostitute_homo_client_male         success          report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <mouth>
+  ea_prostitute_homo_client_female       success          report=Same-Sex Client Service    narra=Oral   skills=Homo
+      <Mouth>
+  ea_prostitute_homo_client_female       success          report=Same-Sex Client Service    narra=Hand   skills=Homo
+      <fingers>
+  ea_prostitute_vanilla_client_gay       success          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  ea_prostitute_vanilla_client_lesbian   failure          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  ea_prostitute_vanilla_client_lesbian   mediocre         report=Client paid for Sex        narra=Oral   skills=Sex
+      <tongue>
+  ea_prostitute_vanilla_client_lesbian   success          report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  ea_prostitute_vanilla_client_lesbian   critical_success report=Client paid for Sex        narra=Oral   skills=Sex
+      <mouth>
+  ea_prostitute_vanilla_client_lesbian   mediocre         report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  ea_prostitute_vanilla_client_lesbian   success          report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  ea_prostitute_vanilla_client_lesbian   critical_success report=Client paid for Sex        narra=Hand   skills=Sex
+      <fingers>
+  ea_prostitute_anal_client_gay          success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <fingers>
+  ea_prostitute_anal_client_gay          success          report=Client paid for Anal       narra=Sex    skills=Anal
+      <fucks>
+  ea_prostitute_anal_client_lesbian      success          report=Client paid for Anal       narra=Hand   skills=Anal
+      <stroke>
+  ea_prostitute_oral_client_gay          success          report=Client paid for a Blowjob  narra=Sex    skills=Oral
+      <takes him deep>
+  ea_prostitute_oral_client_lesbian      success          report=Client paid for Oral       narra=Hand   skills=Oral
+      <fingers>
+  ea_prostitute_hand_client_gay          success          report=Client paid for Handjob    narra=Oral   skills=Hand
+      <mouth>
+  ea_prostitute_hand_client_gay          success          report=Client paid for Handjob    narra=Sex    skills=Hand
+      <fucking>
+  mismatches totales: 123   tocan el report visible: 67
+
+  NOTA: este contador NO es un recuento de defectos. El desarrollador ha
+  establecido que el desajuste entre la actividad narrada y la skill evaluada es
+  aceptable a veces: una escena de "Client paid for Sex" que empieza con la boca
+  es preliminar, no contradiccion. Y comprobar la AUSENCIA del acto declarado da
+  falsos positivos masivos, porque el acto se narra sin nombrarlo ("works him
+  open", "takes the lady's strap"). Se deja como inventario para lectura humana.
+  Ver AUDIT_REPORT.md seccion 12.3.
+
+==============================================================================
+HALLAZGO 5 - gramatica y construcciones compartidas
+==============================================================================
+
+  construcciones compartidas entre historias distintas (>=5 palabras):
+    85 n-gramas  "exactly as commissioned bound presented"             ea_prostitute_extreme_client_female, ea_prostitute_extreme_client_male
+    77 n-gramas  "somebody desperate rather than desirable"            pleasure_servant_libido20_overwhelming_desire_female, pleasure_servant_libido20_
+    72 n-gramas  "booking degenerates into clumsy grabbing"            expert_libido20_lost_control_female, expert_libido20_lost_control_male
+    53 n-gramas  "ear describing what she would"                       ea_prostitute_hand_client_female, prostitute_hand_client_female
+    50 n-gramas  "exactly what was arranged competently"               courtesan_vip_private_chamber_female, courtesan_vip_private_chamber_lesbian
+    49 n-gramas  "long time everywhere except where"                   ea_prostitute_oral_client_male, prostitute_oral_client_male
+    41 n-gramas  "the group drinks elsewhere afterwards"               ea_prostitute_group_clients_female, ea_prostitute_group_clients_male
+    35 n-gramas  "client's throat then lower unhurried"                ea_prostitute_homo_client_female, prostitute_homo_client_female
+    35 n-gramas  "provides precisely what was arranged"                pleasure_servant_noble_client_female, pleasure_servant_noble_client_lesbian
+    33 n-gramas  "has finished over his fingers"                       ea_prostitute_hand_client_gay, prostitute_hand_client_gay
+    31 n-gramas  "the man stops wondering whether"                     ea_prostitute_homo_client_male, prostitute_homo_client_male
+    29 n-gramas  "name loses the thread between"                       ea_prostitute_oral_client_lesbian, prostitute_oral_client_lesbian
+    27 n-gramas  "delivered in sequence without error"                 ea_prostitute_vip_client_female, ea_prostitute_vip_client_gay, ea_prostitute_vip
+    26 n-gramas  "shoulders and fucks their ass"                       ea_prostitute_anal_client_male, prostitute_anal_client_male
+    21 n-gramas  "holding position until her voice"                    ea_prostitute_bdsm_client_female, ea_prostitute_bdsm_client_lesbian
+    21 n-gramas  "castle's reputation had promised her"                courtesan_seduction_nsfw_lesbian, courtesan_seduction_nsfw_male
+    20 n-gramas  "overtips wildly and books three"                     prostitute_libido20_too_eager_female, prostitute_libido20_too_eager_male
+    20 n-gramas  "satisfied some spend the evening"                    ea_prostitute_group_clients_gay, ea_prostitute_group_clients_lesbian
+  pares/grupos de historias que comparten texto literal: 312

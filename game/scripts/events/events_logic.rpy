@@ -371,6 +371,72 @@ init python:
                 removed.append(timestamp_flag)
         return removed
 
+    def event_choice_cost_warning(effect, money, bankruptcy_threshold=-5000):
+        """Text added to a choice whose cost exceeds the coins on hand. Never blocks.
+
+        Bad decisions stay available, but the player sees what they are
+        choosing: "Invest 10,000" with 3,000 coins says it puts them in debt,
+        and past the bankruptcy line it says the game ends.
+        """
+        if not hasattr(effect, "get"):
+            return ""
+        try:
+            cost = -int(effect.get("money", 0) or 0)
+            funds = int(money or 0)
+            threshold = int(bankruptcy_threshold)
+        except (TypeError, ValueError, OverflowError):
+            return ""
+        if cost <= 0 or funds >= cost:
+            return ""
+        after = funds - cost
+        if after <= threshold:
+            return "You have %d coins: this leaves you at %d, past the bankruptcy line" % (funds, after)
+        return "You have %d coins: this puts you %d in debt" % (funds, -after)
+
+    ELITE_EMPORIUM_OFFER_EVENT_IDS = (
+        "shop_owner_expansion", "shop_owner_expansion_retry", "shop_owner_expansion_guaranteed",
+    )
+    ELITE_EMPORIUM_RETURN_COOLDOWN_DAYS = 21
+
+    def elite_emporium_return_hint(event_flags, event_last_occurred, event_occurrences, today):
+        """Note under "Elite Emporium (Closed)" once the merchant has made her offer.
+
+        Read-only: derives "she returns in about N days" from the last offer
+        (or the decline stamp) plus the events' 21-day cooldown, so a player who
+        declined knows the shop is waiting for her, not broken.
+        """
+        flags = event_flags if hasattr(event_flags, "get") else {}
+        last = event_last_occurred if hasattr(event_last_occurred, "get") else {}
+        seen = event_occurrences if hasattr(event_occurrences, "get") else {}
+        if flags.get("shop3_unlocked", False):
+            return ""
+        offered = bool(flags.get("shop_expansion_declined", False))
+        stamps = []
+        for event_id in ELITE_EMPORIUM_OFFER_EVENT_IDS:
+            try:
+                if int(seen.get(event_id, 0) or 0) > 0:
+                    offered = True
+            except (TypeError, ValueError):
+                pass
+            value = last.get(event_id)
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                offered = True
+                stamps.append(value)
+        decline = flags.get("shop_expansion_decline_timestamp")
+        if isinstance(decline, (int, float)) and not isinstance(decline, bool):
+            stamps.append(decline)
+        if not offered:
+            return ""
+        if not stamps:
+            return "The merchant will return with her offer."
+        try:
+            days = int(max(stamps) + ELITE_EMPORIUM_RETURN_COOLDOWN_DAYS - int(today))
+        except (TypeError, ValueError, OverflowError):
+            return "The merchant will return with her offer."
+        if days <= 0:
+            return "The merchant may return with her offer any day now."
+        return "The merchant returns with her offer in about %d day%s." % (days, "" if days == 1 else "s")
+
     def reconcile_shop_unlock_state():
         """Heal legacy Shop 2 UI state into the event-gating namespace."""
         if not hasattr(store, "unlocked_shops") or store.unlocked_shops is None:

@@ -1,0 +1,61 @@
+STRUCTURE IDENTICAL (ids/weights/skills/effects/earnings/images/traits): False
+--- 
++++ 
+@@ -54,11 +54,10 @@
+         "success": "100 + skill"
+        },
+        "excluded_traits": [
+-        "Gay",
+-        "Lesbian"
++        "Gay"
+        ],
+        "failure_image": "prostitute_vanilla_client_failure",
+-       "id": "prostitute_vanilla_client",
++       "id": "prostitute_vanilla_client_male",
+        "negative_traits": {
+         "Shy": 3
+        },
+@@ -77,7 +76,76 @@
+        "trait_msg_failure": "{worker_name}'s {trait} put the client off.",
+        "trait_msg_success": "The client is really into {worker_name}'s {trait}.",
+        "trait_success": "The client is really into {worker_name}'s {trait}.",
+-       "weight": 4
++       "weight": 4,
++       "worker_gender_requirement": "male"
++      },
++      {
++       "consequences": {
++        "critical_success": {
++         "joy": 2,
++         "reputation": 10
++        },
++        "failure": {
++         "energy": -4,
++         "health": -1,
++         "joy": -2,
++         "libido": -2,
++         "rebelliousness": 1,
++         "reputation": -5
++        },
++        "mediocre": {
++         "energy": -4,
++         "health": -1,
++         "joy": -2,
++         "libido": -2,
++         "rebelliousness": 1,
++         "reputation": -5
++        },
++        "success": {
++         "energy": -4,
++         "joy": 1,
++         "libido": -1,
++         "reputation": 5
++        }
++       },
++       "descriptions": {
++        "critical_success": "<TEXT>",
++        "failure": "<TEXT>",
++        "mediocre": "<TEXT>",
++        "success": "<TEXT>"
++       },
++       "difficulty_modifier": 5,

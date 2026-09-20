@@ -18,7 +18,7 @@
         "option": "Accept the duel. (Risk: Worker Health; Potential: Money, Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] meets every blow clean, steel on steel. The knight pushes hard but can't break through. After the final exchange both step back, breathing heavy, grinning.\n\nThe knight pulls off their helm and offers a toast. Honor satisfied, purse earned ({actual_money}, {actual_reputation} reputation, +5 Joy).",
-        "message_failure": "[acting_worker] can't keep up. Every parry lands late, every counter falls short. The knight batters them back until blood shows through torn cloth. You cover the medical costs and the knight's fee while the crowd mutters about your house fielding amateurs ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] can't keep up. Every parry lands late, every counter falls short. The knight batters them back until blood shows through torn cloth. You cover the medical costs and the knight's fee while the crowd mutters about your house fielding amateurs ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 1200,
@@ -61,7 +61,6 @@
     "worker_filter": {},
     "player_gender_requirement": null
   },
-
   {
     "id": "guild_rivalry_taunt",
     "description": "Crude flyers plastered across every post in the district—your name mocked in bad verse, your guild drawn as a joke. The rival guild's seal is still wet. Passersby stop to read and glance your way. You need to respond or let this stand.",
@@ -1152,8 +1151,8 @@
         "condition": "Clever",
         "threshold": 65,
         "required_trait": "Magical",
-        "message_success": "The archmage's eyes widen as [acting_worker] approaches. 'Yes—this one burns bright.' What follows is not teaching but awakening—ancient words spoken into the mind, visions of currents beneath reality, doors opening in consciousness. When the archmage departs, magic is no longer something [acting_worker] does. It is something they are. They have become an Arcane Adept.",
-        "message_failure": "The archmage probes [acting_worker]'s essence carefully, then shakes their head. 'The potential exists, but the foundation is too thin. Master the basics first.' They vanish in a flash of light.",
+        "message_success": "The archmage sits [acting_worker] at a cleared table and begins with something small: making a candle flame lean without touching it. It takes four hours and most of a bottle of your wine. By the end [acting_worker] can do it without looking at the candle, and the archmage leaves behind a book nobody else in the house can get open.",
+        "message_failure": "The archmage holds [acting_worker]'s hands for a long moment and then lets them go. 'There is something there. It is under twenty years of nobody asking, and I do not have twenty years.' They write down the name of a teacher in the eastern quarter, leave it on the table, and walk out through the wall.",
         "effect": {
           "success": {
             "servant_energy": -5,
@@ -1294,8 +1293,8 @@
         "option": "Present a worthy worker for blessing. (Requires Charm 65+)",
         "condition": "Charm",
         "threshold": 65,
-        "message_success": "The high priest's eyes light up as [acting_worker] approaches. 'Yes—this is the one.' Hands on [acting_worker]'s head, chanting in a language older than kingdoms. Golden light suffuses their form. When the ritual ends, [acting_worker] radiates warmth that draws people close, and minor wounds heal faster in their presence. They have become Divine Touched.",
-        "message_failure": "The high priest studies [acting_worker] carefully, then sighs. 'The heart is good, but there's too much conflict within for the blessing to take root. Find peace first.' They depart with a gentle benediction.",
+        "message_success": "The high priest has [acting_worker] kneel on the boards and works oil into their palms, reciting something the room does not recognise. It takes a quarter of an hour and is very dull to watch. Afterwards, cuts on [acting_worker]'s hands close in days instead of weeks, and people keep finding themselves standing closer than they meant to.",
+        "message_failure": "The high priest holds [acting_worker]'s wrists, waits, and sets them down again. 'The heart is willing. There is simply too much noise in it for the words to land.' They mark the doorframe with oil on the way out instead, which is not nothing.",
         "effect": {
           "success": {
             "joy": 15,
@@ -2045,7 +2044,7 @@
   },
   {
     "id": "legendary_courtesan_visit",
-    "description": "She arrives without fanfare, yet every eye turns. No obvious reason for the magnetism—her dress is elegant but not ostentatious. Yet something about her presence commands the room. This is Madame Celestine, the legendary courtesan whose clients have included emperors and archdukes. 'I did not build my reputation on beauty alone,' she says. 'I built it on understanding. On anticipation.' Her gaze sweeps your workers. 'Is there one here who can truly understand another person?'",
+    "description": "She arrives without announcing herself and the room notices anyway — not for the dress, which is plain by the standards of your better clients, but because she stops to greet your doorman by name and he goes red to the ears. This is Madame Celestine, whose clients have included emperors and archdukes. 'I did not build a reputation on being beautiful,' she says. 'I built it on paying attention.' Her gaze sweeps your workers. 'Is there one here who actually listens?'",
     "weight": 1,
     "event_probability": 5,
     "limited": true,
@@ -2066,8 +2065,8 @@
         "option": "Present your most promising worker. (Requires Sex 65+)",
         "condition": "Sex",
         "threshold": 65,
-        "message_success": "Celestine observes [acting_worker] with clients over several evenings, then nods. 'You have the foundation. Now we build the palace.' An education follows in true companionship—reading desires clients don't know they have, mastering conversation as foreplay, understanding that seduction happens in the mind first. When Celestine departs, [acting_worker] has achieved Courtesan's Grace—moving through intimacy with an elegance that transforms physical pleasure into something transcendent.",
-        "message_failure": "Celestine studies [acting_worker]'s interactions and sighs softly. 'You see the body but not the soul within it. True intimacy requires seeing both.' She produces a vial of perfume. 'Wear this when you work. Let it remind you that every client carries secret gardens. Learn to find the gates.'",
+        "message_success": "Celestine watches [acting_worker] work for three evenings and says nothing at all. On the fourth she takes them aside and starts with small things: where to stand while a client is still deciding, how long to leave a silence before filling it, which question makes a man talk about himself for an hour. 'The body is the easy half,' she says. 'You already have that.'",
+        "message_failure": "Celestine watches for two evenings and does not stay for a third. 'You are very good at the part that can be taught,' she says, not unkindly. 'Come and find me when you have got bored of being good at it.' She leaves a vial of perfume on the bar and no instructions for it.",
         "effect": {
           "success": {
             "servant_energy": -3,
@@ -2137,8 +2136,8 @@
         "option": "Offer your most spiritually inclined worker. (Requires Hand 65+)",
         "condition": "Hand",
         "threshold": 65,
-        "message_success": "The practitioner places their hands over [acting_worker]'s and closes their eyes. Something passes between them—warmth, recognition. 'Yes. You can feel it.' Training follows in sensing energy flow through the body, pressure points that unlock deeper pleasure, techniques refined over millennia. When the practitioner departs to their hidden temple, [acting_worker] has received the Sacred Touch. Their hands carry ancient knowledge, and their ministrations transcend mere physical sensation.",
-        "message_failure": "The practitioner examines [acting_worker]'s hands, then their eyes. 'Your body knows the movements, but your spirit is not yet aligned.' They press a smooth stone into [acting_worker]'s palm. 'Meditate with this each night. When you can feel its warmth without your hands, you will be ready.'",
+        "message_success": "The practitioner lays their hands over [acting_worker]'s and closes their eyes. Something passes between them—warmth, recognition. 'Yes. You can feel it.' What follows is a week of patient work: where the pulse sits closest to the skin, how long to hold pressure before easing it, how to bring somebody to the edge and hold them there until the release goes through them like something breaking open. By the end [acting_worker] can take a client apart with both hands and no hurry at all, and has received the Sacred Touch.",
+        "message_failure": "The practitioner examines [acting_worker]'s hands, then their eyes. 'Your body knows the movements, but you are working toward the finish instead of through it. The release is not the prayer. It is only the last word of it.' They press a smooth stone into [acting_worker]'s palm. 'Meditate with this each night. When you can feel its warmth without your hands, you will be ready.'",
         "effect": {
           "success": {
             "servant_energy": -3,
@@ -2211,8 +2210,8 @@
         "option": "Present your worker best suited to intimate persuasion. (Requires Oral 65+)",
         "condition": "Oral",
         "threshold": 65,
-        "message_success": "The Whisperer converses with [acting_worker] for hours—intimate conversations that reveal nothing yet communicate everything. Then they nod. 'You understand that the most powerful intimacy happens in words.' Training follows in the art of intimate conversation: questions that unlock hidden desires, the dance of revelation and mystery, anticipation as power. When the Whisperer departs, [acting_worker] has become a fellow Desire Whisperer—able to draw out and fulfill desires clients didn't know they had.",
-        "message_failure": "The Whisperer listens to [acting_worker] and smiles gently. 'You talk to fill silence. You must learn to talk to create hunger.' They lean close and whisper something that makes [acting_worker] shiver. 'Remember this feeling. When you can create it with words alone, find me.'",
+        "message_success": "The Whisperer talks with [acting_worker] for hours—conversations that reveal nothing and communicate everything—and then moves closer, and keeps talking. That is the lesson: the same breath that carries the words is the breath a mouth works with. Questions that open somebody up, silences held a beat too long, and then the mouth doing what the words were promising, slow enough that the client is begging before they are allowed to come. When the Whisperer departs, [acting_worker] is one too.",
+        "message_failure": "The Whisperer listens to [acting_worker] and smiles gently. 'You talk to fill silence. You must learn to talk to create hunger.' They lean in until their breath is at [acting_worker]'s ear and say something that makes them shiver hard enough to be embarrassing. 'That, with nothing touching you. Learn to do it with your mouth full and you will not need me. Until then, find me.'",
         "effect": {
           "success": {
             "servant_energy": -2,
@@ -2338,7 +2337,7 @@
         "option": "Send a worker to fight. (Risk: Health; Potential: Money, Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] steps into the ring and reads the pit fighter's rhythm within the first exchange. A feint, a counter, and the visitor hits the floor hard. The crowd roars. Bets pay out in your favor and the pit fighter buys drinks, laughing about the loss ({actual_money}, {actual_reputation} reputation, +5 Joy).",
-        "message_failure": "[acting_worker] takes a heavy hit in the second exchange and doesn't recover. The pit fighter finishes the bout quickly and collects the purse while your worker limps to the back room. The crowd enjoyed the show, but your reputation takes the hit ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] takes a heavy hit in the second exchange and doesn't recover. The pit fighter finishes the bout quickly and collects the purse while your worker limps to the back room. The crowd enjoyed the show, but your reputation takes the hit ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 800,
@@ -2402,7 +2401,7 @@
         "option": "Send a worker to confront them. (Risk: Health; Potential: Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] walks out alone and doesn't flinch. The first thug swings; [acting_worker] puts them on the ground before the other two can react. The leader backs off, hands raised. Word spreads through the district that your place doesn't bend ({actual_reputation} reputation, +5 Joy).",
-        "message_failure": "[acting_worker] steps out swinging but the thugs fight dirty. A knife slash across the arm ends it fast. You pay their fee this time and patch up your worker while the neighborhood watches ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] steps out swinging but the thugs fight dirty. A knife slash across the arm ends it fast. You pay their fee this time and patch up your worker while the neighborhood watches ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "reputation": 12,
@@ -2718,7 +2717,7 @@
         "option": "Send a worker to chase the thief. (Risk: Health; Potential: Money, Reputation)",
         "condition": "Agility",
         "message_success": "[acting_worker] is out the door before anyone else moves. They clear the fence, hit the rooftop tiles at a sprint, and corner the thief three buildings away. The purse comes back, the patron is overjoyed, and the whole district hears about it by morning ({actual_money}, {actual_reputation} reputation, +5 Joy).",
-        "message_failure": "[acting_worker] gives chase but loses footing on the wet tiles. They slide off a low roof and land hard in the alley below. The thief escapes, the patron demands compensation, and your worker needs a healer ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] gives chase but loses footing on the wet tiles. They slide off a low roof and land hard in the alley below. The thief escapes, the patron demands compensation, and your worker needs a healer ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 500,
@@ -2841,7 +2840,7 @@
         "option": "Send a worker to help. (Risk: Health; Potential: Reputation)",
         "condition": "Agility",
         "message_success": "[acting_worker] sprints across the street and shoves three people clear just as the scaffold collapses behind them. Timber crashes where the crowd stood seconds ago. The district watches your worker dust themselves off, unhurt. By evening, your establishment is the talk of the neighborhood ({actual_reputation} reputation, +10 Joy).",
-        "message_failure": "[acting_worker] rushes in but catches a falling beam across the shoulder. They manage to pull one person clear before going down. The crowd helps, but your worker needs rest and healing. Good intentions, rough outcome ({actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] rushes in but catches a falling beam across the shoulder. They manage to pull one person clear before going down. The crowd helps, but your worker needs rest and healing. Good intentions, rough outcome ({actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "reputation": 15,
@@ -2984,7 +2983,7 @@
         "option": "Send a worker to subdue the beast by force. (Risk: Health; Potential: Money, Reputation)",
         "condition": "Combat",
         "message_success": "[acting_worker] grabs a heavy plank and meets the beast head-on. A solid strike to the snout stuns it long enough for the handler to throw a chain around its neck. The crowd cheers, the handler pays a generous reward, and your place is the hero of the district ({actual_money}, {actual_reputation} reputation, +5 Joy).",
-        "message_failure": "[acting_worker] swings but the beast is faster. A claw rakes across their arm and the beast charges past into a market stall. The handler catches it eventually, but your worker needs stitching and the stall owner blames you ({actual_money}, {actual_reputation} reputation, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] swings but the beast is faster. A claw rakes across their arm and the beast charges past into a market stall. The handler catches it eventually, but your worker needs stitching and the stall owner blames you ({actual_money}, {actual_reputation} reputation, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 800,
@@ -3068,7 +3067,7 @@
         "option": "Enter a worker in the ring. (Risk: Health; Potential: Money)",
         "condition": "Combat",
         "message_success": "[acting_worker] walks into the pit and the crowd goes quiet. Three rounds later, their opponent is on the floor and the bookmaker is counting out your winnings. Your worker walks out with bruises and a fat purse. Nobody needs to know the details ({actual_money}, +5 Joy).",
-        "message_failure": "[acting_worker] holds their own for two rounds but takes a brutal hit in the third. The fight is called, the purse stays with the house, and your worker limps home with nothing to show for it but a black eye and sore ribs ({actual_money}, -10 Health, -5 Joy).",
+        "message_failure": "[acting_worker] holds their own for two rounds but takes a brutal hit in the third. The fight is called, the purse stays with the house, and your worker limps home with nothing to show for it but a black eye and sore ribs ({actual_money}, -5 Health, -5 Joy).",
         "effect": {
           "success": {
             "money": 1100,

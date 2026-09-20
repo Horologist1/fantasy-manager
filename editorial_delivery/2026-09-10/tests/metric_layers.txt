@@ -1,0 +1,12 @@
+--- editorial_delivery/2026-09-10/backups/game__data__buildings__building_types.json
+  layer          words  vague/1k  concrete/1k
+  CORE-nsfw      19259       9.5         16.5
+  CORE-sfw        5989       5.3         12.2
+  EXT-nsfw       19420       0.6         18.3
+  EXT-sfw        25222       0.4         20.7
+--- game/data/buildings/building_types.json
+  layer          words  vague/1k  concrete/1k
+  CORE-nsfw      26684       0.9         23.1
+  CORE-sfw        6371       0.9         13.8
+  EXT-nsfw       19420       0.6         18.3
+  EXT-sfw        25222       0.4         20.7

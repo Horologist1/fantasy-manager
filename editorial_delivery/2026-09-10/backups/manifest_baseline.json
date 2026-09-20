@@ -1,0 +1,17 @@
+{
+ "game/data/buildings/building_types.json": {
+  "sha256": "bfc91da36d72b19a4b89ab503227f6c57dcf80c898bbe62591aca682773b3824",
+  "bytes": 565303,
+  "backup": "backups/game__data__buildings__building_types.json"
+ },
+ "game/data/events/events_common.json": {
+  "sha256": "b2f4b42ac41d2b46902e7742ad353ddabad63b9a7ad0537c58e4c31591356a55",
+  "bytes": 139705,
+  "backup": "backups/game__data__events__events_common.json"
+ },
+ "game/data/events/events_building.json": {
+  "sha256": "cc1a7c4eaa5c9c9c9b02eae8291c6b44a8d26d66b2ed713e372b9ade78ceb606",
+  "bytes": 227211,
+  "backup": "backups/game__data__events__events_building.json"
+ }
+}

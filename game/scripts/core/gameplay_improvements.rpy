@@ -361,11 +361,13 @@ init python:
         return "…"
 
 
-    def resolve_depleted_worker_health(worker_pool):
-        """Resolve zero health without permanent roster loss."""
-        incapacitated_names = []
+    def resolve_depleted_worker_health(worker_pool, cause="Daily work"):
+        """Resolve owned deaths once, preserving the existing Slime reform rule."""
+        dead_names = []
         for worker in list(worker_pool or []):
             if not hasattr(worker, "get") or int(worker.get("health", 0) or 0) > 0:
+                continue
+            if not any(current is worker for current in (getattr(store, "workers", []) or [])):
                 continue
             already_reforming = "Reforming" in (worker.get("traits") or [])
             if worker_can_reform(worker) and not already_reforming:
@@ -374,12 +376,9 @@ init python:
                 renpy.notify(f"{worker['name']} reformed from a puddle!")
                 renpy.log(f"{worker['name']} reformed after reaching zero health (health -> {worker['health']})")
                 continue
-            unassign_worker(worker)
-            worker["health"] = 1
-            worker["energy"] = 0
-            incapacitated_names.append(str(worker.get("name", "Unknown")))
-            renpy.log(f"{worker.get('name', 'Unknown')} collapsed at zero health and was withdrawn from duty")
-        return incapacitated_names
+            if record_worker_death(worker, cause):
+                dead_names.append(str(worker.get("name", "Unknown")))
+        return dead_names
 
     def _coerce_stat_int(value, default=0):
         # Legacy saves can carry stats as strings ("18.5") or junk; int() alone raises.
@@ -623,7 +622,7 @@ init python:
         return resolved, building, btype
 
     def _fm_job_holder_count(resolved_key, building, profession_id):
-        """Active workers plus Rest reservations occupying (building, job).
+        """Active workers occupying (building, job); Rest reservations do not count.
 
         Must never raise: it runs from screen render paths (Manager, auto-fill
         plan popup), where an exception crash-loops the whole screen. A stale
@@ -639,23 +638,21 @@ init python:
         ]
         try:
             from fm_autorest.capacity import count_job_slots
-            return count_job_slots(servant_jobs, workers_here, pid)
+            return count_job_slots(servant_jobs, workers_here, pid, include_reservations=False)
         except Exception as e:
             renpy.log("_fm_job_holder_count: fm_autorest unavailable/stale (%r); inline fallback (restart the game to reload modules)" % (e,))
         # Inline mirror of fm_autorest.capacity.count_job_slots (canonical copy
-        # lives there): active workers plus Rest reservations for this job.
+        # lives there): only active workers hold a slot. A Rest reservation is
+        # not a holder, so the free-slot maths matches the "(x/y)" shown to the
+        # player and manual assignment.
         if not pid or pid in ("rest", "unassigned") or not hasattr(servant_jobs, "items"):
             return 0
         by_name = {w.get("name"): w for w in workers_here if hasattr(w, "get") and w.get("name")}
         count = 0
         for worker_name, current_job in servant_jobs.items():
-            worker = by_name.get(worker_name)
-            if worker is None:
+            if worker_name not in by_name:
                 continue
-            occupied = str(current_job or "").strip().lower()
-            if occupied == "rest":
-                occupied = str(worker.get("previous_profession") or worker.get("previous_job") or "").strip().lower() or "rest"
-            if occupied == pid:
+            if str(current_job or "").strip().lower() == pid:
                 count += 1
         return count
 
@@ -711,6 +708,7 @@ init python:
         resolved, building, btype = _fm_building_and_btype(building_key)
         if not resolved:
             return
+        monthly_sync()
         quotas = _autofill_quotas_for(building)
         valid = set(str(j).strip().lower() for j in (valid_job_ids or []))
         stale = [k for k in quotas.keys() if k not in valid]
@@ -769,6 +767,7 @@ init python:
                 "job_id": p.get("id"),
                 "name": pname,
                 "skills": list(p.get("skills", []) or []),
+                "skill_adjustments": {skill: _fm_monthly.modifiers(store.monthly_condition_state, btype.get("id"), p.get("id"), skill)[0] for skill in (p.get("skills", []) or [])},
                 "free_slots": free,
             })
 
@@ -1348,11 +1347,7 @@ init python:
             "reports": reports,
             "building_displays": building_displays,
             "building_type_ids": building_type_ids,
-            "building_costs": {
-                building_name: int(building.get("costs", 0) or 0)
-                for building_name, building in (getattr(store, "available_buildings", {}) or {}).items()
-                if hasattr(building, "get") and building.get("owned", False)
-            },
+            "building_costs": daily_ledger_cost_map(),
         }
         archive = list(getattr(store, "auto_advance_day_reports", []) or [])
         archive.append(day_record)
@@ -1393,6 +1388,6 @@ init python:
         summary["days_processed"] = int(summary.get("days_processed", 0)) + 1
         summary["end_money"] = int(getattr(store, "money", 0) or 0)
         summary["earnings"] = int(summary.get("earnings", 0)) + sum(int(report.get("earnings", 0) or 0) for report in (getattr(store, "daily_report", []) or []))
-        summary["costs"] = int(summary.get("costs", 0)) + sum(int(building.get("costs", 0) or 0) for building in (getattr(store, "available_buildings", {}) or {}).values() if hasattr(building, "get") and building.get("owned", False))
+        summary["costs"] = int(summary.get("costs", 0)) + sum(daily_ledger_cost_map().values())
         summary["critical_events"] = int(summary.get("critical_events", 0)) + len([report for report in (getattr(store, "daily_report", []) or []) if report.get("result") in ("Critical Success", "Failure", "Refused")])
         return summary

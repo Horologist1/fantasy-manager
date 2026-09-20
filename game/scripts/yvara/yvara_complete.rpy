@@ -130,12 +130,17 @@ init python:
         return bool(getattr(persistent, "nsfw_enabled", False))
 
     def yvara_s4_finance_track_complete():
-        """Route-specific Stage 4 finance completion check.
-        Dominion requires all paid favors; devotion requires all donation tiers.
+        """Stage 4 finance completion: all four tiers of either track.
+
+        The track offered each visit follows the live devotion/dominion lean,
+        which can flip for a balanced player. A track the player already
+        completed stays complete whichever way the lean points today;
+        otherwise progress split across both tracks could never finish
+        Stage 4.
         """
-        if yvara_is_dominion_route():
-            return int(getattr(store, "yvara_s4_favor_highest_tier", 0) or 0) >= 4
-        return int(getattr(store, "yvara_s4_donation_highest_tier", 0) or 0) >= 4
+        favors = int(getattr(store, "yvara_s4_favor_highest_tier", 0) or 0)
+        donations = int(getattr(store, "yvara_s4_donation_highest_tier", 0) or 0)
+        return max(favors, donations) >= 4
 
     # Gift table: item_id -> (devotion_gain, dominion_gain, affection_gain, reaction_label)
     YVARA_GIFTS = {
@@ -986,9 +991,9 @@ label yvara_s2_talk_1:
 label yvara_s2_talk_2:
     $ _total_days = calculate_total_days()
     narrator "She does not greet you. She waits until you have settled, and then she says:"
-    yvara "You said something the last time you were here."
+    yvara "I formed an impression of you early on."
     narrator "She does not look up from the page she is annotating."
-    yvara "About how you make decisions under pressure. You said you go quiet."
+    yvara "That under pressure you go quiet. Withdraw, and wait for it to pass."
     narrator "A beat."
     yvara "You do not. I have watched you. You go very still, and then you act."
     narrator "She says it as a correction, the same way she would correct a student's misread passage. But she has been paying attention—closely—and there is no pretending otherwise."
@@ -2219,7 +2224,7 @@ label yvara_s4_donate_tier_3:
     $ money -= 2800
     $ yvara_s4_finance_last_day = _total_days
     $ yvara_s4_donation_total += 1
-    $ yvara_s4_donation_highest_tier = 3
+    $ yvara_s4_donation_highest_tier = max(yvara_s4_donation_highest_tier, 3)
     $ yvara_devotion += 4
     $ yvara_affection += 4
     $ _emote = "images/yvara/yvara_formal_warm.png" if renpy.loadable("images/yvara/yvara_formal_warm.png") else "images/yvara/yvara_formal_neutral.png"
@@ -2253,7 +2258,7 @@ label yvara_s4_donate_tier_4:
     $ money -= 4000
     $ yvara_s4_finance_last_day = _total_days
     $ yvara_s4_donation_total += 1
-    $ yvara_s4_donation_highest_tier = 4
+    $ yvara_s4_donation_highest_tier = max(yvara_s4_donation_highest_tier, 4)
     $ yvara_devotion += 5
     $ yvara_affection += 5
     $ _emote = "images/yvara/yvara_formal_yielding.png" if renpy.loadable("images/yvara/yvara_formal_yielding.png") else "images/yvara/yvara_formal_neutral.png"
@@ -2350,7 +2355,7 @@ label yvara_s4_favor_lingerie:
     $ money -= 1600
     $ yvara_s4_finance_last_day = _total_days
     $ yvara_s4_favors_total += 1
-    $ yvara_s4_favor_highest_tier = 2
+    $ yvara_s4_favor_highest_tier = max(yvara_s4_favor_highest_tier, 2)
     $ yvara_dominion += 3
     $ yvara_affection += 2
     $ yvara_leverage_financial = True
@@ -2383,7 +2388,7 @@ label yvara_s4_favor_topless:
     $ money -= 2800
     $ yvara_s4_finance_last_day = _total_days
     $ yvara_s4_favors_total += 1
-    $ yvara_s4_favor_highest_tier = 3
+    $ yvara_s4_favor_highest_tier = max(yvara_s4_favor_highest_tier, 3)
     $ yvara_dominion += 4
     $ yvara_affection += 1
     $ yvara_leverage_financial = True
@@ -2415,7 +2420,7 @@ label yvara_s4_favor_striptease:
     $ money -= 4000
     $ yvara_s4_finance_last_day = _total_days
     $ yvara_s4_favors_total += 1
-    $ yvara_s4_favor_highest_tier = 4
+    $ yvara_s4_favor_highest_tier = max(yvara_s4_favor_highest_tier, 4)
     $ yvara_dominion += 5
     $ yvara_affection += 2
     $ yvara_leverage_financial = True
@@ -5625,7 +5630,7 @@ label yvara_ending_dominion:
             }
 
         _yw["name"] = "Yvara"
-        if not any(w.get("name") == "Yvara" for w in store.workers):
+        if not is_worker_dead(_yw) and not any(w.get("name") == "Yvara" for w in store.workers):
             try:
                 ensure_worker_defaults(_yw)
                 _emt = getattr(store, "_ensure_worker_min_traits", None)
@@ -5739,7 +5744,7 @@ label yvara_ending_mixed:
             }
 
         _yw["name"] = "Yvara"
-        if not any(w.get("name") == "Yvara" for w in store.workers):
+        if not is_worker_dead(_yw) and not any(w.get("name") == "Yvara" for w in store.workers):
             try:
                 ensure_worker_defaults(_yw)
                 _emt = getattr(store, "_ensure_worker_min_traits", None)

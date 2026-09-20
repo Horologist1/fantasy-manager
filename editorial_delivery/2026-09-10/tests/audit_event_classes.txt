@@ -1,0 +1,35 @@
+Eventos: 269   Opciones: 634
+
+1. success y failure que ABREN igual: 2
+     events_special.json :: unique_iris_lore_event :: choices[0]
+     events_workers_aelis.json :: aelis_final_tavern_star :: choices[0]
+
+2. opciones con tirada y SIN indicar riesgo/recompensa: 1
+     event_recruit_advanced_example.json :: event_recruit_tavern_brawler :: choices[1]  'Try to negotiate a lower wage. (50% chance: 25% discount)'
+
+3. promesas de dinero en prosa (revisar contra el efecto): 3
+     events_building.json :: guild_cursed_sword_client :: choices[0].message_failure  -> 'half the fee'
+     events_character_arcs_nsfw.json :: worker_holly_bell_at_midnight :: choices[1].message_failure  -> 'half the fee'
+     events_special.json :: unique_rose_lore_event :: choices[0].message_failure  -> 'half the price'
+
+4. descripciones que recuerdan una escena previa (BIBLIA 16): 51
+     events_building.json :: guild_escort_request
+        A lean merchant in road-dusty clothes has been waiting at your intake desk since before your guild master finished his m...
+     events_building.json :: brothel_masked_noble
+        A carriage with no house crest stops outside well after midnight. The man who steps in wears a velvet half-mask and intr...
+     events_building.json :: guild_cursed_artifact
+        A returning party drops a wrapped package on your front desk and asks, with unusual urgency, that you keep it somewhere ...
+     events_building.json :: guild_rival_recruitment
+        The guild across the market square has started offering signing bonuses. You know this because two of your best members ...
+     events_building.json :: guild_monster_bounty
+        The city council has posted a bounty on a creature raiding livestock farms along the northern road. The reward is substa...
+     events_building.json :: guild_deserter_refuge
+        A young soldier in torn uniform stumbles through your guild doors after midnight, asking for shelter. He deserted his co...
+     events_building.json :: restaurant_rival_poaching
+        Your best cook pulls you aside after service with a folded letter. A rival restaurant across the district has offered he...
+     events_building.json :: brothel_couples_fantasy_night
+        A married couple arrives after midnight, nervous and electric. They've saved for months. What they want is specific: a t...
+     events_building.json :: guild_cursed_sword_client
+        A woman walks in carrying a longsword wrapped in chains and salt cloth. She sets it on the counter and steps back as if ...
+     events_character_arcs_nsfw.json :: worker_florian_name_beneath_mask
+        Some days after Master Aldric's parcel, a lacquered invitation arrives from the noble house whose record Florian was ask...

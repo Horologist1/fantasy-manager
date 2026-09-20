@@ -152,6 +152,39 @@ init python:
             "Comfort above desired adds daily Joy (which reduces Rebelliousness above 80)."
         )
 
+    def get_building_skill_bonus_daily_cost(skill_bonus):
+        """Single source for the skill-bonus upkeep: $100 per +10, scaled by difficulty."""
+        try:
+            bonus = max(0, int(skill_bonus or 0))
+        except (TypeError, ValueError):
+            bonus = 0
+        return int(((bonus // 10) * 100) * get_difficulty_building_skill_mult())
+
+    def daily_ledger_building_names():
+        """Buildings whose daily costs the ledger charges: exactly store.owned_buildings.
+
+        Academy is "owned" but never in owned_buildings (its fee is a negative
+        earning), so any total that iterates available_buildings by the owned
+        flag shows costs the player never pays. Report and summary totals must
+        use this list, mirroring process_next_day.
+        """
+        names = []
+        for building_name in (getattr(store, "owned_buildings", None) or []):
+            building = available_buildings.get(building_name)
+            if hasattr(building, "get") and building_name not in names:
+                names.append(building_name)
+        return names
+
+    def daily_ledger_cost_map():
+        """{building_name: costs charged for the current day}, the single source for totals."""
+        result = {}
+        for building_name in daily_ledger_building_names():
+            try:
+                result[building_name] = int(available_buildings[building_name].get("costs", 0) or 0)
+            except (TypeError, ValueError, KeyError):
+                result[building_name] = 0
+        return result
+
     def compute_worker_portion_daily_costs(workers, base_level):
         """
         Returns (total, comfort_part, upkeep_part) for assigned servants.
@@ -539,7 +572,7 @@ init python:
         for story in compatible_stories:
             skill_options = story.get("skill_options", []) or []
             if skill_options:
-                effective_skill = sum(calculate_skill_with_traits(worker, skill) for skill in skill_options) // len(skill_options)
+                effective_skill = sum(monthly_skill(worker, skill, (building_type or {}).get("id"), profession.get("id")) for skill in skill_options) // len(skill_options)
             else:
                 effective_skill = 0
             effective_skill = max(0, effective_skill - difficulty_skill_penalty)
@@ -684,6 +717,9 @@ init python:
     def process_daily_events():
         global daily_report, manager_inventory
         renpy.log("process_daily_events() starting...")
+        monthly_sync()
+        # At most one ingredient award per worker in this daily resolution.
+        alchemy_awarded_names = set()
 
         # Daily badge tracker (level/skill ups, HP loss) shown in the report.
         # SESSION-ONLY, and reset here at the single once-per-day entry point:
@@ -732,6 +768,7 @@ init python:
                 workers_by_building[b_name].append(w)
 
         all_owned_buildings = list(store.owned_buildings or [])
+        _ledger_building_names = set(daily_ledger_building_names())
         if getattr(store, "academy_enrolled", False) and "Academy" in available_buildings and "Academy" not in all_owned_buildings:
             all_owned_buildings.append("Academy")
 
@@ -769,11 +806,15 @@ init python:
             )
 
             # Update building costs to include skill bonus
-            _skill_mult = get_difficulty_building_skill_mult()
-            bonus_cost = int(((building["skill_bonus"] // 10) * 100) * _skill_mult)
-            renpy.log(f"Building {building_name} previous costs: {building.get('costs', 0)}, adding skill bonus: {bonus_cost}")
-            building["costs"] = building.get("costs", 0) + bonus_cost
-            renpy.log(f"Building {building_name} new costs after skill bonus: {building['costs']}")
+            bonus_cost = get_building_skill_bonus_daily_cost(building.get("skill_bonus", 0))
+            if building_name in _ledger_building_names:
+                renpy.log(f"Building {building_name} previous costs: {building.get('costs', 0)}, adding skill bonus: {bonus_cost}")
+                building["costs"] = building.get("costs", 0) + bonus_cost
+                renpy.log(f"Building {building_name} new costs after skill bonus: {building['costs']}")
+            else:
+                # Academy: never charged by the ledger, so never let a stale
+                # cost accumulate and leak into report or summary totals.
+                building["costs"] = 0
 
             policy_incident = apply_building_policy_incident(building, btype, building_name)
             policy_incident_worker_name = None
@@ -826,7 +867,13 @@ init python:
                         bonus = 0
                     events_per_worker = max(1, base_events + bonus)
                 else:
-                    events_per_worker = int(daily_story_count)
+                    # Authored/modded data is not trusted to be numeric here: a
+                    # bad daily_story_count used to raise in the middle of the day.
+                    try:
+                        events_per_worker = int(daily_story_count)
+                    except (TypeError, ValueError):
+                        renpy.log(f"DAILY: profession {profession.get('id')} has a non-numeric daily_story_count ({daily_story_count!r}); using 1")
+                        events_per_worker = 1
 
                 # Building event_limit caps stories per worker (0 = unlimited; 1–3 = max per worker per day).
                 event_limit = building.get("event_limit", 0)
@@ -1044,7 +1091,7 @@ init python:
                             difficulty_skill_penalty = 0
                         if skill_options:
                             selected_skill = random.choice(skill_options)
-                            total_skill = sum(calculate_skill_with_traits(worker, s) for s in skill_options)  # Use skill names directly
+                            total_skill = sum(monthly_skill(worker, s, btype.get("id"), profession.get("id")) for s in skill_options)  # Use skill names directly
                             count_skill = len(skill_options)
                             effective_skill = total_skill // count_skill if count_skill > 0 else 0
                         else:
@@ -1169,6 +1216,8 @@ init python:
                                 "EARNINGS PAYOUT REPAIRED: story=%s outcome=%s base=%s"
                                 % (chosen_story.get("id", "<unknown>"), outcome_key, base_earnings)
                             )
+
+                        earnings = monthly_earnings(earnings, btype.get("id"), profession.get("id"))
 
                         # Story/Easy: floor on failure losses (daily stories use failure: "-roll" after rebalance)
                         if outcome == "Failure" and earnings < 0:
@@ -1342,6 +1391,10 @@ init python:
                         if _gate_bits:
                             full_description += "\n{{color=#557799}}{{size=20}}(Unlocked by {}){{/size}}{{/color}}".format(", ".join(_gate_bits))
 
+                        monthly_note = monthly_report_note(btype.get("id"), profession.get("id"), skill_options, earnings > 0)
+                        if monthly_note:
+                            full_description += "\n" + monthly_note.replace("{", "{{").replace("[", "[[")
+
                         _earn_col = "#228822" if earnings > 0 else ("#aa2222" if earnings < 0 else "#666666")
                         if earnings > 0:
                             full_description += "\n{{color={0}}}{{size=20}}Earned +${1}{{/size}}{{/color}}".format(_earn_col, earnings)
@@ -1451,6 +1504,8 @@ init python:
                                             report_entry["loot"].append(f"Monster Worker: {looted_worker['name']}")
                                             if not hidden_content_job or getattr(persistent, "nsfw_enabled", False):
                                                 renpy.notify(f"Captured {looted_worker['name']}!")
+                        report_entry["loot"].extend(alchemy_grant_guild_ingredients(
+                            worker, btype.get("id"), profession.get("id"), outcome, alchemy_awarded_names))
                         sanitize_daily_report_entry_for_filter(report_entry, btype, profession, chosen_story)
                         daily_report.append(report_entry)
                         processed_events += 1
@@ -1784,14 +1839,18 @@ init python:
 
         # Check and update trait durations
         check_trait_durations()
-        # One-time migration: rebelliousness no longer uses modifiers; prime _last_applied to avoid delta spike
-        if not getattr(persistent, "_rebelliousness_v2_migrated", False):
+        # One-time migration: rebelliousness no longer uses modifiers; prime _last_applied to avoid delta spike.
+        # Per save (event_flags travels in the snapshot), never persistent: a global
+        # flag only migrated whichever slot happened to be loaded first.
+        if not hasattr(getattr(store, "event_flags", None), "get"):
+            store.event_flags = {}
+        if not store.event_flags.get("rebelliousness_v2_migrated"):
             for w in getattr(store, "workers", []) or []:
                 if hasattr(w, "get"):
                     la = w.get("_last_applied_trait_modifiers") or {}
                     la["rebelliousness"] = 0
                     w["_last_applied_trait_modifiers"] = la
-            persistent._rebelliousness_v2_migrated = True
+            store.event_flags["rebelliousness_v2_migrated"] = True
             renpy.log("REBELLIOUSNESS_V2: Migration applied (primed _last_applied for all workers)")
         # Advance the date first
         advance_date()
@@ -1820,11 +1879,22 @@ init python:
         for building_name in store.owned_buildings:
             building = available_buildings.get(building_name)
             if building:
-                # Cap base_level at 5
-                building["base_level"] = min(building["base_level"], 5)
+                # One ceiling for building level (shared with upgrade_building and the UI)
+                building["base_level"] = min(building["base_level"], MAX_BUILDING_LEVEL)
                 building["skill"] = building["base_level"] * 10  # Update skill based on level
-                # Cap reputation at 1000
-                building["reputation"] = min(building["reputation"], 1000)
+                # Reputation ceiling is the level-based cap (building + manager),
+                # the same one daily stories and events use; never a hard 1000.
+                try:
+                    _rep_cap = int(get_building_reputation_cap(building))
+                except Exception:
+                    _rep_cap = 1000
+                building["reputation"] = max(0, min(int(building.get("reputation", 0) or 0), _rep_cap))
+                # Same ceiling as the UI for the purchasable skill bonus: the
+                # sabotage restore and any future writer are clamped here too.
+                try:
+                    building["skill_bonus"] = max(0, min(int(building.get("skill_bonus", 0) or 0), MAX_BUILDING_SKILL_BONUS))
+                except (TypeError, ValueError):
+                    building["skill_bonus"] = 0
                 # Reset building costs each day
                 building["costs"] = 0
                 renpy.log(f"Reset costs for {building_name} to 0")
@@ -1937,24 +2007,26 @@ init python:
             outcome = report.get("result", "Unknown")
             _daily_debug_log(f"  Entry {i+1}: {worker_name} - ${earnings} ({outcome})")
 
-        for building_name in store.owned_buildings:
-            building = available_buildings.get(building_name)
-            if building:
-                # Skill bonus cost is added during process_daily_events, sum final costs here
-                renpy.log(f"Final costs for {building_name} after process_daily_events: {building.get('costs', 0)}")
-                total_building_costs += building.get('costs', 0)
+        # Charge exactly what the ledger reports (LA BIBLIA 11.5: daily_ledger_cost_map
+        # is the single source). Summing available_buildings here again is how the
+        # report and the charge drifted apart before.
+        _ledger_costs = daily_ledger_cost_map()
+        for building_name, building_cost in _ledger_costs.items():
+            renpy.log(f"Final costs for {building_name} after process_daily_events: {building_cost}")
+        total_building_costs += sum(_ledger_costs.values())
         # --- END INCOME/COST CALCULATION ---
 
-        # Zero health is reversible: withdraw the worker from duty, never delete the roster entry.
-        incapacitated_workers = check_worker_health()
-        if incapacitated_workers:
-            if len(incapacitated_workers) == 1:
-                renpy.say(None, f"{incapacitated_workers[0]} collapsed and was withdrawn from duty to recover.")
+        # Resolve death before nightly recovery. Kept remains can be raised at
+        # the church; a worker must not heal back into the roster after dying.
+        deceased_workers = check_worker_health()
+        if deceased_workers:
+            if len(deceased_workers) == 1:
+                renpy.say(None, f"{deceased_workers[0]} died today. The church has recorded the loss.")
             else:
-                names_text = ", ".join(incapacitated_workers[:-1]) + f" and {incapacitated_workers[-1]}"
-                renpy.say(None, f"{names_text} collapsed and were withdrawn from duty to recover.")
+                names_text = ", ".join(deceased_workers[:-1]) + f" and {deceased_workers[-1]}"
+                renpy.say(None, f"{names_text} died today. The church has recorded their loss.")
 
-        # --- NIGHTLY REST: Regenerate health/energy/libido AFTER events and incapacitation check ---
+        # --- NIGHTLY REST: Regenerate surviving workers AFTER death resolution ---
         for worker in store.workers:
             if worker_is_in_franchise(worker):
                 continue
@@ -2064,11 +2136,16 @@ init python:
                     _amount = store.event_flags.pop("sabotage_amount_" + _bname, 10)
                     _b = available_buildings.get(_bname)
                     if _b is not None:
-                        _b["skill_bonus"] = _b.get("skill_bonus", 0) + _amount
+                        # Clamp: the player can buy bonus back while sabotaged,
+                        # and restoring on top of that used to exceed the cap.
+                        _b["skill_bonus"] = min(
+                            MAX_BUILDING_SKILL_BONUS,
+                            _b.get("skill_bonus", 0) + _amount,
+                        )
                         renpy.notify(f"{custom_names.get(_bname, _bname)} has recovered from the sabotage.")
                         renpy.log(f"TENSION: Restored sabotaged skill_bonus (+{_amount}) on {_bname}")
                     store.event_flags.pop("sabotage_" + _bname, None)
-                    del store.event_flags[_flag]
+                    store.event_flags.pop(_flag, None)
         except Exception as e:
             renpy.log(f"TENSION ERROR restoring sabotage: {e}")
 

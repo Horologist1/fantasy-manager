@@ -95,56 +95,41 @@ default days_since_last_tension_event = 0  # Track days without tension events (
 
 # Objective content
 default objective_titles = {
-    1: "The First Gathering - Assembling Loyal Souls",
-    2: "The Path Chosen - Establishing Thy Domain", 
-    3: "The Deployment - Assigning Daily Duties",
-    4: "The Foundation - Amassing Fortune's Favor",
-    5: "The Mastery - Learning the Arts of Provision",
-    6: "The Stronghold - Fortifying Thy Realm",
-    7: "The Understanding - Breaking Bread With Thy Faithful",
-    8: "The Grand Design - Expanding Thy Empire",
-    9: "The Final Gambit - The Governor's Reckoning",
-    10: "The Shadow's Wealth - Amassing the War Chest",
-    11: "The Informant Network - Eyes in the Darkness",
-    12: "The Arsenal of Vengeance - Gathering the Tools of War",
-    13: "The Empire of Shadows - Expanding the Domain",
-    14: "The Elite Guard - Forging the Inner Circle",
-    15: "The Final Preparation - The Eve of Reckoning",
-    16: "The Reckoning Begins - The Final Strike"
+    1: "First Hires - Three Workers and a Focus",
+    2: "Choosing the Business - What This Place Becomes",
+    3: "Putting People to Work - Assign Three Workers",
+    4: "Building Capital - Five Thousand Coins",
+    5: "Supplies and Upkeep - Potions and Energy",
+    6: "Upgrading - Building Level and Building Skill",
+    7: "Getting to Know Them - A Friendly Lunch",
+    8: "Expansion - Two Buildings, Ten Workers",
+    9: "Choosing the Method - How the Governor Falls",
+    10: "The War Chest - Thirty Thousand Coins",
+    11: "The Network - Fifteen Workers",
+    12: "The Arsenal - Three Artifacts",
+    13: "Holding the City - Three Buildings",
+    14: "The Inner Circle - Five Specialists",
+    15: "Proving the Machine - Three Thousand in a Day",
+    16: "The Reckoning - The Final Strike",
 }
 
 default objective_descriptions = {
-    1: "If ever I am to raise my dynasty's empire from the ashes of ruination, I shall require the hands and hearts of loyal workers. Three workers should suffice to begin this grand endeavor—laying the foundation for the day of reckoning. Some may be bought with coin from the market square's bustling commerce, whilst others might be recruited through chance encounters that may span several days, yet oft prove more skilled in their craft.\n\nEre I lead others, I must know my own strengths. Let me reflect upon my best skills and qualities—those virtues that shall define my rule—and choose where my first mastery shall lie, that my domain may benefit from it.",
-    
-    2: "The hour of decision draws nigh, wherein I must decree what manner of building type this place shall become. Perchance a brothel, where secrets flow as freely as wine and influence is currency? Mayhap a restaurant, where respectable coin may be earned through honest trade? Or shall it be an adventurer's guild, where muscle and steel forge connections of power? Each path offers different opportunities... and different means by which to gather the strength I need to face the one who destroyed my lineage.",
-    
-    3: "Each worker in my service possesses their own gifts and talents, bestowed by fate and honed through experience. A wise lord employs his workers according to their greatest strengths, for through such wisdom empires are built. I must assign three workers to their destined professions—for this network of loyal souls will one day be the foundation upon which I act against the governor. Efficiency shall be the cornerstone upon which wealth is swiftly accumulated.",
-    
-    4: "Gold is the lifeblood of power, and power is the weapon I must wield. Five thousand coins should suffice to begin contemplating the expansion of my domain. Every transaction, every service rendered, every bargain struck brings me ever closer to the resources the day of reckoning will demand. The governor may sit in his fortress now, but each coin I earn is a step toward the moment I can move against him.",
-    
-    5: "The time has come to master the arts of item management and the care of those who serve. I must procure an energy potion from the merchant's stall, transfer it to one of my workers, and witness its effects. Through such endeavors I shall learn to tend to my workers' needs and employ items with wisdom. This knowledge will be vital when my operation grows and the governor takes notice.\n\nLet me also mark the rhythm of a working day. Each worker undertakes at least one task a day—the very tasks set down in the daily report. As my establishment's reputation grows and word of it spreads, more patrons come calling, and a worker may be pressed into several tasks in a single day. Yet every task drains their energy, and a worker left spent leaves the rest undone. They regain their strength each night without remedy, but with this elixir I may keep them on their feet through a busy day, turning the tide of fortune in my favor. And should I judge the burden too heavy, I may decree in each building's management a limit upon the tasks any worker takes in a day.",
-    
-    6: "The foundation of any lasting empire lies in its infrastructure and preparedness. I must enhance a building's level and its Building skill for the trials ahead—trials that will come when the governor notices my rise. To elevate a building's level shall cost one thousand coins. Then, I must increase the building's Building skill bonus by ten measures, be they equipment, ingredients, or Hag Potions—whatever the establishment requires to weather the storms of fortune.",
-    
-    7: "The time has arrived to know the hearts and minds of those workers who have sworn themselves to my cause. Sharing a meal together shall reveal their true nature, their motivations, and the depths of their loyalty. The governor rules through fear and gold. I shall build something different: a circle of those who have chosen to stand with me. I must invite one of my workers to a Friendly Lunch—breaking bread at my table—to understand the souls who would follow me into darkness. The repast shall cost one hundred fifty coins.",
-    
-    8: "Behold, the grand design reveals itself at last! Two buildings under my dominion, ten loyal workers in my service, and ten thousand coins to fuel my ambitions. With such resources at my command, I may at last move against the governor who destroyed all that was dear to me.",
-    
-    9: "Two paths diverge before me in this wood of vengeance: I may orchestrate the governor's final breath through shadow and steel, or I may corner the wretch with cunning theft and the chains of blackmail. Each road leads to justice, yet by different means shall it be achieved.",
-    
-    10: "To wage war against the shadow that haunts this city, I shall require resources beyond mere governance. Thirty thousand coins - a sum vast enough to fund an army, bribe informants, and purchase the tools of vengeance. Every coin earned brings me closer to the reckoning.",
-    
-    11: "Knowledge is power, and I must know mine enemy's every move. I require a network of informants - fifteen loyal workers who can gather intelligence, spread rumors, and move unseen through the city's underbelly. Each soul I recruit strengthens my web of eyes and ears.",
-    
-    12: "Mere gold and information will not suffice - I must arm myself for the battles ahead. I seek three artifacts of power: a Binding Gem to break dark pacts, an Obsidian Blade to pierce enchanted armor, and an Enchanted Ring to grant my agents supernatural charm. These treasures shall be my weapons.",
-    
-    13: "To challenge the powers that rule from darkness, I must command an empire of mine own. Three buildings under my dominion, each a fortress of influence and a wellspring of resources. Through these strongholds, I shall project power across the city and fund the final campaign.",
-    
-    14: "For the trials ahead, I require not merely workers, but champions. I must cultivate an elite guard: three warriors of supreme combat prowess (Combat 80+), and two masters of cunning and charm (Clever or Charm 80+). These paragons shall be my sword and shield in the battles to come.",
-    
-    15: "All the pieces are in place, yet one final test remains. I must prove my empire's strength by achieving a single day's revenue of three thousand coins - a demonstration that my operations run with ruthless efficiency. Only then shall I be ready to strike.",
-    
-    16: "The hour of vengeance is at hand. All preparations are complete - my wealth is vast, my network extensive, my arsenal deadly, my empire formidable, and my champions unmatched. Now I must choose the path of reckoning: shall I strike with overwhelming force, or with cunning subterfuge? The choice is mine, and the fate of my enemy hangs in the balance."
+    1: "Hire three workers to start with.\n\nI can buy them outright at the market, or wait for someone to turn up looking for work. Recruits take a few days to appear, but they usually come better skilled than anything on sale.\n\nI should also decide what I am good at. My own best skills shape what this place can do, so I need to pick a focus before I start telling other people what to do.",
+    2: "Decide what this building becomes.\n\nA brothel trades on discretion and appetite, and the coin comes fast. A restaurant is slower and respectable. An adventurers' guild deals in muscle and salvage, and the people it attracts are useful in other ways.\n\nEach one earns differently and draws a different crowd. Whichever I choose has to fund what comes after, because the governor will not be brought down on goodwill.",
+    3: "Assign three workers to a profession.\n\nEveryone is better at some things than others, and the day's takings depend on putting people where their best skills actually apply. Put a strong earner in the wrong job and they still bring something in - just a fraction of what they would make where their skills fit.\n\nThis is also how I find out who I can rely on. When it is time to move against the governor, I will need people already standing in the right places.",
+    4: "Reach five thousand coins.\n\nThat is enough to start thinking about a second building. Every service sold and every deal struck adds to it, and none of what I am planning happens without money first.\n\nThe governor sits in his fortress and does not think about me at all. Every coin changes that.",
+    5: "Buy an energy potion at the market, give it to one of my workers, and use it.\n\nWork costs energy. A worker who runs out leaves the rest of the day's tasks undone, and they only recover overnight. A potion puts them back on their feet in the middle of a busy day.\n\nIt is worth knowing how a day fills up, too. Every worker does at least one task a day, and those are the tasks listed in the daily report. As this place gets busier and word spreads, one worker can be pulled into several tasks in a single day. If that starts costing me more in exhaustion than it earns, I can cap the tasks per worker in each building's management screen.",
+    6: "Raise a building's level, and raise its Building skill by ten.\n\nA level costs one thousand coins. The Building skill goes up through equipment, ingredients or Hag Potions, depending on what that particular business runs on.\n\nBoth make every worker inside more effective. I would rather be over-prepared when the governor finally looks in my direction.",
+    7: "Invite one of my workers to a Friendly Lunch. It costs one hundred and fifty coins.\n\nSitting down with someone tells me more than a week of watching them work: what they want, what they are afraid of, whether they would stay if this got difficult.\n\nThe governor keeps people in line with fear and money. I would rather have a handful who chose to be here.",
+    8: "Two buildings, ten workers, ten thousand coins.\n\nWith that much behind me I can stop reacting and start planning. This is the point where the operation becomes something the governor has to take seriously.",
+    9: "Choose how this ends.\n\nI can have the governor killed. Quiet, final, and it makes an enemy of everyone still loyal to him.\n\nOr I can ruin him: take back what he stole, put the proof somewhere he cannot reach, and own him for as long as he lives.\n\nBoth work. They cost different things.",
+    10: "Reach thirty thousand coins.\n\nEnough to pay fighters, buy informants, and cover whatever this turns out to actually cost. Vengeance runs on the same accounts as everything else.",
+    11: "Recruit fifteen workers.\n\nNot for the work. For the reach. Fifteen people spread across the city hear things: which guards take money, who visits the governor's house after dark, which of his allies is already looking for a way out.\n\nA network like that is worth more than any single weapon.",
+    12: "Collect three artifacts: a Binding Gem, an Obsidian Blade, and an Enchanted Ring.\n\nThe gem breaks dark pacts, and the governor has at least one. The blade goes through enchanted armour. The ring makes whoever wears it very hard to refuse.\n\nThese are the tools the last night will need.",
+    13: "Own three buildings.\n\nThree businesses in three districts means income that does not stop if one of them is shut down, and eyes in parts of the city the governor still thinks are his. It also means funding the end of this without borrowing from anyone.",
+    14: "Train five specialists: three workers at Combat 80 or higher, and two at Clever or Charm 80 or higher.\n\nThe fighters are the obvious part. The other two matter more. Most of what happens that night will be talking, and lying, and getting through doors that are supposed to be locked.",
+    15: "Take three thousand coins in a single day.\n\nNot for the money. It proves the operation runs without me standing over it, which is exactly what needs to be true on the night I am somewhere else.",
+    16: "Everything is ready: the money, the network, the weapons, the buildings, the people.\n\nNow I choose how to do it. Overwhelming force, or something quieter. Either way, the governor's last ordinary day is already behind him.",
 }
 
 # ===== HELPER FUNCTIONS =====
@@ -399,7 +384,7 @@ init python:
             return f"Progress: Workers {workers_hired}/3\nManager Assign Skill point {1 if char_sheet_done else 0}/1"
         elif current_objective == 2:
             if building_1_type_set:
-                return "Progress: Building type hath been chosen {image=journal_check_on}"
+                return "Progress: Building type chosen {image=journal_check_on}"
             else:
                 return "Progress: Building type remains unselected"
         elif current_objective == 3:
@@ -411,7 +396,7 @@ init python:
             return f"Progress: {money}/5000 Coins"
         elif current_objective == 5:
             if store.potion_purchased and store.potion_transferred and store.potion_used_on_worker:
-                return "Progress: Energy potion's power hath been witnessed {image=journal_check_on}"
+                return "Progress: Energy potion used {image=journal_check_on}"
             elif store.potion_purchased and store.potion_transferred:
                 return "Progress: 2/3 - Energy potion purchased {image=journal_check_on}, Transferred to worker {image=journal_check_on}, Use potion on worker"
             elif store.potion_purchased:
@@ -491,7 +476,7 @@ init python:
                 shadow_ready = "{image=journal_check_on}" if clever_count >= 5 else "{image=journal_check_off}"
                 return f"Progress: Choose your path of vengeance\n- Path of the Blade (Combat 70+): {combat_count}/5 {blade_ready}\n- Path of the Shadow (Clever 70+): {clever_count}/5 {shadow_ready}\nTip: Check out shops for items to boost skills!"
         else:
-            return "Progress: The path remains shrouded in mystery"
+            return "Progress: I have not chosen how this ends yet"
 
     def _get_worker_skill_value(worker, skill_name):
         """Get worker skill value including equipment bonuses for tutorial checks."""
@@ -1492,9 +1477,12 @@ screen journal_panel():
                         text "Choose Your Gambit:" size font_size(26) color "#7a4b2a" xalign 0.5
                         null height 15
                         
-                        # Calculate requirements dynamically
-                        $ can_assassinate = has_team_assassination()
-                        $ can_blackmail = has_team_blackmail()
+                        # Calculate requirements dynamically. One gambit only: once a
+                        # branch is chosen the other button goes inactive, so both flags
+                        # can never be set at once.
+                        $ _branch_chosen = bool(store.event_flags.get("branch_assassination", False) or store.event_flags.get("branch_blackmail", False))
+                        $ can_assassinate = has_team_assassination() and not _branch_chosen
+                        $ can_blackmail = has_team_blackmail() and not _branch_chosen
                         
                         # Assassination path button (same style as objective 16)
                         textbutton "Plan the Governor's Death\n(requires 3 with 70+ Combat or Craft)":
@@ -1560,6 +1548,7 @@ screen journal_panel():
                                      SetVariable("vengeance_path", "Blade")],
                                     None)
                             ]
+                            sensitive combat_count >= 5
                         
                         textbutton "Path of the Shadow - Strike with cunning subterfuge (requires 5 with Clever 70+)":
                             xsize 580
@@ -1572,6 +1561,7 @@ screen journal_panel():
                                      SetVariable("vengeance_path", "Shadow")],
                                     None)
                             ]
+                            sensitive clever_count >= 5
                         
                         if store.vengeance_path_chosen:
                             null height 15
@@ -1637,7 +1627,7 @@ screen journal_panel():
                             text_hover_color "#777777"
                             action Show("skip_tutorial_confirm")
                 else:
-                    text "The vengeance is complete! Thy empire stands supreme, and thy enemies lie vanquished.":
+                    text "It is done. The empire stands, and the people who took everything from me do not.":
                         xsize 580
                         xalign 0.0
                         size font_size(30)
@@ -1723,7 +1713,8 @@ label show_objective_10_dialogue:
     "The governor has his armies and his influence. I have patience, and now the gold to make patience dangerous."
     "With such resources I can buy loyalty, purchase silence, and open doors that steel alone could never breach."
     "Whether through blade or whisper, the reckoning draws nearer with every ledger I close."
-    "My journal has been inscribed with the next duty. The final pieces of my plan are falling into place."
+    "The final pieces of my plan are falling into place."
+    "The next objective is in my Journal."
     $ renpy.log("DEBUG: show_objective_10_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1731,12 +1722,13 @@ label show_objective_11_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_11_dialogue - STARTING DIALOGUE")
-    "Fifteen souls now serve beneath my banner — eyes watching, ears listening, hands and blades for every purpose."
-    "This is no mere workforce. It is a web laid across the city, and I sit at its center."
-    "Warriors, spies, merchants — each brings a craft my cause requires, and each chose to stand with me."
-    "The governor holds his people by fear and coin. Mine follow through loyalty, and loyalty keeps no second ledger."
-    "Little now moves in this city that I do not hear of by nightfall. His every weakness is catalogued, his every ally marked."
-    "My journal has been inscribed with the next duty. The web is complete, and the spider waits."
+    "Fifteen people on my books, and not one of them only carries plates."
+    "They watch, they listen, and they tell me. That is not a workforce, it is a net across the city."
+    "Fighters, talkers, people who know which doors are unlocked. Every one of them picked this over something safer."
+    "The governor holds his people with fear and wages. Mine stay because they want to, which costs less and holds better."
+    "Very little happens here now that I do not hear about before the night is out. His weak points are written down."
+    "The net is finished. Now he walks into it."
+    "The next objective is in my Journal."
     $ renpy.log("DEBUG: show_objective_11_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1746,13 +1738,13 @@ label show_objective_12_dialogue:
     scene expression _consolidation_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_12_dialogue - STARTING DIALOGUE")
-    "The artifacts are mine. Three relics, and each a key to the governor's downfall."
-    "The Binding Gem, to shatter the djinn's protection that has kept him beyond the reach of harm."
-    "The Obsidian Blade, whose edge no defense — mortal or magical — can hope to turn aside."
-    "The Enchanted Ring, to sway allies and command respect where words alone would fail."
-    "These are no trinkets. They are instruments of vengeance, each chosen for its purpose in the grand design."
-    "The arsenal is complete, and the hour draws near."
-    "My journal has been inscribed with the next duty. The final preparations begin."
+    "The artifacts are mine. Three of them, and each one solves a problem money could not."
+    "The Binding Gem breaks the djinn's protection. That is the thing that has kept him alive this long."
+    "The Obsidian Blade goes through whatever a bodyguard or a ward puts in front of it."
+    "The Enchanted Ring makes people agree with me who have no reason to."
+    "None of them is an ornament. Each was bought for one specific moment on one specific night."
+    "That is the last of what I needed. What is left is timing."
+    "The next objective is in my Journal."
     $ renpy.log("DEBUG: show_objective_12_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1760,12 +1752,13 @@ label show_objective_13_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_13_dialogue - STARTING DIALOGUE")
-    "Three strongholds now fly my banner, and from them I command the streets the governor only taxes."
-    "Taverns where information flows like wine. Halls where warriors train. Houses where secrets change hands in the dark."
-    "Each building is a staging ground; each worker within it, a soldier in my quiet army."
-    "The governor sits in his castle and calls it power. I hold the markets, the rumors, the debts — the city's true bones."
-    "When the hour comes, these three bastions shall bear the weight of everything that follows."
-    "My journal has been inscribed with the next duty. The stage is set, and the players take their positions."
+    "Three buildings under my name, and from them I run the streets the governor only taxes."
+    "A room where information moves faster than the drink. A hall where fighters train. A house where people say things they would not say sober."
+    "Every one of them is a staging post, and everyone working inside is doing two jobs, whether they know it or not."
+    "The governor sits in his castle and calls that power. I hold the markets, the gossip and the debts, which is what the city actually runs on."
+    "When the night comes, all of it launches from these three doors."
+    "Everything is where it needs to be."
+    "The next objective is in my Journal."
     $ renpy.log("DEBUG: show_objective_13_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1773,12 +1766,12 @@ label show_objective_14_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_14_dialogue - STARTING DIALOGUE")
-    "My elite guard stands assembled — the finest this city can offer, each one a master of their craft."
-    "Some excel at open steel, ready to strike with overwhelming force. Others work in shadow, all cunning and charm."
-    "Together they can meet whatever the reckoning demands, whether the path calls for blood or for whispers."
-    "The governor keeps guards who serve for coin. I keep champions who chose my cause and will see it through."
-    "His days are numbered. The final act begins."
-    "My journal has been inscribed with the next duty. The pieces are in place, and the endgame approaches."
+    "My best people are picked and standing by, and there is nobody in this city I would rather have."
+    "Some of them are for open trouble. The others do quieter work and are better at it than anyone I have met."
+    "Between them they can handle it whichever way it goes, blades or paperwork."
+    "The governor's guards turn up for wages. Mine chose this, and they will still be standing there at the end of it."
+    "He does not have long. This is where it starts."
+    "The next objective is in my Journal."
     $ renpy.log("DEBUG: show_objective_14_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1786,12 +1779,12 @@ label show_objective_15_dialogue:
     scene expression workers_bg
     show expression Solid("#00000080")
     $ renpy.log("DEBUG: show_objective_15_dialogue - STARTING DIALOGUE")
-    "Three thousand coins in a single day. The river of commerce I have dug now flows without my hand upon the wheel."
-    "Every coin is a testament — to the workers I have trained, the buildings I have raised, the patient years of labor."
-    "The governor inherited his fortune. I forged mine from a single deed and a grudge, and mine still grows."
-    "Wealth such as this can fund operations that would beggar lesser men, and buy what loyalty alone cannot."
-    "The machine is built. It wants only a target."
-    "My journal has been inscribed with the next duty. The final preparations are complete, and the time for action has come."
+    "Three thousand coins in a single day, and I did not have to stand over any of it."
+    "That is what the training and the buildings and the patient years actually bought: a business that runs without me watching it."
+    "The governor inherited his money. I built mine out of one deed and a grudge, and mine is still growing."
+    "Money like this pays for work that would ruin a smaller operation, and buys the help that loyalty on its own will not."
+    "The machine works. All it needs now is somewhere to point it."
+    "The next objective is in my Journal."
     $ renpy.log("DEBUG: show_objective_15_dialogue - FINISHED DIALOGUE")
     jump tavern_screen
 
@@ -1799,46 +1792,20 @@ label show_tutorial_completion_message:
     scene expression event_bg
     show expression Solid("#00000080")
     
-    # Unlock the Governor's Castle (backup in case we got here without going through endings)
+    # Unlock the Governor's Castle (backup in case we got here without going
+    # through endings). One implementation only: this block used to repeat the
+    # helper inline and drifted from it (level 5 here vs 3 there, and it reset
+    # reputation and skill_bonus instead of preserving them).
     python:
-        castle_name = "Governor's Castle"
-        renpy.log("DEBUG: show_tutorial_completion_message - Ensuring castle is unlocked")
-        
-        # Ensure castle exists in available_buildings
-        if castle_name not in available_buildings:
-            available_buildings[castle_name] = {}
-        
-        # Set all castle properties
-        available_buildings[castle_name]["price"] = 0
-        available_buildings[castle_name]["reputation"] = 0
-        available_buildings[castle_name]["base_level"] = 5
-        available_buildings[castle_name]["type"] = "governor_castle"
-        available_buildings[castle_name]["assigned_servants"] = available_buildings[castle_name].get("assigned_servants", [])
-        available_buildings[castle_name]["servant_jobs"] = available_buildings[castle_name].get("servant_jobs", {})
-        available_buildings[castle_name]["max_workers"] = 10
-        available_buildings[castle_name]["costs"] = 0
-        available_buildings[castle_name]["owned"] = True
-        available_buildings[castle_name]["skill"] = 50
-        available_buildings[castle_name]["skill_bonus"] = 0
-        
-        # Ensure it's in owned_buildings
-        if castle_name not in owned_buildings:
-            owned_buildings.append(castle_name)
-        
-        buildings_owned = len(owned_buildings)
-        map_button_buildings["Castle"] = castle_name
-        custom_names[castle_name] = castle_name
-        
-        renpy.log(f"DEBUG: Castle unlocked in completion message - in owned: {castle_name in owned_buildings}, map_button: {'Castle' in map_button_buildings}")
+        unlock_governor_castle("tutorial completion")
     
-    "The vengeance is complete! My empire stands supreme, and my enemies lie vanquished."
-    "The governor's reign hath ended, brought low by my hand through steel or secrets, as I chose."
-    "The city now answers to a new master—one who built their power from nothing, who forged an empire of shadows through cunning and determination."
-    "The Governor's Castle is now mine, a symbol of my triumph and a testament to the empire I have built."
-    "Within its walls, I command the finest servants, the most skilled courtesans, the deadliest guards, and the wisest chamberlains."
-    "The castle serves as the crown jewel of my domain, a place where power flows like wine and where my will becomes law."
-    "From this moment forth, the castle is mine to command as I see fit—its halls echo with my authority, its chambers filled with those who serve my cause."
-    "The old order hath fallen. A new empire rises, and I am its master."
-    "With your quest complete, new opportunities arise. You can now purchase buildings in other cities through the 'Buy Buildings Abroad' option on the map."
-    "But remember: the Governor's Castle remains the heart of your empire, a constant reminder of the vengeance you have achieved and the power you now wield."
+    "It is done."
+    "The governor's rule is over, ended by my hand, with steel or with secrets as I chose."
+    "The city answers to somebody who started with nothing and took it one building at a time."
+    "The Governor's Castle is mine. Not a symbol of anything: a property, with staff, an income, and better locks than anywhere else I own."
+    "Servants, courtesans, guards, chamberlains. The best of them, and all of them working for me now."
+    "It is the best-earning thing I have, and it is the last address he ever gave an order from. Both of those matter."
+    "The old order is finished. What stands in its place is mine."
+    "With the quest complete, new options open up. You can now buy buildings in other cities through the 'Buy Buildings Abroad' option on the map."
+    "The castle stays the centre of it, though. Everything else is expansion."
     jump tavern_screen

@@ -50,7 +50,14 @@ def claim_job_slot(
     active_count,
     capacity,
 ):
-    """Plan one direct assignment without activating an overbooked reservation."""
+    """Plan one direct assignment. Only active workers consume capacity.
+
+    A Rest reservation only remembers where a resting worker returns; it never
+    blocks the manager from giving that slot to someone else. The resting
+    worker then simply waits (see can_restore_reserved_job) until the job has
+    room again. ``occupied_count`` (active + reservations) is kept in the
+    signature and the result for callers that display it, but it is not a limit.
+    """
     try:
         occupied = int(occupied_count)
         active = int(active_count)
@@ -64,12 +71,10 @@ def claim_job_slot(
         return False, occupied, active
     if current == target:
         return True, occupied, active
-    if current == "rest" and reserved_job_id(worker, current) == target:
-        if active >= limit:
-            return False, occupied, active
-        return True, occupied, active + 1
-    if occupied >= limit:
+    if active >= limit:
         return False, occupied, active
+    if current == "rest" and reserved_job_id(worker, current) == target:
+        return True, occupied, active + 1
     return True, occupied + 1, active + 1
 
 

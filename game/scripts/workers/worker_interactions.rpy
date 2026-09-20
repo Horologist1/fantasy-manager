@@ -1081,8 +1081,8 @@ init python:
         store.take_a_walk_in_progress = True
         store.take_a_walk_fail_message = None
         
-        # Check if already used today
-        if store.last_take_a_walk_day == store.current_day:
+        # Check if already used today (total days, so day 12 of next month is a new day)
+        if store.last_take_a_walk_day == calculate_total_days():
             store.take_a_walk_fail_message = "You've already taken a walk today. Come back tomorrow."
             store.take_a_walk_in_progress = False
             return False
@@ -1131,7 +1131,7 @@ init python:
         apply_interaction_effects(canonical_worker, chosen_interaction, apply_costs=False, skip_daily_limit=True)
         
         # Mark as used today
-        store.last_take_a_walk_day = store.current_day
+        store.last_take_a_walk_day = calculate_total_days()
         
         # Store the interaction data for the screen to display
         store.walk_worker = canonical_worker

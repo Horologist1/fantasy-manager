@@ -1,0 +1,11 @@
+Eventos que otorgan un trait: 63
+
+evento                                     tics de plantilla compartidos
+royal_butler_inspection                    1  prescribes homework
+master_card_dealer                         1  prescribes homework
+legendary_gambler_arrives                  1  studies/probes then sighs or shakes head
+legendary_barkeep                          1  studies/probes then sighs or shakes head
+desire_whisperer_arrives                   1  prescribes homework
+archmage_apprentice                        1  departs in light / vanishes / dissolves
+
+con 2 o mas tics compartidos: 0 de 63

@@ -827,6 +827,10 @@ label auto_advance_days:
 label auto_advance_next_day:
     $ _auto_requested = max(1, int(auto_advance_requested_days or 1))
     $ _auto_processed = int(store.auto_advance_summary.get("days_processed", 0) or 0)
+    if _auto_processed > 0 and store.current_day == 1:
+        $ store.auto_advance_summary["stop_reason"] = "New month: review your monthly condition"
+        call screen monthly_card(transition=True)
+        jump auto_advance_show_summary
     if _auto_processed >= _auto_requested:
         $ store.auto_advance_summary["stop_reason"] = "Requested span completed"
         jump auto_advance_show_summary

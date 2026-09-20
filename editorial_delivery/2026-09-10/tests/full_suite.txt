@@ -1,0 +1,19 @@
+................................................................................................................................ [ 34%]
+........................................................................ [ 54%]
+............................................................... [ 71%]
+..................................................F................. [ 89%]
+.......................................                                [100%]
+================================== FAILURES ===================================
+__________________ test_repeat_storage_save_runtime_isolated __________________
+
+tmp_path = WindowsPath('C:/Users/Usuario/AppData/Local/Temp/pytest-of-Usuario/pytest-351/test_repeat_storage_save_runti0')
+
+    def test_repeat_storage_save_runtime_isolated(tmp_path: Path) -> None:
+        if os.environ.get("RENPY_RUNTIME_REQUIRED") != "1":
+>           pytest.fail("RENPY_RUNTIME_REQUIRED=1 is mandatory; runtime QA must not be silently skipped")
+E           Failed: RENPY_RUNTIME_REQUIRED=1 is mandatory; runtime QA must not be silently skipped
+
+tests\test_repeat_storage_save_runtime.py:500: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_repeat_storage_save_runtime.py::test_repeat_storage_save_runtime_isolated
+1 failed, 369 passed, 463 subtests passed in 109.59s (0:01:49)

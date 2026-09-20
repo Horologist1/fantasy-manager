@@ -1,5 +1,11 @@
 # Define helper functions in store namespace to avoid pickling errors
 init python:
+    def event_text_with_selected_worker(text, worker_name):
+        # Names from mods are literal text, never regex replacement programs.
+        # Keep the callable local to this init helper, outside saved label state.
+        text = re.sub(r"\bthe worker\b", lambda match: worker_name, text)
+        return text.replace("[event_worker]", worker_name).replace("[acting_worker]", worker_name)
+
     def _worker_meets_trait_requirements(worker_obj, required_traits_list, excluded_traits_list):
         """Check if worker has all required traits and none of the excluded traits. Must be in store for pickling."""
         if not worker_obj:
@@ -586,6 +592,15 @@ label handle_random_event:
                 # the preview text — keeps modded events safe from accidental
                 # SyntaxErrors regardless of what the label contains.
                 option_text = option_text + " (" + check_preview + ")"
+            # A cost above the coins on hand stays selectable, but says so.
+            try:
+                _cost_warning = event_choice_cost_warning(
+                    choice_option.get("effect"), store.money,
+                    getattr(store, "BANKRUPTCY_MONEY_THRESHOLD", -5000))
+                if _cost_warning and _cost_warning not in option_text:
+                    option_text = option_text + " (" + _cost_warning + ")"
+            except Exception as e:
+                renpy.log(f"cost warning preview failed: {e}")
             new_choice["option"] = option_text
             # Prepare success/failure messages with placeholders resolved; avoid empty messages
             # When final_worker is None (e.g. worker_selection "choose" before pick), keep
@@ -636,8 +651,10 @@ label handle_random_event:
     $ chosen_choice_data = _return
     $ store.chosen_choice_data = chosen_choice_data
 
-    if chosen_choice_data is None:
-        $ outcome_message = "No valid option selected."
+    # Return(None) in older screens yields True in Ren'Py. A choice must be
+    # dict-like; both the explicit False cancellation and legacy sentinels decline.
+    if not hasattr(chosen_choice_data, "get"):
+        $ outcome_message = "You let the moment pass."
         narrator "[outcome_message]"
         window hide
         # Declined events reappear after a cooldown: select_possible_events reads
@@ -830,7 +847,7 @@ label handle_random_event:
         # Still show narrator window during worker choice
         call screen choose_event_worker_screen(eligible_workers=store.temp_eligible_workers_for_event)
         $ chosen_worker = _return
-        if chosen_worker is None:
+        if not hasattr(chosen_worker, "get"):
             $ renpy.log("Player cancelled worker selection.")
             $ final_worker = None
             $ event_status = "cancelled"
@@ -847,17 +864,7 @@ label handle_random_event:
                 python:
                     if final_worker:
                         acting_worker_name = final_worker.get("name", "the worker")
-                        # Update the outcome message for when it's displayed later.
-                        # Word-boundary replace: a blanket .replace() also mangled
-                        # "the workers" into e.g. "Aeliss".
-                        # NOTE: use the init-imported `re` (store.re) directly. Do NOT
-                        # `import re as _re` here: this is a label python: block, so any
-                        # name bound here lands in the persistent store. Binding a module
-                        # (_re) makes the store unpicklable and breaks ALL saves. See
-                        # LA BIBLIA / project_save_pickle_gotcha.
-                        store.temp_narrator_text = re.sub(r"\bthe worker\b", acting_worker_name, store.temp_narrator_text)
-                        store.temp_narrator_text = store.temp_narrator_text.replace("[event_worker]", acting_worker_name)
-                        store.temp_narrator_text = store.temp_narrator_text.replace("[acting_worker]", acting_worker_name)
+                        store.temp_narrator_text = event_text_with_selected_worker(store.temp_narrator_text, acting_worker_name)
                         
             else:
                 $ renpy.log(f"ERROR: chosen_worker from screen was not dict-like: {chosen_worker}, Type: {type(chosen_worker)}")

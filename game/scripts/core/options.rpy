@@ -24,8 +24,8 @@ define gui.show_name = True
 
 
 
-define config.version = "0.9.6.1"
-define build.version = "0.9.6.1"
+define config.version = "0.9.6.2"
+define build.version = "0.9.6.2"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -199,6 +199,8 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
+    build.classify('backups/**', None)
+    build.classify('backups/', None)
 
     ## Internal development/release documents are not player-facing content.
     build.classify('AUDIT_SUMMARY.md', None)
@@ -228,6 +230,9 @@ init python:
     ## Test sources are development-only and must not enter release packages.
     build.classify('tests/**', None)
     build.classify('tests/', None)
+
+    # Dev-only content: a $1 item that raises Manager level on purchase.
+    build.classify('game/data/items/test_items.json', None)
 
     ## Exclude local AI/tooling metadata and debug artifacts from releases.
     build.classify('AGENTS.md', None)
@@ -479,8 +484,17 @@ init python:
             if not btype_id:
                 continue
             btype = next((entry for entry in (building_types or []) if hasattr(entry, "get") and entry.get("id") == btype_id), None)
-            if btype and content_object_is_restricted(btype):
+            if not btype:
+                continue
+            if content_object_is_restricted(btype):
                 return True
+            # A SFW building type can still hold workers on an NSFW-only job
+            # (Bikini Bouts, amatory training). Those jobs go dark in SFW mode.
+            jobs = building.get("servant_jobs", {}) or {}
+            job_ids = {str(job or "").strip().lower() for job in (jobs.values() if hasattr(jobs, "values") else ())}
+            for profession in (btype.get("professions", []) or []):
+                if hasattr(profession, "get") and str(profession.get("id", "")).strip().lower() in job_ids and content_object_is_restricted(profession):
+                    return True
         return False
 
     def _save_expects_nsfw(recorded_mode, buildings, building_types):

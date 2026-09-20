@@ -396,6 +396,9 @@ label recruitment_event_flow(event, worker):
         if chosen_choice_data is None:
             # User returned from worker details - go back to choices
             jump recruitment_choice_loop
+
+        if chosen_choice_data.get("_dismiss_recruitment", False):
+            return
     
     # Process the choice
     python:
