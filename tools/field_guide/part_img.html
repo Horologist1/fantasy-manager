@@ -1,0 +1,101 @@
+<section class="chapter">
+<h2 id="i-rules">How the game picks an image</h2>
+<p>Worker art goes in <code>game/images/workers/&lt;folder&gt;/</code>, where the folder is the one named in the worker's JSON. Formats: <code>.png .jpg .jpeg .webp .webm .mp4</code>. Only <code>profile</code> is required. Every other image is optional: when a name isn't found, the game quietly moves to the next step of the chain, so a worker with just profile and skill art already covers the whole game.</p>
+<div class="tw"><table>
+<thead><tr><th>Rule</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>Variants</td><td><code>sex.jpg</code>, <code>sex (1).jpg</code>, <code>sex (2).jpg</code>… One is picked at random and stays the same for that day's report.</td></tr>
+<tr><td>Failure</td><td>Failure <i>and mediocre</i> results use <code>&lt;name&gt;_failure</code>. If that file is missing, the success image of the same name is used before moving down the chain.</td></tr>
+<tr><td>Trait art</td><td>Workers with Transformed, Magical, Futa or Pregnant look for <code>&lt;trait&gt;_&lt;name&gt;</code> first (<code>pregnant_sex</code>, <code>futa_profile</code>, <code>transformed_magical_oral</code>). Priority: Transformed &gt; Magical &gt; Futa &gt; Pregnant.</td></tr>
+<tr><td>Generic folder</td><td>If nothing matches in the worker's folder, the whole search repeats in <code>guy</code> (male) or <code>blossom</code> (female).</td></tr>
+<tr><td>Reserved names</td><td>Files starting with <code>discipline_</code>, <code>romance_</code>, <code>friendship_</code> or <code>obedience</code> are only used by interactions, never as skill art in jobs or events.</td></tr>
+</tbody></table></div>
+<h3 id="i-chain">The fallback chain</h3>
+<pre>daily story / event image   (story_image, failure_image, success_image)
+   ↓ missing
+skill image of the roll     (sex, oral, combat… see the grid below)
+   ↓ missing
+rest                        (rest stories only)
+   ↓ missing
+profile                     (always exists)</pre>
+</section>
+
+<section class="chapter">
+<h2 id="i-browse">Image browser</h2>
+<div class="subtabs" role="tablist" aria-label="Image lists">
+  <button class="subtab" role="tab" aria-selected="true" data-target="skills">Skills &amp; base</button>
+  <button class="subtab" role="tab" aria-selected="false" data-target="stories">Daily stories</button>
+  <button class="subtab" role="tab" aria-selected="false" data-target="events">Events</button>
+  <button class="subtab" role="tab" aria-selected="false" data-target="inter">Interactions</button>
+  <button class="subtab" role="tab" aria-selected="false" data-target="train">Training</button>
+</div>
+
+<div data-sub="skills">
+  <h3 id="i-skills">Skill images</h3>
+  <p>The safety net under every story, event and training session. Some skills accept several file names; any of them works. A <code>handjob</code> file is <b>not</b> recognised for Hand.</p>
+  <div id="skills-grid"></div>
+  <p class="fb">Homo: M/M scenes look for <code>gay</code> / <code>homo</code>, F/F scenes for <code>les</code> / <code>homo</code>. Gay or Lesbian workers in a story with a client outside their preference use <code>hetero</code>.</p>
+  <h3 id="i-base">Base images</h3>
+  <div class="tw"><table><thead><tr><th>Name</th><th>Used for</th></tr></thead><tbody>
+    <tr><td><code>profile</code></td><td>Portrait in the roster and details, and the last fallback for everything. Required.</td></tr>
+    <tr><td><code>&lt;trait&gt;_profile</code></td><td>Portrait while the worker has that trait (<code>pregnant_profile</code>, <code>futa_profile</code>…)</td></tr>
+    <tr><td><code>rest</code></td><td>Rest stories in any building</td></tr>
+  </tbody></table></div>
+  <p class="fb"><code>rest</code> covers every rest story. A specific name like <code>rest_adventurer</code> or <code>rest_libido</code> is tried first.</p>
+</div>
+
+<div data-sub="stories" hidden>
+  <h3 id="i-stories">Daily story images</h3>
+  <p>Each story names its own image. Open a row to see the full chain the game follows when that image isn't there. The relationship filter separates the stories unlocked by Romance, Relationship, Rebellious and the finale traits.</p>
+  <div class="controls">
+    <input type="search" id="st-q" placeholder="Search story id, image or skill" aria-label="Search stories">
+    <select id="st-building" aria-label="Building"></select>
+    <select id="st-prof" aria-label="Profession"></select>
+    <select id="st-rel" aria-label="Story type"><option value="">All stories</option><option value="base">Base stories</option><option value="rel">Relationship stories</option></select>
+    <span class="count" id="st-count"></span>
+  </div>
+  <div class="list" id="st-list"></div>
+  <button class="more" id="st-more" hidden>Show more</button>
+</div>
+
+<div data-sub="events" hidden>
+  <h3 id="i-events">Event images</h3>
+  <p>Visual novel scenes (Yvara, Varro/Varra) are not listed. Event art is searched in the acting worker's folder first, then in <code>images/events/</code>, which holds the shared <code>generic_success</code>, <code>generic_failure</code> and event backgrounds.</p>
+  <div class="controls">
+    <input type="search" id="ev-q" placeholder="Search event id or image" aria-label="Search events">
+    <select id="ev-file" aria-label="Event file"></select>
+    <span class="count" id="ev-count"></span>
+  </div>
+  <div class="list" id="ev-list"></div>
+  <button class="more" id="ev-more" hidden>Show more</button>
+</div>
+
+<div data-sub="inter" hidden>
+  <h3 id="i-inter">Interaction images</h3>
+  <p>Exact name only (plus <code>(N)</code> variants). Search order: <code>&lt;image&gt;_lord</code> / <code>_lady</code> by player title, then <code>_male</code> / <code>_female</code> (old names), then <code>&lt;image&gt;</code>, then the category fallback, then <code>profile</code>. The lord/lady versions can be copies of each other, except <code>passionate_night</code> and <code>perfect_night</code>. <code>joy_male</code> / <code>joy_female</code> and <code>romance_male</code> / <code>romance_female</code> are old names: the first pair is no longer used, the second still works as a fallback.</p>
+  <div class="list" id="inter-list"></div>
+</div>
+
+<div data-sub="train" hidden>
+  <h3 id="i-train">Training images</h3>
+  <p>Stricter than the rest: the file must be exactly the name below (or <code>name (N)</code>), with no trait prefix. Naming: <code>Training_&lt;Skill&gt;_&lt;Lord|Lady&gt;_&lt;Male|Female&gt;</code> = player title + worker gender. If it isn't there, the session shows the trained skill's image.</p>
+  <div class="tw"><table><thead><tr><th>Image</th><th>Skill / branch</th><th>If missing</th></tr></thead><tbody id="train-list"></tbody></table></div>
+</div>
+
+</section>
+
+<section class="chapter">
+<h2 id="i-new">Adding a new worker</h2>
+<ol>
+  <li>Add the worker to any JSON file in <code>game/data/workers/</code> (copy an existing one). No code changes needed.</li>
+  <li>Create <code>game/images/workers/&lt;folder&gt;/</code> with at least a <code>profile</code> image.</li>
+  <li>Add art in this order of value:
+    <ul>
+      <li><b>Tier 1:</b> <code>profile</code>, <code>rest</code></li>
+      <li><b>Tier 2:</b> the 16 skill images and their <code>_failure</code> versions. With these, every job, event and training already shows something that fits.</li>
+      <li><b>Tier 3:</b> interactions: <code>friendship</code>, <code>obedience</code>, <code>romance_lord</code> / <code>romance_lady</code>, then the specific <code>discipline_*</code>, <code>friendship_*</code>, <code>romance_*</code> and <code>Training_*</code> images.</li>
+      <li><b>Tier 4:</b> story and event images for the jobs this worker will do. The Daily stories list above, filtered by building and profession, shows every name a job uses.</li>
+    </ul>
+  </li>
+</ol>
+</section>

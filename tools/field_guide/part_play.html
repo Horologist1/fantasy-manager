@@ -1,0 +1,227 @@
+<section class="chapter">
+<h2 id="p-loop">The daily loop</h2>
+<p>You run a business empire one day at a time. Each day you assign workers to jobs in your buildings, press <b>Next Day</b>, and read the Daily Report. Here is what happens behind that button, in order:</p>
+<ol>
+  <li><b>Bankruptcy check.</b> If your money is at −5,000 or lower, the game ends.</li>
+  <li><b>Timed traits tick down</b> (Sick, Pregnant, Poisoned…), then the calendar moves forward one day.</li>
+  <li><b>Morning upkeep for each worker:</b> max health and energy are recalculated, comfort adds joy, and joy and relationship adjustments apply.</li>
+  <li><b>Franchises pay out</b>, then every assigned worker does their <b>daily stories</b> (jobs).</li>
+  <li><b>Income and costs</b> are added up. Costs are building upkeep plus worker comfort.</li>
+  <li><b>Death check</b>, then the <b>nightly rest</b>: health, energy and libido regenerate.</li>
+  <li><b>Level-ups</b> for skills and workers.</li>
+  <li><b>Money is applied</b>, followed by another bankruptcy check.</li>
+  <li>Governor events, then <b>random events</b>, then the Daily Report.</li>
+</ol>
+<div class="note"><strong>Calendar.</strong> A year has 12 months of 28 days, with 7-day weeks (Monareth, Tuelivane, Wetheris, Thurramor, Freylorn, Starrith, Sundusk). Months run from Frostveil to Nightspire.</div>
+
+<h3 id="p-start">Starting out</h3>
+<ul>
+  <li>You start with <b>$6,000</b> and Building 1, which you can never sell.</li>
+  <li>The <b>Journal</b> holds 16 objectives. Objectives 1–7 complete on their own. From objective 8 onward you press "Mark as Complete" yourself. Objective 15 asks for 3,000 income in a single day.</li>
+  <li>The story ends in an <b>Assassination</b> or <b>Blackmail</b> ending, depending on the path you chose at objective 9.</li>
+</ul>
+
+<h3 id="p-difficulty">Difficulty</h3>
+<div class="tw"><table>
+<thead><tr><th>Difficulty</th><th class="num">Comfort per level</th><th class="num">Job earnings</th><th>Other effects</th></tr></thead>
+<tbody>
+<tr><td>Story</td><td class="num">15</td><td class="num">×1.3</td><td>Failed jobs never lose money</td></tr>
+<tr><td>Easy</td><td class="num">18</td><td class="num">×1.15</td><td>A failed job loses at most 25</td></tr>
+<tr><td>Normal</td><td class="num">20</td><td class="num">×1.0</td><td>—</td></tr>
+<tr><td>Hard</td><td class="num">25</td><td class="num">×0.85</td><td>Building upkeep ×2, failure consequences ×2</td></tr>
+<tr><td>Nightmare</td><td class="num">30</td><td class="num">×0.7</td><td>Upkeep ×3, failure consequences ×3, −10 to every job roll</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="chapter">
+<h2 id="p-workers">Workers</h2>
+<p>Workers come from three places:</p>
+<ul>
+  <li><b>Bought</b> at the market. They want little comfort (around 1). Only bought servants can be <b>sold</b>, for level × 500.</li>
+  <li><b>Recruited</b> through recruitment events. You can start one a day from the menu. They want more comfort (around 4).</li>
+  <li><b>Captured</b> monsters, which can drop as loot from successful guild jobs.</li>
+</ul>
+<p>Any worker can be <b>fired</b>, which pays nothing. Workers that aren't for sale can still go to a specialty buyer through the level-5 Discipline interaction (see Interactions).</p>
+
+<h3 id="p-stats">Stats at a glance</h3>
+<div class="tw"><table>
+<thead><tr><th>Stat</th><th>Range</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td>Level</td><td>1+</td><td>Raises max health and energy and nightly regeneration. There is no level cap.</td></tr>
+<tr><td>Health</td><td>max = 10 + 5 × level + bonuses</td><td>A worker at 0 health dies. Slimes reform for 3 days instead.</td></tr>
+<tr><td>Energy</td><td>max = 5 × level + bonuses</td><td>Every job costs energy. At 0, the worker stops working (Rest jobs still run).</td></tr>
+<tr><td>Skills</td><td>0–100 base</td><td>Decide job success. Bonuses can push the total above 100.</td></tr>
+<tr><td>Joy</td><td>0–100</td><td>Above 80: −3 rebelliousness per day. Below 20: +2 rebelliousness per day. It does not affect job rolls.</td></tr>
+<tr><td>Rebelliousness</td><td>0–100</td><td>Above 80, a worker has a 20% chance to refuse work each day. Rest and Academy can't be refused.</td></tr>
+<tr><td>Romance</td><td>0–100</td><td>Unlocks Romance interactions and romance stories.</td></tr>
+<tr><td>Relationship</td><td>0–100</td><td>Unlocks Friendship interactions. It never drops below 10 + comfort level.</td></tr>
+<tr><td>Comfort level</td><td>set by you</td><td>Costs money every day. Each level above the worker's desired comfort gives +1 joy per day, and each level above 1 gives +1 energy regeneration.</td></tr>
+<tr><td>Libido (NSFW)</td><td>0 – max (base 20)</td><td>Boosts sex skills by libido ÷ 2. Running below 0 turns into rebelliousness.</td></tr>
+</tbody></table></div>
+
+<h3 id="p-growth">How workers grow</h3>
+<ul>
+  <li><b>Worker level:</b> successful jobs fill a counter. At 20 × current level successes the worker levels up and the counter resets.</li>
+  <li><b>Skills grow with use.</b> Every job adds a use to one of the skills it rolled, and enough uses raise the skill by 1. The cost in uses rises with the skill: 1 use at 0, about one more every 15 points up to 75, then it climbs steeply. Training and the Academy also add uses.</li>
+  <li>Each level or skill point gained lowers rebelliousness by the worker's comfort level.</li>
+</ul>
+
+<h3 id="p-rest">Rest, regeneration and death</h3>
+<ul>
+  <li>Every night: <b>health</b> +level +1 (+traits), <b>energy</b> +level + (comfort − 1) (+traits), <b>libido</b> +1 + level − 1 per sex job that day (never below −2).</li>
+  <li>The <b>Rest</b> job in every building gives extra energy. With <b>auto-rest</b> on, tired workers rest by themselves below 35% and go back to work at 95%.</li>
+  <li><b>Auto-potions:</b> workers below 30% health or energy drink potions from stock at the start of the day.</li>
+  <li><b>Death:</b> up to 10 graves are kept at the Church. Resurrection costs 5,000 + 1,000 × (level − 1).</li>
+</ul>
+
+<h3 id="p-libido">Libido (NSFW mode)</h3>
+<ul>
+  <li>Max libido is 20, plus traits and items.</li>
+  <li>Sex skills get <b>+libido ÷ 2</b>.</li>
+  <li>On non-sexual jobs, high libido is a distraction: −5 skill at libido 20, and −1 more per point above.</li>
+  <li>If libido would drop below 0, the overflow becomes rebelliousness.</li>
+</ul>
+</section>
+
+<section class="chapter">
+<h2 id="p-buildings">Buildings</h2>
+<p>Each building has jobs (professions). Each job has a number of seats that grows by 1 per building level. Every building also has a <b>Rest</b> job with unlimited seats.</p>
+<div class="tw"><table>
+<thead><tr><th>Building</th><th>Jobs (base seats)</th><th>How you get it</th></tr></thead>
+<tbody>
+<tr><td><b>Brothel</b> <span class="pill nsfw">NSFW</span></td><td>Prostitute 3, Masseuse 3, Expert Attendant 3, Stripper 3, Service 3, Manager 1</td><td>Buy a map spot</td></tr>
+<tr><td><b>Restaurant</b></td><td>Server 3, Cook 3, Manager 1</td><td>Buy a map spot</td></tr>
+<tr><td><b>Adventurer's Guild</b></td><td>Adventurer 5, Treasure Hunter 4, Boss Hunting 2, Monster Taming 2 <span class="pill nsfw">NSFW</span>, Manager 1</td><td>Buy a map spot</td></tr>
+<tr><td><b>Tavern</b></td><td>Bartender 4, Entertainer 3, Tavern Server 3, Manager 1</td><td>Buy a map spot</td></tr>
+<tr><td><b>Casino</b></td><td>Dealer 3, Guard 3, Casino Server 3, Manager 1</td><td>Buy a map spot</td></tr>
+<tr><td><b>Governor's Castle</b></td><td>Ambassador 3, Courtesan 3 <span class="pill nsfw">NSFW</span>, Servant 5, Pleasure Servant 3 <span class="pill nsfw">NSFW</span>, Prisoner 9 (unpaid), Guards 3, Chamberlain 1</td><td>Story reward. Always level 5 and free of upkeep beyond level 1</td></tr>
+<tr><td><b>Academy</b></td><td>Academics, Amatory Arts <span class="pill nsfw">NSFW</span>, Hospitality Arts, Artisan Studies (99 seats each)</td><td>$15,000 tuition (a haggle can halve it). Each student costs 300 × (1 + 0.06 × (level − 1)) per day</td></tr>
+<tr><td><b>Arena</b></td><td>Exhibition 8, Proving 5, Championship 3, plus three NSFW shows unlocked through the Lanista story</td><td>$10,000 permit, then win the opening trial</td></tr>
+</tbody></table></div>
+
+<h3 id="p-map">Buying, upgrading and changing</h3>
+<ul>
+  <li><b>Map spots:</b> Tavern $15k, Bluehouse $20k, Redhouse $25k, Greenhouse $30k. Each spot only allows some building types; the Greenhouse takes any.</li>
+  <li><b>Upgrade</b> from level N to N+1 costs N² × 1,000 ($1k, $4k, $9k, $16k). The max level is 5.</li>
+  <li><b>Change type</b> for $1,000. This resets the building to level 1, 0 reputation and no skill bonus.</li>
+  <li><b>Sell</b> a building for its purchase price − $5,000 (not Building 1).</li>
+  <li><b>Building skill</b> (Hag Potions, Ingredients, Equipment…) = level × 10, plus up to +50 in bonuses. It is used for building checks in random events.</li>
+  <li><b>Reputation</b> rises with good jobs (+10 critical, +5 success, −5 failure) and brings more stories per worker. Its cap is level × 200, plus your best manager's level × 200.</li>
+</ul>
+
+<h3 id="p-costs">Daily costs</h3>
+<ul>
+  <li><b>Building upkeep:</b> 100 / 300 / 500 / 700 / 900 for levels 1–5 (×2 on Hard, ×3 on Nightmare).</li>
+  <li><b>Comfort:</b> comfort level × 20 per worker on Normal (15–30 depending on difficulty).</li>
+  <li><b>Skill bonus:</b> $100 per +10 building skill bonus.</li>
+  <li>There is no separate wage per worker any more; comfort is the wage.</li>
+</ul>
+</section>
+
+<section class="chapter">
+<h2 id="p-jobs">Jobs and earnings</h2>
+<p>Each worker does at least 1 story per day. Busy buildings add more: <b>reputation ÷ 400</b> extra stories per worker, up to 6. Each story rolls d100 against the worker's skill:</p>
+<div class="tw"><table>
+<thead><tr><th>Roll</th><th>Result</th><th>Reputation</th></tr></thead>
+<tbody>
+<tr><td>≤ 10% of the target (max 25, min 1)</td><td><b>Critical success</b></td><td>+10</td></tr>
+<tr><td>≤ target</td><td><b>Success</b></td><td>+5</td></tr>
+<tr><td>≤ target + 10</td><td><b>Mediocre</b></td><td>0</td></tr>
+<tr><td>above that</td><td><b>Failure</b></td><td>−5</td></tr>
+</tbody></table></div>
+<p>The <b>target</b> is the average of the story's skills, adjusted by story difficulty, the worker's matching traits (about ±3 each), staff synergy and policies, capped at 100. Some relationship stories can't fail.</p>
+<p>Pay comes from each story's own formula, usually <code>50 + skill</code> on success and <code>50 + skill × 2</code> on a critical. Mediocre pays about the skill value. Failure costs money: the further the roll missed, the more it costs. On top of that:</p>
+<ul>
+  <li><b>Traits</b> multiply pay. Each trait counts for at most ×1.2, and all traits together for at most ×1.5.</li>
+  <li><b>Business Acumen</b> adds +10% per point.</li>
+  <li><b>Staffing:</b> if a building's core job is empty (Prostitute, Cook, Adventurer, Bartender, Dealer), everyone in that building earns ×0.5. A staffed Expert Attendant gives the Brothel ×1.1. Each Service, Server or Entertainer worker adds +1 to every roll in their building (up to +40).</li>
+  <li><b>Difficulty</b> and the <b>monthly card</b> multiply the final amount.</li>
+</ul>
+
+<h3 id="p-managers">Managers and management skills</h3>
+<ul>
+  <li>A <b>Manager</b> seat in a building calms it down: each manager lowers that building's random event chance by 10 points (minimum 5%). Managers also raise the building's reputation cap.</li>
+  <li>Your own <b>management skills</b> add +5 per point to the matching worker skills and stats. They are Whore Mastery (sex skills), Combat Instruction (Combat, +10 health), Servant Training (−10 rebelliousness cap), Gang Leader (+10 energy) and Business Acumen (+10% earnings).</li>
+  <li><b>Manager Level</b> raises how many interactions you can do per day (2 + level).</li>
+</ul>
+
+<h3 id="p-monthly">Monthly conditions</h3>
+<p>From the third month, every month draws one card from a deck of 16. A card raises or lowers some skills (±10) or the earnings (×0.9–1.15) of certain buildings or jobs. The same card never comes up twice in a row, and you can switch the system off.</p>
+
+<h3 id="p-franchise">Franchises</h3>
+<p>Franchise Holdings are off-map businesses: $10,000 to set up, upgrades at level² × 1,000. Workers sent there leave the roster and earn about 10 + 1.5 × level + 0.75 × average skill per day.</p>
+</section>
+
+<section class="chapter">
+<h2 id="p-traits">Traits</h2>
+<p>There are 205 traits. Races (Human, Elf, Dwarf, Orc, Ogre, Demon, Angel, Goblin, Half-Breed, Slime, Centauride, Transformed) are traits too. A trait can:</p>
+<ul>
+  <li>Add or remove skill points, health, energy, libido and regeneration.</li>
+  <li>Multiply earnings, from ×0.5 (Reforming) up to ×1.2 (Idol, Porn Star, Transformed).</li>
+  <li>Set caps and minimums (e.g. Dependant caps rebelliousness at 50).</li>
+  <li>Change stats every day (e.g. Obedient: −1 rebelliousness per day).</li>
+  <li>Expire after a number of days: Sick 7, Poisoned 7, Cursed Vitality 7, Pregnant 100, Trial Worker 30.</li>
+  <li>Conflict with other traits. Gaining one removes the other, e.g. Rebellious vs Dependant, Obedient and Meek.</li>
+</ul>
+<p>Magic traits stack: Strong Magic, Powerful Magic and Psychic all need Magical first.</p>
+</section>
+
+<section class="chapter">
+<h2 id="p-items">Items and shops</h2>
+<ul>
+  <li><b>Equipment:</b> a worker can wear one weapon, one armor, one clothing and one accessory. Equipping a second item of the same type swaps the first out. Items have no durability.</li>
+  <li><b>Consumables and gifts</b> are used up. Gifts give small boosts to joy, romance and relationship (+1 or +2 each).</li>
+  <li><b>Ingredients</b> are for Academy alchemy. They are sold in the Basic Shop and drop from guild jobs.</li>
+</ul>
+<div class="tw"><table>
+<thead><tr><th>Shop</th><th>Price range</th><th>How it opens</th></tr></thead>
+<tbody>
+<tr><td>Basic Shop</td><td class="num">0–200</td><td>Open from the start</td></tr>
+<tr><td>Adventurer's Market</td><td class="num">201–500</td><td>A shop-owner rescue event, from objective 7 (guaranteed by day 90)</td></tr>
+<tr><td>Elite Emporium</td><td class="num">501+</td><td>A follow-up expansion event about 20 days later (guaranteed by day 120)</td></tr>
+</tbody></table></div>
+<p>Some items only show up on some days. Example: the <b>Amulet of Desire</b> (468 gold, +5 max libido, +2 libido regen) sits in the Adventurer's Market. The <b>Elixir of Passion</b> (1,000 gold, +10 libido) is in the Elite Emporium every day and is also a rare loot drop.</p>
+</section>
+
+<section class="chapter">
+<h2 id="p-interactions">Interactions</h2>
+<p>From a worker's details you can spend interactions on them. You have <b>2 + Manager Level</b> interactions per day, shared by all workers (training counts too).</p>
+<ul>
+  <li><b>Friendship</b> (needs relationship 25 / 50 / 75 / 80 for levels 2–5)</li>
+  <li><b>Romance</b> (needs romance 25 / 50 / 75 / 80)</li>
+  <li><b>Discipline</b> (needs rebelliousness <i>below</i> 80 / 75 / 50 / 25)</li>
+</ul>
+<p>Each category has levels 1–5. To open a level, you need to have done the previous level once and to meet its stat requirement. Costs are small: a gift costs 300, a Friendly Lunch 150, and so on. They come out of your money and the worker's energy.</p>
+
+<h3 id="p-finales">Level-5 finales</h3>
+<div class="tw"><table>
+<thead><tr><th>Finale</th><th>Reward</th></tr></thead>
+<tbody>
+<tr><td>Romance: Confess Feelings</td><td><b>Loves you</b> (×1.15 earnings, libido max 5, rebelliousness max 20), or rebelliousness 0 and +40 joy</td></tr>
+<tr><td>Friendship: Become Confidants</td><td><b>Best Friends</b> (+1 joy/day, +2 energy regen, +5 max energy)</td></tr>
+<tr><td>Discipline: Assign Their Place</td><td><b>House Servant</b> (+10 Service, +5 Charm, +5 Clever) or <b>Harem Member</b> (+5 all sex skills, NSFW). Both cap rebelliousness at 20</td></tr>
+<tr><td>Discipline: Sell to a Specialty Buyer</td><td>Pays (cost + sum of skills) × level × 3</td></tr>
+</tbody></table></div>
+<p>Finishing one finale locks level 5 in the other two categories. Each finale trait also unlocks its own relationship stories in the worker's daily jobs.</p>
+
+<h3 id="p-training">Training and walks</h3>
+<ul>
+  <li><b>Training</b> (25 skills) first asks the worker to accept: the chance comes from comfort and rebelliousness, between 10% and 98%. If they refuse, you can let it go, insist or punish. A successful lesson adds skill uses.</li>
+  <li><b>Repeat</b> redoes the last interaction or training with the same rules.</li>
+  <li><b>Take a Walk</b> picks a random worker and a random Friendship interaction once a day, for free.</li>
+</ul>
+</section>
+
+<section class="chapter">
+<h2 id="p-events">Random events</h2>
+<ul>
+  <li>At most <b>one random event</b> a day.</li>
+  <li><b>Normal events</b> need a working worker. First a 30% roll, then each event rolls its own chance: 30 − 10 × managers in its building (minimum 5%).</li>
+  <li><b>Story, quest and character-arc events</b> roll their own chance (usually 50%), and managers don't reduce it. Guaranteed and fixed-date events fire first.</li>
+  <li>Events have <b>cooldowns</b> (usually 5–30 days) and some only happen a set number of times.</li>
+  <li>Choices can need a worker with a skill above a threshold. The chosen worker then rolls d100 against that skill.</li>
+  <li>Building level boosts what events pay: money +10% per level above 1, reputation +30% per level.</li>
+</ul>
+<h3 id="p-governor">The Governor</h3>
+<p>From objective 8 the Governor starts watching you, and attention grows with each objective. After the path you choose at objective 9 comes a one-time retaliation: 1–2 workers are poisoned. From objective 10 the Governor can strike any day. Strikes poison a worker, sabotage a building's skill for 3 days, or let a spy steal 5–15% of your money.</p>
+</section>

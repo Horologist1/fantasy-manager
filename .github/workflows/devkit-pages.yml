@@ -14,6 +14,7 @@ on:
       - 'game/data/**'
       - 'game/python-packages/fm_mods/**'
       - 'game/scripts/core/options.rpy'
+      - 'tools/field_guide/**'
       - '.github/workflows/devkit-pages.yml'
   workflow_dispatch:
 
@@ -55,10 +56,12 @@ jobs:
       - name: Build single-file offline app
         run: npm run build:offline
         working-directory: devkit_web
+      - name: Build field guide from game data
+        run: python tools/field_guide/build_field_guide.py --out _site/guide/index.html
       - name: Assemble site
         run: |
-          # The app lives under /devkit/ ; a root index just redirects there so
-          # the bare repo Pages URL does not 404.
+          # The app lives under /devkit/ and the player/modder guide under /guide/ ;
+          # a root index just redirects to the devkit so the bare repo Pages URL does not 404.
           mkdir -p _site/devkit
           cp -r devkit_web/src/* _site/devkit/
           cp devkit_web/dist/FantasyManagerDevkit.html _site/devkit/

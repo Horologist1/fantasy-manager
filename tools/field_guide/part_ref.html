@@ -1,0 +1,169 @@
+<section class="chapter">
+<h2 id="r-changes">What changed from the old guides</h2>
+<p>If you read the earlier Game Mechanics Guide or Game Reference, these are the rules that no longer hold.</p>
+<div class="tw"><table>
+<thead><tr><th>Old guide said</th><th>The game now does</th></tr></thead>
+<tbody>
+<tr><td>Earnings scaled ×0.65 / ×0.75 by outcome; failure ×2 or −10</td><td>Each story has its own formula per outcome. Failure loses money based on how far the roll missed.</td></tr>
+<tr><td>Trait multiplier caps 1.15 per trait, 1.6 total</td><td>1.2 per trait, 1.5 total</td></tr>
+<tr><td>Relevant-trait cash bonus (50% chance, 30%)</td><td>Gone. Matching traits change the roll (±3 each) instead of the pay.</td></tr>
+<tr><td>Mediocre guaranteed ≥10%, failure ≥1%</td><td>Mediocre is the 10 points above the target. At a target of 95+ there is no failure band.</td></tr>
+<tr><td>Upkeep 20 + 3 × level (recruited) / 5 + level (bought)</td><td>No per-worker wage. The only worker cost is comfort.</td></tr>
+<tr><td>Building upkeep 100 × level</td><td>100 / 300 / 500 / 700 / 900</td></tr>
+<tr><td>Random events 50% a day</td><td>A 30% roll, then 30 − 10 × managers per building (min 5%). Story events roll their own chance.</td></tr>
+<tr><td>Event money multiplier +50% per level</td><td>+10% per level above 1 (reputation +30% is unchanged)</td></tr>
+<tr><td>Stories: base reduced by 1, reputation ÷ 100 at 50%</td><td>Base 1 + reputation ÷ 400 (max 6). Reputation can go up to 2,000 with managers.</td></tr>
+<tr><td>Skill up at 10 × skill successes</td><td>Skills rise from use counts (see the formula below)</td></tr>
+<tr><td>Energy regen = level, at the start of the day</td><td>level + (comfort − 1) + traits, every night after work</td></tr>
+<tr><td>Comfort 1–5</td><td>Comfort can be set up to 20</td></tr>
+<tr><td>Obedient / Meek cap rebelliousness at 40; Dependant at 30</td><td>Dependant caps at 50. Obedient and Meek lower it a little every day instead.</td></tr>
+<tr><td>Joy affects performance</td><td>Joy only moves rebelliousness</td></tr>
+<tr><td>Interactions cost player energy 1–4; Joy category; cooldowns</td><td>A daily pool of 2 + Manager Level for all workers. No Joy category, no cooldowns.</td></tr>
+<tr><td>Equipment durability</td><td>Not used</td></tr>
+<tr><td>Amulet of Desire 260 gold; Elixir 15% availability, +3 regen</td><td>Amulet 468 gold. Elixir is always in stock and has no regen.</td></tr>
+<tr><td>Trait categories (Racial, Physical, Mental…)</td><td>Traits have no categories. Only races are grouped.</td></tr>
+<tr><td>5 buildings</td><td>Also Governor's Castle, Academy, Arena; plus franchises</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="chapter">
+<h2 id="r-roll">Job roll</h2>
+<pre>target   = average(skill_options, effective skills)
+         − 10                         (Nightmare only)
+         − libido distraction         (non-sexual jobs, libido ≥ 20)
+         + story difficulty_modifier
+         + 3 per positive trait − 3 per negative trait   (story's own weights override)
+         + staff synergy (cap ±40) + policy focus
+target   = min(100, target)
+
+roll     = d100
+critical : roll ≤ min(25, max(1, round(target × 0.10)))
+success  : roll ≤ target
+mediocre : roll ≤ target + 10
+failure  : otherwise          (no_fail stories turn this into success)</pre>
+<p>One of the story's skills is picked at random to gain a use.</p>
+
+<h3 id="r-effective">Effective skill</h3>
+<pre>effective = min(base, 100)
+          + trait skill_modifiers
+          + equipped item skill_modifiers
+          + floor(libido / 2)          (sex skills, NSFW on)
+          + 5 × management skill        (Whore Mastery for sex skills, etc.)
+          + monthly card modifier       (during jobs)</pre>
+<p>The sex skills are Sex, Anal, BDSM, Hand, Oral, Homo, Special, Group, Extreme and Striptease. The SFW skills are Combat, Clever, Charm, Service, Agility and Craft.</p>
+
+<h3 id="r-earn">Earnings</h3>
+<pre>pay = story formula for the outcome     ("50 + skill", "-(roll - skill)", …; skill = target)
+pay × staffing      (clamped 1/3 … 3)
+pay × difficulty    (Story 1.3, Easy 1.15, Normal 1, Hard 0.85, Nightmare 0.7; gains only)
+pay × trait mult    (each ≤ 1.2, total ≤ 1.5; gains only)
+pay × (1 + 0.1 × Business Acumen)
+pay × monthly card
+failure floor: Story → 0, Easy → −25</pre>
+
+<h3 id="r-volume">Stories per worker</h3>
+<pre>effective_rep = min(reputation, level × 200) + best manager level × 200
+stories       = max(1, base + reputation_formula)     base = 1, formula = effective_rep / 400</pre>
+</section>
+
+<section class="chapter">
+<h2 id="r-worker">Worker formulas</h2>
+<div class="tw"><table>
+<thead><tr><th>Value</th><th>Formula</th></tr></thead>
+<tbody>
+<tr><td>Max health</td><td><code>10 + 5 × level + traits + items + 10 × Combat Instruction</code>, trait multipliers and caps apply</td></tr>
+<tr><td>Max energy</td><td><code>5 × level + traits + items + 10 × Gang Leader</code></td></tr>
+<tr><td>Health regen (night)</td><td><code>level + 1 + trait health_regeneration</code></td></tr>
+<tr><td>Energy regen (night)</td><td><code>level + (comfort − 1) + trait energy_regeneration</code> (Rest jobs add comfort − 1 more)</td></tr>
+<tr><td>Libido regen (night)</td><td><code>max(−2, 1 + level + traits + items − sex jobs today)</code></td></tr>
+<tr><td>Max libido</td><td><code>20 + traits + items</code>, trait caps apply</td></tr>
+<tr><td>Level up</td><td><code>successes ≥ 20 × level</code>, then the counter resets</td></tr>
+<tr><td>Uses per skill point</td><td>1 at skill 0; <code>skill ÷ 15 + 1</code> up to 75; then <code>6 + int((skill − 75)^1.8 / 5)</code>. Leftover uses carry over.</td></tr>
+<tr><td>Rebelliousness drop</td><td>−comfort per level or skill point gained; −3 × comfort when the worker refuses work</td></tr>
+<tr><td>Minimum relationship</td><td><code>10 + comfort</code>, applied every day</td></tr>
+<tr><td>Comfort joy</td><td><code>+max(0, comfort − desired)</code> per day</td></tr>
+<tr><td>Joy drift</td><td>joy &gt; 80: −3 rebelliousness/day; joy &lt; 20: +2 rebelliousness/day</td></tr>
+<tr><td>Refusal</td><td>rebelliousness &gt; 80: 20% a day (not for Rest or Academy)</td></tr>
+<tr><td>Sell price (servant)</td><td><code>level × 500</code></td></tr>
+<tr><td>Specialty buyer</td><td><code>(cost + sum of skills) × level × 3</code></td></tr>
+<tr><td>Resurrection</td><td><code>5,000 + 1,000 × (level − 1)</code></td></tr>
+<tr><td>Academy student</td><td><code>300 × (1 + 0.06 × (level − 1))</code> per day, about 10 skill uses per day</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="chapter">
+<h2 id="r-building">Building formulas</h2>
+<div class="tw"><table>
+<thead><tr><th>Value</th><th>Formula</th></tr></thead>
+<tbody>
+<tr><td>Upkeep</td><td><code>100 + (level − 1) × 200</code> (Hard ×2, Nightmare ×3; Castle always pays level 1)</td></tr>
+<tr><td>Skill-bonus cost</td><td><code>floor(bonus / 10) × 100</code> (Hard ×1.5, Nightmare ×2)</td></tr>
+<tr><td>Comfort cost</td><td><code>comfort × rate</code> per worker; rate 15/18/20/25/30 by difficulty</td></tr>
+<tr><td>Upgrade</td><td><code>level² × 1,000</code></td></tr>
+<tr><td>Seats per job</td><td><code>base + (level − 1)</code> (Manager and Chamberlain stay at 1)</td></tr>
+<tr><td>Building skill</td><td><code>level × 10 + bonus</code> (bonus max 50)</td></tr>
+<tr><td>Reputation cap</td><td><code>min(1000, level × 200) + min(1000, best manager level × 200)</code></td></tr>
+<tr><td>Event money / reputation</td><td><code>1 + (level − 1) × 0.1</code> / <code>1 + (level − 1) × 0.3</code> on gains</td></tr>
+<tr><td>Event building check</td><td>skill + bonus + difficulty bonus (Story +35, Easy +25, Normal +20, Hard +15, Nightmare +10)</td></tr>
+<tr><td>Manager event chance</td><td><code>max(5, 30 − 10 × managers in that building)</code></td></tr>
+</tbody></table></div>
+
+<h3 id="r-reptiers">Reputation tiers</h3>
+<div class="chips">
+<span class="pill tag">0 Unknown</span><span class="pill tag">50 New</span><span class="pill tag">100 Recognized</span><span class="pill tag">200 Respected</span><span class="pill tag">300 Well-Known</span><span class="pill tag">400 Popular</span><span class="pill tag">500 Famous</span><span class="pill tag">600 Highly Regarded</span><span class="pill tag">700 Prestigious</span><span class="pill tag">800 Elite</span><span class="pill tag">900+ Master</span>
+</div>
+</section>
+
+<section class="chapter">
+<h2 id="r-data">Data files</h2>
+<p>Everything lives in <code>game/data/</code> and can be edited with the Devkit or a text editor.</p>
+<div class="tw"><table>
+<thead><tr><th>Folder / file</th><th>Contents</th></tr></thead>
+<tbody>
+<tr><td><code>workers/*.json</code></td><td>Workers. Any file name works; all are loaded.</td></tr>
+<tr><td><code>buildings/building_types.json</code></td><td>The 6 main buildings, their jobs and daily stories</td></tr>
+<tr><td><code>buildings/special_buildings.json</code></td><td>Academy and Arena</td></tr>
+<tr><td><code>buildings/daily_story_extensions/</code></td><td>Relationship stories added to existing jobs (merged by id)</td></tr>
+<tr><td><code>events/*.json</code>, <code>events/recruit/</code></td><td>Random, building, shop, seasonal, character-arc and recruitment events</td></tr>
+<tr><td><code>interactions/*.json</code></td><td>Friendship, Romance, Discipline, Training and special interactions</td></tr>
+<tr><td><code>traits/*.json</code></td><td>205 traits: core, races, nsfw, special, arc rewards…</td></tr>
+<tr><td><code>items/items.json</code>, <code>alchemy_ingredients.json</code></td><td>194 items + 6 ingredients</td></tr>
+<tr><td><code>monthly_conditions/cards.json</code></td><td>The 16 monthly cards</td></tr>
+</tbody></table></div>
+
+<h3 id="r-worker-json">Worker fields</h3>
+<div class="tw"><table>
+<thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>name</code></td><td>Unique id across all worker files. Duplicates are skipped.</td></tr>
+<tr><td><code>folder</code></td><td>Art folder: <code>game/images/workers/&lt;folder&gt;/</code></td></tr>
+<tr><td><code>gender</code></td><td><code>"male"</code> / <code>"female"</code>. Also picks the fallback art folder (<code>guy</code> / <code>blossom</code>).</td></tr>
+<tr><td><code>nsfw</code></td><td>NSFW workers don't load with NSFW off</td></tr>
+<tr><td><code>unique</code>, <code>procedural</code>, <code>encounter_only</code>, <code>monster</code>, <code>recruit_only</code></td><td>Which pools the worker can appear in</td></tr>
+<tr><td><code>skills</code></td><td>Skill levels. Missing skills get defaults.</td></tr>
+<tr><td><code>traits</code></td><td>Trait names. They must exist in the trait files.</td></tr>
+<tr><td><code>description</code>, <code>cost</code>, <code>comfort_desired</code>, <code>names_list</code></td><td>Flavor, price, comfort wish, name pool (<code>data/names.json</code>)</td></tr>
+</tbody></table></div>
+
+<h3 id="r-story-json">Daily story fields</h3>
+<pre>{
+  "id": "prostitute_vanilla_client_male",
+  "weight": 4,                          // how often it is picked
+  "report": "Client paid for Sex",      // title in the Daily Report
+  "difficulty_modifier": 5,             // added to the target
+  "skill_options": ["Sex"],             // skills averaged for the roll
+  "worker_gender_requirement": "male",
+  "excluded_traits": ["Gay"],
+  "required_traits": [], "stat_requirements": {},
+  "negative_traits": {"Shy": 3},        // −3 to the roll
+  "earnings": { "success": "100 + skill", "critical_success": "100 + skill * 2",
+                "mediocre": "skill", "failure": "-(roll - skill)" },
+  "story_image": "prostitute_vanilla_client",
+  "failure_image": "prostitute_vanilla_client_failure",
+  "descriptions": { "success": "…", "failure": "…", … }
+}</pre>
+
+<h3 id="r-trait-json">Trait fields</h3>
+<p><code>modifiers</code> (earnings_multiplier, skill_modifiers, health, energy, health/energy_regeneration, libido, libido_max, libido_regeneration, joy, romance, relationship, comfort_desired…), <code>daily_effects</code>, <code>attribute_caps</code>, <code>attribute_minimums</code>, <code>skill_caps</code>, <code>conflicts</code>, <code>removes_traits</code>, <code>requires_traits</code>, <code>duration</code>, <code>on_expire</code>, <code>gender_restriction</code>, <code>nsfw</code>.</p>
+<div class="note fix"><strong>Modder note.</strong> A <code>rebelliousness</code> value inside <code>modifiers</code> does nothing. Use <code>daily_effects</code> or <code>attribute_caps</code> instead.</div>
+</section>
