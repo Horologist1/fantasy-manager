@@ -14,7 +14,6 @@ on:
       - 'game/data/**'
       - 'game/python-packages/fm_mods/**'
       - 'game/scripts/core/options.rpy'
-      - 'tools/field_guide/**'
       - '.github/workflows/devkit-pages.yml'
   workflow_dispatch:
 
@@ -57,7 +56,7 @@ jobs:
         run: npm run build:offline
         working-directory: devkit_web
       - name: Build field guide from game data
-        run: python tools/field_guide/build_field_guide.py --out _site/guide/index.html
+        run: python devkit_web/field_guide/build_field_guide.py --out _site/guide/index.html
       - name: Assemble site
         run: |
           # The app lives under /devkit/ and the player/modder guide under /guide/ ;

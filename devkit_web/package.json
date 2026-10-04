@@ -9,7 +9,8 @@
     "bake": "node scripts/bake_catalogs.mjs",
     "build:offline": "node scripts/build_offline.mjs",
     "docs": "node scripts/build_user_guide.mjs",
-    "check": "npm run bake && npm run docs && npm test && npm run build:offline"
+    "guide": "python field_guide/build_field_guide.py",
+    "check": "npm run bake && npm run docs && npm run guide && npm test && npm run build:offline"
   },
   "devDependencies": {
     "happy-dom": "^15.7.4"

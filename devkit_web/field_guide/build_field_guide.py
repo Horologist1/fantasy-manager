@@ -4,11 +4,12 @@ Reads game/data/ for every image name the game looks for (daily stories, events,
 interactions, training) and embeds it, together with the hand-written chapters in
 this folder, into user_docs/guides/field_guide.html.
 
-    python tools/field_guide/build_field_guide.py [--out PATH]
+    npm run guide                      (from devkit_web/, also part of npm run check)
+    python field_guide/build_field_guide.py [--out PATH]
 
 The GitHub Pages workflow runs this on every push that touches game data, so the
 image lists stay in sync with the game. The mechanics chapters (part_*.html) are
-written by hand: update them when a formula changes.
+written by hand: update them when a formula changes. See README.md here.
 """
 import argparse
 import glob
@@ -16,7 +17,7 @@ import json
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(os.path.dirname(HERE))
+REPO = os.path.dirname(os.path.dirname(HERE))  # devkit_web/field_guide -> repo root
 GAME = os.path.join(REPO, "game")
 DEFAULT_OUT = os.path.join(REPO, "user_docs", "guides", "field_guide.html")
 
