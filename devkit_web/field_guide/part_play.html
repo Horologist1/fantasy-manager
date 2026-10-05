@@ -81,6 +81,10 @@
   <li>On non-sexual jobs, high libido is a distraction: −5 skill at libido 20, and −1 more per point above.</li>
   <li>If libido would drop below 0, the overflow becomes rebelliousness.</li>
 </ul>
+
+<h3 id="p-get">Getting workers</h3>
+<p>How every worker in the game joins your house. Generated workers (new names, random skills) also turn up in the market and in Recruit Workers once the named ones run out.</p>
+<!--WORKER_LIST-->
 </section>
 
 <section class="chapter">
@@ -111,7 +115,7 @@
 
 <h3 id="p-costs">Daily costs</h3>
 <ul>
-  <li><b>Building upkeep:</b> 100 / 300 / 500 / 700 / 900 for levels 1–5 (×2 on Hard, ×3 on Nightmare).</li>
+  <li><b>Building upkeep:</b> 100 / 300 / 500 / 700 / 900 for levels 1–5 (×2 on Hard, ×3 on Nightmare). Your first building pays no upkeep at any level, and the Governor's Castle always pays the level-1 rate.</li>
   <li><b>Comfort:</b> comfort level × 20 per worker on Normal (15–30 depending on difficulty).</li>
   <li><b>Skill bonus:</b> $100 per +10 building skill bonus.</li>
   <li>There is no separate wage per worker any more; comfort is the wage.</li>
@@ -130,7 +134,7 @@
 <tr><td>above that</td><td><b>Failure</b></td><td>−5</td></tr>
 </tbody></table></div>
 <p>The <b>target</b> is the average of the story's skills, adjusted by story difficulty, the worker's matching traits (about ±3 each), staff synergy and policies, capped at 100. Some relationship stories can't fail.</p>
-<p>Pay comes from each story's own formula, usually <code>50 + skill</code> on success and <code>50 + skill × 2</code> on a critical. Mediocre pays about the skill value. Failure costs money: the further the roll missed, the more it costs. On top of that:</p>
+<p>Pay comes from each story's own formula, usually <code>50 + skill</code> on success and <code>50 + skill × 2</code> on a critical. Mediocre pays about the skill value. Failure costs money: the further the roll missed, the more it costs, but only half of what the formula says (since 0.9.6.2t1). On top of that:</p>
 <ul>
   <li><b>Traits</b> multiply pay. Each trait counts for at most ×1.2, and all traits together for at most ×1.5.</li>
   <li><b>Business Acumen</b> adds +10% per point.</li>
@@ -164,6 +168,7 @@
   <li>Conflict with other traits. Gaining one removes the other, e.g. Rebellious vs Dependant, Obedient and Meek.</li>
 </ul>
 <p>Magic traits stack: Strong Magic, Powerful Magic and Psychic all need Magical first.</p>
+<!--TRAIT_LIST-->
 </section>
 
 <section class="chapter">
@@ -225,3 +230,60 @@
 <h3 id="p-governor">The Governor</h3>
 <p>From objective 8 the Governor starts watching you, and attention grows with each objective. After the path you choose at objective 9 comes a one-time retaliation: 1–2 workers are poisoned. From objective 10 the Governor can strike any day. Strikes poison a worker, sabotage a building's skill for 3 days, or let a spy steal 5–15% of your money.</p>
 </section>
+
+<section class="chapter">
+<h2 id="p-goals">Goals and milestones</h2>
+<p>The Journal walks you through 16 objectives, from your first hires to the night the governor falls. Objectives 1–7 complete by themselves; from 8 on, open the Journal and press the completion button (scroll down if you see the arrow).</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Objective</th><th>What it asks</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>First Hires</td><td>3 workers, and your first management skill point spent</td></tr>
+<tr><td class="num">2</td><td>Choosing the Business</td><td>Pick your first building's type</td></tr>
+<tr><td class="num">3</td><td>Putting People to Work</td><td>3 workers with a job</td></tr>
+<tr><td class="num">4</td><td>Building Capital</td><td>5,000 coins</td></tr>
+<tr><td class="num">5</td><td>Supplies and Upkeep</td><td>Buy an Energy Potion, give it to a worker and use it</td></tr>
+<tr><td class="num">6</td><td>Upgrading</td><td>Raise a building one level and its building skill by 10</td></tr>
+<tr><td class="num">7</td><td>Getting to Know Them</td><td>A Friendly Lunch with a worker (150 coins)</td></tr>
+<tr><td class="num">8</td><td>Expansion</td><td>2 buildings, 10 workers and 10,000 coins (the Arena and the Academy don't count as buildings)</td></tr>
+<tr><td class="num">9</td><td>Choosing the Method</td><td>Assassination: 3 workers with Combat or Craft 70+. Blackmail: 2 with Charm 70+ and one more with Charm or Clever 70+. You pick one.</td></tr>
+<tr><td class="num">10</td><td>The War Chest</td><td>30,000 coins</td></tr>
+<tr><td class="num">11</td><td>The Network</td><td>15 workers</td></tr>
+<tr><td class="num">12</td><td>The Arsenal</td><td>A Binding Gem (follow the rumour events), an Obsidian Blade (Elite Emporium) and an Enchanted Ring (Adventurer's Market). If the gem has not turned up after 14 days, the Journal offers a way to get it.</td></tr>
+<tr><td class="num">13</td><td>Holding the City</td><td>3 buildings</td></tr>
+<tr><td class="num">14</td><td>The Inner Circle</td><td>3 workers with Combat 80+ and 2 with Clever or Charm 80+ (equipment and traits count)</td></tr>
+<tr><td class="num">15</td><td>Proving the Machine</td><td>3,000 coins of income in a single day</td></tr>
+<tr><td class="num">16</td><td>The Reckoning</td><td>The final strike: Blade (5 workers with Combat 70+) or Shadow (5 with Clever 70+)</td></tr>
+</tbody></table></div>
+
+<h3 id="p-ending">The ending</h3>
+<p>Both paths of the final strike end the governor's story and give the same rewards:</p>
+<ul>
+  <li><b>The Governor's Castle</b>, at the maximum building level, with its own jobs. It always pays the level-1 upkeep.</li>
+  <li><b>+1 Manager Level</b> (one more management skill point).</li>
+  <li><b>Franchise Holdings</b>: "Buy Buildings Abroad" appears on the map.</li>
+  <li>The governor's pressure stops, and the fear traits it left on your workers are removed.</li>
+</ul>
+
+<h3 id="p-manager-points">Manager Level and skill points</h3>
+<p>Each Manager Level gives one management skill point (see Managers and management skills). There are four ways to get a level, each only once, so the highest Manager Level is 4:</p>
+<div class="tw"><table>
+<thead><tr><th>Source</th><th>How</th></tr></thead>
+<tbody>
+<tr><td>Start</td><td>You begin at level 1. Spending this point is part of objective 1.</td></tr>
+<tr><td>The ending</td><td>Completing objective 16.</td></tr>
+<tr><td>Master's Elixir</td><td>Enrol at the Academy, buy the alchemist's pass, finish the library quest, then brew the Elixir in the laboratory (2,500 coins a try; a failed brew can be retried).</td></tr>
+<tr><td>Arena Champion</td><td>A gladiator wins 5 special matches at the Arena. The first champion also brings the Arena Champion's Blade. A fighter who loses a special match before the crown may die.</td></tr>
+</tbody></table></div>
+
+<h3 id="p-unlocks">Places to unlock</h3>
+<ul>
+  <li><b>Academy:</b> 15,000 coins of tuition, or 7,500 if you haggle successfully (a failed haggle waits until the next day). Training courses, the curriculum, the library and the laboratory.</li>
+  <li><b>Laboratory:</b> a one-time 6,000-coin pass, then a session every 3 days. Basic batches turn out Health and Energy Potions.</li>
+  <li><b>Arena:</b> the Lanista sells the permit for 10,000 coins. Then an opening trial: a Combat roll that one of your fighters must pass before the Arena can be used.</li>
+  <li><b>Church of the Circle:</b> find the four seals, one per day, then perform the ritual in the right order. After that you can resurrect fallen workers for 5,000 + 1,000 × (level − 1). The cemetery holds 10 graves.</li>
+  <li><b>Adventurer's Market:</b> unlocked by helping an indebted shop owner (an event from objective 7 on; it comes back if you decline, and is guaranteed after day 90).</li>
+  <li><b>Elite Emporium:</b> the same owner offers it about 20 days after the Market opens, for 10,000 coins. If you decline she returns 21 days later; it is guaranteed after day 120.</li>
+  <li><b>Franchise Holdings:</b> after the ending. 10,000 coins to establish each type.</li>
+</ul>
+</section>
+

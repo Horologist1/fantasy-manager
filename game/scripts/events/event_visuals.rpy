@@ -8,6 +8,21 @@ init python:
     _VALID_MEDIA_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4")
     _media_files_cache = None
     _media_files_by_folder_cache = {}
+    # Resultado de get_pattern_matches_flexible por (carpeta, patron, exclude).
+    # El listado de la carpeta ya estaba cacheado, pero el EMPAREJADO se repetia:
+    # con 200 workers repartidos en 11 carpetas se tokenizaban los nombres de
+    # fichero 200 veces para obtener 11 respuestas distintas (0,306 s de los
+    # 0,345 s que costaba resolver los retratos del roster en frio).
+    #
+    # Vive en renpy.session, NO en un global de init python: un global se
+    # serializa dentro del save y volveria con rutas de arte que ya no esta en
+    # disco (ver "Save System Caches Gotcha"). session se reconstruye por proceso.
+    def _pattern_matches_store():
+        cache = renpy.session.get("fm_pattern_matches")
+        if cache is None:
+            cache = {}
+            renpy.session["fm_pattern_matches"] = cache
+        return cache
 
     def _reset_media_file_caches():
         """
@@ -17,6 +32,9 @@ init python:
         global _media_files_cache, _media_files_by_folder_cache
         _media_files_cache = None
         _media_files_by_folder_cache.clear()
+        # Deriva del listado: si el listado se rehace, esto tambien, o servirian
+        # rutas de arte que ya no esta en disco.
+        _pattern_matches_store().clear()
 
     def _get_all_media_files():
         """
@@ -1337,6 +1355,14 @@ init python:
         consecutively in the stem. Empty pattern matches every file (used by the
         worker-image fallback to enumerate any image in a folder).
         """
+        clave_cache = (base_folder or "", (pattern or "").lower(), bool(exclude_failure))
+        _cache_patrones = _pattern_matches_store()
+        en_cache = _cache_patrones.get(clave_cache)
+        if en_cache is not None:
+            # Copia: quien llama filtra la lista en sitio (get_worker_image hace
+            # profile_matches = [f for f in profile_matches ...] pero otros
+            # llamantes mutan), y una lista compartida se corrompería.
+            return list(en_cache)
         matches = []
         folder_files = _get_media_files_in_folder(base_folder)
         pattern_low = (pattern or "").lower()
@@ -1371,7 +1397,15 @@ init python:
                 continue
             matches.append(f)
 
-        return matches
+        # Solo se memoiza si la carpeta TENIA ficheros. El cache del listado lleva
+        # una autocuracion explicita contra un {carpeta: []} rancio; sin esta
+        # guarda, un listado vacio en un mal momento dejaria cacheado "esta
+        # carpeta no tiene nada" para el resto de la sesion y ese worker se
+        # quedaria sin retrato. Un resultado vacio con la carpeta llena si es una
+        # respuesta legitima y se cachea.
+        if folder_files:
+            _cache_patrones[clave_cache] = matches
+        return list(matches)
 
     def show_event_flags():
         """Display a notification with current event flags and occurrences for debugging purposes"""

@@ -20,7 +20,7 @@
       },
       {
         "option": "Negotiate a lower wage. (Potential: Discount)",
-        "message": "After a measured back-and-forth, you settle at [actual_cost] per day, a 20% cut below their preferred rate. [event_worker] accepts with grace.",
+        "message": "After a measured back-and-forth, you settle at [actual_cost] per day (one comfort level below their usual demand). [event_worker] accepts with grace.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8
@@ -63,7 +63,7 @@
     "choices": [
       {
         "option": "Offer them a trial period with reduced pay. (Potential: Discount, Trial Worker)",
-        "message": "You outline a short trial at [actual_cost] per day (50% discount). [event_worker] nods - for the 30-day trial they'll work at that rate while proving their worth. They gain the 'Trial Worker' trait, which will last for 30 days.",
+        "message": "You outline a short trial at [actual_cost] per day (one comfort level below their usual demand). [event_worker] nods - for the 30-day trial they'll work at that rate while proving their worth. They gain the 'Trial Worker' trait, which will last for 30 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.5,
@@ -75,8 +75,8 @@
         }
       },
       {
-        "option": "Try to negotiate a lower wage. (50% chance: 25% discount)",
-        "message_success": "Your persuasive words and reasonable arguments convince [event_worker] that steady work and good treatment are worth more than high pay. 'You make a good point about job security,' they admit. They agree to work for [actual_cost] per day (25% discount).",
+        "option": "Try to negotiate a lower wage. (50% chance: one comfort level cheaper)",
+        "message_success": "Your persuasive words and reasonable arguments convince [event_worker] that steady work and good treatment are worth more than high pay. 'You make a good point about job security,' they admit. They agree to work for [actual_cost] per day (one comfort level below their usual demand).",
         "message_failure": "Your negotiation attempt comes across as cheap and insulting. [event_worker]'s expression hardens. 'I know my worth. If you want me, you'll pay full price.' They still accept the position at [actual_cost] (full price), but their rebelliousness increases by +8.",
         "effect": {
           "success_chance": 0.5,
@@ -136,7 +136,7 @@
       },
       {
         "option": "Offer above their asking price to show genuine appreciation. (Potential: Reputation, Relationship)",
-        "message": "You offer more than they asked for, wanting them to feel truly valued. [event_worker]'s expression softens with genuine surprise. 'You would do that? I appreciate your generosity.' They accept with [actual_cost] per day and their spirits lift noticeably. Talk of the fair wage travels through the district, raising your standing (+10 Reputation). You sense a stronger bond forming between you and Violet (+20 Relationship).",
+        "message": "You offer more than they asked for, wanting them to feel truly valued. [event_worker]'s expression softens with genuine surprise. 'You would do that? I appreciate your generosity.' They accept [actual_cost] per day (one comfort level above their usual demand) and their spirits lift noticeably. Talk of the fair wage travels through the district, raising your standing (+10 Reputation). You sense a stronger bond forming between you and [event_worker] (+20 Relationship).",
         "effect": {
           "recruit_worker": true,
           "reputation": 10,
@@ -148,7 +148,7 @@
       },
       {
         "option": "Offer them access to your private library in exchange for reduced wages. (Potential: Discount, Relationship, Scholar's Joy)",
-        "message": "You sweeten the offer with library access and settle on [actual_cost] per day (20% discount). [event_worker]'s eyes brighten; knowledge is a currency they value above coin. You sense a stronger bond forming between you and Violet (+15 Relationship), and they gain the 'Scholar's Joy' trait for 90 days.",
+        "message": "You sweeten the offer with library access and settle on [actual_cost] per day (one comfort level below their usual demand). [event_worker]'s eyes brighten; knowledge is a currency they value above coin. You sense a stronger bond forming between you and [event_worker] (+15 Relationship), and they gain the 'Scholar's Joy' trait for 90 days.",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,

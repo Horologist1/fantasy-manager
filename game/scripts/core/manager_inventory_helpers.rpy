@@ -4,6 +4,41 @@ init python:
     config.keymap.setdefault("fm_storage_prev", ["ctrl_K_LEFT"])
     config.keymap.setdefault("fm_storage_next", ["ctrl_K_RIGHT"])
 
+    # Indice id -> definicion de objeto.
+    #
+    # La pantalla manager_inventory resolvia cada objeto con
+    # next((i for i in items_json["items"] if i["id"] == ...)), es decir un
+    # barrido lineal del catalogo (201 objetos) POR FILA pintada y DOS por cada
+    # comparacion de la ordenacion. Medido jugando con 41 workers: interacciones
+    # de 1,70 a 2,31 s en la ficha de worker.
+    #
+    # El indice vive en renpy.session a proposito: un cache en un global de
+    # init python se serializa dentro de los saves y se queda rancio cuando un
+    # mod anade objetos (ver "Save System Caches Gotcha"). session no se guarda
+    # y se reconstruye en cada proceso.
+    def item_definitions_index():
+        items = items_json.get("items", []) if hasattr(items_json, "get") else []
+        cached = renpy.session.get("fm_item_index")
+        if cached is not None and renpy.session.get("fm_item_index_size") == len(items):
+            return cached
+        index = {}
+        for entry in items:
+            if hasattr(entry, "get") and entry.get("id") is not None:
+                index[entry["id"]] = entry
+        renpy.session["fm_item_index"] = index
+        renpy.session["fm_item_index_size"] = len(items)
+        return index
+
+    _FM_NO_DEFAULT = object()
+
+    def item_def(item_id, default=_FM_NO_DEFAULT):
+        """Definicion de un objeto por id. Por defecto {} , como el next(..., {})
+        al que sustituye; pasa default=None donde el codigo esperaba None."""
+        found = item_definitions_index().get(item_id)
+        if found is not None:
+            return found
+        return {} if default is _FM_NO_DEFAULT else default
+
     def manager_inventory_use_item(item_id, worker):
         return use_item(item_id, worker)
 

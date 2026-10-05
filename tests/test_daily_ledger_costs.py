@@ -52,3 +52,43 @@ def test_missing_duplicate_and_bad_entries_are_tolerated():
     assert env["daily_ledger_cost_map"]() == {"Building 1": 450, "Broken": 0}
     env = load(None, buildings)
     assert env["daily_ledger_cost_map"]() == {}
+
+
+def _maintenance(building, difficulty="normal"):
+    env = {"persistent": SimpleNamespace(difficulty=difficulty)}
+    exec(function("_fixed_maintenance_ladder_cost"), env)
+    exec(function("get_building_base_maintenance_cost"), env)
+    return env["get_building_base_maintenance_cost"]("x", building)
+
+
+def test_governor_castle_level_is_a_gift_not_an_upkeep_bill():
+    """The end-game reward arrives at level 5; it pays level-1 upkeep (it cost
+    900/day and ran at a loss even when fully staffed)."""
+    assert _maintenance({"type": "governor_castle", "base_level": 5}) == 100
+    assert _maintenance({"type": "governor_castle", "base_level": 5}, "hard") == 200
+    # Every other building keeps the level ladder.
+    assert _maintenance({"type": "tavern", "base_level": 5}) == 900
+
+
+def _maintenance_named(name, building, difficulty="normal"):
+    env = {"persistent": SimpleNamespace(difficulty=difficulty)}
+    exec(function("_fixed_maintenance_ladder_cost"), env)
+    exec(function("get_building_base_maintenance_cost"), env)
+    return env["get_building_base_maintenance_cost"](name, building)
+
+
+def test_first_building_has_no_fixed_upkeep_at_any_level():
+    """Balance 2026-10-05: the start was the hardest stretch players reported.
+    The player's own premises pay no fixed upkeep (comfort is still charged)."""
+    for level in (1, 3, 5):
+        assert _maintenance_named("Building 1", {"type": "tavern", "base_level": level}) == 0
+        assert _maintenance_named("Building_1", {"type": "brothel", "base_level": level}, "hard") == 0
+    assert _maintenance_named("Building 2", {"type": "tavern", "base_level": 1}) == 100
+
+
+def test_failed_stories_lose_half_and_before_the_easy_floor():
+    body = SOURCE.split('earnings = monthly_earnings(earnings, btype.get("id"), profession.get("id"))', 1)[1]
+    half = 'earnings = -((abs(earnings) + 1) // 2)'
+    assert half in body, "failed daily stories no longer lose half of the formula's loss"
+    assert body.index(half) < body.index("earnings = max(earnings, -25)"), (
+        "halve the loss BEFORE the Easy -25 floor, or Easy players lose the benefit")

@@ -227,6 +227,13 @@ init python:
         )
 
 label day_transition:
+    # El paso de dia deja la escena vacia a proposito (negro + texto de fecha).
+    # fm_recover_hub_if_bare solo miraba "estoy en main_flow.rpy y la escena esta
+    # vacia", y el paso de dia esta en ESTE fichero: la recuperacion mostraba la
+    # taberna por debajo del fundido, y la tarjeta del mes acababa flotando sobre
+    # el fondo del hub. La marca se limpia al llegar al hub, asi que no puede
+    # quedarse encendida aunque un evento desvie el flujo.
+    $ renpy.session["fm_en_paso_de_dia"] = True
     # Show black IMMEDIATELY (no transition yet) to cover daily_report
     scene expression Solid('#000000')
     # NOW hide daily_report (it's covered by black, so no transparency)
@@ -668,6 +675,11 @@ label show_ending_assassination:
     $ _ending_bg = get_tutorial_milestone_image(tutorial_milestone_ending_blade) or event_bg
     scene expression _ending_bg
     $ renpy.log("DEBUG: show_ending_assassination - STARTING EPIC ENDING")
+    # No saves until the rewards are granted (tavern_screen clears this). A save
+    # in the middle of the ending loaded straight into the hub: objective 16
+    # complete, but no manager level and no Governor's Castle, ever (found by
+    # the goal-driven autoplayer, 2026-10-03).
+    $ set_save_blocked_context("ending")
     
     # Resolve governor tension - remove fear traits from workers
     $ healed_workers = resolve_governor_tension()
@@ -743,6 +755,11 @@ label show_ending_blackmail:
     $ _ending_bg = get_tutorial_milestone_image(tutorial_milestone_ending_blackmail, ["images/tutorial/ending_blackmail_study.png.png"]) or event_bg
     scene expression _ending_bg
     $ renpy.log("DEBUG: show_ending_blackmail - STARTING EPIC ENDING")
+    # No saves until the rewards are granted (tavern_screen clears this). A save
+    # in the middle of the ending loaded straight into the hub: objective 16
+    # complete, but no manager level and no Governor's Castle, ever (found by
+    # the goal-driven autoplayer, 2026-10-03).
+    $ set_save_blocked_context("ending")
     
     # Resolve governor tension - remove fear traits from workers
     $ healed_workers = resolve_governor_tension()
@@ -832,8 +849,86 @@ label show_ending_blackmail:
     jump tavern_screen
 
 # FM-SAVE-ANCHOR: tavern-screen-label
+# Recuperacion PROACTIVA del hub.
+#
+# La red de seguridad de mas abajo solo corre cuando `call screen tavern`
+# RETORNA. Si una rama deja la escena desnuda mientras esa llamada sigue
+# esperando, el jugador se queda con pantalla negra y sin nada que pulsar: no
+# puede hacer que la llamada retorne, asi que la red nunca llega a actuar.
+# Observado jugando (autoplay, ~1 de cada 10 sesiones): esperando en
+# main_flow.rpy:884, cero elementos pulsables, ninguna pantalla de juego.
+#
+# Esto vigila esa situacion concreta y vuelve a mostrar la taberna. Las guardas
+# son estrictas a proposito: solo actua si NO hay ninguna pantalla de juego ni
+# dialogo, para no interferir con escenas, menus ni transiciones legitimas.
+init python:
+    FM_HUB_SCREENS = (
+        "tavern", "map_screen", "workers", "manager_inventory",
+        "Building_select_global", "academy_menu", "arena_menu", "shop_selection",
+    )
+    # Pantallas de sistema que no cuentan como "hay algo en pantalla".
+    FM_OVERLAY_SCREENS = (
+        "quick_menu", "notify", "tooltip", "esc_key_handler", "skip_indicator",
+        "fm_hub_recovery", "ap_driver",
+    )
+
+    def fm_scene_is_bare():
+        """True si no hay NADA con lo que interactuar: ni hub, ni dialogo, ni
+        menu, ni ninguna otra pantalla de juego."""
+        try:
+            listas = renpy.exports.scene_lists()
+        except Exception:
+            return False
+        for _capa, entradas in (getattr(listas, "layers", None) or {}).items():
+            for entrada in entradas or []:
+                etiqueta = getattr(entrada, "tag", None)
+                if not etiqueta or not isinstance(etiqueta, str):
+                    continue
+                if etiqueta in FM_OVERLAY_SCREENS:
+                    continue
+                if renpy.get_screen(etiqueta) is not None:
+                    return False
+        return True
+
+    def fm_recover_hub_if_bare():
+        if not getattr(store, "game_initialized", False):
+            return
+        if getattr(store, "main_menu", False) or getattr(store, "at_main_menu", False):
+            return
+        if renpy.get_screen("say") or renpy.get_screen("choice") or renpy.get_screen("input"):
+            return
+        # Durante el paso de dia la escena esta vacia A PROPOSITO: recuperar ahi
+        # mete la taberna debajo del fundido.
+        if renpy.session.get("fm_en_paso_de_dia"):
+            return
+        # Solo cuando el juego espera justo en la llamada al hub.
+        try:
+            fichero, linea = renpy.get_filename_line()
+        except Exception:
+            return
+        if not str(fichero).endswith("main_flow.rpy"):
+            return
+        if not fm_scene_is_bare():
+            return
+        renpy.log("HUB RECOVERY: bare scene while waiting at the hub; re-showing tavern")
+        renpy.show_screen("tavern")
+        renpy.restart_interaction()
+
+screen fm_hub_recovery():
+    zorder 0
+    timer 1.0 repeat True action Function(fm_recover_hub_if_bare)
+
+init python:
+    if "fm_hub_recovery" not in config.overlay_screens:
+        config.overlay_screens.append("fm_hub_recovery")
+
+
 label tavern_screen():
     $ renpy.log("DEBUG: tavern_screen label - STARTING")
+    # El hub nunca debe heredar las pantallas del paso de dia, llegue por donde
+    # llegue (clic que salta el fade, evento que desvia el flujo, carga...).
+    $ renpy.hide_screen("monthly_transition")
+    $ renpy.session["fm_en_paso_de_dia"] = False
     $ set_save_blocked_context(None)
 
     # Call-stack hygiene: nothing legitimately returns past the hub (no `call
@@ -861,6 +956,12 @@ label tavern_screen():
     
     # Verify castle is properly set up if tutorial is complete
     python:
+        # Saves from before the ending save-block: objective 16 done but the
+        # ending was interrupted before the castle was granted. Grant it here.
+        if (getattr(store, "objective_16_complete", False)
+                and "Governor's Castle" not in owned_buildings):
+            renpy.log("WARNING: objective 16 complete but no Governor's Castle (interrupted ending), granting it")
+            unlock_governor_castle("(TAVERN REPAIR: interrupted ending)")
         if not tutorial_act:
             castle_name = "Governor's Castle"
             # If castle should exist but isn't properly set up, repair it
@@ -908,6 +1009,13 @@ label tavern_screen():
 
 label next_day:
     $ renpy.log("DEBUG: next_day label - STARTING")
+    # The day is being processed from here on, not only from day_transition:
+    # an objective dialogue (call_in_new_context) or an event waiting in this
+    # file with a bare scene made fm_recover_hub_if_bare re-show the tavern
+    # MID-DAY, so the hub was clickable before the random event and the daily
+    # report, and the monthly card later floated over it. tavern_screen clears
+    # the flag on arrival.
+    $ renpy.session["fm_en_paso_de_dia"] = True
     # Day-transition chime removed by request; only the button click cue remains.
     # Reset walk flag for new day
     $ take_a_walk_in_progress = False

@@ -153,3 +153,25 @@ def test_autofill_can_use_bench_without_changing_quota():
     plan = plan_autofill(professions, workers, lambda w, s: w[s])
     assert team_score(plan, professions, workers) == 199
     assert plan['empty_slots'] == dict(a=0, b=0, reserved=0)
+
+
+def test_autofill_never_proposes_workers_away_in_a_franchise():
+    """Found by the goal-driven autoplayer (2026-10-03): franchise staff read as
+    "Unassigned", Auto-fill gave them seats in every building (even the
+    Governor's Castle), the integrity pass then dropped those jobs and the
+    seats stayed empty although free workers existed."""
+    from fm_roster.autofill import reoptimization_candidates
+
+    workers = [
+        {"name": "Aspen", "assigned_building": "Unassigned", "franchise_id": "hospitality"},
+        {"name": "Rose", "assigned_building": "Unassigned"},
+        {"name": "Iris", "assigned_building": "Building 1"},
+    ]
+    resolve = lambda b: None if b in (None, "", "Unassigned") else b
+    away = lambda w: bool(w.get("franchise_id"))
+
+    names = [w["name"] for w in reoptimization_candidates(workers, "Building 1", {}, resolve, is_away=away)]
+    assert "Aspen" not in names
+    assert names == ["Rose", "Iris"]
+    # Without the predicate the old behaviour is unchanged (callers opt in).
+    assert "Aspen" in [w["name"] for w in reoptimization_candidates(workers, "Building 1", {}, resolve)]

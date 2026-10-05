@@ -635,10 +635,9 @@
       "display_name": "Elixir of Passion",
       "type": "consumable",
       "effect": {
-        "libido": 10,
-        "libido_regeneration": 3
+        "libido": 10
       },
-      "description": "A potent elixir that boosts libido and hastens its regeneration for a time. (+10 Libido, +3 Libido regeneration)",
+      "description": "A potent elixir that stirs desire the moment it is drunk. (+10 Libido)",
       "price": 1000,
       "weight": 0.02,
       "image": "elixir_passion"

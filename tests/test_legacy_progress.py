@@ -75,3 +75,39 @@ def test_current_objective_proves_earlier_ones():
     assert not store.objective_12_complete and not store.objective_16_complete
     store, healed = run(current_objective="oops")
     assert healed == []
+
+
+# --- Orden de aplicación en la carga -----------------------------------------
+# El helper de arriba se prueba con las listas ya pobladas, lo que demuestra que la
+# REGLA funciona pero no que _apply_snapshot la invoque cuando sus datos ya existen.
+# En 0.9.6.2 la llamada iba 14 líneas ANTES de restaurar yvara_s4_talks_done, así que
+# la cura de Yvara S4 nunca podía dispararse en una carga real.
+
+SNAPSHOT_SRC = (ROOT / "game/scripts/save_snapshot.rpy").read_text(encoding="utf-8")
+
+
+def _line_of(needle, source=None, start=0):
+    src = source if source is not None else SNAPSHOT_SRC
+    return src.count("\n", 0, src.index(needle, start)) + 1
+
+
+def test_reconciliation_runs_after_the_lists_it_reads():
+    """La reconciliación debe ir después de restaurar las listas de arco que lee."""
+    lista = _line_of('("yvara_s4_talks_done", [])')
+    reconciliacion = _line_of("store.reconcile_legacy_progress_on_load()")
+    assert lista < reconciliacion, (
+        "reconcile_legacy_progress_on_load() se ejecuta antes de restaurar "
+        "yvara_s4_talks_done: leeria el default del store limpio y no curaria nada"
+    )
+
+
+def test_late_repair_pass_reconciles_again():
+    """La pasada tardía reescribe campos curados desde el snapshot; hay que recurar."""
+    primera = SNAPSHOT_SRC.index("store.reconcile_legacy_progress_on_load()")
+    segunda = SNAPSHOT_SRC.find("store.reconcile_legacy_progress_on_load()", primera + 1)
+    assert segunda != -1, (
+        "falta la segunda reconciliacion: la pasada tardia de after_load reescribe "
+        "yvara_s4_finance_unlocked y arena_unlocked desde el snapshot y desharia la cura"
+    )
+    sobrescritura = _line_of('"yvara_s4_finance_unlocked",')
+    assert sobrescritura < _line_of("store.reconcile_legacy_progress_on_load()", start=primera + 1)

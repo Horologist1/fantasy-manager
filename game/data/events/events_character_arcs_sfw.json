@@ -1736,5 +1736,275 @@
       }
     ],
     "nsfw": false
+  },
+  {
+    "id": "margarita_personal_stage_1",
+    "arc_id": "margarita_personal",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "margarita_personal_stage_1_at",
+    "description": "A salt caravan out of the south halts three days in the city, and its drivers come to your door because one of them recognized Margarita's hoops across the market. She owes them eleven days of food from the road north, given when she had nothing and asked for nothing back. She means to settle it tonight, in your house, at your tables, and she has already begun counting out cups without asking you first.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Margarita",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 2
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "has_worker:Margarita"
+    },
+    "excluded_flags": {
+      "margarita_personal_stage_1_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Let Margarita host the drivers properly, on the house. (Requires Service 45+; Potential: Money, Reputation)",
+        "condition": "Service",
+        "threshold": 45,
+        "message_success": "She seats them at the long table and feeds them the way the road feeds: one dish, all night, nobody counting. The drivers talk, and talk carries. By closing, two merchants who had never heard of your house have booked the same table for the next caravan, and the caravan master leaves a bolt of southern cloth against the bill. (+3 Service, +180 gold, +6 reputation)",
+        "message_failure": "She overreaches. Eleven days of debt served in one night empties the larder before midnight, and the kitchen falls behind on paying custom. The drivers leave full and grateful; your regulars leave early and irritated. (+1 Service, -260 gold, -2 reputation)",
+        "effect": {
+          "success": {
+            "money": 180,
+            "reputation": 6,
+            "skill_modifiers": {
+              "Service": 3
+            },
+            "event_flags": {
+              "margarita_personal_stage_1_done": true
+            }
+          },
+          "failure": {
+            "money": -260,
+            "reputation": -2,
+            "skill_modifiers": {
+              "Service": 1
+            },
+            "event_flags": {
+              "margarita_personal_stage_1_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Have her work the room and turn the debt into business. (Requires Charm 45+; Potential: Money, Relationship)",
+        "condition": "Charm",
+        "threshold": 45,
+        "message_success": "Margarita pays the debt in a currency the drivers value above food: all night she walks them from buyer to buyer, vouching for men who have no standing in this city. Three contracts are struck at your tables before dawn, and the caravan master settles his own bill twice over for the trouble. (+3 Charm, +320 gold, +4 joy)",
+        "message_failure": "She misjudges the room. The drivers came to be guests, not stock to be walked past buyers, and the caravan master says so loudly enough for your other customers to hear. The debt is settled coldly and the evening never recovers. (+1 Charm, -180 gold, -3 reputation)",
+        "effect": {
+          "success": {
+            "money": 320,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "margarita_personal_stage_1_done": true
+            },
+            "joy": 4,
+            "joy_worker_name": "Margarita"
+          },
+          "failure": {
+            "money": -180,
+            "reputation": -3,
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "margarita_personal_stage_1_done": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "margarita_personal_stage_2",
+    "arc_id": "margarita_personal",
+    "arc_stage": 2,
+    "arc_kind": "character",
+    "completion_timestamp_flag": "margarita_personal_stage_2_at",
+    "description": "The caravan master comes back alone, and he does not sit down. He offers Margarita a guide's wage for the return run: she knows the coast road, the water, and which passes close in the rains, and he lost two men this season to a wrong turning. It is more than you pay her, and it goes south. She does not answer him. She looks at you, which is an answer of a kind, and waits to hear what you have to say about it.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Margarita",
+    "worker_selection": "random",
+    "worker_progress": {
+      "any_skills": {
+        "Service": 55,
+        "Charm": 55
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:margarita_personal_stage_1_at,5"
+    },
+    "excluded_flags": {
+      "margarita_personal_stage_2_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Ask her to stay, and say plainly what she is worth to this house. (Requires Charm 55+; Potential: Relationship, Reputation)",
+        "condition": "Charm",
+        "threshold": 55,
+        "message_success": "You do not outbid him. You tell her, in front of him, exactly what the house would lose, and you name the nights you are thinking of. Margarita hears it out with her hands still. Then she tells the caravan master to find another guide and goes back to the floor without further ceremony. The staff notice what it takes to keep her. (+3 Charm, +7 joy, +5 reputation)",
+        "message_failure": "You speak warmly and say nothing she can hold on to. She listens, thanks you, and asks for the night to think. She is at her tables in the morning, but she keeps the caravan master's tally-stick in her apron where she can feel it. (+1 Charm, -3 joy)",
+        "effect": {
+          "success": {
+            "reputation": 5,
+            "skill_modifiers": {
+              "Charm": 3
+            },
+            "event_flags": {
+              "margarita_personal_stage_2_done": true
+            },
+            "joy": 7,
+            "joy_worker_name": "Margarita"
+          },
+          "failure": {
+            "skill_modifiers": {
+              "Charm": 1
+            },
+            "event_flags": {
+              "margarita_personal_stage_2_done": true
+            },
+            "joy": -3,
+            "joy_worker_name": "Margarita"
+          }
+        }
+      },
+      {
+        "option": "Match the offer as a partnership rather than a wage. (Requires Clever 45+; Potential: Money, Relationship)",
+        "condition": "Clever",
+        "threshold": 45,
+        "message_success": "You propose what the caravan master cannot: not a wage, but a share of every southern contract closed under your roof. Margarita does the arithmetic before you finish and improves your terms twice. The caravan master leaves grumbling that he should have offered her a share years ago. (+3 Clever, +260 gold, +5 joy)",
+        "message_failure": "You reach for numbers you have not checked, and she catches the error in front of the man you were trying to outmanoeuvre. The offer is refused, the partnership is not mentioned again, and you pay for the correction out of the week's takings. (+1 Clever, -200 gold, -2 joy)",
+        "effect": {
+          "success": {
+            "money": 260,
+            "skill_modifiers": {
+              "Clever": 3
+            },
+            "event_flags": {
+              "margarita_personal_stage_2_done": true
+            },
+            "joy": 5,
+            "joy_worker_name": "Margarita"
+          },
+          "failure": {
+            "money": -200,
+            "skill_modifiers": {
+              "Clever": 1
+            },
+            "event_flags": {
+              "margarita_personal_stage_2_done": true
+            },
+            "joy": -2,
+            "joy_worker_name": "Margarita"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "margarita_personal_stage_3",
+    "arc_id": "margarita_personal",
+    "arc_stage": 3,
+    "arc_kind": "character",
+    "description": "Three caravan houses now stop in this city because Margarita is in it, and they have begun arriving without warning, at whatever hour the passes let them through. Your kitchen cannot keep guessing. Margarita proposes something that is not quite hers to propose: that the house become their standing stop, with a table always held and a price agreed in advance for beds, feed and cargo watch. She has the figures written out on the back of a way-bill, in two languages.",
+    "weight": 2,
+    "limited": true,
+    "event_probability": 25,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "worker_name": "Margarita",
+    "worker_selection": "random",
+    "worker_progress": {
+      "min_level": 3,
+      "any_skills": {
+        "Service": 85,
+        "Charm": 85
+      }
+    },
+    "background_image": "worker_charm",
+    "conditions": {
+      "start_when": "after_days_from_flag:margarita_personal_stage_2_at,7"
+    },
+    "excluded_flags": {
+      "margarita_personal_stage_3_done": true
+    },
+    "nsfw": false,
+    "choices": [
+      {
+        "option": "Sign the standing arrangement and let her run it. (Requires Service 85+; Potential: Money, Reputation)",
+        "condition": "Service",
+        "threshold": 85,
+        "message_success": "You sign, and she runs it like a relay: beds counted before the carts are unhitched, feed billed by weight, a watchman on the cargo from dusk. Within the month the southern houses route through you by default, and the city's factors drink in your common room because that is where the goods arrive first. (+4 Service, +900 gold, +12 reputation)",
+        "message_failure": "You sign, but the house is not ready for it. Two caravans arrive the same night, the beds are double-booked, and a cargo watch you never posted costs a driver his week's wages. The arrangement holds, barely, and you make good the loss yourself. (+2 Service, -480 gold, -5 reputation)",
+        "effect": {
+          "success": {
+            "money": 900,
+            "reputation": 12,
+            "skill_modifiers": {
+              "Service": 4
+            },
+            "event_flags": {
+              "margarita_personal_stage_3_done": true
+            }
+          },
+          "failure": {
+            "money": -480,
+            "reputation": -5,
+            "skill_modifiers": {
+              "Service": 2
+            },
+            "event_flags": {
+              "margarita_personal_stage_3_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Let her meet each caravan at the door and settle it there. (Requires Charm 85+; Potential: Money, Relationship)",
+        "condition": "Charm",
+        "threshold": 85,
+        "message_success": "No contract and no standing price: she meets each caravan herself and settles it on the step, reading what the run was like from the state of the animals. The houses pay more for being treated as guests than any schedule would have charged them, and Margarita stops mentioning the road south. (+4 Charm, +760 gold, +8 joy)",
+        "message_failure": "Without a fixed price she is haggling at the door every night, in front of your customers, with men who are tired and want their beds. The caravans keep coming and the room empties. She does not complain, which is worse. (+2 Charm, -400 gold, -4 joy)",
+        "effect": {
+          "success": {
+            "money": 760,
+            "skill_modifiers": {
+              "Charm": 4
+            },
+            "event_flags": {
+              "margarita_personal_stage_3_done": true
+            },
+            "joy": 8,
+            "joy_worker_name": "Margarita"
+          },
+          "failure": {
+            "money": -400,
+            "skill_modifiers": {
+              "Charm": 2
+            },
+            "event_flags": {
+              "margarita_personal_stage_3_done": true
+            },
+            "joy": -4,
+            "joy_worker_name": "Margarita"
+          }
+        }
+      }
+    ]
   }
 ]

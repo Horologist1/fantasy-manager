@@ -817,7 +817,82 @@ screen auto_advance_summary(summary):
                     action Return()
     key "K_BACKSPACE" action Return()
 
+# Tarjeta de progreso del avance rapido.
+#
+# `auto_advance_days` hace `hide screen tavern`, asi que mientras se simulan los
+# dias NO se dibuja absolutamente nada. Medido con el perfilador de fotogramas de
+# Ren'Py: process_next_day() cuesta 303 ms de mediana y el bucle encadena dos dias
+# por fotograma, o sea tirones de 630-736 ms con la pantalla congelada y sin
+# ninguna senal de que el juego siga vivo.
+#
+# Esto no acelera nada: hace que el motor DIBUJE entre dia y dia, para que el
+# jugador vea avanzar el contador en vez de mirar una pantalla muerta.
+screen smart_advance_progress(dias_hechos=0, dias_pedidos=1):
+    # Modal: durante el parpadeo entre dias no debe poder pulsarse nada.
+    modal True
+    zorder 180
+    add Solid("#000000cc")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 760
+        ysize 300
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))
+        padding (65, 50)
+        vbox:
+            xalign 0.5
+            yalign 0.5
+            spacing 22
+            label "ADVANCING TIME" xalign 0.5 style "header_style"
+            text "Day [dias_hechos] of [dias_pedidos]" size font_size(30) color gui.journal_text_color xalign 0.5
+            # Barra de avance simple, con el mismo lenguaje visual que el roster.
+            fixed:
+                xsize 560
+                ysize 14
+                xalign 0.5
+                add Solid(gui.bar_track_color, xysize=(560, 14))
+                add Solid(gui.energy_bar_color, xysize=(max(6, int(560.0 * dias_hechos / max(1, dias_pedidos))), 14))
+            text "Simulating the day for your whole roster." size font_size(22) color gui.journal_hover_color xalign 0.5 text_align 0.5
+
+init python:
+
+    def smart_advance_tick(dias_hechos, dias_pedidos):
+        """Dibuja un fotograma de progreso entre dia y dia del avance rapido.
+
+        Se muestra Y se oculta dentro de la misma llamada a proposito: el bucle
+        tiene seis salidas distintas (resumen, bancarrota, tres tipos de evento,
+        fin de mes) y una pantalla mostrada fuera de aqui se quedaria pegada por
+        alguna de ellas.
+
+        La pausa es `hard` para que un clic no la salte y se cuele en la
+        simulacion, y `checkpoint=False` para no tocar el log de rollback: este
+        proyecto corre con rollback desactivado y los saves viajan en el snapshot.
+        0.01 s por dia frente a los 303 ms que cuesta simularlo es ruido.
+        """
+        try:
+            renpy.show_screen("smart_advance_progress",
+                              dias_hechos=dias_hechos, dias_pedidos=dias_pedidos)
+            # modal=False es OBLIGATORIO aqui: la pantalla de progreso es modal, y
+            # una pausa temporizada con modal=True "aguanta" mientras haya una
+            # pantalla modal, o sea que NO expira nunca. Con modal=True el juego
+            # se quedaba colgado para siempre en el avance de varios dias (lo cazo
+            # el autojugador como atasco O2 en esta misma linea).
+            renpy.pause(0.01, hard=True, checkpoint=False, modal=False)
+        except renpy.game.CONTROL_EXCEPTIONS:
+            # Saltos, rollback y fin de la interaccion NO son errores: dejarlos pasar.
+            raise
+        except Exception as e:
+            renpy.log("smart_advance_tick: %r" % (e,))
+        finally:
+            try:
+                renpy.hide_screen("smart_advance_progress")
+            except Exception:
+                pass
+
 label auto_advance_days:
+    # Same as label next_day: days are being processed, the hub recovery must
+    # not re-show the tavern until tavern_screen clears this.
+    $ renpy.session["fm_en_paso_de_dia"] = True
     hide screen tavern
     $ take_a_walk_in_progress = False
     $ initialize_auto_advance_summary(auto_advance_requested_days)
@@ -838,6 +913,9 @@ label auto_advance_next_day:
     $ store.manager_interactions_today = 0
     $ renpy.log("SMART_ADVANCE: processing day %s of %s" % (_auto_processed + 1, _auto_requested))
     $ _auto_start_total_days = calculate_total_days()
+    # Dibujar antes de simular: el jugador ve que empieza el dia N en vez de una
+    # pantalla congelada durante los ~300 ms que tarda.
+    $ smart_advance_tick(_auto_processed + 1, _auto_requested)
     $ auto_advance_pending_result = process_next_day()
     $ renpy.log("SMART_ADVANCE: day result=%s event=%s" % (auto_advance_pending_result, (store.current_event or {}).get("id", "none")))
     if auto_advance_day_was_processed(_auto_start_total_days, calculate_total_days()):

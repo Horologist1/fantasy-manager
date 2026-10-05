@@ -44,18 +44,26 @@ def _name_key(worker):
     return str(worker.get("name", "")).strip().lower()
 
 
-def reoptimization_candidates(workers, target_building, servant_jobs, resolve_building):
+def reoptimization_candidates(workers, target_building, servant_jobs, resolve_building, is_away=None):
     """Return workers Auto-fill may optimize for one building.
 
     Includes globally unassigned workers plus everyone already assigned to the
     target building, regardless of whether they currently have a normal job.
     Manager/Rest reservations are protected, and workers in other buildings are
     never moved.
+
+    `is_away(worker)` marks workers who are unassigned only because they work
+    elsewhere (franchise holdings). They read as "Unassigned", so without this
+    Auto-fill gave them seats: add_worker_to_building refused them but
+    set_worker_job still wrote the job, and the integrity pass later dropped
+    it, leaving the seat EMPTY although free workers were available.
     """
     jobs = servant_jobs if hasattr(servant_jobs, "get") else {}
     candidates = []
     for worker in workers or []:
         if not hasattr(worker, "get"):
+            continue
+        if is_away is not None and is_away(worker):
             continue
         assigned = resolve_building(worker.get("assigned_building"))
         if assigned is None:

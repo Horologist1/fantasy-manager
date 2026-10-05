@@ -96,8 +96,14 @@ init python:
                 if skill_name not in worker["skill_uses"]:
                     worker["skill_uses"][skill_name] = 0
                 else:
-                    # Ensure it's an integer
-                    worker["skill_uses"][skill_name] = int(worker["skill_uses"][skill_name])
+                    # Ensure it's an integer. Mismo blindaje que la normalizacion de
+                    # "skills" de arriba: un valor null/texto de un mod o de un save
+                    # danado reventaba ensure_worker_defaults entera, y esta funcion
+                    # corre AL CARGAR, asi que se llevaba por delante la partida.
+                    try:
+                        worker["skill_uses"][skill_name] = int(worker["skill_uses"][skill_name])
+                    except (TypeError, ValueError):
+                        worker["skill_uses"][skill_name] = 0
             # Don't remove skills that aren't in base_skills - preserve all progress
 
         worker["level"] = max(1, int(worker.get("level", 1)))

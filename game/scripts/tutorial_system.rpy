@@ -1112,6 +1112,50 @@ init python:
         # We still check conditions here to enable the button, but don't auto-advance
 
 
+# ===== JOURNAL "MORE BELOW" ARROW =====
+init python:
+    def fm_journal_adjustment():
+        """The journal viewport's Adjustment, kept in renpy.session.
+
+        session on purpose (same as fm_roster_adjustment): an Adjustment kept
+        in a screen scope or the store enters the rollback log and can poison
+        saves (LA BIBLIA 8). session is never serialized.
+        """
+        adj = renpy.session.get("fm_journal_adj")
+        if adj is None:
+            adj = renpy.display.behavior.Adjustment()
+            renpy.session["fm_journal_adj"] = adj
+        return adj
+
+    def fm_journal_reset_scroll():
+        """Open at the top, like before the shared Adjustment existed."""
+        adj = renpy.session.get("fm_journal_adj")
+        if adj is not None:
+            try:
+                adj.value = 0
+            except Exception:
+                pass
+
+    def fm_journal_more_arrow(st, at):
+        """Down arrow while content remains below the fold.
+
+        Polled at render time (0.1 s): the viewport only learns its `range`
+        when it renders, after the screen is evaluated, so a plain `if` in the
+        screen would lag one interaction behind. DejaVuSans because neither
+        journal font has a down-arrow glyph.
+        """
+        adj = renpy.session.get("fm_journal_adj")
+        more = False
+        if adj is not None:
+            try:
+                more = (float(adj.range) - float(adj.value)) > 4
+            except Exception:
+                more = False
+        if more:
+            return Text(u"▼", font="DejaVuSans.ttf", size=font_size(28), color="#7a4b2a"), 0.1
+        return Null(), 0.1
+
+
 # ===== WRAPPER FUNCTION FOR GLOBAL ACCESS =====
 init python:
     def check_tutorial_objective():
@@ -1128,7 +1172,7 @@ image journal_check_off = Transform("gui/icons/batch_checkbox_off.png", xysize=(
 screen journal_panel():
     modal True
     zorder 200
-    on "show" action [Function(check_existing_building_upgrades), Function(check_objective_completion)]
+    on "show" action [Function(fm_journal_reset_scroll), Function(check_existing_building_upgrades), Function(check_objective_completion)]
     # Universal close/back hotkey (mirrors config.rpy's esc routing for this screen)
     key "K_BACKSPACE" action Hide("journal_panel")
     
@@ -1153,6 +1197,7 @@ screen journal_panel():
                 scrollbars None
                 mousewheel True
                 draggable True
+                yadjustment fm_journal_adjustment()
                 ysize 500
                 xsize 650
                 xoffset 60
@@ -1643,7 +1688,17 @@ screen journal_panel():
             yalign 0.0
             xoffset -45
             yoffset 15
-        
+
+        # "There is more below" hint. The journal has no scrollbar on purpose,
+        # but the completion buttons (MARK AS COMPLETE, the objective 9 gambit,
+        # the final strike) often sit below the fold. Centered under the
+        # viewport (xoffset 60 + xsize 650 -> center at 385).
+        add DynamicDisplayable(fm_journal_more_arrow):
+            xpos 385
+            xanchor 0.5
+            yalign 1.0
+            yoffset 12
+
 
 # ===== SKIP TUTORIAL CONFIRMATION =====
 screen skip_tutorial_confirm():

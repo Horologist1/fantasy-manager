@@ -18,13 +18,22 @@ game looks for. Published next to the devkit:
 
 ## Updating with the game
 
-- **Image lists** (stories, events, interactions, training) are rebuilt from `game/data/`
+- **Generated lists** are rebuilt from `game/data/` every time: image names (stories,
+  events, interactions, training), the full **trait list** (from `data/traits/`) and
+  **how to get each worker** (from `data/workers/` and `data/events/recruit/`).
+  Two hand-kept tables in `build_field_guide.py` cover what the data can't tell:
+  `WORKER_NOTES` / `LANISTA_NOTE` (workers that join through a story: Yvara, the
+  Lanista, Kar and Kara) and `NEVER_GRANTED` (traits defined but given by nothing).
+  Update them when those rules change.
+- The **Goals and milestones** chapter (objectives, ending rewards, Manager Level
+  sources, places to unlock) is hand-written in `part_play.html`.
+- Image lists (stories, events, interactions, training) are rebuilt from `game/data/`
   every time. Nothing to do: the Pages workflow regenerates the online guide on every
   push that touches game data or the devkit.
 - **Mechanics and formulas** are written by hand. When a release changes a rule (costs,
   roll math, caps, new building, new system), edit `part_play.html` and/or `part_ref.html`
   and bump the version in `template.html` ("Checked against the code of version …").
-  The values were verified against these code locations (0.9.6.2):
+  The values were verified against these code locations (0.9.6.2t1):
   - job roll, earnings, daily loop, costs: `game/scripts/events/event_daily_exec.rpy`
   - stats, regen, earnings caps: `game/scripts/workers/worker_stats.rpy`
   - leveling, skill uses, difficulty, upgrades: `game/scripts/script.rpy`

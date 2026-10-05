@@ -890,5 +890,49 @@
         "description": "A lively hire with horse-like features, quick on her feet and eager to please.",
         "gender": "female",
         "comfort_desired": 1
+    },
+    {
+        "name": "Camellia",
+        "folder": "margarita",
+        "cost": 1450,
+        "nsfw": true,
+        "unique": false,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 44,
+            "Anal": 38,
+            "BDSM": 35,
+            "Hand": 41,
+            "Oral": 42,
+            "Homo": 17,
+            "Special": 34,
+            "Group": 36,
+            "Extreme": 31,
+            "Striptease": 42,
+            "Combat": 26,
+            "Clever": 34,
+            "Charm": 47,
+            "Service": 48,
+            "Agility": 37,
+            "Craft": 27,
+            "Specialty 4": 32,
+            "Specialty 5": 31,
+            "Specialty 6": 33,
+            "Specialty 7": 31,
+            "Specialty 8": 30,
+            "Specialty 9": 32,
+            "Specialty 10": 31,
+            "Specialty 11": 31,
+            "Specialty 12": 34
+        },
+        "names_list": "western_female",
+        "traits": [
+            "Human"
+        ],
+        "description": "A curvy hire from the south, easy-going and patient with the customers.",
+        "gender": "female",
+        "comfort_desired": 1
     }
 ]

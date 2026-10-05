@@ -10573,7 +10573,6 @@
       "name": "Castle",
       "skill_name": "Luxury",
       "skill_description": "Exquisite furnishings, rare wines, and opulent decorations that impress the aristocracy. Enhanced luxury helps your courtiers handle demanding nobles and create unforgettable experiences. Formula: Base Level + Skill Bonus = Success chance in Events.",
-      "nsfw": true,
       "allowed_map_locations": [
         "castle"
       ],

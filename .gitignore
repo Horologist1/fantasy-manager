@@ -30,6 +30,18 @@ local.properties
 !/tools/qa_json_overrides.rpy
 !/tools/build_android_mods.py
 !/tools/android/
+!/tools/android_preflight.py
+!/tools/qa_playtest_save.py
+!/tools/qa_playtest_save.rpy
+!/tools/qa_playtest_content.py
+!/tools/qa_playtest_content.rpy
+!/tools/autoplay.py
+!/tools/autoplay.rpy
+!/tools/autoplay_tests.rpy
+!/tools/autoplay_campaign.py
+!/tools/make_fixture_save.py
+!/tools/make_fixture_save.rpy
+!/tools/autoplay_goal.rpy
 
 # Desktop devkit (compiled editor exe) — distributed separately
 devkit/
@@ -70,3 +82,6 @@ game/tl/None/*.rpymc
 # Python bytecode caches (pure python-packages + tests)
 __pycache__/
 *.pyc
+
+# Playwright MCP screenshots / logs (local QA)
+.playwright-mcp/

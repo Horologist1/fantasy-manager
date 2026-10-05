@@ -79,7 +79,8 @@ init python:
             return
         worker["template_id"] = folder
 
-    def load_workers(include_unique=False, include_encounter_only=False, for_events=False, include_procedural_templates=False):
+    def load_workers(include_unique=False, include_encounter_only=False, for_events=False,
+                     include_procedural_templates=False, apply_content_filters=True):
         """
         Load all workers from multiple locations with optional filters.
         Loads from:
@@ -114,6 +115,9 @@ init python:
             if renpy.loadable("data/workers.json"):
                 with renpy.file("data/workers.json") as f:
                     workers_data = json.loads(f.read().decode("utf-8"))
+                    # Un override de mod puede traer un worker suelto como objeto, o envolver la lista en {"workers": [...]}. Iterar un dict recorreria sus CLAVES: _worker_catalog_identity reventaria sobre una cadena, el except por fichero se lo tragaria y el override aportaria CERO workers, llevandose ademas por delante a los originales que sustituye.
+                    if hasattr(workers_data, "get"):
+                        workers_data = workers_data.get("workers") or [workers_data]
                     for worker in workers_data:
                         worker_name = _worker_catalog_identity(worker)
                         
@@ -122,11 +126,12 @@ init python:
                             continue
                         
                         # Apply NSFW/SFW mode filter
-                        if not persistent.nsfw_enabled and content_object_is_restricted(worker):
+                        # apply_content_filters=False los desactiva: son filtros de PRESENTACION (preferencias del jugador); la migracion de saves necesita el catalogo canonico.
+                        if apply_content_filters and not persistent.nsfw_enabled and content_object_is_restricted(worker):
                             continue
                         
                         # Apply worker gender filter (Both / Only Male / Only Female)
-                        if getattr(persistent, "worker_gender_filter", "both") != "both":
+                        if apply_content_filters and getattr(persistent, "worker_gender_filter", "both") != "both":
                             wgender = (worker.get("gender") or "").strip().lower()
                             if persistent.worker_gender_filter == "male" and wgender == "female":
                                 continue
@@ -172,6 +177,9 @@ init python:
                         continue
                     with renpy.file(worker_file) as f:
                         workers_data = json.loads(f.read().decode("utf-8"))
+                        # Un override de mod puede traer un worker suelto como objeto, o envolver la lista en {"workers": [...]}. Iterar un dict recorreria sus CLAVES: _worker_catalog_identity reventaria sobre una cadena, el except por fichero se lo tragaria y el override aportaria CERO workers, llevandose ademas por delante a los originales que sustituye.
+                        if hasattr(workers_data, "get"):
+                            workers_data = workers_data.get("workers") or [workers_data]
                         file_workers_loaded = 0
                         for worker in workers_data:
                             worker_name = _worker_catalog_identity(worker)
@@ -181,11 +189,12 @@ init python:
                                 continue
                             
                             # Apply NSFW/SFW mode filter
-                            if not persistent.nsfw_enabled and content_object_is_restricted(worker):
+                            # apply_content_filters=False los desactiva: son filtros de PRESENTACION (preferencias del jugador); la migracion de saves necesita el catalogo canonico.
+                            if apply_content_filters and not persistent.nsfw_enabled and content_object_is_restricted(worker):
                                 continue
                             
                             # Apply worker gender filter (Both / Only Male / Only Female)
-                            if getattr(persistent, "worker_gender_filter", "both") != "both":
+                            if apply_content_filters and getattr(persistent, "worker_gender_filter", "both") != "both":
                                 wgender = (worker.get("gender") or "").strip().lower()
                                 if persistent.worker_gender_filter == "male" and wgender == "female":
                                     continue
@@ -255,6 +264,9 @@ init python:
             if renpy.loadable("data/workers.json"):
                 with renpy.file("data/workers.json") as f:
                     workers_data = json.loads(f.read().decode("utf-8"))
+                    # Un override de mod puede traer un worker suelto como objeto, o envolver la lista en {"workers": [...]}. Iterar un dict recorreria sus CLAVES: _worker_catalog_identity reventaria sobre una cadena, el except por fichero se lo tragaria y el override aportaria CERO workers, llevandose ademas por delante a los originales que sustituye.
+                    if hasattr(workers_data, "get"):
+                        workers_data = workers_data.get("workers") or [workers_data]
                     info["legacy_file"] = {
                         "path": "data/workers.json",
                         "workers_count": len(workers_data),
@@ -274,6 +286,9 @@ init python:
                     if renpy.loadable(worker_file):
                         with renpy.file(worker_file) as f:
                             workers_data = json.loads(f.read().decode("utf-8"))
+                            # Un override de mod puede traer un worker suelto como objeto, o envolver la lista en {"workers": [...]}. Iterar un dict recorreria sus CLAVES: _worker_catalog_identity reventaria sobre una cadena, el except por fichero se lo tragaria y el override aportaria CERO workers, llevandose ademas por delante a los originales que sustituye.
+                            if hasattr(workers_data, "get"):
+                                workers_data = workers_data.get("workers") or [workers_data]
                             info["folder_files"].append({
                                 "path": worker_file,
                                 "workers_count": len(workers_data),

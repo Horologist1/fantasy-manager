@@ -108,12 +108,23 @@ init python:
         if building is None or not hasattr(building, "get"):
             return 0
 
+        # The first building is the player's own premises from the start, not
+        # an investment: no fixed upkeep at any level (comfort is still paid).
+        # The start of the game was the hardest stretch players reported.
+        if str(building_name or "").replace("_", " ").strip() == "Building 1":
+            return 0
+
         diff = getattr(persistent, "difficulty", "normal")
         try:
             base_level = int(building.get("base_level", 1))
         except Exception:
             base_level = 1
         base_level = max(1, base_level)
+        # The Governor's Castle is granted at max level as the end-game reward.
+        # Its level is a gift, not an investment: it pays level-1 upkeep. At
+        # level 5 it cost 900/day and, even fully staffed, ran at a loss.
+        if str(building.get("type", "")).strip().lower() == "governor_castle":
+            base_level = 1
 
         raw = _fixed_maintenance_ladder_cost(base_level)
         if diff == "nightmare":
@@ -131,6 +142,7 @@ init python:
         return (
             "Fixed daily upkeep by building level (Normal): $100, $300, $500, $700, $900 for levels 1-5.\n"
             "Hard doubles that ladder; Nightmare triples it (same relative tiers as before).\n"
+            "Your first building has no fixed upkeep; the Governor's Castle always pays the level-1 rate.\n"
             "Assigned workers: comfort x " + str(_cm) + " each, with no extra multiplier from building level."
         )
 
@@ -1219,6 +1231,13 @@ init python:
 
                         earnings = monthly_earnings(earnings, btype.get("id"), profession.get("id"))
 
+                        # A failed service costs half of the formula's loss: it loses part
+                        # of the take, not more than a success would have earned. Failures
+                        # happen almost only at low skill, so this eases the start without
+                        # changing the late game (modelled: ceiling change < 0.3%).
+                        if outcome == "Failure" and earnings < 0:
+                            earnings = -((abs(earnings) + 1) // 2)
+
                         # Story/Easy: floor on failure losses (daily stories use failure: "-roll" after rebalance)
                         if outcome == "Failure" and earnings < 0:
                             diff_fail = getattr(persistent, "difficulty", "normal")
@@ -1473,6 +1492,13 @@ init python:
                                 # Bonus items: JSON chance only (no difficulty loot multiplier; same idea as monster_worker).
                                 bonus_items = loot_data.get("bonus_items", [])
                                 for bonus in bonus_items:
+                                    # El DevKit valida y exporta bonus_items como lista de
+                                    # OBJETOS o de CADENAS (devkit_web/src/schemas/daily_story.schema.js),
+                                    # y el `loot` de arriba ya acepta cadenas sueltas. Sin esto, una
+                                    # cadena hacia .get() y reventaba process_daily_events entero,
+                                    # perdiendo el resto del informe diario.
+                                    if not hasattr(bonus, "get"):
+                                        bonus = {"item_id": str(bonus)}
                                     item_id = bonus.get("item_id")
                                     chance = min(1.0, max(0.0, bonus.get("chance", 1.0)))
                                     # Keep restricted definitions/inventory intact, but do not

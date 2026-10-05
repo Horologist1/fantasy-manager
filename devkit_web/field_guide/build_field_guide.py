@@ -13,6 +13,7 @@ written by hand: update them when a formula changes. See README.md here.
 """
 import argparse
 import glob
+import html
 import json
 import os
 
@@ -153,6 +154,146 @@ def build_data():
     return data
 
 
+# ---------------------------------------------------------------- traits list
+#
+# Defined in data/traits but granted by nothing in the game (checked 0.9.6.2t1):
+# listing them would promise traits nobody can get.
+NEVER_GRANTED = {"Expecting Visit", "Expecting Visit2", "Soul Wearied", "Cursed Vitality",
+                 "Blade's Whisper", "Curse of Greed", "Vampire", "Furry"}
+
+
+def _trait_tags(t):
+    tags = []
+    if t.get("nsfw") or t.get("nsfw_only"):
+        tags.append('<span class="pill nsfw">NSFW</span>')
+    g = t.get("gender_restriction")
+    if g in ("male", "female"):
+        tags.append('<span class="pill tag">%s only</span>' % g)
+    if int(t.get("duration") or 0) > 0:
+        tags.append('<span class="pill tag">%d days</span>' % int(t["duration"]))
+    return " ".join(tags)
+
+
+def build_traits_html():
+    groups = {"races": [], "rolled": [], "story": []}
+    seen = set()
+    for path in sorted(glob.glob(os.path.join(GAME, "data/traits/*.json"))):
+        with open(path, encoding="utf-8") as f:
+            for t in as_list(json.load(f)):
+                name = (t or {}).get("name") if isinstance(t, dict) else None
+                if not name or name in seen or name in NEVER_GRANTED:
+                    continue
+                seen.add(name)  # first definition wins, like the game
+                key = "races" if os.path.basename(path) == "traits_races.json" else (
+                    "story" if t.get("only_assigned") else "rolled")
+                groups[key].append(t)
+    titles = {
+        "races": ("Races", "Every worker has one race. Races are traits too."),
+        "rolled": ("Traits workers can be born with",
+                   "New workers roll their traits from this list."),
+        "story": ("Story, status and reward traits",
+                  "Never rolled at random: they come from events, recruitment choices, "
+                  "interactions, the governor, the Arena or a character's story. "
+                  "Temporary ones show how many days they last."),
+    }
+    out = []
+    for key in ("races", "rolled", "story"):
+        title, intro = titles[key]
+        rows = sorted(groups[key], key=lambda t: t["name"].lower())
+        out.append('<h3 id="p-traits-%s">%s (%d)</h3><p>%s</p>' % (key, html.escape(title), len(rows), html.escape(intro)))
+        out.append('<div class="tw"><table><thead><tr><th>Trait</th><th>What it does</th></tr></thead><tbody>')
+        for t in rows:
+            out.append("<tr><td><b>%s</b> %s</td><td>%s</td></tr>" % (
+                html.escape(t["name"]), _trait_tags(t), html.escape(t.get("description") or "")))
+        out.append("</tbody></table></div>")
+    return "\n".join(out)
+
+
+# --------------------------------------------------------------- workers list
+#
+# Workers that join through a story, not through Recruit or the market.
+# Facts verified against the code for 0.9.6.2t1 (see README).
+WORKER_NOTES = {
+    "Yvara": "Yvara's Academy story (NSFW): she joins on the Dominion or Mixed ending.",
+    "Kar": "Recruit Workers, her own event only. SFW: once the Arena is unlocked. NSFW: after any "
+           "ending of the Lanista's story with a female Lanista.",
+    "Kara": "Recruit Workers, her own event only. SFW: once the Arena is unlocked. NSFW: after any "
+            "ending of the Lanista's story with a male Lanista.",
+}
+LANISTA_NOTE = ("The Lanista's Arena story (NSFW): joins on the Dominion or Mixed ending. "
+                "Varra or Varro, depending on the gender you choose at the first meeting.")
+
+
+def build_workers_html():
+    recruit_events = set()
+    for path in sorted(glob.glob(os.path.join(GAME, "data/events/recruit/*.json"))):
+        with open(path, encoding="utf-8") as f:
+            for e in as_list(json.load(f)):
+                if isinstance(e, dict) and e.get("worker_name"):
+                    recruit_events.add(e["worker_name"])
+    found = {}
+    for path in sorted(glob.glob(os.path.join(GAME, "data/workers/*.json"))):
+        base = os.path.basename(path)
+        with open(path, encoding="utf-8") as f:
+            raw = json.load(f)
+        workers = raw if isinstance(raw, list) else (raw.get("workers") if isinstance(raw.get("workers"), list) else [raw])
+        for w in workers:
+            # Monster templates have no name: the game names each capture.
+            if not isinstance(w, dict) or not (w.get("name") or w.get("monster_archetype")):
+                continue
+            # encounter_only on a NON-unique sheet = only a template for generated
+            # workers. Most uniques are encounter_only too: they come by recruitment.
+            if w.get("encounter_only") and not w.get("unique") and not w.get("monster"):
+                continue
+            mode = "NSFW" if w.get("nsfw") else "SFW"
+            if w.get("monster"):
+                if not w.get("unique"):
+                    name = "%s (any number)" % (w.get("monster_archetype") or w.get("name")).title()
+                    how = "Captured with Monster Taming at the Adventurer's Guild; gets a new name each time."
+                else:
+                    name = w["name"]
+                    how = "Captured with Monster Taming at the Adventurer's Guild (10–15% per successful story)."
+                group = "monster"
+            elif base.startswith("lanista_"):
+                name, how, group = w["name"], LANISTA_NOTE, "story"
+            elif w["name"] in WORKER_NOTES:
+                name, how, group = w["name"], WORKER_NOTES[w["name"]], "story"
+            elif w.get("unique"):
+                name, group = w["name"], "recruit"
+                pron = "his" if str(w.get("gender", "")).lower() == "male" else "her"
+                how = ("Recruit Workers, with %s own recruitment event." % pron
+                       if w["name"] in recruit_events else "Recruit Workers.")
+            else:
+                name, group = w["name"], "market"
+                how = "Buy Servants, about $%s." % w.get("cost", "?")
+            row = found.setdefault((group, name), {"name": name, "how": how, "modes": set(), "group": group})
+            row["modes"].add(mode)
+    labels = {"recruit": ("Recruited", "From the map: Recruit Workers, once a day. Unique workers only appear in "
+                                       "the content mode their sheet belongs to (an SFW-only worker is never offered "
+                                       "in NSFW mode, and the other way round). When every unique has been hired, "
+                                       "Recruit Workers offers newly generated workers instead."),
+              "market": ("Bought", "From the map: Buy Servants. Five offers a day; one free refresh, a second one "
+                                   "for $2,500. NSFW-mode games can also be offered the SFW workers below."),
+              "story": ("Joined through a story", ""),
+              "monster": ("Monsters", "Only in NSFW mode: Monster Taming is an NSFW job.")}
+    out = []
+    for group in ("recruit", "market", "story", "monster"):
+        rows = sorted((r for r in found.values() if r["group"] == group), key=lambda r: r["name"].lower())
+        if not rows:
+            continue
+        title, intro = labels[group]
+        out.append('<h3 id="p-get-%s">%s (%d)</h3>' % (group, html.escape(title), len(rows)))
+        if intro:
+            out.append("<p>%s</p>" % html.escape(intro))
+        out.append('<div class="tw"><table><thead><tr><th>Worker</th><th>Mode</th><th>How to get</th></tr></thead><tbody>')
+        for r in rows:
+            mode = "SFW and NSFW" if len(r["modes"]) > 1 else next(iter(r["modes"]))
+            out.append("<tr><td><b>%s</b></td><td>%s</td><td>%s</td></tr>" % (
+                html.escape(r["name"]), mode, html.escape(r["how"])))
+        out.append("</tbody></table></div>")
+    return "\n".join(out)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=DEFAULT_OUT)
@@ -168,6 +309,8 @@ def main():
                 .replace("<!--REF-->", part("part_ref.html"))
                 .replace("<!--IMG-->", part("part_img.html"))
                 .replace("/*DATA*/", data))
+    page = (page.replace("<!--TRAIT_LIST-->", build_traits_html())
+                .replace("<!--WORKER_LIST-->", build_workers_html()))
     # template.html starts with <title>/<link>/<style>: they belong in <head>.
     head_end = page.index('<div class="wrap">')
     page = PAGE_HEAD + page[:head_end] + "</head>\n<body>\n" + page[head_end:] + "\n</body>\n</html>\n"

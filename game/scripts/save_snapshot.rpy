@@ -818,7 +818,17 @@ init -2 python:
             _loader = getattr(store, "load_workers", None)
             if not callable(_loader):
                 return None, None
-            templates = _loader(include_unique=True, include_encounter_only=True, for_events=True) or []
+            # apply_content_filters=False: esto repara datos persistentes, no decide
+            # qué se le enseña al jugador. Con los filtros puestos, un worker oculto
+            # por modo SFW o por el filtro de género no aparecía en el índice, la
+            # migración lo daba por "inexistente" y subía igualmente de versión,
+            # dejando la identidad sin reparar para siempre.
+            try:
+                templates = _loader(include_unique=True, include_encounter_only=True,
+                                    for_events=True, apply_content_filters=False) or []
+            except TypeError:
+                # Loader antiguo (mods o versión previa) sin el parámetro.
+                templates = _loader(include_unique=True, include_encounter_only=True, for_events=True) or []
             if not templates:
                 return None, None
             for tpl in templates:
@@ -1667,14 +1677,11 @@ init -2 python:
                     store.lanista_reconcile_program_unlocks()
             except Exception as e:
                 renpy.log(f"SNAPSHOT: WARNING - lanista program unlock reconciliation failed: {e}")
-            # Academy enrolment, Arena permit, Yvara finance, Lanista identity
-            # and tutorial objective flags: derive from the state that proves
-            # them (see legacy_progress.rpy).
-            try:
-                if callable(getattr(store, "reconcile_legacy_progress_on_load", None)):
-                    store.reconcile_legacy_progress_on_load()
-            except Exception as e:
-                renpy.log(f"SNAPSHOT: WARNING - legacy progress reconciliation failed: {e}")
+            # NOTE: la reconciliación de progreso legacy NO va aquí. Lee listas de
+            # arco (yvara_s4_talks_done, lanista_*_talks_done) que todavía no se han
+            # restaurado en este punto: la carga parte de un store limpio, así que
+            # vería las listas vacías y ninguna regla basada en ellas dispararía.
+            # Se ejecuta más abajo, cuando ya están todos sus datos de entrada.
 
             # Apply arc list fields separately (must stay lists; deepcopy so the
             # store never aliases the transient snapshot dict)
@@ -1729,7 +1736,20 @@ init -2 python:
             except Exception as e:
                 failed_fields.append("lanista_remark_choices")
                 renpy.log(f"SNAPSHOT: WARNING - Could not apply lanista_remark_choices: {e}")
-            
+
+            # Academy enrolment, Arena permit, Yvara finance, Lanista identity
+            # and tutorial objective flags: derive from the state that proves
+            # them (see legacy_progress.rpy).
+            # DEBE ir aquí, después de las listas de arco: la regla de Yvara S4 mira
+            # "s4_t1" dentro de yvara_s4_talks_done, y la de identidad de Lanista puede
+            # apoyarse en lanista_*_talks_done. Colocada antes (como estaba hasta
+            # 2026-09-27) leía los defaults del store limpio y no curaba nada.
+            try:
+                if callable(getattr(store, "reconcile_legacy_progress_on_load", None)):
+                    store.reconcile_legacy_progress_on_load()
+            except Exception as e:
+                renpy.log(f"SNAPSHOT: WARNING - legacy progress reconciliation failed: {e}")
+
             # Inventory and shops
             for field_name, default_val, field_type in [
                 ("manager_inventory", [], list),
@@ -4020,6 +4040,18 @@ label after_load:
                                 _val = _cp.deepcopy(_to_dict(_src) or {})
                                 setattr(store, _field_name, _val)
                                 setattr(renpy.store, _field_name, _cp.deepcopy(_val))
+
+                        # Esta pasada reescribe desde el snapshot campos que la
+                        # reconciliación legacy había curado (yvara_s4_finance_unlocked,
+                        # arena_unlocked, lanista_gender/name/known_name), devolviéndolos
+                        # a su valor guardado. Se vuelve a reconciliar aquí para que la
+                        # curación sobreviva; la función es idempotente (solo asciende
+                        # False -> True cuando existe la prueba).
+                        try:
+                            if callable(getattr(store, "reconcile_legacy_progress_on_load", None)):
+                                store.reconcile_legacy_progress_on_load()
+                        except Exception as e:
+                            _snap_log(f"AFTER_LOAD: WARNING - legacy progress re-reconciliation failed: {e}")
 
             # Log current state
             _snap_log(f"AFTER_LOAD: store.workers has {len(store.workers)} workers, renpy.store.workers has {len(renpy.store.workers)} workers")

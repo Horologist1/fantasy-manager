@@ -965,5 +965,133 @@
     "always_available": false,
     "worker_filter": {},
     "player_gender_requirement": null
+  },
+  {
+    "id": "unique_margarita_lore_event",
+    "arc_id": "margarita_bond",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "nsfw": false,
+    "completion_timestamp_flag": "margarita_bond_stage_1_at",
+    "event_probability": 25,
+    "worker_progress": {
+      "min_level": 2
+    },
+    "description": "A southern factor in a dust-coloured coat sets a brass tally-stick on your counter and asks, politely, for Margarita's earrings. The hoops are a caravan house's bond mark, he explains: issued to a guard on hire, returned on discharge. She left the caravan in your city and never gave them back. 'She is not a thief,' he says, and appears to mean it. 'She is undischarged. Either she finishes the contract on the next run south, or the bond is paid in coin.' Margarita has gone very still. She has not taken those hoops off once since the day she walked in.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Margarita",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Margarita"
+    },
+    "excluded_flags": {
+      "unique_margarita_bond_done": true
+    },
+    "choices": [
+      {
+        "option": "Send for the caravan house's ledger and read it against the tally-stick. (Potential: Money; Risk: Money, Reputation)",
+        "message_success": "The ledger copy arrives at dusk and you lay the notches beside it. The stick counts eleven days of guard duty that the ledger already records as settled in kind, with her keep on the road north entered as the payment. The bond was discharged before she ever reached the gates. The factor recuts his stick on the spot and pays the customary penalty for a false claim.",
+        "message_failure": "You read the notches confidently and read them wrong: what you take for days of service are stages of the road. The factor lets you finish before correcting you in front of the room. You pay the bond, and the correction, and Margarita keeps her hoops with a look you do not enjoy.",
+        "effect": {
+          "success_chance": 0.7,
+          "success": {
+            "money": 450,
+            "joy": 6,
+            "joy_worker_name": "Margarita",
+            "event_flags": {
+              "unique_margarita_bond_done": true
+            }
+          },
+          "failure": {
+            "money": -520,
+            "reputation": -4,
+            "event_flags": {
+              "unique_margarita_bond_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Pay the bond outright and have the discharge written in full. (Cost: Money; Potential: Relationship, Reputation)",
+        "message": "You pay without haggling, and ask the factor to write the discharge out in full, in both languages, in front of her. He does. Margarita reads it twice, folds it, and puts it away where the tally-stick would have gone. She does not say thank you. She starts calling the house 'here' instead of 'this city'.",
+        "effect": {
+          "money": -350,
+          "reputation": 6,
+          "joy": 10,
+          "joy_worker_name": "Margarita",
+          "event_flags": {
+            "unique_margarita_bond_done": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique_chestnut_lore_event",
+    "arc_id": "chestnut_relay",
+    "arc_stage": 1,
+    "arc_kind": "character",
+    "nsfw": false,
+    "completion_timestamp_flag": "chestnut_relay_stage_1_at",
+    "event_probability": 25,
+    "worker_progress": {
+      "min_level": 2
+    },
+    "description": "A young courier from the Running Horse relay arrives on lathered legs with the route ledger strapped across her back, and she is too nervous to sit. Chestnut's name is still written against four stages of the King's Road, which means the relay still answers for roads Chestnut no longer walks, and the relay master will not carry that liability another season. The courier has been sent with two papers: one signs the stages over to her, name and all, and one calls Chestnut back to walk them in person until a replacement is trained. Chestnut looks at the ledger the way people look at a house they grew up in.",
+    "weight": 2,
+    "limited": true,
+    "max_occurrences": 1,
+    "cooldown_days": 14,
+    "worker_name": "Chestnut",
+    "worker_selection": "none",
+    "background_image": "worker_private_talk",
+    "conditions": {
+      "start_when": "has_worker:Chestnut"
+    },
+    "excluded_flags": {
+      "unique_chestnut_relay_done": true
+    },
+    "choices": [
+      {
+        "option": "Have the stages signed over properly, with the relay's seal and a witness. (Potential: Money, Reputation; Risk: Money)",
+        "message_success": "You send for a scrivener and make a ceremony of it. The stages pass to the courier under seal, with Chestnut named as the holder who kept them clean for nine years, and the relay pays the customary courtesy for an orderly handover. The courier leaves at a gallop with her own name in the ledger for the first time. Chestnut watches the road a while after she has gone, then goes back to work.",
+        "message_failure": "You let the courier's papers stand as written. Weeks later a claim arrives anyway: the handover was never sealed and the relay's liability for a broken culvert follows the name in the ledger, which is still hers. You pay it to keep her out of a magistrate's court.",
+        "effect": {
+          "success_chance": 0.7,
+          "success": {
+            "money": 260,
+            "reputation": 5,
+            "joy": 5,
+            "joy_worker_name": "Chestnut",
+            "event_flags": {
+              "unique_chestnut_relay_done": true
+            }
+          },
+          "failure": {
+            "money": -430,
+            "reputation": -3,
+            "event_flags": {
+              "unique_chestnut_relay_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Buy the stages out of the ledger so her name comes off free and clear. (Cost: Money; Potential: Relationship)",
+        "message": "You pay the relay what the four stages are worth and take the liability off their books entirely, so nothing needs signing away and nobody needs calling back. The courier keeps the route. Chestnut keeps the name. She asks what it cost, you tell her, and she does not argue, which is not like her at all.",
+        "effect": {
+          "money": -400,
+          "joy": 12,
+          "joy_worker_name": "Chestnut",
+          "event_flags": {
+            "unique_chestnut_relay_done": true
+          }
+        }
+      }
+    ]
   }
 ]

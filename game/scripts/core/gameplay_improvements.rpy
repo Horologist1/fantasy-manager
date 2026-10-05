@@ -755,6 +755,11 @@ init python:
             pname = str(p.get("name", pid) or pid)
             if pid in ("manager", "rest") or pname.strip().lower() in ("manager", "rest"):
                 continue
+            # Roles without skills earn nothing (the castle's Prisoner: 9-13
+            # seats). Auto-fill filled them first-come, paying comfort for zero
+            # income; they stay a manual choice, like Rest.
+            if not (p.get("skills") or []):
+                continue
             if not profession_is_unlocked(p) or not profession_is_visible(p, btype):
                 continue
             capacity = max(0, get_max_daily_workers(building, p))
@@ -771,11 +776,13 @@ init python:
                 "free_slots": free,
             })
 
+        _away = getattr(store, "worker_is_in_franchise", None)
         candidates = reoptimization_candidates(
             store.workers,
             resolved,
             servant_jobs,
             _resolve_building_key,
+            is_away=_away if callable(_away) else None,
         )
         target_candidates = [
             candidate for candidate in candidates

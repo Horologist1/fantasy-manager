@@ -2020,6 +2020,19 @@ init python:
                     worker["energy"] = min(calculate_max_energy(worker), worker.get("energy", 0) + int(effect_value))
                 except Exception:
                     pass
+            elif effect_type == "libido":
+                # Sin esta rama, "libido" caia en el `else: pass` del final y el
+                # consumible se gastaba sin efecto (Elixir of Passion, 1000 de oro).
+                # El tope real lo da get_max_libido (base + rasgos + equipo, y
+                # luego el cap de rasgos): set_attribute_with_caps no tiene tope
+                # por defecto para libido, asi que se clampa aqui como health.
+                try:
+                    # Suelo en 0: un consumible con valor negativo (ninguno hoy,
+                    # pero el esquema lo permite) dejaria la libido bajo cero.
+                    worker["libido"] = max(0, min(get_max_libido(worker),
+                                                  worker.get("libido", 0) + int(effect_value)))
+                except Exception:
+                    pass
             elif effect_type == "skill_modifiers":
                 # Consumables that declare skill_modifiers should increase base skills.
                 # This allows repeated uses until reaching the normal base-skill cap.
@@ -2945,7 +2958,11 @@ init python:
             for key, value in list(worker.items()):
                 if hasattr(value, "items"):
                     worker[key] = dict(value)
-                elif isinstance(value, list):
+                elif hasattr(value, "__iter__") and not isinstance(value, str):
+                    # Duck-typing: `selected` sale de json.loads, asi que sus listas
+                    # son NATIVAS y en el store `list` es RevertableList. Con
+                    # isinstance la rama no se tomaba nunca y el monster capturado
+                    # compartia traits/inventory con la plantilla del catalogo.
                     worker[key] = list(value)
             identity = selected.get("template_id") or f"monster_unique_{selected.get('monster_archetype', selected.get('name', 'unknown').lower())}"
             worker.update({

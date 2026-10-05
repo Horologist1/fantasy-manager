@@ -528,5 +528,49 @@
         "description": "Heather has the ready warmth of a natural host — an open smile, a quick read on a guest's mood, and the knack of making an ordinary evening feel like an occasion. Adaptable and unflappable, she settles into whatever a night asks of her.",
         "gender": "female",
         "comfort_desired": 1
+    },
+    {
+        "name": "Zinnia",
+        "folder": "margarita",
+        "cost": 1400,
+        "nsfw": false,
+        "unique": false,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 44,
+            "Anal": 38,
+            "BDSM": 35,
+            "Hand": 41,
+            "Oral": 42,
+            "Homo": 17,
+            "Special": 34,
+            "Group": 36,
+            "Extreme": 31,
+            "Striptease": 42,
+            "Combat": 26,
+            "Clever": 34,
+            "Charm": 47,
+            "Service": 48,
+            "Agility": 37,
+            "Craft": 27,
+            "Specialty 4": 32,
+            "Specialty 5": 31,
+            "Specialty 6": 33,
+            "Specialty 7": 31,
+            "Specialty 8": 30,
+            "Specialty 9": 32,
+            "Specialty 10": 31,
+            "Specialty 11": 31,
+            "Specialty 12": 34
+        },
+        "names_list": "western_female",
+        "traits": [
+            "Human"
+        ],
+        "description": "A southern hire with a warm manner and a good head for a busy room.",
+        "gender": "female",
+        "comfort_desired": 1
     }
 ]

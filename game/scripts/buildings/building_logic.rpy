@@ -7,6 +7,104 @@ init python:
     # remain owned for save/state logic but never belong to generic building UI.
     SPECIAL_MAP_ONLY_BUILDING_TYPES = frozenset(("arena", "academy"))
 
+    # Igual que item_definitions_index (manager_inventory_helpers.rpy), el indice
+    # vive en renpy.session y no en un global de init python: un global se
+    # serializa dentro de los saves y se queda rancio cuando un mod anade tipos
+    # de edificio. La comprobacion de tamano lo reconstruye si el catalogo crece.
+    #
+    # Sustituye al patron next((bt for bt in building_types_json["building_types"]
+    # if bt["id"] == X), None), que se repite por CADA fila de plantilla en las
+    # pantallas de roster y asignacion: con 200 workers eso es barrer el catalogo
+    # 200 veces en cada repintado.
+    def building_type_index():
+        types = []
+        if hasattr(building_types_json, "get"):
+            types = building_types_json.get("building_types") or []
+        cached = renpy.session.get("fm_btype_index")
+        if cached is not None and renpy.session.get("fm_btype_index_size") == len(types):
+            return cached
+        index = {}
+        for entry in types:
+            if hasattr(entry, "get") and entry.get("id") is not None:
+                index[entry["id"]] = entry
+        renpy.session["fm_btype_index"] = index
+        renpy.session["fm_btype_index_size"] = len(types)
+        return index
+
+    def building_type_def(btype_id, default=None):
+        """Definicion de un tipo de edificio por id. Devuelve None por defecto,
+        como el next(..., None) al que sustituye."""
+        found = building_type_index().get(btype_id)
+        return found if found is not None else default
+
+    def profession_def(btype, job_id):
+        """Profesion de un tipo de edificio por id, sin barrer la lista.
+
+        resolve_profession_for_job se llama una vez por FILA de plantilla en las
+        pantallas de roster y asignacion; con 200 workers su bucle lineal sobre
+        las profesiones se pagaba 200 veces por repintado. El indice se guarda
+        por tipo de edificio en renpy.session (no en un global de init python,
+        que se serializaria dentro del save) y se rehace si el catalogo crece,
+        que es como un mod anade profesiones.
+        """
+        if not hasattr(btype, "get"):
+            return None
+        professions = btype.get("professions") or []
+        buscado = str(job_id or "").strip().lower()
+        if not buscado:
+            return None
+        clave_bruta = btype.get("id")
+        if clave_bruta is None or str(clave_bruta).strip() == "":
+            # Sin id no hay clave estable con la que cachear. NO se usa id(btype):
+            # Python reutiliza las direcciones de objeto tras el recolector, asi
+            # que dos tipos distintos podrian compartir entrada y devolverse las
+            # profesiones del otro. Se barre y punto: este caso es raro.
+            for p in professions:
+                if hasattr(p, "get") and str(p.get("id", "")).strip().lower() == buscado:
+                    return p
+            return None
+        clave = str(clave_bruta)
+        indices = renpy.session.get("fm_profession_index")
+        if indices is None:
+            indices = {}
+            renpy.session["fm_profession_index"] = indices
+        entrada = indices.get(clave)
+        if entrada is None or entrada[0] != len(professions):
+            mapa = {}
+            for p in professions:
+                if not hasattr(p, "get"):
+                    continue
+                pid = p.get("id")
+                if pid is None:
+                    continue
+                mapa.setdefault(str(pid).strip().lower(), p)
+            entrada = (len(professions), mapa)
+            indices[clave] = entrada
+        return entrada[1].get(buscado)
+
+    def _fm_nombre_de_puesto(btype, job_id, resolver=None):
+        """Nombre visible del puesto de un worker, sin barrer la lista.
+
+        Sustituye a una expresion de una sola linea que, en la fila del roster,
+        caia en un next() sobre las profesiones del tipo de edificio cuando el
+        resolver no estaba disponible. Una fila lo pagaba una vez por
+        actualizacion de pantalla, y con 200 filas eso es por fotograma.
+        """
+        texto = str(job_id or "").strip()
+        if not texto or texto.lower() == "unassigned":
+            return "Unassigned"
+        if btype is None:
+            return texto
+        if callable(resolver):
+            try:
+                return resolver(btype, job_id)[0]
+            except Exception:
+                pass
+        encontrada = profession_def(btype, texto)
+        if encontrada is not None and hasattr(encontrada, "get"):
+            return encontrada.get("name") or texto
+        return texto
+
     def is_standard_managed_building(building_name, building=None):
         """Return whether a building belongs in generic management lists."""
         normalized_name = str(building_name or "").strip().lower().replace(" ", "_")
@@ -259,16 +357,15 @@ init python:
         if jlow in ("", "unassigned"):
             return ("Unassigned", None)
         if btype and not building_type_is_visible(btype):
-            profession = next((p for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == jlow), None)
+            profession = profession_def(btype, jlow)
             return ("Hidden Role", profession)
         if jlow == "rest":
             return ("Rest", None)
         if not btype:
             return (jid, None)
-        for p in btype.get("professions", []) or []:
-            pid = p.get("id")
-            if pid is not None and str(pid).strip().lower() == jlow:
-                return (profession_display_name(p, btype, jid), p)
+        encontrada = profession_def(btype, jlow)
+        if encontrada is not None:
+            return (profession_display_name(encontrada, btype, jid), encontrada)
         return (jid, None)
 
     store.resolve_profession_for_job = resolve_profession_for_job

@@ -36,7 +36,7 @@
       },
       {
         "option": "Negotiate: steady work at a lower wage - more left over for the sands. ([COST] per day)",
-        "message": "'Less coin, steady work... a purse built over a season beats one fat night.' She runs the sum with an Arena clerk's precision, and nods once. 'Done.' She accepts a reduced daily cost ([actual_cost], a 20% discount), and the fair dealing still speaks well of your house (+2 Reputation).",
+        "message": "'Less coin, steady work... a purse built over a season beats one fat night.' She runs the sum with an Arena clerk's precision, and nods once. 'Done.' She accepts a reduced daily cost ([actual_cost], one comfort level below their usual demand), and the fair dealing still speaks well of your house (+2 Reputation).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,
@@ -97,7 +97,7 @@
       },
       {
         "option": "Negotiate: steady work at a lower wage - more left over for the sands. ([COST] per day)",
-        "message": "'Less coin, steady work... a purse built over a season beats one fat night.' He runs the sum with an Arena clerk's precision, and nods once. 'Done.' He accepts a reduced daily cost ([actual_cost], a 20% discount), and the fair dealing still speaks well of your house (+2 Reputation).",
+        "message": "'Less coin, steady work... a purse built over a season beats one fat night.' He runs the sum with an Arena clerk's precision, and nods once. 'Done.' He accepts a reduced daily cost ([actual_cost], one comfort level below their usual demand), and the fair dealing still speaks well of your house (+2 Reputation).",
         "effect": {
           "recruit_worker": true,
           "cost_modifier": 0.8,

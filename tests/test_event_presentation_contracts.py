@@ -164,7 +164,7 @@ class ArcBackreferenceContracts(unittest.TestCase):
         transitions = arc_transitions(load_events())
         self.assertEqual(len(indexed), len(reviews), "Duplicate review")
         self.assertEqual(set(indexed), {(p["id"], c["id"]) for p, c in transitions}, "Missing or obsolete arc reviews")
-        self.assertEqual(len(transitions), 46, "Catalogue changed: review all new/removed transitions")
+        self.assertEqual(len(transitions), 48, "Catalogue changed: review all new/removed transitions")
         for previous, current in transitions:
             review = indexed[(previous["id"], current["id"])]
             with self.subTest(event=current["id"]):

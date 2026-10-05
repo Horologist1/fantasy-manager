@@ -21,7 +21,13 @@ init python:
     
     def _is_equipped(item):
         """Check if an item is equipped. Must be defined at module level for pickling."""
-        if not isinstance(item, (list, tuple)) or len(item) < 3:
+        # Duck-typed por el mismo motivo que _is_inv_entry (abajo): en el store
+        # `list` es RevertableList, asi que isinstance(entrada_nativa, list) es
+        # False y una entrada recien salida de json.loads (mod, DevKit, sidecar
+        # sin convertir) se daba por NO equipada. LA BIBLIA §1.
+        if not (hasattr(item, "__getitem__") and not isinstance(item, str) and not hasattr(item, "get")):
+            return False
+        if len(item) < 3:
             return False
         eq = item[2]
         if isinstance(eq, bool):
@@ -43,6 +49,137 @@ init python:
         str and dict-likes.
         """
         return hasattr(x, "__getitem__") and not isinstance(x, str) and not hasattr(x, "get")
+
+    # ================================ Roster virtualizado (lista de plantilla)
+    #
+    # Una fila de la tabla declara 31 displayables. Con 200 workers eso son 6.200
+    # construidos en CADA actualizacion de la pantalla, y medido con
+    # renpy.profile_screen sale a 96 ms de media y 195 ms en el peor caso: muy por
+    # encima de los 16 ms de un fotograma fluido. Construyendo solo la ventana
+    # visible (16 filas) baja a 11,2 ms de media. Es lo que hace una hoja de
+    # calculo: nunca dibuja las 200 filas, solo las que caben.
+    #
+    # Las medidas de la maquetacion NO son adivinadas: la celda mas alta de la
+    # fila es el marco del retrato (52 px), el frame de la fila anade padding
+    # (0, 2) -> 56 px, y el vbox que las apila lleva spacing 5 -> paso de 61 px.
+    # Si alguien cambia esa maquetacion, fm_roster_paso_valido() lo detecta y se
+    # vuelve a construir la lista entera: lento, pero nunca descuadrado.
+
+    FM_ROSTER_VIRTUAL = True          # interruptor de emergencia
+    FM_ROSTER_ALTO_FILA = 56
+    FM_ROSTER_ESPACIO = 5
+    FM_ROSTER_PASO = FM_ROSTER_ALTO_FILA + FM_ROSTER_ESPACIO
+    FM_ROSTER_ALTO_VISIBLE = 420      # ysize del viewport de la lista
+    FM_ROSTER_MARGEN = 3              # filas de colchon arriba y abajo
+
+    def fm_roster_scrolled(valor):
+        """Reevaluar la pantalla al desplazar.
+
+        Adjustment.change() llama a este callback en cada cambio de valor
+        (behavior.py), pero por si solo el motor unicamente REDIBUJA: sin
+        reevaluar la pantalla, la ventana de filas construidas se quedaria
+        congelada y el jugador veria huecos al bajar. No hay bucle: el viewport
+        toca `range`, no `value`, asi que esto no se vuelve a disparar solo.
+        """
+        try:
+            if renpy.display.predict.predicting:
+                return
+            renpy.restart_interaction()
+        except Exception:
+            pass
+
+    def fm_roster_adjustment():
+        """El Adjustment de la lista, en renpy.session.
+
+        En session a proposito: un Adjustment con un callback guardado en el
+        scope de una screen o en el store entra en el log de rollback y puede
+        envenenar los saves (LA BIBLIA 8). session no se serializa nunca.
+        """
+        ajuste = renpy.session.get("fm_roster_adj")
+        if ajuste is None:
+            ajuste = renpy.display.behavior.Adjustment(changed=fm_roster_scrolled)
+            renpy.session["fm_roster_adj"] = ajuste
+        return ajuste
+
+    def fm_roster_reset_scroll():
+        """Volver arriba al abrir, que es lo que hacia antes."""
+        ajuste = renpy.session.get("fm_roster_adj")
+        if ajuste is not None:
+            try:
+                ajuste.value = 0
+            except Exception:
+                pass
+
+    def fm_roster_paso_valido(total, ajuste):
+        """¿Cuadra la maquetacion con el paso que damos por supuesto?
+
+        El viewport deja en el adjustment `range` = alto del contenido menos el
+        alto visible, y `page` = alto visible. De ahi sale el alto real del
+        contenido y se compara con el que predice la formula. Si no cuadra (una
+        fila mas alta, otro spacing), se devuelve False y la lista se construye
+        entera: preferimos lenta a descuadrada.
+        """
+        if total <= 0:
+            return True
+        try:
+            recorrido = float(getattr(ajuste, "range", 0) or 0)
+            pagina = float(getattr(ajuste, "page", 0) or 0)
+        except (TypeError, ValueError):
+            return False
+        if recorrido <= 0 or pagina <= 0:
+            return True        # aun no renderizado: no hay nada que contradecir
+        alto_real = recorrido + pagina
+        alto_previsto = total * FM_ROSTER_PASO - FM_ROSTER_ESPACIO
+        return abs(alto_real - alto_previsto) <= FM_ROSTER_PASO
+
+    def fm_ventana_de_roster(total):
+        """(primera, ultima) filas que hay que construir de verdad."""
+        if not FM_ROSTER_VIRTUAL or total <= 0:
+            return (0, total)
+        ajuste = fm_roster_adjustment()
+        if not fm_roster_paso_valido(total, ajuste):
+            return (0, total)
+        try:
+            desplazamiento = float(getattr(ajuste, "value", 0) or 0)
+        except (TypeError, ValueError):
+            return (0, total)
+        if desplazamiento < 0:
+            desplazamiento = 0
+        # El alto visible se toma del propio viewport: el adjustment deja en
+        # `page` el alto de la ventana. Asi, si alguien cambia el `ysize` de la
+        # lista, la ventana se adapta sola en vez de quedarse corta y dejar un
+        # hueco en blanco al desplazar. La constante queda solo de respaldo para
+        # la primerisima construccion, cuando aun no se ha renderizado nada.
+        try:
+            alto_visible = float(getattr(ajuste, "page", 0) or 0)
+        except (TypeError, ValueError):
+            alto_visible = 0
+        if alto_visible <= 0:
+            alto_visible = FM_ROSTER_ALTO_VISIBLE
+        caben = int(alto_visible // FM_ROSTER_PASO) + 2
+        primera = int(desplazamiento // FM_ROSTER_PASO) - FM_ROSTER_MARGEN
+        if primera < 0:
+            primera = 0
+        ultima = primera + caben + 2 * FM_ROSTER_MARGEN
+        if ultima > total:
+            ultima = total
+            primera = max(0, ultima - (caben + 2 * FM_ROSTER_MARGEN))
+        # Si de todas formas hay que construir casi todo, no trocear.
+        if (ultima - primera) >= total:
+            return (0, total)
+        return (primera, ultima)
+
+    def fm_relleno_de_roster(cuantas):
+        """Alto del hueco que sustituye a `cuantas` filas sin construir.
+
+        Cada fila ocupa FM_ROSTER_PASO contando su separacion, pero el propio
+        hueco recibe una separacion del vbox, asi que se le descuenta una.
+        Con esto el recorrido de la barra de scroll queda identico a tener las
+        200 filas y el ultimo worker sigue siendo alcanzable.
+        """
+        if cuantas <= 0:
+            return 0
+        return max(0, int(cuantas) * FM_ROSTER_PASO - FM_ROSTER_ESPACIO)
 
     def get_worker_portrait_cached(worker):
         """
@@ -1169,13 +1306,17 @@ screen main_menu():
     on "hide" action SetVariable("at_main_menu", False)
 
     ## Use imagebuttons with centered positions
-    imagebutton auto "gui/main_menu/buttons/start_%s.png" xpos 761 ypos 345 focus_mask True action [Function(mark_new_game_start), Start()]
-    imagebutton auto "gui/main_menu/buttons/load_%s.png" xalign 0.5 ypos 456 focus_mask True action ShowMenu("load")
-    imagebutton auto "gui/main_menu/buttons/options_%s.png" xalign 0.5 ypos 516 focus_mask True action ShowMenu("preferences")
+    # `alt` da nombre accesible a cada boton: lo lee el TTS y es lo unico por lo
+    # que el localizador de widgets del motor (renpy/test/testfocus.py, que casa
+    # contra _tts_all()) puede encontrarlos. Sin esto un imagebutton es invisible
+    # para el lector de pantalla y para cualquier prueba que juegue de verdad.
+    imagebutton auto "gui/main_menu/buttons/start_%s.png" alt "Start" xpos 761 ypos 345 focus_mask True action [Function(mark_new_game_start), Start()]
+    imagebutton auto "gui/main_menu/buttons/load_%s.png" alt "Load" xalign 0.5 ypos 456 focus_mask True action ShowMenu("load")
+    imagebutton auto "gui/main_menu/buttons/options_%s.png" alt "Options" xalign 0.5 ypos 516 focus_mask True action ShowMenu("preferences")
     # Gallery button removed while the gallery screen is a "Coming Soon" stub (screen kept below for later)
-    imagebutton auto "gui/main_menu/buttons/about_%s.png" xalign 0.5 ypos 622 focus_mask True action ShowMenu("about")
-    imagebutton auto "gui/main_menu/buttons/help_%s.png" xalign 0.5 ypos 675 focus_mask True action ShowMenu("help")
-    imagebutton auto "gui/main_menu/buttons/quit_%s.png" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=True)
+    imagebutton auto "gui/main_menu/buttons/about_%s.png" alt "About" xalign 0.5 ypos 622 focus_mask True action ShowMenu("about")
+    imagebutton auto "gui/main_menu/buttons/help_%s.png" alt "Help" xalign 0.5 ypos 675 focus_mask True action ShowMenu("help")
+    imagebutton auto "gui/main_menu/buttons/quit_%s.png" alt "Quit" xalign 0.5 ypos 728 focus_mask True action Quit(confirm=True)
 
     vbox:
         style "main_menu_vbox"
@@ -4227,15 +4368,15 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     equipped_items = sorted(
                                         equipped_list,
                                         key=lambda x: (
-                                            -int(next((i for i in items_json["items"] if i["id"] == x[1][0]), {}).get("price", 0)),
-                                            next((i for i in items_json["items"] if i["id"] == x[1][0]), {}).get("name", "ZZZ").lower(),
+                                            -int(item_def(x[1][0]).get("price", 0)),
+                                            item_def(x[1][0]).get("name", "ZZZ").lower(),
                                         ),
                                     )
                                     unequipped_items = sorted(
                                         unequipped_list,
                                         key=lambda x: (
-                                            -int(next((i for i in items_json["items"] if i["id"] == x[1][0]), {}).get("price", 0)),
-                                            next((i for i in items_json["items"] if i["id"] == x[1][0]), {}).get("name", "ZZZ").lower(),
+                                            -int(item_def(x[1][0]).get("price", 0)),
+                                            item_def(x[1][0]).get("name", "ZZZ").lower(),
                                         ),
                                     )
                                 elif left_sort_by_name:
@@ -4246,7 +4387,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     unequipped_items = unequipped_list
 
                             for idx, item in equipped_items:
-                                $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                $ item_info = item_def(item[0])
                                 $ _item_name = item_info.get("name", "Unknown")
                                 $ _item_name_display = abbreviate_item_name(_item_name, 184, font_size(24))
                                 $ bg_button = Solid("#d4a574")
@@ -4283,7 +4424,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
 
                             for i, idx_item in enumerate(unequipped_items):
                                 $ idx, item = idx_item
-                                $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                $ item_info = item_def(item[0])
                                 $ _item_name = item_info.get("name", "Unknown")
                                 $ _item_name_display = abbreviate_item_name(_item_name, 184, font_size(24))
                                 $ bg_button = Solid("#777777") if i % 2 == 0 else Solid("#555555")
@@ -4489,7 +4630,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                     "misc": "Misc",
                                 }
                                 if _sel_item:
-                                    _sel_item_info = next((i for i in items_json["items"] if i["id"] == _sel_item[0]), {})
+                                    _sel_item_info = item_def(_sel_item[0])
                                     _sel_item_name = _sel_item_info.get("name", "")
                                     _sel_item_category = _category_labels.get(_sel_item_info.get("type", "misc"), str(_sel_item_info.get("type", "misc")).replace("_", " ").title())
                             if _sel_item_name:
@@ -4508,7 +4649,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                         padding (10, 10)
                         $ current_item = selected_worker_item if selected_worker_item is not None else selected_manager_item
                         $ current_item_id = current_item[0] if current_item else None
-                        $ _item_def = next((i for i in items_json.get("items", []) if i.get("id") == current_item_id), None) if current_item_id else None
+                        $ _item_def = item_def(current_item_id, None) if current_item_id else None
                         $ _img_basename = _item_def.get("image", current_item_id) if _item_def and _item_def.get("image") else current_item_id
                         $ img_path_png = f"images/items/{_img_basename}.png" if _img_basename is not None else None
                         $ img_path_jpg = f"images/items/{_img_basename}.jpg" if _img_basename is not None else None
@@ -4719,7 +4860,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                                             unequipped_items = unequipped_list_r
 
                                     for idx, item in equipped_items:
-                                        $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                        $ item_info = item_def(item[0])
                                         $ _item_name = item_info.get("name", "Unknown")
                                         $ _item_name_display = abbreviate_item_name(_item_name, 184, font_size(24))
                                         $ label, the_action, is_sens, btn_bg = get_item_action_elements(item, item_info, right_worker, idx)
@@ -4759,7 +4900,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
 
                                     for i, idx_item in enumerate(unequipped_items):
                                         $ idx, item = idx_item
-                                        $ item_info = next((i for i in items_json["items"] if i["id"] == item[0]), {})
+                                        $ item_info = item_def(item[0])
                                         $ _item_name = item_info.get("name", "Unknown")
                                         $ _item_name_display = abbreviate_item_name(_item_name, 184, font_size(24))
                                         $ label, the_action, is_sens, btn_bg = get_item_action_elements(item, item_info, right_worker, idx)
@@ -5067,7 +5208,7 @@ screen manager_inventory(shop_mode=None, return_to_worker=None, return_to_in_ros
                             xsize 280
                             text "Equipment" size font_size(24) color gui.journal_dark_color xalign 0.0
                             null height 2
-                            $ _eq_pairs = [(i, next((x for x in items_json["items"] if x["id"] == i[0]), None)) for i in summary_worker.get("inventory", []) if store._is_equipped(i)]
+                            $ _eq_pairs = [(i, item_def(i[0], None)) for i in summary_worker.get("inventory", []) if store._is_equipped(i)]
                             $ _eq_pairs = [(item, info) for item, info in _eq_pairs if info and item_content_is_visible(info)]
                             $ _eq_weapon_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "weapon"), "Empty")
                             $ _eq_armor_name = next((info.get("name", "?") for _, info in _eq_pairs if info and info.get("type") == "armor"), None)
@@ -5785,7 +5926,8 @@ screen Manager(building_name):
                 $ worker_costs = compute_worker_portion_daily_costs(manager_servants, building.get("base_level", 1))[0]
                 $ bonus_cost = get_building_skill_bonus_daily_cost(building.get("skill_bonus", 0))
                 $ total_costs = fixed_cost + worker_costs + bonus_cost
-                $ _mgr_cost_tt = "How daily costs are calculated:\n\nTotal/day = Fixed + Workers + Skill Bonus\nFixed: $" + str(fixed_cost) + " (scales with building level; Normal: $100, $300, $500, $700, $900 for levels 1-5)\nWorkers: $" + str(worker_costs) + " (sum of comfort x " + str(get_difficulty_comfort_mult()) + "; not multiplied by level)\nSkill Bonus upkeep: $" + str(bonus_cost) + "\n\nWorker Details shows per-worker comfort cost only."
+                $ _mgr_fixed_note = ("your first building: no fixed upkeep" if str(building_name).replace("_", " ").strip() == "Building 1" else "the Castle always pays the level-1 rate" if str(building.get("type", "")).lower() == "governor_castle" else "scales with building level; Normal: $100, $300, $500, $700, $900 for levels 1-5")
+                $ _mgr_cost_tt = "How daily costs are calculated:\n\nTotal/day = Fixed + Workers + Skill Bonus\nFixed: $" + str(fixed_cost) + " (" + _mgr_fixed_note + ")\nWorkers: $" + str(worker_costs) + " (sum of comfort x " + str(get_difficulty_comfort_mult()) + "; not multiplied by level)\nSkill Bonus upkeep: $" + str(bonus_cost) + "\n\nWorker Details shows per-worker comfort cost only."
                 $ event_limit = building.get("event_limit", 0)
                 $ _mgr_ev_label = building_event_chance_label(building_name)
                 $ limit_texts = ["Unlimited (with reputation bonus)", "Limited to 1 per worker", "Limited to 2 per worker", "Limited to 3 per worker"]
@@ -7184,17 +7326,32 @@ screen choose_worker_for_arena_trial():
     default _worker_query_applied = ""
     modal True
     zorder 100
+    # El ranking se recalcula SOLO cuando cambian sus entradas, no en cada
+    # actualizacion de pantalla. Este selector es modal y se queda puesto mientras
+    # un dialogo escribe, asi que su bloque python: corre una vez por fotograma:
+    # medido con renpy.profile_screen, 1779 actualizaciones a 8 ms = 6,3 s
+    # reordenando los mismos 200 workers. Las variables van con `default`, que es
+    # lo que las hace sobrevivir de una actualizacion a la siguiente; al cerrar y
+    # reabrir el selector se recalculan, asi que un cambio de equipo o de
+    # entrenamiento entre aperturas si se nota. De paso la lista ya no se
+    # reordena sola debajo del dedo del jugador.
+    default _ranked_key = None
+    default _ranked_workers = []
     python:
         _worker_pool = workers_filtered_by_gender(list(store.workers))
         if _worker_search_text != _worker_query_applied:
             _worker_page = 0
             _worker_query_applied = _worker_search_text
-        eligible_workers = rank_worker_choices(
-            _worker_pool,
-            last_worker_name=last_arena_worker_name,
-            query=_worker_search_text,
-            score_getter=lambda worker: calculate_skill_with_traits(worker, "Combat"),
-        )
+        _ranked_key_now = (tuple(w.get("name") for w in _worker_pool), _worker_search_text, last_arena_worker_name)
+        if _ranked_key_now != _ranked_key:
+            _ranked_key = _ranked_key_now
+            _ranked_workers = rank_worker_choices(
+                _worker_pool,
+                last_worker_name=last_arena_worker_name,
+                query=_worker_search_text,
+                score_getter=lambda worker: calculate_skill_with_traits(worker, "Combat"),
+            )
+        eligible_workers = _ranked_workers
         _page_workers, _worker_page, _worker_page_count = page_worker_choices(
             eligible_workers, _worker_page, 7
         )
@@ -7313,17 +7470,32 @@ screen choose_worker_for_arena_special_match():
     default _worker_query_applied = ""
     modal True
     zorder 100
+    # El ranking se recalcula SOLO cuando cambian sus entradas, no en cada
+    # actualizacion de pantalla. Este selector es modal y se queda puesto mientras
+    # un dialogo escribe, asi que su bloque python: corre una vez por fotograma:
+    # medido con renpy.profile_screen, 1779 actualizaciones a 8 ms = 6,3 s
+    # reordenando los mismos 200 workers. Las variables van con `default`, que es
+    # lo que las hace sobrevivir de una actualizacion a la siguiente; al cerrar y
+    # reabrir el selector se recalculan, asi que un cambio de equipo o de
+    # entrenamiento entre aperturas si se nota. De paso la lista ya no se
+    # reordena sola debajo del dedo del jugador.
+    default _ranked_key = None
+    default _ranked_workers = []
     python:
         _worker_pool = workers_filtered_by_gender(list(store.workers))
         if _worker_search_text != _worker_query_applied:
             _worker_page = 0
             _worker_query_applied = _worker_search_text
-        eligible_workers = rank_worker_choices(
-            _worker_pool,
-            last_worker_name=last_arena_worker_name,
-            query=_worker_search_text,
-            score_getter=lambda worker: calculate_skill_with_traits(worker, "Combat"),
-        )
+        _ranked_key_now = (tuple(w.get("name") for w in _worker_pool), _worker_search_text, last_arena_worker_name)
+        if _ranked_key_now != _ranked_key:
+            _ranked_key = _ranked_key_now
+            _ranked_workers = rank_worker_choices(
+                _worker_pool,
+                last_worker_name=last_arena_worker_name,
+                query=_worker_search_text,
+                score_getter=lambda worker: calculate_skill_with_traits(worker, "Combat"),
+            )
+        eligible_workers = _ranked_workers
         _page_workers, _worker_page, _worker_page_count = page_worker_choices(
             eligible_workers, _worker_page, 7
         )
@@ -7442,17 +7614,32 @@ screen choose_worker_for_alchemy_craft():
     default _worker_query_applied = ""
     modal True
     zorder 100
+    # El ranking se recalcula SOLO cuando cambian sus entradas, no en cada
+    # actualizacion de pantalla. Este selector es modal y se queda puesto mientras
+    # un dialogo escribe, asi que su bloque python: corre una vez por fotograma:
+    # medido con renpy.profile_screen, 1779 actualizaciones a 8 ms = 6,3 s
+    # reordenando los mismos 200 workers. Las variables van con `default`, que es
+    # lo que las hace sobrevivir de una actualizacion a la siguiente; al cerrar y
+    # reabrir el selector se recalculan, asi que un cambio de equipo o de
+    # entrenamiento entre aperturas si se nota. De paso la lista ya no se
+    # reordena sola debajo del dedo del jugador.
+    default _ranked_key = None
+    default _ranked_workers = []
     python:
         _worker_pool = workers_filtered_by_gender(list(store.workers))
         if _worker_search_text != _worker_query_applied:
             _worker_page = 0
             _worker_query_applied = _worker_search_text
-        eligible_workers = rank_worker_choices(
-            _worker_pool,
-            last_worker_name=last_alchemy_worker_name,
-            query=_worker_search_text,
-            score_getter=lambda worker: calculate_skill_with_traits(worker, "Craft"),
-        )
+        _ranked_key_now = (tuple(w.get("name") for w in _worker_pool), _worker_search_text, last_alchemy_worker_name)
+        if _ranked_key_now != _ranked_key:
+            _ranked_key = _ranked_key_now
+            _ranked_workers = rank_worker_choices(
+                _worker_pool,
+                last_worker_name=last_alchemy_worker_name,
+                query=_worker_search_text,
+                score_getter=lambda worker: calculate_skill_with_traits(worker, "Craft"),
+            )
+        eligible_workers = _ranked_workers
         _page_workers, _worker_page, _worker_page_count = page_worker_choices(
             eligible_workers, _worker_page, 7
         )
@@ -7934,9 +8121,19 @@ screen buy_servants_table():
                 vbox:
                     xalign 0.5
                     spacing 12
+                    python:
+                        # La lista se reconstruia DENTRO del bucle (una compresion
+                        # de n elementos por cada una de las n filas) y encima se
+                        # recorria con next(). Doble O(n^2). Se calcula una vez.
+                        _buy_nav_names = [w.get("name") for w in filtered_displayed_workers
+                                          if hasattr(w, "get") and w.get("name")]
+                        _buy_nav_pos = {}
+                        for _idx_buy, _nombre_buy in enumerate(_buy_nav_names):
+                            if _nombre_buy not in _buy_nav_pos:
+                                _buy_nav_pos[_nombre_buy] = _idx_buy
+
                     for worker in filtered_displayed_workers:
-                        $ _buy_nav_names = [w.get("name") for w in filtered_displayed_workers if hasattr(w, "get") and w.get("name")]
-                        $ _buy_nav_index = next((idx for idx, n in enumerate(_buy_nav_names) if n == worker.get("name")), 0)
+                        $ _buy_nav_index = _buy_nav_pos.get(worker.get("name"), 0)
                         $ _row_portrait = get_worker_portrait_cached(worker)
                         $ _row_initial = (str(worker.get("name", "")).strip() or "?")[:1]
                         hbox:
@@ -9254,7 +9451,10 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 action If(len(_nav_names) > 0, [
                                     SetVariable("current_worker_index", _prev_store_idx),
                                     Function(set_worker_details_image, _prev_worker),
-                                    Show("worker_details", worker=_prev_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx - 1) % len(_nav_names), nav_worker_pool=_context_pool)
+                                    # max(1, ...) evita ZeroDivisionError: If() es una FUNCION, sus
+                                    # argumentos se evaluan al construir la pantalla aunque la lista
+                                    # este vacia (roster entero oculto por el filtro de genero).
+                                    Show("worker_details", worker=_prev_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx - 1) % max(1, len(_nav_names)), nav_worker_pool=_context_pool)
                                 ])
                                 hovered ShowTransient("tooltip", message="Navigate to previous worker in this list.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
@@ -9266,7 +9466,7 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
                                 action If(len(_nav_names) > 0, [
                                     SetVariable("current_worker_index", _next_store_idx),
                                     Function(set_worker_details_image, _next_worker),
-                                    Show("worker_details", worker=_next_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx + 1) % len(_nav_names), nav_worker_pool=_context_pool)
+                                    Show("worker_details", worker=_next_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx + 1) % max(1, len(_nav_names)), nav_worker_pool=_context_pool)
                                 ])
                                 hovered ShowTransient("tooltip", message="Navigate to next worker in this list.", screen_name="WorkerDetails")
                                 unhovered Hide("tooltip")
@@ -9837,12 +10037,12 @@ screen worker_details(worker, in_roster=False, from_buy_workers=False, from_recr
         key "ctrl_K_LEFT" action If(len(_nav_names) > 0, [
             SetVariable("current_worker_index", _prev_store_idx),
             Function(set_worker_details_image, _prev_worker),
-            Show("worker_details", worker=_prev_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx - 1) % len(_nav_names), nav_worker_pool=_context_pool)
+            Show("worker_details", worker=_prev_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx - 1) % max(1, len(_nav_names)), nav_worker_pool=_context_pool)
         ])
         key "ctrl_K_RIGHT" action If(len(_nav_names) > 0, [
             SetVariable("current_worker_index", _next_store_idx),
             Function(set_worker_details_image, _next_worker),
-            Show("worker_details", worker=_next_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx + 1) % len(_nav_names), nav_worker_pool=_context_pool)
+            Show("worker_details", worker=_next_worker, in_roster=in_roster, from_buy_workers=from_buy_workers, from_recruitment=from_recruitment, nav_worker_names=_nav_names, nav_worker_index=(_roster_idx + 1) % max(1, len(_nav_names)), nav_worker_pool=_context_pool)
         ])
 
 
@@ -9893,7 +10093,11 @@ screen workers():
     # before the first paint; the extra restart re-created the list viewport's
     # scroll adjustment mid-reflow and the roster opened scrolled ~1.5 rows
     # down (first row half-hidden under the header). Verified by screenshot.
-    on "show" action [Function(process_manager_auto_rest), Function(ensure_manager_inventory_synced_for_potions), Function(maybe_show_intro_popup, "workers")]
+    # fm_roster_reset_scroll pone value=0 por la propiedad, que NO llama al callback
+    # `changed` (eso solo lo hace Adjustment.change), asi que no reproduce el bug
+    # del comentario de arriba: el Adjustment vive en renpy.session y conservaria
+    # el desplazamiento de la vez anterior si no se reiniciara aqui.
+    on "show" action [Function(fm_roster_reset_scroll), Function(process_manager_auto_rest), Function(ensure_manager_inventory_synced_for_potions), Function(maybe_show_intro_popup, "workers")]
     add workers_bg
     add Solid("#00000099")
     
@@ -9952,7 +10156,7 @@ screen workers():
                             building_name = worker.get('assigned_building', 'Unassigned')
                             building = available_buildings.get(building_name, {})
                             btype_id = building.get("type")
-                            _worker_btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+                            _worker_btype = building_type_def(btype_id)
                             type_name = building_type_display_name(_worker_btype, "Unassigned" if btype_id is None else btype_id)
                             parts = building_name.split('_')
                             default_name = f"Building {parts[1]}" if len(parts) > 1 else building_name
@@ -9984,7 +10188,7 @@ screen workers():
                         if worker_building_filter != "All Workers":
                             for bname, bdata in available_buildings.items():
                                 btype_id = bdata.get("type")
-                                _filter_btype = next((bt for bt in building_types_json.get("building_types", []) if bt.get("id") == btype_id), None)
+                                _filter_btype = building_type_def(btype_id)
                                 type_name = building_type_display_name(_filter_btype, "Unassigned" if btype_id is None else btype_id)
                                 parts = bname.split('_')
                                 default_name = f"Building {parts[1]}" if len(parts) > 1 else bname
@@ -10003,7 +10207,7 @@ screen workers():
                             
                             if building_name != "Unassigned" and building_name in available_buildings:
                                 job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
-                                btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
+                                btype = building_type_def(available_buildings[building_name]["type"])
                                 # Match filter logic below: "Unassigned" job slot is not the same as unassigned building.
                                 jid_low = str(job_id).strip().lower() if job_id is not None else "unassigned"
                                 if jid_low != "unassigned" and btype is not None:
@@ -10011,7 +10215,8 @@ screen workers():
                                     if callable(_rpj):
                                         job_name, _pj_unused = _rpj(btype, job_id)
                                     else:
-                                        job_name = next((p["name"] for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == str(job_id).strip().lower()), job_id)
+                                        _pj_fallback = profession_def(btype, job_id)
+                                        job_name = _pj_fallback["name"] if _pj_fallback else job_id
                                     if job_name not in unique_jobs:
                                         unique_jobs.append(job_name)
                                 else:
@@ -10111,6 +10316,10 @@ screen workers():
                 scrollbars "vertical"
                 mousewheel True
                 draggable True
+                # Adjustment propio: su callback reevalua la pantalla al
+                # desplazar, que es lo que permite construir solo las filas
+                # visibles sin que queden huecos al bajar.
+                yadjustment fm_roster_adjustment()
                 # Height budget (verified against real screenshots): frame top 108
                 # + padding 20 + null 80 + title ~45 + null 5 + filters 50 + header 50
                 # + 6 vbox gaps of 15 = viewport starts ~433 (1080-space). The
@@ -10149,12 +10358,12 @@ screen workers():
                                 _b_data = available_buildings[_b_name]
                                 _j_id = _b_data.get("servant_jobs", {}).get(_w["name"], "Unassigned")
                                 _j_id_lc = str(_j_id).strip().lower()
-                                _b_type_def = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == _b_data.get("type")), None)
+                                _b_type_def = building_type_def(_b_data.get("type"))
                                 if _j_id_lc != "unassigned" and _b_type_def:
                                     _rpjc = getattr(store, "resolve_profession_for_job", None)
                                     _jd = _rpjc(_b_type_def, _j_id)[1] if callable(_rpjc) else None
                                     if not _jd:
-                                        _jd = next((p for p in _b_type_def.get("professions", []) if str(p.get("id", "")).strip().lower() == _j_id_lc), None)
+                                        _jd = profession_def(_b_type_def, _j_id_lc)
                                     if _jd and hasattr(_jd, "get"):
                                         _sks = [str(_sk) for _sk in (_jd.get("skills", []) or [])]
                                         _tot = 0
@@ -10171,15 +10380,39 @@ screen workers():
 
                         # Loop-invariant nav list (was rebuilt inside the per-worker row loop)
                         _workers_nav_names = [w.get("name") for w in filtered_workers if hasattr(w, "get") and w.get("name")]
+                        # Y el indice, en un mapa: buscarlo con next() DENTRO del
+                        # bucle es O(n) por fila, o sea O(n^2) por fotograma. Con
+                        # 200 workers eran ~40.000 comparaciones cada vez que se
+                        # repinta la lista, y abrir "Workers" costaba 1,6 s.
+                        _workers_nav_pos = {}
+                        for _idx_nav, _nombre_nav in enumerate(_workers_nav_names):
+                            if _nombre_nav not in _workers_nav_pos:
+                                _workers_nav_pos[_nombre_nav] = _idx_nav
 
-                    for worker in filtered_workers:
-                        $ _workers_nav_index = next((idx for idx, n in enumerate(_workers_nav_names) if n == worker.get("name")), 0)
+                        # Ventana visible. Se calcula AQUI, al final: el orden, la
+                        # lista de navegacion, el recuento y las acciones por lotes
+                        # ya han visto la plantilla COMPLETA. La ventana solo
+                        # recorta lo que se construye.
+                        _fm_total_filas = len(filtered_workers)
+                        _fm_desde, _fm_hasta = fm_ventana_de_roster(_fm_total_filas)
+
+                    if _fm_desde > 0:
+                        null height fm_relleno_de_roster(_fm_desde)
+
+                    for worker in filtered_workers[_fm_desde:_fm_hasta]:
+                        $ _workers_nav_index = _workers_nav_pos.get(worker.get("name"), 0)
                         $ worker_level = worker.get('level', 1)
                         $ _row_portrait = get_worker_portrait_cached(worker)
                         $ _row_initial = (str(worker.get("name", "")).strip() or "?")[:1]
                         frame:
                             xalign 0.5  # Center each worker row horizontally
                             padding (0, 2)
+                            # Alto explicito: la virtualizacion calcula el hueco de
+                            # las filas que no construye a partir de este numero
+                            # (56 = celda mas alta 52 + padding 2+2). Dejarlo
+                            # implicito era invitar a que el scroll se descuadrara
+                            # en cuanto alguien tocara una celda.
+                            ysize FM_ROSTER_ALTO_FILA
                             # Zebra striping so long rosters stay scannable
                             background (Solid(gui.row_alt_color) if _workers_nav_index % 2 else None)
                             # WIDTH: content-sized (see header note) so the zebra band
@@ -10234,12 +10467,12 @@ screen workers():
                                     $ building_name = worker["assigned_building"]
                                     if building_name in available_buildings:
                                         $ job_id = available_buildings[building_name]["servant_jobs"].get(worker["name"], "Unassigned")
-                                        $ btype = next((bt for bt in building_types_json.get("building_types", []) if bt["id"] == available_buildings[building_name]["type"]), None)
+                                        $ btype = building_type_def(available_buildings[building_name]["type"])
                                     else:
                                         $ job_id = "Unassigned"
                                         $ btype = None
                                     $ _rpj3 = getattr(store, "resolve_profession_for_job", None)
-                                    $ job_name = "Unassigned" if job_id.lower() == "unassigned" else ((_rpj3(btype, job_id)[0] if callable(_rpj3) and btype else next((p["name"] for p in btype.get("professions", []) if str(p.get("id", "")).strip().lower() == str(job_id).strip().lower()), job_id)) if btype else job_id)
+                                    $ job_name = _fm_nombre_de_puesto(btype, job_id, _rpj3)
                                     $ avg_skill = 0
                                     if job_id.lower() != "unassigned" and btype is not None:
                                         # Cached per render in _ws_skill_cache (computed above, before the loop)
@@ -10328,6 +10561,12 @@ screen workers():
                                             text_hover_color gui.journal_hover_color
                                             action Show("confirm_sell_worker", worker=worker)
                                             yalign 0.5
+
+                    # Hueco de las filas de abajo que no se construyen: mantiene el
+                    # recorrido de la barra igual que con las 200 filas, para que el
+                    # ultimo worker siga siendo alcanzable.
+                    if _fm_hasta < _fm_total_filas:
+                        null height fm_relleno_de_roster(_fm_total_filas - _fm_hasta)
 
             # (Removed duplicate close button)
 
@@ -10940,15 +11179,20 @@ screen map_screen():
         idle Transform("gui/map/N6murderhousea.png", matrixcolor=SaturationMatrix(0.35))
         hover "gui/map/N6murderhouseb.png"
         focus_mask True
+        alt "In development"
         action Show("in_development")
         hovered ShowTransient("tooltip", message="In development")
         unhovered Hide("tooltip")
     
+    # `alt` en cada punto del mapa: es el nombre accesible que lee el TTS y lo
+    # unico por lo que un imagebutton sin texto puede localizarse (el tooltip no
+    # sirve, solo existe al pasar por encima). Ver screens.rpy del menu principal.
     # N5 Academy - on first unlock call Yvara prologue (tuition dialogue); when enrolled, show academy menu.
     imagebutton:
         idle If(store.academy_enrolled, "gui/map/N5academya.png", Transform("gui/map/N5academya.png", matrixcolor=SaturationMatrix(0.35)))
         hover "gui/map/N5academyb.png"
         focus_mask True
+        alt "Academy"
         action If(store.academy_enrolled, Show("academy_menu"), [Hide("map_screen"), Jump("yvara_prologue")])
         hovered ShowTransient("tooltip", message="Academy" if store.academy_enrolled else "Academy (enroll to unlock)")
         unhovered Hide("tooltip")
@@ -10958,6 +11202,7 @@ screen map_screen():
         idle If(store.arena_unlocked, "gui/map/arenaa.png", Transform("gui/map/arenaa.png", matrixcolor=SaturationMatrix(0.35)))
         hover "gui/map/arenab.png"
         focus_mask True
+        alt "Arena"
         action If(store.arena_unlocked, Show("arena_menu"), [Hide("map_screen"), Jump("lanista_visit")])
         hovered ShowTransient("tooltip", message="Arena" if store.arena_unlocked else "Arena (visit the Lanista to unlock)")
         unhovered Hide("tooltip")
@@ -10969,6 +11214,7 @@ screen map_screen():
         idle church_map_idle
         hover church_map_hover
         focus_mask church_map_idle
+        alt "Church of the Circle"
         action [Hide("tooltip"), Hide("map_screen"), Jump("church_visit")]
         hovered ShowTransient("tooltip", message="Church of the Circle")
         unhovered Hide("tooltip")
@@ -10978,6 +11224,7 @@ screen map_screen():
         idle "gui/map/Castlea.png"
         hover "gui/map/Castleb.png"
         focus_mask True
+        alt "Castle"
         action If(
             get_map_building_name_safe("Castle") is not None,
             [Hide("map_screen"), Show("Manager", building_name=get_map_building_name_safe("Castle"))],

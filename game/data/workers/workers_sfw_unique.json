@@ -576,5 +576,53 @@
         "description": "A gentle performer of mature bearing whose demure grace and warm presence put everyone at ease.",
         "gender": "female",
         "comfort_desired": 4
+    },
+    {
+        "name": "Margarita",
+        "folder": "margarita",
+        "cost": 1500,
+        "nsfw": false,
+        "unique": true,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 52,
+            "Anal": 45,
+            "BDSM": 41,
+            "Hand": 48,
+            "Oral": 50,
+            "Homo": 20,
+            "Special": 40,
+            "Group": 42,
+            "Extreme": 36,
+            "Striptease": 50,
+            "Combat": 30,
+            "Clever": 40,
+            "Charm": 55,
+            "Service": 56,
+            "Agility": 44,
+            "Craft": 32,
+            "Specialty 4": 38,
+            "Specialty 5": 36,
+            "Specialty 6": 39,
+            "Specialty 7": 37,
+            "Specialty 8": 35,
+            "Specialty 9": 38,
+            "Specialty 10": 36,
+            "Specialty 11": 37,
+            "Specialty 12": 40
+        },
+        "names_list": "western_female",
+        "traits": [
+            "Human",
+            "Exotic",
+            "Great Figure",
+            "Adventurer",
+            "Wise"
+        ],
+        "description": "A southern traveller who came north for work and found it behind a bar. Margarita has the unhurried warmth of someone who has served strangers her whole life, and a considered way of speaking that patrons find steadier than the ale.",
+        "gender": "female",
+        "comfort_desired": 4
     }
 ]

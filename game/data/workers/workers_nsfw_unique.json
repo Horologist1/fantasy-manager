@@ -529,5 +529,53 @@
         "description": "A spirited woman with horse-like features whose tireless energy is matched only by her eager, obedient nature.",
         "gender": "female",
         "comfort_desired": 4
+    },
+    {
+        "name": "Margarita",
+        "folder": "margarita",
+        "cost": 1500,
+        "nsfw": true,
+        "unique": true,
+        "encounter_only": false,
+        "monster": false,
+        "procedural": false,
+        "skills": {
+            "Sex": 52,
+            "Anal": 45,
+            "BDSM": 41,
+            "Hand": 48,
+            "Oral": 50,
+            "Homo": 20,
+            "Special": 40,
+            "Group": 42,
+            "Extreme": 36,
+            "Striptease": 50,
+            "Combat": 30,
+            "Clever": 40,
+            "Charm": 55,
+            "Service": 56,
+            "Agility": 44,
+            "Craft": 32,
+            "Specialty 4": 38,
+            "Specialty 5": 36,
+            "Specialty 6": 39,
+            "Specialty 7": 37,
+            "Specialty 8": 35,
+            "Specialty 9": 38,
+            "Specialty 10": 36,
+            "Specialty 11": 37,
+            "Specialty 12": 40
+        },
+        "names_list": "western_female",
+        "traits": [
+            "Human",
+            "Exotic",
+            "Large Breasts",
+            "Large Hips",
+            "Wise"
+        ],
+        "description": "A dark-skinned traveller from the south, generous of figure and unhurried in everything she does. Margarita worked out long ago exactly what she is worth, and she prices herself accordingly.",
+        "gender": "female",
+        "comfort_desired": 4
     }
 ]

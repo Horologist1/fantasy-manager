@@ -415,6 +415,24 @@
       "current_sha256": "a12270a59d6137e62ea75f9dd808d214a493edee7df16e388410902af3bd7240",
       "premise": "Nuphar possesses the bell in the stage-two premise before either exhibition choice.",
       "branches": "The alchemist and vessel are introduced now. Every ending can use the bell without assuming the exhibition succeeded."
+    },
+    {
+      "arc": "margarita_personal",
+      "from": "margarita_personal_stage_1",
+      "to": "margarita_personal_stage_2",
+      "previous_sha256": "42114cdee5a700e5e2eb6187de1f8c71fd6df81e27580b87af57f5a73e71718b",
+      "current_sha256": "4c0f80315aa4bde20726358e7556db6018047cdbc8064e631a28f893e142cf9c",
+      "premise": "The salt caravan, its master and Margarita's road knowledge are established in the first scene's premise, not in any outcome.",
+      "branches": "The return-run offer is self-interested (he lost two men to a wrong turning), so it stands after the night went badly or after the caravan master left the house offended."
+    },
+    {
+      "arc": "margarita_personal",
+      "from": "margarita_personal_stage_2",
+      "to": "margarita_personal_stage_3",
+      "previous_sha256": "4c0f80315aa4bde20726358e7556db6018047cdbc8064e631a28f893e142cf9c",
+      "current_sha256": "95cc261895117521527751e9c051bdd9b21347fc4d87c7c5d35d86e91af50468",
+      "premise": "Stage three assumes only that she is still employed here and that southern caravans keep arriving, both carried by the earlier premises.",
+      "branches": "She stays in all four stage-two outcomes: refusing the guide's wage, taking the night to think, signing the share, or seeing the partnership fall through. The standing-stop proposal never refers to a share being agreed."
     }
   ]
 }

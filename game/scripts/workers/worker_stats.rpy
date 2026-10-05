@@ -178,6 +178,11 @@ init python:
         base_health = 10 + (worker.get("level", 1) * 5)
         bonus = 0
         health_cap = None
+        # Multiplicador de vida por rasgo (Construct: "3x Health"). Se aplica al
+        # total ya sumado y ANTES del tope, que es como lo lee el jugador en la
+        # descripcion. Sin esta pieza la clave health_multiplier no la leia nadie
+        # y el rasgo entregaba solo su penalizacion de libido.
+        health_multiplier = 1.0
         
         trait_defs = _get_trait_defs_by_name()
         item_defs = _get_item_defs_by_id()
@@ -189,6 +194,9 @@ init python:
                 modifiers = trait.get("modifiers", {})
                 bonus += modifiers.get("health", 0)
                 bonus += modifiers.get("health_max", 0)
+                multiplicador = modifiers.get("health_multiplier")
+                if isinstance(multiplicador, (int, float)) and multiplicador > 0:
+                    health_multiplier *= float(multiplicador)
                 if "health_max_cap" in modifiers:
                     cap_val = modifiers.get("health_max_cap")
                     # Ignore neutral/invalid caps (0 or negative) introduced by schema defaults.
@@ -213,7 +221,7 @@ init python:
         mgmt = getattr(store, "management_skills", None) or {}
         bonus += 10 * mgmt.get("combat_instruction", 0)
         
-        max_health = base_health + bonus
+        max_health = (base_health + bonus) * health_multiplier
         if health_cap is not None:
             max_health = min(max_health, health_cap)
         return max(1, int(max_health))

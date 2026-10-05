@@ -639,6 +639,11 @@ init python:
             # If price was negotiated down, comfort should be exactly one point below desired (min 1)
             if cost_modifier < 1.0:
                 negotiated_comfort = max(1, int(desired_comfort) - 1)
+            elif cost_modifier > 1.0:
+                # "Pay above their asking price": one comfort level ABOVE desired,
+                # the mirror of the discount. It used to cost exactly the asking
+                # price while still granting the extra reputation/relationship.
+                negotiated_comfort = min(20, int(desired_comfort) + 1)
             else:
                 negotiated_comfort = int(desired_comfort)
             worker["comfort_level"] = negotiated_comfort

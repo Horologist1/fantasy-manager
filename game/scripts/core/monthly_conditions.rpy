@@ -196,17 +196,21 @@ screen monthly_transition():
     $ card = monthly_presentation()
     vbox:
         xalign 0.5
-        ypos 650
-        xsize 1050
-        spacing 8
-        text "[card['name']!q]" size font_size(28) color "#ffffff" xalign 0.5
+        # Sube un poco al crecer el texto, para que la lista de efectos no se
+        # salga por abajo en un mes con varias condiciones.
+        ypos 600
+        xsize 1200
+        spacing 14
+        # Esto se lee a pantalla completa y durante un segundo: con 28/22 px
+        # quedaba diminuto. El nombre del mes es el titular del momento.
+        text "[card['name']!q]" size font_size(46) color "#ffffff" xalign 0.5 text_align 0.5
         if store.current_day == 1:
-            text "[card['duration']!q]" size font_size(22) color "#ffffff" xalign 0.5
+            text "[card['duration']!q]" size font_size(30) color "#ffffff" xalign 0.5 text_align 0.5
             for effect in card["effects"]:
-                text "[effect!q]" size font_size(22) color "#ffffff" xalign 0.5
+                text "[effect!q]" size font_size(30) color "#ffffff" xalign 0.5 text_align 0.5
         if not card["enabled"]:
-            text "Monthly conditions disabled." size font_size(22) color "#ffffff" xalign 0.5
+            text "Monthly conditions disabled." size font_size(30) color "#ffffff" xalign 0.5
         textbutton "Review monthly conditions":
             action Function(monthly_open)
             xalign 0.5
-            text_size font_size(24)
+            text_size font_size(36)
