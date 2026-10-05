@@ -66,6 +66,34 @@ export const GUIDE_SECTIONS = [
     ]
   }
 ]`},
+  {title:'Event choices that need several skills, or no roll', paragraphs:[
+    'A choice normally rolls one skill: "condition" names the skill and "threshold" the level that makes success likely. Write that pair only once per choice; the game would silently keep only the last one, and the in-game installer rejects a choice that repeats a key.',
+    'To ask for more than one skill, add "skill_requirements" with every minimum, for example {"Combat": 70, "Agility": 55}. Only workers who meet all of them can take the choice; if nobody does, the option is shown locked with the reason. Levels include traits and equipment, the same way as skill rolls.',
+    'With a "condition" as well, the roll still uses that skill: the requirements only decide who may try. Without a "condition", the choice has no roll at all: a qualifying worker always succeeds and gets the effect (or its "success" block, if the effect is split into success and failure). The option shows "(guaranteed, requires Combat 70, Agility 55)".',
+    'skill_requirements needs a worker: it cannot be used with worker_selection "none", with condition "building_skill" or in recruitment events. NSFW skills (Sex, Oral, Anal…) need "nsfw": true on the event or on the choice. It needs a game version newer than 0.9.6.2t1.',
+    'Example: one guaranteed option for a worker who can fight and climb, and one rolled option open only to strong workers.',
+  ], code:String.raw`{
+  "id": "mira_storm_pass_contract",
+  "description": "A caravan needs someone to clear the mountain pass.",
+  "worker_selection": "choose",
+  "building_type": ["adventurers_guild"],
+  "choices": [
+    {
+      "option": "Send someone who can fight and climb",
+      "skill_requirements": {"Combat": 70, "Agility": 55},
+      "message_success": "[acting_worker] clears the pass without a scratch.",
+      "effect": {"money": 500}
+    },
+    {
+      "option": "Talk the bandits down",
+      "condition": "Charm", "threshold": 50,
+      "skill_requirements": {"Combat": 60},
+      "message_success": "The bandits step aside.",
+      "message_failure": "Words fail; the caravan turns back.",
+      "effect": {"success": {"money": 300}, "failure": {"money": -50}}
+    }
+  ]
+}`},
   {title:'Make your first character pack', steps:[
     'Choose Character pack and enter a mod name.',
     'Open Unique Worker, complete the assistant, then choose Save to project. Use a plain-text character name. The image folder is a short identifier using letters, numbers, underscores or hyphens, such as mira_storm.',
