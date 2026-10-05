@@ -7,6 +7,50 @@ init python:
         event_worker_allowed_by_building_policy,
     )
 
+    import fm_events.skill_requirements as _skill_req
+
+    def event_choice_skill_requirements(choice):
+        """{skill: minimum} from a choice's optional "skill_requirements"."""
+        return _skill_req.parse(choice.get("skill_requirements") if hasattr(choice, "get") else None)
+
+    def worker_meets_choice_skill_requirements(worker, choice):
+        """Every listed minimum, measured like event rolls (traits + equipment)."""
+        requirements = event_choice_skill_requirements(choice)
+        if not requirements:
+            return True
+        if not hasattr(worker, "get"):
+            return False
+        return _skill_req.meets(requirements, lambda skill: calculate_skill_with_traits(worker, skill))
+
+    def event_choice_is_guaranteed(choice):
+        return _skill_req.is_guaranteed(choice)
+
+    def event_choice_requirements_label(choice):
+        requirements = event_choice_skill_requirements(choice)
+        if not requirements:
+            return ""
+        names = getattr(store, "skill_names", {}) or {}
+        return _skill_req.label(requirements, lambda skill: names.get(skill, skill) if hasattr(names, "get") else skill)
+
+    def event_worker_requirements_label(worker, choice):
+        """'Combat 82, Agility 60 -> Guaranteed' for the worker picker."""
+        requirements = event_choice_skill_requirements(choice)
+        names = getattr(store, "skill_names", {}) or {}
+        parts = []
+        for skill in requirements:
+            try:
+                level = int(calculate_skill_with_traits(worker, skill))
+            except Exception:
+                level = 0
+            parts.append("%s %d" % (names.get(skill, skill) if hasattr(names, "get") else skill, level))
+        return ", ".join(parts) + " -> Guaranteed"
+
+    store.event_worker_requirements_label = event_worker_requirements_label
+    store.event_choice_skill_requirements = event_choice_skill_requirements
+    store.worker_meets_choice_skill_requirements = worker_meets_choice_skill_requirements
+    store.event_choice_is_guaranteed = event_choice_is_guaranteed
+    store.event_choice_requirements_label = event_choice_requirements_label
+
     EVENT_FILTER_DEBUG = False
     CHARACTER_EVENT_GLOBAL_COOLDOWN_DAYS = 5
     CHARACTER_EVENT_POOL_CAP = 1
@@ -245,7 +289,8 @@ init python:
         if not choice or not hasattr(choice, "get"):
             return True
         condition_skill = choice.get("condition")
-        if not condition_skill or condition_skill == "building_skill":
+        requirements = event_choice_skill_requirements(choice)
+        if condition_skill == "building_skill" or not (condition_skill or requirements):
             return True
         try:
             threshold = int(choice.get("threshold", 0) or 0)
@@ -276,8 +321,10 @@ init python:
         if store._event_has_identity_filters(event):
             pool = [w for w in pool if store._worker_matches_event_identity(w, event)]
         pool = filter_workers_for_event_choice_building_policy(pool, event, choice)
-        if threshold > 0:
+        if threshold > 0 and condition_skill:
             pool = [w for w in pool if get_event_worker_skill_check_info(w, choice).get("roll_skill", 0) >= threshold]
+        if requirements:
+            pool = [w for w in pool if worker_meets_choice_skill_requirements(w, choice)]
         return bool(pool)
 
     def event_progress_is_satisfied(event, worker_pool=None):

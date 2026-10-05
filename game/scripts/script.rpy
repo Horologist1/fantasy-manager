@@ -5440,6 +5440,30 @@ init python:
         building_display_name = custom_names.get(building_name, building_name)
         renpy.notify(f"Upgraded {building_display_name} to level {building['base_level']}!")
 
+    def _resolve_guaranteed_event_choice(choice, event, worker, effect, effect_kwargs):
+        from fm_events.skill_requirements import guaranteed_effect
+        if not worker_meets_choice_skill_requirements(worker, choice):
+            # Selection filters keep this unreachable; never hand out a free success.
+            renpy.log(f"Guaranteed choice refused: {worker.get('name')} misses {event_choice_requirements_label(choice)}")
+            return {"message": worker.get("name", "The worker") + " is not ready for this yet (" + event_choice_requirements_label(choice) + ").",
+                    "outcome": "failure"}
+        applied_values = apply_effects(guaranteed_effect(effect), worker=worker, **effect_kwargs)
+        message = choice.get("message_success") or choice.get("message") or "The task goes exactly as planned."
+        if not isinstance(message, str):
+            message = str(message)
+        worker_name = worker.get("name", "the worker")
+        event_worker_name = getattr(store, "event_worker_name", "") or worker_name
+        message = message.replace("[event_worker]", event_worker_name).replace("[acting_worker]", worker_name)
+        message = message.replace("[player_title]", str(player_title)).replace("[player_name]", str(player_name))
+        message = format_dynamic_message(message, applied_values)
+        message = message + build_changes_summary(applied_values)
+        event_id = event.get("id")
+        if event_id:
+            store.event_occurrences[event_id] = store.event_occurrences.get(event_id, 0) + 1
+            store.event_last_occurred[event_id] = calculate_total_days()
+        renpy.log(f"Guaranteed choice resolved by {worker_name} (skill requirements met)")
+        return {"message": message, "outcome": "success"}
+
     def process_choice(choice, event, acting_worker=None):
         renpy.log(f"process_choice received acting_worker: {acting_worker}, Type: {type(acting_worker)}")
         import random
@@ -5454,6 +5478,10 @@ init python:
         _fwf = getattr(store, "filter_workers_for_effect_worker_filter", None)
         selected_worker = None
         outcome_status = "default" # Default status
+        # skill_requirements without a condition: whoever qualified succeeds, no roll.
+        # Checked before routing so the worker-less branches below never see it.
+        if acting_worker is not None and hasattr(acting_worker, "get") and event_choice_is_guaranteed(choice):
+            return _resolve_guaranteed_event_choice(choice, event, acting_worker, effect, _ef_kw)
         # REMOVING THIS LINE: store.current_affected_building = None  # Reset the affected building for this event
         # This was incorrectly resetting the affected building that was set at the beginning of the event
 

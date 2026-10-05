@@ -129,6 +129,7 @@ class Source:
 
 def _worker_files(source):
     found = []
+    content_roots = set()
     for name in sorted(source.entries):
         if not name.lower().endswith(".json"):
             continue
@@ -139,9 +140,13 @@ def _worker_files(source):
             found.append((name[:-len("data/workers.json")].rstrip("/"), name))
         elif PurePosixPath(name).name == "workers.json":
             found.append((name.rsplit("/", 1)[0] if "/" in name else "", name))
-    if not found:
-        raise PackError("No workers.json or data/workers/*.json found in this pack.")
-    roots = {root for root, _ in found}
+        elif "/data/" in "/" + name:
+            prefix, relative = ("/" + name).rsplit("/data/", 1)
+            if content_kind("data/" + relative):
+                content_roots.add(prefix.lstrip("/"))
+    if not found and not content_roots:
+        raise PackError("No workers.json, data/workers/*.json or supported data/ content found in this pack.")
+    roots = {root for root, _ in found} | content_roots
     if len(roots) != 1:
         raise PackError("Several game roots found. Select one character pack at a time.")
     return roots.pop(), [name for _, name in found]
@@ -196,7 +201,279 @@ def _image_signature(data, extension):
             (extension == ".webp" and data.startswith(b"RIFF") and data[8:12] == b"WEBP"))
 
 
-def inspect_pack(path):
+# Additive content a character pack may carry besides workers. The game loads
+# every JSON file in these folders, so each kind is installed as one namespaced
+# file (<folder><pack id>.json) and never replaces a shipped file.
+CONTENT_FOLDERS = {"traits": "data/traits/", "events": "data/events/",
+                   "recruit": "data/events/recruit/",
+                   "stories": "data/buildings/daily_story_extensions/"}
+CONTENT_LABELS = {"traits": "traits", "events": "events", "recruit": "recruitment scenes",
+                  "stories": "daily stories"}
+CONTENT_SINGULAR = {"traits": "trait", "events": "event", "recruit": "recruitment scene",
+                    "stories": "daily story"}
+DOC_FILE = re.compile(r"(readme|license|licence|changelog|credits)[^/]*\.(txt|md)\Z", re.IGNORECASE)
+CONDITION_PREFIXES = ("has_flag", "flag_value", "after_days_from_flag", "exact_date", "has_worker",
+                      "not_has_worker", "has_folder_worker", "not_has_folder_worker", "after_date",
+                      "before_days", "after_days")
+SIMPLE_COMPARISON = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\s*(?:==|!=|>=|<=|>|<)\s*"
+                               r"(?:-?\d+(?:\.\d+)?|True|False|None|'[^'\\]*'|\"[^\"\\]*\")\Z")
+STORY_MERGE_MODE = "append"
+# The only evaluated flag value shipped data uses: "today" as a day number, read
+# back by after_days_from_flag. Any other "[...]" value would run as code.
+SAFE_FLAG_EXPRESSIONS = {"[calculate_total_days()]"}
+
+
+def content_kind(relative):
+    """Map a game-relative path to an additive content kind, or None."""
+    if not relative.lower().endswith(".json"):
+        return None
+    for kind in ("recruit", "stories", "events", "traits"):
+        folder = CONTENT_FOLDERS[kind]
+        if relative.startswith(folder) and "/" not in relative[len(folder):]:
+            return kind
+    return None
+
+
+def content_count(kind, rows):
+    """Daily stories count stories, not the profession blocks holding them."""
+    return sum(len(row.get("daily_stories", [])) for row in rows) if kind == "stories" else len(rows)
+
+
+def _walk(value):
+    """Yield every dict nested anywhere inside a JSON value."""
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, dict):
+            yield item
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+
+
+def _check_condition(text, where):
+    """The game eval()s comparisons it does not recognise; allow only data."""
+    if not isinstance(text, str):
+        raise PackError(where + ": conditions must be text.")
+    for atom in re.split(r" AND | OR ", text.strip()):
+        atom = atom.strip()
+        if atom in ("True", "False"):
+            continue
+        prefix = atom.split(":", 1)[0]
+        if ":" in atom and prefix in CONDITION_PREFIXES:
+            continue
+        if "__" not in atom and SIMPLE_COMPARISON.fullmatch(atom):
+            continue
+        raise PackError(where + ": unsupported condition '" + atom[:80] + "'. Use has_flag:, has_worker:, after_days: and similar prefixes.")
+
+
+SFW_SKILLS = ("Combat", "Clever", "Charm", "Service", "Agility", "Craft")
+NSFW_SKILLS = ("Sex", "Anal", "BDSM", "Hand", "Oral", "Homo", "Special", "Group", "Extreme", "Striptease")
+KNOWN_SKILLS = SFW_SKILLS + NSFW_SKILLS + tuple("Specialty %d" % i for i in range(4, 13))
+
+
+def _check_skill_requirements(event, kind):
+    """Choice-level skill_requirements need a worker, real skill names and an
+    NSFW rating when they test NSFW skills."""
+    where = "Event " + str(event.get("id"))
+    for choice in event.get("choices", []) if isinstance(event.get("choices"), list) else []:
+        if not isinstance(choice, dict) or "skill_requirements" not in choice:
+            continue
+        requirements = choice["skill_requirements"]
+        if kind == "recruit":
+            raise PackError(where + ": skill_requirements is not supported in recruitment scenes.")
+        if event.get("worker_selection") == "none" or choice.get("condition") == "building_skill":
+            raise PackError(where + ": skill_requirements needs a worker; it can't be used with worker_selection \"none\" or building_skill.")
+        if not isinstance(requirements, dict) or not requirements or len(requirements) > 6:
+            raise PackError(where + ": skill_requirements must map 1 to 6 skills to minimum levels.")
+        for skill, minimum in requirements.items():
+            if skill not in KNOWN_SKILLS:
+                raise PackError(where + ": unknown skill '" + str(skill)[:40] + "' in skill_requirements.")
+            if isinstance(minimum, bool) or not isinstance(minimum, (int, float)) or not 0 <= minimum <= 300:
+                raise PackError(where + ": skill_requirements minimums must be numbers from 0 to 300.")
+            if skill in NSFW_SKILLS and not (event.get("nsfw") or choice.get("nsfw")):
+                raise PackError(where + ": requires the NSFW skill " + skill + "; mark the event or the choice \"nsfw\": true.")
+        condition = choice.get("condition")
+        if condition and condition not in KNOWN_SKILLS:
+            raise PackError(where + ": condition '" + str(condition)[:40] + "' is not a skill.")
+
+
+def _check_scripted_values(value, where):
+    """Reject the two JSON shapes the game evaluates as Python code."""
+    for node in _walk(value):
+        for key in ("start_when", "stop_when"):
+            if node.get(key) is not None:  # Authoring tools write null for "no condition".
+                _check_condition(node[key], where)
+        flags = node.get("event_flags")
+        if isinstance(flags, dict):
+            for flag, flag_value in flags.items():
+                if (isinstance(flag_value, str) and flag_value.startswith("[") and flag_value.endswith("]")
+                        and flag_value not in SAFE_FLAG_EXPRESSIONS):
+                    raise PackError(where + ": event flag '" + str(flag)[:60] + "' uses a [code] value, which packs cannot run.")
+
+
+def _rows(value, key, where):
+    if isinstance(value, dict):
+        value = value.get(key, [value]) if key else [value]
+    if not isinstance(value, list) or any(not isinstance(row, dict) for row in value):
+        raise PackError(where + ": expected a list of JSON objects.")
+    return value
+
+
+def _identifier(row, key, where):
+    value = row.get(key)
+    if not isinstance(value, str) or not value.strip() or len(value) > 200:
+        raise PackError(where + ": every entry needs a text '" + key + "'.")
+    return value
+
+
+def content_entries(kind, value, where):
+    """Normalise one content file to a list of entries for its kind."""
+    if kind == "traits":
+        return _rows(value, "traits", where)
+    if kind in ("events", "recruit"):
+        return _rows(value, None, where)
+    if isinstance(value, dict) and "daily_story_extensions" in value:
+        value = value["daily_story_extensions"]
+    return _rows(value, None, where)
+
+
+def _validate_content(content, catalog):
+    """Check identities, references and evaluated strings. Returns per-kind ids."""
+    catalog = catalog or {}
+    ids = {"traits": [], "events": [], "stories": []}
+    for kind, rows in content.items():
+        label = CONTENT_LABELS[kind]
+        for row in rows:
+            if kind == "traits":
+                ids["traits"].append(_identifier(row, "name", label))
+            elif kind in ("events", "recruit"):
+                event_id = _identifier(row, "id", label)
+                if kind == "events" and event_id.startswith("event_recruit_"):
+                    raise PackError("Event " + event_id + ": ids starting with event_recruit_ belong in data/events/recruit/.")
+                ids["events"].append(event_id)
+                _check_skill_requirements(row, kind)
+            else:
+                building, profession = row.get("building_id"), row.get("profession_id")
+                if not isinstance(building, str) or not isinstance(profession, str):
+                    raise PackError("Daily stories need building_id and profession_id.")
+                professions = catalog.get("professions")
+                if professions is not None and profession not in professions.get(building, ()):
+                    raise PackError("Daily stories target an unknown profession: " + building + "/" + profession)
+                if row.get("merge_mode", STORY_MERGE_MODE) != STORY_MERGE_MODE:
+                    raise PackError("Daily stories in character packs must use merge_mode \"append\"; they cannot replace the game's stories.")
+                stories = row.get("daily_stories")
+                if not isinstance(stories, list) or not stories or any(not isinstance(s, dict) for s in stories):
+                    raise PackError("Daily story extension for " + building + "/" + profession + " has no stories.")
+                ids["stories"].extend(_identifier(s, "id", "daily stories") for s in stories)
+            _check_scripted_values(row, label)
+    for kind, values in ids.items():
+        seen, taken = set(), set(catalog.get(kind, ()))
+        for value in values:
+            if value in seen:
+                raise PackError("Duplicate " + kind[:-1] + " in pack: " + value)
+            if value in taken:
+                raise PackError("This " + kind[:-1] + " already exists in the game or another pack: " + value)
+            seen.add(value)
+    return ids
+
+
+def game_catalog(files, read):
+    """Identifiers already used by game data. read(name) returns bytes.
+
+    Best effort: unreadable files are skipped, as the game's loaders do.
+    """
+    catalog = {"traits": set(), "events": set(), "stories": set(), "professions": {}}
+    def load(name):
+        try:
+            return json.loads(read(name).decode("utf-8-sig"))
+        except (OSError, ValueError, UnicodeError):
+            return None
+    for name in sorted(files):
+        if not name.endswith(".json") or not name.startswith("data/"):
+            continue
+        kind = content_kind(name)
+        value = load(name) if kind or name.startswith("data/buildings/") or name == "data/traits.json" else None
+        if value is None:
+            continue
+        try:
+            if kind is None and name.startswith("data/buildings/"):
+                for building in value.get("building_types", []):
+                    professions = catalog["professions"].setdefault(building.get("id"), set())
+                    for profession in building.get("professions", []):
+                        professions.add(profession.get("id"))
+                        catalog["stories"].update(s.get("id") for s in profession.get("daily_stories", []) if hasattr(s, "get"))
+            elif kind == "traits" or name == "data/traits.json":
+                catalog["traits"].update(t.get("name") for t in content_entries("traits", value, name) if t.get("name"))
+            elif kind in ("events", "recruit"):
+                catalog["events"].update(e.get("id") for e in value if hasattr(e, "get") and e.get("id"))
+            elif kind == "stories":
+                for entry in content_entries("stories", value, name):
+                    catalog["stories"].update(s.get("id") for s in entry.get("daily_stories", []) if hasattr(s, "get"))
+        except (AttributeError, TypeError, PackError):
+            continue
+    for kind in ("traits", "events", "stories"):
+        catalog[kind].discard(None)
+    return catalog
+
+
+def _taken_by_packs(root, exclude_id=None):
+    taken = {"traits": set(), "events": set(), "stories": set()}
+    for pack in installed_packs(root):
+        if pack["id"] != exclude_id:
+            for kind, values in (pack.get("content_ids") or {}).items():
+                if kind in taken and isinstance(values, list):
+                    taken[kind].update(v for v in values if isinstance(v, str))
+    return taken
+
+
+def check_pack_content(plan, root):
+    """Reject content ids another installed pack already uses."""
+    taken = _taken_by_packs(root, plan["id"])
+    for kind, values in plan.get("content_ids", {}).items():
+        clash = sorted(set(values) & taken.get(kind, set()))
+        if clash:
+            raise PackError("Another installed pack already uses these " + kind + ": " + ", ".join(clash[:5]))
+
+
+def _merge_catalog(catalog, taken):
+    merged = {key: set(value) if isinstance(value, (set, list)) else value for key, value in (catalog or {}).items()}
+    for kind, values in taken.items():
+        merged[kind] = set(merged.get(kind, ())) | values
+    return merged
+
+
+def _rewrite_references(value, names, folders):
+    """Keep pack content pointing at the pack's workers after install renames."""
+    def identity(raw, mapping):
+        if isinstance(raw, str):
+            return mapping.get(raw.strip(), raw)
+        if isinstance(raw, list):
+            return [identity(item, mapping) for item in raw]
+        return raw
+    def condition(text):
+        if not isinstance(text, str):
+            return text
+        parts = re.split(r"( AND | OR )", text)
+        for index, part in enumerate(parts):
+            prefix, sep, target = part.strip().partition(":")
+            mapping = names if prefix in ("has_worker", "not_has_worker") else folders if prefix in ("has_folder_worker", "not_has_folder_worker") else None
+            if sep and mapping and target.strip() in mapping:
+                parts[index] = part.replace(target, mapping[target.strip()], 1)
+        return "".join(parts)
+    for node in _walk(value):
+        if "worker_name" in node:
+            node["worker_name"] = identity(node["worker_name"], names)
+        if "specific_worker_images" in node:
+            node["specific_worker_images"] = identity(node["specific_worker_images"], folders)
+        for key in ("start_when", "stop_when"):
+            if key in node:
+                node[key] = condition(node[key])
+    return value
+
+
+def inspect_pack(path, catalog=None):
+    """catalog: identifiers from game_catalog(); None skips game-collision checks."""
     with Source(path) as source:
         prefix, json_files = _worker_files(source)
         workers, warnings = [], []
@@ -214,8 +491,23 @@ def inspect_pack(path):
                 dropped = set(row) - WORKER_FIELDS
                 if dropped:
                     warnings.append("Unrecognised worker fields omitted: " + ", ".join(sorted(dropped)))
-        if not workers or len(workers) > MAX_WORKERS:
-            raise PackError("A pack must contain between 1 and 1,000 workers.")
+        root_prefix = prefix + "/" if prefix else ""
+        content = {}
+        content_files = []
+        for name in sorted(source.entries):
+            if not name.startswith(root_prefix):
+                continue
+            kind = content_kind(name[len(root_prefix):])
+            if not kind:
+                continue
+            # Same structural checks as overrides: syntax, duplicate keys, ids.
+            value = _validate_override_json(name[len(root_prefix):], source.read(name, MAX_JSON))
+            content.setdefault(kind, []).extend(content_entries(kind, value, name))
+            content_files.append(name)
+        content = {kind: rows for kind, rows in content.items() if rows}
+        content_ids = _validate_content(content, catalog)
+        if len(workers) > MAX_WORKERS or not (workers or content):
+            raise PackError("A pack must contain up to 1,000 workers, or at least one event, trait or daily story.")
         names = [w["name"].casefold() for w in workers]
         if len(names) != len(set(names)):
             raise PackError("The pack contains duplicate worker names.")
@@ -241,15 +533,21 @@ def inspect_pack(path):
                         and re.fullmatch(r"profile(?:[ _-]?\d+| \(\d+\))?", PurePosixPath(i["relative"]).stem.lower())]
             if not profiles:
                 raise PackError("Missing profile.png/jpg/webp in images/workers/" + folder)
-        ignored = len(source.entries) - len(json_files) - len(images)
+        docs = [name for name in source.entries if DOC_FILE.fullmatch(PurePosixPath(name).name)]
+        ignored = len(source.entries) - len(json_files) - len(images) - len(content_files) - len(docs)
         if ignored:
-            warnings.append("%d extra file(s) excluded. Custom events, scripts and other content are not imported." % ignored)
-        canonical = json.dumps({"workers": workers, "images": [(i["relative"], i["sha256"]) for i in images]},
-                               sort_keys=True, ensure_ascii=False).encode("utf-8")
+            warnings.append("%d extra file(s) excluded: scripts, buildings, items and other files are not imported by character packs." % ignored)
+        identity = {"workers": workers, "images": [(i["relative"], i["sha256"]) for i in images]}
+        if content:
+            # Worker-only packs keep the identity they had before content support.
+            identity["content"] = content
+        canonical = json.dumps(identity, sort_keys=True, ensure_ascii=False).encode("utf-8")
         pack_id = "mod_" + hashlib.sha256(canonical).hexdigest()[:20]
+        content_bytes = len(json.dumps(content, ensure_ascii=False).encode("utf-8")) if content else 0
         return {"id": pack_id, "source": str(source.path), "title": source.path.stem,
                 "workers": workers, "images": images, "warnings": sorted(set(warnings)),
-                "bytes": sum(i["size"] for i in images)}
+                "content": content, "content_ids": content_ids,
+                "bytes": sum(i["size"] for i in images) + content_bytes}
 
 
 def installed_packs(root):
@@ -283,10 +581,12 @@ def installed_packs(root):
             if manifest.get("format") != 1:
                 continue
             names = manifest.get("worker_names")
+            content = manifest.get("content", [])
             if (not isinstance(manifest.get("title"), str) or
-                    not isinstance(names, list) or not 1 <= len(names) <= MAX_WORKERS or
+                    not isinstance(names, list) or not len(names) <= MAX_WORKERS or
                     any(not isinstance(name, str) or not name for name in names) or
-                    manifest.get("workers") != len(names)):
+                    manifest.get("workers") != len(names) or not _valid_content_manifest(content) or
+                    not (names or content)):
                 continue
             marker = directory / REMOVE_MARKER
             pending = marker.exists() and not _is_link(marker) and marker.is_file()
@@ -377,11 +677,28 @@ def finish_uninstalls(root):
     return errors
 
 
-def install_pack(plan, root, reserved_names=(), rename_conflicts=False):
+def _content_path(kind, pack_id):
+    return CONTENT_FOLDERS[kind] + pack_id + ".json"
+
+
+def _valid_content_manifest(content):
+    if not isinstance(content, list) or len(content) > len(CONTENT_FOLDERS):
+        return False
+    seen = set()
+    for entry in content:
+        if not isinstance(entry, dict) or entry.get("kind") not in CONTENT_FOLDERS or entry["kind"] in seen:
+            return False
+        if not isinstance(entry.get("sha256"), str) or not re.fullmatch("[0-9a-f]{64}", entry["sha256"]):
+            return False
+        seen.add(entry["kind"])
+    return True
+
+
+def install_pack(plan, root, reserved_names=(), rename_conflicts=False, catalog=None):
     """Stage completely, then publish a new directory atomically. Never overwrite."""
     root = disk_path(root)
     root.mkdir(parents=True, exist_ok=True)
-    fresh = inspect_pack(plan["source"])
+    fresh = inspect_pack(plan["source"], _merge_catalog(catalog, _taken_by_packs(root, plan["id"])))
     if fresh["id"] != plan["id"]:
         raise PackError("The source changed after preview. Please inspect it again.")
     target = root / fresh["id"]
@@ -402,8 +719,7 @@ def install_pack(plan, root, reserved_names=(), rename_conflicts=False):
     stage = Path(tempfile.mkdtemp(prefix=".install-", dir=str(root)))
     try:
         content = stage / "content"
-        worker_dir = content / "data/workers"
-        worker_dir.mkdir(parents=True)
+        content.mkdir()
         workers = []
         renamed = []
         for worker in fresh["workers"]:
@@ -421,7 +737,23 @@ def install_pack(plan, root, reserved_names=(), rename_conflicts=False):
             taken.add(worker["name"].casefold())
             worker["folder"] = fresh["id"] + "__" + worker["folder"]
             workers.append(worker)
-        (worker_dir / (fresh["id"] + ".json")).write_text(json.dumps(workers, ensure_ascii=False, indent=2), encoding="utf-8")
+        if workers:
+            worker_dir = content / "data/workers"
+            worker_dir.mkdir(parents=True)
+            (worker_dir / (fresh["id"] + ".json")).write_text(json.dumps(workers, ensure_ascii=False, indent=2), encoding="utf-8")
+        names = {entry["original"]: entry["imported"] for entry in renamed}
+        folders = {original["folder"]: worker["folder"] for original, worker in zip(fresh["workers"], workers)}
+        content_manifest = []
+        for kind, rows in sorted(fresh["content"].items()):
+            rows = _rewrite_references(json.loads(json.dumps(rows)), names, folders)
+            if kind == "stories":
+                rows = {"daily_story_extensions": [dict(row, merge_mode=STORY_MERGE_MODE) for row in rows]}
+            data = json.dumps(rows, ensure_ascii=False, indent=2).encode("utf-8")
+            destination = content / _content_path(kind, fresh["id"])
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(data)
+            content_manifest.append({"kind": kind, "sha256": hashlib.sha256(data).hexdigest(),
+                                     "count": content_count(kind, fresh["content"][kind])})
         with Source(fresh["source"]) as source:
             for entry in fresh["images"]:
                 data = source.read(entry["source"])
@@ -432,7 +764,8 @@ def install_pack(plan, root, reserved_names=(), rename_conflicts=False):
                 destination.write_bytes(data)
         manifest = {"format": 1, "id": fresh["id"], "title": fresh["title"],
                     "worker_names": [w["name"] for w in workers], "workers": len(workers),
-                    "images": len(fresh["images"]), "bytes": fresh["bytes"], "warnings": fresh["warnings"], "renamed": renamed}
+                    "images": len(fresh["images"]), "bytes": fresh["bytes"], "warnings": fresh["warnings"], "renamed": renamed,
+                    "content": content_manifest, "content_ids": fresh["content_ids"]}
         (stage / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         # The directory is only visible to startup discovery once complete.
         stage.rename(target)
@@ -468,14 +801,23 @@ def mount_paths(root):
                 continue
             with Source(content) as source:
                 allowed_json = "data/workers/" + pack["id"] + ".json"
-                if allowed_json not in source.entries:
+                expected = {_content_path(entry["kind"], pack["id"]): entry for entry in pack.get("content", [])}
+                if (allowed_json in source.entries) != bool(pack["workers"]):
                     continue
-                if any(name != allowed_json and not (
+                if any(name != allowed_json and name not in expected and not (
                         name.startswith("images/workers/" + pack["id"] + "__") and
                         PurePosixPath(name).suffix.lower() in IMAGE_EXTENSIONS)
                         for name in source.entries):
                     continue
-                rows = json.loads(source.read(allowed_json, MAX_JSON).decode("utf-8"))
+                if not set(expected) <= set(source.entries):
+                    continue
+                for name, entry in expected.items():
+                    data = source.read(name, MAX_JSON)
+                    if hashlib.sha256(data).hexdigest() != entry["sha256"]:
+                        raise PackError("Installed pack content changed: " + name)
+                    value = _validate_override_json(name, data)
+                    _validate_content({entry["kind"]: content_entries(entry["kind"], value, name)}, None)
+                rows = json.loads(source.read(allowed_json, MAX_JSON).decode("utf-8")) if pack["workers"] else []
                 if not isinstance(rows, list) or len(rows) != pack["workers"]:
                     continue
                 folders = set()
@@ -536,7 +878,7 @@ def _validate_override_json(path, data):
     try:
         value = json.loads(data.decode("utf-8-sig"), parse_constant=reject_constant, parse_float=finite_float, object_pairs_hook=unique_keys)
     except (ValueError, UnicodeError, RecursionError) as exc:
-        raise PackError("Invalid override JSON: " + path) from exc
+        raise PackError("Invalid JSON (syntax error or a key written twice): " + path) from exc
     category = override_category(path)
     if category == "Monthly conditions":
         from fm_monthly.conditions import validate_catalog
@@ -557,7 +899,7 @@ def _validate_override_json(path, data):
     else:
         rows = value
     if not category or not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
-        raise PackError("Unexpected catalog structure: " + path)
+        raise PackError("Unexpected JSON structure: " + path)
     if category != "Daily stories":
         key = "name" if category in ("Workers", "Traits") else "id"
         # Shipped procedural monster templates intentionally have no name.
@@ -611,7 +953,8 @@ def inspect_override_pack(path, known_files):
         canonical = json.dumps([(f["path"], f["sha256"]) for f in files], ensure_ascii=False).encode("utf-8")
         warnings = ["Whole JSON files are replaced; missing entries are not inherited from the original file.",
                     "Use a new game. Keep the same packs installed for that playthrough. Gameplay compatibility is the mod author's responsibility."]
-        ignored = len(source.entries) - len(files)
+        docs = [name for name in source.entries if DOC_FILE.fullmatch(PurePosixPath(name).name)]
+        ignored = len(source.entries) - len(files) - len(docs)
         if ignored:
             warnings.append("%d other file(s) excluded. This mode imports JSON only, not images or scripts." % ignored)
         return {"id": "mod_" + hashlib.sha256(b"override-v1\0" + canonical).hexdigest()[:20],

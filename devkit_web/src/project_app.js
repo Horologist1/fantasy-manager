@@ -1,7 +1,7 @@
 import { TYPES } from './lib/content_types.js';
 import { loadBundledReference, readGameReference } from './lib/reference.js';
 import { createProject, restoreProject, PROJECT_MODES, rowsFor, identityFor, projectFilename } from './lib/project.js';
-import { categoryFor, supportsOverride, parseJSON, LIMITS, WORKER_FIELDS, characterErrors } from './lib/contract.js';
+import { categoryFor, supportsOverride, parseJSON, LIMITS, WORKER_FIELDS, characterErrors, CHARACTER_CONTENT, scriptSafetyErrors } from './lib/contract.js';
 import { validateEntry, validateDailyStoryTarget } from './lib/validator.js';
 import { runRecipe } from './recipes/_engine.js';
 import { runEditor } from './editors/_engine.js';
@@ -63,6 +63,7 @@ export async function startDevkit() {
     const ctx = project.context();
     const result = validateEntry(entry, type.schema, ctx);
     if (project.mode === 'characters' && type.id === 'workers') result.errors.push(...characterErrors(entry).map(message=>({field:'Character pack',message})));
+    if (project.mode === 'characters' && type.id !== 'workers') result.errors.push(...scriptSafetyErrors(entry).map(message=>({field:'Character pack',message})));
     if (target) result.errors.push(...validateDailyStoryTarget(target, ctx));
     return result;
   }
@@ -102,9 +103,9 @@ export async function startDevkit() {
     for (const [value,label] of Object.entries(PROJECT_MODES)) mode.append(el('option', {value, selected:project.mode === value}, label));
     panel.append(el('label', {class:'project-field'}, 'Mod name', name), el('label', {class:'project-field'}, 'Project mode', mode));
     const descriptions = {
-      characters:'Add regular characters and their pictures. Export one ZIP for Mods → Install mods on PC or Android.',
+      characters:'Add regular characters and their pictures, plus optional new traits, events and daily stories. Export one ZIP for Mods → Install mods on PC or Android, or drag its game folder onto a PC installation.',
       override:'Edit a copy of an existing catalog. The ZIP replaces each included file in full. Use a new game; images and scripts are not imported.',
-      manual:'Advanced PC workflow. Export files for manual installation. This mode is not supported by the in-game Mods installer.',
+      manual:'Advanced PC workflow. Export a game folder for manual installation. This mode is not supported by the in-game Mods installer.',
     };
     panel.append(el('p', {}, descriptions[project.mode]));
     panel.append(el('p', {class:'muted'}, 'Original game files stay unchanged. Save a draft to continue editing later; Export ZIP creates the installable pack.'));
@@ -135,19 +136,20 @@ export async function startDevkit() {
     if (project.mode !== 'override') app.append(button('Manage character images', imagePage, {'data-action':'images'}));
 
     for (const type of TYPES) {
-      if (project.mode === 'characters' && type.id !== 'workers') continue;
+      const characterType = type.id === 'workers' || CHARACTER_CONTENT.includes(type.id);
+      if (project.mode === 'characters' && !characterType) continue;
       if (project.mode === 'override' && type.id === 'interactions') continue;
       const group = el('section', {class:'type-group', 'data-type':type.id});
-      group.append(el('h2', {}, type.title), el('p', {class:'muted'}, project.mode === 'characters' ? 'Regular named characters with their own image folders.' : type.blurb));
+      group.append(el('h2', {}, type.title), el('p', {class:'muted'}, project.mode === 'characters' && type.id === 'workers' ? 'Regular named characters with their own image folders.' : type.blurb));
       const actions = el('div', {class:'type-actions'});
       for (const recipe of type.recipes) {
-        if (project.mode === 'characters' && recipe.id !== 'unique_worker') continue;
+        if (project.mode === 'characters' && type.id === 'workers' && recipe.id !== 'unique_worker') continue;
         actions.append(button('＋ '+recipe.title, () => startRecipe(type, recipe), {title:recipe.description}));
       }
-      actions.append(button(project.mode === 'characters' ? 'Edit project workers' : 'Edit existing…', () => pick('Choose a file to edit', fileChoices(type).map(path => ({key:path,label:path})), choice => openFile(type, choice.key))));
+      actions.append(button(project.mode === 'characters' ? (type.id === 'workers' ? 'Edit project workers' : 'Edit project entries') : 'Edit existing…', () => pick('Choose a file to edit', fileChoices(type).map(path => ({key:path,label:path})), choice => openFile(type, choice.key))));
       group.append(actions); app.append(group);
     }
-    if (project.mode === 'characters') app.append(el('p', {class:'muted'}, 'Procedural templates, monsters, custom traits and events need a separate supported override or manual PC project.'));
+    if (project.mode === 'characters') app.append(el('p', {class:'muted'}, 'Traits, events and daily stories in a character pack must be new (new names and IDs); daily stories are added to existing jobs. Procedural templates, monsters, items, buildings, interactions and monthly conditions need a separate override or manual PC project.'));
     if (project.mode !== 'override') {
       const tools = el('section', {class:'type-group'});
       tools.append(el('h2', {}, 'Tools'), button('Whoremaster importer', wmImport), button('GIF → WebM (PC file tool)', () => {
@@ -157,7 +159,7 @@ export async function startDevkit() {
     if (project.mode !== 'override') {
       const imported = fileInput('.json', async ([file]) => {
         const data = await readFile(file);
-        pick('What kind of JSON is this?', TYPES.filter(t => project.mode !== 'characters' || t.id === 'workers').map(t=>({key:t.id,label:t.title})), choice=>{
+        pick('What kind of JSON is this?', TYPES.filter(t => project.mode !== 'characters' || t.id === 'workers' || CHARACTER_CONTENT.includes(t.id)).map(t=>({key:t.id,label:t.title})), choice=>{
           const type=TYPES.find(t=>t.id===choice.key);
           project.importJSON(type.id === 'monthly_conditions' ? 'data/monthly_conditions/cards.json' : 'data/'+type.folder+'/'+file.name,data); landing(); message('JSON added as a draft. Review the pack before exporting.');
         });
@@ -273,7 +275,7 @@ export async function startDevkit() {
       if (busy) return; busy = true;
       try {
         const pack = project.exportPack(); download(pack.bytes,pack.filename,'application/zip');
-        message(project.mode === 'manual' ? 'ZIP downloaded for manual PC installation. See the guide before copying files.' : 'ZIP downloaded. Open Mods → Install mods in the game'+(project.mode === 'override' ? ', enable JSON override, then select this ZIP.' : ' and select this ZIP. Leave JSON override off.'));
+        message(project.mode === 'manual' ? 'ZIP downloaded for manual PC installation. Read README.txt inside the ZIP before copying files.' : 'ZIP downloaded. Open Mods → Install mods in the game'+(project.mode === 'override' ? ', enable JSON override, then select this ZIP.' : ' and select this ZIP. Leave JSON override off. README.txt inside the ZIP also explains manual installation.'));
       } finally { busy = false; }
     }, {disabled:result.errors.length > 0, 'data-action':'export-pack'}), button('Back to project', landing));
     app.append(el('p', {class:'muted'}, 'Acceptance by the installer checks the pack format. Test custom events and gameplay in a new game before sharing.'));

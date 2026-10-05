@@ -3559,8 +3559,10 @@ screen choose_event_worker_screen(eligible_workers):
             if "condition" in store.chosen_choice_data and store.chosen_choice_data["condition"] not in ["building_skill", None]:
                 condition_skill = str(store.chosen_choice_data["condition"])
         
+        # A guaranteed choice (skill_requirements, no roll) shows its requirements instead.
+        _guaranteed_choice = bool(getattr(store, "chosen_choice_data", None)) and event_choice_is_guaranteed(store.chosen_choice_data)
         # If we didn't find a skill in the chosen choice, check all choices in the event
-        if not condition_skill and hasattr(store, "current_event") and store.current_event and "choices" in store.current_event:
+        if not condition_skill and not _guaranteed_choice and hasattr(store, "current_event") and store.current_event and "choices" in store.current_event:
             for choice in store.current_event["choices"]:
                 if "condition" in choice and choice["condition"] not in ["building_skill", None]:
                     condition_skill = str(choice["condition"])
@@ -3631,6 +3633,14 @@ screen choose_event_worker_screen(eligible_workers):
                                     textbutton "[worker['name']!q] - [skill_label!q]":
                                         xsize 640  # Wider buttons for longer text
                                         text_size font_size(25)  # Increased by 5 points
+                                        text_color gui.journal_text_color
+                                        text_hover_color gui.journal_hover_color
+                                        action Return(worker)
+                                elif _guaranteed_choice:
+                                    $ skill_label = event_worker_requirements_label(worker, store.chosen_choice_data)
+                                    textbutton "[worker['name']!q] - [skill_label!q]":
+                                        xsize 640
+                                        text_size font_size(25)
                                         text_color gui.journal_text_color
                                         text_hover_color gui.journal_hover_color
                                         action Return(worker)

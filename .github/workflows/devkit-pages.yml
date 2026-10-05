@@ -13,6 +13,7 @@ on:
       - 'devkit_web/**'
       - 'game/data/**'
       - 'game/python-packages/fm_mods/**'
+      - 'user_docs/templates/character_pack/**'
       - 'game/scripts/core/options.rpy'
       - '.github/workflows/devkit-pages.yml'
   workflow_dispatch:
@@ -57,6 +58,8 @@ jobs:
         working-directory: devkit_web
       - name: Build field guide from game data
         run: python devkit_web/field_guide/build_field_guide.py --out _site/guide/index.html
+      - name: Zip the example character pack linked from the guide
+        run: cd user_docs/templates/character_pack && zip -r -X ../../../_site/guide/mira_example_pack.zip README.txt game
       - name: Assemble site
         run: |
           # The app lives under /devkit/ and the player/modder guide under /guide/ ;

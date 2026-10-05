@@ -164,6 +164,18 @@ test('skill choice without threshold warns', () => {
   assert.ok(r.warnings.find((x) => x.rule === 'skill_choice_needs_threshold'));
 });
 
+test('skill_requirements: valid map passes, bad skill / no worker / NSFW skill error', () => {
+  const ok = validEvent();
+  ok.choices[0].skill_requirements = { Combat: 70, Agility: 55 };
+  assert.deepEqual(validateEntry(ok, event_schema, ctx()).errors, []);
+  const bad = (mut) => { const e = validEvent(); e.choices[0].skill_requirements = { Combat: 70 }; mut(e); return validateEntry(e, event_schema, ctx()).errors.map((x) => x.rule); };
+  assert.ok(bad((e) => { e.choices[0].skill_requirements = { Cooking: 40 }; }).includes('skill_requirements_skills_exist'));
+  assert.ok(bad((e) => { e.worker_selection = 'none'; }).includes('skill_requirements_need_worker'));
+  assert.ok(bad((e) => { e.choices[0].condition = 'building_skill'; }).includes('skill_requirements_need_worker'));
+  assert.ok(bad((e) => { e.choices[0].skill_requirements = { Sex: 40 }; e.nsfw = false; }).includes('skill_requirements_nsfw'));
+  assert.equal(bad((e) => { e.choices[0].skill_requirements = { Sex: 40 }; e.nsfw = true; }).includes('skill_requirements_nsfw'), false);
+});
+
 test('worker_gender_requirement on pool event is accepted', () => {
   const e = { ...validEvent(), worker_gender_requirement: 'female' };
   const r = validateEntry(e, event_schema, ctx());

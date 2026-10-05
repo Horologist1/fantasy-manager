@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Starborn",
+    "only_assigned": true,
+    "description": "Guided by the stars. [+5 Agility, +3 Clever]",
+    "modifiers": {
+      "skill_modifiers": {
+        "Agility": 5,
+        "Clever": 3
+      }
+    }
+  },
+  {
+    "name": "Trailblazer",
+    "only_assigned": true,
+    "description": "Earned on the high roads. [+1 Energy Regen, +6 Agility]",
+    "modifiers": {
+      "energy_regeneration": 1,
+      "skill_modifiers": {
+        "Agility": 6
+      }
+    }
+  }
+]

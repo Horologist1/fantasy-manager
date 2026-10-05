@@ -6,11 +6,14 @@ from . import android_picker
 
 from .packs import (Source, PackError, inspect_pack, install_pack, installed_packs,
                     mount_paths, schedule_uninstall, finish_uninstalls,
-                    inspect_override_pack, install_override_pack)
+                    inspect_override_pack, install_override_pack, game_catalog,
+                    CONTENT_LABELS, CONTENT_SINGULAR, check_pack_content, content_count)
 
 _root = None
 _reserved_names = []
 _known_files = set()
+_catalog = None
+_catalog_reader = None
 _mounted_ids = set()
 _startup_ids = set()
 _plan = None
@@ -88,7 +91,7 @@ def _scan_files(add, seen):
 
 
 def bootstrap(renpy):
-    global _root, _reserved_names, _known_files, _mounted_ids, _startup_ids, _plan, _state, _files, _previous_open, _previous_loadable
+    global _root, _reserved_names, _known_files, _catalog, _catalog_reader, _mounted_ids, _startup_ids, _plan, _state, _files, _previous_open, _previous_loadable
     _root = str(Path(renpy.config.savedir) / "character_mods")
     _reserved_names = []
     _plan = None
@@ -111,6 +114,11 @@ def bootstrap(renpy):
                 _reserved_names.extend(w["name"] for w in rows if hasattr(w, "get") and isinstance(w.get("name"), str))
             except (OSError, ValueError, TypeError):
                 continue
+    def read(name):
+        with renpy.file(name) as handle:
+            return handle.read()
+    # Built on first import, not at startup: only importing needs it.
+    _catalog, _catalog_reader = None, read
     paths = mount_paths(_root)
     installed = installed_packs(_root)
     _startup_ids = {pack["id"] for pack in installed if not pack["pending_uninstall"]}
@@ -151,10 +159,37 @@ def state():
     return _state
 
 
+def _game_catalog():
+    """Identifiers in the game's own data (packs are checked via manifests)."""
+    global _catalog
+    if _catalog is None and _catalog_reader is not None:
+        _catalog = game_catalog(_known_files, _catalog_reader)
+    return _catalog
+
+
+def content_summary(content):
+    """'3 events / 2 traits' for the preview and the installed list."""
+    counts = [(kind, content_count(kind, rows)) for kind, rows in sorted(content.items()) if rows]
+    return " / ".join(_count_label(kind, count) for kind, count in counts)
+
+
+def _count_label(kind, count):
+    return "%d %s" % (count, (CONTENT_SINGULAR if count == 1 else CONTENT_LABELS).get(kind, "files"))
+
+
 def refresh():
     packs = installed_packs(_root) if _root else []
     _state["installed"] = [dict(pack, active=pack["id"] in _mounted_ids,
+                                summary=_installed_summary(pack),
                                 restart_required=pack["id"] not in _startup_ids) for pack in packs]
+
+
+def _installed_summary(pack):
+    workers = pack.get("workers", 0)
+    parts = ["%d character%s" % (workers, "" if workers == 1 else "s")] if workers else []
+    for entry in pack.get("content", []):
+        parts.append(_count_label(entry.get("kind"), entry.get("count", 0)))
+    return " / ".join(parts)
 
 
 def default_folder():
@@ -215,7 +250,8 @@ def _preview_job(source):
                                  "mb": round(_plan["bytes"] / 1048576, 1), "warnings": warnings, "conflicts": []}
             _state["message"] = "Review the full-file replacements below. The last installed override wins for matching paths."
             return
-        _plan = inspect_pack(source)
+        _plan = inspect_pack(source, _game_catalog())
+        check_pack_content(_plan, _root)
         conflicts = set(n.casefold() for n in _reserved_names)
         for pack in installed_packs(_root):
             if pack["id"] != _plan["id"]:
@@ -224,6 +260,7 @@ def _preview_job(source):
         _state["preview"] = {"title": _plan["title"], "workers": len(_plan["workers"]),
                              "images": len(_plan["images"]), "mb": round(_plan["bytes"] / 1048576, 1),
                              "names": ", ".join(w["name"] for w in _plan["workers"]),
+                             "content": content_summary(_plan["content"]),
                              "warnings": _plan["warnings"], "conflicts": collisions}
         _state["message"] = ("Overlapping names: " + ", ".join(collisions) + ". The import button will keep both by adding a Mod suffix to these imported names.") if collisions else "Pack checked. Review it before installing."
     except Exception as exc:
@@ -248,7 +285,7 @@ def _install_job(rename_conflicts=False):
         if override:
             result = install_override_pack(_plan, _root, _known_files)
         else:
-            result = install_pack(_plan, _root, _reserved_names, rename_conflicts=rename_conflicts)
+            result = install_pack(_plan, _root, _reserved_names, rename_conflicts=rename_conflicts, catalog=_game_catalog())
         _state["message"] = ("This pack is already installed." if result == "already_installed" else
                              "Installed. Close and reopen the game, then start a new game for these overrides." if override else
                              "Installed. Close and reopen the game to activate the pack, then load your save.")

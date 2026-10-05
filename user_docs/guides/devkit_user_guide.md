@@ -1,5 +1,15 @@
 # Fantasy Manager Devkit — User guide
 
+## Quick guide: a character pack in 5 steps
+
+1. Keep the project mode on Character pack and type a mod name at the top of the page.
+2. Under Workers, choose ＋ Unique Worker, answer the questions and choose Save to project. Give the character a plain-text name and a short image folder such as mira_storm.
+3. Choose Manage character images, then Choose portrait for each character. Add other PNG, JPG or WebP pictures with Add other images.
+4. Optional: add new traits, events, recruitment events or daily stories with the assistants in the other sections (see “Adding events, traits and daily stories to a character pack” below).
+5. Choose Save draft to keep an editable copy, then Review & export ZIP. Fix every error and choose Export ZIP. Players install the ZIP from the game’s Mods → Install mods, or extract it and drag its game folder onto the game’s main folder. README.txt inside the ZIP explains both methods.
+
+
+
 ## Create and install mods
 
 The devkit edits a separate project. It never writes to your original game files. The bundled reference includes the game version shown at the top of the page; you can create a pack without selecting a game folder.
@@ -8,11 +18,77 @@ Save draft downloads an editable .fmproject.json file containing your project an
 
 ## Choose the right project mode
 
-Character pack adds regular named characters and their images. It supports the in-game installer on PC and Android. Procedural templates, monsters, custom traits, recruitment-only logic and custom events are outside this mode.
+Character pack adds regular named characters and their images, plus optional new traits, events, recruitment events and daily stories for existing jobs. It supports the in-game installer on PC and Android, and manual drag & drop on PC. Procedural templates, monsters, items, buildings, interactions and monthly conditions are outside this mode.
 
 JSON override (experimental) starts from existing game files. Each file in the exported ZIP replaces that complete original file, at the same data/... path. Other entries and unknown fields in the copied file are retained when you edit one entry. Images, scripts and Interactions are not imported in this mode.
 
-Manual JSON files (PC only) keeps the advanced authoring tools for content outside the managed importer. Its ZIP is for manual installation into a backed-up PC game. Do not select this mode for the Android Mods installer.
+Manual JSON files (PC only) keeps the advanced authoring tools for content outside the managed importer. Its ZIP contains a game folder for manual installation into a backed-up PC game. Do not select this mode for the Android Mods installer.
+
+## What is inside an exported character pack
+
+Every file of a character pack sits under a top-level game folder, for example game/data/workers/mira.json and game/images/workers/mira_storm/profile.png. A README.txt at the top of the ZIP lists the contents and explains how to install and uninstall the pack.
+
+The same ZIP works in two ways. In the game, Mods → Install mods reads the ZIP directly (leave Import as JSON override off) and ignores README, LICENSE, CHANGELOG and CREDITS text files. On PC you can instead extract the ZIP and drag the game folder onto the game’s main folder (the folder that contains Fantasy_Manager.exe), merging folders. A character pack only adds new files, so it never replaces original game files; the devkit refuses project file names that already exist in the game.
+
+Use only one method for a pack. Installing it both ways loads the same content twice. To remove a pack installed in the game, use Uninstall in Mods → Install mods. To remove a manual install, delete the files listed in README.txt.
+
+JSON override ZIPs keep data/... paths without a game folder. Install them only through Mods → Install mods with Import as JSON override enabled; never drag & drop them, because each file would replace an original game file.
+
+## Adding events, traits and daily stories to a character pack
+
+A character pack can carry these JSON files next to its workers: data/traits/*.json (new traits), data/events/*.json (daily and story events), data/events/recruit/*.json (recruitment events) and data/buildings/daily_story_extensions/*.json (new daily stories for existing jobs). A pack may even have no workers at all, for example new events for base-game characters.
+
+Everything must be new. Trait names, event IDs and daily story IDs must not exist in the game already and must not repeat inside the pack. Daily and recruitment events share one ID list. Daily event IDs must not start with event_recruit_, because the game keeps those out of the daily event pool; put recruitment events in data/events/recruit/.
+
+Daily stories are always added to a job: building_id and profession_id must name an existing building and job, and the devkit writes merge_mode "append" for you. Character packs cannot use "upsert" or "replace_all" to change the game’s own stories; use a JSON override for that.
+
+Conditions (start_when and stop_when) may only combine, with AND or OR: True, False, a prefixed condition (has_flag:, flag_value:, after_days_from_flag:, exact_date:, has_worker:, not_has_worker:, has_folder_worker:, not_has_folder_worker:, after_date:, before_days:, after_days:), or a simple comparison such as money >= 500 or store.current_objective == 7. Brackets, parentheses, function calls and double underscores are rejected, because the game would run them as code.
+
+Event flag values (event_flags) must be plain values such as true, numbers or text. The only allowed [code] value is "[calculate_total_days()]": it stores today’s day number so a later event can wait with after_days_from_flag:<flag>,<days>. Any other value written in square brackets is rejected.
+
+Refer to your own characters by their exact name (worker_name, has_worker:Mira Storm) and image folder (has_folder_worker:mira_storm, specific_worker_images). If the game has to rename a pack character because the name is already taken, the installer updates these references for you.
+
+Items, buildings, interactions and monthly conditions cannot go into a character pack. Create them in a JSON override or manual PC project. A complete example pack (Mira) is published in user_docs/templates/character_pack.
+
+Minimal example: a two-step chain for the pack character Mira Storm. The first event fires once she works for you; its choice sets a flag and a day stamp; the second event waits three days after the first.
+
+```json
+[
+  {
+    "id": "mira_storm_first_visit",
+    "description": "Mira Storm waits by the door, rain still dripping from her cloak.",
+    "worker_name": "Mira Storm",
+    "worker_selection": "random",
+    "weight": 5,
+    "excluded_flags": {"mira_storm_met": true},
+    "conditions": {"start_when": "has_worker:Mira Storm"},
+    "choices": [
+      {
+        "option": "Offer her a seat by the fire",
+        "message": "She smiles for the first time since she arrived.",
+        "effect": {"event_flags": {"mira_storm_met": true, "mira_storm_met_at": "[calculate_total_days()]"}}
+      }
+    ]
+  },
+  {
+    "id": "mira_storm_second_visit",
+    "description": "Three days later, Mira Storm brings you a small gift.",
+    "worker_name": "Mira Storm",
+    "worker_selection": "random",
+    "weight": 5,
+    "required_flags": {"mira_storm_met": true},
+    "excluded_flags": {"mira_storm_thanked": true},
+    "conditions": {"start_when": "has_worker:Mira Storm AND after_days_from_flag:mira_storm_met_at,3"},
+    "choices": [
+      {
+        "option": "Thank her",
+        "message": "Mira Storm nods, pleased.",
+        "effect": {"event_flags": {"mira_storm_thanked": true}}
+      }
+    ]
+  }
+]
+```
 
 ## Make your first character pack
 
@@ -65,7 +141,7 @@ The Whoremaster importer uses a compatible desktop browser to read the source fo
 
 The GIF → WebM tool is a separate PC file conversion tool. It writes converted files beside the selected GIFs and downloads its converter on first use. Its WebM output is for manual PC use, not for the current managed character importer.
 
-Manual PC installation: back up the game and saves, unpack the manual ZIP into a separate folder, inspect its data/... and images/... paths, then copy only the intended files into the game folder. Files with matching paths replace existing files. Start a new game for testing. Managed Mods → Uninstall cannot remove files installed by hand.
+Manual PC installation of a Manual JSON files ZIP: back up the game and saves, unpack the ZIP into a separate folder, inspect the files inside its game folder, then drag the game folder onto the game’s main folder. Files with matching paths replace existing files. Start a new game for testing. Managed Mods → Uninstall cannot remove files installed by hand; README.txt lists the files to delete.
 
 ## Understand the checks and common errors
 

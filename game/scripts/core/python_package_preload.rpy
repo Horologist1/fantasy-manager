@@ -8,6 +8,7 @@ init -1 python hide:
     import fm_events.building_policy
     import fm_events.earnings
     import fm_events.manager_gating
+    import fm_events.skill_requirements
     import fm_franchise.holdings
     import fm_lanista.arena_feedback
     import fm_lifecycle.rules

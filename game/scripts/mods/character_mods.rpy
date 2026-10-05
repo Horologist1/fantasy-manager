@@ -125,9 +125,9 @@ screen character_mods():
                 vbox:
                     spacing 20
                     if renpy.android:
-                        text "Choose a mod ZIP from Downloads or another document provider. The game copies it to its own storage. Normal imports add characters and images; restart to activate installed packs." size font_size(24) color gui.journal_text_color xmaximum 1240
+                        text "Choose a mod ZIP from Downloads or another document provider. The game copies it to its own storage. Normal imports add characters, images, events, traits and daily stories; restart to activate installed packs." size font_size(24) color gui.journal_text_color xmaximum 1240
                     else:
-                        text "Import a ZIP or an unpacked folder. Normal imports add characters and images. Packs are kept separately from the game and become available after restarting." size font_size(24) color gui.journal_text_color xmaximum 1240
+                        text "Import a ZIP or an unpacked folder. Normal imports add characters, images, events, traits and daily stories. Packs are kept separately from the game and become available after restarting." size font_size(24) color gui.journal_text_color xmaximum 1240
                     if renpy.ios or renpy.emscripten:
                         text "File import is currently available on desktop." size font_size(24) color gui.journal_text_color
                     elif main_menu:
@@ -162,8 +162,11 @@ screen character_mods():
                                 text "[path!q]" size font_size(22) color gui.journal_text_color xmaximum 1240
                         else:
                             text "[preview['workers']] characters / [preview['images']] images / [preview['mb']] MB" size font_size(24) color gui.journal_text_color
-                            text "[preview['names']!q]" size font_size(22) color gui.journal_text_color xmaximum 1240
-                            text "Characters use the normal market/recruitment rules and your content filters. Custom recruitment scenes are excluded." size font_size(22) color gui.journal_text_color xmaximum 1240
+                            if preview["names"]:
+                                text "[preview['names']!q]" size font_size(22) color gui.journal_text_color xmaximum 1240
+                            if preview.get("content"):
+                                text "Also adds: [preview['content']!q]" size font_size(22) color gui.journal_text_color xmaximum 1240
+                            text "Everything follows your content filters. New events and stories never replace the game's own." size font_size(22) color gui.journal_text_color xmaximum 1240
                         for warning in preview["warnings"]:
                             text "[warning!q]" size font_size(22) color gui.journal_text_color xmaximum 1240
                         textbutton ("Install JSON override" if preview.get("mode") == "override" else "Install and keep both versions of overlapping names" if preview["conflicts"] else "Install this pack"):
@@ -180,7 +183,7 @@ screen character_mods():
                         if pack.get("mode") == "override":
                             text "[pack['title']!q] - JSON override (priority [pack['load_order']])" size font_size(24) color gui.journal_text_color xmaximum 1240
                         else:
-                            text "[pack['title']!q] - [pack['workers']] characters" size font_size(24) color gui.journal_text_color xmaximum 1240
+                            text "[pack['title']!q] - [pack['summary']!q]" size font_size(24) color gui.journal_text_color xmaximum 1240
                         text ("Uninstall scheduled: restart required" if pack["pending_uninstall"] else "Active" if pack["active"] else "Restart required" if pack["restart_required"] else "Unavailable: installation is incomplete or invalid") size font_size(22) color gui.journal_text_color
                         textbutton ("Cancel uninstall" if pack["pending_uninstall"] else "Uninstall"):
                             id ("mod_uninstall_" + pack["id"])
@@ -252,7 +255,7 @@ screen character_mod_uninstall_confirm(pack):
             if pack.get("mode") == "override":
                 text "The original files or earlier overrides will be used again. Start a new game afterwards: existing saves are not adapted. Your original ZIP or folder is kept." size font_size(24) color gui.journal_text_color xmaximum 1020
             else:
-                text "Saved characters and progress are kept, but this pack's images will no longer be available. Your original ZIP or folder is kept." size font_size(24) color gui.journal_text_color xmaximum 1020
+                text "Saved characters and progress are kept, but this pack's images, events and stories will no longer be available. Your original ZIP or folder is kept." size font_size(24) color gui.journal_text_color xmaximum 1020
             hbox:
                 spacing 48
                 textbutton "Uninstall":

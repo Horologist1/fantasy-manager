@@ -1,6 +1,7 @@
 // Event schema — game/data/events/*.json (array files; recruitment pool lives
 // in events/recruit/ and has its own schema).
 import { allIn, asList } from './_rules.js';
+import { ALL_SKILLS } from './worker.schema.js';
 
 const STORE_VALUE_FIELDS = {
   var: { type: 'string', required: true },
@@ -85,10 +86,15 @@ const EVENT_EFFECT_FIELDS = {
   failure: { type: 'object', fields: EVENT_EFFECT_BRANCH_FIELDS },
 };
 
+const NSFW_SKILLS = ['Sex', 'Anal', 'BDSM', 'Hand', 'Oral', 'Homo', 'Special', 'Group', 'Extreme', 'Striptease'];
+
 export const CHOICE_FIELDS = {
   option: { type: 'string', required: true },
   condition: { type: ['string', 'null'] },
   threshold: { type: ['int', 'null'] },
+  // Every minimum must be met to take the choice. Without a condition the
+  // choice succeeds with no roll (guaranteed for whoever qualifies).
+  skill_requirements: { type: 'dict_of_numbers' },
   skill_check: { type: ['int', 'null'] },
   required_trait: { type: ['string', 'null'] },
   required_traits: { type: 'list_of_strings' },
@@ -232,6 +238,27 @@ export const EVENT_RULES = [
       || typeof c.threshold === 'number' || typeof c.skill_check === 'number'),
     severity: 'warning',
     message: 'a skill-check choice has no threshold (the check cannot be resolved)',
+  },
+  {
+    id: 'skill_requirements_skills_exist',
+    check: (e) => (e.choices || []).every((c) => !c.skill_requirements
+      || Object.keys(c.skill_requirements).every((s) => ALL_SKILLS.includes(s))),
+    severity: 'error',
+    message: 'skill_requirements names a skill that does not exist (it would count as 0)',
+  },
+  {
+    id: 'skill_requirements_need_worker',
+    check: (e) => (e.choices || []).every((c) => !c.skill_requirements
+      || (e.worker_selection !== 'none' && c.condition !== 'building_skill')),
+    severity: 'error',
+    message: 'skill_requirements needs a worker: not with worker_selection "none" or building_skill',
+  },
+  {
+    id: 'skill_requirements_nsfw',
+    check: (e) => (e.choices || []).every((c) => !c.skill_requirements || e.nsfw || c.nsfw
+      || Object.keys(c.skill_requirements).every((s) => !NSFW_SKILLS.includes(s))),
+    severity: 'error',
+    message: 'skill_requirements tests an NSFW skill; mark the event or the choice "nsfw": true',
   },
   {
     id: 'choice_required_trait_legacy',

@@ -3,7 +3,7 @@
 Player and modder guide: how the game works, its formulas, and every image name the
 game looks for. Published next to the devkit:
 
-- Online: https://horologist1.github.io/fantasy-manager/guide/ (`#play`, `#ref`, `#img` open a tab)
+- Online: https://horologist1.github.io/fantasy-manager/guide/ (`#play`, `#ref`, `#img`, `#mods` open a tab)
 - Offline copy shipped with the game: `user_docs/guides/field_guide.html`
 
 ## Files
@@ -12,7 +12,8 @@ game looks for. Published next to the devkit:
 |---|---|---|
 | `part_play.html` | "How to play" tab: loop, workers, buildings, jobs, traits, items, interactions, events | Hand |
 | `part_ref.html` | "Formulas & data" tab: formulas, data files, JSON fields, changes from old guides | Hand |
-| `part_img.html` | "Images & modding" tab: lookup rules and fallback chain | Hand |
+| `part_img.html` | "Images" tab: lookup rules and fallback chain | Hand |
+| `part_mods.html` | "Mods" tab: installing mods, making character packs (traits, events, recruitment, daily stories), importer rules, overrides | Hand; the buildings/jobs table is generated |
 | `template.html` | Page shell, styles and the script that renders the image lists | Hand |
 | `build_field_guide.py` | Reads `game/data/` and builds the page | Runs automatically |
 
@@ -40,6 +41,10 @@ game looks for. Published next to the devkit:
   - reputation, building logic: `game/scripts/buildings/building_logic.rpy`
   - interactions: `game/scripts/workers/worker_interactions.rpy`, `core/screens.rpy`
   - events and managers: `python-packages/fm_events/`, `scripts/events/`
+- **Mods tab**: if the importer's rules change (`game/python-packages/fm_mods/packs.py`:
+  accepted folders, `CONDITION_PREFIXES`, `SAFE_FLAG_EXPRESSIONS`, merge mode), update
+  `part_mods.html`. The example pack linked there is `user_docs/templates/character_pack/`,
+  zipped by the Pages workflow as `guide/mira_example_pack.zip`.
 - **Image lookup rules**: if `get_skill_search_patterns` or the fallback order in
   `game/scripts/events/event_visuals.rpy` changes, update `SKILL_FILES` in
   `build_field_guide.py` and the rules in `part_img.html`.

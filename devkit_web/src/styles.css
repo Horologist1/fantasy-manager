@@ -36,6 +36,10 @@ button.secondary { background: var(--bg-elev); color: var(--fg); border: 1px sol
 main p, .banner { overflow-wrap: anywhere; }
 .guide { line-height: 1.65; }
 .guide h2 { margin-top: 1.5rem; }
+.guide pre {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.75rem 1rem; overflow-x: auto; font-size: 15px; line-height: 1.5;
+}
 @media (max-width: 650px) {
   header { align-items: flex-start; flex-direction: column; gap: .8rem; }
   main { padding: .7rem; }

@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Mira",
+    "folder": "Mira",
+    "cost": 900,
+    "nsfw": false,
+    "unique": true,
+    "encounter_only": true,
+    "skills": {
+      "Sex": 0,
+      "Anal": 0,
+      "BDSM": 0,
+      "Hand": 0,
+      "Oral": 0,
+      "Homo": 0,
+      "Special": 0,
+      "Group": 0,
+      "Extreme": 0,
+      "Striptease": 0,
+      "Combat": 30,
+      "Clever": 40,
+      "Charm": 35,
+      "Service": 30,
+      "Agility": 45,
+      "Craft": 25,
+      "Specialty 4": 5,
+      "Specialty 5": 5,
+      "Specialty 6": 5,
+      "Specialty 7": 5,
+      "Specialty 8": 5,
+      "Specialty 9": 5,
+      "Specialty 10": 5,
+      "Specialty 11": 5,
+      "Specialty 12": 5
+    },
+    "names_list": "fantasy_female",
+    "traits": [
+      "Human",
+      "Agile",
+      "Starborn"
+    ],
+    "description": "A soft-spoken scout who maps the roads nobody else dares to walk.",
+    "gender": "female",
+    "comfort_desired": 3
+  }
+]

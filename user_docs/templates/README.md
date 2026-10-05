@@ -7,6 +7,7 @@ Plantillas listas para copiar en tus JSON de contenido:
 - `events/event.template.json`
 - `interactions/interaction.template.json`
 - `workers/worker.template.json`
+- `character_pack/`: pack de personaje completo y funcional (Mira: personaje, 2 traits, evento, escena de reclutamiento e historia diaria). Ver `guides/character_pack_quickstart.md`.
 
 Tip:
 - Para Academy (`academy_*`), define `daily_story_count` con:

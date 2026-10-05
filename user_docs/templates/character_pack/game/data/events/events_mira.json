@@ -1,0 +1,55 @@
+[
+  {
+    "id": "mira_pathfinder_trial",
+    "worker_name": "Mira",
+    "worker_selection": "random",
+    "description": "A merchant guild needs a safe route through the northern passes. Mira asks to try.",
+    "weight": 5,
+    "event_probability": 50,
+    "max_occurrences": 1,
+    "cooldown_days": 5,
+    "building_type": [
+      "adventurers_guild"
+    ],
+    "conditions": {
+      "start_when": "has_worker:Mira"
+    },
+    "excluded_flags": {
+      "mira_pathfinder_done": true
+    },
+    "background_image": "event_bg",
+    "success_image": "pathfinder_success",
+    "failure_image": "pathfinder_failure",
+    "choices": [
+      {
+        "option": "Send Mira to chart the passes.",
+        "condition": "Agility",
+        "threshold": 50,
+        "message_success": "Mira comes back with a route the guild calls impossible. They call her Trailblazer now.",
+        "message_failure": "Snow closes the passes. Mira turns back safely, frustrated but unhurt.",
+        "effect": {
+          "success": {
+            "add_trait": "Trailblazer",
+            "money": 600,
+            "reputation": 10,
+            "event_flags": {
+              "mira_pathfinder_done": true
+            }
+          },
+          "failure": {
+            "servant_energy": -3,
+            "joy": -5,
+            "event_flags": {
+              "mira_pathfinder_done": true
+            }
+          }
+        }
+      },
+      {
+        "option": "Not this season.",
+        "message": "Mira nods and goes back to her maps.",
+        "effect": {}
+      }
+    ]
+  }
+]

@@ -92,3 +92,54 @@ export function characterErrors(worker) {
   if (extra.length) fail('these fields are not imported in character packs: ' + extra.join(', ') + '.');
   return errors;
 }
+
+// Content a character pack may carry besides workers. The game installs each
+// kind as one namespaced file; items, buildings, interactions and monthly
+// conditions stay override/manual-only.
+export const CHARACTER_CONTENT = ['traits', 'events', 'recruit_events', 'daily_stories'];
+// Character and manual ZIPs keep their files under game/ so the same ZIP can be
+// imported in-game or dragged onto the game's main folder.
+export const PACK_ROOT = 'game/';
+export const STORY_MERGE_MODE = 'append';
+export const DAY_STAMP = '[calculate_total_days()]';
+const CONDITION_PREFIXES = ['has_flag', 'flag_value', 'after_days_from_flag', 'exact_date', 'has_worker', 'not_has_worker',
+  'has_folder_worker', 'not_has_folder_worker', 'after_date', 'before_days', 'after_days'];
+const SIMPLE_COMPARISON = /^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\s*(?:==|!=|>=|<=|>|<)\s*(?:-?\d+(?:\.\d+)?|True|False|None|'[^'\\]*'|"[^"\\]*")$/;
+
+// The game eval()s condition atoms it does not recognise, so packs may only use
+// the data-style forms the importer accepts.
+export function conditionError(text) {
+  if (typeof text !== 'string') return 'conditions must be text.';
+  for (const raw of text.trim().split(/ AND | OR /)) {
+    const atom = raw.trim();
+    if (atom === 'True' || atom === 'False') continue;
+    if (atom.includes(':') && CONDITION_PREFIXES.includes(atom.split(':')[0])) continue;
+    if (!atom.includes('__') && SIMPLE_COMPARISON.test(atom)) continue;
+    return 'unsupported condition \'' + atom.slice(0, 80) + '\'. Use has_flag:, has_worker:, after_days: and similar prefixes, or a simple comparison such as money >= 500.';
+  }
+  return null;
+}
+
+// start_when/stop_when strings and [code] event flag values anywhere in a value.
+export function scriptSafetyErrors(value) {
+  const errors = [], stack = [value];
+  while (stack.length) {
+    const node = stack.pop();
+    if (Array.isArray(node)) { stack.push(...node); continue; }
+    if (!node || typeof node !== 'object') continue;
+    for (const key of ['start_when', 'stop_when']) {
+      if (typeof node[key] === 'string') {
+        const error = conditionError(node[key]);
+        if (error) errors.push(key + ': ' + error);
+      }
+    }
+    if (node.event_flags && typeof node.event_flags === 'object' && !Array.isArray(node.event_flags)) {
+      for (const [flag, flagValue] of Object.entries(node.event_flags)) {
+        // The one allowed [code] value stores today's day number for after_days_from_flag.
+        if (typeof flagValue === 'string' && flagValue !== DAY_STAMP && flagValue.trim().startsWith('[') && flagValue.trim().endsWith(']')) errors.push('event flag \'' + flag.slice(0, 60) + '\' uses a [code] value, which character packs cannot run.');
+      }
+    }
+    stack.push(...Object.values(node));
+  }
+  return errors;
+}

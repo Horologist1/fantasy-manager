@@ -1,0 +1,64 @@
+{
+  "daily_story_extensions": [
+    {
+      "building_id": "adventurers_guild",
+      "profession_id": "adventurer",
+      "merge_mode": "append",
+      "daily_stories": [
+        {
+          "id": "mira_pathfinder_route",
+          "weight": 3,
+          "report": "Route Charting",
+          "difficulty_modifier": 0,
+          "nsfw_only": false,
+          "skill_options": [
+            "Agility",
+            "Clever"
+          ],
+          "required_traits": [
+            "Trailblazer"
+          ],
+          "excluded_traits": [],
+          "stat_requirements": {
+            "agility": 55
+          },
+          "descriptions": {
+            "failure": "{worker_name} finds the trail washed out and turns back early.",
+            "mediocre": "{worker_name} charts half the route before the weather turns.",
+            "success": "{worker_name} marks a safe new trail for the guild's caravans.",
+            "critical_success": "{worker_name} finds a shortcut that saves the caravans two days."
+          },
+          "earnings": {
+            "failure": "50",
+            "mediocre": "200 + skill",
+            "success": "500 + skill * 2",
+            "critical_success": "800 + skill * 3"
+          },
+          "consequences": {
+            "failure": {
+              "energy": -3,
+              "joy": -2
+            },
+            "mediocre": {
+              "energy": -2
+            },
+            "success": {
+              "energy": -1,
+              "reputation": 4
+            },
+            "critical_success": {
+              "energy": -1,
+              "reputation": 8
+            }
+          },
+          "story_image": "pathfinder_success",
+          "failure_image": "pathfinder_failure",
+          "loot": {
+            "rolls": 0,
+            "bonus_items": []
+          }
+        }
+      ]
+    }
+  ]
+}

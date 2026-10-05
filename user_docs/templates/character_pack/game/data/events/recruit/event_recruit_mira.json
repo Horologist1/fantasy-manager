@@ -1,0 +1,29 @@
+[
+  {
+    "id": "event_recruit_mira",
+    "worker_name": "Mira",
+    "random_worker": false,
+    "weight": 1,
+    "unlimited": false,
+    "max_occurrences": 1,
+    "description": "A young woman with ink-stained fingers unrolls a hand-drawn map on your table.",
+    "dialogue": "\"I'm [event_worker]. I know every road from here to the coast. Hire me and your people will never get lost.\"",
+    "background_image": "event_bg",
+    "success_image": "generic_success",
+    "failure_image": "generic_failure",
+    "choices": [
+      {
+        "option": "Hire her for [COST] per day.",
+        "message": "[event_worker] rolls up her map with a quick smile.",
+        "effect": {
+          "recruit_worker": true
+        }
+      },
+      {
+        "option": "Politely decline.",
+        "message": "[event_worker] shrugs and heads back out.",
+        "effect": {}
+      }
+    ]
+  }
+]

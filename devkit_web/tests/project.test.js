@@ -6,9 +6,12 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createProject, restoreProject, identityFor } from '../src/lib/project.js';
 import { createMemoryFS, createFSAFS } from '../src/lib/fs.js';
-import { workerIdentity, parseJSON, supportsOverride, categoryFor } from '../src/lib/contract.js';
+import { workerIdentity, parseJSON, supportsOverride, categoryFor, conditionError } from '../src/lib/contract.js';
 import { catalogsFromFiles, referenceMetadata } from '../src/lib/reference.js';
 import { unique_worker_recipe } from '../src/recipes/unique_worker.js';
+import { worker_specific_event_recipe } from '../src/recipes/events.js';
+import { daily_story_basic_recipe } from '../src/recipes/daily_stories.js';
+import { GUIDE_SECTIONS } from '../src/user_guide.js';
 import { TYPES } from '../src/lib/content_types.js';
 
 const GAME_ROOT = process.env.FM_GAME_ROOT || path.resolve(import.meta.dirname, '../..');
@@ -108,7 +111,10 @@ test('override targets are existing JSON paths and cannot import images or scrip
 });
 test('character mode rejects other categories and blocks procedural/unsupported worker exports', async () => {
   const p=createProject(reference);
-  await assert.rejects(p.stage('traits',{name:'New'},'data/traits/new.json'));
+  await assert.rejects(p.stage('items',{id:'x'},'data/items/new.json'),/override or manual/);
+  assert.throws(()=>p.importJSON('data/buildings/new.json',{building_types:[]}),/override or manual/);
+  assert.throws(()=>p.importJSON('data/interactions/new.json',[]),/override or manual/);
+  assert.throws(()=>p.importJSON('data/monthly_conditions/cards.json',[]),/override or manual/);
   await p.stage('workers',{...worker(),procedural:true},workerPath);
   p.addImage(imagePath,png);
   assert.match(p.validate().errors.join('\n'),/regular characters only/);
@@ -165,12 +171,139 @@ test('exported ZIPs pass real game inspection, installation and mounted-content 
     const character=createProject(reference); await character.stage('workers',worker(),workerPath); character.addImage(imagePath,png);
     const override=createProject(reference,{mode:'override',files:Object.fromEntries(Object.entries(reference.files).filter(([p])=>supportsOverride(p)))});
     assert.deepEqual(override.validate().errors,[]);
-    for (const [mode,p] of [['characters',character],['override',override]]) {
-      const pack=p.exportPack(), file=path.join(temporary,pack.filename); await fs.writeFile(file,pack.bytes);
+    const content=await contentPack(); const contentOnly=await contentPack(false);
+    for (const [mode,p,label] of [['characters',character,'worker'],['override',override,'override'],['characters',content,'content'],['characters',contentOnly,'content-only']]) {
+      const pack=p.exportPack(), file=path.join(temporary,label+'_'+pack.filename); await fs.writeFile(file,pack.bytes);
       const result=JSON.parse(execFileSync(process.env.PYTHON || 'python',[path.resolve(import.meta.dirname,'../scripts/verify_export.py'),file,'--mode',mode,'--game-root',GAME_ROOT],{encoding:'utf8'}));
-      assert.equal(result.accepted,true); assert.equal(result.installed,'installed');
-      if (mode==='characters') { assert.equal(result.workers,1); assert.equal(result.images,1); assert.deepEqual(result.warnings,[]); }
-      else assert.equal(result.files,Object.keys(override.files).length);
+      assert.equal(result.accepted,true,label); assert.equal(result.installed,'installed',label);
+      if (label==='worker') { assert.equal(result.workers,1); assert.equal(result.images,1); assert.deepEqual(result.warnings,[]); }
+      else if (label==='override') assert.equal(result.files,Object.keys(override.files).length);
+      else {
+        assert.equal(result.workers,label==='content' ? 1 : 0,label); assert.deepEqual(result.warnings,[],label);
+        assert.deepEqual(result.content,{traits:1,events:2,recruit:1,stories:1},label);
+        assert.ok(result.content_paths.length>=4,label+': '+JSON.stringify(result.content_paths));
+      }
     }
   } finally { await fs.rm(temporary,{recursive:true,force:true}); }
+});
+
+// Minimal reader for the devkit's stored (uncompressed) ZIP entries.
+function unzip(bytes) {
+  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength), out={};
+  for (let at=0; view.getUint32(at,true)===0x04034b50;) {
+    const size=view.getUint32(at+18,true), nameLength=view.getUint16(at+26,true), extra=view.getUint16(at+28,true);
+    const name=new TextDecoder().decode(bytes.subarray(at+30,at+30+nameLength));
+    out[name]=bytes.subarray(at+30+nameLength+extra,at+30+nameLength+extra+size); at+=30+nameLength+extra+size;
+  }
+  return out;
+}
+const text=bytes=>new TextDecoder().decode(bytes);
+const packEvent=(id='audit_pack_gift')=>worker_specific_event_recipe.build({worker_name:'Audit Worker',id,description:'Audit visits.',message:'Done.',one_time:true});
+// Recipes leave unused conditions as null; the importer contract checks strings.
+const withoutNullConditions=event=>({...event,conditions:Object.fromEntries(Object.entries(event.conditions).filter(([,v])=>v!==null))});
+const story=(id='audit_pack_song')=>daily_story_basic_recipe.build({building:'tavern',profession:'bartender',id,report:'Sang a song',skill:'Service',desc_failure:'a',desc_mediocre:'b',desc_success:'c',desc_critical:'d'});
+const recruit=id=>({id,description:'A wanderer asks for work.',weight:5,unlimited:true,random_worker:true,always_available:true,nsfw:false,worker_name:null,worker_filter:{},choices:[{option:'Hire',message:'Hired.',effect:{recruit_worker:true}}]});
+async function contentPack(withWorker=true) {
+  const p=createProject(reference,{name:withWorker ? 'Audit Content' : 'Audit Events Only'});
+  if (withWorker) { await p.stage('workers',worker(),workerPath); p.addImage(imagePath,png); }
+  const first=withWorker ? packEvent() : {...packEvent(),worker_name:'Aelis',conditions:{start_when:'has_worker:Aelis'}};
+  const second={...packEvent('audit_pack_followup'),required_flags:{audit_pack_gift_done:true},conditions:{start_when:withWorker ? 'has_worker:Audit Worker AND money >= 100' : 'has_flag:audit_pack_gift_done'}};
+  if (!withWorker) second.worker_name='Aelis';
+  await p.stage('events',[withoutNullConditions(first),withoutNullConditions(second)],'data/events/audit_pack.json');
+  await p.stage('traits',{name:'Audit Pack Trait',nsfw:false},'data/traits/audit_pack.json');
+  await p.stage('recruit_events',recruit('event_recruit_audit_pack'),'data/events/recruit/audit_pack.json');
+  await p.stage('daily_stories',story(),'data/buildings/daily_story_extensions/audit_pack.json');
+  return p;
+}
+test('character and manual ZIPs put files under game/ with a README; overrides keep data/ paths and warn against drag & drop', async () => {
+  const character=createProject(reference,{name:'Audit Pack'}); await character.stage('workers',worker(),workerPath); character.addImage(imagePath,png);
+  const files=unzip(character.exportPack().bytes);
+  assert.deepEqual(Object.keys(files).sort(),['README.txt','game/'+workerPath,'game/'+imagePath]);
+  const readme=text(files['README.txt']);
+  for (const part of [/^Audit Pack\r\n/,/Workers: 1 \(Audit Worker\)/,/Mods > Install mods/,/Drag the "game" folder/,/never replaces original game files/,/Do not use both methods at once/,/UNINSTALL/,/Uninstall/,new RegExp('  game/'+workerPath),new RegExp('  game/'+imagePath)]) assert.match(readme,part);
+  const manual=createProject(reference,{mode:'manual'}); await manual.stage('traits',{name:'Audit Trait',nsfw:false},'data/traits/audit.json');
+  const manualFiles=unzip(manual.exportPack().bytes);
+  assert.deepEqual(Object.keys(manualFiles).sort(),['README.txt','game/data/traits/audit.json']);
+  assert.match(text(manualFiles['README.txt']),/REPLACE/);
+  const name='data/items/alchemy_ingredients.json';
+  const override=createProject(reference,{mode:'override'}); await override.stage('items',{...reference.files[name].items[0],price:240},name,{originalKey:reference.files[name].items[0].id});
+  const overrideFiles=unzip(override.exportPack().bytes);
+  assert.deepEqual(Object.keys(overrideFiles).sort(),['README.txt',name]);
+  assert.match(text(overrideFiles['README.txt']),/Import as JSON override/); assert.match(text(overrideFiles['README.txt']),/NEVER drag & drop/);
+});
+test('character packs accept new traits, events, recruitment events and daily stories, and content-only packs', async () => {
+  const p=await contentPack();
+  assert.deepEqual(p.validate().errors,[]);
+  assert.ok(p.catalogs().all_traits.has('Audit Pack Trait'));
+  const extension=p.files['data/buildings/daily_story_extensions/audit_pack.json'].daily_story_extensions[0];
+  assert.equal(extension.merge_mode,'append');
+  const files=unzip(p.exportPack().bytes);
+  for (const name of ['data/events/audit_pack.json','data/traits/audit_pack.json','data/events/recruit/audit_pack.json','data/buildings/daily_story_extensions/audit_pack.json']) assert.ok(files['game/'+name],name);
+  const readme=text(files['README.txt']);
+  for (const part of [/Traits: 1/,/Events: 2/,/Recruitment events: 1/,/Daily stories: 1/]) assert.match(readme,part);
+  const only=await contentPack(false);
+  assert.deepEqual(only.validate().errors,[]);
+  assert.ok(!Object.keys(unzip(only.exportPack().bytes)).some(n=>n.includes('data/workers')));
+  const empty=createProject(reference);
+  assert.match(empty.validate().errors.join('\n'),/Add at least one JSON file/);
+});
+test('character pack daily stories always append; a missing merge_mode is written as append on export', async () => {
+  const group={building_id:'tavern',profession_id:'bartender',daily_stories:[story().story]};
+  const p=createProject(reference,{files:{'data/buildings/daily_story_extensions/audit.json':{daily_story_extensions:[group]}}});
+  assert.deepEqual(p.validate().errors,[]);
+  const files=unzip(p.exportPack().bytes);
+  assert.equal(JSON.parse(text(files['game/data/buildings/daily_story_extensions/audit.json'])).daily_story_extensions[0].merge_mode,'append');
+  for (const mode of ['upsert','replace_all']) {
+    const bad=createProject(reference,{files:{'data/buildings/daily_story_extensions/audit.json':[{...group,merge_mode:mode}]}});
+    assert.match(bad.validate().errors.join('\n'),/merge_mode "append"/); assert.throws(()=>bad.exportPack());
+  }
+  const unknown=createProject(reference,{files:{'data/buildings/daily_story_extensions/audit.json':[{...group,building_id:'nowhere'}]}});
+  assert.match(unknown.validate().errors.join('\n'),/unknown building/);
+  const job=createProject(reference,{files:{'data/buildings/daily_story_extensions/audit.json':[{...group,profession_id:'nobody'}]}});
+  assert.match(job.validate().errors.join('\n'),/unknown profession/);
+});
+test('character pack content must use new, unique identifiers and new file names', async () => {
+  const baseStory=reference.files['data/buildings/building_types.json'].building_types.find(b=>b.id==='tavern').professions.find(j=>j.id==='bartender').daily_stories[0].id;
+  const cases=[
+    [{'data/traits/a.json':[{name:'Human'}]},/trait Human already exists in the game/],
+    [{'data/traits/a.json':[{name:'Twice'}],'data/traits/b.json':{traits:[{name:'Twice'}]}},/used more than once/],
+    [{'data/traits/a.json':[{nsfw:false}]},/missing its identifier/],
+    [{'data/events/a.json':[{...withoutNullConditions(packEvent('knights_honor_duel')),worker_name:'Aelis'}]},/knights_honor_duel already exists/],
+    [{'data/events/a.json':[{...withoutNullConditions(packEvent('event_recruit_audit')),worker_name:'Aelis'}]},/must not start with event_recruit_/],
+    [{'data/events/recruit/a.json':[recruit('event_recruit_oak')]},/event_recruit_oak already exists/],
+    [{'data/events/a.json':[{...withoutNullConditions(packEvent('same_id')),worker_name:'Aelis'}],'data/events/recruit/a.json':[recruit('same_id')]},/same_id is used more than once/],
+    [{'data/buildings/daily_story_extensions/a.json':[{building_id:'tavern',profession_id:'bartender',daily_stories:[{...story().story,id:baseStory}]}]},/already exists in the game/],
+    [{'data/buildings/daily_story_extensions/a.json':[{building_id:'tavern',profession_id:'bartender',daily_stories:[story().story]},{building_id:'tavern',profession_id:'entertainer',daily_stories:[story().story]}]},/used more than once/],
+  ];
+  for (const [files,pattern] of cases) assert.match(createProject(reference,{files}).validate().errors.join('\n'),pattern,JSON.stringify(Object.keys(files)));
+  assert.throws(()=>createProject(reference,{files:{'data/traits/traits_core.json':[{name:'New one'}]}}),/already exists in the game/);
+});
+test('character pack conditions and event flags only use data the game does not evaluate as code', async () => {
+  const allowed=['True','False','has_flag:a AND not_has_worker:Aelis','after_days_from_flag:x_at,5 OR exact_date:7,1','has_folder_worker:aelis','store.current_objective >= 7','money >= 50000','flag_value:x,1',"name == 'Aelis'",'gold != -1.5 AND x < None'];
+  for (const start_when of allowed) assert.equal(conditionError(start_when),null,start_when);
+  const rejected=['__import__("os")','money >= len(x)','store.__class__ == 1','store.x == [1]','open("x")','unknown_prefix:x','money >= other','','has_flag:a AND (b)'];
+  for (const start_when of rejected) assert.ok(conditionError(start_when),start_when);
+  const event=extra=>({...withoutNullConditions(packEvent('audit_safety')),worker_name:'Aelis',...extra});
+  const errorsFor=value=>createProject(reference,{files:{'data/events/a.json':[value]}}).validate().errors.join('\n');
+  assert.equal(errorsFor(event({conditions:{start_when:'has_worker:Aelis'}})),'');
+  assert.match(errorsFor(event({conditions:{start_when:'store.x.__class__ == 1'}})),/unsupported condition/);
+  assert.match(errorsFor(event({choices:[{option:'a',message:'b',effect:{event_flags:{when:'[random.randint(1, 9)]'}}}]})),/\[code\] value/);
+  assert.match(errorsFor(event({choices:[{option:'a',message:'b',effect:{event_flags:{when:'[calculate_total_days() + 1]'}}}]})),/\[code\] value/);
+  // The day stamp is the one allowed [code] value: it starts delayed chains.
+  assert.equal(errorsFor(event({conditions:{start_when:'after_days_from_flag:audit_met_at,3'},choices:[{option:'a',message:'b',effect:{event_flags:{audit_met_at:'[calculate_total_days()]'}}}]})),'');
+  assert.match(errorsFor(event({nested:{deeper:[{stop_when:'exec("x")'}]}})),/stop_when: unsupported condition/);
+  const flagged={building_id:'tavern',profession_id:'bartender',daily_stories:[{...story('audit_flag_story').story,event_flags:{t:' [x] '}}]};
+  assert.match(createProject(reference,{files:{'data/buildings/daily_story_extensions/a.json':[flagged]}}).validate().errors.join('\n'),/\[code\] value/);
+  // Manual projects keep their existing behaviour.
+  assert.ok(!createProject(reference,{mode:'manual',files:{'data/events/a.json':[event({conditions:{start_when:'money >= len(x)'}})]}}).validate().errors.some(e=>e.includes('unsupported condition')));
+});
+test('the guide’s pack-worker event example is a valid character pack', async () => {
+  const section=GUIDE_SECTIONS.find(s=>s.title.startsWith('Adding events, traits and daily stories'));
+  assert.ok(section?.code); assert.match(section.paragraphs.join(' '),/\[calculate_total_days\(\)\]/);
+  assert.equal(GUIDE_SECTIONS[0].title,'Quick guide: a character pack in 5 steps'); assert.equal(GUIDE_SECTIONS[0].steps.length,5);
+  const p=createProject(reference);
+  await p.stage('workers',unique_worker_recipe.build({name:'Mira Storm',folder:'mira_storm',gender:'female',race:'Human',nsfw:false,skill_focus:'balanced'}),'data/workers/mira.json');
+  p.addImage('images/workers/mira_storm/profile.png',png);
+  p.importJSON('data/events/events_mira.json',parseJSON(section.code));
+  assert.deepEqual(p.validate().errors,[]);
 });

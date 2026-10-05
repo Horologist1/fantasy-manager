@@ -148,11 +148,12 @@ details.row .body { padding: 8px 14px 14px; font-size: 15.5px; }
 <div class="wrap">
   <header class="top">
     <h1>Fantasy Manager Field Guide</h1>
-    <p>How the game works, the formulas behind it, and every image the game looks for. Checked against the code of version 0.9.6.2t1.</p>
+    <p>How the game works, the formulas behind it, every image the game looks for, and how to install and make mods. Checked against the code of version 0.9.6.2t1.</p>
     <div class="tabs" role="tablist" aria-label="Guide sections">
       <button class="tab" role="tab" id="tab-play" aria-selected="true" data-tab="play">How to play</button>
       <button class="tab" role="tab" id="tab-ref" aria-selected="false" data-tab="ref">Formulas &amp; data</button>
-      <button class="tab" role="tab" id="tab-img" aria-selected="false" data-tab="img">Images &amp; modding</button>
+      <button class="tab" role="tab" id="tab-img" aria-selected="false" data-tab="img">Images</button>
+      <button class="tab" role="tab" id="tab-mods" aria-selected="false" data-tab="mods">Mods</button>
     </div>
   </header>
 
@@ -663,6 +664,7 @@ details.row .body { padding: 8px 14px 14px; font-size: 15.5px; }
   <li><b>Story, quest and character-arc events</b> roll their own chance (usually 50%), and managers don't reduce it. Guaranteed and fixed-date events fire first.</li>
   <li>Events have <b>cooldowns</b> (usually 5–30 days) and some only happen a set number of times.</li>
   <li>Choices can need a worker with a skill above a threshold. The chosen worker then rolls d100 against that skill.</li>
+  <li>Some choices list several minimums ("requires Combat 70, Agility 55"): only workers meeting all of them can take it. Marked <i>guaranteed</i>, the choice has no roll and always succeeds.</li>
   <li>Building level boosts what events pay: money +10% per level above 1, reputation +30% per level.</li>
 </ul>
 <h3 id="p-governor">The Governor</h3>
@@ -989,7 +991,7 @@ profile                     (always exists)</pre>
 <section class="chapter">
 <h2 id="i-new">Adding a new worker</h2>
 <ol>
-  <li>Add the worker to any JSON file in <code>game/data/workers/</code> (copy an existing one). No code changes needed.</li>
+  <li>Add the worker to any JSON file in <code>game/data/workers/</code> (copy an existing one). No code changes needed. To share it, pack it as a character pack: see the <a href="#mods" data-tab-link="mods" data-anchor="m-quick">Mods</a> tab.</li>
   <li>Create <code>game/images/workers/&lt;folder&gt;/</code> with at least a <code>profile</code> image.</li>
   <li>Add art in this order of value:
     <ul>
@@ -1000,6 +1002,263 @@ profile                     (always exists)</pre>
     </ul>
   </li>
 </ol>
+</section>
+
+      </div>
+      <div class="panel" id="panel-mods" data-panel="mods" hidden>
+<section class="chapter">
+<h2 id="m-install">Installing mods</h2>
+<p>Mods come as a ZIP file (from the Discord, F95 or itch.io pages). Most are <b>character packs</b>: new characters with their images and, often, their own traits, recruitment scene, story events and daily stories.</p>
+
+<h3 id="m-install-game">With the in-game importer (PC and Android)</h3>
+<ol>
+  <li>Main menu &gt; <b>Mods</b> &gt; <b>Install mods</b> &gt; <b>Choose ZIP or folder</b>. On Android, the system file picker opens; choose the ZIP.</li>
+  <li>The game checks the pack and shows a summary: characters, images and size, plus a line such as <i>"Also adds: 3 events / 1 recruitment scene / 8 daily stories / 3 traits"</i>. Read any warning below it.</li>
+  <li>Press <b>Install this pack</b>, then close and reopen the game.</li>
+</ol>
+<p>Installed packs are stored next to your saves, never inside the game folder, so updating the game doesn't remove them. They only add content: no original game file is changed. The pack's characters follow your content filter (NSFW characters stay hidden with NSFW off), and its events and stories are added to the game's own.</p>
+
+<h3 id="m-install-manual">By hand (PC)</h3>
+<p>Character packs made with the Devkit, or packed the same way, have a <code>game</code> folder and a <code>README.txt</code> inside the ZIP:</p>
+<ol>
+  <li>Close the game and extract the ZIP.</li>
+  <li>Drag the <code>game</code> folder onto the game's main folder (the one with <code>Fantasy_Manager.exe</code>) and choose to <b>merge</b> the folders. A character pack only adds new files.</li>
+  <li>Start the game.</li>
+</ol>
+<div class="note fix"><strong>Use one method only.</strong> A pack installed by hand and then imported again would add everything twice, so the importer refuses it ("already exists in the game"). Packs labelled <i>JSON override</i> must only be installed through the importer: copying them by hand would overwrite original game files.</div>
+
+<h3 id="m-uninstall">Uninstalling</h3>
+<ul>
+  <li><b>Importer:</b> Mods &gt; Install mods &gt; <b>Uninstall</b> next to the pack, then restart. You can cancel before restarting. Saved characters stay in your save, but the pack's images, events and stories are no longer available.</li>
+  <li><b>By hand:</b> delete the files listed in the pack's <code>README.txt</code>, then restart.</li>
+</ul>
+
+<h3 id="m-messages">What the importer's messages mean</h3>
+<div class="tw"><table>
+<thead><tr><th>Message</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>Overlapping names: …</td><td>A character with that name already exists. The install button keeps both and adds "(Mod xxxxxx)" to the new one's name. Its events are updated to match.</td></tr>
+<tr><td>… already exists in the game or another pack</td><td>The pack adds a trait, event or story the game already has. Often it means the pack is already installed, by hand or by the importer.</td></tr>
+<tr><td>N extra file(s) excluded</td><td>Files a character pack can't add (scripts, buildings, items…). The rest of the pack still installs.</td></tr>
+<tr><td>Restart required</td><td>Installed, not active yet. Close and reopen the game.</td></tr>
+<tr><td>Unavailable: installation is incomplete or invalid</td><td>The installed files were changed or damaged. Uninstall the pack and import it again.</td></tr>
+</tbody></table></div>
+<p class="fb">Packs with events, traits and daily stories need a game version newer than 0.9.6.2t1. Version 0.9.6.2t1 imports only the characters and their images from those packs.</p>
+</section>
+
+<section class="chapter">
+<h2 id="m-kinds">Kinds of mods</h2>
+<div class="tw"><table>
+<thead><tr><th>Kind</th><th>What it does</th><th>Install</th></tr></thead>
+<tbody>
+<tr><td><b>Character pack</b></td><td>Adds characters, images, traits, recruitment scenes, story events and daily stories. Never replaces game content.</td><td>Importer or by hand</td></tr>
+<tr><td><b>JSON override</b> (experimental)</td><td>Replaces whole game data files (items, buildings, events…) with edited copies. For balance and rule changes.</td><td>Importer only, with "Import as JSON override" ticked. Start a new game afterwards.</td></tr>
+<tr><td><b>Manual PC pack</b></td><td>Raw files to copy over the game. Can replace originals: make a backup first.</td><td>By hand only</td></tr>
+</tbody></table></div>
+<p>The <a href="https://horologist1.github.io/fantasy-manager/devkit/">Devkit</a> (also under Mods &gt; Create Mods) builds and checks all three in your browser.</p>
+</section>
+
+<section class="chapter">
+<h2 id="m-quick">Make a character pack in 5 steps</h2>
+<ol>
+  <li><b>Start from the example.</b> Download the <a href="https://horologist1.github.io/fantasy-manager/guide/mira_example_pack.zip">Mira example pack</a>: a working pack with a character, 2 traits, a story event, a recruitment scene and a daily story. Or build one in the <a href="https://horologist1.github.io/fantasy-manager/devkit/">Devkit</a>, which writes the same layout.</li>
+  <li><b>Make it yours.</b> Rename Mira everywhere: <code>name</code>, <code>folder</code>, <code>worker_name</code>, <code>has_worker:Mira</code>, the file names and the image folder. Also give your traits, event ids and story ids new names. The importer rejects names the game already uses.</li>
+  <li><b>Add images</b> to <code>game/images/workers/&lt;YourFolder&gt;/</code>. A <code>profile</code> image is required; the rest follow the names in the <a href="#img" data-tab-link="img" data-anchor="i-rules">Images</a> tab.</li>
+  <li><b>Zip it</b> with <code>README.txt</code> and the <code>game</code> folder at the top of the ZIP. List your files in the README so players can uninstall by hand.</li>
+  <li><b>Test it:</b> Mods &gt; Install mods, check the summary counts every file you expect, install, restart and start a new game.</li>
+</ol>
+</section>
+
+<section class="chapter">
+<h2 id="m-layout">What goes in a character pack</h2>
+<pre>MyPack.zip
+├── README.txt
+└── game/
+    ├── data/
+    │   ├── workers/mypack.json                       characters
+    │   ├── traits/mypack_traits.json                 new traits
+    │   ├── events/events_mypack.json                 story events
+    │   ├── events/recruit/event_recruit_mypack.json  recruitment scenes
+    │   └── buildings/daily_story_extensions/mypack_stories.json   daily stories
+    └── images/workers/MyFolder/                      the character's images</pre>
+<p>Every part except the images is optional. A pack can be just a character, or just events and stories for characters already in the game. Use file names nobody else will use (<code>events_mira.json</code>, not <code>events.json</code>): in a by-hand install, two files with the same name overwrite each other.</p>
+<p><b>Not allowed in character packs:</b> items, buildings, interactions, monthly conditions, and scripts (<code>.rpy</code>, <code>.py</code>). Use a JSON override for data changes; scripts are never imported.</p>
+</section>
+
+<section class="chapter">
+<h2 id="m-worker">The character</h2>
+<p>A JSON list in <code>data/workers/</code>. The fields are the same as the game's own workers (see <a href="#ref" data-tab-link="ref" data-anchor="r-worker-json">Worker fields</a>). In a pack:</p>
+<ul>
+  <li><code>name</code> must be unique in the whole game. Events find the character by this exact name.</li>
+  <li><code>folder</code> is the image folder name: letters, numbers, <code>_</code> and <code>-</code>.</li>
+  <li><code>gender</code> is <code>female</code> or <code>male</code>. <code>nsfw</code> missing counts as <code>true</code>.</li>
+  <li><code>"unique": true, "encounter_only": true</code> make a named character met through recruitment rather than sold at the market.</li>
+  <li>Every trait listed must exist in the game or in the pack.</li>
+  <li>Other fields (for example <code>image_folder</code>) are dropped with a warning. Procedural, monster and template workers can't be imported.</li>
+</ul>
+<p>Image names that match no slot, such as <code>ComfyUI_temp_00001_.png</code>, are never shown. Rename them or leave them out.</p>
+</section>
+
+<section class="chapter">
+<h2 id="m-traits">Traits</h2>
+<p>A JSON list in <code>data/traits/</code>, with the fields described in <a href="#ref" data-tab-link="ref" data-anchor="r-trait-json">Trait fields</a>. Every <code>name</code> must be new: a trait with a name the game already uses would silently replace the original, so the importer rejects it.</p>
+<ul>
+  <li><code>"only_assigned": true</code> keeps a trait for your character and your events. Without it, random recruits can roll it.</li>
+  <li>A race trait lists the other races, <code>Human</code> included, in <code>conflicts</code>.</li>
+  <li>Put the effect in the description so players see it: <code>[+5 Agility, +3 Clever]</code>.</li>
+</ul>
+<pre>[
+  { "name": "Starborn", "only_assigned": true,
+    "description": "Guided by the stars. [+5 Agility, +3 Clever]",
+    "modifiers": { "skill_modifiers": { "Agility": 5, "Clever": 3 } } }
+]</pre>
+</section>
+
+<section class="chapter">
+<h2 id="m-recruit">Recruitment scene</h2>
+<p>A JSON list in <code>data/events/recruit/</code>. It plays when the player recruits and your character is available.</p>
+<ul>
+  <li><code>"worker_name": "Mira"</code> and <code>"random_worker": false</code> tie the scene to your character.</li>
+  <li>The hiring choice uses <code>"effect": {"recruit_worker": true}</code>. The text can use <code>[event_worker]</code>, <code>[COST]</code> and <code>[actual_cost]</code>.</li>
+  <li>The <code>id</code> must be new. By convention it starts with <code>event_recruit_</code>.</li>
+</ul>
+</section>
+
+<section class="chapter">
+<h2 id="m-events">Story events</h2>
+<p>A JSON list in <code>data/events/</code>: quests, rivalries, promotions that happen during the day.</p>
+<pre>{
+  "id": "mira_trailblazer_trial",
+  "worker_name": "Mira",
+  "worker_selection": "random",
+  "building_type": ["adventurers_guild"],
+  "max_occurrences": 1,
+  "conditions": { "start_when": "has_worker:Mira" },
+  "excluded_flags": { "mira_trailblazer_done": true },
+  "choices": [{
+    "option": "Send Mira to chart the passes.",
+    "condition": "Agility", "threshold": 50,
+    "message_success": "…", "message_failure": "…",
+    "effect": {
+      "success": { "add_trait": "Trailblazer", "event_flags": { "mira_trailblazer_done": true } },
+      "failure": { "event_flags": { "mira_trailblazer_done": true } }
+    }
+  }]
+}</pre>
+<ul>
+  <li><b>One skill check per choice:</b> <code>condition</code> and <code>threshold</code> appear once. Writing them twice in the same choice is invalid JSON for the importer ("a key written twice").</li>
+  <li><code>required_traits</code> with <code>"trait_visibility": "blocked"</code> and a <code>blocked_message</code> shows a choice the player can't pick yet.</li>
+  <li>Event ids here must not start with <code>event_recruit_</code>: the game drops those from the daily pool.</li>
+</ul>
+
+<h3 id="m-multiskill">Several skills, or no roll at all</h3>
+<p>A choice can ask for more than one skill with <code>skill_requirements</code>. Only workers who meet <b>every</b> minimum can take the choice; when nobody does, the option is shown locked with the reason. A player can never burn the event on a worker who doesn't qualify.</p>
+<div class="tw"><table>
+<thead><tr><th>The choice has</th><th>What happens</th></tr></thead>
+<tbody>
+<tr><td><code>condition</code> + <code>threshold</code></td><td>The usual roll on that skill</td></tr>
+<tr><td><code>condition</code> + <code>skill_requirements</code></td><td>Only workers meeting the minimums can try; the roll still uses <code>condition</code></td></tr>
+<tr><td>only <code>skill_requirements</code></td><td><b>No roll:</b> a qualifying worker always succeeds and gets the success effects</td></tr>
+</tbody></table></div>
+<pre>{
+  "option": "Send someone who can fight and climb.",
+  "skill_requirements": { "Combat": 70, "Agility": 55 },
+  "message_success": "[acting_worker] clears the pass without a scratch.",
+  "effect": { "money": 500, "add_trait": "Trailblazer" }
+}</pre>
+<ul>
+  <li>The option shows <i>"(guaranteed, requires Combat 70, Agility 55)"</i>, and the worker list shows each worker's levels.</li>
+  <li>Levels count traits and equipment, the same way as skill rolls.</li>
+  <li>The effect can be flat, or split into <code>success</code>/<code>failure</code>: a guaranteed choice applies <code>success</code>.</li>
+  <li>Needs a worker: not with <code>"worker_selection": "none"</code>, not with <code>building_skill</code>, and not in recruitment scenes. NSFW skills (Sex, Oral…) need <code>"nsfw": true</code> on the event or the choice.</li>
+</ul>
+<p class="fb">Needs a game version newer than 0.9.6.2t1.</p>
+
+<h3 id="m-chains">Chains and conditions</h3>
+<p>Event 1 sets a flag with <code>event_flags</code>. Event 2 starts with <code>"start_when": "has_flag:mira_trailblazer_done"</code> and excludes its own "done" flag, and so on.</p>
+<p><b>Waiting a number of days:</b> event 1 sets <code>"event_flags": {"mira_day": "[calculate_total_days()]"}</code>, which stores today's day. Event 2 uses <code>"start_when": "after_days_from_flag:mira_day,7"</code>.</p>
+<p><code>start_when</code> and <code>stop_when</code> accept these, joined with <code> AND </code> or <code> OR </code>:</p>
+<div class="tw"><table>
+<thead><tr><th>Condition</th><th>True when</th></tr></thead>
+<tbody>
+<tr><td><code>has_flag:x</code></td><td>flag <code>x</code> is set</td></tr>
+<tr><td><code>flag_value:x=value</code></td><td>flag <code>x</code> has that value</td></tr>
+<tr><td><code>after_days_from_flag:x,7</code></td><td>7 days have passed since flag <code>x</code> stored the day</td></tr>
+<tr><td><code>has_worker:Name</code> / <code>not_has_worker:Name</code></td><td>that character is (not) in your roster</td></tr>
+<tr><td><code>has_folder_worker:Folder</code> / <code>not_has_folder_worker:Folder</code></td><td>same, by image folder</td></tr>
+<tr><td><code>after_days:N</code> / <code>before_days:N</code></td><td>days since the start of the game</td></tr>
+<tr><td><code>after_date:day,month,year</code> / <code>exact_date:day,month</code></td><td>calendar dates</td></tr>
+<tr><td><code>money &gt;= 5000</code>, <code>store.current_objective &gt;= 7</code></td><td>simple comparisons with a number, text or True/False</td></tr>
+</tbody></table></div>
+<div class="note fix"><strong>No code in packs.</strong> The game runs some condition and flag values as Python code, so the importer rejects anything else: function calls, brackets, <code>__</code>, and flag values written as <code>"[...]"</code> other than <code>"[calculate_total_days()]"</code>.</div>
+</section>
+
+<section class="chapter">
+<h2 id="m-stories">Daily stories</h2>
+<p>Extra stories for an existing job, in <code>data/buildings/daily_story_extensions/</code>. They are added to the job's stories and never replace them. The story fields are the same as the game's (see <a href="#ref" data-tab-link="ref" data-anchor="r-story-json">Daily story fields</a>); the image names follow the <a href="#img" data-tab-link="img" data-anchor="i-rules">Images</a> rules.</p>
+<pre>{ "daily_story_extensions": [{
+    "building_id": "adventurers_guild",
+    "profession_id": "adventurer",
+    "merge_mode": "append",
+    "daily_stories": [ { "id": "mira_trailblazer_route", "report": "Route Charting", … } ]
+}] }</pre>
+<ul>
+  <li><code>merge_mode</code> must be <code>append</code> (missing counts as <code>append</code>).</li>
+  <li><code>report</code> is the title in the Daily Report: short, about 24 characters, with no <code>{worker_name}</code>.</li>
+  <li>To keep a story for your character, use <code>required_traits</code> with one of your <code>only_assigned</code> traits. <code>worker_name</code> has no effect on daily stories.</li>
+  <li>Every story <code>id</code> must be new.</li>
+</ul>
+<h3 id="m-jobs">Buildings and jobs you can target</h3>
+<div class="tw"><table><thead><tr><th>building_id</th><th>profession_id</th></tr></thead><tbody>
+<tr><td><code>academy</code><div class="sub-line">Academy</div></td><td><code>academy_academics</code> <span class="fb">Academics</span><br><code>academy_amatory</code> <span class="fb">Amatory Arts</span><br><code>academy_hospitality</code> <span class="fb">Hospitality Arts</span><br><code>academy_artisan</code> <span class="fb">Artisan Studies</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>adventurers_guild</code><div class="sub-line">Adventurer&#x27;s Guild</div></td><td><code>adventurer</code> <span class="fb">Adventurer</span><br><code>treasure_hunter</code> <span class="fb">Treasure Hunter</span><br><code>boss_hunting</code> <span class="fb">Boss Hunting</span><br><code>monster_taming</code> <span class="fb">Monster Taming</span><br><code>manager</code> <span class="fb">Manager</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>arena</code><div class="sub-line">Arena</div></td><td><code>arena_exhibition</code> <span class="fb">Exhibition fighter</span><br><code>arena_proving</code> <span class="fb">Proving fighter</span><br><code>arena_championship</code> <span class="fb">Championship fighter</span><br><code>arena_pinup_barbarian</code> <span class="fb">Bikini Bouts</span><br><code>arena_oil_chains</code> <span class="fb">Oil &amp; Chains</span><br><code>arena_spectacle</code> <span class="fb">The Spectacle</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>brothel</code><div class="sub-line">Brothel</div></td><td><code>prostitute</code> <span class="fb">Prostitute</span><br><code>masseuse</code> <span class="fb">Masseuse</span><br><code>expert_attendant</code> <span class="fb">Expert attendant</span><br><code>stripper</code> <span class="fb">Stripper</span><br><code>service</code> <span class="fb">Service</span><br><code>manager</code> <span class="fb">Manager</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>casino</code><div class="sub-line">Casino</div></td><td><code>dealer</code> <span class="fb">Dealer</span><br><code>guard</code> <span class="fb">Guard</span><br><code>manager</code> <span class="fb">Manager</span><br><code>casino_server</code> <span class="fb">Casino server</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>governor_castle</code><div class="sub-line">Castle</div></td><td><code>ambassador</code> <span class="fb">Ambassador</span><br><code>courtesan</code> <span class="fb">Courtesan</span><br><code>servant</code> <span class="fb">Servant</span><br><code>pleasure_servant</code> <span class="fb">Pleasure Servant</span><br><code>prisoner</code> <span class="fb">Prisoner</span><br><code>guards</code> <span class="fb">Guards</span><br><code>chamberlain</code> <span class="fb">Chamberlain</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>restaurant</code><div class="sub-line">Restaurant</div></td><td><code>service</code> <span class="fb">Restaurant server</span><br><code>cook</code> <span class="fb">Cook</span><br><code>manager</code> <span class="fb">Manager</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+<tr><td><code>tavern</code><div class="sub-line">Tavern</div></td><td><code>bartender</code> <span class="fb">Bartender</span><br><code>entertainer</code> <span class="fb">Entertainer</span><br><code>manager</code> <span class="fb">Manager</span><br><code>tavern_server</code> <span class="fb">Tavern server</span><br><code>rest</code> <span class="fb">Rest</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="chapter">
+<h2 id="m-checks">What the importer checks</h2>
+<p>Before installing, the importer refuses a pack, and says why, when:</p>
+<ul>
+  <li>a file is not valid JSON, or repeats a key inside the same object;</li>
+  <li>a trait, event id or story id already exists in the game or in another installed pack;</li>
+  <li>a daily story targets a building or job that doesn't exist, or doesn't use <code>append</code>;</li>
+  <li>a condition or flag value is something the game would run as code;</li>
+  <li><code>skill_requirements</code> names an unknown skill, is used where no worker acts, or tests an NSFW skill in an event not marked NSFW;</li>
+  <li>a character has no <code>profile</code> image, or a field has an invalid value.</li>
+</ul>
+<p>When a character's name is taken, the player can install it as "Name (Mod xxxxxx)". The importer then updates <code>worker_name</code>, <code>has_worker:</code>, <code>has_folder_worker:</code> and <code>specific_worker_images</code> in the pack's own events, so they keep working.</p>
+</section>
+
+<section class="chapter">
+<h2 id="m-mistakes">Common mistakes</h2>
+<div class="tw"><table>
+<thead><tr><th>Mistake</th><th>What happens</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>Daily stories saved in <code>data/events/</code></td><td>Not loaded</td><td>Move them to <code>data/buildings/daily_story_extensions/</code></td></tr>
+<tr><td>A whole building file to add one job's stories</td><td>It would replace the building; character packs exclude it</td><td>A daily story extension with <code>append</code></td></tr>
+<tr><td><code>condition</code> / <code>threshold</code> twice in one choice</td><td>Rejected</td><td>One roll per choice; extra minimums go in <code>skill_requirements</code></td></tr>
+<tr><td>Events for a character that isn't in the pack or the game</td><td>They never trigger</td><td>Ship the character, or remove the events</td></tr>
+<tr><td>A race trait without <code>only_assigned</code></td><td>Random recruits get the race</td><td><code>"only_assigned": true</code></td></tr>
+<tr><td>Two skill checks written into one choice</td><td>Only the last one counted; now rejected</td><td><code>skill_requirements</code> for the extra minimums</td></tr>
+<tr><td><code>{worker_name}</code> in a story's <code>report</code></td><td>Shows up as written</td><td>A short title</td></tr>
+<tr><td>Extra worker fields such as <code>image_folder</code></td><td>Ignored, with a warning</td><td>Use <code>folder</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="chapter">
+<h2 id="m-override">JSON overrides</h2>
+<p>An override replaces a whole game data file, found by its exact path (for example <code>data/items/items.json</code>), with your edited copy. Use it for balance and rule changes that a character pack can't make.</p>
+<ul>
+  <li>The whole file is replaced: entries you leave out are gone, not inherited.</li>
+  <li>Install with Mods &gt; Install mods and "Import as JSON override" ticked, restart, then start a new game. When two overrides change the same file, the last one installed wins.</li>
+  <li>Never copy an override into the game folder by hand.</li>
+</ul>
 </section>
 
       </div>
@@ -1033,6 +1292,14 @@ profile                     (always exists)</pre>
     if (push) { try { history.replaceState(null, "", "#" + name); } catch (e) {} }
   }
   tabs.forEach(t => t.addEventListener("click", () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); }));
+  // Cross-tab links in the chapters: <a href="#mods" data-tab-link="mods">.
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a[data-tab-link]"); if (!a) return;
+    e.preventDefault();
+    show(a.dataset.tabLink, true);
+    const id = a.dataset.anchor, el = id && document.getElementById(id);
+    if (el) el.scrollIntoView(); else window.scrollTo({ top: 0 });
+  });
   toc.addEventListener("click", e => {
     const a = e.target.closest("a"); if (!a) return;
     e.preventDefault();
@@ -1157,8 +1424,9 @@ profile                     (always exists)</pre>
 
   let start = "play";
   const hash = (location.hash || "").slice(1);
-  if (["play", "ref", "img"].includes(hash)) start = hash;
-  else { try { const s = localStorage.getItem("fm-guide-tab"); if (s && ["play", "ref", "img"].includes(s)) start = s; } catch (e) {} }
+  const TABS = ["play", "ref", "img", "mods"];
+  if (TABS.includes(hash)) start = hash;
+  else { try { const s = localStorage.getItem("fm-guide-tab"); if (s && TABS.includes(s)) start = s; } catch (e) {} }
   show(start, false);
 })();
 </script>

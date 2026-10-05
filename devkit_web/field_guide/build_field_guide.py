@@ -294,6 +294,24 @@ def build_workers_html():
     return "\n".join(out)
 
 
+def build_professions_html():
+    """building_id / profession_id pairs a mod's daily stories can target."""
+    rows = []
+    for path in sorted(glob.glob(os.path.join(GAME, "data/buildings/*.json"))):
+        with open(path, encoding="utf-8") as f:
+            raw = json.load(f)
+        for b in raw.get("building_types", []) if isinstance(raw, dict) else []:
+            profs = [p for p in b.get("professions", []) if isinstance(p, dict) and p.get("id")]
+            if b.get("id") and profs:
+                rows.append((b.get("name") or b["id"], b["id"], profs))
+    out = ['<div class="tw"><table><thead><tr><th>building_id</th><th>profession_id</th></tr></thead><tbody>']
+    for name, bid, profs in sorted(rows, key=lambda r: r[1]):
+        jobs = "<br>".join("<code>%s</code> <span class=\"fb\">%s</span>" % (html.escape(p["id"]), html.escape(p.get("name") or p["id"])) for p in profs)
+        out.append("<tr><td><code>%s</code><div class=\"sub-line\">%s</div></td><td>%s</td></tr>" % (html.escape(bid), html.escape(name), jobs))
+    out.append("</tbody></table></div>")
+    return "\n".join(out)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=DEFAULT_OUT)
@@ -308,9 +326,11 @@ def main():
     page = (page.replace("<!--PLAY-->", part("part_play.html"))
                 .replace("<!--REF-->", part("part_ref.html"))
                 .replace("<!--IMG-->", part("part_img.html"))
+                .replace("<!--MODS-->", part("part_mods.html"))
                 .replace("/*DATA*/", data))
     page = (page.replace("<!--TRAIT_LIST-->", build_traits_html())
-                .replace("<!--WORKER_LIST-->", build_workers_html()))
+                .replace("<!--WORKER_LIST-->", build_workers_html())
+                .replace("<!--PROFESSION_LIST-->", build_professions_html()))
     # template.html starts with <title>/<link>/<style>: they belong in <head>.
     head_end = page.index('<div class="wrap">')
     page = PAGE_HEAD + page[:head_end] + "</head>\n<body>\n" + page[head_end:] + "\n</body>\n</html>\n"

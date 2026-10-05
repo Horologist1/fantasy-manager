@@ -587,6 +587,10 @@ label handle_random_event:
             elif final_worker is not None and condition_for_preview and condition_for_preview != "building_skill":
                 preview_info = get_event_worker_skill_check_info(final_worker, choice_option)
                 check_preview = preview_info.get("label", "") if preview_info.get("valid") else ""
+            _req_label = event_choice_requirements_label(choice_option)
+            if _req_label:
+                _req_label = ("guaranteed, " if event_choice_is_guaranteed(choice_option) else "") + _req_label
+                check_preview = (check_preview + "; " + _req_label) if check_preview else _req_label
             if check_preview and check_preview not in option_text:
                 # Parentheses (not brackets) so Ren'Py never tries to interpolate
                 # the preview text — keeps modded events safe from accidental
@@ -625,12 +629,17 @@ label handle_random_event:
             new_choice["condition"] = choice_option.get("condition", None)
             new_choice["_blocked"] = (not trait_requirements_met and trait_visibility == "blocked")
             new_choice["_blocked_reason"] = blocked_reason
+            if (not new_choice["_blocked"] and final_worker is not None
+                    and not worker_meets_choice_skill_requirements(final_worker, choice_option)):
+                new_choice["_blocked"] = True
+                new_choice["_blocked_reason"] = final_worker.get("name", "This worker") + " does not meet: " + event_choice_requirements_label(choice_option)
             # Dead-end guard: a skill-check option no roster member can attempt
             # would burn the event on "no eligible workers" AFTER the pick.
             # Disable it up front with the reason instead.
             if (not new_choice["_blocked"] and final_worker is None
                     and worker_selection_mode in ("choose", "random")
-                    and new_choice.get("condition") not in (None, "building_skill")):
+                    and (new_choice.get("condition") not in (None, "building_skill")
+                         or (event_choice_skill_requirements(choice_option) and new_choice.get("condition") != "building_skill"))):
                 try:
                     if not event_choice_has_qualifying_worker(choice_option, event):
                         new_choice["_blocked"] = True
@@ -677,6 +686,10 @@ label handle_random_event:
             if condition != "building_skill" and condition is not None:
                 worker_needed = True
                 renpy.log(f"Worker needed for choice with condition: {condition}")
+            elif (condition is None and worker_selection_mode != "none"
+                  and event_choice_skill_requirements(chosen_choice_data)):
+                worker_needed = True
+                renpy.log("Worker needed for choice with skill requirements")
 
         if worker_needed:
             renpy.log(f"Choice requires a worker. Mode: {worker_selection_mode}, Initial worker: {final_worker}")
@@ -733,6 +746,7 @@ label handle_random_event:
                         w for w in temp_eligible
                         if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
                     ]
+                temp_eligible = [w for w in temp_eligible if worker_meets_choice_skill_requirements(w, chosen_choice_data)]
 
                 # Filter by event worker_name and/or specific_worker_images (OR semantics)
                 if store._event_has_identity_filters(event):
@@ -806,6 +820,7 @@ label handle_random_event:
                             w for w in temp_eligible
                             if store._worker_meets_trait_requirements(w, req_tr, ex_tr)
                         ]
+                    temp_eligible = [w for w in temp_eligible if worker_meets_choice_skill_requirements(w, chosen_choice_data)]
 
                     # Filter by event worker_name and/or specific_worker_images (OR semantics)
                     if store._event_has_identity_filters(event):

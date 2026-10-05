@@ -140,11 +140,12 @@ details.row .body { padding: 8px 14px 14px; font-size: 15.5px; }
 <div class="wrap">
   <header class="top">
     <h1>Fantasy Manager Field Guide</h1>
-    <p>How the game works, the formulas behind it, and every image the game looks for. Checked against the code of version 0.9.6.2t1.</p>
+    <p>How the game works, the formulas behind it, every image the game looks for, and how to install and make mods. Checked against the code of version 0.9.6.2t1.</p>
     <div class="tabs" role="tablist" aria-label="Guide sections">
       <button class="tab" role="tab" id="tab-play" aria-selected="true" data-tab="play">How to play</button>
       <button class="tab" role="tab" id="tab-ref" aria-selected="false" data-tab="ref">Formulas &amp; data</button>
-      <button class="tab" role="tab" id="tab-img" aria-selected="false" data-tab="img">Images &amp; modding</button>
+      <button class="tab" role="tab" id="tab-img" aria-selected="false" data-tab="img">Images</button>
+      <button class="tab" role="tab" id="tab-mods" aria-selected="false" data-tab="mods">Mods</button>
     </div>
   </header>
 
@@ -159,6 +160,9 @@ details.row .body { padding: 8px 14px 14px; font-size: 15.5px; }
       </div>
       <div class="panel" id="panel-img" data-panel="img" hidden>
 <!--IMG-->
+      </div>
+      <div class="panel" id="panel-mods" data-panel="mods" hidden>
+<!--MODS-->
       </div>
     </main>
   </div>
@@ -190,6 +194,14 @@ details.row .body { padding: 8px 14px 14px; font-size: 15.5px; }
     if (push) { try { history.replaceState(null, "", "#" + name); } catch (e) {} }
   }
   tabs.forEach(t => t.addEventListener("click", () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); }));
+  // Cross-tab links in the chapters: <a href="#mods" data-tab-link="mods">.
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a[data-tab-link]"); if (!a) return;
+    e.preventDefault();
+    show(a.dataset.tabLink, true);
+    const id = a.dataset.anchor, el = id && document.getElementById(id);
+    if (el) el.scrollIntoView(); else window.scrollTo({ top: 0 });
+  });
   toc.addEventListener("click", e => {
     const a = e.target.closest("a"); if (!a) return;
     e.preventDefault();
@@ -314,8 +326,9 @@ details.row .body { padding: 8px 14px 14px; font-size: 15.5px; }
 
   let start = "play";
   const hash = (location.hash || "").slice(1);
-  if (["play", "ref", "img"].includes(hash)) start = hash;
-  else { try { const s = localStorage.getItem("fm-guide-tab"); if (s && ["play", "ref", "img"].includes(s)) start = s; } catch (e) {} }
+  const TABS = ["play", "ref", "img", "mods"];
+  if (TABS.includes(hash)) start = hash;
+  else { try { const s = localStorage.getItem("fm-guide-tab"); if (s && TABS.includes(s)) start = s; } catch (e) {} }
   show(start, false);
 })();
 </script>
