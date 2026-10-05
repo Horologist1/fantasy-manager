@@ -105,7 +105,7 @@ init python:
         return {"title": "Monthly conditions", "body": [
             "This condition lasts through the end of the current month. Its effects change activity performance, not learned skills.",
             safe(card["name"] + ": " + "; ".join(card["effects"])),
-            "Select the underlined calendar date in the Tavern to review the card. You may adapt your staff or keep your current organization; no workers are reassigned automatically.",
+            "Select the calendar date in the Tavern or on the map to review the card. You may adapt your staff or keep your current organization; no workers are reassigned automatically.",
             "The checkbox changes whether conditions are enabled starting NEXT month. You can cancel a pending change before then."]}
 
     def monthly_maybe_intro():
@@ -122,23 +122,20 @@ screen monthly_card(transition=False):
     modal True
     zorder 180
     $ card = monthly_presentation()
-    add Solid(gui.surface_dark)
-    add Transform("gui/Journalback.png", align=(0.5, 0.5))
+    # Same layout as journal_panel (tutorial_system.rpy): same frame, close
+    # button, centred title and left-aligned text column, so both read alike.
+    add Solid("#000000dd")
     frame:
-        xalign 0.5
+        xalign 0.35
         yalign 0.5
-        xsize 720
+        background Transform("gui/Journalback.png", align=(0.5, 0.5))
+        padding (40, 40)
+        xsize 780
         ysize 740
-        padding (40, 36)
-        background None
-        fixed:
-            imagebutton:
-                id "monthly_close"
-                idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-                hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
-                action (Return() if transition else Hide("monthly_card"))
-                xalign 1.0
-                ypos 0
+
+        vbox:
+            spacing 15
+            null height 15
             text "[card['name']!q]":
                 font gui.text_font
                 color gui.journal_dark_color
@@ -146,35 +143,45 @@ screen monthly_card(transition=False):
                 outlines []
                 size font_size(42)
                 xalign 0.5
-                ypos 25
                 xsize 540
                 text_align 0.5
-            text "[card['duration']!q]":
-                size font_size(26)
-                color gui.journal_text_color
-                xalign 0.5
-                ypos 130
+            null height 10
             viewport:
-                xpos 5
-                ypos 180
-                xsize 630
-                ysize 330
+                scrollbars None
                 mousewheel True
                 draggable True
-                vbox:
-                    spacing 18
-                    xsize 620
-                    if card["image"]:
-                        add Transform(card["image"], xysize=(550, 220), fit="contain") xalign 0.5
-                    text "[card['description']!q]" size font_size(32) color gui.journal_text_color
-                    if not card["enabled"]:
-                        text "Monthly conditions disabled." size font_size(32) color gui.journal_text_color
-                    for effect in card["effects"]:
-                        text "[effect!q]" size font_size(30) color gui.journal_text_color
+                ysize 400
+                xsize 650
+                xoffset 60
+                yoffset 25
+                has vbox
+                spacing 18
+
+                text "[card['duration']!q]":
+                    xsize 580
+                    size font_size(24)
+                    color "#6b6528"
+                if card["image"]:
+                    add Transform(card["image"], xysize=(550, 220), fit="contain") xalign 0.0
+                text "[card['description']!q]":
+                    xsize 580
+                    size font_size(26)
+                    color "#7a4b2a"
+                if not card["enabled"]:
+                    text "Monthly conditions disabled.":
+                        xsize 580
+                        size font_size(26)
+                        color "#7a4b2a"
+                for effect in card["effects"]:
+                    text "[effect!q]":
+                        xsize 580
+                        size font_size(26)
+                        color "#7a4b2a"
+
             vbox:
-                xpos 5
-                ypos 545
-                xsize 620
+                xoffset 60
+                yoffset 25
+                xsize 580
                 spacing 10
                 button:
                     id "monthly_toggle"
@@ -186,9 +193,19 @@ screen monthly_card(transition=False):
                     hbox:
                         spacing 12
                         add Transform("gui/icons/batch_checkbox_on.png" if card["requested"] else "gui/icons/batch_checkbox_off.png", xysize=(26, 26)) yalign 0.5
-                        text "Enable monthly conditions" size font_size(32) color gui.journal_dark_color
+                        text "Enable monthly conditions" size font_size(26) color gui.journal_dark_color hover_color gui.journal_hover_color
                 if card["pending"]:
-                    text "[card['pending']!q]" size font_size(32) color gui.journal_text_color
+                    text "[card['pending']!q]" xsize 580 size font_size(24) color "#6b6528"
+
+        imagebutton:
+            id "monthly_close"
+            idle Transform("gui/button/return_idle.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            hover Transform("gui/button/return_hover.png", zoom=(0.65 if renpy.variant("touch") else 0.5))
+            action (Return() if transition else Hide("monthly_card"))
+            xalign 1.0
+            yalign 0.0
+            xoffset -45
+            yoffset 15
     key "game_menu" action (Return() if transition else Hide("monthly_card"))
 
 screen monthly_transition():

@@ -104,6 +104,8 @@ def main():
     parser.add_argument("--bad-mod", action="store_true",
                         help="deja un JSON de mod malformado para comprobar que no rompe el catalogo")
     parser.add_argument("--title", default="Lady", choices=("Lady", "Lord"))
+    parser.add_argument("--shots", action="store_true",
+                        help="jugador con objetivo: captura la primera vez que ve mapa, taberna, Journal y reclutamiento")
     parser.add_argument("--i7-every", type=int, default=0,
                         help="guardar+cargar cada N acciones (por defecto 250)")
     parser.add_argument("--goal", action="store_true",
@@ -160,6 +162,8 @@ def main():
         env["FM_AUTOPLAY_BADMOD"] = "1"
     if args.fast_days:
         env["FM_AUTOPLAY_FASTDAYS"] = "1"
+    if args.shots:
+        env["FM_GOAL_SHOTS"] = "1"
     if args.i7_every:
         env["FM_AP_I7_EVERY"] = str(args.i7_every)
     if args.goal:

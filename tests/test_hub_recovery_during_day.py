@@ -60,3 +60,20 @@ def test_recovery_still_honours_the_mark():
     body = source.split("def fm_recover_hub_if_bare():", 1)[1].split("\nscreen ", 1)[0]
     assert 'renpy.session.get("fm_en_paso_de_dia")' in body, (
         "fm_recover_hub_if_bare ya no consulta la marca del paso de dia")
+
+
+def test_recovery_timer_does_not_refresh_every_screen():
+    """The always-on recovery timer must not restart the interaction: Function()
+    does by default, which re-evaluated every screen once a second, and screens
+    that pick a random image variant changed pictures on their own (recruitment
+    outcomes, reported 2026-10-05)."""
+    source = MAIN_FLOW.read_text(encoding="utf-8")
+    assert "timer 1.0 repeat True action Function(fm_recover_hub_if_bare, _update_screens=False)" in source
+
+
+def test_recruitment_outcome_keeps_its_picked_image():
+    screens = (ROOT / "game/scripts/core/screens.rpy").read_text(encoding="utf-8")
+    body = screens.split("screen recruitment_outcome(", 1)[1].split("\nscreen ", 1)[0]
+    assert "default _bg_pick = {}" in body
+    assert 'bg_image = _bg_pick.get("bg")' in body
+    assert '_bg_pick["bg"] = bg_image' in body

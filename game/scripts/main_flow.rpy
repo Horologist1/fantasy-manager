@@ -916,7 +916,12 @@ init python:
 
 screen fm_hub_recovery():
     zorder 0
-    timer 1.0 repeat True action Function(fm_recover_hub_if_bare)
+    # _update_screens=False: Function restarts the interaction by default, which
+    # re-evaluated EVERY screen once a second. Screens that pick a random image
+    # variant ("(2)", "(3)"...) in a python block then switched pictures on their
+    # own (recruitment outcomes). fm_recover_hub_if_bare restarts by itself in
+    # the one case it acts.
+    timer 1.0 repeat True action Function(fm_recover_hub_if_bare, _update_screens=False)
 
 init python:
     if "fm_hub_recovery" not in config.overlay_screens:

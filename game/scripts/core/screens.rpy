@@ -1838,13 +1838,13 @@ screen load():
         ## Load slots. FileLoad explicitly: FileAction resolves by the current
         ## screen name and would silently become a native FileSave (bypassing
         ## the snapshot sidecar) if this block were reused outside "load".
-        hotspot (468, 312, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(1), 1):
+        hotspot (468, 312, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(1), 1, loading_card=True):
             use load_save_slot(number=1)
-        hotspot (468, 620, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(2), 2):
+        hotspot (468, 620, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(2), 2, loading_card=True):
             use load_save_slot(number=2)
-        hotspot (1055, 312, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(3), 3):
+        hotspot (1055, 312, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(3), 3, loading_card=True):
             use load_save_slot(number=3)
-        hotspot (1055, 620, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(4), 4):
+        hotspot (1055, 620, 393, 207) action CanonicalSnapshotFileLoad(FileLoad(4), 4, loading_card=True):
             use load_save_slot(number=4)
 
         ## Confirmed delete controls remain visible in every slot so the load
@@ -8814,6 +8814,10 @@ screen take_a_walk_result(stage=0):
 screen recruitment_outcome(message, event, outcome, message_index=0, show_image_only=False, frozen_bg=None):
     modal True
     zorder 99
+    # The picked image lives here for the whole time the screen is shown: the
+    # python block below runs again on every re-evaluation, and the lookup picks
+    # at random among variants, so without this the picture could change by itself.
+    default _bg_pick = {}
     python:
         _recruitment_worker = getattr(store, "current_recruitment_worker", None)
         if not (_recruitment_worker and hasattr(_recruitment_worker, "get")):
@@ -8867,6 +8871,8 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
     python:
         # Keep one stable image through all clicks in this outcome sequence.
         bg_image = frozen_bg if _recruitment_content_visible else None
+        if _recruitment_content_visible and not bg_image:
+            bg_image = _bg_pick.get("bg")
 
         if _recruitment_content_visible and not bg_image:
             candidate_worker = getattr(store, "current_recruitment_worker", None)
@@ -8888,6 +8894,7 @@ screen recruitment_outcome(message, event, outcome, message_index=0, show_image_
                 except Exception as e:
                     renpy.log(f"recruitment_outcome get_recruitment_image failed: {e}")
                     bg_image = "images/event_bg.png"
+            _bg_pick["bg"] = bg_image
     python:
         # Keep image stable across click-driven re-renders of this same outcome sequence.
         if _recruitment_content_visible and show_dialogue:
@@ -11284,14 +11291,18 @@ screen map_screen():
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month - 1]
-            textbutton "[day_name], [store.current_day] [month_name] [store.current_year]":
+            # Same look as the rest of the HUD (no underline); hover colour like
+            # the manager name below. Opens the monthly condition cards.
+            textbutton fm_hud_date_text(day_name, month_name):
                 id "monthly_calendar"
                 action Function(monthly_open)
                 text_color gui.journal_dark_color
-                text_size 25
-                text_underline True
-                yminimum 44
+                text_hover_color gui.journal_hover_color
+                text_size FM_HUD_DATE_SIZE
+                yalign 0.5
                 padding (0, 0)
+                background None
+                hover_background None
         # Compact status strip: roster size and owned holdings (read-only)
         python:
             _tv_worker_count = len(store.workers)
@@ -12309,7 +12320,18 @@ screen tavern():
             add "images/calendar.png" zoom 0.7 yalign 0.5
             $ day_name = day_names[(store.current_day - 1) % 7]  # Map day 1-28 to 7-day week
             $ month_name = month_names[store.current_month - 1]
-            text "[day_name], [store.current_day] [month_name] [store.current_year]" color gui.journal_dark_color size 25 yalign 0.5
+            # Same look as the rest of the HUD (no underline); hover colour like
+            # the manager name below. Opens the monthly condition cards.
+            textbutton fm_hud_date_text(day_name, month_name):
+                id "monthly_calendar"
+                action Function(monthly_open)
+                text_color gui.journal_dark_color
+                text_hover_color gui.journal_hover_color
+                text_size FM_HUD_DATE_SIZE
+                yalign 0.5
+                padding (0, 0)
+                background None
+                hover_background None
         # Compact status strip: roster size and owned holdings (read-only)
         python:
             _tv_worker_count = len(store.workers)
@@ -12355,22 +12377,64 @@ screen tutorial_dialogue_trigger():
             SetVariable("objective_just_completed", 0),
             Return("objective_" + str(current_objective))
         ]
+init python:
+    FM_HUD_DATE_SIZE = 25
+    # Room for the date in the HUD box, right of the calendar icon. Long day and
+    # month names together ("Wetheris, 24 Glimmerthaw 1") overflow it, so the
+    # month is shortened only when the full date does not fit.
+    FM_HUD_DATE_WIDTH = 228
+
+    def fm_hud_date_text(day_name, month_name):
+        # The HUD is re-evaluated on every interaction, so each date is measured
+        # once and remembered. renpy.session: never written into saves.
+        cache = renpy.session.setdefault("fm_hud_date_cache", {})
+        day, year = store.current_day, store.current_year
+        full = "%s, %s %s %s" % (day_name, day, month_name, year)
+        shown = cache.get(full)
+        if shown is None:
+            try:
+                width = Text(full, style="button_text", size=FM_HUD_DATE_SIZE).size()[0]
+            except Exception:
+                width = 0
+            if width <= FM_HUD_DATE_WIDTH:
+                shown = full
+            else:
+                shown = "%s, %s %s. %s" % (day_name, day, month_name[:3], year)
+            cache[full] = shown
+        return shown
+
 ## Load/Save slot screen ######################################################
 
 screen load_save_slot(number):
     $ file_text = "% s\n%s" % (FileTime(number, empty="Empty Slot"), FileSaveName(number))
     add FileScreenshot(number) xpos -1 ypos 0
+    # Hover reads like the game's links: the slot lightens, gets a gold edge
+    # and its text turns gold. The hotspot passes its hover state down here.
     frame:
         xpos -1
         ypos 0
         xsize config.thumbnail_width
         ysize config.thumbnail_height
         background Solid("#00000099")
+        hover_background Fixed(Solid("#00000055"), fm_slot_hover_edge())
         text file_text:
             xalign 0.5
             yalign 0.5
             size font_size(24)
             color "#ffffff"
+            hover_color "#f2d27a"
+
+init python:
+    def fm_slot_hover_edge(width=3, color="#e8c56a"):
+        """A gold outline the size of a save slot (no image asset needed)."""
+        w, h = config.thumbnail_width, config.thumbnail_height
+        return Fixed(
+            Transform(Solid(color), xysize=(w, width)),
+            Transform(Solid(color), xysize=(w, width), ypos=h - width),
+            Transform(Solid(color), xysize=(width, h)),
+            Transform(Solid(color), xysize=(width, h), xpos=w - width),
+            xysize=(w, h),
+        )
 
 ## Configure thumbnail size for save slots
 init python:

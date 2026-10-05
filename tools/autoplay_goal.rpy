@@ -2244,6 +2244,14 @@ init 5 python:
                 and not _g_label(r).startswith("Release")]
         if getattr(store, "game_initialized", False) and not getattr(store, "main_menu", False):
             _apg.game_seen = True
+        # FM_GOAL_SHOTS=1: una captura la primera vez que sale cada pantalla de
+        # la lista, para revisar maquetacion sin tener que jugar a mano.
+        if _g_os.environ.get("FM_GOAL_SHOTS"):
+            vistas = renpy.session.setdefault("ap_goal_shots", [])
+            for nombre in ("map_screen", "tavern", "journal_panel", "recruitment_outcome"):
+                if nombre in _g_screens(rows) and nombre not in vistas:
+                    vistas.append(nombre)
+                    ap_shot("vista-" + nombre)
         # Solo el menu rapido en pantalla = el juego espera un toque (una
         # "pause" tras la imagen final de un evento). En escritorio el menu
         # rapido esta vacio y el arnes avanza solo; en la variante tactil tiene

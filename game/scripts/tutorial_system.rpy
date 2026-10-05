@@ -1151,9 +1151,11 @@ init python:
                 more = (float(adj.range) - float(adj.value)) > 4
             except Exception:
                 more = False
+        box = 32  # width of the close button above (return_idle.png 64 px x 0.5)
         if more:
-            return Text(u"▼", font="DejaVuSans.ttf", size=font_size(28), color="#7a4b2a"), 0.1
-        return Null(), 0.1
+            arrow = Text(u"▼", font="DejaVuSans.ttf", size=font_size(28), color="#7a4b2a", xalign=0.5)
+            return Fixed(arrow, xsize=box, ysize=font_size(28) + 6), 0.1
+        return Null(box, 1), 0.1
 
 
 # ===== WRAPPER FUNCTION FOR GLOBAL ACCESS =====
@@ -1691,13 +1693,14 @@ screen journal_panel():
 
         # "There is more below" hint. The journal has no scrollbar on purpose,
         # but the completion buttons (MARK AS COMPLETE, the objective 9 gambit,
-        # the final strike) often sit below the fold. Centered under the
-        # viewport (xoffset 60 + xsize 650 -> center at 385).
+        # the final strike) often sit below the fold. Same column as the close
+        # button: a box as wide as it (64 px image at zoom 0.5 = 32), aligned
+        # exactly like it, with the arrow centred inside.
         add DynamicDisplayable(fm_journal_more_arrow):
-            xpos 385
-            xanchor 0.5
+            xalign 1.0
+            xoffset -45
             yalign 1.0
-            yoffset 12
+            yoffset 17
 
 
 # ===== SKIP TUTORIAL CONFIRMATION =====

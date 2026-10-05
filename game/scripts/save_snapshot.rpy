@@ -2733,11 +2733,12 @@ init -2 python:
     class CanonicalSnapshotFileLoad(renpy.store.Action):
         """Load a complete sidecar into a clean store, never a saved stack."""
 
-        def __init__(self, load_action, slot_num, confirm=None, page=None):
+        def __init__(self, load_action, slot_num, confirm=None, page=None, loading_card=False):
             self.load_action = load_action
             self.slot_num = slot_num
             self.confirm = bool(getattr(load_action, "confirm", False)) if confirm is None else bool(confirm)
             self.page = page
+            self.loading_card = loading_card
             self.confirm_action = None
 
             if self.confirm:
@@ -2756,6 +2757,7 @@ init -2 python:
                     self.slot_num,
                     confirm=False,
                     page=self.page,
+                    loading_card=loading_card,
                 )
                 self.confirm_action = renpy.store.Confirm(
                     renpy.store.layout.LOADING,
@@ -2773,12 +2775,16 @@ init -2 python:
                 renpy.notify(_("This save has no complete, verified snapshot and was not loaded."))
                 return
 
-            renpy.full_restart(
-                transition=None,
-                label="_canonical_snapshot_load",
-                target="_canonical_snapshot_load",
-                save=False,
-            )
+            if not self.loading_card:
+                # Scripted callers (tests, autoplayer) need the restart now.
+                _canonical_snapshot_restart()
+
+            # The restart takes about a second with nothing on screen, so the
+            # click looked ignored. Show the "Loading" card first; its timer
+            # runs the restart once that frame has been drawn, and the card
+            # stays on screen until the tavern replaces it.
+            renpy.show_screen("fm_loading_save", _canonical_snapshot_restart)
+            renpy.restart_interaction()
 
         def get_sensitive(self):
             return renpy.is_sensitive(self.load_action)
@@ -2788,6 +2794,14 @@ init -2 python:
 
         def get_tooltip(self):
             return renpy.display.behavior.get_tooltip(self.load_action)
+
+    def _canonical_snapshot_restart():
+        renpy.full_restart(
+            transition=None,
+            label="_canonical_snapshot_load",
+            target="_canonical_snapshot_load",
+            save=False,
+        )
 
     class SnapshotDeletePair(renpy.store.Action):
         """Delete native and sidecar state while holding the slot lock."""
@@ -3708,6 +3722,17 @@ init -2 python:
         config.after_load_callbacks.append(_after_load_snapshot_callback)
     except Exception as e:
         renpy.log(f"SNAPSHOT: could not register after_load callback: {e}")
+
+screen fm_loading_save(then):
+    modal True
+    zorder 300
+    add Solid("#000000bb")
+    text _("Loading..."):
+        xalign 0.5
+        yalign 0.5
+        size font_size(48)
+        color "#f0e6c8"
+    timer 0.05 action Function(then)
 
 label _canonical_snapshot_load:
     $ _canonical_snapshot_loaded = _consume_canonical_snapshot_load()
