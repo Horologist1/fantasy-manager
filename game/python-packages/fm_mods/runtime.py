@@ -44,7 +44,15 @@ def start_android_picker(renpy):
         _android_pending = True
         _state.update(busy=True, message="Choose a mod ZIP in Android's file picker.")
     except Exception as exc:
-        _state.update(busy=False, message="Could not open Android's file picker. This APK needs the mod import bridge: " + str(exc))
+        if hasattr(renpy, "log"):
+            renpy.log("MODS: Android file picker unavailable: " + str(exc))
+        if "ModImportActivity" in str(exc):
+            # Packaging fault, not a player error: the APK lacks the SAF bridge.
+            message = ("This Android build was packaged without the mod importer, so a ZIP can't be chosen here. "
+                       "Please install the latest Android build of the game.")
+        else:
+            message = "Could not open Android's file picker: " + str(exc)
+        _state.update(busy=False, message=message)
 
 
 def poll_android_picker(renpy):

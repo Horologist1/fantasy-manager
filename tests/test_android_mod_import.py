@@ -123,3 +123,13 @@ def test_jni_failure_is_recoverable(phone, monkeypatch):
     assert not runtime.state()["busy"]
     assert "Missing bridge" in runtime.state()["message"]
     assert runtime._plan is None
+
+
+def test_apk_without_bridge_explains_the_packaging_fault(phone, monkeypatch):
+    def missing():
+        raise RuntimeError("Class not found b'org/fantasymanager/mods/ModImportActivity'")
+    monkeypatch.setattr(runtime.android_picker, "start", missing)
+    runtime.start_android_picker(phone[0])
+    assert not runtime.state()["busy"]
+    assert "packaged without the mod importer" in runtime.state()["message"]
+    assert "b'org/" not in runtime.state()["message"]

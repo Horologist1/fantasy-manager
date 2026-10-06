@@ -22,26 +22,8 @@ local.properties
 !/docs/REVIEW_devkit_architecture_2026-09-10.md
 !/docs/DEVKIT_upgrade_2026-09-10.md
 
-# Developer maintenance scripts — offline JSON tooling, not needed at runtime
-/tools/*
-!/tools/qa_choice_layout.py
-!/tools/qa_choice_layout.rpy
-!/tools/qa_json_overrides.py
-!/tools/qa_json_overrides.rpy
-!/tools/build_android_mods.py
-!/tools/android/
-!/tools/android_preflight.py
-!/tools/qa_playtest_save.py
-!/tools/qa_playtest_save.rpy
-!/tools/qa_playtest_content.py
-!/tools/qa_playtest_content.rpy
-!/tools/autoplay.py
-!/tools/autoplay.rpy
-!/tools/autoplay_tests.rpy
-!/tools/autoplay_campaign.py
-!/tools/make_fixture_save.py
-!/tools/make_fixture_save.rpy
-!/tools/autoplay_goal.rpy
+# Developer tools (QA harnesses, autoplayer, Android build helpers) — kept in the private repo
+/tools/
 
 # Desktop devkit (compiled editor exe) — distributed separately
 devkit/
